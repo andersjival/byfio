@@ -14,14 +14,14 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const getDims = () => {
     switch (size) {
       case 'sm':
-        return { badge: 'w-9 h-9', height: 26, text: 'text-[9px]' };
+        return { badge: 'w-7 h-7 sm:w-8 sm:h-8', height: 24, text: 'text-[9px]', title: 'text-base sm:text-lg' };
       case 'lg':
-        return { badge: 'w-14 h-14', height: 44, text: 'text-xs' };
+        return { badge: 'w-14 h-14', height: 44, text: 'text-xs', title: 'text-2xl' };
       case 'hero':
-        return { badge: 'w-20 h-20', height: 64, text: 'text-sm' };
+        return { badge: 'w-20 h-20', height: 64, text: 'text-sm', title: 'text-3xl' };
       case 'md':
       default:
-        return { badge: 'w-10 h-10', height: 32, text: 'text-[10px]' };
+        return { badge: 'w-9 h-9', height: 28, text: 'text-[10px]', title: 'text-lg sm:text-xl' };
     }
   };
 
@@ -29,10 +29,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   if (variant === 'badge') {
     return (
-      <div className="flex items-center gap-2.5 select-none group cursor-pointer">
+      <div className="flex items-center gap-2 select-none group cursor-pointer">
         {/* Isotipo Oficial Sin Borde Blanco — Fusión Suave */}
         <div
-          className={`${dims.badge} rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-300 shrink-0`}
+          className={`${dims.badge} rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-300 shrink-0`}
         >
           <svg viewBox="0 0 1000 1000" width="100%" height="100%">
             <defs>
@@ -85,7 +85,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         </div>
 
         {/* Solo Nombre Limpio 'by.fio' — Sin slogan invasivo */}
-        <span className="font-bubble font-bold text-xl sm:text-2xl text-fio-900 tracking-tight leading-none">
+        <span className={`font-bubble font-bold ${dims.title} text-fio-900 tracking-tight leading-none`}>
           by.fio
         </span>
       </div>
