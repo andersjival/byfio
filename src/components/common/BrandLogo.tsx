@@ -8,20 +8,20 @@ interface BrandLogoProps {
 
 export const BrandLogo: React.FC<BrandLogoProps> = ({
   size = 'md',
-  showSlogan = true,
+  showSlogan = false,
   variant = 'badge',
 }) => {
   const getDims = () => {
     switch (size) {
       case 'sm':
-        return { badge: 'w-10 h-10', height: 28, text: 'text-[9px]' };
+        return { badge: 'w-9 h-9', height: 26, text: 'text-[9px]' };
       case 'lg':
-        return { badge: 'w-16 h-16', height: 48, text: 'text-xs' };
+        return { badge: 'w-14 h-14', height: 44, text: 'text-xs' };
       case 'hero':
-        return { badge: 'w-24 h-24', height: 72, text: 'text-sm' };
+        return { badge: 'w-20 h-20', height: 64, text: 'text-sm' };
       case 'md':
       default:
-        return { badge: 'w-12 h-12', height: 36, text: 'text-[10px]' };
+        return { badge: 'w-10 h-10', height: 32, text: 'text-[10px]' };
     }
   };
 
@@ -29,12 +29,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   if (variant === 'badge') {
     return (
-      <div className="flex items-center gap-3 select-none group cursor-pointer">
-        {/* Isotipo Oficial con Gradiente Real #D4AEFA -> #E7B8F9 */}
+      <div className="flex items-center gap-2.5 select-none group cursor-pointer">
+        {/* Isotipo Oficial Sin Borde Blanco — Fusión Suave */}
         <div
-          className={`${dims.badge} rounded-2xl overflow-hidden shadow-claySm border-2 border-white/80 group-hover:scale-105 transition-transform duration-300 shrink-0`}
+          className={`${dims.badge} rounded-2xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-300 shrink-0`}
         >
-          <svg viewBox="0 0 1000 1000" width="100%" height="100%" className="drop-shadow-sm">
+          <svg viewBox="0 0 1000 1000" width="100%" height="100%">
             <defs>
               <linearGradient id="logoBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#D4AEFA" />
@@ -84,17 +84,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           </svg>
         </div>
 
-        {/* Nombre y Slogan Tipográfico */}
-        <div className="flex flex-col">
-          <span className="font-bubble font-bold text-lg sm:text-xl text-fio-900 tracking-tight leading-tight">
-            by.fio
-          </span>
-          {showSlogan && (
-            <span className={`${dims.text} font-bold text-fio-pink tracking-wider uppercase -mt-0.5`}>
-              Talleres Creativos & Tienda
-            </span>
-          )}
-        </div>
+        {/* Solo Nombre Limpio 'by.fio' — Sin slogan invasivo */}
+        <span className="font-bubble font-bold text-xl sm:text-2xl text-fio-900 tracking-tight leading-none">
+          by.fio
+        </span>
       </div>
     );
   }

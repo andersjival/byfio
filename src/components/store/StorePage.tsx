@@ -67,24 +67,23 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="py-6 sm:py-10 max-w-7xl mx-auto space-y-8 animate-fadeIn">
-      {/* Barra de Árbol con División de Slashes */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <TreeNavigation nodes={breadcrumbs} onNavigate={onNavigate} />
-
-        <div className="flex items-center gap-2 text-xs text-slate-500 font-sans tracking-wide self-end sm:self-auto">
-          <Flower2 className="w-3.5 h-3.5 text-fio-500" />
-          <span>{filteredProducts.length} artículo{filteredProducts.length !== 1 ? 's' : ''} disponibles</span>
-        </div>
-      </div>
-
-      {/* Encabezado Editorial Estilo SLOW / SPACE */}
-      <div className="relative text-center py-8 px-6 rounded-[36px] bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_12px_30px_rgba(180,160,200,0.08)] overflow-hidden">
+    <div className="py-2 sm:py-4 max-w-7xl mx-auto space-y-6 animate-fadeIn">
+      {/* Encabezado Editorial Estilo SLOW / SPACE con Árbol Integrado sobre el Cuadro Difuminado */}
+      <div className="relative text-center py-6 px-6 rounded-[36px] bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_12px_30px_rgba(180,160,200,0.08)] overflow-hidden">
         {/* Glows interiores */}
         <div className="absolute top-0 right-1/4 w-64 h-64 bg-[#D4AEFA]/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-[#FFF07C]/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 max-w-2xl mx-auto space-y-3">
+          {/* Árbol de Navegación Compacto Directo Dentro del Cuadro Difuminado (Cero Espacio Perdido) */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200/40">
+            <TreeNavigation nodes={breadcrumbs} onNavigate={onNavigate} />
+            <div className="flex items-center justify-center sm:justify-end gap-1.5 text-[11px] text-slate-500 font-sans tracking-wide">
+              <Flower2 className="w-3.5 h-3.5 text-fio-500" />
+              <span>{filteredProducts.length} artículo{filteredProducts.length !== 1 ? 's' : ''} disponibles</span>
+            </div>
+          </div>
+
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF5FF] border border-fio-200/60 text-fio-800 text-[11px] font-semibold tracking-widest uppercase">
             <Sparkles className="w-3 h-3 text-fio-pink" />
             <span>Tienda Online &amp; Personalizados</span>

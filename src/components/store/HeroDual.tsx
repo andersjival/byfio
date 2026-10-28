@@ -1,38 +1,41 @@
 import React from 'react';
+import { AppRoute } from '../../types';
+import { TreeNavigation } from '../common/TreeNavigation';
 import { Sparkles, ShoppingBag, Calendar, Heart, Star, CheckCircle2 } from 'lucide-react';
 
 interface HeroDualProps {
   onScrollToWorkshops: () => void;
   onScrollToProducts: () => void;
+  onNavigate?: (route: AppRoute) => void;
 }
 
 export const HeroDual: React.FC<HeroDualProps> = ({
   onScrollToWorkshops,
   onScrollToProducts,
+  onNavigate,
 }) => {
   return (
-    <section id="hero-section" className="relative overflow-hidden pt-6 pb-14 px-4 sm:px-6 lg:px-8">
+    <section id="hero-section" className="relative overflow-hidden pt-1 pb-12 px-4 sm:px-6 lg:px-8">
       {/* Fondo con Degradado Lila Pastel Oficial (#D4AEFA -> #E7B8F9) */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[420px] bg-gradient-to-b from-[#D4AEFA]/35 via-[#E7B8F9]/20 to-transparent rounded-b-[60px] -z-10 pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-b from-[#D4AEFA]/30 via-[#E7B8F9]/15 to-transparent rounded-b-[60px] -z-10 pointer-events-none" />
 
       <div className="max-w-6xl mx-auto text-center">
-        {/* Isotipo Oficial Flotante de Marca */}
-        <div className="inline-flex flex-col items-center mb-6 group cursor-pointer">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden shadow-clayLg border-3 border-white p-1 bg-gradient-to-br from-[#D4AEFA] to-[#E7B8F9] group-hover:scale-105 transition-transform duration-300">
-            <img
-              src="/assets/logo-byfio.svg"
-              alt="Logo Oficial by.fio"
-              className="w-full h-full object-contain drop-shadow"
+        {/* Árbol de Navegación Compacto Directo sobre el Difuminado */}
+        {onNavigate && (
+          <div className="flex justify-center mb-4">
+            <TreeNavigation
+              nodes={[
+                { label: 'by.fio', route: 'home' as AppRoute },
+                { label: 'inicio' },
+              ]}
+              onNavigate={onNavigate}
             />
           </div>
-          <span className="text-[11px] font-bold text-purple-900/80 uppercase tracking-widest mt-2">
-            by.fio • Marca Oficial
-          </span>
-        </div>
+        )}
 
         {/* Badge Slogan Kawaii */}
-        <div className="flex items-center justify-center mb-5">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-fio-200 shadow-claySm">
+        <div className="flex items-center justify-center mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-fio-200/60 shadow-claySm">
             <Sparkles className="w-4 h-4 text-[#FFF07C] fill-[#FFF07C]" />
             <span className="text-xs sm:text-sm font-bubble font-bold text-fio-900">
               ¡Transformá tu creatividad en tu mejor proyecto!

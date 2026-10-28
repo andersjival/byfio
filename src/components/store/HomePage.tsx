@@ -16,22 +16,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const featuredWorkshops = workshops.slice(0, 3);
   const featuredProducts = products.slice(0, 4);
 
-  const breadcrumbs = [
-    { label: 'by.fio', route: 'home' as AppRoute },
-    { label: 'inicio' },
-  ];
-
   return (
-    <div className="space-y-12 animate-fadeIn">
-      {/* Slashes Breadcrumb */}
-      <div className="pt-2">
-        <TreeNavigation nodes={breadcrumbs} onNavigate={onNavigate} />
-      </div>
-
-      {/* Hero Dual */}
+    <div className="space-y-8 animate-fadeIn">
+      {/* Hero Dual con Árbol Integrado sobre el Cuadro Difuminado (Cero Espacio Perdido) */}
       <HeroDual
         onScrollToWorkshops={() => onNavigate('workshops')}
         onScrollToProducts={() => onNavigate('store')}
+        onNavigate={onNavigate}
       />
 
       {/* Sección Destacada: Talleres Creativos */}

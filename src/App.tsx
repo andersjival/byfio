@@ -112,7 +112,7 @@ export const App: React.FC = () => {
       <div>
         <Navbar currentRoute={currentRoute} onNavigate={navigate} />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8">
           {currentRoute === 'home' && <HomePage onNavigate={navigate} />}
 
           {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
