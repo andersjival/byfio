@@ -13,6 +13,7 @@ import { CartDrawer } from './components/store/CartDrawer';
 import { CheckoutModal } from './components/store/CheckoutModal';
 import { AdminHeader } from './components/admin/AdminHeader';
 import { AdminTabs, AdminTabType } from './components/admin/AdminTabs';
+import { AdminHubMenu } from './components/admin/AdminHubMenu';
 import { OrdersQueue } from './components/admin/OrdersQueue';
 import { QuickBillingSection } from './components/admin/QuickBillingSection';
 import { InventoryTable } from './components/admin/InventoryTable';
@@ -25,7 +26,7 @@ import { NewProductModal } from './components/admin/NewProductModal';
 import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
-import { MessageCircle, Instagram } from 'lucide-react';
+import { MessageCircle, Instagram, LayoutGrid, ArrowLeft } from 'lucide-react';
 
 const parseRouteFromLocation = (): AppRoute => {
   const path = window.location.pathname.toLowerCase();
@@ -42,7 +43,7 @@ export const App: React.FC = () => {
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(parseRouteFromLocation);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
-  const [adminTab, setAdminTab] = useState<AdminTabType>('orders');
+  const [adminTab, setAdminTab] = useState<AdminTabType>('hub');
 
   const navigate = (newRoute: AppRoute) => {
     setCurrentRoute(newRoute);
@@ -89,19 +90,23 @@ export const App: React.FC = () => {
 
   const adminBreadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },
-    { label: 'panel administrativo', route: 'admin' as AppRoute },
-    {
-      label:
-        adminTab === 'orders'
-          ? 'pedidos & alisto'
-          : adminTab === 'billing'
-          ? 'facturación'
-          : adminTab === 'inventory'
-          ? 'inventario'
-          : adminTab === 'reports'
-          ? 'caja & reportes'
-          : 'talleres & inscripciones',
-    },
+    { label: 'panel administrativo', onClick: () => setAdminTab('hub') },
+    ...(adminTab !== 'hub'
+      ? [
+          {
+            label:
+              adminTab === 'orders'
+                ? 'cola de pedidos'
+                : adminTab === 'billing'
+                ? 'facturación rápida'
+                : adminTab === 'inventory'
+                ? 'inventario & qr'
+                : adminTab === 'reports'
+                ? 'caja & reportes'
+                : 'talleres & inscripciones',
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -121,17 +126,42 @@ export const App: React.FC = () => {
 
           {currentRoute === 'admin' && (
             <div className="space-y-6">
-              <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
-              <AdminHeader />
-              <AdminTabs activeTab={adminTab} setActiveTab={setAdminTab} />
+              {/* Barra de Árbol con Slashes */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
 
-              {adminTab === 'orders' && <OrdersQueue />}
-              {adminTab === 'billing' && <QuickBillingSection />}
-              {adminTab === 'inventory' && <InventoryTable />}
-              {adminTab === 'reports' && (
-                <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
+                {adminTab !== 'hub' && (
+                  <button
+                    type="button"
+                    onClick={() => setAdminTab('hub')}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-white/80 hover:bg-white text-slate-700 text-xs font-semibold border border-white/80 shadow-sm transition-all self-start sm:self-auto"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5 text-fio-pink" />
+                    <span>Volver al Menú Principal</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Si está en el Menú Principal (Hub) */}
+              {adminTab === 'hub' ? (
+                <>
+                  <AdminHeader />
+                  <AdminHubMenu onSelectTab={(tab) => setAdminTab(tab)} />
+                </>
+              ) : (
+                /* Si está dentro de una sección específica */
+                <>
+                  <AdminTabs activeTab={adminTab} setActiveTab={setAdminTab} />
+
+                  {adminTab === 'orders' && <OrdersQueue />}
+                  {adminTab === 'billing' && <QuickBillingSection />}
+                  {adminTab === 'inventory' && <InventoryTable />}
+                  {adminTab === 'reports' && (
+                    <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
+                  )}
+                  {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
+                </>
               )}
-              {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
             </div>
           )}
         </main>
