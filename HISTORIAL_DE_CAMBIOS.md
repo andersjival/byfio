@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.10.0 - Menú Principal del Panel Admin con Cajitas Grandes Redonditas (Hub Central)
+- [x] Nuevo componente [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx) con 5 cajitas de botones táctiles bien grandes y redonditas (`rounded-[32px]`) en una sola pantalla:
+  1. **📦 Cola de Pedidos & Alisto QR** (con contador de pedidos pendientes en vivo).
+  2. **🧾 Facturación Rápida** (búsqueda instantánea por # de orden).
+  3. **🏷️ Inventario & Etiquetas QR** (con indicador de stock crítico y total de productos).
+  4. **💰 Caja & Reportería Diaria** (resumen de ingresos, arqueo y valor de inventario).
+  5. **🎓 Talleres & Inscripciones** (seguimiento de alumnos y cupos activos).
+- [x] Navegación fluida: al dar clic a cualquier cajita entra a la sección específica. Dentro de la sección se incluye el botón permanente `← Volver al Menú Principal` y pestañas rápidas.
+- [x] Árbol de navegación con slashes sincronizado (`by.fio / panel administrativo` y `by.fio / panel administrativo / [sección]`).
+
 ### Versión 1.9.0 - Limpieza Visual de Borde Blanco, Eliminación de Logo Redundante & Árbol Compacto sobre Cuadro Difuminado
 - [x] Eliminación del borde blanco invasivo en el isotipo y retiro del slogan secundario en el Navbar (`BrandLogo.tsx`), dejando únicamente el isotipo degradado suave y el nombre `by.fio`.
 - [x] Retiro del bloque flotante duplicado con borde blanco en el Hero (`HeroDual.tsx`).
