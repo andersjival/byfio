@@ -1,13 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
-import { GraduationCap, Users, ChevronDown, ChevronUp, Phone, Hash, Calendar } from 'lucide-react';
+import {
+  GraduationCap, Users, ChevronDown, ChevronUp, Phone, Hash,
+  Calendar, Plus, Link2, Trash2, CheckCircle2,
+} from 'lucide-react';
 
 export const WorkshopEnrollmentsSection: React.FC = () => {
-  const { workshops, orders } = useApp();
+  const { workshops, orders, setIsNewWorkshopModalOpen, deleteWorkshop } = useApp();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Derive enrollments from orders containing workshop items
   const enrollmentsByWorkshop = useMemo(() => {
     const map = new Map<string, { name: string; phone: string; email?: string; orderNumber: string; quantity: number; date: string }[]>();
     workshops.forEach((ws) => map.set(ws.id, []));
@@ -16,8 +19,7 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
       order.items
         .filter((item) => item.type === 'workshop')
         .forEach((item) => {
-          // Match by SKU pattern or name
-          const ws = workshops.find((w) => item.sku === w.id || item.name.includes(w.title.split(' ').slice(0, 3).join(' ')));
+          const ws = workshops.find((w) => item.sku === w.id || item.sku === `WS-${w.id.toUpperCase()}` || item.name === w.title);
           if (ws) {
             map.get(ws.id)?.push({
               name: order.customerName,
@@ -33,6 +35,14 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
     return map;
   }, [workshops, orders]);
 
+  const copyLink = (wsId: string) => {
+    const link = `${window.location.origin}?taller=${wsId}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedId(wsId);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
+
   const toggle = (id: string) => setExpandedId((prev) => (prev === id ? null : id));
 
   return (
@@ -42,6 +52,12 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
           <GraduationCap className="w-5 h-5 text-fio-300" />
           Inscripciones a Talleres
         </h2>
+        <button
+          onClick={() => setIsNewWorkshopModalOpen(true)}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all"
+        >
+          <Plus className="w-4 h-4" /> Crear Taller
+        </button>
       </div>
 
       {workshops.map((ws) => {
@@ -53,7 +69,6 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
 
         return (
           <div key={ws.id} className="bg-white rounded-2xl border border-fio-200 shadow-sm overflow-hidden">
-            {/* Header */}
             <button
               onClick={() => toggle(ws.id)}
               className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-fio-50/50 transition-colors"
@@ -64,9 +79,7 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
                   <Calendar className="w-3 h-3" /> {ws.date} • {ws.schedule}
                 </p>
               </div>
-
               <div className="flex items-center gap-3 shrink-0 ml-4">
-                {/* Spots badge */}
                 <div className="text-right">
                   <div className="flex items-center gap-1 text-xs font-bold text-fio-800">
                     <Users className="w-3.5 h-3.5" />
@@ -79,19 +92,39 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
                     />
                   </div>
                 </div>
-
-                {/* Revenue */}
                 <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg hidden sm:block">
                   {formatCRC(totalSold * ws.price)}
                 </span>
-
                 {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
               </div>
             </button>
 
-            {/* Expanded: attendees list */}
             {isOpen && (
               <div className="border-t border-fio-100 px-5 py-3 bg-fio-50/30">
+                {/* Action buttons */}
+                <div className="flex items-center gap-2 mb-3">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); copyLink(ws.id); }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                      copiedId === ws.id
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-fio-100 text-fio-800 hover:bg-fio-200'
+                    }`}
+                  >
+                    {copiedId === ws.id ? (
+                      <><CheckCircle2 className="w-3.5 h-3.5" /> ¡Link copiado!</>
+                    ) : (
+                      <><Link2 className="w-3.5 h-3.5" /> Copiar Link para Redes</>
+                    )}
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); if (confirm(`¿Eliminar "${ws.title}"?`)) deleteWorkshop(ws.id); }}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-red-50 text-red-500 hover:bg-red-100 transition-all"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" /> Eliminar
+                  </button>
+                </div>
+
                 {enrollments.length === 0 ? (
                   <p className="text-xs text-gray-400 italic py-2">Sin inscripciones registradas aún.</p>
                 ) : (
@@ -116,7 +149,6 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
                   </div>
                 )}
 
-                {/* Summary footer */}
                 <div className="flex items-center justify-between pt-3 mt-2 border-t border-fio-200 text-xs">
                   <span className="text-gray-500">
                     {enrollments.length} inscri{enrollments.length === 1 ? 'to' : 'tos'} •{' '}

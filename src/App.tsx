@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from './context/AppContext';
 import { Navbar } from './components/common/Navbar';
 import { FloatingMascot } from './components/common/FloatingMascot';
@@ -18,14 +18,26 @@ import { SupplierOrderModal } from './components/admin/SupplierOrderModal';
 import { QrLabelModal } from './components/admin/QrLabelModal';
 import { InvoiceModal } from './components/admin/InvoiceModal';
 import { NewProductModal } from './components/admin/NewProductModal';
+import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
 
 export const App: React.FC = () => {
-  const { viewMode } = useApp();
+  const { viewMode, setViewMode } = useApp();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>('orders');
+
+  // Deep link: ?taller=ID forces store view and scrolls to workshops
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('taller')) {
+      setViewMode('store');
+      setTimeout(() => {
+        document.getElementById('workshops-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  }, []);
 
   const scrollToWorkshops = () => {
     document.getElementById('workshops-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -86,6 +98,7 @@ export const App: React.FC = () => {
       <QrLabelModal />
       <InvoiceModal />
       <NewProductModal />
+      <NewWorkshopModal />
       <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
     </div>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Workshop } from '../../types';
 import { formatCRC } from '../../utils/formatters';
@@ -6,6 +6,20 @@ import { Calendar, Users, Sparkles, Check, ArrowRight } from 'lucide-react';
 
 export const WorkshopsSection: React.FC = () => {
   const { workshops, addToCart } = useApp();
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  // Handle ?taller=ID deep link
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tallerId = params.get('taller');
+    if (tallerId) {
+      setHighlightId(tallerId);
+      setTimeout(() => {
+        document.getElementById(`ws-card-${tallerId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 400);
+      setTimeout(() => setHighlightId(null), 4000);
+    }
+  }, []);
 
   const handleBook = (workshop: Workshop) => {
     addToCart({
@@ -48,7 +62,10 @@ export const WorkshopsSection: React.FC = () => {
         {workshops.map((ws) => (
           <div
             key={ws.id}
-            className="flex flex-col bg-white rounded-3xl overflow-hidden border border-fio-200 shadow-clay hover:shadow-clayLg transition-all duration-300 group"
+            id={`ws-card-${ws.id}`}
+            className={`flex flex-col bg-white rounded-3xl overflow-hidden border shadow-clay hover:shadow-clayLg transition-all duration-500 group ${
+              highlightId === ws.id ? 'border-fio-pink ring-2 ring-fio-pink/40 scale-[1.02]' : 'border-fio-200'
+            }`}
           >
             {/* Imagen con badges */}
             <div className="relative h-48 w-full overflow-hidden bg-fio-100">

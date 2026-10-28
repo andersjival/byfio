@@ -41,6 +41,10 @@ interface AppContextType {
   updateProductStock: (productId: string, stock: number, minStock?: number, maxStock?: number) => void;
   addProduct: (productData: Omit<Product, 'id'>) => Product;
   deleteProduct: (productId: string) => void;
+  addWorkshop: (wsData: Omit<Workshop, 'id'>) => Workshop;
+  deleteWorkshop: (wsId: string) => void;
+  isNewWorkshopModalOpen: boolean;
+  setIsNewWorkshopModalOpen: (open: boolean) => void;
   resetToDefaults: () => void;
 }
 
@@ -51,6 +55,7 @@ const STORAGE_KEYS = {
   ORDERS: 'byfio_orders_v1',
   CART: 'byfio_cart_v1',
   VIEW_MODE: 'byfio_view_mode_v1',
+  WORKSHOPS: 'byfio_workshops_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -63,7 +68,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
   });
 
-  const [workshops] = useState<Workshop[]>(INITIAL_WORKSHOPS);
+  const [workshops, setWorkshops] = useState<Workshop[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.WORKSHOPS);
+    return saved ? JSON.parse(saved) : INITIAL_WORKSHOPS;
+  });
 
   const [orders, setOrders] = useState<Order[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
@@ -81,6 +89,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [qrModalProduct, setQrModalProduct] = useState<Product | null>(null);
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
+  const [isNewWorkshopModalOpen, setIsNewWorkshopModalOpen] = useState(false);
 
   // Sync initial data from Cloudflare D1 Database
   useEffect(() => {
@@ -118,6 +127,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(workshops));
+  }, [workshops]);
 
   const addToCart = (item: Omit<CartItem, 'cartId'>) => {
     const cartId = `${item.id}-${item.customText || 'standard'}-${Date.now()}`;
@@ -373,12 +386,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
+  const addWorkshop = (wsData: Omit<Workshop, 'id'>): Workshop => {
+    const newWs: Workshop = { ...wsData, id: `ws-${Date.now()}` };
+    setWorkshops((prev) => [...prev, newWs]);
+    return newWs;
+  };
+
+  const deleteWorkshop = (wsId: string) => {
+    setWorkshops((prev) => prev.filter((w) => w.id !== wsId));
+  };
+
   const resetToDefaults = () => {
     setProducts(INITIAL_PRODUCTS);
     setOrders(INITIAL_ORDERS);
+    setWorkshops(INITIAL_WORKSHOPS);
     localStorage.removeItem(STORAGE_KEYS.PRODUCTS);
     localStorage.removeItem(STORAGE_KEYS.ORDERS);
     localStorage.removeItem(STORAGE_KEYS.CART);
+    localStorage.removeItem(STORAGE_KEYS.WORKSHOPS);
   };
 
   return (
@@ -402,6 +427,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsSupplierModalOpen,
         isNewProductModalOpen,
         setIsNewProductModalOpen,
+        isNewWorkshopModalOpen,
+        setIsNewWorkshopModalOpen,
         addToCart,
         removeFromCart,
         updateCartQuantity,
@@ -413,6 +440,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateProductStock,
         addProduct,
         deleteProduct,
+        addWorkshop,
+        deleteWorkshop,
         resetToDefaults,
       }}
     >
