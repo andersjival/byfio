@@ -1,52 +1,144 @@
 import React from 'react';
 
 interface BrandLogoProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'hero';
   showSlogan?: boolean;
+  variant?: 'badge' | 'text';
 }
 
-export const BrandLogo: React.FC<BrandLogoProps> = ({ size = 'md', showSlogan = true }) => {
-  const isSm = size === 'sm';
-  const isLg = size === 'lg';
+export const BrandLogo: React.FC<BrandLogoProps> = ({
+  size = 'md',
+  showSlogan = true,
+  variant = 'badge',
+}) => {
+  const getDims = () => {
+    switch (size) {
+      case 'sm':
+        return { badge: 'w-10 h-10', height: 28, text: 'text-[9px]' };
+      case 'lg':
+        return { badge: 'w-16 h-16', height: 48, text: 'text-xs' };
+      case 'hero':
+        return { badge: 'w-24 h-24', height: 72, text: 'text-sm' };
+      case 'md':
+      default:
+        return { badge: 'w-12 h-12', height: 36, text: 'text-[10px]' };
+    }
+  };
 
+  const dims = getDims();
+
+  if (variant === 'badge') {
+    return (
+      <div className="flex items-center gap-3 select-none group cursor-pointer">
+        {/* Isotipo Oficial con Gradiente Real #D4AEFA -> #E7B8F9 */}
+        <div
+          className={`${dims.badge} rounded-2xl overflow-hidden shadow-claySm border-2 border-white/80 group-hover:scale-105 transition-transform duration-300 shrink-0`}
+        >
+          <svg viewBox="0 0 1000 1000" width="100%" height="100%" className="drop-shadow-sm">
+            <defs>
+              <linearGradient id="logoBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#D4AEFA" />
+                <stop offset="100%" stopColor="#E7B8F9" />
+              </linearGradient>
+            </defs>
+
+            <rect width="1000" height="1000" fill="url(#logoBgGrad)" />
+
+            <g transform="translate(0, 15)">
+              {/* Letra "b" */}
+              <path d="M 145 335 L 145 575" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" />
+              <circle cx="208" cy="512" r="65" fill="none" stroke="#FFFFFF" strokeWidth="48" />
+
+              {/* Letra "y" */}
+              <path d="M 332 450 L 385 572" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M 438 450 L 372 615 Q 355 655 322 652" fill="none" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" />
+
+              {/* Corazón Celeste Central #9BE4FF */}
+              <path
+                d="M 490 562 C 490 546, 465 536, 454 550 C 442 565, 452 586, 490 612 C 528 586, 538 565, 526 550 C 515 536, 490 546, 490 562 Z"
+                fill="#9BE4FF"
+              />
+
+              {/* Letra "f" */}
+              <path d="M 628 380 C 600 368, 572 385, 572 425 L 572 575" fill="none" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" />
+              <path d="M 542 455 L 610 455" stroke="#FFFFFF" strokeWidth="46" strokeLinecap="round" />
+
+              {/* Letra "i" */}
+              <path d="M 668 455 L 668 575" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" />
+
+              {/* Letra "o" */}
+              <circle cx="798" cy="512" r="65" fill="none" stroke="#FFFFFF" strokeWidth="48" />
+
+              {/* Estrella Amarilla #FFF07C Inclinada 12° */}
+              <g transform="translate(696, 385) rotate(12)">
+                <path
+                  d="M 0 -44 L 12 -14 L 44 -10 L 20 12 L 26 43 L 0 28 L -26 43 L -20 12 L -44 -10 L -12 -14 Z"
+                  fill="#FFF07C"
+                  stroke="#FFF07C"
+                  strokeWidth="10"
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                />
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* Nombre y Slogan Tipográfico */}
+        <div className="flex flex-col">
+          <span className="font-bubble font-bold text-lg sm:text-xl text-fio-900 tracking-tight leading-tight">
+            by.fio
+          </span>
+          {showSlogan && (
+            <span className={`${dims.text} font-bold text-fio-pink tracking-wider uppercase -mt-0.5`}>
+              Talleres Creativos & Tienda
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Versión Vectorial Horizontal Transparente
   return (
     <div className="flex flex-col items-start select-none group cursor-pointer">
-      <div className="flex items-center tracking-tight font-bubble font-bold text-fio-800">
-        <span className={`${isSm ? 'text-2xl' : isLg ? 'text-4xl' : 'text-3xl'} tracking-tight`}>
-          by
-        </span>
+      <svg
+        viewBox="115 320 775 365"
+        style={{ height: dims.height }}
+        className="w-auto drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+      >
+        <g transform="translate(0, 15)">
+          <path d="M 145 335 L 145 575" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" />
+          <circle cx="208" cy="512" r="65" fill="none" stroke="#6B21A8" strokeWidth="48" />
 
-        {/* Corazón celeste en lugar del punto */}
-        <span className="inline-flex items-center justify-center mx-0.5 transform group-hover:scale-125 transition-transform duration-300">
-          <svg
-            className={`${isSm ? 'w-4 h-4' : isLg ? 'w-6 h-6' : 'w-5 h-5'} text-fio-blue drop-shadow-sm fill-current`}
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-          </svg>
-        </span>
+          <path d="M 332 450 L 385 572" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M 438 450 L 372 615 Q 355 655 322 652" fill="none" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" />
 
-        <span className={`${isSm ? 'text-2xl' : isLg ? 'text-4xl' : 'text-3xl'}`}>f</span>
+          <path
+            d="M 490 562 C 490 546, 465 536, 454 550 C 442 565, 452 586, 490 612 C 528 586, 538 565, 526 550 C 515 536, 490 546, 490 562 Z"
+            fill="#38BDF8"
+          />
 
-        {/* Letra 'i' con estrella amarilla brillante encima */}
-        <span className="relative inline-block">
-          {/* Estrellita amarilla sobre la 'i' */}
-          <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-fio-yellow animate-pulse drop-shadow-sm">
-            <svg
-              className={`${isSm ? 'w-3.5 h-3.5' : isLg ? 'w-5 h-5' : 'w-4 h-4'} fill-current`}
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.88L12 17.27l-6.18 3.24 1.18-6.88-5-4.87 6.91-1z" />
-            </svg>
-          </span>
-          <span className={`${isSm ? 'text-2xl' : isLg ? 'text-4xl' : 'text-3xl'}`}>ı</span>
-        </span>
+          <path d="M 628 380 C 600 368, 572 385, 572 425 L 572 575" fill="none" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" />
+          <path d="M 542 455 L 610 455" stroke="#6B21A8" strokeWidth="46" strokeLinecap="round" />
 
-        <span className={`${isSm ? 'text-2xl' : isLg ? 'text-4xl' : 'text-3xl'}`}>o</span>
-      </div>
+          <path d="M 668 455 L 668 575" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" />
+          <circle cx="798" cy="512" r="65" fill="none" stroke="#6B21A8" strokeWidth="48" />
 
+          <g transform="translate(696, 385) rotate(12)">
+            <path
+              d="M 0 -44 L 12 -14 L 44 -10 L 20 12 L 26 43 L 0 28 L -26 43 L -20 12 L -44 -10 L -12 -14 Z"
+              fill="#FACC15"
+              stroke="#FACC15"
+              strokeWidth="10"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+          </g>
+        </g>
+      </svg>
       {showSlogan && (
-        <span className="text-[10px] md:text-xs font-semibold tracking-wider uppercase text-purple-700/80 -mt-0.5">
+        <span className={`${dims.text} font-bold text-fio-pink tracking-wider uppercase mt-1`}>
           Talleres Creativos & Tienda
         </span>
       )}

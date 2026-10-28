@@ -8,21 +8,27 @@ export default {
           50: '#FAF5FF',
           100: '#F3E8FF',
           200: '#E9D5FF',
-          300: '#E2C6FF',
-          400: '#C084FC',
-          500: '#A855F7',
-          600: '#9333EA',
-          700: '#7E22CE',
+          300: '#D4AEFA', // Exact start color
+          400: '#E7B8F9', // Exact end color
+          500: '#C084FC',
+          600: '#A855F7',
+          700: '#9333EA',
           800: '#6B21A8',
           900: '#4C1D95',
+          dark: '#1E1035', // Exact dark purple
           pink: '#EC4899',
-          blue: '#38BDF8',
-          yellow: '#FACC15',
+          blue: '#9BE4FF', // Exact cyan heart
+          yellow: '#FFF07C', // Exact yellow star
         },
       },
       fontFamily: {
         bubble: ['Fredoka', 'Quicksand', 'sans-serif'],
         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+      },
+      backgroundImage: {
+        'fio-brand': 'linear-gradient(135deg, #D4AEFA 0%, #E7B8F9 100%)',
+        'fio-cta': 'linear-gradient(135deg, #A855F7 0%, #EC4899 100%)',
+        'fio-cyan-indigo': 'linear-gradient(135deg, #38BDF8 0%, #6366F1 100%)',
       },
       boxShadow: {
         clay: '0 12px 28px -6px rgba(107, 33, 168, 0.12), 0 8px 16px -8px rgba(107, 33, 168, 0.08), inset 0 2px 4px 0 rgba(255, 255, 255, 0.9)',
@@ -30,20 +36,6 @@ export default {
         clayLg: '0 20px 35px -8px rgba(107, 33, 168, 0.16), 0 10px 20px -10px rgba(107, 33, 168, 0.1), inset 0 2px 6px 0 rgba(255, 255, 255, 0.95)',
         clayBtn: '0 8px 20px -4px rgba(147, 51, 234, 0.35), inset 0 2px 3px 0 rgba(255, 255, 255, 0.4)',
         clayPink: '0 8px 20px -4px rgba(236, 72, 153, 0.4), inset 0 2px 3px 0 rgba(255, 255, 255, 0.4)',
-      },
-      animation: {
-        'float-slow': 'float 4s ease-in-out infinite',
-        'pulse-subtle': 'pulseSubtle 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-      },
-      keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-8px)' },
-        },
-        pulseSubtle: {
-          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
-          '50%': { opacity: '0.9', transform: 'scale(1.03)' },
-        },
       },
     },
   },
