@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+}
+
+/* Print Styles for QR Labels and Invoices */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-qr-label, #printable-qr-label *,
+  #printable-invoice, #printable-invoice * {
+    visibility: visible;
+  }
+  #printable-qr-label, #printable-invoice {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}

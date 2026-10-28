@@ -1,0 +1,8 @@
+name = "byfiocr"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "byfiocr-db"
+database_id = "60326015-d917-4a7b-baac-ab90d972ae57"
