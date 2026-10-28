@@ -32,10 +32,10 @@ export const App: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('taller')) {
-      setViewMode('store');
+      window.location.hash = ''; // ensure store view
       setTimeout(() => {
         document.getElementById('workshops-section')?.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
+      }, 500);
     }
   }, []);
 
@@ -87,6 +87,14 @@ export const App: React.FC = () => {
         <p className="text-gray-400">
           WhatsApp 6400-4640 • Instagram @by_fio10 • San José, Costa Rica 🇨🇷
         </p>
+        {viewMode === 'store' && (
+          <a
+            href="#admin"
+            className="inline-block mt-3 text-[10px] text-gray-300 hover:text-fio-600 transition-colors"
+          >
+            Acceso Administración
+          </a>
+        )}
       </footer>
 
       {/* Modales y Elementos Flotantes Globales */}

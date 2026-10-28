@@ -11,7 +11,7 @@ export const HeroDual: React.FC<HeroDualProps> = ({
   onScrollToProducts,
 }) => {
   return (
-    <section className="relative overflow-hidden pt-6 pb-14 px-4 sm:px-6 lg:px-8">
+    <section id="hero-section" className="relative overflow-hidden pt-6 pb-14 px-4 sm:px-6 lg:px-8">
       {/* Fondo con Degradado Lila Pastel Oficial (#D4AEFA -> #E7B8F9) */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[420px] bg-gradient-to-b from-[#D4AEFA]/35 via-[#E7B8F9]/20 to-transparent rounded-b-[60px] -z-10 pointer-events-none" />
 
