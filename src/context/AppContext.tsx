@@ -82,6 +82,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
 
+  // Sync initial data from Cloudflare D1 Database
+  useEffect(() => {
+    fetch('/api/products')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setProducts(data);
+        }
+      })
+      .catch(() => {});
+
+    fetch('/api/orders')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setOrders(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.VIEW_MODE, viewMode);
   }, [viewMode]);
@@ -176,11 +197,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       notes: orderInfo.notes,
     };
 
+    // Update D1 Remote Database in background
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder),
+    }).catch(() => {});
+
+    // Deduct stock locally and in D1
     setProducts((prev) =>
       prev.map((prod) => {
         const inCart = cart.find((c) => c.sku === prod.sku);
         if (inCart) {
           const newStock = Math.max(0, prod.stock - inCart.quantity);
+          fetch('/api/products', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: prod.id, stock: newStock }),
+          }).catch(() => {});
           return { ...prod, stock: newStock };
         }
         return prod;
@@ -199,6 +233,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       prev.map((o) => (o.id === orderId ? { ...o, orderStatus: 'picking' } : o))
     );
     setActivePickingOrder({ ...target, orderStatus: 'picking' });
+
+    fetch('/api/orders', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: orderId, orderStatus: 'picking', items: target.items }),
+    }).catch(() => {});
   };
 
   const markItemPicked = (orderId: string, itemSku: string) => {
@@ -235,6 +275,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setActivePickingOrder(updatedOrder);
         }
 
+        // Sync with D1 Database
+        fetch('/api/orders', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: orderId,
+            orderStatus: updatedOrder.orderStatus,
+            packedAt: updatedOrder.packedAt,
+            items: updatedItems,
+          }),
+        }).catch(() => {});
+
         return updatedOrder;
       })
     );
@@ -254,17 +306,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
+    const packedAt = newStatus === 'packed' ? new Date().toISOString() : undefined;
     setOrders((prev) =>
       prev.map((o) =>
         o.id === orderId
           ? {
               ...o,
               orderStatus: newStatus,
-              packedAt: newStatus === 'packed' ? new Date().toISOString() : o.packedAt,
+              packedAt: packedAt || o.packedAt,
             }
           : o
       )
     );
+
+    fetch('/api/orders', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: orderId, orderStatus: newStatus, packedAt }),
+    }).catch(() => {});
   };
 
   const updateProductStock = (
@@ -285,6 +344,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           : p
       )
     );
+
+    fetch('/api/products', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: productId, stock, minStock, maxStock }),
+    }).catch(() => {});
   };
 
   const addProduct = (productData: Omit<Product, 'id'>): Product => {
@@ -293,6 +358,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `prod-${Date.now()}`,
     };
     setProducts((prev) => [newProduct, ...prev]);
+
+    // Save to D1 database
+    fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newProduct),
+    }).catch(() => {});
+
     return newProduct;
   };
 
