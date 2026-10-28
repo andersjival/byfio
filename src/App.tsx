@@ -8,17 +8,23 @@ import { ProductsSection } from './components/store/ProductsSection';
 import { CartDrawer } from './components/store/CartDrawer';
 import { CheckoutModal } from './components/store/CheckoutModal';
 import { AdminHeader } from './components/admin/AdminHeader';
+import { AdminTabs, AdminTabType } from './components/admin/AdminTabs';
 import { OrdersQueue } from './components/admin/OrdersQueue';
+import { QuickBillingSection } from './components/admin/QuickBillingSection';
 import { InventoryTable } from './components/admin/InventoryTable';
+import { CashRegisterReports } from './components/admin/CashRegisterReports';
 import { GuidedPickingModal } from './components/admin/GuidedPickingModal';
 import { SupplierOrderModal } from './components/admin/SupplierOrderModal';
 import { QrLabelModal } from './components/admin/QrLabelModal';
 import { InvoiceModal } from './components/admin/InvoiceModal';
 import { NewProductModal } from './components/admin/NewProductModal';
+import { DailyClosingModal } from './components/admin/DailyClosingModal';
 
 export const App: React.FC = () => {
   const { viewMode } = useApp();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
+  const [adminTab, setAdminTab] = useState<AdminTabType>('orders');
 
   const scrollToWorkshops = () => {
     document.getElementById('workshops-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -46,8 +52,14 @@ export const App: React.FC = () => {
           ) : (
             <>
               <AdminHeader />
-              <OrdersQueue />
-              <InventoryTable />
+              <AdminTabs activeTab={adminTab} setActiveTab={setAdminTab} />
+
+              {adminTab === 'orders' && <OrdersQueue />}
+              {adminTab === 'billing' && <QuickBillingSection />}
+              {adminTab === 'inventory' && <InventoryTable />}
+              {adminTab === 'reports' && (
+                <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
+              )}
             </>
           )}
         </main>
@@ -72,6 +84,7 @@ export const App: React.FC = () => {
       <QrLabelModal />
       <InvoiceModal />
       <NewProductModal />
+      <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
     </div>
   );
 };

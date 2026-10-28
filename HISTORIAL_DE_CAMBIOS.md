@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.2.0 - Facturación Rápida por Número de Orden & Reportería de Caja
+- [x] Módulo de Facturación Rápida (`QuickBillingSection`): Búsqueda instantánea por número de orden (#FIO-1001 / 1001) que jala automáticamente todos los datos del cliente, productos y desglose financiero.
+- [x] Módulo de Registro de Caja & Reportería (`CashRegisterReports`): Ventas del día, ganancias netas estimadas (Ventas - Costos de insumos), pedidos atendidos en la semana y pedidos pendientes de despacho.
+- [x] Desglose de canales de cobro: Ventas totales vía SINPE Móvil (6400-4640) vs Transferencias bancarias.
+- [x] Acta de Cierre de Caja Diario (`DailyClosingModal`): Comprobante oficial imprimible y exportable con botón de envío directo a WhatsApp.
+- [x] Barra de Pestañas de Navegación del Panel Admin (`AdminTabs`): Pestañas dedicadas para Pedidos & Alisto QR, Facturación Rápida, Inventario y Caja & Reportes.
+
 ### Versión 1.1.0 - Módulo de Alta de Productos & Filtros de Categoría en Inventario
 - [x] Botón de alta prominente `+ Agregar Producto al Inventario` en la tabla de control WMS.
 - [x] Modal completo `NewProductModal` con campos: Nombre, SKU (con autogenerador inteligente), Categoría (selector + creación de nueva categoría), Ubicación en estante, Precios, Stock inicial, Mínimo y Máximo para alertas, Unidad de medida y Checkbox de personalización.
