@@ -10,6 +10,38 @@
   }
 }
 
+/* =========================================================================
+   SELECTOR GLOBAL DE TIPOGRAFÍA (ADMIN): REDONDITA vs SERIF vs COMBINACIÓN
+   ========================================================================= */
+
+/* 1. MODO REDONDITA TOTAL: Aplica Fredoka / Quicksand a TODOS los encabezados */
+body[data-font-theme="bubble"] .font-serif,
+body[data-font-theme="bubble"] .font-bubble,
+body[data-font-theme="bubble"] h1,
+body[data-font-theme="bubble"] h2,
+body[data-font-theme="bubble"] h3,
+body[data-font-theme="bubble"] h4 {
+  font-family: 'Fredoka', 'Quicksand', sans-serif !important;
+}
+
+/* 2. MODO SERIF EDITORIAL TOTAL: Aplica Cormorant Garamond a TODOS los encabezados */
+body[data-font-theme="serif"] .font-bubble,
+body[data-font-theme="serif"] .font-serif,
+body[data-font-theme="serif"] h1,
+body[data-font-theme="serif"] h2,
+body[data-font-theme="serif"] h3,
+body[data-font-theme="serif"] h4 {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif !important;
+}
+
+/* 3. MODO COMBINACIÓN ARMÓNICA (HÍBRIDO): Títulos en Serif + Subtítulos y Botones en Redondita */
+body[data-font-theme="hybrid"] .font-serif {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif !important;
+}
+body[data-font-theme="hybrid"] .font-bubble {
+  font-family: 'Fredoka', 'Quicksand', sans-serif !important;
+}
+
 /* Print Styles for QR Labels and Invoices */
 @media print {
   body * {

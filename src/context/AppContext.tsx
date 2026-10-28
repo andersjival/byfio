@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus } from '../types';
+import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { playAudioBeep } from '../utils/formatters';
 
@@ -45,6 +45,8 @@ interface AppContextType {
   deleteWorkshop: (wsId: string) => void;
   isNewWorkshopModalOpen: boolean;
   setIsNewWorkshopModalOpen: (open: boolean) => void;
+  typographyTheme: TypographyTheme;
+  setTypographyTheme: (theme: TypographyTheme) => void;
   resetToDefaults: () => void;
 }
 
@@ -56,6 +58,7 @@ const STORAGE_KEYS = {
   CART: 'byfio_cart_v1',
   VIEW_MODE: 'byfio_view_mode_v1',
   WORKSHOPS: 'byfio_workshops_v1',
+  TYPOGRAPHY_THEME: 'byfio_typography_theme_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -90,6 +93,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
   const [isNewWorkshopModalOpen, setIsNewWorkshopModalOpen] = useState(false);
+  const [typographyTheme, setTypographyTheme] = useState<TypographyTheme>(() => {
+    return (localStorage.getItem(STORAGE_KEYS.TYPOGRAPHY_THEME) as TypographyTheme) || 'hybrid';
+  });
+
+  // Apply typography theme to document body
+  useEffect(() => {
+    document.body.setAttribute('data-font-theme', typographyTheme);
+    localStorage.setItem(STORAGE_KEYS.TYPOGRAPHY_THEME, typographyTheme);
+  }, [typographyTheme]);
 
   // Sync initial data from Cloudflare D1 Database
   useEffect(() => {
@@ -429,6 +441,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsNewProductModalOpen,
         isNewWorkshopModalOpen,
         setIsNewWorkshopModalOpen,
+        typographyTheme,
+        setTypographyTheme,
         addToCart,
         removeFromCart,
         updateCartQuantity,

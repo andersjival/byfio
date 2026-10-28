@@ -2,6 +2,8 @@ export type ViewMode = 'store' | 'admin';
 
 export type AppRoute = 'home' | 'store' | 'workshops' | 'admin';
 
+export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
+
 export type ProductCategory =
   | 'Agendas Personalizadas'
   | 'Libros de Vacunas'
