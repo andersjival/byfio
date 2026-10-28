@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.13.0 - Sub-Rutas de URL Independientes para Admin, Menú Hub Compacto en 1 Pantalla & Modal Discreto de Diseño
+- [x] Enrutamiento por URL independiente en cada sección administrativa:
+  - `/admin` (Menú Principal / Hub)
+  - `/admin/facturacion` (Facturación Rápida)
+  - `/admin/pedidos` (Cola de Pedidos & Alisto QR)
+  - `/admin/inventario` (Inventario & Etiquetas QR)
+  - `/admin/caja` (Caja & Reportería)
+  - `/admin/talleres` (Talleres & Alumnos)
+  Sincronización bidireccional con historial del navegador y recargas directas con soporte SPA.
+- [x] Rediseño ultra-compacto del Menú Hub en [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx): Eliminadas las descripciones largas y botones redundantes; cajitas táctiles estilizadas (`grid-cols-5` en desktop) con iconos profesionales en gradiente pastel, títulos concisos y badges en una sola pantalla sin necesidad de scroll.
+- [x] Modal discreto de Personalización Visual ([`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx)): Retiradas las dos cajas gigantes de tipografía y color de la pantalla principal, reemplazándolas por un botón compacto `🎨 Diseño & Letra` en el encabezado de [`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx).
+
 ### Versión 1.12.0 - Reducción del 50% de la Barra Superior de Navegación (Navbar Slim)
 - [x] Reducción de la altura total de la barra de navegación de `h-20` (80px) a `h-11 sm:h-12` (44px-48px), reduciendo exactamente un 50% el espacio vertical ocupado.
 - [x] Pastilla de enlaces (`Inicio`, `Talleres`, `Tienda`) compactada a `p-0.5` con botones de `px-3 py-1 text-xs`.
