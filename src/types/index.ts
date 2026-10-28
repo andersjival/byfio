@@ -5,7 +5,8 @@ export type ProductCategory =
   | 'Libros de Vacunas'
   | 'Artículos Sublimados'
   | 'Stickers y Papelería'
-  | 'Kits e Insumos';
+  | 'Kits e Insumos'
+  | string;
 
 export interface Product {
   id: string;

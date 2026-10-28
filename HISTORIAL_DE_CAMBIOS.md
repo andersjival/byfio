@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.1.0 - Módulo de Alta de Productos & Filtros de Categoría en Inventario
+- [x] Botón de alta prominente `+ Agregar Producto al Inventario` en la tabla de control WMS.
+- [x] Modal completo `NewProductModal` con campos: Nombre, SKU (con autogenerador inteligente), Categoría (selector + creación de nueva categoría), Ubicación en estante, Precios, Stock inicial, Mínimo y Máximo para alertas, Unidad de medida y Checkbox de personalización.
+- [x] Barra de Filtros de Categorías dinámicas en la tabla de inventario para segmentar productos sin tenerlos todos en una sola fila.
+- [x] Realce visual del botón `Iniciar Alisto con Escáner QR` en la cola de pedidos FIFO con animaciones y badges de alta visibilidad.
+- [x] Acción de eliminación/archivado de productos del inventario.
+
 ### Versión 1.0.0 - Lanzamiento Inicial E-commerce & WMS Picking QR
 - [x] Identidad de Marca `by.fio` con tipografía Fredoka/Quicksand y estética pastel claymorphic (Lila, Morado profundo, Rosa, Celeste y Amarillo estrella).
 - [x] Selector superior de vista dual rápida (Vista Cliente / Panel Admin WMS) con sincronización de estado en tiempo real.

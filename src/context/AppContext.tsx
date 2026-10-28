@@ -20,6 +20,8 @@ interface AppContextType {
   setQrModalProduct: (prod: Product | null) => void;
   isSupplierModalOpen: boolean;
   setIsSupplierModalOpen: (open: boolean) => void;
+  isNewProductModalOpen: boolean;
+  setIsNewProductModalOpen: (open: boolean) => void;
   addToCart: (item: Omit<CartItem, 'cartId'>) => void;
   removeFromCart: (cartId: string) => void;
   updateCartQuantity: (cartId: string, quantity: number) => void;
@@ -37,6 +39,8 @@ interface AppContextType {
   markItemPicked: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
   updateOrderStatus: (orderId: string, newStatus: OrderStatus) => void;
   updateProductStock: (productId: string, stock: number, minStock?: number, maxStock?: number) => void;
+  addProduct: (productData: Omit<Product, 'id'>) => Product;
+  deleteProduct: (productId: string) => void;
   resetToDefaults: () => void;
 }
 
@@ -76,6 +80,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
   const [qrModalProduct, setQrModalProduct] = useState<Product | null>(null);
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.VIEW_MODE, viewMode);
@@ -148,7 +153,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       quantity: item.quantity,
       shelfLocation: item.shelfLocation,
       customText: item.customText,
-      isPicked: item.type === 'workshop', // workshops are auto-picked / virtual
+      isPicked: item.type === 'workshop',
       image: item.image,
     }));
 
@@ -161,7 +166,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       deliveryMethod: orderInfo.deliveryMethod,
       shippingAddress: orderInfo.shippingAddress,
       paymentMethod: orderInfo.paymentMethod,
-      paymentStatus: 'paid', // SINPE confirmation in checkout
+      paymentStatus: 'paid',
       orderStatus: 'pending',
       items: orderItems,
       subtotal,
@@ -171,7 +176,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       notes: orderInfo.notes,
     };
 
-    // Deduct stock from products
     setProducts((prev) =>
       prev.map((prod) => {
         const inCart = cart.find((c) => c.sku === prod.sku);
@@ -205,7 +209,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       prev.map((order) => {
         if (order.id !== orderId) return order;
 
-        // find first unpicked item with this SKU
         const updatedItems = [...order.items];
         const unpickedIdx = updatedItems.findIndex((it) => it.sku === itemSku && !it.isPicked);
 
@@ -284,6 +287,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const addProduct = (productData: Omit<Product, 'id'>): Product => {
+    const newProduct: Product = {
+      ...productData,
+      id: `prod-${Date.now()}`,
+    };
+    setProducts((prev) => [newProduct, ...prev]);
+    return newProduct;
+  };
+
+  const deleteProduct = (productId: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
+  };
+
   const resetToDefaults = () => {
     setProducts(INITIAL_PRODUCTS);
     setOrders(INITIAL_ORDERS);
@@ -311,6 +327,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setQrModalProduct,
         isSupplierModalOpen,
         setIsSupplierModalOpen,
+        isNewProductModalOpen,
+        setIsNewProductModalOpen,
         addToCart,
         removeFromCart,
         updateCartQuantity,
@@ -320,6 +338,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         markItemPicked,
         updateOrderStatus,
         updateProductStock,
+        addProduct,
+        deleteProduct,
         resetToDefaults,
       }}
     >

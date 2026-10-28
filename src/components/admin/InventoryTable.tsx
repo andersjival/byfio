@@ -1,31 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
-import { QrCode, AlertOctagon, Plus, Minus, Search, MapPin } from 'lucide-react';
+import { QrCode, AlertOctagon, Plus, Minus, Search, MapPin, PlusCircle, Trash2 } from 'lucide-react';
 
 export const InventoryTable: React.FC = () => {
-  const { products, updateProductStock, setQrModalProduct } = useApp();
+  const { products, updateProductStock, setQrModalProduct, setIsNewProductModalOpen, deleteProduct } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
 
-  const filtered = products.filter(
-    (p) =>
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => set.add(p.category));
+    return ['Todas', ...Array.from(set)];
+  }, [products]);
+
+  const filtered = products.filter((p) => {
+    const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
+    const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.shelfLocation.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      p.shelfLocation.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="bg-white rounded-3xl border border-fio-200 shadow-clay p-5 mb-8">
-      {/* Encabezado y Buscador */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 border-b border-fio-100 pb-4">
+      {/* Encabezado con Botón Principal para AGREGAR PRODUCTO */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 border-b border-fio-100 pb-4">
         <div>
-          <h2 className="font-bubble font-bold text-xl text-fio-900">Gestión de Inventario & Alertas</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-bubble font-bold text-xl text-fio-900">Control de Inventario & Estanterías</h2>
+            <span className="text-xs bg-fio-100 text-fio-800 font-bold px-2 py-0.5 rounded-full">
+              {products.length} ítems
+            </span>
+          </div>
           <p className="text-xs text-gray-500">
-            Control de existencias mínimas/máximas, estanterías y códigos QR únicos para picking.
+            Administra existencias, categorías, ubicación física y genera etiquetas QR para picking.
           </p>
         </div>
 
-        <div className="relative w-full sm:w-64">
+        {/* BOTÓN PROMINENTE AGREGAR PRODUCTO NUEVO */}
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setIsNewProductModalOpen(true)}
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayPink transition-all active:scale-95 animate-pulse-subtle"
+          >
+            <PlusCircle className="w-5 h-5" />
+            <span>+ Agregar Producto al Inventario</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Selector de Categorías & Buscador */}
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-bold text-gray-400 uppercase mr-1">Categorías:</span>
+          {categories.map((cat) => {
+            const count = cat === 'Todas' ? products.length : products.filter((p) => p.category === cat).length;
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  selectedCategory === cat
+                    ? 'bg-fio-800 text-white shadow-sm'
+                    : 'bg-fio-50 text-gray-700 hover:bg-fio-100 border border-fio-200/60'
+                }`}
+              >
+                {cat} <span className="text-[10px] opacity-75 font-mono">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="relative w-full lg:w-64">
           <input
             type="text"
             placeholder="Buscar por SKU, nombre o estante..."
@@ -37,19 +85,19 @@ export const InventoryTable: React.FC = () => {
         </div>
       </div>
 
-      {/* Tabla Responsiva */}
+      {/* Tabla de Productos */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-fio-100 text-gray-500 font-semibold uppercase tracking-wider text-[10px]">
               <th className="pb-3 px-2">SKU & Producto</th>
-              <th className="pb-3 px-2">Ubicación Estante</th>
-              <th className="pb-3 px-2">Precio Venta</th>
-              <th className="pb-3 px-2 text-center">Stock Actual</th>
-              <th className="pb-3 px-2 text-center">Mín / Máx</th>
-              <th className="pb-3 px-2 text-center">Estado / Alerta</th>
-              <th className="pb-3 px-2 text-center">Sugerido Reposición</th>
-              <th className="pb-3 px-2 text-right">Etiqueta QR</th>
+              <th className="pb-3 px-2">Categoría</th>
+              <th className="pb-3 px-2">Ubicación</th>
+              <th className="pb-3 px-2">Precio</th>
+              <th className="pb-3 px-2 text-center">Stock</th>
+              <th className="pb-3 px-2 text-center">Alerta Mín/Máx</th>
+              <th className="pb-3 px-2 text-center">A Reponer</th>
+              <th className="pb-3 px-2 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-fio-100">
@@ -59,7 +107,6 @@ export const InventoryTable: React.FC = () => {
 
               return (
                 <tr key={prod.id} className="hover:bg-fio-50/40 transition-colors">
-                  {/* SKU & Nombre */}
                   <td className="py-3 px-2">
                     <div className="flex items-center gap-2">
                       <img src={prod.image} alt={prod.name} className="w-9 h-9 rounded-xl object-cover shrink-0" />
@@ -72,7 +119,12 @@ export const InventoryTable: React.FC = () => {
                     </div>
                   </td>
 
-                  {/* Ubicación en Estante */}
+                  <td className="py-3 px-2">
+                    <span className="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-700 text-[11px] font-semibold">
+                      {prod.category}
+                    </span>
+                  </td>
+
                   <td className="py-3 px-2 whitespace-nowrap">
                     <span className="inline-flex items-center gap-1 font-semibold text-purple-900 bg-purple-50 px-2 py-1 rounded-xl border border-purple-200">
                       <MapPin className="w-3 h-3 text-fio-pink shrink-0" />
@@ -80,73 +132,60 @@ export const InventoryTable: React.FC = () => {
                     </span>
                   </td>
 
-                  {/* Precio */}
-                  <td className="py-3 px-2 font-bubble font-bold text-gray-800">
-                    {formatCRC(prod.price)}
-                  </td>
+                  <td className="py-3 px-2 font-bubble font-bold text-gray-800">{formatCRC(prod.price)}</td>
 
-                  {/* Stock con Ajuste Rápido */}
                   <td className="py-3 px-2 text-center">
                     <div className="inline-flex items-center gap-1.5 bg-fio-100/60 px-2 py-1 rounded-xl border border-fio-200">
-                      <button
-                        onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))}
-                        className="p-0.5 text-gray-500 hover:text-red-600 rounded"
-                        title="Restar 1"
-                      >
+                      <button onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))} className="p-0.5 text-gray-500 hover:text-red-600">
                         <Minus className="w-3 h-3" />
                       </button>
                       <span className={`font-bubble font-bold text-sm w-6 ${isCritical ? 'text-red-600' : 'text-gray-900'}`}>
                         {prod.stock}
                       </span>
-                      <button
-                        onClick={() => updateProductStock(prod.id, prod.stock + 1)}
-                        className="p-0.5 text-gray-500 hover:text-emerald-600 rounded"
-                        title="Sumar 1"
-                      >
+                      <button onClick={() => updateProductStock(prod.id, prod.stock + 1)} className="p-0.5 text-gray-500 hover:text-emerald-600">
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
                   </td>
 
-                  {/* Mín / Máx */}
-                  <td className="py-3 px-2 text-center text-gray-500 font-mono text-[11px]">
-                    {prod.minStock} / {prod.maxStock}
-                  </td>
-
-                  {/* Estado / Alerta Roja */}
                   <td className="py-3 px-2 text-center">
                     {isCritical ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-100 text-red-700 font-bold text-[10px] animate-pulse">
                         <AlertOctagon className="w-3 h-3" />
-                        <span>¡Reabastecer!</span>
+                        <span>¡Reabastecer! (≤{prod.minStock})</span>
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">
-                        Óptimo
-                      </span>
+                      <span className="text-gray-500 text-[11px]">{prod.minStock} / {prod.maxStock}</span>
                     )}
                   </td>
 
-                  {/* Cantidad Sugerida */}
                   <td className="py-3 px-2 text-center font-bold text-fio-800">
                     {suggestedOrder > 0 ? (
-                      <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-lg">
-                        +{suggestedOrder} unid.
-                      </span>
+                      <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-lg">+{suggestedOrder}</span>
                     ) : (
                       <span className="text-gray-400">0</span>
                     )}
                   </td>
 
-                  {/* Botón QR */}
                   <td className="py-3 px-2 text-right">
-                    <button
-                      onClick={() => setQrModalProduct(prod)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs shadow-sm transition-all"
-                    >
-                      <QrCode className="w-3.5 h-3.5 text-fio-yellow" />
-                      <span>Etiqueta QR</span>
-                    </button>
+                    <div className="inline-flex items-center gap-1.5">
+                      <button
+                        onClick={() => setQrModalProduct(prod)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs shadow-sm"
+                      >
+                        <QrCode className="w-3.5 h-3.5 text-fio-yellow" />
+                        <span>QR</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`¿Eliminar ${prod.name} del inventario?`)) deleteProduct(prod.id);
+                        }}
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl"
+                        title="Eliminar producto"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );

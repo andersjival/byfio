@@ -14,6 +14,7 @@ import { GuidedPickingModal } from './components/admin/GuidedPickingModal';
 import { SupplierOrderModal } from './components/admin/SupplierOrderModal';
 import { QrLabelModal } from './components/admin/QrLabelModal';
 import { InvoiceModal } from './components/admin/InvoiceModal';
+import { NewProductModal } from './components/admin/NewProductModal';
 
 export const App: React.FC = () => {
   const { viewMode } = useApp();
@@ -70,6 +71,7 @@ export const App: React.FC = () => {
       <SupplierOrderModal />
       <QrLabelModal />
       <InvoiceModal />
+      <NewProductModal />
     </div>
   );
 };
