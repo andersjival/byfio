@@ -22,6 +22,7 @@ export default {
         },
       },
       fontFamily: {
+        serif: ['"Cormorant Garamond"', 'Playfair Display', 'Georgia', 'serif'],
         bubble: ['Fredoka', 'Quicksand', 'sans-serif'],
         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
       },
@@ -31,6 +32,10 @@ export default {
         'fio-cyan-indigo': 'linear-gradient(135deg, #38BDF8 0%, #6366F1 100%)',
       },
       boxShadow: {
+        zen: '0 12px 28px -4px rgba(160, 140, 190, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.95) inset',
+        zenHover: '0 20px 40px -8px rgba(160, 140, 190, 0.22), 0 0 0 1px rgba(255, 255, 255, 1) inset',
+        zenInset: 'inset 2px 2px 5px rgba(160, 140, 190, 0.12), inset -2px -2px 5px rgba(255, 255, 255, 0.9)',
+        zenCircle: '0 10px 22px -4px rgba(160, 140, 190, 0.2), inset 0 2px 3px rgba(255, 255, 255, 0.9)',
         clay: '0 12px 28px -6px rgba(107, 33, 168, 0.12), 0 8px 16px -8px rgba(107, 33, 168, 0.08), inset 0 2px 4px 0 rgba(255, 255, 255, 0.9)',
         claySm: '0 6px 14px -3px rgba(107, 33, 168, 0.1), inset 0 1px 2px 0 rgba(255, 255, 255, 0.8)',
         clayLg: '0 20px 35px -8px rgba(107, 33, 168, 0.16), 0 10px 20px -10px rgba(107, 33, 168, 0.1), inset 0 2px 6px 0 rgba(255, 255, 255, 0.95)',
