@@ -28,48 +28,88 @@ import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft } from 'lucide-react';
 
-const parseRouteFromLocation = (): AppRoute => {
+interface RouteInfo {
+  route: AppRoute;
+  adminTab: AdminTabType;
+}
+
+const parseRouteFromLocation = (): RouteInfo => {
   const path = window.location.pathname.toLowerCase();
   const hash = window.location.hash.toLowerCase();
 
-  if (path.includes('/tienda') || hash.includes('tienda')) return 'store';
-  if (path.includes('/talleres') || hash.includes('talleres')) return 'workshops';
-  if (path.includes('/admin') || hash.includes('admin')) return 'admin';
-  return 'home';
+  // Admin sub-rutas independientes
+  if (path.includes('/admin/pedidos') || path.includes('/administracion/pedidos') || hash.includes('admin/pedidos')) {
+    return { route: 'admin', adminTab: 'orders' };
+  }
+  if (path.includes('/admin/facturacion') || path.includes('/administracion/facturacion') || hash.includes('admin/facturacion')) {
+    return { route: 'admin', adminTab: 'billing' };
+  }
+  if (path.includes('/admin/inventario') || path.includes('/administracion/inventario') || hash.includes('admin/inventario')) {
+    return { route: 'admin', adminTab: 'inventory' };
+  }
+  if (path.includes('/admin/caja') || path.includes('/administracion/caja') || path.includes('/admin/reportes') || hash.includes('admin/caja')) {
+    return { route: 'admin', adminTab: 'reports' };
+  }
+  if (path.includes('/admin/talleres') || path.includes('/administracion/talleres') || hash.includes('admin/talleres')) {
+    return { route: 'admin', adminTab: 'workshops' };
+  }
+  if (path.startsWith('/admin') || path.startsWith('/administracion') || hash.includes('admin')) {
+    return { route: 'admin', adminTab: 'hub' };
+  }
+
+  // Rutas públicas
+  if (path.includes('/tienda') || hash.includes('tienda')) return { route: 'store', adminTab: 'hub' };
+  if (path.includes('/talleres') || hash.includes('talleres')) return { route: 'workshops', adminTab: 'hub' };
+  return { route: 'home', adminTab: 'hub' };
 };
 
 export const App: React.FC = () => {
   const { setViewMode } = useApp();
-  const [currentRoute, setCurrentRoute] = useState<AppRoute>(parseRouteFromLocation);
+  const initial = parseRouteFromLocation();
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
-  const [adminTab, setAdminTab] = useState<AdminTabType>('hub');
+  const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
 
-  const navigate = (newRoute: AppRoute) => {
+  const navigate = (newRoute: AppRoute, targetTab?: AdminTabType) => {
     setCurrentRoute(newRoute);
     setViewMode(newRoute === 'admin' ? 'admin' : 'store');
+
+    const tab = targetTab !== undefined ? targetTab : (newRoute === 'admin' ? 'hub' : 'hub');
+    setAdminTab(tab);
 
     let targetPath = '/';
     if (newRoute === 'store') targetPath = '/tienda';
     else if (newRoute === 'workshops') targetPath = '/talleres';
-    else if (newRoute === 'admin') targetPath = '/admin';
+    else if (newRoute === 'admin') {
+      if (tab === 'orders') targetPath = '/admin/pedidos';
+      else if (tab === 'billing') targetPath = '/admin/facturacion';
+      else if (tab === 'inventory') targetPath = '/admin/inventario';
+      else if (tab === 'reports') targetPath = '/admin/caja';
+      else if (tab === 'workshops') targetPath = '/admin/talleres';
+      else targetPath = '/admin';
+    }
 
     try {
-      window.history.pushState({ route: newRoute }, '', targetPath);
+      window.history.pushState({ route: newRoute, adminTab: tab }, '', targetPath);
     } catch {
-      // Fallback for restricted sandboxes
       window.location.hash = targetPath.replace('/', '#');
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleSelectAdminTab = (tab: AdminTabType) => {
+    navigate('admin', tab);
+  };
+
   // Sync with browser Back/Forward & hash changes
   useEffect(() => {
     const handlePop = () => {
       const parsed = parseRouteFromLocation();
-      setCurrentRoute(parsed);
-      setViewMode(parsed === 'admin' ? 'admin' : 'store');
+      setCurrentRoute(parsed.route);
+      setAdminTab(parsed.adminTab);
+      setViewMode(parsed.route === 'admin' ? 'admin' : 'store');
     };
 
     window.addEventListener('popstate', handlePop);
@@ -90,7 +130,7 @@ export const App: React.FC = () => {
 
   const adminBreadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },
-    { label: 'panel administrativo', onClick: () => setAdminTab('hub') },
+    { label: 'panel administrativo', onClick: () => handleSelectAdminTab('hub') },
     ...(adminTab !== 'hub'
       ? [
           {
@@ -133,7 +173,7 @@ export const App: React.FC = () => {
                 {adminTab !== 'hub' && (
                   <button
                     type="button"
-                    onClick={() => setAdminTab('hub')}
+                    onClick={() => handleSelectAdminTab('hub')}
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-white/80 hover:bg-white text-slate-700 text-xs font-semibold border border-white/80 shadow-sm transition-all self-start sm:self-auto"
                   >
                     <LayoutGrid className="w-3.5 h-3.5 text-fio-pink" />
@@ -146,12 +186,12 @@ export const App: React.FC = () => {
               {adminTab === 'hub' ? (
                 <>
                   <AdminHeader />
-                  <AdminHubMenu onSelectTab={(tab) => setAdminTab(tab)} />
+                  <AdminHubMenu onSelectTab={handleSelectAdminTab} />
                 </>
               ) : (
                 /* Si está dentro de una sección específica */
                 <>
-                  <AdminTabs activeTab={adminTab} setActiveTab={setAdminTab} />
+                  <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
 
                   {adminTab === 'orders' && <OrdersQueue />}
                   {adminTab === 'billing' && <QuickBillingSection />}

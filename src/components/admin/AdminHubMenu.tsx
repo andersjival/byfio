@@ -1,11 +1,9 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
-import { formatCRC } from '../../utils/formatters';
 import {
-  QrCode, FileText, Package, DollarSign, GraduationCap,
-  ArrowRight, Sparkles, AlertTriangle, Users, ShoppingCart,
-  Clock, TrendingUp, ChevronRight
+  QrCode, Receipt, Boxes, Landmark, GraduationCap,
+  ChevronRight, Sparkles
 } from 'lucide-react';
 
 interface AdminHubMenuProps {
@@ -17,131 +15,99 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
-  const totalInventoryValue = products.reduce((acc, p) => acc + p.stock * p.costPrice, 0);
 
-  const menuCards = [
+  const menuItems = [
     {
       id: 'orders' as AdminTabType,
-      title: 'Cola de Pedidos & Alisto QR',
-      subtitle: 'Alisto guiado paso a paso con escáner QR y control de entregas en orden cronológico (FIFO).',
-      badge: pendingOrders.length > 0 ? `${pendingOrders.length} pendientes` : 'Al día',
-      badgeColor: pendingOrders.length > 0 ? 'bg-fio-pink text-white animate-pulse' : 'bg-emerald-100 text-emerald-700',
+      title: 'Cola de Pedidos',
+      badge: pendingOrders.length > 0 ? `${pendingOrders.length} por alistar` : 'Al día',
+      badgeClass: pendingOrders.length > 0 ? 'bg-fio-pink text-white animate-pulse' : 'bg-emerald-50 text-emerald-700',
       icon: QrCode,
-      iconGradient: 'from-purple-500 to-fio-800',
-      highlightStat: `${orders.length} pedidos registrados`,
-      actionText: 'Ingresar a Pedidos',
+      gradient: 'from-[#A855F7] to-[#6B21A8]',
     },
     {
       id: 'billing' as AdminTabType,
       title: 'Facturación Rápida',
-      subtitle: 'Ingresa o escanea el número de orden (#FIO-1001) para jalar los datos y generar comprobantes al instante.',
-      badge: 'Búsqueda por # orden',
-      badgeColor: 'bg-fio-100 text-fio-800',
-      icon: FileText,
-      iconGradient: 'from-fio-300 to-fio-600',
-      highlightStat: 'Envío directo por WhatsApp',
-      actionText: 'Ingresar a Facturación',
+      badge: 'Buscar por # orden',
+      badgeClass: 'bg-fio-100 text-fio-800',
+      icon: Receipt,
+      gradient: 'from-[#C084FC] to-[#8B5CF6]',
     },
     {
       id: 'inventory' as AdminTabType,
-      title: 'Inventario & Etiquetas QR',
-      subtitle: 'Control de existencias, alertas automáticas de reabastecimiento, alta de productos e impresión de stickers QR.',
-      badge: criticalProducts.length > 0 ? `${criticalProducts.length} por reabastecer` : 'Stock saludable',
-      badgeColor: criticalProducts.length > 0 ? 'bg-red-500 text-white' : 'bg-emerald-100 text-emerald-700',
-      icon: Package,
-      iconGradient: 'from-sky-400 to-indigo-600',
-      highlightStat: `${products.length} productos activos`,
-      actionText: 'Ingresar a Inventario',
+      title: 'Inventario & QR',
+      badge: criticalProducts.length > 0 ? `${criticalProducts.length} por reponer` : `${products.length} productos`,
+      badgeClass: criticalProducts.length > 0 ? 'bg-red-500 text-white' : 'bg-sky-50 text-sky-700',
+      icon: Boxes,
+      gradient: 'from-[#38BDF8] to-[#4338CA]',
     },
     {
       id: 'reports' as AdminTabType,
-      title: 'Caja & Reportería Diaria',
-      subtitle: 'Ventas del día, cálculo de ganancias netas, desglose de pagos SINPE Móvil y cierre de caja imprimible.',
-      badge: 'Cierre & Finanzas',
-      badgeColor: 'bg-amber-100 text-amber-800',
-      icon: DollarSign,
-      iconGradient: 'from-emerald-400 to-teal-700',
-      highlightStat: `Inventario: ${formatCRC(totalInventoryValue)}`,
-      actionText: 'Ingresar a Caja',
+      title: 'Caja & Reportería',
+      badge: 'Cierre diario',
+      badgeClass: 'bg-amber-50 text-amber-800',
+      icon: Landmark,
+      gradient: 'from-[#34D399] to-[#047857]',
     },
     {
       id: 'workshops' as AdminTabType,
-      title: 'Talleres & Inscripciones',
-      subtitle: 'Seguimiento de cupos vendidos por fecha, lista de personas inscritas, creación de talleres y links para redes.',
-      badge: `${workshops.length} talleres`,
-      badgeColor: 'bg-fio-pink/10 text-fio-pink border border-fio-pink/20',
+      title: 'Talleres & Alumnos',
+      badge: `${workshops.length} programados`,
+      badgeClass: 'bg-pink-50 text-fio-pink',
       icon: GraduationCap,
-      iconGradient: 'from-fio-pink to-purple-600',
-      highlightStat: 'Control de alumnos 1 a 1',
-      actionText: 'Ingresar a Talleres',
+      gradient: 'from-[#EC4899] to-[#BE185D]',
     },
   ];
 
   return (
-    <div className="space-y-6 animate-fadeIn max-w-6xl mx-auto">
-      {/* Bienvenida del Menú Principal */}
-      <div className="text-center py-6 px-4 rounded-[32px] bg-white/70 backdrop-blur-md border border-white/80 shadow-[0_10px_25px_rgba(180,160,200,0.08)]">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FAF5FF] border border-fio-200/60 text-fio-800 text-[11px] font-bold uppercase tracking-widest mb-2">
-          <Sparkles className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow" />
-          <span>Centro de Control Administrativo</span>
+    <div className="space-y-4 animate-fadeIn">
+      {/* Título Compacto de una Sola Línea */}
+      <div className="flex items-center justify-between gap-2 px-1">
+        <div className="flex items-center gap-2">
+          <span className="p-1 rounded-lg bg-purple-100 text-fio-700">
+            <Sparkles className="w-3.5 h-3.5" />
+          </span>
+          <h2 className="font-bubble font-bold text-sm sm:text-base text-fio-900">
+            Menú Principal de Administración
+          </h2>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-bubble font-bold text-fio-900">
-          ¿A qué sección deseas ingresar hoy?
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-lg mx-auto">
-          Selecciona una de las opciones principales para gestionar tu tienda, inventario, pedidos o talleres.
-        </p>
+        <span className="text-[11px] text-slate-400 font-sans hidden sm:inline">
+          Selecciona una sección para ingresar
+        </span>
       </div>
 
-      {/* Grid de Cajitas Grandes y Redonditas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {menuCards.map((card, idx) => {
-          const Icon = card.icon;
-          const isWide = idx === 0; // The first card can be slightly more prominent if on 2-col layout
+      {/* Grid de Cajitas Compactas, Redonditas y Profesionales (Todo en 1 Sola Pantalla) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
 
           return (
             <button
-              key={card.id}
+              key={item.id}
               type="button"
-              onClick={() => onSelectTab(card.id)}
-              className={`group text-left rounded-[32px] p-6 sm:p-7 bg-[#FDFBF9] border border-white/90 shadow-[10px_14px_28px_rgba(180,160,200,0.1),-8px_-8px_20px_rgba(255,255,255,0.95)] hover:shadow-[16px_22px_40px_rgba(180,160,200,0.18),-10px_-10px_24px_rgba(255,255,255,1)] hover:-translate-y-1.5 active:scale-[0.98] transition-all duration-300 flex flex-col justify-between ${
-                isWide ? 'md:col-span-2 lg:col-span-1' : ''
-              }`}
+              onClick={() => onSelectTab(item.id)}
+              className="group text-left rounded-2xl p-4 bg-[#FDFBF9] border border-white/90 shadow-[0_4px_16px_rgba(180,160,200,0.08)] hover:shadow-[0_8px_24px_rgba(180,160,200,0.18)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[125px] sm:min-h-[140px]"
             >
-              <div>
-                {/* Header de la Cajita con Icono Gigante Redondito y Badge */}
-                <div className="flex items-start justify-between gap-3 mb-5">
-                  <div
-                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-[24px] bg-gradient-to-br ${card.iconGradient} text-white flex items-center justify-center shadow-[0_10px_20px_rgba(147,51,234,0.25),inset_0_2px_4px_rgba(255,255,255,0.4)] group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <Icon className="w-7 h-7 sm:w-8 sm:h-8" />
-                  </div>
-
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-sm ${card.badgeColor}`}>
-                    {card.badge}
-                  </span>
+              {/* Icono Elegante con Gradiente & Badge */}
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}
+                >
+                  <Icon className="w-5 h-5" />
                 </div>
 
-                {/* Título y Subtítulo */}
-                <h3 className="text-lg sm:text-xl font-bubble font-bold text-fio-900 group-hover:text-fio-600 transition-colors mb-2 leading-snug">
-                  {card.title}
-                </h3>
-
-                <p className="text-xs sm:text-[13px] text-slate-500 leading-relaxed mb-4">
-                  {card.subtitle}
-                </p>
+                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-700 group-hover:translate-x-0.5 transition-all" />
               </div>
 
-              {/* Pie de la Cajita con Stat y Botón Redondito de Entrada */}
-              <div className="pt-4 border-t border-slate-200/50 flex items-center justify-between gap-2 mt-2">
-                <span className="text-[11px] font-semibold text-slate-400">
-                  {card.highlightStat}
-                </span>
+              {/* Título & Badge Limpio (Sin Párrafos Relleno) */}
+              <div className="space-y-1.5">
+                <h3 className="font-bubble font-bold text-xs sm:text-sm text-fio-900 group-hover:text-fio-600 transition-colors leading-snug">
+                  {item.title}
+                </h3>
 
-                <div className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 group-hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn transition-all group-hover:translate-x-1">
-                  <span>{card.actionText}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </div>
+                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${item.badgeClass}`}>
+                  {item.badge}
+                </span>
               </div>
             </button>
           );
