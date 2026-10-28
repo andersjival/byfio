@@ -1,8 +1,8 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Package, FileText, QrCode, DollarSign } from 'lucide-react';
+import { Package, FileText, QrCode, DollarSign, GraduationCap } from 'lucide-react';
 
-export type AdminTabType = 'orders' | 'billing' | 'inventory' | 'reports';
+export type AdminTabType = 'orders' | 'billing' | 'inventory' | 'reports' | 'workshops';
 
 interface AdminTabsProps {
   activeTab: AdminTabType;
@@ -77,6 +77,19 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
       >
         <DollarSign className="w-4 h-4 text-emerald-400" />
         <span>Caja & Reportería</span>
+      </button>
+
+      {/* Tab 5: Talleres & Inscripciones */}
+      <button
+        onClick={() => setActiveTab('workshops')}
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bubble font-bold transition-all shrink-0 ${
+          activeTab === 'workshops'
+            ? 'bg-fio-800 text-white shadow-clayBtn scale-[1.02]'
+            : 'bg-white text-gray-700 border border-fio-200 hover:bg-fio-50'
+        }`}
+      >
+        <GraduationCap className="w-4 h-4 text-fio-pink" />
+        <span>Talleres & Inscripciones</span>
       </button>
     </div>
   );

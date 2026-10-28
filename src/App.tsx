@@ -19,6 +19,7 @@ import { QrLabelModal } from './components/admin/QrLabelModal';
 import { InvoiceModal } from './components/admin/InvoiceModal';
 import { NewProductModal } from './components/admin/NewProductModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
+import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
 
 export const App: React.FC = () => {
   const { viewMode } = useApp();
@@ -60,6 +61,7 @@ export const App: React.FC = () => {
               {adminTab === 'reports' && (
                 <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
               )}
+              {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
             </>
           )}
         </main>

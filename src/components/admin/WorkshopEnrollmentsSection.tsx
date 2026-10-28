@@ -1,0 +1,134 @@
+import React, { useState, useMemo } from 'react';
+import { useApp } from '../../context/AppContext';
+import { formatCRC } from '../../utils/formatters';
+import { GraduationCap, Users, ChevronDown, ChevronUp, Phone, Hash, Calendar } from 'lucide-react';
+
+export const WorkshopEnrollmentsSection: React.FC = () => {
+  const { workshops, orders } = useApp();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Derive enrollments from orders containing workshop items
+  const enrollmentsByWorkshop = useMemo(() => {
+    const map = new Map<string, { name: string; phone: string; email?: string; orderNumber: string; quantity: number; date: string }[]>();
+    workshops.forEach((ws) => map.set(ws.id, []));
+
+    orders.forEach((order) => {
+      order.items
+        .filter((item) => item.type === 'workshop')
+        .forEach((item) => {
+          // Match by SKU pattern or name
+          const ws = workshops.find((w) => item.sku === w.id || item.name.includes(w.title.split(' ').slice(0, 3).join(' ')));
+          if (ws) {
+            map.get(ws.id)?.push({
+              name: order.customerName,
+              phone: order.customerPhone,
+              email: order.customerEmail,
+              orderNumber: order.orderNumber,
+              quantity: item.quantity,
+              date: order.createdAt,
+            });
+          }
+        });
+    });
+    return map;
+  }, [workshops, orders]);
+
+  const toggle = (id: string) => setExpandedId((prev) => (prev === id ? null : id));
+
+  return (
+    <section className="space-y-4">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-lg font-bubble font-bold text-fio-900 flex items-center gap-2">
+          <GraduationCap className="w-5 h-5 text-fio-300" />
+          Inscripciones a Talleres
+        </h2>
+      </div>
+
+      {workshops.map((ws) => {
+        const enrollments = enrollmentsByWorkshop.get(ws.id) || [];
+        const totalSold = enrollments.reduce((acc, e) => acc + e.quantity, 0);
+        const spotsUsed = ws.totalSpots - ws.spotsAvailable + totalSold;
+        const pct = Math.min(100, Math.round((spotsUsed / ws.totalSpots) * 100));
+        const isOpen = expandedId === ws.id;
+
+        return (
+          <div key={ws.id} className="bg-white rounded-2xl border border-fio-200 shadow-sm overflow-hidden">
+            {/* Header */}
+            <button
+              onClick={() => toggle(ws.id)}
+              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-fio-50/50 transition-colors"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="font-bubble font-bold text-sm text-fio-900 truncate">{ws.title}</p>
+                <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1.5">
+                  <Calendar className="w-3 h-3" /> {ws.date} • {ws.schedule}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0 ml-4">
+                {/* Spots badge */}
+                <div className="text-right">
+                  <div className="flex items-center gap-1 text-xs font-bold text-fio-800">
+                    <Users className="w-3.5 h-3.5" />
+                    {spotsUsed}/{ws.totalSpots}
+                  </div>
+                  <div className="w-20 h-1.5 bg-fio-100 rounded-full mt-1 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${pct >= 90 ? 'bg-red-400' : pct >= 60 ? 'bg-fio-yellow' : 'bg-fio-300'}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Revenue */}
+                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg hidden sm:block">
+                  {formatCRC(totalSold * ws.price)}
+                </span>
+
+                {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+              </div>
+            </button>
+
+            {/* Expanded: attendees list */}
+            {isOpen && (
+              <div className="border-t border-fio-100 px-5 py-3 bg-fio-50/30">
+                {enrollments.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic py-2">Sin inscripciones registradas aún.</p>
+                ) : (
+                  <div className="divide-y divide-fio-100">
+                    {enrollments.map((e, idx) => (
+                      <div key={idx} className="flex items-center justify-between py-2.5 text-xs">
+                        <div>
+                          <p className="font-semibold text-fio-900">{e.name}</p>
+                          <p className="text-gray-500 flex items-center gap-1 mt-0.5">
+                            <Phone className="w-3 h-3" /> {e.phone}
+                            {e.email && <span className="ml-2">• {e.email}</span>}
+                          </p>
+                        </div>
+                        <div className="text-right shrink-0 ml-3">
+                          <span className="flex items-center gap-1 text-fio-800 font-bold">
+                            <Hash className="w-3 h-3" /> {e.orderNumber}
+                          </span>
+                          <span className="text-gray-400">{e.quantity} cupo{e.quantity > 1 ? 's' : ''}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Summary footer */}
+                <div className="flex items-center justify-between pt-3 mt-2 border-t border-fio-200 text-xs">
+                  <span className="text-gray-500">
+                    {enrollments.length} inscri{enrollments.length === 1 ? 'to' : 'tos'} •{' '}
+                    {totalSold} cupo{totalSold !== 1 ? 's' : ''} vendido{totalSold !== 1 ? 's' : ''}
+                  </span>
+                  <span className="font-bold text-fio-800">Precio: {formatCRC(ws.price)} c/u</span>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </section>
+  );
+};
