@@ -2,10 +2,19 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
 import { TypographyTheme } from '../../types';
-import { Package, AlertTriangle, ShoppingCart, RefreshCw, FileText, Type, CheckCircle2, Sparkles } from 'lucide-react';
+import { Package, AlertTriangle, ShoppingCart, RefreshCw, FileText, Type, CheckCircle2, Sparkles, Palette, Heart } from 'lucide-react';
 
 export const AdminHeader: React.FC = () => {
-  const { products, orders, setIsSupplierModalOpen, resetToDefaults, typographyTheme, setTypographyTheme } = useApp();
+  const {
+    products,
+    orders,
+    setIsSupplierModalOpen,
+    resetToDefaults,
+    typographyTheme,
+    setTypographyTheme,
+    colorTheme,
+    setColorTheme,
+  } = useApp();
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
@@ -134,6 +143,104 @@ export const AdminHeader: React.FC = () => {
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* Selector Global de Paleta de Color (Moradito/Rosa Original vs Zen Cerámica) */}
+      <div className="bg-white rounded-3xl p-5 border border-fio-200 shadow-sm mb-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-pink-100 text-fio-pink flex items-center justify-center shrink-0">
+              <Palette className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bubble font-bold text-fio-900 flex items-center gap-1.5">
+                <span>Tema &amp; Paleta de Colores de la Web</span>
+                <Heart className="w-3.5 h-3.5 text-fio-pink fill-fio-pink" />
+              </h2>
+              <p className="text-xs text-slate-500">
+                Alterna entre el estilo moradito vibrante original y el estilo cerámico zen para toda la página.
+              </p>
+            </div>
+          </div>
+          <span className="text-[11px] font-bold text-fio-800 bg-fio-100 px-3 py-1 rounded-full self-start sm:self-auto shrink-0">
+            {colorTheme === 'vibrant' ? '● Modo Moradito & Rosa Activo' : '● Modo Zen Cerámica Activo'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Opción 1: Moradito & Rosa Fuerte Original */}
+          <button
+            type="button"
+            onClick={() => setColorTheme('vibrant')}
+            className={`p-4 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between gap-3 ${
+              colorTheme === 'vibrant'
+                ? 'bg-fio-50 border-fio-500 ring-2 ring-fio-400/40 shadow-sm'
+                : 'bg-white border-slate-200 hover:border-fio-300'
+            }`}
+          >
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-[#A855F7] to-[#EC4899] shadow-sm" />
+                  <span className="text-xs font-bold text-slate-900">1. Moradito &amp; Rosa Vibrante (Original by.fio)</span>
+                </div>
+                {colorTheme === 'vibrant' ? (
+                  <CheckCircle2 className="w-4 h-4 text-fio-600 shrink-0" />
+                ) : (
+                  <div className="w-4 h-4 rounded-full border border-slate-300" />
+                )}
+              </div>
+              <p className="text-[11px] text-slate-500 leading-snug">
+                Fondo lila pastel (#FAF5FF), morado profundo (#6B21A8), botones y acentos en rosa fuerte (#EC4899) con sombras claymorphism intensas.
+              </p>
+            </div>
+
+            <div className="pt-2 border-t border-slate-200/60 flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-[#FAF5FF] border border-fio-300 shadow-xs" title="Fondo Lila Pastel" />
+              <span className="w-3 h-3 rounded-full bg-[#6B21A8]" title="Morado Profundo" />
+              <span className="w-3 h-3 rounded-full bg-[#EC4899]" title="Rosa Fuerte" />
+              <span className="w-3 h-3 rounded-full bg-[#9BE4FF]" title="Celeste Corazón" />
+              <span className="w-3 h-3 rounded-full bg-[#FFF07C]" title="Amarillo Estrella" />
+              <span className="text-[10px] text-fio-700 font-bold ml-auto">Paleta Original</span>
+            </div>
+          </button>
+
+          {/* Opción 2: Zen Cerámica & Calma */}
+          <button
+            type="button"
+            onClick={() => setColorTheme('zen')}
+            className={`p-4 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between gap-3 ${
+              colorTheme === 'zen'
+                ? 'bg-[#FAF7F2] border-fio-500 ring-2 ring-fio-400/40 shadow-sm'
+                : 'bg-white border-slate-200 hover:border-fio-300'
+            }`}
+          >
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-[#D4AEFA] to-[#FAF7F2] border border-slate-300 shadow-sm" />
+                  <span className="text-xs font-bold text-slate-900">2. Zen Cerámica &amp; Calma (Slow Space)</span>
+                </div>
+                {colorTheme === 'zen' ? (
+                  <CheckCircle2 className="w-4 h-4 text-fio-600 shrink-0" />
+                ) : (
+                  <div className="w-4 h-4 rounded-full border border-slate-300" />
+                )}
+              </div>
+              <p className="text-[11px] text-slate-500 leading-snug">
+                Fondo crema cálido cerámico (#FAF7F2), perla suave, tarjetas con doble sombra neumórfica y toques de lavanda sutil.
+              </p>
+            </div>
+
+            <div className="pt-2 border-t border-slate-200/60 flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-[#FAF7F2] border border-slate-300 shadow-xs" title="Cerámica Cálida" />
+              <span className="w-3 h-3 rounded-full bg-[#FDFBF9] border border-slate-300" title="Blanco Perla" />
+              <span className="w-3 h-3 rounded-full bg-[#D4AEFA]" title="Lavanda Suave" />
+              <span className="w-3 h-3 rounded-full bg-[#334155]" title="Slate Carbón" />
+              <span className="text-[10px] text-slate-600 font-bold ml-auto">Paleta Zen</span>
+            </div>
+          </button>
         </div>
       </div>
 

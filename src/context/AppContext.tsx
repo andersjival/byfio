@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme } from '../types';
+import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme, ColorTheme } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { playAudioBeep } from '../utils/formatters';
 
@@ -47,6 +47,8 @@ interface AppContextType {
   setIsNewWorkshopModalOpen: (open: boolean) => void;
   typographyTheme: TypographyTheme;
   setTypographyTheme: (theme: TypographyTheme) => void;
+  colorTheme: ColorTheme;
+  setColorTheme: (theme: ColorTheme) => void;
   resetToDefaults: () => void;
 }
 
@@ -59,6 +61,7 @@ const STORAGE_KEYS = {
   VIEW_MODE: 'byfio_view_mode_v1',
   WORKSHOPS: 'byfio_workshops_v1',
   TYPOGRAPHY_THEME: 'byfio_typography_theme_v1',
+  COLOR_THEME: 'byfio_color_theme_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -97,11 +100,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return (localStorage.getItem(STORAGE_KEYS.TYPOGRAPHY_THEME) as TypographyTheme) || 'hybrid';
   });
 
+  const [colorTheme, setColorTheme] = useState<ColorTheme>(() => {
+    return (localStorage.getItem(STORAGE_KEYS.COLOR_THEME) as ColorTheme) || 'vibrant';
+  });
+
   // Apply typography theme to document body
   useEffect(() => {
     document.body.setAttribute('data-font-theme', typographyTheme);
     localStorage.setItem(STORAGE_KEYS.TYPOGRAPHY_THEME, typographyTheme);
   }, [typographyTheme]);
+
+  // Apply color theme to document body
+  useEffect(() => {
+    document.body.setAttribute('data-color-theme', colorTheme);
+    localStorage.setItem(STORAGE_KEYS.COLOR_THEME, colorTheme);
+  }, [colorTheme]);
 
   // Sync initial data from Cloudflare D1 Database
   useEffect(() => {
@@ -443,6 +456,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsNewWorkshopModalOpen,
         typographyTheme,
         setTypographyTheme,
+        colorTheme,
+        setColorTheme,
         addToCart,
         removeFromCart,
         updateCartQuantity,

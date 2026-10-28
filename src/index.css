@@ -42,6 +42,61 @@ body[data-font-theme="hybrid"] .font-bubble {
   font-family: 'Fredoka', 'Quicksand', sans-serif !important;
 }
 
+/* =========================================================================
+   SELECTOR GLOBAL DE TEMA DE COLOR: VIBRANTE (MORADITO & ROSA) vs ZEN (CERÁMICA)
+   ========================================================================= */
+
+/* TEMA 1: VIBRANTE BY.FIO ORIGINAL (LILA, MORADO PROFUNDO Y ROSA FUERTE) */
+body[data-color-theme="vibrant"] {
+  background-color: #FAF5FF !important;
+}
+
+body[data-color-theme="vibrant"] header {
+  background-color: rgba(250, 245, 255, 0.92) !important;
+  border-bottom-color: rgba(233, 213, 255, 0.8) !important;
+}
+
+body[data-color-theme="vibrant"] footer {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-top-color: #E9D5FF !important;
+}
+
+body[data-color-theme="vibrant"] .bg-\[\#FAF7F2\] {
+  background-color: #FAF5FF !important;
+}
+
+body[data-color-theme="vibrant"] .bg-\[\#FDFBF9\] {
+  background-color: #FFFFFF !important;
+  border-color: #E9D5FF !important;
+  box-shadow: 0 12px 28px -6px rgba(107, 33, 168, 0.12), 0 8px 16px -8px rgba(107, 33, 168, 0.08), inset 0 2px 4px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+body[data-color-theme="vibrant"] .bg-\[\#FDFBF9\]:hover {
+  border-color: #D4AEFA !important;
+  box-shadow: 0 20px 35px -8px rgba(107, 33, 168, 0.18), 0 10px 20px -10px rgba(107, 33, 168, 0.12), inset 0 2px 6px 0 rgba(255, 255, 255, 0.95) !important;
+}
+
+body[data-color-theme="vibrant"] .bg-\[\#F5F1EB\],
+body[data-color-theme="vibrant"] .bg-\[\#F4EFEA\],
+body[data-color-theme="vibrant"] .bg-\[\#F6F2EC\],
+body[data-color-theme="vibrant"] .bg-\[\#F2EDE7\] {
+  background-color: #F3E8FF !important;
+  border-color: #E9D5FF !important;
+}
+
+body[data-color-theme="vibrant"] .bg-white\/60,
+body[data-color-theme="vibrant"] .bg-white\/70,
+body[data-color-theme="vibrant"] .bg-white\/75 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(233, 213, 255, 0.9) !important;
+  box-shadow: 0 12px 28px -6px rgba(107, 33, 168, 0.1) !important;
+}
+
+/* TEMA 2: ZEN CERÁMICA & CALMA (SLOW SPACE) */
+body[data-color-theme="zen"] {
+  background-color: #FAF7F2 !important;
+}
+
 /* Print Styles for QR Labels and Invoices */
 @media print {
   body * {
