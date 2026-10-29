@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.36.0 - Reproducción de Intro con Audio Activo e Imagen de Marca HD (logo-byfio-lila-HD)
+- [x] **Video Intro con Inicio de Audio Directo ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Configurado para reproducir directamente con audio activo (`isMuted: false`, `videoRef.current.muted = false`).
+  - Fallback automático seguro: si la directiva de seguridad del navegador exige interacción previa, inicia silenciosamente y activa el sonido inmediatamente al hacer clic en cualquier parte de la pantalla o sobre el video.
+  - Indicador flotante táctil "Toca aquí para escuchar el video 🎵" en caso de bloqueo estricto del navegador.
+- [x] **Imagen Oficial de la Marca en Alta Definición ([`logo-byfio-lila-HD.png`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/logo-byfio-lila-HD.png)):**
+  - Incorporada la imagen oficial 2000x2000 HD en la fase inicial de la intro con halos radiales púrpuras y dorados pulsantes.
+  - Utilizada como imagen de portada (`poster`) nativa en el reproductor de video para máxima nitidez visual.
+
 ### Versión 1.35.0 - Efecto Hover Fucsia Suave en Botón de Menú Principal y Navegación
 - [x] **Botón "Menú Principal" en Panel Administrativo ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
   - Implementado efecto de hover interactivo al pasar el mouse (`hover:bg-fio-pink` y resplandor `hover:shadow-[0_4px_14px_rgba(236,72,153,0.45)]`), transitando suavemente del púrpura al fucsia suave de la marca by.fio.
