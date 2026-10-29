@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme } from '../../types';
-import { X, Type, Palette, CheckCircle2, Heart, Sparkles, Volume2, Droplets } from 'lucide-react';
+import { X, Type, Palette, CheckCircle2, Heart, Sparkles, Volume2, Droplets, Sun, Moon } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
 interface AdminDesignSettingsModalProps {
@@ -82,7 +82,7 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
               <span>Paleta de Colores de la Web</span>
             </span>
             <span className="text-[10px] font-bold text-fio-800 bg-fio-100 px-2 py-0.5 rounded-full">
-              {colorTheme === 'vibrant' ? 'Moradito Original' : colorTheme === 'zen' ? 'Zen Cerámica' : 'Neumorphism'}
+              {colorTheme === 'vibrant' ? 'Moradito Original' : colorTheme === 'zen' ? 'Zen Cerámica' : 'Modo Oscuro'}
             </span>
           </div>
 
@@ -131,25 +131,25 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
               </p>
             </button>
 
-            {/* Opción Neumorphism */}
+            {/* Opción Modo Oscuro / Noche */}
             <button
               type="button"
-              onClick={() => setColorTheme('neumorphic')}
+              onClick={() => setColorTheme('dark')}
               className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-2 ${
-                colorTheme === 'neumorphic'
-                  ? 'bg-[#F0F2F6] border-amber-500 ring-2 ring-amber-400/40 shadow-neuBtn'
-                  : 'bg-[#F0F2F6]/70 border-slate-200 hover:border-amber-300'
+                colorTheme === 'dark'
+                  ? 'bg-slate-900 border-indigo-500 ring-2 ring-indigo-400/40 text-white'
+                  : 'bg-slate-800/90 border-slate-700 text-slate-200 hover:border-indigo-400'
               }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-[#FBBF24] to-[#F59E0B]" />
-                  <span className="text-xs font-bold text-slate-900">Neumorphism</span>
+                  <Moon className="w-3.5 h-3.5 text-indigo-400" />
+                  <span className="text-xs font-bold text-white">Modo Oscuro</span>
                 </div>
-                {colorTheme === 'neumorphic' && <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
+                {colorTheme === 'dark' && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />}
               </div>
-              <p className="text-[10px] text-slate-500 leading-tight">
-                Relieve táctil, sombras dobles, fondo gris perla (#F0F2F6) y acento ámbar.
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Noche profunda (#0C0A17), sombras cósmicas y destellos violeta.
               </p>
             </button>
           </div>

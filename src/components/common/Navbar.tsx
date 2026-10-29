@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { BrandLogo } from './BrandLogo';
 import { TikTokIcon } from './TikTokIcon';
 import { AppRoute } from '../../types';
-import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid, LogOut, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid, LogOut, ShieldCheck, Sun, Moon } from 'lucide-react';
 
 interface NavbarProps {
   currentRoute: AppRoute;
@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectAdminHub,
   isAdminHub = false,
 }) => {
-  const { cart, setIsCartOpen, colorTheme, currentUser, logoutUser } = useApp();
+  const { cart, setIsCartOpen, colorTheme, setColorTheme, currentUser, logoutUser } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const totalCartCount = cart.reduce((acc, it) => acc + it.quantity, 0);
@@ -165,6 +165,36 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>6400-4640</span>
               </a>
 
+              {/* Selector de Tema Claro / Oscuro (Botones Sol y Luna) */}
+              <div className="flex items-center p-0.5 sm:p-1 rounded-full bg-[#ECEEF2] shadow-neuInset border border-white/60">
+                <button
+                  type="button"
+                  onClick={() => setColorTheme('vibrant')}
+                  className={`p-1.5 sm:p-2 rounded-full transition-all ${
+                    colorTheme !== 'dark'
+                      ? 'bg-[#F1F2F6] shadow-neuBtn text-amber-500 scale-105'
+                      : 'text-slate-400 hover:text-amber-500'
+                  }`}
+                  title="Cambiar a tema claro (Sol)"
+                  aria-label="Cambiar a tema claro"
+                >
+                  <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400/20" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setColorTheme('dark')}
+                  className={`p-1.5 sm:p-2 rounded-full transition-all ${
+                    colorTheme === 'dark'
+                      ? 'bg-[#1E1B4B] shadow-neuBtn text-indigo-400 scale-105'
+                      : 'text-slate-400 hover:text-indigo-400'
+                  }`}
+                  title="Cambiar a tema oscuro (Luna)"
+                  aria-label="Cambiar a tema oscuro"
+                >
+                  <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-indigo-400/20" />
+                </button>
+              </div>
+
               {/* Sesión de Usuario o Botón Iniciar Sesión 3D */}
               {currentUser ? (
                 <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white/90 border border-purple-200/80 rounded-2xl shadow-xs">
@@ -238,6 +268,36 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) : (
             /* EN PANEL DE ADMINISTRACIÓN: Redes sociales retiradas, colocamos Diseño & Letra y Menú Principal */
             <div className="flex items-center gap-2">
+              {/* Selector de Tema Claro / Oscuro en Admin */}
+              <div className="flex items-center p-0.5 sm:p-1 rounded-full bg-[#ECEEF2] shadow-neuInset border border-white/60">
+                <button
+                  type="button"
+                  onClick={() => setColorTheme('vibrant')}
+                  className={`p-1.5 sm:p-2 rounded-full transition-all ${
+                    colorTheme !== 'dark'
+                      ? 'bg-[#F1F2F6] shadow-neuBtn text-amber-500 scale-105'
+                      : 'text-slate-400 hover:text-amber-500'
+                  }`}
+                  title="Cambiar a tema claro (Sol)"
+                  aria-label="Cambiar a tema claro"
+                >
+                  <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400/20" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setColorTheme('dark')}
+                  className={`p-1.5 sm:p-2 rounded-full transition-all ${
+                    colorTheme === 'dark'
+                      ? 'bg-[#1E1B4B] shadow-neuBtn text-indigo-400 scale-105'
+                      : 'text-slate-400 hover:text-indigo-400'
+                  }`}
+                  title="Cambiar a tema oscuro (Luna)"
+                  aria-label="Cambiar a tema oscuro"
+                >
+                  <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-indigo-400/20" />
+                </button>
+              </div>
+
               {/* Botón Diseño & Letra */}
               <button
                 type="button"
@@ -248,7 +308,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink" />
                 <span className="hidden xs:inline">Diseño &amp; Letra</span>
                 <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
-                  {colorTheme === 'vibrant' ? 'Morado' : 'Zen'}
+                  {colorTheme === 'vibrant' ? 'Morado' : colorTheme === 'dark' ? 'Oscuro' : 'Zen'}
                 </span>
               </button>
 
@@ -394,6 +454,37 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>Iniciar Sesión 3D</span>
             </button>
           )}
+
+          {/* Selector de Tema en Móvil */}
+          <div className="flex items-center justify-between p-3 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset">
+            <span className="text-xs font-bubble font-bold text-slate-700">Tema de la Web</span>
+            <div className="flex items-center p-1 rounded-full bg-white/70 shadow-xs border border-white/90">
+              <button
+                type="button"
+                onClick={() => setColorTheme('vibrant')}
+                className={`p-1.5 rounded-full transition-all ${
+                  colorTheme !== 'dark'
+                    ? 'bg-[#F1F2F6] shadow-neuBtn text-amber-500 scale-105'
+                    : 'text-slate-400 hover:text-amber-500'
+                }`}
+                title="Tema Claro (Sol)"
+              >
+                <Sun className="w-4 h-4 fill-amber-400/20" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setColorTheme('dark')}
+                className={`p-1.5 rounded-full transition-all ${
+                  colorTheme === 'dark'
+                    ? 'bg-[#1E1B4B] shadow-neuBtn text-indigo-400 scale-105'
+                    : 'text-slate-400 hover:text-indigo-400'
+                }`}
+                title="Tema Oscuro (Luna)"
+              >
+                <Moon className="w-4 h-4 fill-indigo-400/20" />
+              </button>
+            </div>
+          </div>
 
           <div className="pt-2 border-t border-slate-200/40 flex items-center gap-3 px-2">
             <a

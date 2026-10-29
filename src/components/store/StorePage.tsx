@@ -82,7 +82,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
 
   return (
     <div className="py-2 sm:py-4 max-w-7xl mx-auto space-y-6 animate-fadeIn">
-      {/* Encabezado Editorial Estilo Neumorphic Soft UI con Árbol Integrado */}
+      {/* Encabezado Editorial con Árbol Integrado */}
       <div className="relative text-center py-6 sm:py-8 px-6 rounded-[36px] bg-[#F1F2F6] border border-white/90 shadow-neuCard overflow-hidden">
         {/* Glows interiores */}
         <div className="absolute top-0 right-1/4 w-64 h-64 bg-[#D4AEFA]/15 rounded-full blur-3xl pointer-events-none" />

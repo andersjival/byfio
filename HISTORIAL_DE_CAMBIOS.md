@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.59.0 - Eliminación de Módulo Neumórfico y Activación de Switcher Claro/Oscuro con Botones Sol y Luna
+- [x] **Eliminación de Sección Neumórfica ([`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
+  - Removido por completo el bloque demostrativo con textos de neomorfismo, soft UI, táctil minimal y dial circular.
+- [x] **Conmutador de Tema Claro / Oscuro con Botones Sol y Luna ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Incorporado selector táctil de tema en la barra superior (tienda y admin) y menú móvil con los botones e iconos de Sol (ámbar / claro) y Luna (índigo / oscuro).
+- [x] **Tema Oscuro Completo ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css) y [`BackgroundDecor.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BackgroundDecor.tsx)):**
+  - Estilos oscuros globales con fondo noche profunda (#0C0A17), nebulosas violeta cósmicas y contraste refinado en tarjetas, botones y encabezados.
+
+
 ### Versión 1.58.0 - Inicio de Sesión Real con Credenciales Maestras (fio@byfiocr.com / Fio777)
 - [x] **Autenticación Maestra Oficial ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Implementado sistema de autenticación real reconociendo `fio@byfiocr.com` (o usuario `fio`) con contraseña `Fio777` como cuenta Maestra / Administradora con privilegios totales.

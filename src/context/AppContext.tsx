@@ -314,6 +314,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Apply color theme to document body
   useEffect(() => {
     document.body.setAttribute('data-color-theme', colorTheme);
+    if (colorTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
     localStorage.setItem(STORAGE_KEYS.COLOR_THEME, colorTheme);
   }, [colorTheme]);
 

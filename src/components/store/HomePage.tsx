@@ -3,7 +3,6 @@ import { useApp } from '../../context/AppContext';
 import { AppRoute } from '../../types';
 import { HeroDual } from './HeroDual';
 import { TreeNavigation } from '../common/TreeNavigation';
-import { NeumorphicShowcase } from '../common/NeumorphicShowcase';
 import { StudioLocationScheduleCard } from '../common/StudioLocationScheduleCard';
 import { PricingStickersSection } from './PricingStickersSection';
 import { formatCRC } from '../../utils/formatters';
@@ -228,12 +227,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           UBICACIÓN Y HORARIOS DE ATENCIÓN (TIBÁS, COSTA RICA)
           ========================================================================= */}
       <StudioLocationScheduleCard />
-
-      {/* =========================================================================
-          MÓDULO DE DEMOSTRACIÓN NEUMÓRFICA (SOFT UI TACTILE & MINIMAL)
-          Adaptado fielmente de la hoja de diseño de referencia
-          ========================================================================= */}
-      <NeumorphicShowcase />
       </div>
     </div>
   );
