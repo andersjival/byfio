@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.26.0 - Sistema Multifuncional de Carga de Fotografías (URL, Subida de Archivo, Pegar Foto Ctrl+V y Arrastrar y Soltar)
+- [x] **Componente Universal de Carga de Fotos ([`ImageUploadField.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ImageUploadField.tsx)):**
+  - Implementado sistema modular de 4 métodos simultáneos para fotos:
+    1. **Arrastrar y Soltar (Drag & Drop):** Zona interactiva con respuesta visual que captura cualquier archivo de imagen soltado sobre la caja.
+    2. **Cargar desde Dispositivo:** Botón de subida y selector nativo de archivos compatible con celulares y computadoras.
+    3. **Pegar Foto (Ctrl+V / Portapapeles):** Captura directa de imágenes copiadas en el portapapeles mediante botón interactivo o atajo de teclado `Ctrl+V`.
+    4. **Pegar URL Directa:** Campo de texto con detección inmediata de enlaces web o Unsplash.
+  - **Optimización y Compresión Client-Side (HTML5 Canvas):** Escalamiento automático de fotos pesadas a un máximo de 1200px con compresión JPEG 0.85 (~100-200 KB) para cargas instantáneas y cero sobrecarga de base de datos o almacenamiento.
+- [x] **Integración en Creación y Edición de Talleres ([`NewWorkshopModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewWorkshopModal.tsx)):**
+  - Reemplazado el campo básico de URL por el componente multifuncional con vista previa en vivo, badges de origen y resguardo.
+- [x] **Integración en Creación y Edición de Productos e Inventario ([`NewProductModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx)):**
+  - Incorporado en la ficha técnica del producto con formato cuadrado y todas las opciones de carga inmediata.
+
 ### Versión 1.25.0 - Modal Detallado de Producto 100% sin Barra de Scroll: Diseño Horizontal en 2 Columnas para Computadora y Vista Optimizada para Celular
 - [x] **Eliminación Total de Barras de Scroll en Computadora y Móvil ([`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
   - Rediseñada la ventana modal que se abre al tocar cualquier producto del catálogo: en computadoras se presenta en 2 columnas horizontales (`md:flex-row max-w-3xl`) con fotografía a la izquierda e información, precio, descripción y acciones a la derecha.

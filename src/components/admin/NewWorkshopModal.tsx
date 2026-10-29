@@ -6,6 +6,7 @@ import {
   X, Plus, Trash2, GraduationCap, Sparkles, Image as ImageIcon,
   Calendar, Clock, MapPin, DollarSign, Users, CheckCircle2, Eye, Link2
 } from 'lucide-react';
+import { ImageUploadField } from '../common/ImageUploadField';
 
 interface WorkshopFormData {
   title: string;
@@ -148,10 +149,6 @@ export const NewWorkshopModal: React.FC = () => {
     setForm(EMPTY);
     setIsNewWorkshopModalOpen(false);
   };
-
-  const previewImage =
-    form.image.trim() ||
-    'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80';
 
   return (
     <div className="fixed inset-0 z-50 bg-[#FAF8F5] flex flex-col animate-fadeIn overflow-hidden">
@@ -348,37 +345,14 @@ export const NewWorkshopModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Foto / Imagen con Preview en Vivo */}
-              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <ImageIcon className="w-3.5 h-3.5 text-fio-pink" />
-                  Fotografía Principal del Taller
-                </span>
-
-                <div>
-                  <label className="text-xs font-semibold text-slate-600 block mb-1">
-                    URL de la Foto (Unsplash, Cloudflare, etc.)
-                  </label>
-                  <input
-                    value={form.image}
-                    onChange={(e) => set('image', e.target.value)}
-                    placeholder="https://images.unsplash.com/... (o dejar vacío para foto artesanal por defecto)"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none"
-                  />
-                </div>
-
-                {/* Preview de la imagen */}
-                <div className="relative h-40 sm:h-48 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                  <img
-                    src={previewImage}
-                    alt="Vista previa del taller"
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute bottom-2 left-2 px-2.5 py-1 rounded-lg bg-black/60 text-white text-[10px] backdrop-blur-xs font-semibold">
-                    Vista previa de imagen
-                  </span>
-                </div>
-              </div>
+              {/* Foto / Imagen Multifuncional (URL, Subir archivo, Pegar Ctrl+V, Arrastrar y Soltar) */}
+              <ImageUploadField
+                value={form.image}
+                onChange={(newUrl) => set('image', newUrl)}
+                label="Fotografía Principal del Taller"
+                aspectRatio="video"
+                defaultPlaceholder="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80"
+              />
             </div>
 
             {/* =========================================================

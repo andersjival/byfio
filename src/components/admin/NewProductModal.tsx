@@ -6,6 +6,7 @@ import {
   X, PlusCircle, Sparkles, Wand2, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil
 } from 'lucide-react';
+import { ImageUploadField } from '../common/ImageUploadField';
 
 const DEFAULT_CATEGORIES = [
   'Agendas Personalizadas',
@@ -156,10 +157,6 @@ export const NewProductModal: React.FC = () => {
     }, 1100);
   };
 
-  const previewImage =
-    image.trim() ||
-    'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80';
-
   const marginColones = (Number(price) || 0) - (Number(costPrice) || 0);
   const marginPct = Number(price) > 0 ? Math.round((marginColones / Number(price)) * 100) : 0;
 
@@ -212,32 +209,16 @@ export const NewProductModal: React.FC = () => {
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-5 text-xs max-h-[80vh] overflow-y-auto">
           {/* Bloque 1: Identidad & Foto */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-            {/* Foto con Previsualización en Vivo */}
-            <div className="md:col-span-4 bg-fio-50/70 p-3 rounded-2xl border border-fio-200/80 flex flex-col items-center text-center space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-fio-800">
-                Fotografía del Producto
-              </span>
-              <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-white shadow-sm bg-gray-100 flex items-center justify-center">
-                <img
-                  src={previewImage}
-                  alt="Vista previa"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80';
-                  }}
-                />
-              </div>
-              <div className="w-full text-left">
-                <label className="block text-[10px] font-bold text-gray-600 mb-0.5">URL de la Imagen</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash..."
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-xl border border-fio-200 bg-white text-[11px] focus:ring-2 focus:ring-fio-300 focus:outline-none"
-                />
-              </div>
+            {/* Foto con Previsualización en Vivo y Carga Multifuncional (URL, Archivo, Ctrl+V, Drag & Drop) */}
+            <div className="md:col-span-4">
+              <ImageUploadField
+                value={image}
+                onChange={setImage}
+                label="Fotografía del Producto"
+                aspectRatio="square"
+                compact
+                defaultPlaceholder="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80"
+              />
             </div>
 
             {/* Datos Principales (Nombre, SKU, Categoría, Estante) */}
