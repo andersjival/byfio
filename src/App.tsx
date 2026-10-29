@@ -27,7 +27,8 @@ import { NewProductModal } from './components/admin/NewProductModal';
 import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
-import { MessageCircle, Instagram, LayoutGrid, ArrowLeft } from 'lucide-react';
+import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
+import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette } from 'lucide-react';
 
 interface RouteInfo {
   route: AppRoute;
@@ -82,12 +83,13 @@ const parseRouteFromLocation = (): RouteInfo => {
 };
 
 export const App: React.FC = () => {
-  const { setViewMode } = useApp();
+  const { setViewMode, colorTheme } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(initial.workshopId || null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
+  const [isDesignModalOpen, setIsDesignModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
 
   const navigate = (newRoute: AppRoute, targetTab?: AdminTabType, workshopId?: string) => {
@@ -146,9 +148,9 @@ export const App: React.FC = () => {
 
   const adminBreadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },
-    { label: 'panel administrativo', onClick: () => handleSelectAdminTab('hub') },
-    ...(adminTab !== 'hub'
-      ? [
+    ...(adminTab === 'hub'
+      ? [{ label: 'administración' }]
+      : [
           {
             label:
               adminTab === 'orders'
@@ -161,8 +163,7 @@ export const App: React.FC = () => {
                 ? 'caja & reportes'
                 : 'talleres & inscripciones',
           },
-        ]
-      : []),
+        ]),
   ];
 
   return (
@@ -188,27 +189,44 @@ export const App: React.FC = () => {
           )}
 
           {currentRoute === 'admin' && (
-            <div className="space-y-6">
-              {/* Barra de Árbol con Slashes */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-3 sm:space-y-4">
+              {/* Barra de Árbol y Acciones Superiores (Ultra-Compacta, Sube el Contenido) */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-0.5">
                 <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
 
-                {adminTab !== 'hub' && (
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  {/* Botón Diseño & Letra (Detalles de Personalización del Sitio) */}
                   <button
                     type="button"
-                    onClick={() => handleSelectAdminTab('hub')}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-white/80 hover:bg-white text-slate-700 text-xs font-semibold border border-white/80 shadow-sm transition-all self-start sm:self-auto"
+                    onClick={() => setIsDesignModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/80 hover:bg-white text-slate-700 text-xs font-semibold border border-white/80 shadow-xs transition-all active:scale-95"
+                    title="Ajustar paleta de colores y tipografía de todo el sitio"
                   >
-                    <LayoutGrid className="w-3.5 h-3.5 text-fio-pink" />
-                    <span>Volver al Menú Principal</span>
+                    <Palette className="w-3.5 h-3.5 text-fio-pink" />
+                    <span>Diseño &amp; Letra</span>
+                    <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
+                      {colorTheme === 'vibrant' ? 'Morado' : 'Zen'}
+                    </span>
                   </button>
-                )}
+
+                  {/* Botón Menú Principal (al lado de Diseño & Letra) */}
+                  {adminTab !== 'hub' && (
+                    <button
+                      type="button"
+                      onClick={() => handleSelectAdminTab('hub')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-xs transition-all active:scale-95"
+                    >
+                      <LayoutGrid className="w-3.5 h-3.5 text-fio-yellow" />
+                      <span>Menú Principal</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Si está en el Menú Principal (Hub) */}
               {adminTab === 'hub' ? (
                 <>
-                  <AdminHeader />
+                  <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} />
                   <AdminHubMenu onSelectTab={handleSelectAdminTab} />
                 </>
               ) : (
@@ -303,6 +321,7 @@ export const App: React.FC = () => {
       <NewProductModal />
       <NewWorkshopModal />
       <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
+      <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />
     </div>
   );
 };

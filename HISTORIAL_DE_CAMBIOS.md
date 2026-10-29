@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.15.0 - Reorganización Compacta del Panel Admin, Eliminación de Pestaña Redundante y Ubicación Superior de Botones Clave
+- [x] **Eliminación del botón redundante "Menú Principal" en [`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx):** Retirado el Tab 0 inferior que duplicaba el acceso; ahora las pestañas se centran estrictamente en las 5 secciones de trabajo operativo (Pedidos, Facturación, Inventario, Caja, Talleres).
+- [x] **Reubicación Superior de Botones de Acción ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):** Botón `🎨 Diseño & Letra` (detalles y personalización visual) trasladado a la barra superior justo al lado del botón `Menú Principal`, permitiendo ajustar tipografías y paletas de color desde cualquier sección sin tener que regresar al Hub.
+- [x] **Eliminación de la etiqueta estática "Panel Administrativo" en Navbar ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):** Reemplazado por un acceso limpio `← Ver Tienda / Web`, y retirada la repetición textual en la barra de árbol con slashes (`by.fio / [sección]`).
+- [x] **Elevación vertical de contenidos:** Reducido el espaciado global (`space-y-3 sm:space-y-4` y `mb-4`) para que los datos e inventario queden inmediatamente a la vista sin scroll innecesario.
+
 ### Versión 1.14.0 - Landing Page Individual de Taller por URL (`/talleres/:id`), Enlace Social Específico vs General e Inscripción Directa con SINPE Móvil
 - [x] **Página de Destino Dedicada por Taller ([`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx)):**
   - Enrutamiento por URL individual e independiente (`/talleres/:id` o `/talleres?taller=:id`).

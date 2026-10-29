@@ -7,9 +7,15 @@ import {
   FileText, Palette, DollarSign
 } from 'lucide-react';
 
-export const AdminHeader: React.FC = () => {
+interface AdminHeaderProps {
+  onOpenDesignModal?: () => void;
+}
+
+export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal }) => {
   const { products, orders, setIsSupplierModalOpen, resetToDefaults, colorTheme, typographyTheme } = useApp();
-  const [isDesignModalOpen, setIsDesignModalOpen] = useState(false);
+  const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
+
+  const handleOpenDesign = onOpenDesignModal || (() => setInternalDesignModalOpen(true));
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
@@ -33,7 +39,7 @@ export const AdminHeader: React.FC = () => {
           {/* Botón Discreto de Diseño & Tipografía */}
           <button
             type="button"
-            onClick={() => setIsDesignModalOpen(true)}
+            onClick={handleOpenDesign}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-fio-50 text-fio-800 text-xs font-semibold border border-fio-200/80 shadow-xs transition-all active:scale-95"
             title="Ajustar paleta de colores y tipografía del sitio"
           >
@@ -133,11 +139,13 @@ export const AdminHeader: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal de Diseño & Tipografía */}
-      <AdminDesignSettingsModal
-        isOpen={isDesignModalOpen}
-        onClose={() => setIsDesignModalOpen(false)}
-      />
+      {/* Modal de Diseño & Tipografía Interno */}
+      {!onOpenDesignModal && (
+        <AdminDesignSettingsModal
+          isOpen={internalDesignModalOpen}
+          onClose={() => setInternalDesignModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

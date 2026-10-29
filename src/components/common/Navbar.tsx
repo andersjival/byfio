@@ -74,11 +74,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             </button>
           </nav>
         ) : (
-          <div className="hidden md:flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-fio-800 text-white text-[11px] font-bold tracking-wide shadow-xs">
-              Panel Administrativo (WMS / Alisto)
-            </span>
-          </div>
+          <nav className="hidden md:flex items-center gap-1 p-0.5 rounded-xl bg-white/75 backdrop-blur-sm border border-white/80 shadow-[inset_1px_1px_2px_rgba(160,140,190,0.06)]">
+            <button
+              type="button"
+              onClick={() => handleNav('home')}
+              className="px-3 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/80 transition-all flex items-center gap-1.5"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-fio-pink" />
+              <span>Ver Tienda / Web</span>
+            </button>
+          </nav>
         )}
 
         {/* Redes Sociales & Carrito Compactos */}

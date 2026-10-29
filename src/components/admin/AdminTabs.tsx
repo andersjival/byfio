@@ -16,19 +16,7 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
   const criticalCount = products.filter((p) => p.stock <= p.minStock).length;
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none">
-      {/* Tab 0: Menú Principal */}
-      <button
-        onClick={() => setActiveTab('hub')}
-        className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bubble font-bold transition-all shrink-0 ${
-          activeTab === 'hub'
-            ? 'bg-fio-800 text-white shadow-clayBtn scale-[1.02]'
-            : 'bg-white text-gray-700 border border-fio-200 hover:bg-fio-50'
-        }`}
-      >
-        <LayoutGrid className="w-4 h-4 text-fio-pink" />
-        <span>Menú Principal</span>
-      </button>
+    <div className="flex items-center gap-2 overflow-x-auto pb-1 mb-4 scrollbar-none">
       {/* Tab 1: Pedidos & Alisto */}
       <button
         onClick={() => setActiveTab('orders')}
