@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.44.0 - Ilustración Oficial Recortada de Niña y Estrellita en Login 3D
+- [x] **Integración de Ilustración Recortada y Ajuste Escénico ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Añadida la imagen recortada de alta resolución de la niña con suéter morado y la estrellita sonriente en [`public/assets/login-3d-girl-star.png`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/login-3d-girl-star.png).
+  - Ajustado el encuadre con `object-position: center bottom` y ancho del 90% para que los codos de la niña y la base de la estrellita descansen de manera natural y exacta sobre el marco acolchado del formulario 3D.
+  - Soporte de fallback bidireccional en caso de carga de recursos (`.png` -> `.jpg`).
+
 ### Versión 1.43.0 - Login 3D Claymorphism (Niña & Estrellita By.Fio) con Ilustración Oficial
 - [x] **Componente y Modal de Login 3D ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Implementado fielmente el diseño 3D Claymorphism aportado: tarjeta con sombras biseladas, cabecera con corazón pulsante `彡 💖 彡`, tipografía `Fredoka` + `Quicksand`, escenario de personajes apoyados en el marco y pedestal 3D inferior.

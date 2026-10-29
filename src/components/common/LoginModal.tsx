@@ -108,10 +108,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             <span className="h-purple">💜</span>
           </div>
           <img
-            src="/assets/login-3d-girl-star.jpg"
+            src="/assets/login-3d-girl-star.png"
             alt="Niña y Estrella 3D by.fio"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = '/assets/login-characters-cropped.png';
+              (e.target as HTMLImageElement).src = '/assets/login-3d-girl-star.jpg';
             }}
           />
         </div>

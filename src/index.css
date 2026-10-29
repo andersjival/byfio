@@ -632,11 +632,11 @@ body[data-color-theme="zen"] {
 }
 
 .characters-stage img {
-  width: 88%;
+  width: 90%;
   height: 100%;
   object-fit: cover;
-  object-position: center 38%;
-  border-radius: 26px;
+  object-position: center bottom;
+  border-radius: 24px;
 }
 
 .floating-hearts {
