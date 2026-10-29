@@ -1,6 +1,5 @@
 import React from 'react';
 import { AppRoute } from '../../types';
-import { TreeNavigation } from '../common/TreeNavigation';
 import { AnimatedByfioLetters } from '../common/AnimatedByfioLetters';
 import { Sparkles, ShoppingBag, Calendar, Heart, Star, CheckCircle2 } from 'lucide-react';
 
@@ -29,19 +28,6 @@ export const HeroDual: React.FC<HeroDualProps> = ({
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[450px] bg-[#FFF07C]/12 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       <div className="max-w-6xl mx-auto text-center w-full my-auto space-y-4 sm:space-y-6">
-        {/* Árbol de Navegación Compacto Directo sobre el Difuminado */}
-        {onNavigate && (
-          <div className="flex justify-center mb-2">
-            <TreeNavigation
-              nodes={[
-                { label: 'by.fio', route: 'home' as AppRoute },
-                { label: 'inicio' },
-              ]}
-              onNavigate={onNavigate}
-            />
-          </div>
-        )}
-
         {/* Badge Slogan Kawaii */}
         <div className="flex items-center justify-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-fio-200/60 shadow-claySm">

@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.53.0 - Eliminación de Migas de Pan Redundantes ("by.fio inicio") en Portada
+- [x] **Limpieza del Hero Principal ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx)):**
+  - Eliminado el bloque de navegación de migas de pan `TreeNavigation` ("by.fio > inicio") ubicado sobre el slogan "¡Transformá tu creatividad en tu mejor proyecto!".
+  - Se despeja la cabecera del Home, dejando la insignia destacada directamente bajo el encabezado principal de la tienda.
+
 ### Versión 1.52.0 - Efectos Sonoros Orgánicos: Burbuja Estallando y Gotas de Agua en Botones
 - [x] **Sonido de Burbuja Estallando ([`soundEffects.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts) y [`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
   - Creada función sintetizada con Web Audio API `playBubblePopSound()` sin dependencias de red, emulando la liberación instantánea de presión acústica de una burbuja reventando.
