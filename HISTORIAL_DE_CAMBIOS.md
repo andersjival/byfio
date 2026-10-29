@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.25.0 - Modal Detallado de Producto 100% sin Barra de Scroll: Diseño Horizontal en 2 Columnas para Computadora y Vista Optimizada para Celular
+- [x] **Eliminación Total de Barras de Scroll en Computadora y Móvil ([`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Rediseñada la ventana modal que se abre al tocar cualquier producto del catálogo: en computadoras se presenta en 2 columnas horizontales (`md:flex-row max-w-3xl`) con fotografía a la izquierda e información, precio, descripción y acciones a la derecha.
+  - Al distribuir el contenido horizontalmente, la altura total cabe 100% dentro de la pantalla sin necesidad alguna de scroll en computadoras.
+  - Aplicado `[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden` tanto en el contenedor como en el cuerpo para erradicar cualquier barra de desplazamiento gris antiestética.
+  - En celulares se despliega con proporciones equilibradas, botón flotante de cierre accesible y controles táctiles limpios sin estorbar la visibilidad.
+
 ### Versión 1.24.0 - Botón "Proceder al Pago", Catálogo Compacto en Cuadrícula Doble (50% Ancho / 2 Productos por Fila), Modal de Descripción en Grande, Limpieza de Iconos IA por Corazón Azul y Reubicación de Botones a Administración
 - [x] **Actualización de Botón a "Proceder al Pago" ([`CartDrawer.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CartDrawer.tsx)):**
   - Modificado el botón principal del carrito para que exprese textualmente `Proceder al Pago` en sustitución del anglicismo "Proceder al Checkout".
