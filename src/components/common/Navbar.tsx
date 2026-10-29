@@ -23,15 +23,15 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
 
   return (
     <header className="sticky top-0 z-40 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-white/70 shadow-[0_2px_12px_rgba(180,160,200,0.05)] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-11 sm:h-12 flex items-center justify-between gap-2.5">
-        {/* Logo de Marca Compacto */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[48px] sm:min-h-[52px] py-1 flex items-center justify-between gap-2.5">
+        {/* Logo de Marca con Estrella, Corazón Interactivo y Slogan */}
         <button
           type="button"
           onClick={() => handleNav('home')}
           className="flex items-center shrink-0 text-left focus:outline-none"
           title="Ir al inicio de by.fio"
         >
-          <BrandLogo size="sm" />
+          <BrandLogo size="sm" showSlogan={true} />
         </button>
 
         {/* Links de Navegación de Páginas Independientes (50% más delgado) */}

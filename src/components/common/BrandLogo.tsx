@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface BrandLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'hero';
@@ -8,130 +8,104 @@ interface BrandLogoProps {
 
 export const BrandLogo: React.FC<BrandLogoProps> = ({
   size = 'md',
-  showSlogan = false,
-  variant = 'badge',
+  showSlogan = true,
 }) => {
-  const getDims = () => {
+  const [isPopped, setIsPopped] = useState(false);
+
+  const handleHeartClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsPopped(true);
+    setTimeout(() => setIsPopped(false), 700);
+  };
+
+  const getSizes = () => {
     switch (size) {
       case 'sm':
-        return { badge: 'w-7 h-7 sm:w-8 sm:h-8', height: 24, text: 'text-[9px]', title: 'text-base sm:text-lg' };
+        return {
+          text: 'text-xl sm:text-2xl',
+          heart: 'w-3.5 h-3.5 sm:w-4 sm:h-4',
+          star: 'w-3 h-3 sm:w-3.5 sm:h-3.5 -top-2.5 sm:-top-3',
+          slogan: 'text-[8px] sm:text-[9.5px]',
+        };
       case 'lg':
-        return { badge: 'w-14 h-14', height: 44, text: 'text-xs', title: 'text-2xl' };
+        return {
+          text: 'text-3xl sm:text-4xl',
+          heart: 'w-6 h-6',
+          star: 'w-5 h-5 -top-4 sm:-top-5',
+          slogan: 'text-xs sm:text-sm',
+        };
       case 'hero':
-        return { badge: 'w-20 h-20', height: 64, text: 'text-sm', title: 'text-3xl' };
+        return {
+          text: 'text-5xl sm:text-6xl',
+          heart: 'w-9 h-9 sm:w-11 sm:h-11',
+          star: 'w-8 h-8 sm:w-9 sm:h-9 -top-6 sm:-top-7',
+          slogan: 'text-sm sm:text-base',
+        };
       case 'md':
       default:
-        return { badge: 'w-9 h-9', height: 28, text: 'text-[10px]', title: 'text-lg sm:text-xl' };
+        return {
+          text: 'text-2xl sm:text-3xl',
+          heart: 'w-4 h-4 sm:w-5 sm:h-5',
+          star: 'w-3.5 h-3.5 sm:w-4 sm:h-4 -top-3.5 sm:-top-4',
+          slogan: 'text-[9px] sm:text-[10px]',
+        };
     }
   };
 
-  const dims = getDims();
+  const dims = getSizes();
 
-  if (variant === 'badge') {
-    return (
-      <div className="flex items-center gap-2 select-none group cursor-pointer">
-        {/* Isotipo Oficial Sin Borde Blanco — Fusión Suave */}
-        <div
-          className={`${dims.badge} rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-300 shrink-0`}
-        >
-          <svg viewBox="0 0 1000 1000" width="100%" height="100%">
-            <defs>
-              <linearGradient id="logoBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#D4AEFA" />
-                <stop offset="100%" stopColor="#E7B8F9" />
-              </linearGradient>
-            </defs>
-
-            <rect width="1000" height="1000" fill="url(#logoBgGrad)" />
-
-            <g transform="translate(0, 15)">
-              {/* Letra "b" */}
-              <path d="M 145 335 L 145 575" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" />
-              <circle cx="208" cy="512" r="65" fill="none" stroke="#FFFFFF" strokeWidth="48" />
-
-              {/* Letra "y" */}
-              <path d="M 332 450 L 385 572" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M 438 450 L 372 615 Q 355 655 322 652" fill="none" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" />
-
-              {/* Corazón Celeste Central #9BE4FF */}
-              <path
-                d="M 490 562 C 490 546, 465 536, 454 550 C 442 565, 452 586, 490 612 C 528 586, 538 565, 526 550 C 515 536, 490 546, 490 562 Z"
-                fill="#9BE4FF"
-              />
-
-              {/* Letra "f" */}
-              <path d="M 628 380 C 600 368, 572 385, 572 425 L 572 575" fill="none" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" />
-              <path d="M 542 455 L 610 455" stroke="#FFFFFF" strokeWidth="46" strokeLinecap="round" />
-
-              {/* Letra "i" */}
-              <path d="M 668 455 L 668 575" stroke="#FFFFFF" strokeWidth="50" strokeLinecap="round" />
-
-              {/* Letra "o" */}
-              <circle cx="798" cy="512" r="65" fill="none" stroke="#FFFFFF" strokeWidth="48" />
-
-              {/* Estrella Amarilla #FFF07C Inclinada 12° */}
-              <g transform="translate(696, 385) rotate(12)">
-                <path
-                  d="M 0 -44 L 12 -14 L 44 -10 L 20 12 L 26 43 L 0 28 L -26 43 L -20 12 L -44 -10 L -12 -14 Z"
-                  fill="#FFF07C"
-                  stroke="#FFF07C"
-                  strokeWidth="10"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                />
-              </g>
-            </g>
-          </svg>
-        </div>
-
-        {/* Solo Nombre Limpio 'by.fio' — Sin slogan invasivo */}
-        <span className={`font-bubble font-bold ${dims.title} text-fio-900 tracking-tight leading-none`}>
-          by.fio
-        </span>
-      </div>
-    );
-  }
-
-  // Versión Vectorial Horizontal Transparente
   return (
     <div className="flex flex-col items-start select-none group cursor-pointer">
-      <svg
-        viewBox="115 320 775 365"
-        style={{ height: dims.height }}
-        className="w-auto drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
-      >
-        <g transform="translate(0, 15)">
-          <path d="M 145 335 L 145 575" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" />
-          <circle cx="208" cy="512" r="65" fill="none" stroke="#6B21A8" strokeWidth="48" />
+      {/* Fila Principal: by + corazón interactivo + fio con estrella */}
+      <div className="flex items-center tracking-tight font-bubble font-bold text-fio-800 leading-none">
+        <span className={`${dims.text} tracking-tight drop-shadow-2xs`}>
+          by
+        </span>
 
-          <path d="M 332 450 L 385 572" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M 438 450 L 372 615 Q 355 655 322 652" fill="none" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" />
+        {/* Corazón celeste interactivo: se agranda al pasar el cursor o al tocarlo */}
+        <button
+          type="button"
+          onClick={handleHeartClick}
+          aria-label="Tocar corazón by.fio"
+          className="inline-flex items-center justify-center mx-1 sm:mx-1.5 focus:outline-none focus:ring-0"
+          title="¡Tócame!"
+        >
+          <span
+            className={`inline-flex items-center justify-center transform transition-transform duration-300 ease-out active:scale-150 ${
+              isPopped ? 'scale-150 rotate-6' : 'group-hover:scale-130'
+            }`}
+          >
+            <svg
+              className={`${dims.heart} text-[#38BDF8] drop-shadow-sm fill-current`}
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </span>
+        </button>
 
-          <path
-            d="M 490 562 C 490 546, 465 536, 454 550 C 442 565, 452 586, 490 612 C 528 586, 538 565, 526 550 C 515 536, 490 546, 490 562 Z"
-            fill="#38BDF8"
-          />
+        <span className={`${dims.text} tracking-tight`}>f</span>
 
-          <path d="M 628 380 C 600 368, 572 385, 572 425 L 572 575" fill="none" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" />
-          <path d="M 542 455 L 610 455" stroke="#6B21A8" strokeWidth="46" strokeLinecap="round" />
+        {/* Letra 'i' sin punto nativo + Estrella Amarilla radiante encima */}
+        <span className="relative inline-block">
+          <span
+            className={`absolute ${dims.star} left-1/2 -translate-x-1/2 text-[#FBBF24] drop-shadow-xs animate-pulse`}
+          >
+            <svg className="w-full h-full fill-current" viewBox="0 0 24 24">
+              <path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.88L12 17.27l-6.18 3.24 1.18-6.88-5-4.87 6.91-1z" />
+            </svg>
+          </span>
+          <span className={`${dims.text} tracking-tight`}>ı</span>
+        </span>
 
-          <path d="M 668 455 L 668 575" stroke="#6B21A8" strokeWidth="50" strokeLinecap="round" />
-          <circle cx="798" cy="512" r="65" fill="none" stroke="#6B21A8" strokeWidth="48" />
+        <span className={`${dims.text} tracking-tight`}>o</span>
+      </div>
 
-          <g transform="translate(696, 385) rotate(12)">
-            <path
-              d="M 0 -44 L 12 -14 L 44 -10 L 20 12 L 26 43 L 0 28 L -26 43 L -20 12 L -44 -10 L -12 -14 Z"
-              fill="#FACC15"
-              stroke="#FACC15"
-              strokeWidth="10"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-          </g>
-        </g>
-      </svg>
+      {/* Slogan Oficial: TALLERES CREATIVOS & TIENDA */}
       {showSlogan && (
-        <span className={`${dims.text} font-bold text-fio-pink tracking-wider uppercase mt-1`}>
+        <span
+          className={`${dims.slogan} font-bold tracking-wider uppercase text-purple-600/90 mt-0.5 leading-tight select-none`}
+        >
           Talleres Creativos & Tienda
         </span>
       )}
