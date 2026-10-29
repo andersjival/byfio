@@ -17,6 +17,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.21.0 - Catálogo Online Oficial (`/catalogo`): Vista en Lista Editorial, Banner Fotográfico, Categorías con Botones y Selector, Edición de Precios y Generación Inmediata de Pedidos
+- [x] **Nueva Página de Catálogo Online ([`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Enrutamiento independiente en `/catalogo` y enlace directo en la barra superior de navegación ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)).
+  - Banner fotográfico panorámico en grande con ambientación visual by.fio, métricas de productos y descripción detallada del catálogo para clientes mayoristas e individuales.
+  - Enlaces de 1-clic para compartir: `[🔗 Copiar Link del Catálogo]` y `[📲 Compartir por WhatsApp]`.
+- [x] **Sección Especial de Categorías con Botones, Selector y Buscador:**
+  - Botones (pills) interactivos por categoría con contador dinámico de artículos.
+  - Selector desplegable (`<select>`) para filtrado veloz en celulares y filtro para productos personalizables.
+  - Buscador reactivo por nombre, código SKU o palabras clave de la descripción.
+- [x] **Presentación de Productos en Formato Lista Editorial:**
+  - Filas de catálogo con fotografía amplia (`w-52`), chips de categoría, título, código SKU y descripción completa visible.
+  - Controles de cantidad táctiles `[-] 1 [+]`, cálculo en tiempo real del precio total (`formatCRC`), campo opcional de personalización de texto y botón `[🛒 Agregar al Pedido]`.
+  - Botón directo `[⚡ Pedir por WhatsApp]` para generar el mensaje de orden listo para enviar a Fio con comprobante SINPE Móvil al 6400-4640.
+  - Botón `[✏️ Editar Artículo]` en cada producto para que el administrador pueda modificar precios, fotos o descripciones en caliente con guardado permanente.
+- [x] **Acceso en Panel de Administración ([`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Módulo integrado para copiar el enlace del catálogo online o abrirlo en vivo directamente desde el Hub administrativo.
+
 ### Versión 1.20.0 - Restitución del Logotipo Oficial con Estrella, Corazón Interactivo que se Agranda al Tocar y Slogan
 - [x] **Logotipo Tipográfico Oficial Restituido ([`BrandLogo.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BrandLogo.tsx)):**
   - Reemplazado el isotipo en caja cuadrada por el logo original tipográfico oficial: letras moradas `by` y `fio` (`font-bubble font-bold text-fio-800`), corazón celeste `#38BDF8` en el centro y estrellita amarilla brillante `#FBBF24` posicionada sobre la `i`.

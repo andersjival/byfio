@@ -8,6 +8,7 @@ import { TreeNavigation } from './components/common/TreeNavigation';
 import { FloatingMascot } from './components/common/FloatingMascot';
 import { HomePage } from './components/store/HomePage';
 import { StorePage } from './components/store/StorePage';
+import { CatalogPage } from './components/store/CatalogPage';
 import { WorkshopsPage } from './components/store/WorkshopsPage';
 import { WorkshopDetailPage } from './components/store/WorkshopDetailPage';
 import { CartDrawer } from './components/store/CartDrawer';
@@ -61,6 +62,7 @@ const parseRouteFromLocation = (): RouteInfo => {
   }
 
   // Rutas públicas
+  if (path.includes('/catalogo') || hash.includes('catalogo')) return { route: 'catalogo', adminTab: 'hub' };
   if (path.includes('/tienda') || hash.includes('tienda')) return { route: 'store', adminTab: 'hub' };
 
   // Subruta de taller individual: /talleres/:id o /taller/:id o ?taller=:id
@@ -103,7 +105,8 @@ export const App: React.FC = () => {
     setSelectedWorkshopId(wsId);
 
     let targetPath = '/';
-    if (newRoute === 'store') targetPath = '/tienda';
+    if (newRoute === 'catalogo') targetPath = '/catalogo';
+    else if (newRoute === 'store') targetPath = '/tienda';
     else if (newRoute === 'workshops') targetPath = '/talleres';
     else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
     else if (newRoute === 'admin') {
@@ -178,6 +181,8 @@ export const App: React.FC = () => {
           {currentRoute === 'home' && <HomePage onNavigate={navigate} />}
 
           {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
+
+          {currentRoute === 'catalogo' && <CatalogPage onNavigate={navigate} />}
 
           {currentRoute === 'workshops' && <WorkshopsPage onNavigate={navigate} />}
 

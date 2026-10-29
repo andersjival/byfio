@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
-  ChevronRight, Sparkles
+  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink
 } from 'lucide-react';
 
 interface AdminHubMenuProps {
@@ -12,6 +12,15 @@ interface AdminHubMenuProps {
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
   const { orders, products, workshops } = useApp();
+  const [copiedCatalog, setCopiedCatalog] = useState(false);
+
+  const copyCatalogLink = () => {
+    const link = `${window.location.origin}/catalogo`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedCatalog(true);
+      setTimeout(() => setCopiedCatalog(false), 2000);
+    });
+  };
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
@@ -112,6 +121,54 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
             </button>
           );
         })}
+      </div>
+
+      {/* Acceso y Enlace Compartible del Catálogo Online */}
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/70 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
+            <BookOpen className="w-4 h-4" />
+          </div>
+          <div>
+            <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900">
+              Catálogo Comercial Online (Vista en Lista &amp; Pedidos)
+            </h4>
+            <p className="text-[11px] text-slate-500 font-sans">
+              Comparte el enlace oficial con clientes mayoristas o en redes para que ordenen directo por WhatsApp y SINPE.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={copyCatalogLink}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
+            title="Copiar link directo del catálogo online"
+          >
+            {copiedCatalog ? (
+              <>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>¡Copiado!</span>
+              </>
+            ) : (
+              <>
+                <Link2 className="w-3.5 h-3.5 text-fio-pink" />
+                <span>Copiar Link Catálogo</span>
+              </>
+            )}
+          </button>
+
+          <a
+            href="/catalogo"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-xs active:scale-95 transition-all"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
+            <span>Ver Catálogo</span>
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -72,6 +72,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             >
               Tienda
             </button>
+
+            <button
+              type="button"
+              onClick={() => handleNav('catalogo')}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+                currentRoute === 'catalogo'
+                  ? 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+              }`}
+            >
+              Catálogo
+            </button>
           </nav>
         ) : (
           <nav className="hidden md:flex items-center gap-1 p-0.5 rounded-xl bg-white/75 backdrop-blur-sm border border-white/80 shadow-[inset_1px_1px_2px_rgba(160,140,190,0.06)]">
@@ -199,6 +211,15 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             }`}
           >
             Tienda
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNav('catalogo')}
+            className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+              currentRoute === 'catalogo' ? 'bg-fio-800 text-white' : 'text-slate-700 hover:bg-white/80'
+            }`}
+          >
+            Catálogo Online
           </button>
 
           <div className="pt-2 border-t border-slate-200/40 flex items-center gap-3 px-2">
