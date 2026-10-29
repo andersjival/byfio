@@ -24,21 +24,24 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         return {
           text: 'text-xl sm:text-2xl',
           heart: 'w-3.5 h-3.5 sm:w-4 sm:h-4',
-          star: 'w-3 h-3 sm:w-3.5 sm:h-3.5 -top-2.5 sm:-top-3',
+          star: 'w-3 h-3 sm:w-3.5 sm:h-3.5',
+          iStem: 'w-1.5 sm:w-2 h-3.5 sm:h-4',
           slogan: 'text-[8px] sm:text-[9.5px]',
         };
       case 'lg':
         return {
           text: 'text-3xl sm:text-4xl',
           heart: 'w-6 h-6',
-          star: 'w-5 h-5 -top-4 sm:-top-5',
+          star: 'w-5 h-5',
+          iStem: 'w-2.5 sm:w-3 h-5 sm:h-6',
           slogan: 'text-xs sm:text-sm',
         };
       case 'hero':
         return {
           text: 'text-5xl sm:text-6xl',
           heart: 'w-9 h-9 sm:w-11 sm:h-11',
-          star: 'w-8 h-8 sm:w-9 sm:h-9 -top-6 sm:-top-7',
+          star: 'w-8 h-8 sm:w-9 sm:h-9',
+          iStem: 'w-4 sm:w-5 h-8 sm:h-10',
           slogan: 'text-sm sm:text-base',
         };
       case 'md':
@@ -46,7 +49,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         return {
           text: 'text-2xl sm:text-3xl',
           heart: 'w-4 h-4 sm:w-5 sm:h-5',
-          star: 'w-3.5 h-3.5 sm:w-4 sm:h-4 -top-3.5 sm:-top-4',
+          star: 'w-3.5 h-3.5 sm:w-4 sm:h-4',
+          iStem: 'w-2 sm:w-2.5 h-4 sm:h-4.5',
           slogan: 'text-[9px] sm:text-[10px]',
         };
     }
@@ -55,9 +59,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const dims = getSizes();
 
   return (
-    <div className="flex flex-col items-start select-none group cursor-pointer">
+    <div className="flex flex-col items-start select-none group cursor-pointer pt-0.5">
       {/* Fila Principal: by + corazón interactivo + fio con estrella */}
-      <div className="flex items-center tracking-tight font-bubble font-bold text-fio-800 leading-none">
+      <div className="flex items-baseline tracking-tight font-bubble font-bold text-fio-800 leading-none">
         <span className={`${dims.text} tracking-tight drop-shadow-2xs`}>
           by
         </span>
@@ -67,7 +71,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           type="button"
           onClick={handleHeartClick}
           aria-label="Tocar corazón by.fio"
-          className="inline-flex items-center justify-center mx-1 sm:mx-1.5 focus:outline-none focus:ring-0"
+          className="inline-flex items-center justify-center self-center mx-1 sm:mx-1.5 focus:outline-none focus:ring-0 active:scale-125"
           title="¡Tócame!"
         >
           <span
@@ -86,16 +90,20 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
         <span className={`${dims.text} tracking-tight`}>f</span>
 
-        {/* Letra 'i' sin punto nativo + Estrella Amarilla radiante encima */}
-        <span className="relative inline-block">
+        {/* Letra 'i' con la Estrella Amarilla como punto integrado (pegadita a la letra, sin salirse ni desbordarse) */}
+        <span
+          className="inline-flex flex-col items-center justify-end self-baseline mx-0.5"
+          style={{ verticalAlign: 'baseline' }}
+        >
           <span
-            className={`absolute ${dims.star} left-1/2 -translate-x-1/2 text-[#FBBF24] drop-shadow-xs animate-pulse`}
+            className="text-[#FBBF24] drop-shadow-2xs animate-pulse"
+            style={{ marginBottom: '1.5px', lineHeight: 0 }}
           >
-            <svg className="w-full h-full fill-current" viewBox="0 0 24 24">
+            <svg className={`${dims.star} fill-current`} viewBox="0 0 24 24">
               <path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.88L12 17.27l-6.18 3.24 1.18-6.88-5-4.87 6.91-1z" />
             </svg>
           </span>
-          <span className={`${dims.text} tracking-tight`}>ı</span>
+          <span className={`${dims.iStem} rounded-full bg-fio-800`} />
         </span>
 
         <span className={`${dims.text} tracking-tight`}>o</span>
