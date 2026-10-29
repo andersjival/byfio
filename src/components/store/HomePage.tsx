@@ -46,10 +46,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => onNavigate('workshops')}
-            className="flex items-center gap-1.5 text-xs font-semibold text-fio-800 hover:text-fio-600 group self-start sm:self-auto"
+            className="neu-btn bg-[#F1F2F6] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover flex items-center gap-1.5 self-start sm:self-auto transition-all active:scale-95"
           >
             <span>Ver todos los talleres ({workshops.length})</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-fio-800" />
           </button>
         </div>
 
@@ -114,10 +114,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => onNavigate('store')}
-            className="flex items-center gap-1.5 text-xs font-semibold text-fio-800 hover:text-fio-600 group self-start sm:self-auto"
+            className="neu-btn bg-[#F1F2F6] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover flex items-center gap-1.5 self-start sm:self-auto transition-all active:scale-95"
           >
             <span>Explorar toda la tienda ({products.length})</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-fio-800" />
           </button>
         </div>
 

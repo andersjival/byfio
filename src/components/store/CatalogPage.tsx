@@ -183,37 +183,37 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* =========================================================================
-          SECCIÓN DE CATEGORÍAS CON BOTONES, SELECTOR Y BUSCADOR
+          SECCIÓN DE CATEGORÍAS CON BOTONES, SELECTOR Y BUSCADOR (NEUMÓRFICO TÁCTIL)
           ========================================================================= */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-white/80 backdrop-blur-md border border-white/90 shadow-sm space-y-3">
+      <div className="p-4 sm:p-5 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <BlueHeart className="w-4 h-4" />
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-fio-800">
+              <span className="text-[10px] font-bubble font-bold uppercase tracking-wider text-fio-800">
                 Categorías del Catálogo
               </span>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 font-sans">
                 Selecciona una categoría o busca por nombre o código.
               </p>
             </div>
           </div>
 
-          {/* Buscador */}
+          {/* Buscador Neumórfico Rehundido */}
           <div className="relative w-full md:w-64">
             <input
               type="text"
               placeholder="Buscar producto o SKU..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 hover:bg-white focus:bg-white rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-fio-400 focus:outline-none transition-all shadow-2xs"
+              className="w-full pl-9 pr-4 py-2.5 bg-[#ECEEF2] rounded-2xl border border-white/60 text-xs text-slate-800 placeholder-slate-400 shadow-neuInset focus:outline-none transition-all"
             />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
           </div>
         </div>
 
-        {/* Botones de Categorías */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        {/* Botones de Categorías Neumórficos */}
+        <div className="flex flex-wrap items-center gap-2">
           {categories.map((cat) => {
             const count = cat === 'Todas' ? products.length : products.filter((p) => p.category === cat).length;
             const isSelected = selectedCategory === cat;
@@ -223,16 +223,16 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 rounded-2xl text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center gap-1.5 active:scale-95 ${
                   isSelected
-                    ? 'bg-fio-800 text-white shadow-clayBtn scale-[1.02]'
-                    : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/80 shadow-2xs'
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
                 }`}
               >
                 <span>{cat}</span>
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                    isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                    isSelected ? 'bg-white/20 text-white' : 'bg-white text-slate-600 shadow-neuBtn'
                   }`}
                 >
                   {count}

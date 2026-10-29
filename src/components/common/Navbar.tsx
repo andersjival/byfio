@@ -34,16 +34,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
           <BrandLogo size="sm" showSlogan={true} />
         </button>
 
-        {/* Links de Navegación de Páginas Independientes (50% más delgado) */}
+        {/* Links de Navegación de Páginas Principales con Estilo Neumórfico Táctil */}
         {currentRoute !== 'admin' ? (
-          <nav className="hidden md:flex items-center gap-1 p-0.5 rounded-xl bg-white/75 backdrop-blur-sm border border-white/80 shadow-[inset_1px_1px_2px_rgba(160,140,190,0.06)]">
+          <nav className="hidden md:flex items-center gap-2 p-1.5 rounded-2xl bg-[#ECEEF2] shadow-neuInset border border-white/60">
             <button
               type="button"
               onClick={() => handleNav('home')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'home'
-                  ? 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Inicio
@@ -52,10 +52,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             <button
               type="button"
               onClick={() => handleNav('workshops')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'workshops' || currentRoute === 'workshop-detail'
-                  ? 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Talleres
@@ -64,10 +64,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             <button
               type="button"
               onClick={() => handleNav('store')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'store'
-                  ? 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Tienda
@@ -76,23 +76,23 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             <button
               type="button"
               onClick={() => handleNav('catalogo')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'catalogo'
-                  ? 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Catálogo
             </button>
           </nav>
         ) : (
-          <nav className="hidden md:flex items-center gap-1 p-0.5 rounded-xl bg-white/75 backdrop-blur-sm border border-white/80 shadow-[inset_1px_1px_2px_rgba(160,140,190,0.06)]">
+          <nav className="hidden md:flex items-center gap-2 p-1.5 rounded-2xl bg-[#ECEEF2] shadow-neuInset border border-white/60">
             <button
               type="button"
               onClick={() => handleNav('home')}
-              className="px-3 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/80 transition-all flex items-center gap-1.5"
+              className="neu-btn bg-[#F1F2F6] px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all flex items-center gap-1.5"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-fio-pink" />
+              <ArrowLeft className="w-4 h-4 text-fio-pink" />
               <span>Ver Tienda / Web</span>
             </button>
           </nav>
@@ -136,18 +136,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             <span>6400-4640</span>
           </a>
 
-          {/* Botón Carrito de Compras Compacto */}
+          {/* Botón Carrito de Compras Neumórfico */}
           {currentRoute !== 'admin' && (
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
               aria-label="Abrir Carrito"
-              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] hover:from-[#C084FC] hover:to-[#A855F7] text-white font-semibold text-xs shadow-xs active:scale-95 transition-all"
+              className="relative flex items-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
             >
-              <ShoppingBag className="w-3.5 h-3.5" />
+              <ShoppingBag className="w-4 h-4 text-white" />
               <span className="hidden sm:inline">Carrito</span>
               {totalCartCount > 0 && (
-                <span className="flex items-center justify-center min-w-[18px] h-4 px-1 bg-fio-pink text-white rounded-full text-[10px] font-bold ring-1.5 ring-white">
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1 bg-fio-pink text-white rounded-full text-[10px] font-bold ring-2 ring-white">
                   {totalCartCount}
                 </span>
               )}
@@ -159,9 +159,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             <button
               type="button"
               onClick={() => handleNav('home')}
-              className="flex items-center gap-1 px-3 py-1 rounded-xl bg-white/90 hover:bg-white text-slate-700 text-xs font-semibold border border-white/80 shadow-xs transition-all"
+              className="neu-btn bg-[#F1F2F6] flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-700 text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all active:scale-95"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
+              <ArrowLeft className="w-4 h-4 text-fio-pink" />
               <span>Volver a Tienda</span>
             </button>
           )}
@@ -171,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-1.5 rounded-xl bg-white/80 border border-white/80 text-slate-700 hover:bg-white"
+              className="md:hidden p-2 rounded-xl neu-btn bg-[#F1F2F6] border border-white/80 text-slate-700 shadow-neuBtn active:scale-95 transition-all"
               aria-label="Abrir menú"
             >
               {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -182,12 +182,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
 
       {/* Menú Desplegable en Móvil */}
       {mobileOpen && currentRoute !== 'admin' && (
-        <nav className="md:hidden border-t border-slate-200/40 bg-[#FAF7F2]/95 backdrop-blur-md px-4 py-2.5 space-y-1 animate-fadeIn">
+        <nav className="md:hidden border-t border-slate-200/40 bg-[#FAF7F2]/95 backdrop-blur-md px-4 py-3 space-y-2 animate-fadeIn">
           <button
             type="button"
             onClick={() => handleNav('home')}
-            className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-              currentRoute === 'home' ? 'bg-fio-800 text-white' : 'text-slate-700 hover:bg-white/80'
+            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
+              currentRoute === 'home'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
             }`}
           >
             Inicio
@@ -195,10 +197,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
           <button
             type="button"
             onClick={() => handleNav('workshops')}
-            className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
               currentRoute === 'workshops' || currentRoute === 'workshop-detail'
-                ? 'bg-fio-800 text-white'
-                : 'text-slate-700 hover:bg-white/80'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
             }`}
           >
             Talleres
@@ -206,8 +208,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
           <button
             type="button"
             onClick={() => handleNav('store')}
-            className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-              currentRoute === 'store' ? 'bg-fio-800 text-white' : 'text-slate-700 hover:bg-white/80'
+            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
+              currentRoute === 'store'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
             }`}
           >
             Tienda
@@ -215,8 +219,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
           <button
             type="button"
             onClick={() => handleNav('catalogo')}
-            className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-              currentRoute === 'catalogo' ? 'bg-fio-800 text-white' : 'text-slate-700 hover:bg-white/80'
+            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
+              currentRoute === 'catalogo'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
             }`}
           >
             Catálogo Online

@@ -187,9 +187,9 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
             LADO IZQUIERDO: FOTO, DETALLES Y DESCRIPCIÓN DEL TALLER
             ========================================================= */}
         <div className="lg:col-span-7 space-y-6">
-          {/* Tarjeta de Foto Principal */}
-          <div className="relative rounded-[32px] overflow-hidden bg-[#FDFBF9] border border-white/90 shadow-[10px_14px_28px_rgba(180,160,200,0.1),-8px_-8px_20px_rgba(255,255,255,0.95)]">
-            <div className="relative h-72 sm:h-96 w-full overflow-hidden bg-[#F2EDE7]">
+          {/* Tarjeta de Foto Principal Neumórfica */}
+          <div className="relative rounded-[32px] overflow-hidden bg-[#F1F2F6] border border-white/90 shadow-neuCard">
+            <div className="relative h-72 sm:h-96 w-full overflow-hidden bg-[#ECEEF2] shadow-neuInset">
               <img
                 src={workshop.image}
                 alt={workshop.title}
@@ -197,12 +197,12 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
               />
               {/* Badges Flotantes sobre la Imagen */}
               <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-xs font-bold text-slate-800 shadow-sm border border-white/80 flex items-center gap-1.5">
+                <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-xs font-bubble font-bold text-slate-800 shadow-neuBtn border border-white/80 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow" />
                   {workshop.modality}
                 </span>
                 <span
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bubble font-bold shadow-neuBtn ${
                     isFull
                       ? 'bg-red-500 text-white'
                       : 'bg-fio-pink text-white'
@@ -214,56 +214,56 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
             </div>
 
             {/* Fila de Datos Clave (Fecha, Horario, Lugar) */}
-            <div className="p-6 bg-white/90 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4 text-xs sm:text-sm text-slate-600">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-purple-50 text-fio-800 flex items-center justify-center shrink-0">
+            <div className="p-6 bg-[#F1F2F6] border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-4 text-xs sm:text-sm text-slate-600">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl neu-btn-circle bg-white text-fio-800 shadow-neuBtn shrink-0">
                   <Calendar className="w-4 h-4 text-fio-700" />
                 </div>
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Fecha</p>
-                  <p className="font-semibold text-slate-800">{workshop.date}</p>
+                  <p className="font-bubble font-bold text-slate-800">{workshop.date}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-purple-50 text-fio-800 flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl neu-btn-circle bg-white text-fio-800 shadow-neuBtn shrink-0">
                   <Clock className="w-4 h-4 text-fio-700" />
                 </div>
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Horario</p>
-                  <p className="font-semibold text-slate-800">{workshop.schedule}</p>
+                  <p className="font-bubble font-bold text-slate-800">{workshop.schedule}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-purple-50 text-fio-800 flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl neu-btn-circle bg-white text-fio-800 shadow-neuBtn shrink-0">
                   <MapPin className="w-4 h-4 text-fio-700" />
                 </div>
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Lugar</p>
-                  <p className="font-semibold text-slate-800">{workshop.location}</p>
+                  <p className="font-bubble font-bold text-slate-800">{workshop.location}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bloque Editorial: Título y Descripción Detallada */}
-          <div className="bg-[#FDFBF9] rounded-[32px] p-6 sm:p-8 border border-white/90 shadow-[10px_14px_28px_rgba(180,160,200,0.08),-8px_-8px_20px_rgba(255,255,255,0.95)] space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF5FF] border border-fio-200/60 text-fio-800 text-[11px] font-semibold tracking-wider uppercase">
+          <div className="bg-[#F1F2F6] rounded-[32px] p-6 sm:p-8 border border-white/90 shadow-neuCard space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-white/90 text-fio-800 text-[11px] font-bubble font-bold tracking-wider uppercase shadow-neuBtn">
               <Sparkle className="w-3 h-3 text-fio-pink" />
               <span>Academia de Arte y Creación</span>
             </div>
 
-            <h1 className="font-serif text-2xl sm:text-4xl text-slate-800 font-semibold leading-tight">
+            <h1 className="font-bubble text-2xl sm:text-4xl text-slate-900 font-bold leading-tight">
               {workshop.title}
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed font-sans">
               {workshop.subtitle}
             </p>
 
-            <div className="pt-2 border-t border-slate-200/50 space-y-3 text-sm text-slate-600 leading-relaxed font-sans">
-              <p className="font-semibold text-slate-800">
+            <div className="pt-2 border-t border-slate-200/60 space-y-3 text-sm text-slate-600 leading-relaxed font-sans">
+              <p className="font-bold text-slate-800">
                 ¿De qué trata esta experiencia?
               </p>
               <p>
@@ -276,15 +276,15 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
             </div>
 
             {/* Sello de Acompañamiento Fio */}
-            <div className="pt-4 flex items-center gap-3.5 p-4 rounded-2xl bg-[#FAF5FF]/70 border border-fio-200/60">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-fio-pink to-[#D4AEFA] flex items-center justify-center text-white shrink-0 shadow-xs">
-                <Heart className="w-5 h-5 fill-white" />
+            <div className="pt-4 flex items-center gap-3.5 p-4 rounded-2xl bg-[#ECEEF2] border border-white/70 shadow-neuInset">
+              <div className="w-10 h-10 rounded-2xl neu-btn-circle bg-white text-fio-pink shadow-neuBtn shrink-0">
+                <Heart className="w-5 h-5 fill-fio-pink text-fio-pink" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-800">
+                <p className="text-xs font-bubble font-bold text-slate-900">
                   Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)
                 </p>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-slate-500 font-sans">
                   Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.
                 </p>
               </div>
@@ -297,13 +297,13 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
             ========================================================= */}
         <div className="lg:col-span-5 space-y-6">
           {/* Caja 1: Materiales y Todo lo que Incluye */}
-          <div className="bg-[#FDFBF9] rounded-[32px] p-6 border border-white/90 shadow-[10px_14px_28px_rgba(180,160,200,0.08),-8px_-8px_20px_rgba(255,255,255,0.95)] space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
-              <h2 className="font-serif text-lg text-slate-800 font-semibold flex items-center gap-2">
+          <div className="bg-[#F1F2F6] rounded-[32px] p-6 border border-white/90 shadow-neuCard space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
+              <h2 className="font-bubble text-lg text-slate-900 font-bold flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-fio-pink" />
                 Materiales y Todo lo que Incluye
               </h2>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bubble font-bold uppercase tracking-wider text-emerald-700 bg-white shadow-neuBtn px-2.5 py-0.5 rounded-full border border-white/80">
                 Todo cubierto
               </span>
             </div>
@@ -311,7 +311,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
             <ul className="space-y-2.5">
               {workshop.includes.map((inc, idx) => (
                 <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
-                  <div className="w-5 h-5 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-5 h-5 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
                     <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                   </div>
                   <span className="leading-snug">{inc}</span>
@@ -320,7 +320,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
             </ul>
 
             {/* Destacados Adicionales */}
-            <div className="pt-3 border-t border-slate-200/40 space-y-2 text-xs text-slate-500">
+            <div className="pt-3 border-t border-slate-200/60 space-y-2 text-xs text-slate-500">
               <div className="flex items-center gap-2 text-slate-600">
                 <Coffee className="w-4 h-4 text-amber-500 shrink-0" />
                 <span>Coffee break artesanal con repostería dulce y bebidas.</span>
@@ -337,19 +337,19 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
           </div>
 
           {/* Caja 2: Inversión, Reserva e Inscripción / Pago con SINPE */}
-          <div className="bg-[#FDFBF9] rounded-[32px] p-6 border border-white/90 shadow-[12px_16px_32px_rgba(180,160,200,0.12),-8px_-8px_20px_rgba(255,255,255,0.95)] space-y-5">
+          <div className="bg-[#F1F2F6] rounded-[32px] p-6 border border-white/90 shadow-neuCard space-y-5">
             {/* Encabezado de Inversión */}
-            <div className="flex items-baseline justify-between gap-2 pb-3 border-b border-slate-200/50">
+            <div className="flex items-baseline justify-between gap-2 pb-3 border-b border-slate-200/60">
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
                   Inversión por participante
                 </span>
-                <p className="font-serif text-3xl font-bold text-slate-900">
+                <p className="font-bubble text-3xl font-bold text-slate-900">
                   {formatCRC(workshop.price)}
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-xs font-semibold text-slate-500 flex items-center gap-1 justify-end">
+                <span className="text-xs font-bubble font-bold text-slate-700 flex items-center gap-1 justify-end">
                   <Users className="w-3.5 h-3.5 text-fio-pink" />
                   {workshop.spotsAvailable} disponibles
                 </span>
@@ -384,7 +384,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
               <form onSubmit={handleConfirmReservation} className="space-y-4">
                 {/* Selector de Cantidad de Cupos */}
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1.5">
+                  <label className="text-[11px] font-bubble font-bold uppercase tracking-wider text-slate-500 block mb-1.5">
                     ¿Cuántos cupos deseas reservar?
                   </label>
                   <div className="flex items-center gap-2">
@@ -393,10 +393,10 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                         key={n}
                         type="button"
                         onClick={() => setQuantity(n)}
-                        className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
+                        className={`flex-1 py-2.5 rounded-xl text-xs font-bubble font-bold transition-all ${
                           quantity === n
-                            ? 'bg-fio-800 text-white border-fio-800 shadow-sm'
-                            : 'bg-white/80 text-slate-700 border-slate-200 hover:bg-white'
+                            ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                            : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
                         }`}
                       >
                         {n} {n === 1 ? 'cupo' : 'cupos'}
@@ -404,16 +404,16 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                     ))}
                   </div>
                   {quantity > 1 && (
-                    <p className="text-xs font-semibold text-fio-800 mt-1.5 text-right">
+                    <p className="text-xs font-bubble font-bold text-fio-800 mt-1.5 text-right">
                       Total a pagar: {formatCRC(totalPrice)}
                     </p>
                   )}
                 </div>
 
-                {/* Campos de Contacto */}
+                {/* Campos de Contacto Neumórficos */}
                 <div className="space-y-3">
                   <div>
-                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                    <label className="text-[11px] font-bubble font-bold text-slate-700 block mb-1">
                       Nombre y Apellido <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -422,12 +422,12 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                       placeholder="Ej. Carolina Vargas"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-fio-300"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#ECEEF2] border border-white/60 shadow-neuInset text-xs text-slate-800 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                    <label className="text-[11px] font-bubble font-bold text-slate-700 block mb-1">
                       Teléfono / WhatsApp <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -436,12 +436,12 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                       placeholder="Ej. 8888-8888"
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-fio-300"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#ECEEF2] border border-white/60 shadow-neuInset text-xs text-slate-800 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-600 block mb-1">
+                    <label className="text-[11px] font-bubble font-bold text-slate-600 block mb-1">
                       Correo Electrónico (opcional)
                     </label>
                     <input
@@ -449,12 +449,12 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                       placeholder="tu@correo.com"
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-fio-300"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#ECEEF2] border border-white/60 shadow-neuInset text-xs text-slate-800 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-slate-600 block mb-1">
+                    <label className="text-[11px] font-bubble font-bold text-slate-600 block mb-1">
                       Notas especiales o acompañantes (opcional)
                     </label>
                     <input
@@ -462,13 +462,13 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                       placeholder="Ej: Voy con una amiga / Requiero factura"
                       value={customerNotes}
                       onChange={(e) => setCustomerNotes(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-fio-300"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#ECEEF2] border border-white/60 shadow-neuInset text-xs text-slate-800 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 {formError && (
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 text-xs">
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 text-xs font-semibold">
                     <AlertCircle className="w-4 h-4 shrink-0" />
                     <span>{formError}</span>
                   </div>
@@ -477,10 +477,10 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                 {/* Caja de Datos SINPE Móvil y Cuentas Bancarias Oficiales */}
                 <PaymentAccountsCard amount={totalPrice} compact />
 
-                {/* Botón Principal: Confirmar Reserva y Enviar Comprobante */}
+                {/* Botón Principal: Confirmar Reserva y Enviar Comprobante (Neumórfico Grande) */}
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md hover:shadow-lg active:scale-98 transition-all"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl text-xs sm:text-sm font-bubble font-bold text-white neu-btn-primary shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Confirmar e Inscribirme con SINPE</span>
@@ -490,9 +490,9 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs font-semibold text-slate-700 bg-white/80 hover:bg-white border border-slate-200 shadow-xs active:scale-98 transition-all"
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs font-bubble font-bold text-slate-700 neu-btn bg-[#F1F2F6] border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
                 >
-                  <ShoppingBag className="w-3.5 h-3.5 text-fio-pink" />
+                  <ShoppingBag className="w-4 h-4 text-fio-pink" />
                   <span>{addedToCartToast ? '¡Agregado al Carrito!' : 'O agregar al Carrito de la Web'}</span>
                 </button>
 

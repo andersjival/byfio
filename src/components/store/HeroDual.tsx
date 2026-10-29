@@ -61,11 +61,11 @@ export const HeroDual: React.FC<HeroDualProps> = ({
         </p>
 
         {/* Botones Duales con Estilo Neumórfico Táctil */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto pt-2 pb-2">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto pt-2 pb-2">
           <button
             type="button"
             onClick={onScrollToWorkshops}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-sm shadow-neuBtnHover active:scale-95 transition-all"
+            className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 sm:px-9 sm:py-4.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-base sm:text-lg shadow-neuBtnHover active:scale-95 transition-all"
           >
             <Calendar className="w-5 h-5 text-[#FFF07C]" />
             <span>Ver Talleres Creativos</span>
@@ -74,7 +74,7 @@ export const HeroDual: React.FC<HeroDualProps> = ({
           <button
             type="button"
             onClick={onScrollToProducts}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl neu-btn bg-[#F1F2F6] text-slate-800 border border-white/90 font-bubble font-bold text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
+            className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 sm:px-9 sm:py-4.5 rounded-2xl neu-btn bg-[#F1F2F6] text-slate-800 border border-white/90 font-bubble font-bold text-base sm:text-lg shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
           >
             <ShoppingBag className="w-5 h-5 text-amber-500" />
             <span>Ir a la Tienda &amp; Insumos</span>

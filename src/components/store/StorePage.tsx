@@ -81,29 +81,29 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
 
   return (
     <div className="py-2 sm:py-4 max-w-7xl mx-auto space-y-6 animate-fadeIn">
-      {/* Encabezado Editorial Estilo SLOW / SPACE con Árbol Integrado sobre el Cuadro Difuminado */}
-      <div className="relative text-center py-6 px-6 rounded-[36px] bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_12px_30px_rgba(180,160,200,0.08)] overflow-hidden">
+      {/* Encabezado Editorial Estilo Neumorphic Soft UI con Árbol Integrado */}
+      <div className="relative text-center py-6 sm:py-8 px-6 rounded-[36px] bg-[#F1F2F6] border border-white/90 shadow-neuCard overflow-hidden">
         {/* Glows interiores */}
         <div className="absolute top-0 right-1/4 w-64 h-64 bg-[#D4AEFA]/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-[#FFF07C]/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 max-w-2xl mx-auto space-y-3">
-          {/* Árbol de Navegación Compacto Directo Dentro del Cuadro Difuminado (Cero Espacio Perdido) */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200/40">
+          {/* Árbol de Navegación Compacto Directo Dentro del Cuadro Neumórfico */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200/60">
             <TreeNavigation nodes={breadcrumbs} onNavigate={onNavigate} />
-            <div className="flex items-center justify-center sm:justify-end gap-1.5 text-[11px] text-slate-500 font-sans tracking-wide">
+            <div className="flex items-center justify-center sm:justify-end gap-1.5 text-[11px] text-slate-500 font-sans tracking-wide bg-[#ECEEF2] px-2.5 py-1 rounded-xl shadow-neuInset border border-white/60">
               <Flower2 className="w-3.5 h-3.5 text-fio-500" />
               <span>{filteredProducts.length} artículo{filteredProducts.length !== 1 ? 's' : ''} disponibles</span>
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF5FF] border border-fio-200/60 text-fio-800 text-[11px] font-semibold tracking-widest uppercase">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-white/90 text-fio-800 text-[11px] font-bubble font-bold tracking-widest uppercase shadow-neuBtn">
             <Sparkles className="w-3 h-3 text-fio-pink" />
             <span>Tienda Online &amp; Personalizados</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-slate-800 tracking-[0.18em] uppercase font-normal">
-            TIENDA / CREATIVA
+          <h1 className="font-bubble text-3xl sm:text-5xl lg:text-6xl text-slate-900 tracking-tight font-bold">
+            TIENDA CREATIVA
           </h1>
 
           <p className="font-sans text-xs sm:text-sm text-slate-500 uppercase tracking-[0.25em] font-medium max-w-lg mx-auto">
@@ -116,10 +116,10 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Barra de Filtros Estilo Zen (Cajitas Suaves) */}
-      <div className="p-4 sm:p-5 rounded-[28px] bg-white/75 backdrop-blur-md border border-white/90 shadow-[0_10px_25px_rgba(180,160,200,0.07)] flex flex-col lg:flex-row items-center justify-between gap-4">
-        {/* Categorías como Pastillas Suaves Rehundidas / Resaltadas */}
-        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 w-full lg:w-auto">
+      {/* Barra de Filtros Neumórfica (Cajas y Botones Táctiles) */}
+      <div className="p-4 sm:p-5 rounded-[28px] bg-[#F1F2F6] border border-white/90 shadow-neuCard flex flex-col lg:flex-row items-center justify-between gap-4">
+        {/* Categorías como Botones Neumórficos Grandes y Táctiles */}
+        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 w-full lg:w-auto">
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat;
             return (
@@ -127,10 +127,10 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-2xl text-xs font-semibold tracking-wide transition-all duration-300 ${
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bubble font-bold tracking-wide transition-all duration-200 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] text-white shadow-[0_6px_16px_rgba(192,132,252,0.35),inset_0_1px_2px_rgba(255,255,255,0.7)] scale-[1.03]'
-                    : 'bg-[#F5F1EB] text-slate-600 hover:text-slate-900 hover:bg-[#EFEAE2] shadow-[inset_1px_1px_2px_rgba(160,140,190,0.1),inset_-1px_-1px_2px_rgba(255,255,255,0.9)]'
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.02]'
+                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
                 }`}
               >
                 {cat}
@@ -144,25 +144,25 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => setOnlyCustomizable(!onlyCustomizable)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-medium transition-all ${
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bubble font-bold transition-all ${
               onlyCustomizable
-                ? 'bg-fio-pink text-white shadow-sm'
-                : 'bg-[#F5F1EB] text-slate-600 hover:bg-[#EFEAE2]'
+                ? 'neu-btn-amber text-white shadow-neuBtnHover'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Personalizables</span>
           </button>
 
-          <div className="relative w-full sm:w-60">
+          <div className="relative w-full sm:w-64">
             <input
               type="text"
               placeholder="Buscar por nombre o SKU…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-[#F5F1EB] rounded-2xl text-xs text-slate-800 placeholder-slate-400 border border-transparent focus:border-fio-300 focus:bg-white focus:outline-none shadow-[inset_2px_2px_4px_rgba(160,140,190,0.1),inset_-2px_-2px_4px_rgba(255,255,255,0.9)] transition-all"
+              className="w-full pl-9 pr-4 py-2.5 bg-[#ECEEF2] rounded-2xl text-xs text-slate-800 placeholder-slate-400 border border-white/60 shadow-neuInset focus:outline-none transition-all"
             />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
           </div>
         </div>
       </div>
@@ -191,10 +191,10 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
             return (
               <div
                 key={p.id}
-                className="group flex flex-col bg-[#FDFBF9] rounded-[30px] p-4 sm:p-5 border border-white/90 shadow-[10px_14px_28px_rgba(180,160,200,0.1),-8px_-8px_20px_rgba(255,255,255,0.95)] hover:shadow-[14px_18px_36px_rgba(180,160,200,0.18),-10px_-10px_24px_rgba(255,255,255,1)] hover:-translate-y-1 transition-all duration-300"
+                className="group flex flex-col bg-[#F1F2F6] rounded-[30px] p-4 sm:p-5 border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300"
               >
-                {/* Contenedor de Imagen con Marco Suave Rehundido */}
-                <div className="relative h-48 w-full rounded-2xl overflow-hidden bg-[#F2EDE7] shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] border border-white/80">
+                {/* Contenedor de Imagen con Marco Neumórfico Rehundido */}
+                <div className="relative h-48 w-full rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset border border-white/80">
                   <img
                     src={p.image}
                     alt={p.name}
@@ -203,22 +203,22 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                   />
 
                   {/* Pastilla de Categoría */}
-                  <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[10px] font-semibold text-slate-700 shadow-sm border border-white/60">
+                  <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[10px] font-bold text-slate-700 shadow-neuBtn border border-white/60">
                     {p.category}
                   </span>
 
                   {/* Pastilla de Stock */}
                   {isOutOfStock ? (
-                    <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold shadow-sm">
+                    <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold shadow-neuBtn">
                       Agotado
                     </span>
                   ) : isLowStock ? (
-                    <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold shadow-sm flex items-center gap-1">
+                    <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold shadow-neuBtn flex items-center gap-1">
                       <AlertCircle className="w-3 h-3" />
                       <span>{p.stock} disponibles</span>
                     </span>
                   ) : (
-                    <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-emerald-700 text-[10px] font-semibold shadow-sm border border-white/60">
+                    <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-emerald-700 text-[10px] font-bold shadow-neuBtn border border-white/60">
                       Stock: {p.stock}
                     </span>
                   )}
@@ -232,18 +232,18 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                       <span className="text-slate-500 font-sans">{p.unit}</span>
                     </div>
 
-                    <h3 className="font-serif text-lg text-slate-800 font-semibold leading-snug line-clamp-1 group-hover:text-fio-700 transition-colors">
+                    <h3 className="font-bubble text-lg text-slate-900 font-bold leading-snug line-clamp-1 group-hover:text-fio-800 transition-colors">
                       {p.name}
                     </h3>
 
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-sans">
                       {p.description}
                     </p>
 
                     {/* Input Rehundido de Personalización si Aplica */}
                     {p.isCustomizable && (
                       <div className="pt-2">
-                        <label className="block text-[11px] font-semibold text-fio-700 mb-1 flex items-center gap-1">
+                        <label className="block text-[11px] font-bold text-fio-800 mb-1 flex items-center gap-1">
                           <Sparkles className="w-3 h-3 text-fio-pink" />
                           <span>Personalizar (nombre o frase):</span>
                         </label>
@@ -252,7 +252,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                           placeholder={p.customizationPlaceholder || 'Ej: Sofía / Letra S'}
                           value={customTextInputs[p.id] || ''}
                           onChange={(e) => handleCustomTextChange(p.id, e.target.value)}
-                          className="w-full px-3 py-1.5 rounded-xl bg-[#F4EFEA] text-xs text-slate-800 placeholder-slate-400 border border-transparent focus:border-fio-300 focus:bg-white focus:outline-none shadow-[inset_1.5px_1.5px_3px_rgba(160,140,190,0.12),inset_-1.5px_-1.5px_3px_rgba(255,255,255,0.9)] transition-all"
+                          className="w-full px-3 py-2 rounded-xl bg-[#ECEEF2] text-xs text-slate-800 placeholder-slate-400 border border-white/60 shadow-neuInset focus:outline-none transition-all"
                         />
                       </div>
                     )}
@@ -264,31 +264,31 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                     const currentTotalPrice = p.price * currentQty;
 
                     return (
-                      <div className="pt-3 border-t border-slate-200/50 space-y-2.5">
+                      <div className="pt-3 border-t border-slate-200/60 space-y-2.5">
                         <div className="flex items-baseline justify-between gap-2">
                           <div>
-                            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium block">
+                            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">
                               {currentQty > 1 ? `Total (${currentQty} un.)` : 'Precio'}
                             </span>
-                            <p className="font-serif text-xl sm:text-2xl font-bold text-slate-800">
+                            <p className="font-bubble text-xl sm:text-2xl font-bold text-slate-900">
                               {formatCRC(currentTotalPrice)}
                             </p>
                           </div>
 
-                          {/* Selector de Cantidad: [-] 1 [+] */}
+                          {/* Selector de Cantidad: [-] 1 [+] Neumórfico */}
                           {!isOutOfStock && (
-                            <div className="flex items-center gap-1 bg-[#F4EFEA] p-1 rounded-xl border border-white/60 shadow-[inset_1px_1px_2px_rgba(160,140,190,0.08)]">
+                            <div className="flex items-center gap-1.5 bg-[#ECEEF2] p-1 rounded-xl border border-white/60 shadow-neuInset">
                               <button
                                 type="button"
                                 onClick={() => handleQtyChange(p.id, -1, p.stock)}
                                 disabled={currentQty <= 1}
-                                className="w-6 h-6 flex items-center justify-center rounded-lg bg-white text-slate-600 hover:text-fio-800 disabled:opacity-35 disabled:cursor-not-allowed shadow-xs transition-all active:scale-95"
+                                className="w-7 h-7 neu-btn-circle text-slate-700 hover:text-fio-800 disabled:opacity-35 disabled:cursor-not-allowed shadow-neuBtn transition-all active:scale-95"
                                 title="Reducir cantidad"
                               >
-                                <Minus className="w-3 h-3" />
+                                <Minus className="w-3.5 h-3.5" />
                               </button>
 
-                              <span className="w-5 text-center text-xs font-bold text-slate-800 select-none">
+                              <span className="w-6 text-center text-xs font-bold text-slate-900 select-none">
                                 {currentQty}
                               </span>
 
@@ -296,27 +296,27 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                                 type="button"
                                 onClick={() => handleQtyChange(p.id, 1, p.stock)}
                                 disabled={currentQty >= p.stock}
-                                className="w-6 h-6 flex items-center justify-center rounded-lg bg-white text-slate-600 hover:text-fio-800 disabled:opacity-35 disabled:cursor-not-allowed shadow-xs transition-all active:scale-95"
+                                className="w-7 h-7 neu-btn-circle text-slate-700 hover:text-fio-800 disabled:opacity-35 disabled:cursor-not-allowed shadow-neuBtn transition-all active:scale-95"
                                 title="Aumentar cantidad"
                               >
-                                <Plus className="w-3 h-3" />
+                                <Plus className="w-3.5 h-3.5" />
                               </button>
                             </div>
                           )}
                         </div>
 
-                        {/* Botón Agregar al Carrito */}
+                        {/* Botón Agregar al Carrito Neumórfico */}
                         <button
                           type="button"
                           disabled={isOutOfStock}
                           onClick={() => handleAdd(p)}
                           aria-label={`Agregar ${p.name} al carrito`}
-                          className={`w-full relative flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs font-semibold transition-all duration-200 ${
+                          className={`w-full relative flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all duration-200 ${
                             isOutOfStock
                               ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                               : isAdded
-                              ? 'bg-emerald-500 text-white shadow-sm scale-98'
-                              : 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] hover:from-[#C084FC] hover:to-[#A855F7] text-white shadow-[0_8px_18px_rgba(192,132,252,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)] active:scale-98'
+                              ? 'bg-emerald-600 text-white shadow-neuBtn'
+                              : 'neu-btn-primary text-white shadow-neuBtn hover:shadow-neuBtnHover active:scale-95'
                           }`}
                         >
                           {isAdded ? (

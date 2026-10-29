@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.32.0 - Despliegue Universal del Estilo Neumórfico en Botones Principales (Inicio, Talleres, Tienda) y Secciones
+- [x] **Botones Principales de Navegación Más Grandes y Táctiles ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Implementados botones con relieve físico cerámico `.neu-btn` e iluminado activo `.neu-btn-primary` en la barra de navegación superior (desktop y mobile drawer).
+  - Aumentado el tamaño táctil de los botones `Inicio`, `Talleres`, `Tienda` y `Catálogo` (`px-5 py-2.5` en desktop y `py-3` en móvil con tipografía `font-bubble font-bold`).
+  - Botón de carrito neumórfico con reborde extruido y contador flotante.
+- [x] **Botones Principales en Hero y Home ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx) y [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
+  - Botones principales de acción ampliados a `px-9 py-4.5 text-base sm:text-lg` con relieve dual táctil y respuesta al presionar.
+  - Botones de exploración hacia talleres y tienda en el home con estilo neumórfico.
+- [x] **Estilo Neumórfico Integral en Sección TALLERES ([`WorkshopsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopsPage.tsx) y [`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx)):**
+  - Tarjetas cerámicas `.neu-card` con esquinas redondeadas generosas, contenedor de fotos rehundido `.neu-inset`, caja de beneficios y botones táctiles de inscripción y compartir `.neu-btn-primary` y `.neu-btn-circle`.
+- [x] **Estilo Neumórfico Integral en Sección TIENDA & CATÁLOGO ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx) y [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Pastillas de categorías neumórficas grandes y táctiles, buscador rehundido con sombra interior, tarjetas de productos con relieve suave y botones de cantidad/carrito táctiles.
+
 ### Versión 1.31.0 - Factura PDF e Impresión Universal en Hoja Estándar (Carta / A4): Cabecera con Color de Marca y Cuadrícula de Líneas Nítidas
 - [x] **Cabecera Oficial con Color de la Marca ([`InvoiceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InvoiceModal.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Cabecera con fondo púrpura institucional `#6B21A8` (degradado corporativo `#581C87` a `#7E22CE`) preservado en impresión con `-webkit-print-color-adjust: exact` y `print-color-adjust: exact`.
