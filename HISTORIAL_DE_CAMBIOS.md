@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.29.0 - Corrección Integral de la Parte Superior de Reportes de Pedidos en la Web: Eliminación de Recorte Vertical y Rediseño Neumórfico
+- [x] **Eliminación del Recorte Superior en Modales de Pedido ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx) e [`InvoiceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InvoiceModal.tsx)):**
+  - Solucionado el bug de flexbox (`items-center` con desborde en coordenadas negativas) que empujaba la cabecera del reporte fuera del margen superior de la pantalla.
+  - Implementada arquitectura de ventana con cabecera fija superior (`shrink-0`), contenedor con límite `max-h-[92vh] flex flex-col` y cuerpo con scroll interno suave sin barras antiestéticas (`overflow-y-auto [scrollbar-width:none]`).
+- [x] **Rediseño de la Cabecera del Reporte de Pedido Confirmado:**
+  - Sustituido el texto interno de desarrollo por una cabecera editorial neumórfica con distintivo de pedido generado, nombre del cliente, número de orden `#FIO-XXXX` destacado en recuadro cerámico y metadatos rápidos (fecha, teléfono y método de entrega).
+  - Desglose estructurado de los artículos comprados con personalizaciones, subtotales y tarjeta de cuentas SINPE/BCR con copia rápida.
+- [x] **Alineación y Proporciones en Comprobante Oficial Imprimible:**
+  - Rediseñado el encabezado de factura en [`InvoiceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InvoiceModal.tsx) y reporte diario en [`DailyClosingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx) garantizando visibilidad al 100% desde el primer píxel.
+
 ### Versión 1.28.0 - Integración Oficial de Cuentas para SINPE Móvil y Pagos BCR: Tarjetas Neumórficas con Copiado Rápido y Modal de Consulta
 - [x] **Datos Bancarios Oficiales de la Marca ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx)):**
   - **SINPE Móvil:** Teléfono `6400-4640` con titularidad oficial a nombre de **Fiorella Patricia Jara Gutiérrez** y botón de copiado inmediato.

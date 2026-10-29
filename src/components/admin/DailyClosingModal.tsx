@@ -48,21 +48,21 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-clayLg border-2 border-fio-200 overflow-hidden">
-        {/* Header */}
-        <div className="p-4 border-b border-fio-200 flex items-center justify-between bg-fio-100/70">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-3 sm:p-5 animate-fadeIn">
+      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+        {/* Header Fijo */}
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-[#F1F2F6] shrink-0">
           <div className="flex items-center gap-2">
             <FileSpreadsheet className="w-5 h-5 text-fio-800" />
             <h3 className="font-bubble font-bold text-sm text-fio-900">Acta de Cierre de Caja Diario</h3>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="w-8 h-8 neu-btn-circle text-gray-400 hover:text-gray-600">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Reporte Imprimible */}
-        <div id="printable-closing-report" className="p-6 space-y-4 text-xs">
+        <div id="printable-closing-report" className="p-5 sm:p-6 space-y-4 text-xs overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex items-start justify-between border-b border-gray-200 pb-3">
             <div>
               <BrandLogo size="sm" />

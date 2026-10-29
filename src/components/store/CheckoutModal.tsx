@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { formatCRC } from '../../utils/formatters';
-import { X, CheckCircle, Truck, Store, ArrowRight, Sparkles } from 'lucide-react';
+import { Order } from '../../types';
+import { formatCRC, formatShortDate } from '../../utils/formatters';
+import { X, CheckCircle, Truck, Store, ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 import { PaymentAccountsCard } from '../common/PaymentAccountsCard';
 import confetti from 'canvas-confetti';
 
@@ -18,7 +19,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   const [customerPhone, setCustomerPhone] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
   const [notes, setNotes] = useState('');
-  const [confirmedOrderNum, setConfirmedOrderNum] = useState<string | null>(null);
+  const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
   if (!isOpen) return null;
 
@@ -46,64 +47,143 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
       colors: ['#EC4899', '#C084FC', '#38BDF8', '#FACC15'],
     });
 
-    setConfirmedOrderNum(order.orderNumber);
+    setConfirmedOrder(order);
   };
 
-  const handleFinishAndGoToAdmin = () => {
-    setConfirmedOrderNum(null);
+  const handleClose = () => {
+    setConfirmedOrder(null);
     onClose();
-    setViewMode('admin'); // Directly switch to Admin to see the new order in FIFO queue!
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-clayLg border-2 border-fio-200 overflow-hidden">
-        {/* Header */}
-        <div className="p-5 border-b border-fio-200 flex items-center justify-between bg-fio-100/60">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-fio-pink fill-fio-pink" />
-            <h3 className="font-bubble font-bold text-lg text-fio-900">
-              {confirmedOrderNum ? '¡Pedido Confirmado!' : 'Checkout & Pago SINPE'}
-            </h3>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-3 sm:p-5 animate-fadeIn">
+      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+        {/* Header Superior Fijo (Nunca se Recorta) */}
+        <div className="p-4 sm:p-5 border-b border-slate-200/70 flex items-center justify-between bg-[#F1F2F6] shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-white shadow-neuBtn flex items-center justify-center text-emerald-600">
+              <CheckCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 leading-tight">
+                {confirmedOrder ? `Reporte de Pedido — ${confirmedOrder.orderNumber}` : 'Checkout & Pago SINPE'}
+              </h3>
+              <p className="text-[11px] text-slate-500 font-sans">
+                {confirmedOrder ? 'Comprobante y reporte oficial de pedido' : 'Completa tus datos para confirmar tu pedido'}
+              </p>
+            </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1">
-            <X className="w-5 h-5" />
+          <button
+            type="button"
+            onClick={handleClose}
+            className="w-8 h-8 neu-btn-circle text-slate-500 hover:text-slate-800 transition-colors"
+            title="Cerrar ventana"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {confirmedOrderNum ? (
-          <div className="p-6 text-center">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
-              <CheckCircle className="w-9 h-9" />
+        {confirmedOrder ? (
+          <div className="overflow-y-auto p-4 sm:p-6 space-y-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {/* Bloque Superior del Reporte de Pedido */}
+            <div className="p-4 sm:p-5 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-300/40 pb-3">
+                <div>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                    <CheckCircle className="w-3 h-3 text-emerald-600" />
+                    Pedido Generado con Éxito
+                  </span>
+                  <h2 className="font-bubble font-bold text-lg sm:text-xl text-slate-900 mt-1">
+                    ¡Gracias por tu compra, {confirmedOrder.customerName.split(' ')[0]}!
+                  </h2>
+                  <p className="text-[11px] text-slate-500 font-sans">
+                    Tu pedido ha sido registrado oficialmente en el sistema de by.fio.
+                  </p>
+                </div>
+
+                <div className="text-left sm:text-right shrink-0">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Número de Pedido</span>
+                  <span className="font-mono font-bold text-base sm:text-lg text-fio-900 bg-white px-3.5 py-1 rounded-xl shadow-neuBtn inline-block border border-white/80">
+                    {confirmedOrder.orderNumber}
+                  </span>
+                </div>
+              </div>
+
+              {/* Fila de Metadatos Rápidos */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                <div className="p-2.5 rounded-xl bg-[#ECEEF2] shadow-neuInset border border-white/60">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block">Fecha</span>
+                  <p className="font-bold text-slate-800 text-[11px]">{formatShortDate(confirmedOrder.createdAt)}</p>
+                </div>
+                <div className="p-2.5 rounded-xl bg-[#ECEEF2] shadow-neuInset border border-white/60">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block">WhatsApp / Tel</span>
+                  <p className="font-bold text-slate-800 text-[11px] truncate">{confirmedOrder.customerPhone}</p>
+                </div>
+                <div className="col-span-2 sm:col-span-1 p-2.5 rounded-xl bg-[#ECEEF2] shadow-neuInset border border-white/60">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block">Entrega</span>
+                  <p className="font-bold text-slate-800 text-[11px] truncate">
+                    {confirmedOrder.deliveryMethod === 'envio' ? 'Envío por Correos CR' : 'Retiro en Taller'}
+                  </p>
+                </div>
+              </div>
             </div>
-            <h4 className="font-bubble font-bold text-2xl text-fio-900 mb-1">¡Gracias por tu compra!</h4>
-            <p className="text-xs text-gray-500 mb-3">Tu orden fue inyectada al sistema de alisto:</p>
-            <div className="inline-block px-4 py-2 bg-fio-100 rounded-2xl border border-fio-300 font-mono font-bold text-lg text-fio-800 mb-4">
-              {confirmedOrderNum}
+
+            {/* Desglose de Artículos del Pedido */}
+            <div className="p-4 rounded-2xl bg-[#ECEEF2] border border-white/70 shadow-neuInset space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                Artículos en tu Pedido ({confirmedOrder.items.length})
+              </span>
+              <div className="divide-y divide-slate-200/60">
+                {confirmedOrder.items.map((it) => (
+                  <div key={it.id} className="py-2 flex items-center justify-between text-xs gap-2">
+                    <div className="min-w-0">
+                      <p className="font-bold text-slate-800 truncate">{it.quantity}x {it.name}</p>
+                      {it.customText && (
+                        <p className="text-[10px] text-fio-pink font-semibold">✨ "{it.customText}"</p>
+                      )}
+                    </div>
+                    <span className="font-bubble font-bold text-slate-900 shrink-0">
+                      {formatCRC(it.price * it.quantity)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="pt-2 border-t border-slate-300/50 flex items-center justify-between font-bubble font-bold text-sm">
+                <span className="text-slate-700">Total Oficial:</span>
+                <span className="text-emerald-700 text-base">{formatCRC(confirmedOrder.total)}</span>
+              </div>
             </div>
-            <div className="mb-6 text-left">
-              <PaymentAccountsCard amount={total} orderNumber={confirmedOrderNum} compact />
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={handleFinishAndGoToAdmin}
-                className="px-5 py-3 rounded-2xl bg-fio-800 text-white font-bubble font-semibold text-xs shadow-clayBtn hover:bg-fio-900"
+
+            {/* Cuentas Bancarias & SINPE Móvil Oficial */}
+            <PaymentAccountsCard amount={confirmedOrder.total} orderNumber={confirmedOrder.orderNumber} compact />
+
+            {/* Botones de Acción */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-2">
+              <a
+                href={`https://wa.me/50664004640?text=${encodeURIComponent(
+                  `¡Hola Fio! Acabo de registrar mi pedido ${confirmedOrder.orderNumber} por ${formatCRC(
+                    confirmedOrder.total
+                  )} en la web. Te adjunto el comprobante oficial:`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs flex items-center justify-center gap-2 shadow-neuBtn active:scale-95 transition-all text-center"
               >
-                Ver en Panel Admin (Cola de Alisto) 🚀
-              </button>
+                <MessageCircle className="w-4 h-4" />
+                <span>Enviar Comprobante por WhatsApp</span>
+              </a>
+
               <button
-                onClick={() => {
-                  setConfirmedOrderNum(null);
-                  onClose();
-                }}
-                className="px-5 py-3 rounded-2xl bg-fio-100 text-fio-800 font-bubble font-semibold text-xs hover:bg-fio-200"
+                type="button"
+                onClick={handleClose}
+                className="py-3 px-5 rounded-2xl neu-btn text-slate-700 font-bubble font-bold text-xs active:scale-95 transition-all"
               >
                 Seguir Comprando
               </button>
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          <form onSubmit={handleSubmit} className="overflow-y-auto p-4 sm:p-6 space-y-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {/* Método de Entrega */}
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-2">Método de Entrega:</label>
