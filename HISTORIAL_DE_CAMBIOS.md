@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.46.0 - Reorganización del Header de Administración y Dock de Pestañas Sin Scroll
+- [x] **Limpieza y Reubicación en Encabezado ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Ocultadas las redes sociales (TikTok, Instagram y WhatsApp) en la vista del panel administrativo.
+  - Reubicado el botón "Volver a Tienda" inmediatamente al lado del logotipo `by.fio` en el extremo izquierdo.
+  - Reubicados los botones "Diseño & Letra" y "Menú Principal" en la barra superior derecha del Navbar en modo admin.
+- [x] **Dock de Botones Administrativos Responsivo y Sin Desplazamiento ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx) y [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Erradicada la barra de desplazamiento horizontal (`overflow-x-auto`) sustituyéndola por una cuadrícula fluida de 6 columnas en desktop (`lg:grid-cols-6`), 3 columnas en tablet (`sm:grid-cols-3`) y 2 en móvil.
+  - Botones estilizados en pastillas táctiles neumórficas con badges de estado (Pedidos & Alisto, Facturación, Inventario & QR, Caja & Reportes, Talleres y Precios).
+  - Eliminados los botones redundantes del cuerpo inferior de la página en [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), liberando espacio vertical.
+
 ### Versión 1.45.0 - Animación de Entrada Retardada, Vibración y Burbuja Sin Borde en Mascota Estrellita
 - [x] **Eliminación Total de Borde ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
   - Removido el borde grueso y el padding blanco perimetral de la burbuja flotante del video de la estrellita (`border-0 p-0`), conservando una silueta circular pura con sombras suaves `shadow-2xl`.

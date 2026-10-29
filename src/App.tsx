@@ -195,7 +195,14 @@ export const App: React.FC = () => {
       <BackgroundDecor />
 
       <div>
-        <Navbar currentRoute={currentRoute} onNavigate={navigate} onOpenLogin={() => setIsLoginModalOpen(true)} />
+        <Navbar
+          currentRoute={currentRoute}
+          onNavigate={navigate}
+          onOpenLogin={() => setIsLoginModalOpen(true)}
+          onOpenDesignModal={() => setIsDesignModalOpen(true)}
+          onSelectAdminHub={() => handleSelectAdminTab('hub')}
+          isAdminHub={adminTab === 'hub'}
+        />
 
         {currentRoute === 'home' ? (
           <main className="w-full pb-10">
@@ -228,37 +235,9 @@ export const App: React.FC = () => {
 
             {currentRoute === 'admin' && (
             <div className="space-y-3 sm:space-y-4">
-              {/* Barra de Árbol y Acciones Superiores (Ultra-Compacta, Sube el Contenido) */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-0.5">
+              {/* Barra de Árbol de Navegación Compacta */}
+              <div className="flex items-center justify-between gap-2.5 pb-0.5">
                 <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
-
-                <div className="flex items-center gap-2 self-start sm:self-auto">
-                  {/* Botón Diseño & Letra (Detalles de Personalización del Sitio) */}
-                  <button
-                    type="button"
-                    onClick={() => setIsDesignModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/80 hover:bg-white text-slate-700 text-xs font-semibold border border-white/80 shadow-xs transition-all active:scale-95"
-                    title="Ajustar paleta de colores y tipografía de todo el sitio"
-                  >
-                    <Palette className="w-3.5 h-3.5 text-fio-pink" />
-                    <span>Diseño &amp; Letra</span>
-                    <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
-                      {colorTheme === 'vibrant' ? 'Morado' : 'Zen'}
-                    </span>
-                  </button>
-
-                  {/* Botón Menú Principal (al lado de Diseño & Letra) */}
-                  {adminTab !== 'hub' && (
-                    <button
-                      type="button"
-                      onClick={() => handleSelectAdminTab('hub')}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-fio-800 hover:bg-fio-pink text-white text-xs font-semibold shadow-xs hover:shadow-[0_4px_14px_rgba(236,72,153,0.45)] transition-all active:scale-95 group"
-                    >
-                      <LayoutGrid className="w-3.5 h-3.5 text-fio-yellow group-hover:text-white transition-colors" />
-                      <span>Menú Principal</span>
-                    </button>
-                  )}
-                </div>
               </div>
 
               {/* Si está en el Menú Principal (Hub) */}
