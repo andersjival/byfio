@@ -162,7 +162,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
           </h1>
 
           <p className="text-xs sm:text-sm text-purple-100/95 leading-relaxed font-sans max-w-3xl">
-            Explora toda nuestra papelería bonita, agendas personalizadas con grabado en foil, libros pediátricos de vacunas, libretas de cuero y artículos artesanales hechos a mano en Costa Rica por Fiorella Carballo. Precios en colones costarricenses (₡), con entrega en todo el país y pago directo por SINPE Móvil al 6400-4640.
+            Explora toda nuestra papelería bonita, agendas personalizadas con grabado en foil, libros pediátricos de vacunas, libretas de cuero y artículos artesanales hechos a mano en Costa Rica por Fiorella Patricia Jara Gutiérrez (Fio). Precios en colones costarricenses (₡), con entrega en todo el país y pago directo por SINPE Móvil al 6400-4640 o transferencia BCR.
           </p>
 
           <div className="pt-1 flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-white/90 font-medium">

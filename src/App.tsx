@@ -29,7 +29,8 @@ import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
 import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
-import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette } from 'lucide-react';
+import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
+import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard } from 'lucide-react';
 
 interface RouteInfo {
   route: AppRoute;
@@ -92,6 +93,7 @@ export const App: React.FC = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
   const [isDesignModalOpen, setIsDesignModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
 
   const navigate = (newRoute: AppRoute, targetTab?: AdminTabType, workshopId?: string) => {
@@ -301,6 +303,18 @@ export const App: React.FC = () => {
             <span>San José, Costa Rica 🇨🇷</span>
           </div>
 
+          {/* Botón para Abrir Cuentas Bancarias & SINPE Móvil */}
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => setIsPaymentModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#F1F2F6] hover:bg-white text-slate-800 font-bubble font-bold text-xs shadow-neuBtn active:scale-95 transition-all border border-white/90"
+            >
+              <CreditCard className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Ver Cuentas para SINPE Móvil y Pagos BCR</span>
+            </button>
+          </div>
+
           {currentRoute !== 'admin' && (
             <div>
               <button
@@ -319,6 +333,7 @@ export const App: React.FC = () => {
       <FloatingMascot />
       <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
+      <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
       <GuidedPickingModal />
       <SupplierOrderModal />
       <QrLabelModal />

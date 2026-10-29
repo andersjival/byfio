@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.28.0 - Integración Oficial de Cuentas para SINPE Móvil y Pagos BCR: Tarjetas Neumórficas con Copiado Rápido y Modal de Consulta
+- [x] **Datos Bancarios Oficiales de la Marca ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx)):**
+  - **SINPE Móvil:** Teléfono `6400-4640` con titularidad oficial a nombre de **Fiorella Patricia Jara Gutiérrez** y botón de copiado inmediato.
+  - **Banco de Costa Rica (BCR):**
+    - Cuenta de Ahorros: `00126752891` (con botón de copiado).
+    - Cuenta IBAN: `CR09015202001267528911` (con botón de copiado).
+    - Titular: **Fiorella Patricia Jara Gutiérrez**.
+  - Enlace directo a WhatsApp para recepción instantánea de comprobantes.
+- [x] **Integración en Flujo de Compra y Checkout ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - Se sustituyó el texto plano por la tarjeta neumórfica completa tanto en el formulario de pago como en la pantalla de orden confirmada con desglose de monto y número de pedido.
+- [x] **Integración en Inscripción a Talleres ([`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx)):**
+  - Incorporada la tarjeta completa con el monto exacto del taller seleccionado y la titularidad verificada de Fio.
+- [x] **Modal Global de Consulta de Cuentas ([`PaymentAccountsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsModal.tsx) & [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Botón táctil disponible en el pie de página para que cualquier visitante consulte las cuentas y números SINPE en cualquier momento con 1 clic.
+
 ### Versión 1.27.0 - Adopción y Modulación del Estilo Neumorphism / Soft UI: Cajas de Información con Relieve Táctil, Botones Neumórficos y Showcase Interactivo
 - [x] **Copiado y Modulación Exacta del Estilo Neumorphism ([`tailwind.config.js`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/tailwind.config.js) y [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - **Cajas de Información Neumórficas (`.neu-card`):** Superficies cerámicas `#F1F2F6`, esquinas redondeadas generosas (`rounded-3xl`), bisel blanco sutil (`border-white/90`) y doble sombra física proyectada (`-10px -10px 24px #FFFFFF, 10px 10px 24px rgba(166, 175, 195, 0.38)`).

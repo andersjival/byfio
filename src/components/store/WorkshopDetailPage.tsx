@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Workshop, AppRoute } from '../../types';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
+import { PaymentAccountsCard } from '../common/PaymentAccountsCard';
 import {
   Calendar, Clock, MapPin, Sparkles, Check, ArrowLeft,
   Share2, CheckCircle2, Phone, Copy, Heart, Users,
@@ -281,7 +282,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-800">
-                  Impartido personalmente por Fio (Fiorella Carballo)
+                  Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)
                 </p>
                 <p className="text-[11px] text-slate-500">
                   Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.
@@ -473,36 +474,8 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                   </div>
                 )}
 
-                {/* Caja de Datos SINPE Móvil Oficial */}
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50/80 to-teal-50/40 border border-emerald-200/70 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
-                      SINPE Móvil Oficial Costa Rica
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleCopySinpe}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-800 bg-white/80 px-2.5 py-1 rounded-lg border border-emerald-200 transition-all"
-                    >
-                      {copiedSinpe ? (
-                        <><Check className="w-3 h-3 text-emerald-600" /> ¡Copiado!</>
-                      ) : (
-                        <><Copy className="w-3 h-3" /> Copiar 6400-4640</>
-                      )}
-                    </button>
-                  </div>
-                  <div className="text-xs text-slate-700">
-                    <p className="font-bold text-emerald-900 text-sm">
-                      6400-4640
-                    </p>
-                    <p className="text-[11px] text-slate-500">
-                      Titular: <strong className="text-slate-700">Fiorella Carballo</strong>
-                    </p>
-                    <p className="text-[11px] text-slate-500 mt-1">
-                      Monto a transferir: <strong className="text-emerald-800">{formatCRC(totalPrice)}</strong>
-                    </p>
-                  </div>
-                </div>
+                {/* Caja de Datos SINPE Móvil y Cuentas Bancarias Oficiales */}
+                <PaymentAccountsCard amount={totalPrice} compact />
 
                 {/* Botón Principal: Confirmar Reserva y Enviar Comprobante */}
                 <button

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
 import { X, CheckCircle, Truck, Store, ArrowRight, Sparkles } from 'lucide-react';
+import { PaymentAccountsCard } from '../common/PaymentAccountsCard';
 import confetti from 'canvas-confetti';
 
 interface CheckoutModalProps {
@@ -80,9 +81,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
             <div className="inline-block px-4 py-2 bg-fio-100 rounded-2xl border border-fio-300 font-mono font-bold text-lg text-fio-800 mb-4">
               {confirmedOrderNum}
             </div>
-            <p className="text-xs text-gray-600 mb-6 max-w-sm mx-auto">
-              Realizá el SINPE Móvil al <strong>6400-4640</strong> a nombre de Fiorella con tu número de orden en el detalle.
-            </p>
+            <div className="mb-6 text-left">
+              <PaymentAccountsCard amount={total} orderNumber={confirmedOrderNum} compact />
+            </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={handleFinishAndGoToAdmin}
@@ -185,12 +186,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
               />
             </div>
 
-            {/* Cuadro SINPE Móvil */}
-            <div className="p-3 bg-fio-50 rounded-2xl border border-fio-200 text-xs">
-              <p className="font-bold text-fio-800 mb-1">📲 Datos para SINPE Móvil:</p>
-              <p className="text-gray-700">Número: <strong className="text-fio-pink">6400-4640</strong></p>
-              <p className="text-gray-500 text-[11px]">A nombre de: Fiorella (by.fio)</p>
-            </div>
+            {/* Cuadro de Cuentas para SINPE Móvil y Pagos */}
+            <PaymentAccountsCard amount={total} compact />
 
             {/* Resumen Totales */}
             <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
