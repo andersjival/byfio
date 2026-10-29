@@ -5,16 +5,18 @@ import { formatCRC } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
 import {
   Calendar, Users, Sparkles, Check, ArrowRight,
-  GraduationCap, MapPin, Clock
+  GraduationCap, MapPin, Clock, Share2, CheckCircle2, Eye, Link2
 } from 'lucide-react';
 
 interface WorkshopsPageProps {
-  onNavigate: (route: AppRoute) => void;
+  onNavigate: (route: AppRoute, targetTab?: any, wsId?: string) => void;
 }
 
 export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
   const { workshops, addToCart } = useApp();
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  const [copiedWsId, setCopiedWsId] = useState<string | null>(null);
+  const [copiedCatalog, setCopiedCatalog] = useState(false);
 
   // Check ?taller=ID in URL
   useEffect(() => {
@@ -47,6 +49,22 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
     { label: 'talleres', route: 'workshops' as AppRoute },
   ];
 
+  const copyCatalogLink = () => {
+    const link = `${window.location.origin}/talleres`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedCatalog(true);
+      setTimeout(() => setCopiedCatalog(false), 2000);
+    });
+  };
+
+  const copyWorkshopLink = (wsId: string) => {
+    const link = `${window.location.origin}/talleres/${wsId}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedWsId(wsId);
+      setTimeout(() => setCopiedWsId(null), 2000);
+    });
+  };
+
   return (
     <div className="py-2 sm:py-4 max-w-7xl mx-auto space-y-6 animate-fadeIn">
       {/* Encabezado Editorial Estilo SLOW / SPACE con Árbol Integrado sobre el Cuadro Difuminado */}
@@ -58,9 +76,27 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
           {/* Árbol de Navegación Compacto Directo Dentro del Cuadro Difuminado (Cero Espacio Perdido) */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200/40">
             <TreeNavigation nodes={breadcrumbs} onNavigate={onNavigate} />
-            <div className="flex items-center justify-center sm:justify-end gap-1.5 text-[11px] text-slate-500 font-sans tracking-wide">
-              <GraduationCap className="w-3.5 h-3.5 text-fio-500" />
-              <span>{workshops.length} talleres programados</span>
+            <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 text-[11px] text-slate-500 font-sans tracking-wide">
+              <button
+                type="button"
+                onClick={copyCatalogLink}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl font-semibold border transition-all ${
+                  copiedCatalog
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-white/80 hover:bg-white text-slate-700 border-white/90 shadow-xs'
+                }`}
+              >
+                {copiedCatalog ? (
+                  <><CheckCircle2 className="w-3 h-3 text-emerald-600" /> ¡Link copiado!</>
+                ) : (
+                  <><Link2 className="w-3 h-3 text-fio-pink" /> Copiar Link de Todos los Talleres</>
+                )}
+              </button>
+
+              <div className="flex items-center gap-1.5 text-slate-500">
+                <GraduationCap className="w-3.5 h-3.5 text-fio-500" />
+                <span>{workshops.length} talleres</span>
+              </div>
             </div>
           </div>
 
@@ -99,8 +135,11 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
                   : 'border-white/90'
               }`}
             >
-              {/* Imagen */}
-              <div className="relative h-52 w-full rounded-2xl overflow-hidden bg-[#F2EDE7] shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] border border-white/80">
+              {/* Imagen (Clicable a la página del taller) */}
+              <div
+                onClick={() => onNavigate('workshop-detail', undefined, ws.id)}
+                className="relative h-52 w-full rounded-2xl overflow-hidden bg-[#F2EDE7] shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] border border-white/80 cursor-pointer"
+              >
                 <img
                   src={ws.image}
                   alt={ws.title}
@@ -134,7 +173,10 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
                     </span>
                   </div>
 
-                  <h3 className="font-serif text-xl text-slate-800 font-semibold leading-snug group-hover:text-fio-700 transition-colors pt-1">
+                  <h3
+                    onClick={() => onNavigate('workshop-detail', undefined, ws.id)}
+                    className="font-serif text-xl text-slate-800 font-semibold leading-snug group-hover:text-fio-700 transition-colors pt-1 cursor-pointer"
+                  >
                     {ws.title}
                   </h3>
 
@@ -158,8 +200,8 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Precio y Reserva */}
-                <div className="pt-3 border-t border-slate-200/50 flex items-center justify-between gap-2">
+                {/* Precio y Acciones */}
+                <div className="pt-3 border-t border-slate-200/50 flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium block">
                       Inversión
@@ -169,19 +211,33 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
                     </p>
                   </div>
 
-                  <button
-                    type="button"
-                    disabled={isFull}
-                    onClick={() => handleBook(ws)}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-semibold shadow-[0_8px_18px_rgba(192,132,252,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)] active:scale-95 transition-all ${
-                      isFull
-                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] hover:from-[#C084FC] hover:to-[#A855F7] text-white'
-                    }`}
-                  >
-                    <span>{isFull ? 'Agotado' : 'Reservar Cupo'}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      title="Copiar link directo a este taller"
+                      onClick={() => copyWorkshopLink(ws.id)}
+                      className={`p-2 rounded-xl border text-xs transition-all ${
+                        copiedWsId === ws.id
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : 'bg-white hover:bg-slate-50 text-slate-600 border-slate-200 shadow-xs'
+                      }`}
+                    >
+                      {copiedWsId === ws.id ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      ) : (
+                        <Share2 className="w-4 h-4 text-fio-pink" />
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('workshop-detail', undefined, ws.id)}
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-semibold bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] hover:from-[#C084FC] hover:to-[#A855F7] text-white shadow-[0_6px_14px_rgba(192,132,252,0.3)] active:scale-95 transition-all"
+                    >
+                      <span>Ver Taller &amp; Inscribirme</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

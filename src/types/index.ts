@@ -1,6 +1,6 @@
 export type ViewMode = 'store' | 'admin';
 
-export type AppRoute = 'home' | 'store' | 'workshops' | 'admin';
+export type AppRoute = 'home' | 'store' | 'workshops' | 'workshop-detail' | 'admin';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 

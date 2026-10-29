@@ -17,6 +17,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.14.0 - Landing Page Individual de Taller por URL (`/talleres/:id`), Enlace Social Específico vs General e Inscripción Directa con SINPE Móvil
+- [x] **Página de Destino Dedicada por Taller ([`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx)):**
+  - Enrutamiento por URL individual e independiente (`/talleres/:id` o `/talleres?taller=:id`).
+  - Navegación con árbol de slashes integrado (`by.fio / talleres / [nombre del taller]`) y botón de retorno al catálogo.
+  - Maquetación editorial en 2 columnas:
+    - **Lado Izquierdo:** Fotografía principal en marco zen/neumórfico suave, chips de fecha, horario, ubicación física/virtual, título editorial y descripción completa del taller y experiencia impartida por Fio.
+    - **Lado Derecho:** Tarjeta "Materiales y Todo lo que Incluye" con checks esmeralda de todos los insumos, herramientas y coffee break artesanal; tarjeta de "Inversión & Reserva Inmediata" con selector dinámico de cupos, cálculo automático en colones (`formatCRC`) y formulario integrado de contacto.
+- [x] **Flujo de Pago e Inscripción Oficial con SINPE Móvil:**
+  - Caja informativa de SINPE Móvil oficial (`6400-4640`, Fiorella Carballo) con botón de 1-clic para copiar número.
+  - Al confirmar la reserva: registra el pedido con número único en la base de datos y panel de Fio (`/admin/pedidos` y `/admin/talleres`), descuenta cupos en tiempo real y abre WhatsApp oficial (`6400-4640`) con el mensaje pre-redactado y estructurado para adjuntar el comprobante.
+  - Opción secundaria de agregar el taller al carrito general para compras conjuntas con artículos de papelería.
+- [x] **Separación Estricta de Enlaces Sociales en Panel Admin ([`WorkshopEnrollmentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/WorkshopEnrollmentsSection.tsx)):**
+  - Botón general en el encabezado: `[🔗 Copiar Link de Todos los Talleres]` (`/talleres`).
+  - Botón individual en cada taller: `[🔗 Copiar Link de este Taller]` (`/talleres/:id`).
+  - Botón `[👁️ Ver Página Pública]` para inspección directa del taller en vivo.
+- [x] Integración en catálogo público ([`WorkshopsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopsPage.tsx)): Enlaces directos a la página de cada taller desde imagen, título y botón "Ver Taller & Inscribirme", con botón rápido de copiado de link por tarjeta.
+
 ### Versión 1.13.0 - Sub-Rutas de URL Independientes para Admin, Menú Hub Compacto en 1 Pantalla & Modal Discreto de Diseño
 - [x] Enrutamiento por URL independiente en cada sección administrativa:
   - `/admin` (Menú Principal / Hub)

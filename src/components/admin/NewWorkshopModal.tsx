@@ -52,8 +52,8 @@ export const NewWorkshopModal: React.FC = () => {
       spotsAvailable: form.totalSpots,
     });
 
-    // Copy shareable link
-    const link = `${window.location.origin}?taller=${ws.id}`;
+    // Copy shareable link to specific workshop
+    const link = `${window.location.origin}/talleres/${ws.id}`;
     navigator.clipboard.writeText(link).catch(() => {});
 
     setForm(EMPTY);

@@ -3,13 +3,14 @@ import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   GraduationCap, Users, ChevronDown, ChevronUp, Phone, Hash,
-  Calendar, Plus, Link2, Trash2, CheckCircle2,
+  Calendar, Plus, Link2, Trash2, CheckCircle2, ExternalLink,
 } from 'lucide-react';
 
 export const WorkshopEnrollmentsSection: React.FC = () => {
   const { workshops, orders, setIsNewWorkshopModalOpen, deleteWorkshop } = useApp();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copiedCatalog, setCopiedCatalog] = useState(false);
 
   const enrollmentsByWorkshop = useMemo(() => {
     const map = new Map<string, { name: string; phone: string; email?: string; orderNumber: string; quantity: number; date: string }[]>();
@@ -35,11 +36,19 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
     return map;
   }, [workshops, orders]);
 
-  const copyLink = (wsId: string) => {
-    const link = `${window.location.origin}?taller=${wsId}`;
+  const copyWorkshopLink = (wsId: string) => {
+    const link = `${window.location.origin}/talleres/${wsId}`;
     navigator.clipboard.writeText(link).then(() => {
       setCopiedId(wsId);
       setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
+
+  const copyCatalogLink = () => {
+    const link = `${window.location.origin}/talleres`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedCatalog(true);
+      setTimeout(() => setCopiedCatalog(false), 2000);
     });
   };
 
@@ -47,17 +56,36 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <h2 className="text-lg font-bubble font-bold text-fio-900 flex items-center gap-2">
           <GraduationCap className="w-5 h-5 text-fio-300" />
           Inscripciones a Talleres
         </h2>
-        <button
-          onClick={() => setIsNewWorkshopModalOpen(true)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all"
-        >
-          <Plus className="w-4 h-4" /> Crear Taller
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={copyCatalogLink}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl font-bubble font-bold text-xs border transition-all ${
+              copiedCatalog
+                ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                : 'bg-white hover:bg-slate-50 text-fio-900 border-slate-200 shadow-xs'
+            }`}
+          >
+            {copiedCatalog ? (
+              <><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> ¡Link del catálogo copiado!</>
+            ) : (
+              <><Link2 className="w-3.5 h-3.5 text-fio-pink" /> Copiar Link de Todos los Talleres</>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsNewWorkshopModalOpen(true)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all"
+          >
+            <Plus className="w-4 h-4" /> Crear Taller
+          </button>
+        </div>
       </div>
 
       {workshops.map((ws) => {
@@ -102,9 +130,10 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
             {isOpen && (
               <div className="border-t border-fio-100 px-5 py-3 bg-fio-50/30">
                 {/* Action buttons */}
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex flex-wrap items-center gap-2 mb-3">
                   <button
-                    onClick={(e) => { e.stopPropagation(); copyLink(ws.id); }}
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); copyWorkshopLink(ws.id); }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                       copiedId === ws.id
                         ? 'bg-emerald-100 text-emerald-700'
@@ -112,12 +141,25 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
                     }`}
                   >
                     {copiedId === ws.id ? (
-                      <><CheckCircle2 className="w-3.5 h-3.5" /> ¡Link copiado!</>
+                      <><CheckCircle2 className="w-3.5 h-3.5" /> ¡Link de este taller copiado!</>
                     ) : (
-                      <><Link2 className="w-3.5 h-3.5" /> Copiar Link para Redes</>
+                      <><Link2 className="w-3.5 h-3.5" /> Copiar Link de este Taller</>
                     )}
                   </button>
+
+                  <a
+                    href={`/talleres/${ws.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all shadow-xs"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-fio-pink" />
+                    <span>Ver Página Pública</span>
+                  </a>
+
                   <button
+                    type="button"
                     onClick={(e) => { e.stopPropagation(); if (confirm(`¿Eliminar "${ws.title}"?`)) deleteWorkshop(ws.id); }}
                     className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-red-50 text-red-500 hover:bg-red-100 transition-all"
                   >

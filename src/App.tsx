@@ -9,6 +9,7 @@ import { FloatingMascot } from './components/common/FloatingMascot';
 import { HomePage } from './components/store/HomePage';
 import { StorePage } from './components/store/StorePage';
 import { WorkshopsPage } from './components/store/WorkshopsPage';
+import { WorkshopDetailPage } from './components/store/WorkshopDetailPage';
 import { CartDrawer } from './components/store/CartDrawer';
 import { CheckoutModal } from './components/store/CheckoutModal';
 import { AdminHeader } from './components/admin/AdminHeader';
@@ -31,6 +32,7 @@ import { MessageCircle, Instagram, LayoutGrid, ArrowLeft } from 'lucide-react';
 interface RouteInfo {
   route: AppRoute;
   adminTab: AdminTabType;
+  workshopId?: string | null;
 }
 
 const parseRouteFromLocation = (): RouteInfo => {
@@ -59,7 +61,23 @@ const parseRouteFromLocation = (): RouteInfo => {
 
   // Rutas públicas
   if (path.includes('/tienda') || hash.includes('tienda')) return { route: 'store', adminTab: 'hub' };
-  if (path.includes('/talleres') || hash.includes('talleres')) return { route: 'workshops', adminTab: 'hub' };
+
+  // Subruta de taller individual: /talleres/:id o /taller/:id o ?taller=:id
+  const wsMatch = path.match(/^\/(?:talleres|taller)\/([^/?#]+)/i);
+  const searchParams = new URLSearchParams(window.location.search);
+  const tallerQuery = searchParams.get('taller');
+
+  if (wsMatch && wsMatch[1] && wsMatch[1] !== 'undefined') {
+    return { route: 'workshop-detail', adminTab: 'hub', workshopId: decodeURIComponent(wsMatch[1]) };
+  }
+  if (tallerQuery) {
+    return { route: 'workshop-detail', adminTab: 'hub', workshopId: tallerQuery };
+  }
+
+  if (path.includes('/talleres') || hash.includes('talleres') || path.includes('/taller') || hash.includes('taller')) {
+    return { route: 'workshops', adminTab: 'hub' };
+  }
+
   return { route: 'home', adminTab: 'hub' };
 };
 
@@ -67,20 +85,25 @@ export const App: React.FC = () => {
   const { setViewMode } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
+  const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(initial.workshopId || null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
 
-  const navigate = (newRoute: AppRoute, targetTab?: AdminTabType) => {
+  const navigate = (newRoute: AppRoute, targetTab?: AdminTabType, workshopId?: string) => {
     setCurrentRoute(newRoute);
     setViewMode(newRoute === 'admin' ? 'admin' : 'store');
 
     const tab = targetTab !== undefined ? targetTab : (newRoute === 'admin' ? 'hub' : 'hub');
     setAdminTab(tab);
 
+    const wsId = workshopId !== undefined ? workshopId : selectedWorkshopId;
+    setSelectedWorkshopId(wsId);
+
     let targetPath = '/';
     if (newRoute === 'store') targetPath = '/tienda';
     else if (newRoute === 'workshops') targetPath = '/talleres';
+    else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
     else if (newRoute === 'admin') {
       if (tab === 'orders') targetPath = '/admin/pedidos';
       else if (tab === 'billing') targetPath = '/admin/facturacion';
@@ -91,7 +114,7 @@ export const App: React.FC = () => {
     }
 
     try {
-      window.history.pushState({ route: newRoute, adminTab: tab }, '', targetPath);
+      window.history.pushState({ route: newRoute, adminTab: tab, workshopId: wsId }, '', targetPath);
     } catch {
       window.location.hash = targetPath.replace('/', '#');
     }
@@ -109,6 +132,7 @@ export const App: React.FC = () => {
       const parsed = parseRouteFromLocation();
       setCurrentRoute(parsed.route);
       setAdminTab(parsed.adminTab);
+      setSelectedWorkshopId(parsed.workshopId || null);
       setViewMode(parsed.route === 'admin' ? 'admin' : 'store');
     };
 
@@ -119,14 +143,6 @@ export const App: React.FC = () => {
       window.removeEventListener('hashchange', handlePop);
     };
   }, [setViewMode]);
-
-  // Deep link: ?taller=ID redirects to /talleres
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('taller') && currentRoute !== 'workshops') {
-      navigate('workshops');
-    }
-  }, []);
 
   const adminBreadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },
@@ -163,6 +179,13 @@ export const App: React.FC = () => {
           {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
 
           {currentRoute === 'workshops' && <WorkshopsPage onNavigate={navigate} />}
+
+          {currentRoute === 'workshop-detail' && (
+            <WorkshopDetailPage
+              workshopId={selectedWorkshopId}
+              onNavigate={navigate}
+            />
+          )}
 
           {currentRoute === 'admin' && (
             <div className="space-y-6">

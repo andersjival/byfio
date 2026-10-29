@@ -53,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
               type="button"
               onClick={() => handleNav('workshops')}
               className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
-                currentRoute === 'workshops'
+                currentRoute === 'workshops' || currentRoute === 'workshop-detail'
                   ? 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
               }`}
@@ -179,7 +179,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             type="button"
             onClick={() => handleNav('workshops')}
             className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-              currentRoute === 'workshops' ? 'bg-fio-800 text-white' : 'text-slate-700 hover:bg-white/80'
+              currentRoute === 'workshops' || currentRoute === 'workshop-detail'
+                ? 'bg-fio-800 text-white'
+                : 'text-slate-700 hover:bg-white/80'
             }`}
           >
             Talleres

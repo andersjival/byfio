@@ -43,6 +43,11 @@ interface AppContextType {
   deleteProduct: (productId: string) => void;
   addWorkshop: (wsData: Omit<Workshop, 'id'>) => Workshop;
   deleteWorkshop: (wsId: string) => void;
+  bookWorkshopDirect: (
+    workshop: Workshop,
+    quantity: number,
+    customerInfo: { name: string; phone: string; email?: string; notes?: string }
+  ) => Order;
   isNewWorkshopModalOpen: boolean;
   setIsNewWorkshopModalOpen: (open: boolean) => void;
   typographyTheme: TypographyTheme;
@@ -421,6 +426,62 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setWorkshops((prev) => prev.filter((w) => w.id !== wsId));
   };
 
+  const bookWorkshopDirect = (
+    workshop: Workshop,
+    quantity: number,
+    customerInfo: { name: string; phone: string; email?: string; notes?: string }
+  ): Order => {
+    const total = workshop.price * quantity;
+    const nextNumber = 1000 + orders.length + 1;
+    const orderNumber = `#FIO-${nextNumber}`;
+
+    const newOrder: Order = {
+      id: `ord-ws-${Date.now()}`,
+      orderNumber,
+      customerName: customerInfo.name,
+      customerPhone: customerInfo.phone,
+      customerEmail: customerInfo.email,
+      deliveryMethod: 'retiro',
+      paymentMethod: 'sinpe',
+      paymentStatus: 'pending',
+      orderStatus: 'pending',
+      items: [
+        {
+          id: `ord-item-${Date.now()}-0`,
+          type: 'workshop',
+          sku: `WS-${workshop.id.toUpperCase()}`,
+          name: workshop.title,
+          price: workshop.price,
+          quantity,
+          isPicked: true,
+          image: workshop.image,
+        },
+      ],
+      subtotal: total,
+      shippingFee: 0,
+      total,
+      createdAt: new Date().toISOString(),
+      notes: customerInfo.notes || `Inscripción directa al taller: ${workshop.title}`,
+    };
+
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder),
+    }).catch(() => {});
+
+    setWorkshops((prev) =>
+      prev.map((w) =>
+        w.id === workshop.id
+          ? { ...w, spotsAvailable: Math.max(0, w.spotsAvailable - quantity) }
+          : w
+      )
+    );
+
+    setOrders((prev) => [...prev, newOrder]);
+    return newOrder;
+  };
+
   const resetToDefaults = () => {
     setProducts(INITIAL_PRODUCTS);
     setOrders(INITIAL_ORDERS);
@@ -471,6 +532,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteProduct,
         addWorkshop,
         deleteWorkshop,
+        bookWorkshopDirect,
         resetToDefaults,
       }}
     >
