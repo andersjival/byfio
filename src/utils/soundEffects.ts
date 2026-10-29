@@ -27,6 +27,11 @@ const getAudioContext = (): AudioContext | null => {
  */
 export const playBubblePopSound = (volume = 0.3) => {
   try {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('byfio_sound_bubble_v1');
+      if (saved === 'false') return;
+    }
+
     const ctx = getAudioContext();
     if (!ctx) return;
 
@@ -59,6 +64,11 @@ export const playBubblePopSound = (volume = 0.3) => {
  */
 export const playWaterDropSound = (volume = 0.22) => {
   try {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('byfio_sound_buttons_v1');
+      if (saved === 'false') return;
+    }
+
     const ctx = getAudioContext();
     if (!ctx) return;
 

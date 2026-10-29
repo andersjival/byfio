@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.55.0 - Switches de Activación de Sonido en Panel de Administración
+- [x] **Gestión Centralizada de Audio ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) y [`soundEffects.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts)):**
+  - Añadidos estados reactivos persistentes (`soundBubbleEnabled` y `soundButtonsEnabled`) con respaldo en `localStorage`.
+  - Los sintetizadores `playBubblePopSound` y `playWaterDropSound` evalúan de inmediato el estado configurado, silenciándose o activándose al instante.
+- [x] **Switches Interactivos en Modal de Administración ([`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx)):**
+  - Incorporada nueva sección "Efectos de Sonido Interactivos" accesible desde el botón "Diseño & Letra" en el encabezado de administración.
+  - Implementados interruptores tipo switch con animación fluida, iconos representativos y vista previa auditiva al encenderlos.
+
 ### Versión 1.54.0 - Apoyo Natural y Erradicación de Cortes en Ilustración 3D del Login
 - [x] **Aislamiento en PNG Transparente Real ([`login-3d-girl-star.png`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/login-3d-girl-star.png)):**
   - Removido el fondo plano sólido mediante algoritmo de segmentación alfa y BFS perimetral, eliminando el recuadro opaco y los bordes rectangulares.

@@ -79,6 +79,10 @@ interface AppContextType {
   isIntroOpen: boolean;
   playWebIntro: () => void;
   closeWebIntro: () => void;
+  soundBubbleEnabled: boolean;
+  setSoundBubbleEnabled: (enabled: boolean) => void;
+  soundButtonsEnabled: boolean;
+  setSoundButtonsEnabled: (enabled: boolean) => void;
   resetToDefaults: () => void;
 }
 
@@ -93,6 +97,8 @@ const STORAGE_KEYS = {
   TYPOGRAPHY_THEME: 'byfio_typography_theme_v1',
   COLOR_THEME: 'byfio_color_theme_v1',
   PRICING_DATA: 'byfio_pricing_data_v1',
+  SOUND_BUBBLE: 'byfio_sound_bubble_v1',
+  SOUND_BUTTONS: 'byfio_sound_buttons_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -173,6 +179,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const closeWebIntro = () => {
     setIsIntroOpen(false);
+  };
+
+  // Configuración de efectos de sonido interactivos
+  const [soundBubbleEnabled, setSoundBubbleEnabledState] = useState<boolean>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.SOUND_BUBBLE);
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const [soundButtonsEnabled, setSoundButtonsEnabledState] = useState<boolean>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.SOUND_BUTTONS);
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const setSoundBubbleEnabled = (enabled: boolean) => {
+    setSoundBubbleEnabledState(enabled);
+    localStorage.setItem(STORAGE_KEYS.SOUND_BUBBLE, String(enabled));
+  };
+
+  const setSoundButtonsEnabled = (enabled: boolean) => {
+    setSoundButtonsEnabledState(enabled);
+    localStorage.setItem(STORAGE_KEYS.SOUND_BUTTONS, String(enabled));
   };
 
   const updatePricingData = (newData: PricingSectionData) => {
@@ -625,6 +652,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isIntroOpen,
         playWebIntro,
         closeWebIntro,
+        soundBubbleEnabled,
+        setSoundBubbleEnabled,
+        soundButtonsEnabled,
+        setSoundButtonsEnabled,
         cartToast,
         showCartSuccessToast,
         closeCartToast,

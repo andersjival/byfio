@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme } from '../../types';
-import { X, Type, Palette, CheckCircle2, Heart, Sparkles } from 'lucide-react';
+import { X, Type, Palette, CheckCircle2, Heart, Sparkles, Volume2, Droplets } from 'lucide-react';
+import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
 interface AdminDesignSettingsModalProps {
   isOpen: boolean;
@@ -9,7 +10,16 @@ interface AdminDesignSettingsModalProps {
 }
 
 export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> = ({ isOpen, onClose }) => {
-  const { typographyTheme, setTypographyTheme, colorTheme, setColorTheme } = useApp();
+  const {
+    typographyTheme,
+    setTypographyTheme,
+    colorTheme,
+    setColorTheme,
+    soundBubbleEnabled,
+    setSoundBubbleEnabled,
+    soundButtonsEnabled,
+    setSoundButtonsEnabled,
+  } = useApp();
 
   if (!isOpen) return null;
 
@@ -48,10 +58,10 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
             </div>
             <div>
               <h2 className="font-bubble font-bold text-base text-fio-900">
-                Personalización Visual del Sitio
+                Personalización Visual y Sonido
               </h2>
               <p className="text-[11px] text-slate-500">
-                Elige la combinación de color y tipografía para toda la web.
+                Elige paleta de color, tipografía y activa o desactiva los efectos de sonido.
               </p>
             </div>
           </div>
@@ -188,6 +198,113 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
                 </button>
               );
             })}
+          </div>
+        </div>
+
+        {/* 3. Efectos de Sonido Interactivos (Switches Tipo iOS / Claymorphism) */}
+        <div className="space-y-3 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <Volume2 className="w-3.5 h-3.5 text-fio-pink" />
+              <span>Efectos de Sonido Interactivos</span>
+            </span>
+            <span className="text-[10px] font-bold text-fio-800 bg-fio-100 px-2 py-0.5 rounded-full">
+              Audio Web
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            {/* Switch 1: Sonido de Burbuja de Estrellita */}
+            <div className="p-3 rounded-2xl border border-slate-200 bg-[#FDFBF9] flex items-center justify-between gap-3 transition-colors hover:border-purple-200">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                    soundBubbleEnabled ? 'bg-purple-100 text-fio-700' : 'bg-slate-100 text-slate-400'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4 text-fio-yellow fill-fio-yellow" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-900">Burbuja de la Estrellita</span>
+                    <span className="text-[9.5px] font-semibold text-fio-pink bg-pink-50 px-1.5 py-0.5 rounded-md">
+                      Efecto Pop
+                    </span>
+                  </div>
+                  <p className="text-[10.5px] text-slate-500 leading-tight mt-0.5">
+                    Sonido orgánico de burbuja al emerger la estrellita y su diálogo.
+                  </p>
+                </div>
+              </div>
+
+              {/* Interruptor Switch */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={soundBubbleEnabled}
+                onClick={() => {
+                  const next = !soundBubbleEnabled;
+                  setSoundBubbleEnabled(next);
+                  if (next) playBubblePopSound(0.35);
+                }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-inner ${
+                  soundBubbleEnabled ? 'bg-fio-800' : 'bg-slate-300'
+                }`}
+                title={soundBubbleEnabled ? 'Desactivar sonido de burbuja' : 'Activar sonido de burbuja'}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    soundBubbleEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Switch 2: Sonido de Gotas de Agua en Botones */}
+            <div className="p-3 rounded-2xl border border-slate-200 bg-[#FDFBF9] flex items-center justify-between gap-3 transition-colors hover:border-purple-200">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                    soundButtonsEnabled ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-400'
+                  }`}
+                >
+                  <Droplets className="w-4 h-4 text-sky-500" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-900">Botones de la Web</span>
+                    <span className="text-[9.5px] font-semibold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded-md">
+                      Gotas de Agua
+                    </span>
+                  </div>
+                  <p className="text-[10.5px] text-slate-500 leading-tight mt-0.5">
+                    Sonido suave y táctil de gota de agua líquida al pulsar botones.
+                  </p>
+                </div>
+              </div>
+
+              {/* Interruptor Switch */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={soundButtonsEnabled}
+                onClick={() => {
+                  const next = !soundButtonsEnabled;
+                  setSoundButtonsEnabled(next);
+                  if (next) playWaterDropSound(0.25);
+                }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-inner ${
+                  soundButtonsEnabled ? 'bg-sky-600' : 'bg-slate-300'
+                }`}
+                title={soundButtonsEnabled ? 'Desactivar sonido de botones' : 'Activar sonido de botones'}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    soundButtonsEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
           </div>
         </div>
 
