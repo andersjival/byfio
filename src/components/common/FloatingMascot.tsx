@@ -1,29 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Sparkles, Heart } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 import { getWhatsAppLink } from '../../utils/formatters';
 
 export const FloatingMascot: React.FC = () => {
+  const { isIntroOpen } = useApp();
   const [isVisible, setIsVisible] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const hasTriggeredRef = useRef(false);
 
   useEffect(() => {
-    // La estrellita sale 5 segundos después de que carga la página
-    const entranceTimer = setTimeout(() => {
+    // Si la ventana de animación de presentación está abierta o activa, NO iniciamos el conteo
+    if (isIntroOpen) {
+      return;
+    }
+
+    // Si ya completó la entrada inicial, evitamos re-ejecutar el temporizador de 5 segundos
+    if (hasTriggeredRef.current) {
+      return;
+    }
+
+    // El tiempo empieza a contar en el momento exacto en que la animación termina o el usuario le da a saltar
+    const entranceTimer = window.setTimeout(() => {
+      hasTriggeredRef.current = true;
       setIsVisible(true);
-      // Tras 1150ms culmina la subida y vibración rápida, dando paso a la burbujita
-      const speechBubbleTimer = setTimeout(() => {
+
+      // Tras 1150ms culmina la subida animada y vibración rápida, dando paso a la burbujita de saludo
+      const speechBubbleTimer = window.setTimeout(() => {
         setHasEntered(true);
         setShowSpeechBubble(true);
       }, 1150);
-      return () => clearTimeout(speechBubbleTimer);
+
+      return () => window.clearTimeout(speechBubbleTimer);
     }, 5000);
 
-    return () => clearTimeout(entranceTimer);
-  }, []);
+    return () => window.clearTimeout(entranceTimer);
+  }, [isIntroOpen]);
 
-  if (!isVisible) return null;
+  if (isIntroOpen || !isVisible) return null;
 
   const defaultMsg = '¡Hola Fio! Vi la tienda online y me gustaría hacer una consulta sobre los talleres y personalizados.';
   const waUrl = getWhatsAppLink('64004640', defaultMsg);

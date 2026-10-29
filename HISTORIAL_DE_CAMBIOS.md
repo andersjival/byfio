@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.51.0 - Sincronización de Temporizador de Estrellita Tras Cierre de Intro
+- [x] **Conteo de 5 Segundos Condicionado al Cierre del Intro ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - Vinculado el componente con `useApp().isIntroOpen` para impedir que el temporizador de la estrellita se ejecute mientras la animación de bienvenida está activa o cubriendo la pantalla.
+  - El temporizador de 5 segundos inicia su cuenta regresiva en el instante preciso en que la ventana de animación concluye o el usuario la cierra pulsando "Entrar a la web".
+  - Transcurridos los 5 segundos exactos tras el cierre, la estrellita emerge desde abajo con su animación vibrante y desplegando su burbujita de saludo de forma fluida.
+
 ### Versión 1.50.0 - Eliminación de Cuadro de Carga y Tipografía Oficial Blanca en Splash Intro
 - [x] **Eliminación Total del Marco/Cuadro Cuadrado ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
   - Erradicado el asset de imagen cuadrado `logo-byfio-lila-HD.png` y cualquier marco o caja de fondo en la pantalla de carga/splash.
