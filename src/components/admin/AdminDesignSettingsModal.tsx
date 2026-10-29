@@ -72,11 +72,11 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
               <span>Paleta de Colores de la Web</span>
             </span>
             <span className="text-[10px] font-bold text-fio-800 bg-fio-100 px-2 py-0.5 rounded-full">
-              {colorTheme === 'vibrant' ? 'Moradito Original' : 'Zen Cerámica'}
+              {colorTheme === 'vibrant' ? 'Moradito Original' : colorTheme === 'zen' ? 'Zen Cerámica' : 'Neumorphism'}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {/* Opción Vibrante */}
             <button
               type="button"
@@ -90,7 +90,7 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-[#A855F7] to-[#EC4899]" />
-                  <span className="text-xs font-bold text-slate-900">Moradito &amp; Rosa (Original)</span>
+                  <span className="text-xs font-bold text-slate-900">Moradito &amp; Rosa</span>
                 </div>
                 {colorTheme === 'vibrant' && <CheckCircle2 className="w-3.5 h-3.5 text-fio-600 shrink-0" />}
               </div>
@@ -112,12 +112,34 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-[#D4AEFA] to-[#FAF7F2] border border-slate-300" />
-                  <span className="text-xs font-bold text-slate-900">Zen Cerámica (Calma)</span>
+                  <span className="text-xs font-bold text-slate-900">Zen Cerámica</span>
                 </div>
                 {colorTheme === 'zen' && <CheckCircle2 className="w-3.5 h-3.5 text-fio-600 shrink-0" />}
               </div>
               <p className="text-[10px] text-slate-500 leading-tight">
                 Crema cerámico (#FAF7F2), blanco perla y lavanda difusa minimalista.
+              </p>
+            </button>
+
+            {/* Opción Neumorphism */}
+            <button
+              type="button"
+              onClick={() => setColorTheme('neumorphic')}
+              className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-2 ${
+                colorTheme === 'neumorphic'
+                  ? 'bg-[#F0F2F6] border-amber-500 ring-2 ring-amber-400/40 shadow-neuBtn'
+                  : 'bg-[#F0F2F6]/70 border-slate-200 hover:border-amber-300'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-[#FBBF24] to-[#F59E0B]" />
+                  <span className="text-xs font-bold text-slate-900">Neumorphism</span>
+                </div>
+                {colorTheme === 'neumorphic' && <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
+              </div>
+              <p className="text-[10px] text-slate-500 leading-tight">
+                Relieve táctil, sombras dobles, fondo gris perla (#F0F2F6) y acento ámbar.
               </p>
             </button>
           </div>

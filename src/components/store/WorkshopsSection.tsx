@@ -63,8 +63,8 @@ export const WorkshopsSection: React.FC = () => {
           <div
             key={ws.id}
             id={`ws-card-${ws.id}`}
-            className={`flex flex-col bg-white rounded-3xl overflow-hidden border shadow-clay hover:shadow-clayLg transition-all duration-500 group ${
-              highlightId === ws.id ? 'border-fio-pink ring-2 ring-fio-pink/40 scale-[1.02]' : 'border-fio-200'
+            className={`flex flex-col bg-[#F1F2F6] rounded-3xl overflow-hidden border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300 group ${
+              highlightId === ws.id ? 'ring-2 ring-amber-400/60 scale-[1.02]' : ''
             }`}
           >
             {/* Imagen con badges */}
@@ -124,7 +124,7 @@ export const WorkshopsSection: React.FC = () => {
 
                 <button
                   onClick={() => handleBook(ws)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-semibold text-xs shadow-clayBtn active:scale-95 transition-all"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl neu-btn-primary font-bubble font-bold text-xs active:scale-95 transition-all"
                 >
                   <span>Reservar Cupo</span>
                   <ArrowRight className="w-3.5 h-3.5" />

@@ -60,12 +60,12 @@ export const HeroDual: React.FC<HeroDualProps> = ({
           Talleres creativos de encuadernación, agendas y sublimación, junto a productos personalizados con amor e insumos en Costa Rica.
         </p>
 
-        {/* Botones Duales con los Estilos de la Marca */}
+        {/* Botones Duales con Estilo Neumórfico Táctil */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto pt-2 pb-2">
           <button
             type="button"
             onClick={onScrollToWorkshops}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#A855F7] to-[#EC4899] text-white font-bubble font-bold text-sm shadow-[0_10px_25px_rgba(236,72,153,0.35)] hover:scale-105 active:scale-95 transition-all"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-sm shadow-neuBtnHover active:scale-95 transition-all"
           >
             <Calendar className="w-5 h-5 text-[#FFF07C]" />
             <span>Ver Talleres Creativos</span>
@@ -74,52 +74,52 @@ export const HeroDual: React.FC<HeroDualProps> = ({
           <button
             type="button"
             onClick={onScrollToProducts}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl bg-white text-fio-900 border-2 border-fio-300 font-bubble font-bold text-sm shadow-clay hover:bg-fio-50 hover:scale-105 active:scale-95 transition-all"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl neu-btn bg-[#F1F2F6] text-slate-800 border border-white/90 font-bubble font-bold text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
           >
-            <ShoppingBag className="w-5 h-5 text-[#9BE4FF] fill-[#9BE4FF]" />
+            <ShoppingBag className="w-5 h-5 text-amber-500" />
             <span>Ir a la Tienda &amp; Insumos</span>
           </button>
         </div>
 
-        {/* Píldoras de Calidad */}
+        {/* Píldoras de Calidad / Cajas de Información Neumórficas */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-2">
-          <div className="bg-white/85 backdrop-blur rounded-2xl p-3 border border-fio-200 shadow-claySm flex items-center gap-2.5 text-left">
-            <span className="p-2 rounded-xl bg-purple-100 text-fio-800">
-              <Star className="w-4 h-4 fill-[#FFF07C] text-amber-500" />
+          <div className="bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-3 border border-white/80 shadow-neuCard flex items-center gap-2.5 text-left">
+            <span className="p-2 rounded-xl neu-btn-circle text-amber-500 shadow-neuBtn">
+              <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
             </span>
             <div>
-              <p className="text-xs font-bold text-gray-800">+1,500 Alumnas</p>
-              <p className="text-[11px] text-gray-500">Talleres con amor</p>
+              <p className="text-xs font-bold text-slate-800">+1,500 Alumnas</p>
+              <p className="text-[11px] text-slate-500">Talleres con amor</p>
             </div>
           </div>
 
-          <div className="bg-white/85 backdrop-blur rounded-2xl p-3 border border-fio-200 shadow-claySm flex items-center gap-2.5 text-left">
-            <span className="p-2 rounded-xl bg-pink-100 text-fio-pink">
+          <div className="bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-3 border border-white/80 shadow-neuCard flex items-center gap-2.5 text-left">
+            <span className="p-2 rounded-xl neu-btn-circle text-fio-pink shadow-neuBtn">
               <Heart className="w-4 h-4 fill-fio-pink text-fio-pink" />
             </span>
             <div>
-              <p className="text-xs font-bold text-gray-800">100% Personalizado</p>
-              <p className="text-[11px] text-gray-500">Con tu nombre o idea</p>
+              <p className="text-xs font-bold text-slate-800">100% Personalizado</p>
+              <p className="text-[11px] text-slate-500">Con tu nombre o idea</p>
             </div>
           </div>
 
-          <div className="bg-white/85 backdrop-blur rounded-2xl p-3 border border-fio-200 shadow-claySm flex items-center gap-2.5 text-left">
-            <span className="p-2 rounded-xl bg-sky-100 text-[#38BDF8]">
+          <div className="bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-3 border border-white/80 shadow-neuCard flex items-center gap-2.5 text-left">
+            <span className="p-2 rounded-xl neu-btn-circle text-[#38BDF8] shadow-neuBtn">
               <CheckCircle2 className="w-4 h-4" />
             </span>
             <div>
-              <p className="text-xs font-bold text-gray-800">Pago SINPE Móvil</p>
-              <p className="text-[11px] text-gray-500">Rápido al 6400-4640</p>
+              <p className="text-xs font-bold text-slate-800">Pago SINPE Móvil</p>
+              <p className="text-[11px] text-slate-500">Rápido al 6400-4640</p>
             </div>
           </div>
 
-          <div className="bg-white/85 backdrop-blur rounded-2xl p-3 border border-fio-200 shadow-claySm flex items-center gap-2.5 text-left">
-            <span className="p-2 rounded-xl bg-amber-100 text-amber-600">
+          <div className="bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-3 border border-white/80 shadow-neuCard flex items-center gap-2.5 text-left">
+            <span className="p-2 rounded-xl neu-btn-circle text-amber-600 shadow-neuBtn">
               <Sparkles className="w-4 h-4" />
             </span>
             <div>
-              <p className="text-xs font-bold text-gray-800">Envíos a todo CR</p>
-              <p className="text-[11px] text-gray-500">Correos de Costa Rica</p>
+              <p className="text-xs font-bold text-slate-800">Envíos a todo CR</p>
+              <p className="text-[11px] text-slate-500">Correos de Costa Rica</p>
             </div>
           </div>
         </div>

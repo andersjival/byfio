@@ -103,7 +103,7 @@ export const ProductsSection: React.FC = () => {
           return (
             <div
               key={p.id}
-              className="flex flex-col bg-white rounded-3xl overflow-hidden border border-fio-200 shadow-clay hover:shadow-clayLg transition-all duration-300 group"
+              className="flex flex-col bg-[#F1F2F6] rounded-3xl overflow-hidden border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300 group"
             >
               {/* Imagen y Estado de Stock */}
               <div className="relative h-44 bg-fio-100 overflow-hidden">
@@ -173,10 +173,10 @@ export const ProductsSection: React.FC = () => {
                   <button
                     disabled={isOutOfStock}
                     onClick={() => handleAdd(p)}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-bubble font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-2xl text-xs font-bubble font-bold transition-all ${
                       isOutOfStock
                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        : 'bg-fio-800 hover:bg-fio-900 text-white shadow-clayBtn active:scale-95'
+                        : 'neu-btn-primary active:scale-95'
                     }`}
                   >
                     <ShoppingBag className="w-3.5 h-3.5" />

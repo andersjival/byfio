@@ -46,6 +46,147 @@ body[data-font-theme="hybrid"] .font-bubble {
    SELECTOR GLOBAL DE TEMA DE COLOR: VIBRANTE (MORADITO & ROSA) vs ZEN (CERÁMICA)
    ========================================================================= */
 
+/* =========================================================================
+   SISTEMA DE ESTILO NEUMORPHISM / SOFT UI (TACTILE & MINIMAL)
+   Copiado y modulado del diseño de referencia: Cajas de Información y Botones
+   ========================================================================= */
+
+.neu-surface {
+  background-color: #F0F2F6;
+}
+
+.neu-card {
+  background: #F1F2F6;
+  border-radius: 1.75rem;
+  box-shadow: -10px -10px 24px #FFFFFF, 10px 10px 24px rgba(166, 175, 195, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.neu-card:hover {
+  box-shadow: -14px -14px 30px #FFFFFF, 14px 14px 30px rgba(166, 175, 195, 0.46);
+  transform: translateY(-2px);
+}
+
+.neu-card-inset {
+  background: #ECEEF2;
+  border-radius: 1.25rem;
+  box-shadow: inset 4px 4px 8px rgba(166, 175, 195, 0.32), inset -4px -4px 8px #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.neu-btn {
+  background: #F1F2F6;
+  border-radius: 1rem;
+  box-shadow: -5px -5px 12px #FFFFFF, 5px 5px 12px rgba(166, 175, 195, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.neu-btn:hover {
+  box-shadow: -7px -7px 16px #FFFFFF, 7px 7px 16px rgba(166, 175, 195, 0.44);
+  transform: translateY(-1px);
+}
+
+.neu-btn:active, .neu-btn-active {
+  box-shadow: inset 3px 3px 6px rgba(166, 175, 195, 0.45), inset -3px -3px 6px #FFFFFF !important;
+  transform: translateY(0px) !important;
+}
+
+/* Botón Neumórfico Acento Ámbar / Solar (Estilo Dial Amarillo de la Referencia) */
+.neu-btn-amber {
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  color: #FFFFFF;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px -3px rgba(245, 158, 11, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.neu-btn-amber:hover {
+  box-shadow: 0 12px 25px -4px rgba(245, 158, 11, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.neu-btn-amber:active {
+  box-shadow: inset 3px 3px 6px rgba(180, 83, 9, 0.45), inset -2px -2px 4px rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(0px) !important;
+}
+
+/* Botón Neumórfico Acento Primario by.fio (Moradito Táctil Neumórfico) */
+.neu-btn-primary {
+  background: linear-gradient(135deg, #7C3AED 0%, #6B21A8 100%);
+  color: #FFFFFF;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px -3px rgba(107, 33, 168, 0.38), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.neu-btn-primary:hover {
+  box-shadow: 0 12px 25px -4px rgba(107, 33, 168, 0.48), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.neu-btn-primary:active {
+  box-shadow: inset 3px 3px 6px rgba(59, 7, 100, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(0px) !important;
+}
+
+/* Botón Circular Neumórfico (Iconos, Corazón, +, Controles) */
+.neu-btn-circle {
+  border-radius: 9999px;
+  background: #F1F2F6;
+  box-shadow: -5px -5px 12px #FFFFFF, 5px 5px 12px rgba(166, 175, 195, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.neu-btn-circle:hover {
+  box-shadow: -7px -7px 16px #FFFFFF, 7px 7px 16px rgba(166, 175, 195, 0.44);
+  transform: translateY(-1px);
+}
+
+.neu-btn-circle:active {
+  box-shadow: inset 3px 3px 6px rgba(166, 175, 195, 0.45), inset -3px -3px 6px #FFFFFF !important;
+  transform: translateY(0px) !important;
+}
+
+/* Selector Segmentado / Inset Switcher (Estilo selector clima sol/nube/luna) */
+.neu-segmented-container {
+  background: #ECEEF2;
+  border-radius: 9999px;
+  padding: 0.35rem;
+  box-shadow: inset 3px 3px 7px rgba(166, 175, 195, 0.35), inset -3px -3px 7px #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.neu-segmented-item {
+  border-radius: 9999px;
+  padding: 0.4rem 0.85rem;
+  transition: all 0.2s ease;
+  color: #64748B;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.neu-segmented-item-active {
+  background: #F1F2F6;
+  color: #1E293B;
+  box-shadow: -3px -3px 8px #FFFFFF, 3px 3px 8px rgba(166, 175, 195, 0.35);
+}
+
 /* TEMA 1: VIBRANTE BY.FIO ORIGINAL (LILA, MORADO PROFUNDO Y ROSA FUERTE) */
 body[data-color-theme="vibrant"] {
   background-color: #FAF5FF !important;

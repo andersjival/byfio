@@ -150,14 +150,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
               El costo de envío o retiro por Correos de Costa Rica se calcula en el paso de pago.
             </p>
 
-            {/* Botón Principal: Pago */}
+            {/* Botón Principal: Pago (Neumórfico Táctil) */}
             <button
               type="button"
               onClick={() => {
                 setIsCartOpen(false);
                 onOpenCheckout();
               }}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-semibold text-xs sm:text-sm shadow-clayBtn active:scale-95 transition-all"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl neu-btn-primary font-bubble font-bold text-xs sm:text-sm active:scale-95 transition-all"
             >
               <span>Proceder al Pago</span>
               <ArrowRight className="w-4 h-4" />
@@ -167,7 +167,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
             <button
               type="button"
               onClick={() => setIsCartOpen(false)}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl bg-[#F5F1EB] hover:bg-[#EFEAE2] text-slate-700 font-semibold text-xs border border-slate-200/70 shadow-xs active:scale-95 transition-all"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl neu-btn text-slate-700 font-bubble font-bold text-xs active:scale-95 transition-all"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
               <span>Volver a Seguir Comprando</span>

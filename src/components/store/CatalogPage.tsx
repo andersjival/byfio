@@ -302,7 +302,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
             <p className="text-xs text-slate-500">Prueba con otra búsqueda o categoría.</p>
           </div>
         ) : (
-          /* GRID DE 2 PRODUCTOS POR FILA (50% ANCHO EN CADA ESPACIO) */
+          /* GRID DE 2 PRODUCTOS POR FILA (50% ANCHO EN CADA ESPACIO CON ESTILO NEUMÓRFICO) */
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredProducts.map((product) => {
               const currentQty = getQty(product.id);
@@ -312,7 +312,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
               return (
                 <div
                   key={product.id}
-                  className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+                  className="p-3.5 sm:p-4 rounded-2xl bg-[#F1F2F6] border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all flex flex-col justify-between group"
                 >
                   {/* Fila Superior: Foto + Información Básica */}
                   <div className="flex items-start gap-3">
@@ -406,39 +406,39 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
 
                   {/* Fila Inferior: Selector de Cantidad + Botones */}
                   <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-2">
-                    {/* Selector de Cantidad [-] 1 [+] */}
-                    <div className="flex items-center bg-slate-50 rounded-xl border border-slate-200 p-0.5 shrink-0">
+                    {/* Selector de Cantidad [-] 1 [+] con Relieve Neumórfico Inset */}
+                    <div className="flex items-center bg-[#ECEEF2] rounded-xl border border-white/70 shadow-neuInset p-0.5 shrink-0">
                       <button
                         type="button"
                         onClick={() => handleQtyChange(product.id, -1, product.stock)}
                         disabled={currentQty <= 1}
-                        className="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white disabled:opacity-30 transition-all"
+                        className="w-6 h-6 rounded-lg flex items-center justify-center text-slate-600 hover:bg-[#F1F2F6] hover:shadow-neuBtn disabled:opacity-30 transition-all active:scale-95"
                         title="Restar"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="font-bubble font-bold text-xs text-fio-900 w-6 text-center">
+                      <span className="font-bubble font-bold text-xs text-slate-800 w-6 text-center">
                         {currentQty}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleQtyChange(product.id, 1, product.stock)}
                         disabled={currentQty >= product.stock}
-                        className="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white disabled:opacity-30 transition-all"
+                        className="w-6 h-6 rounded-lg flex items-center justify-center text-slate-600 hover:bg-[#F1F2F6] hover:shadow-neuBtn disabled:opacity-30 transition-all active:scale-95"
                         title="Sumar"
                       >
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
 
-                    {/* Botón Agregar al Pedido */}
+                    {/* Botón Agregar al Pedido (Neumórfico Táctil) */}
                     <button
                       type="button"
                       onClick={() => handleAddToCart(product)}
-                      className={`flex-1 py-1.5 px-2.5 rounded-xl font-bubble font-bold text-xs flex items-center justify-center gap-1 shadow-2xs active:scale-95 transition-all ${
+                      className={`flex-1 py-1.5 px-2.5 rounded-xl font-bubble font-bold text-xs flex items-center justify-center gap-1 active:scale-95 transition-all ${
                         isAdded
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-fio-800 hover:bg-fio-900 text-white'
+                          ? 'bg-emerald-600 text-white shadow-neuBtn'
+                          : 'neu-btn-primary'
                       }`}
                     >
                       {isAdded ? (
@@ -454,11 +454,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       )}
                     </button>
 
-                    {/* Botón Directo WhatsApp */}
+                    {/* Botón Directo WhatsApp (Neumórfico) */}
                     <button
                       type="button"
                       onClick={() => handleDirectWhatsAppOrder(product)}
-                      className="p-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 shrink-0 transition-colors"
+                      className="p-1.5 rounded-xl neu-btn text-emerald-700 shrink-0 transition-all active:scale-95"
                       title="Pedir este producto por WhatsApp"
                     >
                       <MessageCircle className="w-4 h-4 text-emerald-600" />

@@ -17,6 +17,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.27.0 - Adopción y Modulación del Estilo Neumorphism / Soft UI: Cajas de Información con Relieve Táctil, Botones Neumórficos y Showcase Interactivo
+- [x] **Copiado y Modulación Exacta del Estilo Neumorphism ([`tailwind.config.js`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/tailwind.config.js) y [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - **Cajas de Información Neumórficas (`.neu-card`):** Superficies cerámicas `#F1F2F6`, esquinas redondeadas generosas (`rounded-3xl`), bisel blanco sutil (`border-white/90`) y doble sombra física proyectada (`-10px -10px 24px #FFFFFF, 10px 10px 24px rgba(166, 175, 195, 0.38)`).
+  - **Cajas Inset / Hundidas (`.neu-card-inset`):** Contenedores interiores con sombra cóncava (`inset 4px 4px 8px ...`).
+  - **Botones Neumórficos Táctiles (`.neu-btn`, `.neu-btn-primary`, `.neu-btn-amber`):** Efecto de botón físico extruido que al hacer clic se hunde con sensación táctil (`:active { inset 3px 3px 6px ... }`).
+  - **Botones Circulares de Acción (`.neu-btn-circle`):** Redondeados completos con resalte suave para iconos de corazón, audio y sumas.
+  - **Selectores Segmentados (`.neu-segmented-container`):** Píldoras hundidas con interruptores de resalte al estilo del control solar de la referencia.
+- [x] **Demostrador Interactivo en Vivo ([`NeumorphicShowcase.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/NeumorphicShowcase.tsx)):**
+  - Incorporado en la página principal recreando todos los elementos de la hoja de diseño: dial de 28°, selector de clima (sol/nube/luna), los 4 pilares (soft, minimal, tactile, natural), barra de búsqueda inset, interruptor toggle on/off, reproductor de audio y la tarjeta de cita con comillas doradas `66` y esfera ámbar táctil.
+- [x] **Adaptación Integral en la Web:**
+  - Tarjetas y botones de talleres ([`WorkshopsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopsSection.tsx)).
+  - Tarjetas y selector de cantidad táctil `[-] 1 [+]` en el catálogo ([`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)).
+  - Botones del Hero y píldoras de calidad ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx)).
+  - Botón de Proceder al Pago ([`CartDrawer.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CartDrawer.tsx)).
+  - Integración en el selector de diseño del Admin ([`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx)).
+
 ### Versión 1.26.0 - Sistema Multifuncional de Carga de Fotografías (URL, Subida de Archivo, Pegar Foto Ctrl+V y Arrastrar y Soltar)
 - [x] **Componente Universal de Carga de Fotos ([`ImageUploadField.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ImageUploadField.tsx)):**
   - Implementado sistema modular de 4 métodos simultáneos para fotos:

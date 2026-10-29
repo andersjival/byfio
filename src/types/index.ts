@@ -4,7 +4,7 @@ export type AppRoute = 'home' | 'store' | 'catalogo' | 'workshops' | 'workshop-d
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 
-export type ColorTheme = 'vibrant' | 'zen';
+export type ColorTheme = 'vibrant' | 'zen' | 'neumorphic';
 
 export type ProductCategory =
   | 'Agendas Personalizadas'

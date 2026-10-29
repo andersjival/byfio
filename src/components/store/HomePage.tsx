@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { AppRoute } from '../../types';
 import { HeroDual } from './HeroDual';
 import { TreeNavigation } from '../common/TreeNavigation';
+import { NeumorphicShowcase } from '../common/NeumorphicShowcase';
 import { formatCRC } from '../../utils/formatters';
 import { Sparkles, ArrowRight, Calendar, ShoppingBag, Heart, Check } from 'lucide-react';
 
@@ -55,12 +56,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {featuredWorkshops.map((ws) => (
             <div
               key={ws.id}
-              className="bg-[#FDFBF9] rounded-[28px] p-4 sm:p-5 border border-white/90 shadow-[8px_12px_24px_rgba(180,160,200,0.08),-6px_-6px_16px_rgba(255,255,255,0.95)] hover:shadow-[12px_16px_30px_rgba(180,160,200,0.15)] transition-all duration-300 flex flex-col justify-between"
+              className="bg-[#F1F2F6] rounded-[32px] p-4 sm:p-5 border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300 flex flex-col justify-between"
             >
               <div>
-                <div className="relative h-44 rounded-2xl overflow-hidden bg-[#F2EDE7] mb-3">
+                <div className="relative h-44 rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset mb-3">
                   <img src={ws.image} alt={ws.title} className="w-full h-full object-cover" />
-                  <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-white/90 backdrop-blur text-[10px] font-bold text-slate-700 shadow-sm">
+                  <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-slate-700 shadow-neuBtn">
                     {ws.modality}
                   </span>
                 </div>
@@ -68,7 +69,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <Calendar className="w-3.5 h-3.5" />
                   <span>{ws.date}</span>
                 </div>
-                <h3 className="font-serif text-lg text-slate-800 font-semibold line-clamp-1">
+                <h3 className="font-bubble font-bold text-lg text-slate-900 line-clamp-1">
                   {ws.title}
                 </h3>
                 <p className="text-xs text-slate-500 line-clamp-2 mt-1">
@@ -76,14 +77,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between mt-3">
-                <span className="font-serif text-lg font-bold text-slate-800">
+              <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between mt-3">
+                <span className="font-bubble text-lg font-bold text-slate-900">
                   {formatCRC(ws.price)}
                 </span>
                 <button
                   type="button"
                   onClick={() => onNavigate('workshops')}
-                  className="px-3.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-sm"
+                  className="px-4 py-2 rounded-xl neu-btn-primary text-xs font-bubble font-bold active:scale-95 transition-all"
                 >
                   Ver cupos
                 </button>
@@ -123,16 +124,16 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {featuredProducts.map((p) => (
             <div
               key={p.id}
-              className="bg-[#FDFBF9] rounded-[28px] p-4 border border-white/90 shadow-[8px_12px_24px_rgba(180,160,200,0.08),-6px_-6px_16px_rgba(255,255,255,0.95)] hover:shadow-[12px_16px_30px_rgba(180,160,200,0.15)] transition-all duration-300 flex flex-col justify-between"
+              className="bg-[#F1F2F6] rounded-[32px] p-4 border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300 flex flex-col justify-between"
             >
               <div>
-                <div className="relative h-40 rounded-2xl overflow-hidden bg-[#F2EDE7] mb-3">
+                <div className="relative h-40 rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset mb-3">
                   <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
-                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur text-[10px] font-semibold text-slate-700 shadow-sm">
+                  <span className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-slate-700 shadow-neuBtn">
                     {p.category}
                   </span>
                 </div>
-                <h3 className="font-serif text-base text-slate-800 font-semibold line-clamp-1">
+                <h3 className="font-bubble font-bold text-base text-slate-900 line-clamp-1">
                   {p.name}
                 </h3>
                 <p className="text-xs text-slate-500 line-clamp-2 mt-1">
@@ -140,8 +141,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between mt-3">
-                <span className="font-serif text-lg font-bold text-slate-800">
+              <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between mt-3">
+                <span className="font-bubble text-lg font-bold text-slate-900">
                   {formatCRC(p.price)}
                 </span>
                 <button
@@ -158,7 +159,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                       shelfLocation: p.shelfLocation,
                     });
                   }}
-                  className="p-2 rounded-xl bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] hover:from-[#C084FC] hover:to-[#A855F7] text-white shadow-sm"
+                  className="w-10 h-10 neu-btn-circle text-amber-500 hover:text-amber-600 active:scale-90 transition-all"
                   title="Agregar al Carrito"
                 >
                   <ShoppingBag className="w-4 h-4" />
@@ -168,6 +169,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           ))}
         </div>
       </section>
+
+      {/* =========================================================================
+          MÓDULO DE DEMOSTRACIÓN NEUMÓRFICA (SOFT UI TACTILE & MINIMAL)
+          Adaptado fielmente de la hoja de diseño de referencia
+          ========================================================================= */}
+      <NeumorphicShowcase />
     </div>
   );
 };
