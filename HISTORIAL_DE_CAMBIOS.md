@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.58.0 - Inicio de Sesión Real con Credenciales Maestras (fio@byfiocr.com / Fio777)
+- [x] **Autenticación Maestra Oficial ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Implementado sistema de autenticación real reconociendo `fio@byfiocr.com` (o usuario `fio`) con contraseña `Fio777` como cuenta Maestra / Administradora con privilegios totales.
+  - Soporte de registro de nuevos usuarios de clientes con persistencia segura en `localStorage` (`byfio_auth_user_v1` y `byfio_registered_users_v1`).
+- [x] **Formulario Interactivo y Validación en Modal ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
+  - Validación de credenciales en tiempo real con alertas de error claras ante datos inválidos y mensaje de bienvenida personalizado con confeti ante inicio exitoso.
+  - Indicador de sesión activa con opción de desconexión inmediata y redirección automática al Panel de Administración si el rol es administrador.
+- [x] **Indicador de Usuario y Acceso Rápido en Navbar ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Despliegue del estado autenticado en la barra de navegación superior y menú móvil con badge "Admin", botón de acceso directo a "Panel" y botón para "Cerrar Sesión".
+
+
 ### Versión 1.57.0 - Ampliación de Ilustración de Login y Exposición Total de Manos y Dedos
 - [x] **Ampliación de Escala de Personajes ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Incrementada la altura de `.characters-stage` a 245px con `max-width: 96%`, brindando una presencia visual mucho más grande, nítida y destacada a la niña y a la estrella.

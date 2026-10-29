@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme, ColorTheme, PricingSectionData } from '../types';
+import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme, ColorTheme, PricingSectionData, AuthUser } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { playAudioBeep } from '../utils/formatters';
@@ -83,6 +83,10 @@ interface AppContextType {
   setSoundBubbleEnabled: (enabled: boolean) => void;
   soundButtonsEnabled: boolean;
   setSoundButtonsEnabled: (enabled: boolean) => void;
+  currentUser: AuthUser | null;
+  loginUser: (email: string, pass: string) => { success: boolean; error?: string; user?: AuthUser };
+  registerUser: (email: string, pass: string, name?: string) => { success: boolean; error?: string; user?: AuthUser };
+  logoutUser: () => void;
   resetToDefaults: () => void;
 }
 
@@ -99,6 +103,8 @@ const STORAGE_KEYS = {
   PRICING_DATA: 'byfio_pricing_data_v1',
   SOUND_BUBBLE: 'byfio_sound_bubble_v1',
   SOUND_BUTTONS: 'byfio_sound_buttons_v1',
+  AUTH_USER: 'byfio_auth_user_v1',
+  REGISTERED_USERS: 'byfio_registered_users_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -200,6 +206,93 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setSoundButtonsEnabled = (enabled: boolean) => {
     setSoundButtonsEnabledState(enabled);
     localStorage.setItem(STORAGE_KEYS.SOUND_BUTTONS, String(enabled));
+  };
+
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const loginUser = (emailInput: string, passwordInput: string) => {
+    const cleanEmail = emailInput.trim().toLowerCase();
+    const cleanPass = passwordInput.trim();
+
+    // Cuenta Maestra Oficial: fio@byfiocr.com / Fio777
+    if ((cleanEmail === 'fio@byfiocr.com' || cleanEmail === 'fio') && cleanPass === 'Fio777') {
+      const adminUser: AuthUser = {
+        email: 'fio@byfiocr.com',
+        name: 'Fiorella (Fio)',
+        role: 'admin',
+      };
+      setCurrentUser(adminUser);
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(adminUser));
+      return { success: true, user: adminUser };
+    }
+
+    // Cuentas de clientes registradas localmente
+    try {
+      const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+      const found = registered.find(
+        (u: any) => u.email.toLowerCase() === cleanEmail && u.password === cleanPass
+      );
+      if (found) {
+        const normalUser: AuthUser = {
+          email: found.email,
+          name: found.name || found.email.split('@')[0],
+          role: 'customer',
+        };
+        setCurrentUser(normalUser);
+        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(normalUser));
+        return { success: true, user: normalUser };
+      }
+    } catch {}
+
+    return { success: false, error: 'Correo o contraseña incorrectos. Verifica tus credenciales.' };
+  };
+
+  const registerUser = (emailInput: string, passwordInput: string, nameInput?: string) => {
+    const cleanEmail = emailInput.trim().toLowerCase();
+    const cleanPass = passwordInput.trim();
+    if (!cleanEmail || !cleanPass) {
+      return { success: false, error: 'Por favor completa todos los campos requeridos.' };
+    }
+    if (cleanEmail === 'fio@byfiocr.com' || cleanEmail === 'fio') {
+      return { success: false, error: 'Este correo está reservado para la administración.' };
+    }
+    try {
+      const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+      if (registered.some((u: any) => u.email.toLowerCase() === cleanEmail)) {
+        return { success: false, error: 'Ya existe una cuenta con este correo electrónico.' };
+      }
+      const record = {
+        email: cleanEmail,
+        password: cleanPass,
+        name: nameInput?.trim() || cleanEmail.split('@')[0],
+        createdAt: new Date().toISOString(),
+      };
+      registered.push(record);
+      localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+
+      const customer: AuthUser = {
+        email: record.email,
+        name: record.name,
+        role: 'customer',
+      };
+      setCurrentUser(customer);
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(customer));
+      return { success: true, user: customer };
+    } catch {
+      return { success: false, error: 'Error al registrar usuario.' };
+    }
+  };
+
+  const logoutUser = () => {
+    setCurrentUser(null);
+    localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
   };
 
   const updatePricingData = (newData: PricingSectionData) => {
@@ -656,6 +749,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSoundBubbleEnabled,
         soundButtonsEnabled,
         setSoundButtonsEnabled,
+        currentUser,
+        loginUser,
+        registerUser,
+        logoutUser,
         cartToast,
         showCartSuccessToast,
         closeCartToast,

@@ -139,3 +139,11 @@ export interface CartItem {
   shelfLocation?: string;
   spotsLeft?: number;
 }
+
+export interface AuthUser {
+  email: string;
+  name: string;
+  role: 'admin' | 'customer';
+  avatar?: string;
+}
+

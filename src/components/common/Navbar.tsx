@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { BrandLogo } from './BrandLogo';
 import { TikTokIcon } from './TikTokIcon';
 import { AppRoute } from '../../types';
-import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid } from 'lucide-react';
+import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid, LogOut, ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
   currentRoute: AppRoute;
@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectAdminHub,
   isAdminHub = false,
 }) => {
-  const { cart, setIsCartOpen, colorTheme } = useApp();
+  const { cart, setIsCartOpen, colorTheme, currentUser, logoutUser } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const totalCartCount = cart.reduce((acc, it) => acc + it.quantity, 0);
@@ -165,17 +165,49 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>6400-4640</span>
               </a>
 
-              {/* Botón Iniciar Sesión 3D (Niña & Estrellita) */}
-              <button
-                type="button"
-                onClick={onOpenLogin || (() => handleNav('login'))}
-                aria-label="Iniciar Sesión"
-                className="flex items-center gap-1.5 px-3 py-2 sm:py-2.5 rounded-xl neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95"
-                title="Iniciar Sesión 3D"
-              >
-                <User className="w-4 h-4 text-fio-pink" />
-                <span className="hidden xl:inline">Iniciar Sesión</span>
-              </button>
+              {/* Sesión de Usuario o Botón Iniciar Sesión 3D */}
+              {currentUser ? (
+                <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white/90 border border-purple-200/80 rounded-2xl shadow-xs">
+                  <div className="flex items-center gap-1.5 px-2 py-1 text-xs font-bubble font-bold text-slate-700 max-w-[130px] sm:max-w-[160px]">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                    <span className="truncate">{currentUser.name}</span>
+                    {currentUser.role === 'admin' && (
+                      <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                  {currentUser.role === 'admin' && (
+                    <button
+                      type="button"
+                      onClick={() => handleNav('admin')}
+                      className="px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold transition-all shrink-0"
+                      title="Ir al panel de administración"
+                    >
+                      Panel
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={logoutUser}
+                    className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-all shrink-0"
+                    title="Cerrar sesión"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onOpenLogin || (() => handleNav('login'))}
+                  aria-label="Iniciar Sesión"
+                  className="flex items-center gap-1.5 px-3 py-2 sm:py-2.5 rounded-xl neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95"
+                  title="Iniciar Sesión 3D"
+                >
+                  <User className="w-4 h-4 text-fio-pink" />
+                  <span className="hidden xl:inline">Iniciar Sesión</span>
+                </button>
+              )}
 
               {/* Botón Carrito de Compras Neumórfico */}
               <button
@@ -234,6 +266,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-yellow" />
                 <span>Menú Principal</span>
               </button>
+
+              {/* Botón Cerrar Sesión en Admin */}
+              {currentUser && (
+                <button
+                  type="button"
+                  onClick={logoutUser}
+                  className="neu-btn bg-[#F1F2F6] flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-bubble font-bold border border-white/80 shadow-neuBtn transition-all active:scale-95"
+                  title="Cerrar sesión"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Salir</span>
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -298,18 +343,57 @@ export const Navbar: React.FC<NavbarProps> = ({
             Precios Stickers
           </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setMobileOpen(false);
-              if (onOpenLogin) onOpenLogin();
-              else handleNav('login');
-            }}
-            className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn flex items-center gap-2"
-          >
-            <User className="w-4 h-4 text-fio-pink" />
-            <span>Iniciar Sesión 3D</span>
-          </button>
+          {currentUser ? (
+            <div className="p-3 rounded-2xl bg-white/80 border border-purple-200/80 shadow-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-sm font-bubble font-bold text-slate-800">{currentUser.name}</span>
+                </div>
+                {currentUser.role === 'admin' && (
+                  <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[10px] text-white font-bold uppercase tracking-wider">
+                    Admin
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 truncate">{currentUser.email}</p>
+              <div className="flex items-center gap-2 pt-1 border-t border-purple-100">
+                {currentUser.role === 'admin' && (
+                  <button
+                    type="button"
+                    onClick={() => handleNav('admin')}
+                    className="flex-1 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold text-center transition-all"
+                  >
+                    Panel Admin
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    logoutUser();
+                    setMobileOpen(false);
+                  }}
+                  className="flex-1 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bubble font-bold text-center flex items-center justify-center gap-1 transition-all"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Cerrar Sesión</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(false);
+                if (onOpenLogin) onOpenLogin();
+                else handleNav('login');
+              }}
+              className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn flex items-center gap-2"
+            >
+              <User className="w-4 h-4 text-fio-pink" />
+              <span>Iniciar Sesión 3D</span>
+            </button>
+          )}
 
           <div className="pt-2 border-t border-slate-200/40 flex items-center gap-3 px-2">
             <a

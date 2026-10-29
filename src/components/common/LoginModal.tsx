@@ -1,55 +1,104 @@
 import React, { useState } from 'react';
-import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2 } from 'lucide-react';
+import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2, AlertCircle, LogOut } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useApp } from '../../context/AppContext';
+import { AuthUser } from '../../types';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   isStandalonePage?: boolean;
+  onSuccess?: (user: AuthUser) => void;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
   onClose,
   isStandalonePage = false,
+  onSuccess,
 }) => {
+  const { currentUser, loginUser, registerUser, logoutUser } = useApp();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   if (!isOpen && !isStandalonePage) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
     setIsLoading(true);
 
     setTimeout(() => {
       setIsLoading(false);
-      setSuccessMessage(
-        mode === 'login'
-          ? '¡Bienvenido(a) a by.fio! 💖 Sesión iniciada con éxito.'
-          : '¡Cuenta creada con éxito! ✨ Bienvenida a la familia by.fio.'
-      );
 
-      try {
-        confetti({
-          particleCount: 65,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#8e54e9', '#ff7597', '#ffbe3b', '#6c43b5'],
-        });
-      } catch {}
+      if (mode === 'login') {
+        const result = loginUser(email, password);
+        if (result.success && result.user) {
+          setErrorMessage(null);
+          setSuccessMessage(
+            result.user.role === 'admin'
+              ? '¡Bienvenida Fio! 💖 Sesión iniciada con éxito.'
+              : `¡Bienvenid@ ${result.user.name}! ✨ Sesión iniciada con éxito.`
+          );
 
-      if (!isStandalonePage) {
-        setTimeout(() => {
-          onClose();
-          setSuccessMessage(null);
-        }, 1600);
+          try {
+            confetti({
+              particleCount: 70,
+              spread: 75,
+              origin: { y: 0.6 },
+              colors: ['#8e54e9', '#ff7597', '#ffbe3b', '#6c43b5'],
+            });
+          } catch {}
+
+          if (onSuccess) {
+            onSuccess(result.user);
+          }
+
+          setTimeout(() => {
+            if (!isStandalonePage) {
+              onClose();
+            }
+            setSuccessMessage(null);
+          }, 1500);
+        } else {
+          setErrorMessage(result.error || 'Credenciales incorrectas. Verifica tu correo y contraseña.');
+        }
+      } else {
+        const result = registerUser(email, password, name);
+        if (result.success && result.user) {
+          setErrorMessage(null);
+          setSuccessMessage('¡Cuenta creada con éxito! ✨ Bienvenida a la familia by.fio.');
+
+          try {
+            confetti({
+              particleCount: 70,
+              spread: 75,
+              origin: { y: 0.6 },
+              colors: ['#8e54e9', '#ff7597', '#ffbe3b', '#6c43b5'],
+            });
+          } catch {}
+
+          if (onSuccess) {
+            onSuccess(result.user);
+          }
+
+          setTimeout(() => {
+            if (!isStandalonePage) {
+              onClose();
+            }
+            setSuccessMessage(null);
+          }, 1500);
+        } else {
+          setErrorMessage(result.error || 'Error al crear la cuenta.');
+        }
       }
-    }, 1200);
+    }, 600);
   };
 
   const content = (
@@ -96,11 +145,59 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
         {/* Formulario */}
         <form className="form-panel" onSubmit={handleSubmit}>
+          {/* Mensaje de Sesión Activa */}
+          {currentUser && !successMessage && !errorMessage && (
+            <div className="mb-3 p-2 rounded-2xl bg-purple-50 border border-purple-200 text-xs text-purple-900 flex items-center justify-between gap-2 shadow-xs">
+              <div className="truncate text-left pl-1">
+                <span className="font-bubble font-bold text-fio-purple">Sesión activa:</span>{' '}
+                <span className="font-semibold">{currentUser.email}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  logoutUser();
+                  setSuccessMessage(null);
+                }}
+                className="px-2 py-1 rounded-xl bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-[11px] font-bold font-bubble flex items-center gap-1 shrink-0 transition-all shadow-2xs"
+                title="Cerrar sesión actual"
+              >
+                <LogOut className="w-3 h-3" />
+                <span>Salir</span>
+              </button>
+            </div>
+          )}
+
+          {/* Mensaje de Error */}
+          {errorMessage && (
+            <div className="mb-3 p-2.5 rounded-2xl bg-rose-500 text-white text-xs font-bubble font-semibold text-center shadow-md animate-fadeIn flex items-center justify-center gap-1.5">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
           {/* Mensaje de Éxito Flotante */}
           {successMessage && (
             <div className="mb-3 p-2.5 rounded-2xl bg-emerald-500 text-white text-xs font-bubble font-bold text-center shadow-md animate-fadeIn flex items-center justify-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span>{successMessage}</span>
+            </div>
+          )}
+
+          {mode === 'register' && (
+            <div className="input-group">
+              <div className="icon-badge">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <input
+                type="text"
+                placeholder="Tu Nombre Completo"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (errorMessage) setErrorMessage(null);
+                }}
+                required
+              />
             </div>
           )}
 
@@ -110,10 +207,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             </div>
             <input
               type="text"
-              placeholder="Correo o Usuario"
+              placeholder={mode === 'login' ? 'Correo (ej. fio@byfiocr.com)' : 'Correo electrónico'}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errorMessage) setErrorMessage(null);
+              }}
               required
+              autoComplete="username"
             />
           </div>
 
@@ -125,8 +226,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               type={showPassword ? 'text' : 'password'}
               placeholder="Contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (errorMessage) setErrorMessage(null);
+              }}
               required
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
             />
             <button
               type="button"
@@ -167,7 +272,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 ¿No tienes una cuenta?{' '}
                 <button
                   type="button"
-                  onClick={() => setMode('register')}
+                  onClick={() => {
+                    setMode('register');
+                    setErrorMessage(null);
+                    setSuccessMessage(null);
+                  }}
                   className="font-bold hover:underline"
                 >
                   Regístrate
@@ -178,7 +287,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 ¿Ya tienes una cuenta?{' '}
                 <button
                   type="button"
-                  onClick={() => setMode('login')}
+                  onClick={() => {
+                    setMode('login');
+                    setErrorMessage(null);
+                    setSuccessMessage(null);
+                  }}
                   className="font-bold hover:underline"
                 >
                   Inicia Sesión

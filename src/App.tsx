@@ -222,6 +222,13 @@ export const App: React.FC = () => {
                 isOpen={true}
                 onClose={() => navigate('home')}
                 isStandalonePage={true}
+                onSuccess={(user) => {
+                  if (user.role === 'admin') {
+                    navigate('admin');
+                  } else {
+                    navigate('home');
+                  }
+                }}
               />
             )}
 
@@ -381,7 +388,15 @@ export const App: React.FC = () => {
       </footer>
 
       {/* Modales y Elementos Flotantes Globales */}
-      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onSuccess={(user) => {
+          if (user.role === 'admin') {
+            navigate('admin');
+          }
+        }}
+      />
       <CartSuccessToast />
       <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />
       <FloatingMascot />
