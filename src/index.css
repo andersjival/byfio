@@ -238,22 +238,163 @@ body[data-color-theme="zen"] {
   background-color: #FAF7F2 !important;
 }
 
-/* Print Styles for QR Labels and Invoices */
+/* =========================================================================
+   ESTILOS DE IMPRESIÓN PROFESIONAL (HOJA CARTA/A4, LÍNEAS NÍTIDAS, COLOR MARCA)
+   ========================================================================= */
+@page {
+  size: letter portrait;
+  margin: 10mm 12mm 12mm 12mm;
+}
+
 @media print {
-  body * {
-    visibility: hidden;
+  /* Forzar preservación de colores de fondo, gradientes y bordes en todos los navegadores */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
-  #printable-qr-label, #printable-qr-label *,
-  #printable-invoice, #printable-invoice * {
-    visibility: visible;
+
+  html, body {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    font-size: 10.5pt !important;
+    line-height: 1.35 !important;
   }
-  #printable-qr-label, #printable-invoice {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+
+  /* Ocultar elementos de interfaz en pantalla */
+  .no-print,
+  .invoice-header-bar,
+  .invoice-actions-bar,
+  button:not(.force-print),
+  nav,
+  header,
+  footer,
+  aside {
+    display: none !important;
+  }
+
+  /* Si la factura está abierta, ocultar el resto del árbol de la app */
+  body.invoice-open > #root > *:not(.invoice-modal-overlay) {
+    display: none !important;
+  }
+
+  body.closing-report-open > #root > *:not(.closing-modal-overlay) {
+    display: none !important;
+  }
+
+  /* Desactivar modales fijos para que fluyan como documento de hoja completa */
+  .invoice-modal-overlay,
+  .closing-modal-overlay {
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .invoice-modal-card,
+  .closing-modal-card {
+    position: static !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    max-height: none !important;
+    background: #FFFFFF !important;
+  }
+
+  #printable-invoice,
+  #printable-closing-report,
+  #printable-qr-label {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    visibility: visible !important;
+  }
+
+  #printable-invoice *,
+  #printable-closing-report *,
+  #printable-qr-label * {
+    visibility: visible !important;
+  }
+
+  /* Cabecera con Color de la Marca en Impresión */
+  .print-brand-header {
+    background-color: #6B21A8 !important;
+    background-image: linear-gradient(135deg, #581C87 0%, #6B21A8 50%, #7E22CE 100%) !important;
+    color: #FFFFFF !important;
+    border-radius: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .print-brand-header * {
+    color: #FFFFFF !important;
+  }
+
+  .print-contrast-box {
+    background-color: #FFFFFF !important;
+    border: 2px solid #0F172A !important;
+    color: #0F172A !important;
+  }
+
+  .print-contrast-box * {
+    color: #0F172A !important;
+  }
+
+  /* Tablas con Líneas Nítidas y Bien Definidas */
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 2px solid #334155 !important;
+  }
+
+  .print-table th {
+    background-color: #F1F5F9 !important;
+    border: 1px solid #475569 !important;
+    color: #0F172A !important;
+    font-weight: 700 !important;
+    padding: 6px 10px !important;
+  }
+
+  .print-table td {
+    border: 1px solid #64748B !important;
+    color: #0F172A !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Cajas de Información con Bordes Definidos */
+  .print-section-box {
+    border: 1.5px solid #475569 !important;
+    background-color: #F8FAFC !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Evitar quiebres de página incómodos en medio de filas o bloques */
+  tr, table, .print-section-box, .print-brand-header, .print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 

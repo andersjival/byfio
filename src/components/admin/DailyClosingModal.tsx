@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
 import { X, Printer, MessageCircle, FileSpreadsheet, Heart } from 'lucide-react';
@@ -11,6 +11,17 @@ interface DailyClosingModalProps {
 
 export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, onClose }) => {
   const { orders, products } = useApp();
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('closing-report-open');
+    } else {
+      document.body.classList.remove('closing-report-open');
+    }
+    return () => {
+      document.body.classList.remove('closing-report-open');
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -48,10 +59,10 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-3 sm:p-5 animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <div className="closing-modal-overlay fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-3 sm:p-5 animate-fadeIn">
+      <div className="closing-modal-card relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
         {/* Header Fijo */}
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-[#F1F2F6] shrink-0">
+        <div className="no-print p-4 border-b border-slate-200 flex items-center justify-between bg-[#F1F2F6] shrink-0">
           <div className="flex items-center gap-2">
             <FileSpreadsheet className="w-5 h-5 text-fio-800" />
             <h3 className="font-bubble font-bold text-sm text-fio-900">Acta de Cierre de Caja Diario</h3>
@@ -116,7 +127,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
         </div>
 
         {/* Acciones */}
-        <div className="p-4 border-t border-fio-200 bg-fio-50/60 flex flex-col sm:flex-row gap-2 justify-end">
+        <div className="no-print p-4 border-t border-fio-200 bg-fio-50/60 flex flex-col sm:flex-row gap-2 justify-end">
           <button
             onClick={handlePrint}
             className="flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-2xl border border-gray-300 bg-white text-gray-700 font-bubble text-xs font-semibold"

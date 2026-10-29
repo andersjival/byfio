@@ -17,6 +17,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.31.0 - Factura PDF e Impresión Universal en Hoja Estándar (Carta / A4): Cabecera con Color de Marca y Cuadrícula de Líneas Nítidas
+- [x] **Cabecera Oficial con Color de la Marca ([`InvoiceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InvoiceModal.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Cabecera con fondo púrpura institucional `#6B21A8` (degradado corporativo `#581C87` a `#7E22CE`) preservado en impresión con `-webkit-print-color-adjust: exact` y `print-color-adjust: exact`.
+  - Tipografía en blanco puro con logotipo `by.fio`, distintivo `Costa Rica 🇨🇷`, dirección física oficial de Tibás y WhatsApp `6400-4640`.
+  - Recuadro de alta visibilidad para número de orden `#FIO-XXXX`, fecha de emisión y badge de verificación `PAGADO & VERIFICADO ✅`.
+- [x] **Formato Universal de Hoja de Papel Normal (Carta / A4):**
+  - Configuración `@page { size: letter portrait; margin: 10mm 12mm 12mm 12mm; }` para impresión limpia y proporcionada sin cortes de margen en cualquier impresora.
+  - Supresión automática de fondos oscuros, barras de desplazamiento y botones de pantalla (`no-print`) al imprimir o guardar como PDF.
+  - Flujo libre del documento (`invoice-modal-overlay` y `invoice-modal-card` estáticos en `@media print`) para admitir pedidos de múltiples páginas sin desbordes.
+- [x] **Líneas Sólidas y Cuadrícula Nítida en Todos los Bloques:**
+  - Tabla de artículos con cuadrícula completa (`border-collapse`, `border-2 border-slate-400` y divisiones entre celdas `border border-slate-300`), índices numéricos, personalizaciones destacadas y totales alineados.
+  - Cuadro de datos del cliente y método de entrega estructurado con bordes de alta definición.
+  - Desglose de totales con recuadro perimetral cerrado y cuentas bancarias oficiales (SINPE Móvil y BCR IBAN).
+- [x] **Acceso Directo desde Checkout ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - Incorporado botón "Imprimir Factura / PDF" al confirmar la orden para que el comprador descargue o imprima su comprobante al instante.
+
 ### Versión 1.30.0 - Integración Oficial de Dirección Física (Tibás) y Horarios de Atención Semanales
 - [x] **Componente Neumórfico de Dirección y Horarios ([`StudioLocationScheduleCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StudioLocationScheduleCard.tsx)):**
   - **Ubicación Física Oficial:** 200 sur del parque de Tibás, San José, Costa Rica (Referencia: MAYO10 / by.fio) con botón de navegación directa hacia Google Maps y WhatsApp oficial `6400-4640`.

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { X, CheckCircle, Truck, Store, ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
+import { X, CheckCircle, Truck, Store, ArrowRight, Sparkles, MessageCircle, Printer } from 'lucide-react';
 import { PaymentAccountsCard } from '../common/PaymentAccountsCard';
 import confetti from 'canvas-confetti';
 
@@ -12,7 +12,7 @@ interface CheckoutModalProps {
 }
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
-  const { cart, createOrder, setViewMode } = useApp();
+  const { cart, createOrder, setViewMode, setInvoiceOrder } = useApp();
 
   const [deliveryMethod, setDeliveryMethod] = useState<'envio' | 'retiro'>('envio');
   const [customerName, setCustomerName] = useState('');
@@ -170,13 +170,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                 className="flex-1 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs flex items-center justify-center gap-2 shadow-neuBtn active:scale-95 transition-all text-center"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>Enviar Comprobante por WhatsApp</span>
+                <span>Enviar por WhatsApp</span>
               </a>
 
               <button
                 type="button"
+                onClick={() => setInvoiceOrder(confirmedOrder)}
+                className="py-3 px-4 rounded-2xl bg-white hover:bg-slate-50 text-fio-900 border border-slate-200 shadow-neuBtn font-bubble font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+              >
+                <Printer className="w-4 h-4 text-fio-800" />
+                <span>Imprimir Factura / PDF</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={handleClose}
-                className="py-3 px-5 rounded-2xl neu-btn text-slate-700 font-bubble font-bold text-xs active:scale-95 transition-all"
+                className="py-3 px-4 rounded-2xl neu-btn text-slate-700 font-bubble font-bold text-xs active:scale-95 transition-all"
               >
                 Seguir Comprando
               </button>
