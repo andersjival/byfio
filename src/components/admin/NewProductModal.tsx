@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCategory } from '../../types';
-import { X, PlusCircle, Sparkles, Wand2 } from 'lucide-react';
+import { formatCRC } from '../../utils/formatters';
+import {
+  X, PlusCircle, Sparkles, Wand2, Image as ImageIcon,
+  CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil
+} from 'lucide-react';
 
 const DEFAULT_CATEGORIES = [
   'Agendas Personalizadas',
@@ -12,7 +16,14 @@ const DEFAULT_CATEGORIES = [
 ];
 
 export const NewProductModal: React.FC = () => {
-  const { isNewProductModalOpen, setIsNewProductModalOpen, addProduct } = useApp();
+  const {
+    isNewProductModalOpen,
+    setIsNewProductModalOpen,
+    addProduct,
+    updateProduct,
+    editingProduct,
+    setEditingProduct,
+  } = useApp();
 
   const [name, setName] = useState('');
   const [sku, setSku] = useState('');
@@ -26,9 +37,57 @@ export const NewProductModal: React.FC = () => {
   const [minStock, setMinStock] = useState('5');
   const [maxStock, setMaxStock] = useState('20');
   const [unit, setUnit] = useState('Unidad');
+  const [image, setImage] = useState('');
+  const [description, setDescription] = useState('');
   const [isCustomizable, setIsCustomizable] = useState(false);
+  const [customizationPlaceholder, setCustomizationPlaceholder] = useState('');
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+
+  // Sincronizar formulario según modo edición o creación
+  useEffect(() => {
+    if (editingProduct) {
+      setName(editingProduct.name);
+      setSku(editingProduct.sku);
+      setCategory(editingProduct.category);
+      setShelfLocation(editingProduct.shelfLocation);
+      setPrice(String(editingProduct.price));
+      setCostPrice(String(editingProduct.costPrice));
+      setStock(String(editingProduct.stock));
+      setMinStock(String(editingProduct.minStock));
+      setMaxStock(String(editingProduct.maxStock));
+      setUnit(editingProduct.unit || 'Unidad');
+      setImage(editingProduct.image || '');
+      setDescription(editingProduct.description || '');
+      setIsCustomizable(editingProduct.isCustomizable);
+      setCustomizationPlaceholder(editingProduct.customizationPlaceholder || '');
+      setIsCreatingNewCat(false);
+      setCustomCategory('');
+    } else {
+      setName('');
+      setSku('');
+      setCategory(DEFAULT_CATEGORIES[0]);
+      setShelfLocation('Estante A-1');
+      setPrice('12000');
+      setCostPrice('4500');
+      setStock('10');
+      setMinStock('5');
+      setMaxStock('20');
+      setUnit('Unidad');
+      setImage('');
+      setDescription('');
+      setIsCustomizable(false);
+      setCustomizationPlaceholder('');
+      setIsCreatingNewCat(false);
+      setCustomCategory('');
+    }
+  }, [editingProduct, isNewProductModalOpen]);
 
   if (!isNewProductModalOpen) return null;
+
+  const handleClose = () => {
+    setEditingProduct(null);
+    setIsNewProductModalOpen(false);
+  };
 
   const handleAutoGenerateSku = () => {
     const prefix = name ? name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X') : 'PRD';
@@ -37,163 +96,390 @@ export const NewProductModal: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !sku) return;
+    if (!name.trim() || !sku.trim()) return;
 
-    const finalCategory = (isCreatingNewCat && customCategory.trim() ? customCategory.trim() : category) as ProductCategory;
+    const finalCategory = (
+      isCreatingNewCat && customCategory.trim() ? customCategory.trim() : category
+    ) as ProductCategory;
 
-    addProduct({
-      name,
-      sku: sku.trim().toUpperCase(),
-      category: finalCategory,
-      shelfLocation,
-      price: Number(price) || 0,
-      costPrice: Number(costPrice) || 0,
-      stock: Number(stock) || 0,
-      minStock: Number(minStock) || 0,
-      maxStock: Number(maxStock) || 0,
-      unit,
-      isCustomizable,
-      customizationPlaceholder: isCustomizable ? 'Nombre o texto personalizado' : undefined,
-      image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80',
-      description: `${name} de alta calidad elaborado artesanalmente por by.fio.`,
-    });
+    const finalImage =
+      image.trim() ||
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80';
 
-    setIsNewProductModalOpen(false);
-    setName('');
-    setSku('');
+    const finalDesc = description.trim() || `${name.trim()} de alta calidad elaborado artesanalmente por by.fio.`;
+
+    if (editingProduct) {
+      // Modo Edición Completa
+      updateProduct(editingProduct.id, {
+        name: name.trim(),
+        sku: sku.trim().toUpperCase(),
+        category: finalCategory,
+        shelfLocation: shelfLocation.trim(),
+        price: Number(price) || 0,
+        costPrice: Number(costPrice) || 0,
+        stock: Number(stock) || 0,
+        minStock: Number(minStock) || 0,
+        maxStock: Number(maxStock) || 0,
+        unit: unit.trim() || 'Unidad',
+        image: finalImage,
+        description: finalDesc,
+        isCustomizable,
+        customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
+      });
+
+      setSuccessToast('¡Artículo actualizado y guardado correctamente!');
+    } else {
+      // Modo Nuevo Producto
+      addProduct({
+        name: name.trim(),
+        sku: sku.trim().toUpperCase(),
+        category: finalCategory,
+        shelfLocation: shelfLocation.trim(),
+        price: Number(price) || 0,
+        costPrice: Number(costPrice) || 0,
+        stock: Number(stock) || 0,
+        minStock: Number(minStock) || 0,
+        maxStock: Number(maxStock) || 0,
+        unit: unit.trim() || 'Unidad',
+        image: finalImage,
+        description: finalDesc,
+        isCustomizable,
+        customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
+      });
+
+      setSuccessToast('¡Artículo creado y agregado al inventario!');
+    }
+
+    setTimeout(() => {
+      setSuccessToast(null);
+      handleClose();
+    }, 1100);
   };
 
+  const previewImage =
+    image.trim() ||
+    'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80';
+
+  const marginColones = (Number(price) || 0) - (Number(costPrice) || 0);
+  const marginPct = Number(price) > 0 ? Math.round((marginColones / Number(price)) * 100) : 0;
+
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-clayLg border-2 border-fio-200 overflow-hidden">
-        {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-fio-200 flex items-center justify-between bg-fio-100/70">
-          <div className="flex items-center gap-2">
-            <PlusCircle className="w-5 h-5 text-fio-800" />
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 animate-fadeIn">
+      <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-clayLg border border-fio-200 overflow-hidden my-4">
+        {/* Header Superior */}
+        <div className="p-4 sm:p-5 border-b border-fio-200 flex items-center justify-between bg-gradient-to-r from-fio-100/80 via-white to-purple-50/80">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-fio-800 text-white flex items-center justify-center shadow-xs shrink-0">
+              {editingProduct ? <Pencil className="w-5 h-5 text-fio-yellow" /> : <PlusCircle className="w-5 h-5 text-white" />}
+            </div>
             <div>
-              <h3 className="font-bubble font-bold text-lg text-fio-900">Agregar Nuevo Producto o Insumo</h3>
-              <p className="text-[11px] text-gray-500">Se genera código QR y se activa de inmediato en tienda y alisto.</p>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bubble font-bold text-base sm:text-lg text-fio-900 leading-tight">
+                  {editingProduct ? 'Modificar Artículo del Inventario' : 'Agregar Nuevo Producto o Insumo'}
+                </h3>
+                {editingProduct && (
+                  <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 text-[10px] font-mono font-bold">
+                    {editingProduct.sku}
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-gray-500 mt-0.5">
+                {editingProduct
+                  ? 'Edita fotos, descripción, SKU, precios, ubicación y existencias con guardado permanente.'
+                  : 'Registra un nuevo producto, genera su código QR y habilítalo en tienda y pedidos.'}
+              </p>
             </div>
           </div>
-          <button onClick={() => setIsNewProductModalOpen(false)} className="text-gray-400 hover:text-gray-600 p-1">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="p-2 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-all active:scale-95"
+            title="Cerrar ventana"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 text-xs">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="sm:col-span-2">
-              <label className="block font-bold text-gray-700 mb-1">Nombre del Producto / Insumo *</label>
-              <input
-                required
-                type="text"
-                placeholder="Ej: Libreta Cuero Pastel 2027"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-fio-200 focus:ring-2 focus:ring-fio-400 focus:outline-none"
-              />
-            </div>
+        {/* Notificación Toast de Éxito */}
+        {successToast && (
+          <div className="bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 text-center flex items-center justify-center gap-2 animate-in slide-in-from-top duration-200">
+            <CheckCircle2 className="w-4 h-4" />
+            <span>{successToast}</span>
+          </div>
+        )}
 
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="font-bold text-gray-700">Código SKU *</label>
-                <button type="button" onClick={handleAutoGenerateSku} className="text-[10px] text-fio-600 hover:text-fio-800 font-bold flex items-center gap-0.5">
-                  <Wand2 className="w-3 h-3" /> Auto
-                </button>
+        {/* Formulario Completo de Edición */}
+        <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-5 text-xs max-h-[80vh] overflow-y-auto">
+          {/* Bloque 1: Identidad & Foto */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+            {/* Foto con Previsualización en Vivo */}
+            <div className="md:col-span-4 bg-fio-50/70 p-3 rounded-2xl border border-fio-200/80 flex flex-col items-center text-center space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-fio-800">
+                Fotografía del Producto
+              </span>
+              <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-white shadow-sm bg-gray-100 flex items-center justify-center">
+                <img
+                  src={previewImage}
+                  alt="Vista previa"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80';
+                  }}
+                />
               </div>
-              <input
-                required
-                type="text"
-                placeholder="Ej: FIO-LIB-10"
-                value={sku}
-                onChange={(e) => setSku(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-fio-200 font-mono font-bold focus:ring-2 focus:ring-fio-400 focus:outline-none"
-              />
+              <div className="w-full text-left">
+                <label className="block text-[10px] font-bold text-gray-600 mb-0.5">URL de la Imagen</label>
+                <input
+                  type="url"
+                  placeholder="https://images.unsplash..."
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                  className="w-full px-2.5 py-1.5 rounded-xl border border-fio-200 bg-white text-[11px] focus:ring-2 focus:ring-fio-300 focus:outline-none"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block font-bold text-gray-700 mb-1">Categoría del Producto *</label>
-              {!isCreatingNewCat ? (
-                <select
-                  value={category}
-                  onChange={(e) => e.target.value === '__new__' ? setIsCreatingNewCat(true) : setCategory(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800"
-                >
-                  {DEFAULT_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                  <option value="__new__">✨ + Nueva Categoría...</option>
-                </select>
-              ) : (
-                <div className="flex gap-1.5">
+            {/* Datos Principales (Nombre, SKU, Categoría, Estante) */}
+            <div className="md:col-span-8 space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-gray-700 mb-1">Nombre del Producto / Insumo *</label>
                   <input
+                    required
                     type="text"
-                    placeholder="Nueva categoría..."
-                    value={customCategory}
-                    onChange={(e) => setCustomCategory(e.target.value)}
-                    className="flex-1 px-3 py-2 rounded-xl border border-fio-300 bg-purple-50 font-semibold"
+                    placeholder="Ej: Libreta Cuero Pastel 2027"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-fio-200 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-gray-900"
                   />
-                  <button type="button" onClick={() => setIsCreatingNewCat(false)} className="px-2 py-1 bg-gray-100 rounded-xl text-[10px] font-bold">Cancelar</button>
                 </div>
-              )}
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-gray-700">Código SKU *</label>
+                    <button
+                      type="button"
+                      onClick={handleAutoGenerateSku}
+                      className="text-[10px] text-fio-600 hover:text-fio-800 font-bold flex items-center gap-0.5"
+                      title="Generar SKU automáticamente"
+                    >
+                      <Wand2 className="w-3 h-3" /> Auto
+                    </button>
+                  </div>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Ej: FIO-LIB-10"
+                    value={sku}
+                    onChange={(e) => setSku(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-fio-200 font-mono font-bold focus:ring-2 focus:ring-fio-400 focus:outline-none text-fio-900"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Categoría *</label>
+                  {!isCreatingNewCat ? (
+                    <select
+                      value={category}
+                      onChange={(e) => (e.target.value === '__new__' ? setIsCreatingNewCat(true) : setCategory(e.target.value))}
+                      className="w-full px-3 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800"
+                    >
+                      {DEFAULT_CATEGORIES.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                      <option value="__new__">✨ + Nueva Categoría...</option>
+                    </select>
+                  ) : (
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        placeholder="Nueva categoría..."
+                        value={customCategory}
+                        onChange={(e) => setCustomCategory(e.target.value)}
+                        className="flex-1 px-3 py-2 rounded-xl border border-fio-300 bg-purple-50 font-semibold"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setIsCreatingNewCat(false)}
+                        className="px-2 py-1 bg-gray-100 rounded-xl text-[10px] font-bold"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Ubicación en Estantería (WMS) *</label>
+                  <div className="relative">
+                    <input
+                      required
+                      type="text"
+                      placeholder="Ej: Estante A-2 (Nivel 3)"
+                      value={shelfLocation}
+                      onChange={(e) => setShelfLocation(e.target.value)}
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-fio-200 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900"
+                    />
+                    <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bloque 2: Precios, Costos y Margen */}
+          <div className="p-4 rounded-2xl bg-fio-50/50 border border-fio-200/80 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-fio-800 flex items-center gap-1.5">
+                <DollarSign className="w-3.5 h-3.5 text-fio-pink" />
+                Precios, Costos & Margen de Ganancia
+              </span>
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Margen: {formatCRC(marginColones)} ({marginPct}%)
+              </span>
             </div>
 
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <label className="block font-bold text-gray-700 mb-1">Precio Venta (₡) *</label>
+                <input
+                  required
+                  type="number"
+                  min="0"
+                  step="100"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-fio-200 font-bubble font-bold text-fio-900 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-700 mb-1">Costo (₡) *</label>
+                <input
+                  required
+                  type="number"
+                  min="0"
+                  step="100"
+                  value={costPrice}
+                  onChange={(e) => setCostPrice(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-fio-200 text-gray-600 font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-700 mb-1">Stock Actual *</label>
+                <input
+                  required
+                  type="number"
+                  min="0"
+                  value={stock}
+                  onChange={(e) => setStock(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-fio-200 font-bubble font-bold text-fio-800 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-700 mb-1">Unidad de Medida</label>
+                <input
+                  type="text"
+                  placeholder="Unidad / Pack / Rollo"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-fio-200 font-semibold"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Bloque 3: Alertas de Stock Mínimo y Máximo */}
+          <div className="grid grid-cols-2 gap-3 p-3.5 bg-purple-50/70 rounded-2xl border border-purple-100">
             <div>
-              <label className="block font-bold text-gray-700 mb-1">Ubicación en Estante (WMS) *</label>
+              <label className="block font-bold text-red-600 mb-1">Stock Mínimo (Alerta de Reabastecimiento)</label>
               <input
                 required
-                type="text"
-                placeholder="Ej: Estante A-2 (Nivel 3)"
-                value={shelfLocation}
-                onChange={(e) => setShelfLocation(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-fio-200 focus:ring-2 focus:ring-fio-400 focus:outline-none"
+                type="number"
+                min="0"
+                value={minStock}
+                onChange={(e) => setMinStock(e.target.value)}
+                className="w-full px-3 py-1.5 rounded-xl border border-purple-200 bg-white font-bold text-red-600"
               />
+              <p className="text-[10px] text-gray-500 mt-0.5">Alerta en tabla cuando stock sea menor o igual.</p>
+            </div>
+            <div>
+              <label className="block font-bold text-fio-800 mb-1">Stock Máximo (Capacidad / Meta de Reposición)</label>
+              <input
+                required
+                type="number"
+                min="0"
+                value={maxStock}
+                onChange={(e) => setMaxStock(e.target.value)}
+                className="w-full px-3 py-1.5 rounded-xl border border-purple-200 bg-white font-bold text-fio-800"
+              />
+              <p className="text-[10px] text-gray-500 mt-0.5">Calcula la sugerencia automática de compra (+A Reponer).</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div>
-              <label className="block font-bold text-gray-700 mb-1">Precio Venta (₡) *</label>
-              <input required type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-fio-200 font-bold" />
-            </div>
-            <div>
-              <label className="block font-bold text-gray-700 mb-1">Costo (₡) *</label>
-              <input required type="number" value={costPrice} onChange={(e) => setCostPrice(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-fio-200 text-gray-600" />
-            </div>
-            <div>
-              <label className="block font-bold text-gray-700 mb-1">Stock Inicial *</label>
-              <input required type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-fio-200 font-bold text-fio-800" />
-            </div>
-            <div>
-              <label className="block font-bold text-gray-700 mb-1">Unidad</label>
-              <input type="text" placeholder="Unidad/Pack" value={unit} onChange={(e) => setUnit(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-fio-200" />
-            </div>
+          {/* Bloque 4: Descripción */}
+          <div>
+            <label className="block font-bold text-gray-700 mb-1">Descripción del Producto / Insumo</label>
+            <textarea
+              rows={2}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Detalles sobre materiales, acabados, medidas y recomendaciones de uso..."
+              className="w-full px-3 py-2 rounded-xl border border-fio-200 focus:ring-2 focus:ring-fio-400 focus:outline-none"
+            />
           </div>
 
-          <div className="grid grid-cols-2 gap-3 p-3 bg-purple-50/70 rounded-2xl border border-purple-100">
-            <div>
-              <label className="block font-bold text-red-600 mb-1">Stock Mínimo (Alerta)</label>
-              <input required type="number" value={minStock} onChange={(e) => setMinStock(e.target.value)} className="w-full px-3 py-1.5 rounded-xl border border-purple-200 bg-white font-bold text-red-600" />
+          {/* Bloque 5: Personalización */}
+          <div className="p-3.5 bg-white rounded-2xl border border-fio-200 space-y-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isCustomizable"
+                checked={isCustomizable}
+                onChange={(e) => setIsCustomizable(e.target.checked)}
+                className="w-4 h-4 text-fio-800 rounded border-gray-300 focus:ring-fio-400"
+              />
+              <label htmlFor="isCustomizable" className="font-bold text-gray-800 cursor-pointer text-xs">
+                ¿Permite personalización de nombre, frase o fecha por el cliente?
+              </label>
             </div>
-            <div>
-              <label className="block font-bold text-fio-800 mb-1">Stock Máximo (Meta)</label>
-              <input required type="number" value={maxStock} onChange={(e) => setMaxStock(e.target.value)} className="w-full px-3 py-1.5 rounded-xl border border-purple-200 bg-white font-bold text-fio-800" />
-            </div>
+
+            {isCustomizable && (
+              <div className="pl-6 pt-1">
+                <label className="block text-[11px] font-semibold text-gray-600 mb-0.5">
+                  Texto indicador en la tienda (Placeholder)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej: Nombre o frase grabada en foil dorado"
+                  value={customizationPlaceholder}
+                  onChange={(e) => setCustomizationPlaceholder(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded-xl border border-fio-200 bg-purple-50/40 text-xs focus:ring-2 focus:ring-fio-400 focus:outline-none"
+                />
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-2 pt-1">
-            <input type="checkbox" id="isCustomizable" checked={isCustomizable} onChange={(e) => setIsCustomizable(e.target.checked)} className="w-4 h-4 text-fio-600 rounded" />
-            <label htmlFor="isCustomizable" className="font-bold text-gray-700 cursor-pointer">
-              ¿Permite personalización de nombre o frase por el cliente?
-            </label>
-          </div>
-
-          <div className="pt-3 border-t border-fio-100 flex items-center justify-end gap-3">
-            <button type="button" onClick={() => setIsNewProductModalOpen(false)} className="px-4 py-2.5 rounded-2xl border border-gray-300 text-gray-600 font-bubble font-semibold">Cancelar</button>
-            <button type="submit" className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-semibold shadow-clayBtn active:scale-95">
+          {/* Botones de Acción */}
+          <div className="pt-3 border-t border-fio-100 flex items-center justify-end gap-3 sticky bottom-0 bg-white/95 backdrop-blur-md">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="px-5 py-2.5 rounded-2xl border border-gray-300 text-gray-600 font-bubble font-semibold text-xs hover:bg-gray-50 active:scale-95 transition-all"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-semibold text-xs shadow-clayBtn active:scale-95 transition-all"
+            >
               <Sparkles className="w-4 h-4 text-fio-yellow" />
-              <span>Guardar & Generar QR</span>
+              <span>{editingProduct ? 'Guardar Cambios del Artículo' : 'Guardar & Generar QR'}</span>
             </button>
           </div>
         </form>

@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.19.0 - Edición Completa y Persistente de Artículos del Inventario con Fotos, Precios, Stock y WMS
+- [x] **Edición Integral de Artículos ([`NewProductModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx)):**
+  - Modal adaptado a modo dual (`Crear Producto` vs `Modificar Artículo del Inventario`).
+  - Edición completa de todos los atributos: nombre, código SKU (con generador automático), categoría (con creador dinámico de nueva categoría), ubicación física en estantería (WMS), precio de venta (₡), costo unitario (₡), cálculo automático de margen de ganancia en colones y porcentaje, stock actual, alertas de stock mínimo y meta de stock máximo, unidad de medida, descripción detallada y opciones de personalización por cliente.
+  - Previsualización en vivo de la fotografía del producto a partir de la URL ingresada con fallback automático.
+- [x] **Acceso Directo de Edición en Tabla de Inventario ([`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Añadido botón `[✏️ Editar]` en la columna de acciones de cada fila del inventario.
+  - La fila del producto (foto, SKU y nombre) es interactiva y permite abrir el editor completo al hacer clic.
+  - El botón `+ Agregar Producto al Inventario` limpia el formulario para crear un nuevo ítem desde cero.
+- [x] **Gestión y Persistencia Global en Context ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Nuevos estados globales `editingProduct`, `setEditingProduct` y función `updateProduct`.
+  - Sincronización instantánea con `localStorage` (`byfio_products_v1`) y reactividad inmediata en catálogo de tienda, buscador, órdenes y facturación.
+
 ### Versión 1.18.0 - Modal de Crear/Modificar Taller a Pantalla Completa & Edición Completa Persistente con Fotos y Descripción
 - [x] **Ventana Inmersiva a Pantalla Completa ([`NewWorkshopModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewWorkshopModal.tsx)):**
   - Transformación del modal a una experiencia de pantalla completa (`fixed inset-0 w-full h-full`), sin cuadros reducidos ni scrolls apretados.

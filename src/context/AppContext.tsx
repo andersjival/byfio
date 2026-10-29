@@ -40,7 +40,10 @@ interface AppContextType {
   updateOrderStatus: (orderId: string, newStatus: OrderStatus) => void;
   updateProductStock: (productId: string, stock: number, minStock?: number, maxStock?: number) => void;
   addProduct: (productData: Omit<Product, 'id'>) => Product;
+  updateProduct: (productId: string, updatedData: Partial<Product>) => void;
   deleteProduct: (productId: string) => void;
+  editingProduct: Product | null;
+  setEditingProduct: (p: Product | null) => void;
   addWorkshop: (wsData: Omit<Workshop, 'id'>) => Workshop;
   updateWorkshop: (wsId: string, updatedData: Partial<Workshop>) => void;
   deleteWorkshop: (wsId: string) => void;
@@ -103,6 +106,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [qrModalProduct, setQrModalProduct] = useState<Product | null>(null);
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isNewWorkshopModalOpen, setIsNewWorkshopModalOpen] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
   const [typographyTheme, setTypographyTheme] = useState<TypographyTheme>(() => {
@@ -420,6 +424,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
+  const updateProduct = (productId: string, updatedData: Partial<Product>) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === productId ? { ...p, ...updatedData } : p))
+    );
+  };
+
   const addWorkshop = (wsData: Omit<Workshop, 'id'>): Workshop => {
     const newWs: Workshop = { ...wsData, id: `ws-${Date.now()}` };
     setWorkshops((prev) => [...prev, newWs]);
@@ -523,6 +533,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsSupplierModalOpen,
         isNewProductModalOpen,
         setIsNewProductModalOpen,
+        editingProduct,
+        setEditingProduct,
         isNewWorkshopModalOpen,
         setIsNewWorkshopModalOpen,
         editingWorkshop,
@@ -541,6 +553,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateOrderStatus,
         updateProductStock,
         addProduct,
+        updateProduct,
         deleteProduct,
         addWorkshop,
         updateWorkshop,

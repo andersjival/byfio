@@ -1,10 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
-import { QrCode, AlertOctagon, Plus, Minus, Search, MapPin, PlusCircle, Trash2 } from 'lucide-react';
+import { QrCode, AlertOctagon, Plus, Minus, Search, MapPin, PlusCircle, Trash2, Pencil } from 'lucide-react';
 
 export const InventoryTable: React.FC = () => {
-  const { products, updateProductStock, setQrModalProduct, setIsNewProductModalOpen, deleteProduct } = useApp();
+  const {
+    products,
+    updateProductStock,
+    setQrModalProduct,
+    setIsNewProductModalOpen,
+    deleteProduct,
+    setEditingProduct,
+  } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
 
@@ -42,7 +49,10 @@ export const InventoryTable: React.FC = () => {
         {/* BOTÓN PROMINENTE AGREGAR PRODUCTO NUEVO */}
         <div className="flex items-center gap-2.5">
           <button
-            onClick={() => setIsNewProductModalOpen(true)}
+            onClick={() => {
+              setEditingProduct(null);
+              setIsNewProductModalOpen(true);
+            }}
             className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayPink transition-all active:scale-95 animate-pulse-subtle"
           >
             <PlusCircle className="w-5 h-5" />
@@ -108,13 +118,26 @@ export const InventoryTable: React.FC = () => {
               return (
                 <tr key={prod.id} className="hover:bg-fio-50/40 transition-colors">
                   <td className="py-3 px-2">
-                    <div className="flex items-center gap-2">
-                      <img src={prod.image} alt={prod.name} className="w-9 h-9 rounded-xl object-cover shrink-0" />
+                    <div
+                      onClick={() => {
+                        setEditingProduct(prod);
+                        setIsNewProductModalOpen(true);
+                      }}
+                      className="flex items-center gap-2 cursor-pointer group"
+                      title="Haz clic para editar y modificar este artículo por completo"
+                    >
+                      <img
+                        src={prod.image}
+                        alt={prod.name}
+                        className="w-9 h-9 rounded-xl object-cover shrink-0 group-hover:ring-2 group-hover:ring-fio-300 transition-all"
+                      />
                       <div>
                         <span className="font-mono font-bold text-[11px] text-fio-800 bg-fio-100 px-1.5 py-0.5 rounded">
                           {prod.sku}
                         </span>
-                        <p className="font-semibold text-gray-800 line-clamp-1">{prod.name}</p>
+                        <p className="font-semibold text-gray-800 line-clamp-1 group-hover:text-fio-800 transition-colors">
+                          {prod.name}
+                        </p>
                       </div>
                     </div>
                   </td>
@@ -170,8 +193,20 @@ export const InventoryTable: React.FC = () => {
                   <td className="py-3 px-2 text-right">
                     <div className="inline-flex items-center gap-1.5">
                       <button
+                        onClick={() => {
+                          setEditingProduct(prod);
+                          setIsNewProductModalOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-800 border border-purple-200 font-bubble text-xs shadow-2xs active:scale-95 transition-all"
+                        title="Modificar o editar artículo por completo"
+                      >
+                        <Pencil className="w-3.5 h-3.5 text-fio-pink" />
+                        <span>Editar</span>
+                      </button>
+                      <button
                         onClick={() => setQrModalProduct(prod)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs shadow-sm"
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs shadow-sm active:scale-95 transition-all"
+                        title="Generar etiqueta QR"
                       >
                         <QrCode className="w-3.5 h-3.5 text-fio-yellow" />
                         <span>QR</span>
@@ -180,7 +215,7 @@ export const InventoryTable: React.FC = () => {
                         onClick={() => {
                           if (window.confirm(`¿Eliminar ${prod.name} del inventario?`)) deleteProduct(prod.id);
                         }}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl"
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                         title="Eliminar producto"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
