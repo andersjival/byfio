@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
 import {
   ShoppingBag, Search, Sparkles, Heart,
-  Check, AlertCircle, Flower2, SlidersHorizontal
+  Check, AlertCircle, Flower2, SlidersHorizontal, Plus, Minus
 } from 'lucide-react';
 
 const CATEGORIES: ('Todas' | ProductCategory)[] = [
@@ -22,12 +22,23 @@ interface StorePageProps {
 }
 
 export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
-  const { products, addToCart } = useApp();
+  const { products, addToCart, setIsCartOpen } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<'Todas' | ProductCategory>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyCustomizable, setOnlyCustomizable] = useState(false);
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [addedAnimationId, setAddedAnimationId] = useState<string | null>(null);
+
+  const getQty = (id: string) => quantities[id] || 1;
+
+  const handleQtyChange = (id: string, delta: number, maxStock: number) => {
+    setQuantities((prev) => {
+      const current = prev[id] || 1;
+      const next = Math.max(1, Math.min(maxStock, current + delta));
+      return { ...prev, [id]: next };
+    });
+  };
 
   const filteredProducts = products.filter((p) => {
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
@@ -45,18 +56,20 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
 
   const handleAdd = (product: Product) => {
     const customText = customTextInputs[product.id] || '';
+    const qty = getQty(product.id);
     addToCart({
       type: 'product',
       id: product.id,
       sku: product.sku,
       name: product.name,
       price: product.price,
-      quantity: 1,
+      quantity: qty,
       image: product.image,
       shelfLocation: product.shelfLocation,
       customText: product.isCustomizable ? customText : undefined,
     });
     setAddedAnimationId(product.id);
+    setIsCartOpen(true);
     setTimeout(() => setAddedAnimationId(null), 1400);
   };
 
@@ -245,43 +258,82 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                     )}
                   </div>
 
-                  {/* Fila Inferior: Precio + Botón Circular Táctil Estilo Zen */}
-                  <div className="pt-3 border-t border-slate-200/50 flex items-center justify-between gap-2">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium block">
-                        Precio
-                      </span>
-                      <p className="font-serif text-xl sm:text-2xl font-bold text-slate-800">
-                        {formatCRC(p.price)}
-                      </p>
-                    </div>
+                  {/* Fila Inferior: Precio Dinámico + Selector [ - 1 + ] + Botón Agregar */}
+                  {(() => {
+                    const currentQty = getQty(p.id);
+                    const currentTotalPrice = p.price * currentQty;
 
-                    <button
-                      type="button"
-                      disabled={isOutOfStock}
-                      onClick={() => handleAdd(p)}
-                      aria-label={`Agregar ${p.name} al carrito`}
-                      className={`relative flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200 ${
-                        isOutOfStock
-                          ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                          : isAdded
-                          ? 'bg-emerald-500 text-white shadow-sm scale-95'
-                          : 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] hover:from-[#C084FC] hover:to-[#A855F7] text-white shadow-[0_8px_18px_rgba(192,132,252,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)] active:scale-95'
-                      }`}
-                    >
-                      {isAdded ? (
-                        <>
-                          <Check className="w-4 h-4" />
-                          <span>¡Listo!</span>
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingBag className="w-4 h-4" />
-                          <span>Agregar</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
+                    return (
+                      <div className="pt-3 border-t border-slate-200/50 space-y-2.5">
+                        <div className="flex items-baseline justify-between gap-2">
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium block">
+                              {currentQty > 1 ? `Total (${currentQty} un.)` : 'Precio'}
+                            </span>
+                            <p className="font-serif text-xl sm:text-2xl font-bold text-slate-800">
+                              {formatCRC(currentTotalPrice)}
+                            </p>
+                          </div>
+
+                          {/* Selector de Cantidad: [-] 1 [+] */}
+                          {!isOutOfStock && (
+                            <div className="flex items-center gap-1 bg-[#F4EFEA] p-1 rounded-xl border border-white/60 shadow-[inset_1px_1px_2px_rgba(160,140,190,0.08)]">
+                              <button
+                                type="button"
+                                onClick={() => handleQtyChange(p.id, -1, p.stock)}
+                                disabled={currentQty <= 1}
+                                className="w-6 h-6 flex items-center justify-center rounded-lg bg-white text-slate-600 hover:text-fio-800 disabled:opacity-35 disabled:cursor-not-allowed shadow-xs transition-all active:scale-95"
+                                title="Reducir cantidad"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+
+                              <span className="w-5 text-center text-xs font-bold text-slate-800 select-none">
+                                {currentQty}
+                              </span>
+
+                              <button
+                                type="button"
+                                onClick={() => handleQtyChange(p.id, 1, p.stock)}
+                                disabled={currentQty >= p.stock}
+                                className="w-6 h-6 flex items-center justify-center rounded-lg bg-white text-slate-600 hover:text-fio-800 disabled:opacity-35 disabled:cursor-not-allowed shadow-xs transition-all active:scale-95"
+                                title="Aumentar cantidad"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Botón Agregar al Carrito */}
+                        <button
+                          type="button"
+                          disabled={isOutOfStock}
+                          onClick={() => handleAdd(p)}
+                          aria-label={`Agregar ${p.name} al carrito`}
+                          className={`w-full relative flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs font-semibold transition-all duration-200 ${
+                            isOutOfStock
+                              ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                              : isAdded
+                              ? 'bg-emerald-500 text-white shadow-sm scale-98'
+                              : 'bg-gradient-to-r from-[#D4AEFA] to-[#C084FC] hover:from-[#C084FC] hover:to-[#A855F7] text-white shadow-[0_8px_18px_rgba(192,132,252,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)] active:scale-98'
+                          }`}
+                        >
+                          {isAdded ? (
+                            <>
+                              <Check className="w-4 h-4" />
+                              <span>¡Agregado al Carrito!</span>
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingBag className="w-4 h-4" />
+                              <span>Agregar al Carrito {currentQty > 1 ? `(${currentQty})` : ''}</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             );

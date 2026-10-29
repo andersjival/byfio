@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.17.0 - Selector Dinámico de Cantidad en Catálogo, Precio en Tiempo Real y Carrito Centrado en Móvil con Botón "Seguir Comprando"
+- [x] **Controles de Cantidad y Precio Dinámico en Catálogo ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx)):**
+  - Incorporado selector táctil `[-] 1 [+]` directamente en la tarjeta de cada producto antes de añadir.
+  - El monto del precio se multiplica y actualiza en tiempo real (`formatCRC(p.price * currentQty)`).
+  - Al pulsar "Agregar al Carrito", se añade la cantidad exacta seleccionada y se abre automáticamente el carrito.
+- [x] **Carrito Centrado en Móvil ([`CartDrawer.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CartDrawer.tsx)):**
+  - Eliminado el desfase lateral (`pl-10`) que provocaba que el carrito se viera de lado o cortado en pantallas de celular.
+  - Maquetado responsivo: en celular se abre centrado en pantalla completa con bordes suaves (`rounded-[32px]`) y sombra envolvente; en desktop se desliza lateralmente.
+  - Añadido botón secundario mandatorio `[Volver a Seguir Comprando]` en el pie del carrito y en estado vacío, facilitando continuar explorando la tienda sin fricción.
+
 ### Versión 1.16.0 - Hero a Pantalla Completa & Animación Dinámica Rápida de Letras "BYFIO" en el Centro
 - [x] **Hero a Pantalla Completa ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx)):** Dimensionado con `min-h-[calc(100vh-3rem)] sm:min-h-[calc(100vh-3.5rem)]` en disposición centrada vertical y horizontal (`flex flex-col justify-center items-center`), cubriendo el viewport con degradados ambientales expandidos para un impacto visual envolvente.
 - [x] **Animación Veloz de Letras "BYFIO" ([`AnimatedByfioLetters.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/AnimatedByfioLetters.tsx)):**
