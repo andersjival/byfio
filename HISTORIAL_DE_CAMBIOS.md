@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.24.0 - Botón "Proceder al Pago", Catálogo Compacto en Cuadrícula Doble (50% Ancho / 2 Productos por Fila), Modal de Descripción en Grande, Limpieza de Iconos IA por Corazón Azul y Reubicación de Botones a Administración
+- [x] **Actualización de Botón a "Proceder al Pago" ([`CartDrawer.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CartDrawer.tsx)):**
+  - Modificado el botón principal del carrito para que exprese textualmente `Proceder al Pago` en sustitución del anglicismo "Proceder al Checkout".
+- [x] **Reducción de Espacio al 50% y Vista de 2 Productos por Fila ([`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Transformado el catálogo de filas anchas a una cuadrícula compacta de 2 columnas (`grid grid-cols-1 md:grid-cols-2 gap-4`), duplicando la densidad de productos visibles en pantalla.
+  - Tarjetas compactas con fotografía interactiva, chips de categoría, selector ágil de cantidad `[-] 1 [+]` y botones de orden directa.
+- [x] **Despliegue de Descripción Detallada en Grande al Clic:**
+  - Al pulsar sobre la foto o el título de cualquier artículo, se despliega una ventana modal emergente con fotografía ampliada, especificaciones completas, personalización y botón de compra.
+- [x] **Reubicación de Acciones de Compartir al Panel de Administración ([`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Eliminados los botones de "Copiar Link del Catálogo" y "Compartir por WhatsApp" del home/catálogo público; ahora residen exclusivamente en el Hub del Panel Administrativo de Fio.
+- [x] **Sustitución de Iconos de IA por el Corazón Azul Oficial:**
+  - Retirados los iconos genéricos de IA (destellos, paquetes, manos, etc.) y reemplazados en todo el catálogo por el corazoncito azul oficial de by.fio (`#38BDF8`).
+
 ### Versión 1.23.0 - Corrección Integral de la Palabra "fio": Alineación Horizontal Continua y Posicionamiento Óptimo de la Estrella
 - [x] **Alineación Tipográfica Continua ([`BrandLogo.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BrandLogo.tsx)):**
   - Eliminado el contenedor `flex-col` que provocaba que el tallo de la `i` cayera por debajo de la línea base visual de `f` y `o`.

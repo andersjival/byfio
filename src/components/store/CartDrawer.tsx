@@ -147,10 +147,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
               </span>
             </div>
             <p className="text-[11px] text-slate-400">
-              El costo de envío o retiro por Correos de Costa Rica se calcula en el checkout.
+              El costo de envío o retiro por Correos de Costa Rica se calcula en el paso de pago.
             </p>
 
-            {/* Botón Principal: Checkout */}
+            {/* Botón Principal: Pago */}
             <button
               type="button"
               onClick={() => {
@@ -159,7 +159,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
               }}
               className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-semibold text-xs sm:text-sm shadow-clayBtn active:scale-95 transition-all"
             >
-              <span>Proceder al Checkout</span>
+              <span>Proceder al Pago</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 

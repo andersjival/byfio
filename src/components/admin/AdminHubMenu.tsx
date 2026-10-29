@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
-  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink
+  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink, Share2
 } from 'lucide-react';
 
 interface AdminHubMenuProps {
@@ -20,6 +20,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
       setCopiedCatalog(true);
       setTimeout(() => setCopiedCatalog(false), 2000);
     });
+  };
+
+  const shareCatalogWhatsApp = () => {
+    const link = `${window.location.origin}/catalogo`;
+    const message = encodeURIComponent(
+      `¡Hola! Te comparto el Catálogo Oficial de by.fio con toda nuestra colección de papelería bonita, agendas y artículos listos para pedir: ${link}`
+    );
+    window.open(`https://wa.me/?text=${message}`, '_blank');
   };
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
@@ -154,9 +162,19 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
             ) : (
               <>
                 <Link2 className="w-3.5 h-3.5 text-fio-pink" />
-                <span>Copiar Link Catálogo</span>
+                <span>Copiar Link</span>
               </>
             )}
+          </button>
+
+          <button
+            type="button"
+            onClick={shareCatalogWhatsApp}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
+            title="Compartir catálogo completo por WhatsApp"
+          >
+            <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Compartir por WhatsApp</span>
           </button>
 
           <a
