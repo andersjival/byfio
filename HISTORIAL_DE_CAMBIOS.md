@@ -17,6 +17,20 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.34.0 - Video Oficial de Intro Cinematográfica con Gradientes Púrpuras Difuminados y Transición Suave a la Web
+- [x] **Video Intro Oficial Integrado ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Incorporado video oficial de bienvenida (`intro-web-byfio.mp4`, 10 segundos, 1280x720 HD con audio AAC).
+  - Apertura cinematográfica con fondo púrpura profundo y gradientes profesionales (`#4A0E78` a `#120220`, halos radiales difuminados y monograma oficial).
+  - Difuminación suave de los gradientes ("SE DIFUMINAN Y APARECE EL VIDEO") con revelación fluida del marco de video en proporción 16:9 con sombras y bordes de cristal.
+  - Salida gradual ("DESAPARECE LENTAMENTE Y ENTRA EN LA WEB") con desvanecimiento de 1100ms hacia la plataforma web interactiva.
+- [x] **Controles Táctiles y Accesibilidad:**
+  - Botón táctil para alternar sonido (Mute / Unmute con Audio HD) y detección de toque directo en el video.
+  - Botón "Entrar a la web" (Saltar intro) con acceso instantáneo.
+  - Barra de progreso del video en gradiente neón.
+  - Botón "Ver Intro Web 🎬" disponible en el pie de página para repetir la experiencia en cualquier momento.
+- [x] **Sincronización en Contexto Global ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) y [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Métodos `isIntroOpen`, `playWebIntro` y `closeWebIntro` disponibles en toda la app.
+
 ### Versión 1.33.0 - Sección Oficial de Precios de Stickers, Pasos de Pedido y Editor Administrativo Completo
 - [x] **Sección de Precios de Stickers Neumórfica ([`PricingStickersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/PricingStickersSection.tsx)):**
   - Paquetes oficiales para Stickers 5x5: 15 (₡1.000 con 4-5 regalías), 75 (₡5.000 con 20-25 regalías), 105 (₡7.500 con 28-35 regalías), 150 (₡9.500 con 40-50 regalías).

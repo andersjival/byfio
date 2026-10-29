@@ -66,6 +66,9 @@ interface AppContextType {
   resetPricingData: () => void;
   isPricingModalOpen: boolean;
   setIsPricingModalOpen: (open: boolean) => void;
+  isIntroOpen: boolean;
+  playWebIntro: () => void;
+  closeWebIntro: () => void;
   resetToDefaults: () => void;
 }
 
@@ -130,6 +133,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+
+  // Web Intro Video Overlay state: Auto-plays on app load (initial visit)
+  const [isIntroOpen, setIsIntroOpen] = useState(true);
+
+  const playWebIntro = () => {
+    setIsIntroOpen(true);
+  };
+
+  const closeWebIntro = () => {
+    setIsIntroOpen(false);
+  };
 
   const updatePricingData = (newData: PricingSectionData) => {
     setPricingData(newData);
@@ -572,6 +586,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resetPricingData,
         isPricingModalOpen,
         setIsPricingModalOpen,
+        isIntroOpen,
+        playWebIntro,
+        closeWebIntro,
         addToCart,
         removeFromCart,
         updateCartQuantity,

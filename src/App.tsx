@@ -33,7 +33,8 @@ import { AdminPricingModal } from './components/admin/AdminPricingModal';
 import { PricingStickersSection } from './components/store/PricingStickersSection';
 import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
 import { StudioScheduleModal } from './components/common/StudioScheduleModal';
-import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin } from 'lucide-react';
+import { WebIntroOverlay } from './components/common/WebIntroOverlay';
+import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film } from 'lucide-react';
 
 interface RouteInfo {
   route: AppRoute;
@@ -93,7 +94,7 @@ const parseRouteFromLocation = (): RouteInfo => {
 };
 
 export const App: React.FC = () => {
-  const { setViewMode, colorTheme } = useApp();
+  const { setViewMode, colorTheme, isIntroOpen, closeWebIntro, playWebIntro } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(initial.workshopId || null);
@@ -340,6 +341,16 @@ export const App: React.FC = () => {
               <CreditCard className="w-3.5 h-3.5 text-emerald-600" />
               <span>Cuentas para SINPE Móvil &amp; BCR</span>
             </button>
+
+            <button
+              type="button"
+              onClick={playWebIntro}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#F1F2F6] hover:bg-white text-slate-800 font-bubble font-bold text-xs shadow-neuBtn active:scale-95 transition-all border border-white/90"
+              title="Ver video de bienvenida oficial de By.Fio"
+            >
+              <Film className="w-3.5 h-3.5 text-fio-pink" />
+              <span>Ver Intro Web 🎬</span>
+            </button>
           </div>
 
           {currentRoute !== 'admin' && (
@@ -357,6 +368,7 @@ export const App: React.FC = () => {
       </footer>
 
       {/* Modales y Elementos Flotantes Globales */}
+      <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />
       <FloatingMascot />
       <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
