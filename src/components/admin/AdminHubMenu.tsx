@@ -111,7 +111,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
               key={item.id}
               type="button"
               onClick={() => onSelectTab(item.id)}
-              className="group text-left rounded-2xl p-4 bg-[#FDFBF9] border border-white/90 shadow-[0_4px_16px_rgba(180,160,200,0.08)] hover:shadow-[0_8px_24px_rgba(180,160,200,0.18)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[125px] sm:min-h-[140px]"
+              className="group text-left rounded-2xl p-4 bg-[#FDFBF9] hover:bg-pink-50/40 border border-white/90 hover:border-pink-200/90 shadow-[0_4px_16px_rgba(180,160,200,0.08)] hover:shadow-[0_8px_24px_rgba(236,72,153,0.18)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[125px] sm:min-h-[140px]"
             >
               {/* Icono Elegante con Gradiente & Badge */}
               <div className="flex items-start justify-between gap-2 mb-3">
@@ -121,12 +121,12 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
                   <Icon className="w-5 h-5" />
                 </div>
 
-                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-700 group-hover:translate-x-0.5 transition-all" />
+                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-pink group-hover:translate-x-0.5 transition-all" />
               </div>
 
               {/* Título & Badge Limpio (Sin Párrafos Relleno) */}
               <div className="space-y-1.5">
-                <h3 className="font-bubble font-bold text-xs sm:text-sm text-fio-900 group-hover:text-fio-600 transition-colors leading-snug">
+                <h3 className="font-bubble font-bold text-xs sm:text-sm text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
                   {item.title}
                 </h3>
 

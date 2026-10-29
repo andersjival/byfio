@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.35.0 - Efecto Hover Fucsia Suave en Botón de Menú Principal y Navegación
+- [x] **Botón "Menú Principal" en Panel Administrativo ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Implementado efecto de hover interactivo al pasar el mouse (`hover:bg-fio-pink` y resplandor `hover:shadow-[0_4px_14px_rgba(236,72,153,0.45)]`), transitando suavemente del púrpura al fucsia suave de la marca by.fio.
+  - Icono de cuadrícula (`LayoutGrid`) con transición a blanco al pasar el mouse por encima.
+- [x] **Botones del Menú Principal en Barra Superior y Móvil ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Efecto hover fucsia suave en todos los botones del menú de navegación (Inicio, Talleres, Tienda, Catálogo, Precios): `hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80`.
+  - Botón de regreso "Ver Tienda / Web" con transición fucsia suave.
+- [x] **Tarjetas del Menú Principal de Administración ([`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Transición a tono fucsia suave en bordes (`hover:border-pink-200/90`), fondo (`hover:bg-pink-50/40`), flecha y títulos al hacer hover.
+
 ### Versión 1.34.0 - Video Oficial de Intro Cinematográfica con Gradientes Púrpuras Difuminados y Transición Suave a la Web
 - [x] **Video Intro Oficial Integrado ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
   - Incorporado video oficial de bienvenida (`intro-web-byfio.mp4`, 10 segundos, 1280x720 HD con audio AAC).

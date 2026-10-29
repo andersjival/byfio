@@ -236,9 +236,9 @@ export const App: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleSelectAdminTab('hub')}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-xs transition-all active:scale-95"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-fio-800 hover:bg-fio-pink text-white text-xs font-semibold shadow-xs hover:shadow-[0_4px_14px_rgba(236,72,153,0.45)] transition-all active:scale-95 group"
                     >
-                      <LayoutGrid className="w-3.5 h-3.5 text-fio-yellow" />
+                      <LayoutGrid className="w-3.5 h-3.5 text-fio-yellow group-hover:text-white transition-colors" />
                       <span>Menú Principal</span>
                     </button>
                   )}

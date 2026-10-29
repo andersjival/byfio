@@ -43,7 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
               className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'home'
                   ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Inicio
@@ -55,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
               className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'workshops' || currentRoute === 'workshop-detail'
                   ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Talleres
@@ -67,7 +67,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
               className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'store'
                   ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Tienda
@@ -79,7 +79,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
               className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'catalogo'
                   ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Catálogo
@@ -91,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
               className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'precios'
                   ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
               Precios
@@ -102,7 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             <button
               type="button"
               onClick={() => handleNav('home')}
-              className="neu-btn bg-[#F1F2F6] px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all flex items-center gap-1.5"
+              className="neu-btn bg-[#F1F2F6] px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all flex items-center gap-1.5"
             >
               <ArrowLeft className="w-4 h-4 text-fio-pink" />
               <span>Ver Tienda / Web</span>
@@ -201,7 +201,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
               currentRoute === 'home'
                 ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
             }`}
           >
             Inicio
@@ -212,7 +212,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
               currentRoute === 'workshops' || currentRoute === 'workshop-detail'
                 ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
             }`}
           >
             Talleres
@@ -223,7 +223,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
               currentRoute === 'store'
                 ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
             }`}
           >
             Tienda
@@ -234,7 +234,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
               currentRoute === 'catalogo'
                 ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
             }`}
           >
             Catálogo Online
@@ -245,7 +245,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
               currentRoute === 'precios'
                 ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
             }`}
           >
             Precios Stickers
