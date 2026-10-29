@@ -36,6 +36,7 @@ import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { LoginModal } from './components/common/LoginModal';
+import { initWaterDropButtonSounds } from './utils/soundEffects';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film } from 'lucide-react';
 
 interface RouteInfo {
@@ -166,6 +167,12 @@ export const App: React.FC = () => {
       window.removeEventListener('hashchange', handlePop);
     };
   }, [setViewMode]);
+
+  // Sonido háptico/orgánico de gotas de agua al hacer clic en botones
+  useEffect(() => {
+    const cleanupSounds = initWaterDropButtonSounds();
+    return cleanupSounds;
+  }, []);
 
   const adminBreadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },

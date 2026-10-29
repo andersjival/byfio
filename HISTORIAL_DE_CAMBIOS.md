@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.52.0 - Efectos Sonoros Orgánicos: Burbuja Estallando y Gotas de Agua en Botones
+- [x] **Sonido de Burbuja Estallando ([`soundEffects.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts) y [`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - Creada función sintetizada con Web Audio API `playBubblePopSound()` sin dependencias de red, emulando la liberación instantánea de presión acústica de una burbuja reventando.
+  - Reproducción automática al emerger la estrellita desde abajo y al desplegarse la burbujita de diálogo de saludo.
+- [x] **Efecto Sonoro de Gotas de Agua en Botones ([`soundEffects.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts) y [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Sintetizado el tono resonante de gota de agua líquida `playWaterDropSound()` mediante curva física de frecuencia ("bloop / plink").
+  - Integrado de forma táctil en los controles de la mascota flotante y listener delegado global en todos los botones de la interfaz.
+
 ### Versión 1.51.0 - Sincronización de Temporizador de Estrellita Tras Cierre de Intro
 - [x] **Conteo de 5 Segundos Condicionado al Cierre del Intro ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
   - Vinculado el componente con `useApp().isIntroOpen` para impedir que el temporizador de la estrellita se ejecute mientras la animación de bienvenida está activa o cubriendo la pantalla.

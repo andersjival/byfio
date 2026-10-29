@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Sparkles, Heart } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getWhatsAppLink } from '../../utils/formatters';
+import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
 export const FloatingMascot: React.FC = () => {
   const { isIntroOpen } = useApp();
@@ -26,11 +27,15 @@ export const FloatingMascot: React.FC = () => {
     const entranceTimer = window.setTimeout(() => {
       hasTriggeredRef.current = true;
       setIsVisible(true);
+      // Efecto sonoro orgánico: burbuja estallando
+      playBubblePopSound(0.35);
 
       // Tras 1150ms culmina la subida animada y vibración rápida, dando paso a la burbujita de saludo
       const speechBubbleTimer = window.setTimeout(() => {
         setHasEntered(true);
         setShowSpeechBubble(true);
+        // Efecto sonoro de burbuja al emerger el saludo
+        playBubblePopSound(0.28);
       }, 1150);
 
       return () => window.clearTimeout(speechBubbleTimer);
@@ -64,7 +69,10 @@ export const FloatingMascot: React.FC = () => {
               </div>
             </div>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                playWaterDropSound();
+                setIsOpen(false);
+              }}
               className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
               aria-label="Cerrar ventana de ayuda"
             >
@@ -92,7 +100,8 @@ export const FloatingMascot: React.FC = () => {
             href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl text-xs font-bold shadow-md transition-all active:scale-95"
+            onClick={() => playWaterDropSound()}
+            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl text-xs font-bold shadow-md transition-all active:scale-95 btn-water-drop"
           >
             <MessageCircle className="w-4 h-4" />
             <span>Chatear al WhatsApp 6400-4640</span>
@@ -104,6 +113,7 @@ export const FloatingMascot: React.FC = () => {
       {showSpeechBubble && !isOpen && (
         <div
           onClick={() => {
+            playWaterDropSound();
             setIsOpen(true);
             setShowSpeechBubble(false);
           }}
@@ -120,6 +130,7 @@ export const FloatingMascot: React.FC = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
+              playWaterDropSound();
               setShowSpeechBubble(false);
             }}
             className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
@@ -135,6 +146,7 @@ export const FloatingMascot: React.FC = () => {
       {/* Botón Flotante con Video / Avatar de la Estrellita (SIN BORDE) */}
       <button
         onClick={() => {
+          playWaterDropSound();
           setIsOpen(!isOpen);
           setShowSpeechBubble(false);
         }}
