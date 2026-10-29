@@ -35,6 +35,7 @@ import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
 import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
+import { LoginModal } from './components/common/LoginModal';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film } from 'lucide-react';
 
 interface RouteInfo {
@@ -71,6 +72,7 @@ const parseRouteFromLocation = (): RouteInfo => {
   }
 
   // Rutas públicas
+  if (path.includes('/login') || hash.includes('login')) return { route: 'login', adminTab: 'hub' };
   if (path.includes('/precios') || hash.includes('precios')) return { route: 'precios', adminTab: 'hub' };
   if (path.includes('/catalogo') || hash.includes('catalogo')) return { route: 'catalogo', adminTab: 'hub' };
   if (path.includes('/tienda') || hash.includes('tienda')) return { route: 'store', adminTab: 'hub' };
@@ -104,6 +106,7 @@ export const App: React.FC = () => {
   const [isDesignModalOpen, setIsDesignModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
 
   const navigate = (newRoute: AppRoute, targetTab?: AdminTabType, workshopId?: string) => {
@@ -117,7 +120,8 @@ export const App: React.FC = () => {
     setSelectedWorkshopId(wsId);
 
     let targetPath = '/';
-    if (newRoute === 'precios') targetPath = '/precios';
+    if (newRoute === 'login') targetPath = '/login';
+    else if (newRoute === 'precios') targetPath = '/precios';
     else if (newRoute === 'catalogo') targetPath = '/catalogo';
     else if (newRoute === 'store') targetPath = '/tienda';
     else if (newRoute === 'workshops') targetPath = '/talleres';
@@ -191,7 +195,7 @@ export const App: React.FC = () => {
       <BackgroundDecor />
 
       <div>
-        <Navbar currentRoute={currentRoute} onNavigate={navigate} />
+        <Navbar currentRoute={currentRoute} onNavigate={navigate} onOpenLogin={() => setIsLoginModalOpen(true)} />
 
         {currentRoute === 'home' ? (
           <main className="w-full pb-10">
@@ -199,6 +203,14 @@ export const App: React.FC = () => {
           </main>
         ) : (
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8">
+            {currentRoute === 'login' && (
+              <LoginModal
+                isOpen={true}
+                onClose={() => navigate('home')}
+                isStandalonePage={true}
+              />
+            )}
+
             {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
 
             {currentRoute === 'catalogo' && <CatalogPage onNavigate={navigate} />}
@@ -359,11 +371,21 @@ export const App: React.FC = () => {
           </div>
 
           {currentRoute !== 'admin' && (
-            <div>
+            <div className="flex items-center justify-center gap-3 mt-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setIsLoginModalOpen(true)}
+                className="text-[11px] text-fio-800 hover:text-fio-pink transition-colors underline underline-offset-4 font-semibold"
+              >
+                🌸 Iniciar Sesión 3D
+              </button>
+
+              <span className="text-slate-300">•</span>
+
               <button
                 type="button"
                 onClick={() => navigate('admin')}
-                className="inline-block mt-2 text-[11px] text-slate-400 hover:text-fio-800 transition-colors underline underline-offset-4"
+                className="text-[11px] text-slate-400 hover:text-fio-800 transition-colors underline underline-offset-4"
               >
                 Acceso Administración (WMS &amp; Alisto)
               </button>
@@ -373,6 +395,7 @@ export const App: React.FC = () => {
       </footer>
 
       {/* Modales y Elementos Flotantes Globales */}
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
       <CartSuccessToast />
       <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />
       <FloatingMascot />

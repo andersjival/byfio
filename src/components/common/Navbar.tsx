@@ -3,14 +3,15 @@ import { useApp } from '../../context/AppContext';
 import { BrandLogo } from './BrandLogo';
 import { TikTokIcon } from './TikTokIcon';
 import { AppRoute } from '../../types';
-import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User } from 'lucide-react';
 
 interface NavbarProps {
   currentRoute: AppRoute;
   onNavigate: (route: AppRoute) => void;
+  onOpenLogin?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate, onOpenLogin }) => {
   const { cart, setIsCartOpen } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -148,6 +149,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             <span>6400-4640</span>
           </a>
 
+          {/* Botón Iniciar Sesión 3D (Niña & Estrellita) */}
+          {currentRoute !== 'admin' && (
+            <button
+              type="button"
+              onClick={onOpenLogin || (() => handleNav('login'))}
+              aria-label="Iniciar Sesión"
+              className="flex items-center gap-1.5 px-3 py-2 sm:py-2.5 rounded-xl neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95"
+              title="Iniciar Sesión 3D"
+            >
+              <User className="w-4 h-4 text-fio-pink" />
+              <span className="hidden xl:inline">Iniciar Sesión</span>
+            </button>
+          )}
+
           {/* Botón Carrito de Compras Neumórfico */}
           {currentRoute !== 'admin' && (
             <button
@@ -249,6 +264,19 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             }`}
           >
             Precios Stickers
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setMobileOpen(false);
+              if (onOpenLogin) onOpenLogin();
+              else handleNav('login');
+            }}
+            className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn flex items-center gap-2"
+          >
+            <User className="w-4 h-4 text-fio-pink" />
+            <span>Iniciar Sesión 3D</span>
           </button>
 
           <div className="pt-2 border-t border-slate-200/40 flex items-center gap-3 px-2">

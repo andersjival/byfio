@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.43.0 - Login 3D Claymorphism (Niña & Estrellita By.Fio) con Ilustración Oficial
+- [x] **Componente y Modal de Login 3D ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Implementado fielmente el diseño 3D Claymorphism aportado: tarjeta con sombras biseladas, cabecera con corazón pulsante `彡 💖 彡`, tipografía `Fredoka` + `Quicksand`, escenario de personajes apoyados en el marco y pedestal 3D inferior.
+  - Ilustración oficial incorporada en [`public/assets/login-3d-girl-star.jpg`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/login-3d-girl-star.jpg) (con encuadre exacto `center 38%` y corazones flotantes).
+  - Formulario interactivo con insignias de iconos en círculo morado 3D, alternador de visibilidad de contraseña (ojo), botón táctil de envío con confetti, botones sociales 3D (Google, Apple, Facebook) y selector de modo (Iniciar Sesión vs Registrarse).
+- [x] **Accesos Directos y Rutas ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx) y [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Botón táctil "Iniciar Sesión" en la barra de navegación superior (desktop y drawer móvil) y en el footer.
+  - Habilitada ruta y hash `/login` (#login) para visualización tanto en modal overlay como en página inmersiva completa.
+
 ### Versión 1.42.0 - Integración del Video VID ESTRELLITA en la Burbuja Flotante
 - [x] **Video VID ESTRELLITA en la Mascota / Burbuja Flotante ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
   - Importado el archivo oficial `VID ESTRELLITA.mp4` desde Descargas a `public/assets/vid-estrellita.mp4` y `public/vid-estrellita.mp4`.
