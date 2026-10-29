@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.23.0 - Corrección Integral de la Palabra "fio": Alineación Horizontal Continua y Posicionamiento Óptimo de la Estrella
+- [x] **Alineación Tipográfica Continua ([`BrandLogo.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BrandLogo.tsx)):**
+  - Eliminado el contenedor `flex-col` que provocaba que el tallo de la `i` cayera por debajo de la línea base visual de `f` y `o`.
+  - La palabra `fio` ahora fluye en una sola línea horizontal continua (`inline-flex items-center`) perfectamente cohesionada.
+  - La estrella brillante `#FBBF24` se asienta de manera exacta sobre la `i` con micro-desplazamiento suave (`top-[-1px] sm:top-[-2px]`), manteniendo proximidad perfecta con la letra sin salirse ni recortarse en el borde superior del navegador.
+
 ### Versión 1.22.0 - Ajuste de la Estrella del Logotipo: Proximidad Natural sobre la "i", Eliminación de Desborde y Espaciado en Navbar
 - [x] **Ajuste y Rediseño de la Estrella ([`BrandLogo.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BrandLogo.tsx)):**
   - Eliminado el desplazamiento negativo agresivo (`-top-3.5`) que hacía que la estrella flotara demasiado lejos de la letra y se saliera de la pantalla cortándose contra el borde del navegador.
