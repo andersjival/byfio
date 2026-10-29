@@ -624,31 +624,33 @@ body[data-color-theme="zen"] {
 .characters-stage {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 245px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-top: 2px;
-  z-index: 3;
+  margin-top: 0;
+  z-index: 5;
+  pointer-events: none;
 }
 
 .characters-stage img {
   width: auto;
-  max-width: 92%;
+  max-width: 96%;
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
   border-radius: 0;
   pointer-events: none;
+  filter: drop-shadow(0 6px 14px rgba(108, 67, 181, 0.12));
 }
 
 .form-panel {
   background: linear-gradient(180deg, #fdf3f4 0%, #f5e4e8 100%);
-  border-radius: 32px;
-  padding: 18px 22px 18px;
+  border-radius: 34px;
+  padding: 24px 22px 18px;
   position: relative;
-  z-index: 4;
-  margin-top: -18px;
+  z-index: 3;
+  margin-top: -10px;
   box-shadow: 
     0 -6px 14px rgba(120, 85, 150, 0.10),
     inset 0 5px 8px rgba(255, 255, 255, 0.95),

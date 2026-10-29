@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.57.0 - Ampliación de Ilustración de Login y Exposición Total de Manos y Dedos
+- [x] **Ampliación de Escala de Personajes ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Incrementada la altura de `.characters-stage` a 245px con `max-width: 96%`, brindando una presencia visual mucho más grande, nítida y destacada a la niña y a la estrella.
+- [x] **Visibilidad Total de Manos y Dedos Apoyados ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Asignado `z-index: 5` con `pointer-events: none` a `.characters-stage`, colocando las manos, dedos y codos de la niña descansando por encima del borde superior de `.form-panel` (`z-index: 3`).
+  - Erradicado cualquier corte o solapamiento que tape los dedos; los personajes lucen íntegros y apoyados físicamente sobre el lomo acolchado del formulario.
+
 ### Versión 1.56.0 - Corrección Definitiva de Apoyo en Login: Eliminación de Líneas y Calibración
 - [x] **Regeneración de PNG Limpio Sin Extrusión ([`login-3d-girl-star.png`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/login-3d-girl-star.png)):**
   - Eliminadas las líneas verticales/artefactos inferiores generados por el pixel-stretching anterior.
