@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.49.0 - Eliminación de Redes Sociales en Login y Visualización Completa de Ilustración 3D
+- [x] **Retiro de Botones de Redes Sociales ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Eliminados los botones de inicio de sesión con Google, Apple y Facebook, así como el divisor "o continúa con", despejando el formulario y enfocándolo al acceso directo por cuenta.
+- [x] **Ampliación y Visualización Íntegra de la Ilustración 3D ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Espacio vertical liberado asignado a `.characters-stage` (altura incrementada a 195px con `object-fit: contain`).
+  - La muñequita con su moño castaño, rostro, suéter morado, la estrellita sonriente y sus corazones se aprecian al 100% sin cortes en ningún extremo, manteniendo un apoyo natural sobre el marco.
+
 ### Versión 1.48.0 - Banners Ilustrados Oficiales: Taller Creativo, Catálogo Digital y Tienda Online
 - [x] **Ilustración para Taller Creativo ([`WorkshopsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopsPage.tsx) y [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
   - Importada la ilustración `imagen tienda creativa.jpeg` y `taller-creativo.jpeg` a `public/assets/imagen-tienda-creativa.jpeg`.
