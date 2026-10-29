@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.48.0 - Banners Ilustrados Oficiales: Taller Creativo, Catálogo Digital y Tienda Online
+- [x] **Ilustración para Taller Creativo ([`WorkshopsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopsPage.tsx) y [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
+  - Importada la ilustración `imagen tienda creativa.jpeg` y `taller-creativo.jpeg` a `public/assets/imagen-tienda-creativa.jpeg`.
+  - Integrado banner ilustrado panorámico en la cabecera de la página de Talleres y en la sección de Academia Creativa de la página de inicio.
+- [x] **Ilustración para Catálogo Digital ([`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Importada la ilustración `IMAGEN CATALODO DIGITAL.jpeg` a `public/assets/imagen-catalogo-digital.jpeg`.
+  - Integrado banner ilustrado oficial destacado en la cabecera del Catálogo Online, sustituyendo las imágenes genéricas de stock.
+- [x] **Ilustración para Tienda Online ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx) y [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
+  - Importada la ilustración `IMAGEN TIENDA ONLINE.jpeg` a `public/assets/imagen-tienda-online.jpeg`.
+  - Integrado banner ilustrado oficial en la página de Tienda y en la sección de Favoritos de la Tienda del inicio.
+
 ### Versión 1.47.0 - Ajuste de Escala Completa y Apoyo Exacto en Tarjeta de Login 3D
 - [x] **Ajuste de Escala para Visualización Completa Sin Cortes ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css) y [`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
   - Calibradas las dimensiones verticales de la tarjeta a escala compacta equilibrada (~500px de altura total) para garantizar que todo el contenido (cabecera con corazón, personajes, campos de entrada, botones sociales y pedestal) se aprecie al 100% sin cortes en la pantalla.

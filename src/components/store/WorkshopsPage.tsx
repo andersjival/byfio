@@ -119,6 +119,18 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
         </div>
       </div>
 
+      {/* Banner Ilustrado Oficial: Taller Creativo */}
+      <div className="rounded-[32px] overflow-hidden shadow-neuCard border border-white/90 bg-[#FAF5FF] group">
+        <img
+          src="/assets/imagen-tienda-creativa.jpeg"
+          alt="Taller Creativo by.fio"
+          className="w-full h-44 sm:h-64 md:h-80 object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/assets/taller-creativo.jpeg';
+          }}
+        />
+      </div>
+
       {/* Grid de Talleres — Cajas Neumórficas Táctiles */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
         {workshops.map((ws) => {

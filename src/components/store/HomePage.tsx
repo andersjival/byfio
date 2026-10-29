@@ -32,7 +32,22 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
         {/* Sección Destacada: Talleres Creativos */}
         <section className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          {/* Banner Ilustrado Oficial: Taller Creativo */}
+          <div
+            onClick={() => onNavigate('workshops')}
+            className="rounded-[32px] overflow-hidden shadow-neuCard border border-white/90 bg-[#FAF5FF] group cursor-pointer"
+          >
+            <img
+              src="/assets/imagen-tienda-creativa.jpeg"
+              alt="Taller Creativo by.fio"
+              className="w-full h-36 sm:h-52 md:h-64 object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/assets/taller-creativo.jpeg';
+              }}
+            />
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF5FF] border border-fio-200 text-fio-800 text-[11px] font-semibold tracking-widest uppercase mb-2">
               <Sparkles className="w-3 h-3 text-fio-yellow fill-fio-yellow" />
@@ -100,6 +115,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
       {/* Sección Destacada: Tienda Online */}
       <section className="space-y-6 pt-6">
+        {/* Banner Ilustrado Oficial: Tienda Online */}
+        <div
+          onClick={() => onNavigate('store')}
+          className="rounded-[32px] overflow-hidden shadow-neuCard border border-white/90 bg-[#FAF5FF] group cursor-pointer"
+        >
+          <img
+            src="/assets/imagen-tienda-online.jpeg"
+            alt="Tienda Online by.fio"
+            className="w-full h-36 sm:h-52 md:h-64 object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+          />
+        </div>
+
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-50 border border-pink-200 text-fio-pink text-[11px] font-semibold tracking-widest uppercase mb-2">

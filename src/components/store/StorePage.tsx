@@ -117,6 +117,15 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
         </div>
       </div>
 
+      {/* Banner Ilustrado Oficial: Tienda Online */}
+      <div className="rounded-[32px] overflow-hidden shadow-neuCard border border-white/90 bg-[#FAF5FF] group">
+        <img
+          src="/assets/imagen-tienda-online.jpeg"
+          alt="Tienda Online by.fio"
+          className="w-full h-44 sm:h-64 md:h-80 object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+        />
+      </div>
+
       {/* Barra de Filtros Neumórfica (Cajas y Botones Táctiles) */}
       <div className="p-4 sm:p-5 rounded-[28px] bg-[#F1F2F6] border border-white/90 shadow-neuCard flex flex-col lg:flex-row items-center justify-between gap-4">
         {/* Categorías como Botones Neumórficos Grandes y Táctiles */}

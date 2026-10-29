@@ -136,6 +136,15 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
         <TreeNavigation nodes={breadcrumbs} onNavigate={onNavigate} />
       </div>
 
+      {/* Banner Ilustrado Oficial: Catálogo Digital */}
+      <div className="rounded-[32px] overflow-hidden shadow-neuCard border border-white/90 bg-[#FAF5FF] group">
+        <img
+          src="/assets/imagen-catalogo-digital.jpeg"
+          alt="Catálogo Digital by.fio"
+          className="w-full h-44 sm:h-64 md:h-80 object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+        />
+      </div>
+
       {/* =========================================================================
           BANNER FOTOGRÁFICO EN GRANDE & DESCRIPCIÓN DEL CATÁLOGO
           ========================================================================= */}
@@ -143,7 +152,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
         {/* Imagen de Fondo */}
         <div className="absolute inset-0 z-0 opacity-25 mix-blend-overlay">
           <img
-            src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1600&q=80"
+            src="/assets/imagen-catalogo-digital.jpeg"
             alt="Papelería by.fio"
             className="w-full h-full object-cover object-center"
           />
