@@ -305,12 +305,26 @@ body[data-color-theme="zen"] {
     display: none !important;
   }
 
-  /* Si la factura está abierta, ocultar el resto del árbol de la app */
-  body.invoice-open > #root > *:not(.invoice-modal-overlay) {
+  /* Reset de contenedores de React para permitir que el modal se imprima */
+  body.invoice-open #root,
+  body.invoice-open #root > div,
+  body.closing-report-open #root,
+  body.closing-report-open #root > div {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  /* Si la factura está abierta, ocultar los demás elementos dentro del contenedor principal */
+  body.invoice-open #root > div > *:not(.invoice-modal-overlay) {
     display: none !important;
   }
 
-  body.closing-report-open > #root > *:not(.closing-modal-overlay) {
+  body.closing-report-open #root > div > *:not(.closing-modal-overlay) {
     display: none !important;
   }
 
@@ -327,7 +341,9 @@ body[data-color-theme="zen"] {
     display: block !important;
     width: 100% !important;
     height: auto !important;
+    min-height: 0 !important;
     max-height: none !important;
+    z-index: auto !important;
   }
 
   .invoice-modal-card,
@@ -341,6 +357,8 @@ body[data-color-theme="zen"] {
     box-shadow: none !important;
     border-radius: 0 !important;
     overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
     max-height: none !important;
     background: #FFFFFF !important;
   }
@@ -356,6 +374,7 @@ body[data-color-theme="zen"] {
     overflow: visible !important;
     border: none !important;
     box-shadow: none !important;
+    display: block !important;
     visibility: visible !important;
   }
 

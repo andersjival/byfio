@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.38.0 - Corrección Definitiva del Selector de Impresión de Factura y Generación PDF
+- [x] **Aislamiento Quirúrgico del Contenedor de Impresión ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Corregido el selector CSS de impresión (`body.invoice-open #root > div > *:not(.invoice-modal-overlay)`) que provocaba pantalla en blanco en el diálogo de impresión al ocultar erróneamente el contenedor principal de React `#root > div`.
+  - Restablecida la jerarquía de impresión en `#root` y `#root > div` (`display: block !important; position: static !important; overflow: visible !important; min-height: 0 !important;`).
+  - Habilitado el flujo nativo a página completa de `.invoice-modal-overlay` e `#printable-invoice` para visualización y descarga nítida en Carta / A4.
+- [x] **Optimización en Flujo de Checkout ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx) e [`InvoiceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InvoiceModal.tsx)):**
+  - Cierre automático del modal de checkout al pulsar "Imprimir Factura / PDF", desplegando limpiamente la factura con capa superior `z-[80]`.
+  - Asegurada la clase `body.invoice-open` en `handlePrint` previo a invocar `window.print()`.
+
 ### Versión 1.37.0 - Color Lila Pastel Oficial en Botones de Carrito y Catálogo con Hover Fucsia Suave
 - [x] **Rediseño de Color en Botones de Carrito y Catálogo ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Reemplazado el morado fuerte anterior por el gradiente exacto lila pastel suave de referencia (`linear-gradient(135deg, #D4AEFA 0%, #C084FC 100%)`) en `.neu-btn-primary` y `.neu-btn-cart`.

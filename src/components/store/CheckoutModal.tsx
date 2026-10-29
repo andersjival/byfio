@@ -175,7 +175,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
 
               <button
                 type="button"
-                onClick={() => setInvoiceOrder(confirmedOrder)}
+                onClick={() => {
+                  setInvoiceOrder(confirmedOrder);
+                  handleClose();
+                }}
                 className="py-3 px-4 rounded-2xl bg-white hover:bg-slate-50 text-fio-900 border border-slate-200 shadow-neuBtn font-bubble font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all"
               >
                 <Printer className="w-4 h-4 text-fio-800" />

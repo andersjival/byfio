@@ -20,7 +20,10 @@ export const InvoiceModal: React.FC = () => {
   if (!invoiceOrder) return null;
 
   const handlePrint = () => {
-    window.print();
+    document.body.classList.add('invoice-open');
+    setTimeout(() => {
+      window.print();
+    }, 50);
   };
 
   const generateWhatsAppMessage = () => {
@@ -38,7 +41,7 @@ export const InvoiceModal: React.FC = () => {
   };
 
   return (
-    <div className="invoice-modal-overlay fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-5 animate-fadeIn">
+    <div className="invoice-modal-overlay fixed inset-0 z-[80] overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-5 animate-fadeIn">
       <div className="invoice-modal-card relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[94vh] flex flex-col">
         {/* Barra Superior de Control en Pantalla (Oculta al Imprimir) */}
         <div className="invoice-header-bar no-print p-4 sm:p-5 border-b border-slate-200/70 flex items-center justify-between bg-[#F1F2F6] shrink-0">
