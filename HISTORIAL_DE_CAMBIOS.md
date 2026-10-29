@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.42.0 - Integración del Video VID ESTRELLITA en la Burbuja Flotante
+- [x] **Video VID ESTRELLITA en la Mascota / Burbuja Flotante ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - Importado el archivo oficial `VID ESTRELLITA.mp4` desde Descargas a `public/assets/vid-estrellita.mp4` y `public/vid-estrellita.mp4`.
+  - Integrado en reproducción fluida en bucle continuo (`autoPlay loop muted playsInline`) tanto en la burbuja circular flotante inferior como en la tarjeta interior desplegable de asistencia por WhatsApp.
+
 ### Versión 1.41.0 - Corrección Integral de Espacios y Cortes en Hero Segment (Full-Bleed de Borde a Borde)
 - [x] **Hero Segment a Pantalla Completa De Borde a Borde ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx) y [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
   - Eliminados los espacios vacíos y márgenes laterales que cortaban visualmente el segmento principal en pantallas anchas.

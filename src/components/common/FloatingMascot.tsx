@@ -32,9 +32,9 @@ export const FloatingMascot: React.FC = () => {
           </div>
 
           {/* Video de la Mascota */}
-          <div className="rounded-2xl overflow-hidden bg-fio-100 mb-3 border border-fio-200 shadow-inner max-h-36 flex items-center justify-center">
+          <div className="rounded-2xl overflow-hidden bg-fio-100 mb-3 border border-fio-200 shadow-inner max-h-40 flex items-center justify-center">
             <video
-              src="/assets/estrella-byfio.mp4"
+              src="/assets/vid-estrellita.mp4"
               autoPlay
               loop
               muted
@@ -65,14 +65,14 @@ export const FloatingMascot: React.FC = () => {
         className="relative group p-1 bg-white rounded-full shadow-clayLg border-3 border-fio-300 hover:scale-105 active:scale-95 transition-all duration-300"
         aria-label="Ayuda con Estrellita by.fio"
       >
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gradient-to-tr from-fio-300 via-fio-200 to-fio-100 flex items-center justify-center relative">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gradient-to-tr from-fio-300 via-fio-200 to-fio-100 flex items-center justify-center relative shadow-inner">
           <video
-            src="/assets/estrella-byfio.mp4"
+            src="/assets/vid-estrellita.mp4"
             autoPlay
             loop
             muted
             playsInline
-            className="w-full h-full object-cover pointer-events-none"
+            className="w-full h-full object-cover pointer-events-none scale-105"
           />
         </div>
 
