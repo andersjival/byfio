@@ -20,16 +20,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const featuredProducts = products.filter((p) => p.showInStore !== false).slice(0, 4);
 
   return (
-    <div className="space-y-8 animate-fadeIn">
-      {/* Hero Dual con Árbol Integrado sobre el Cuadro Difuminado (Cero Espacio Perdido) */}
+    <div className="space-y-10 sm:space-y-14 animate-fadeIn">
+      {/* Hero Dual a Pantalla Completa De Borde a Borde (Full-Bleed, Cero Cortes Laterales) */}
       <HeroDual
         onScrollToWorkshops={() => onNavigate('workshops')}
         onScrollToProducts={() => onNavigate('store')}
         onNavigate={onNavigate}
       />
 
-      {/* Sección Destacada: Talleres Creativos */}
-      <section className="space-y-6">
+      {/* Contenido Restante con Contenedor Central Estándar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+        {/* Sección Destacada: Talleres Creativos */}
+        <section className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF5FF] border border-fio-200 text-fio-800 text-[11px] font-semibold tracking-widest uppercase mb-2">
@@ -205,6 +207,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           Adaptado fielmente de la hoja de diseño de referencia
           ========================================================================= */}
       <NeumorphicShowcase />
+      </div>
     </div>
   );
 };

@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.41.0 - Corrección Integral de Espacios y Cortes en Hero Segment (Full-Bleed de Borde a Borde)
+- [x] **Hero Segment a Pantalla Completa De Borde a Borde ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx) y [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
+  - Eliminados los espacios vacíos y márgenes laterales que cortaban visualmente el segmento principal en pantallas anchas.
+  - El fondo y degradados ambientales lila pastel oficial ahora cubren el 100% del ancho del viewport (`w-full`) de lado a lado sin esquinas recortadas artificiales.
+- [x] **Eliminación del Gap Superior y Aislamiento del Contenedor ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Ajustado el layout para que el Hero se conecte directamente y sin separaciones con la barra de navegación superior en la vista principal (`pt-0`), manteniendo el contenedor central `max-w-7xl` para las secciones inferiores de talleres, tienda, precios y ubicación.
+  - Resplandores ambientales expandidos (`blur-[120px]`) que logran una atmósfera continua, pulida y 100% profesional.
+
 ### Versión 1.40.0 - Etiqueta Sin Bordes "Producto Agregado", Notificación Flotante de Éxito y Carrito Cerrado
 - [x] **Etiqueta Sin Bordes "Producto Agregado" en Tarjetas de Productos ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx), [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
   - Implementada insignia distintiva sin bordes (`border-0`, `bg-emerald-500`, texto blanco con icono de verificación `Check`) que se activa reactivamente cuando un producto ya se encuentra en el carrito (`cart.some(it => it.id === product.id)`).

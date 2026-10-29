@@ -18,10 +18,15 @@ export const HeroDual: React.FC<HeroDualProps> = ({
   return (
     <section
       id="hero-section"
-      className="relative overflow-hidden min-h-[calc(100vh-3rem)] sm:min-h-[calc(100vh-3.5rem)] flex flex-col justify-center items-center py-6 sm:py-10 px-4 sm:px-6 lg:px-8"
+      className="relative w-full overflow-hidden min-h-[calc(100vh-3.5rem)] flex flex-col justify-center items-center py-8 sm:py-14 px-4 sm:px-6 lg:px-8"
     >
-      {/* Fondo con Degradado Lila Pastel Oficial de Pantalla Completa (#D4AEFA -> #E7B8F9) */}
-      <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-[#D4AEFA]/35 via-[#E7B8F9]/18 to-transparent rounded-b-[60px] -z-10 pointer-events-none" />
+      {/* Fondo con Degradado Lila Pastel Oficial de Pantalla Completa De Borde a Borde (Full Bleed) */}
+      <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-[#D4AEFA]/35 via-[#E7B8F9]/18 to-transparent -z-10 pointer-events-none" />
+
+      {/* Resplandores ambientales expansivos de ancho completo (Sin bordes ni cortes laterales) */}
+      <div className="absolute -top-28 -left-20 w-[550px] h-[550px] rounded-full bg-gradient-to-br from-[#D4AEFA]/40 via-[#C084FC]/25 to-transparent blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute -top-28 -right-20 w-[550px] h-[550px] rounded-full bg-gradient-to-bl from-[#EC4899]/20 via-[#F472B6]/15 to-transparent blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[450px] bg-[#FFF07C]/12 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       <div className="max-w-6xl mx-auto text-center w-full my-auto space-y-4 sm:space-y-6">
         {/* Árbol de Navegación Compacto Directo sobre el Difuminado */}

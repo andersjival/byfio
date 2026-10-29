@@ -193,25 +193,28 @@ export const App: React.FC = () => {
       <div>
         <Navbar currentRoute={currentRoute} onNavigate={navigate} />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8">
-          {currentRoute === 'home' && <HomePage onNavigate={navigate} />}
+        {currentRoute === 'home' ? (
+          <main className="w-full pb-10">
+            <HomePage onNavigate={navigate} />
+          </main>
+        ) : (
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8">
+            {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
 
-          {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
+            {currentRoute === 'catalogo' && <CatalogPage onNavigate={navigate} />}
 
-          {currentRoute === 'catalogo' && <CatalogPage onNavigate={navigate} />}
+            {currentRoute === 'workshops' && <WorkshopsPage onNavigate={navigate} />}
 
-          {currentRoute === 'workshops' && <WorkshopsPage onNavigate={navigate} />}
+            {currentRoute === 'precios' && <PricingStickersSection onNavigate={navigate} />}
 
-          {currentRoute === 'precios' && <PricingStickersSection onNavigate={navigate} />}
+            {currentRoute === 'workshop-detail' && (
+              <WorkshopDetailPage
+                workshopId={selectedWorkshopId}
+                onNavigate={navigate}
+              />
+            )}
 
-          {currentRoute === 'workshop-detail' && (
-            <WorkshopDetailPage
-              workshopId={selectedWorkshopId}
-              onNavigate={navigate}
-            />
-          )}
-
-          {currentRoute === 'admin' && (
+            {currentRoute === 'admin' && (
             <div className="space-y-3 sm:space-y-4">
               {/* Barra de Árbol y Acciones Superiores (Ultra-Compacta, Sube el Contenido) */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-0.5">
@@ -270,6 +273,7 @@ export const App: React.FC = () => {
             </div>
           )}
         </main>
+      )}
       </div>
 
       {/* Footer con Redes Sociales (TikTok, Instagram, WhatsApp) */}
