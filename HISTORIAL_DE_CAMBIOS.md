@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.54.0 - Apoyo Natural y Erradicación de Cortes en Ilustración 3D del Login
+- [x] **Aislamiento en PNG Transparente Real ([`login-3d-girl-star.png`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/login-3d-girl-star.png)):**
+  - Removido el fondo plano sólido mediante algoritmo de segmentación alfa y BFS perimetral, eliminando el recuadro opaco y los bordes rectangulares.
+  - Extendido el cuerpo inferior de las mangas y de la estrella en 55px hacia abajo para garantizar que los personajes desciendan de forma continua por detrás de la curvatura del panel.
+- [x] **Calibración de Solapamiento y Escenario ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Eliminado el `border-radius` residual en la imagen y ajustado `.characters-stage` a 215px de altura (`width: 98%`, `max-width: 365px`).
+  - Incrementado el solapamiento de `.form-panel` a `margin-top: -26px` para que el panel funcione como un reposabrazos/cuchillo 3D perfecto, logrando que la niña y la estrella se vean 100% completas y apoyadas de forma natural sin líneas de corte en ningún extremo.
+
 ### Versión 1.53.0 - Eliminación de Migas de Pan Redundantes ("by.fio inicio") en Portada
 - [x] **Limpieza del Hero Principal ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx)):**
   - Eliminado el bloque de navegación de migas de pan `TreeNavigation` ("by.fio > inicio") ubicado sobre el slogan "¡Transformá tu creatividad en tu mejor proyecto!".

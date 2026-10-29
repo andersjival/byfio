@@ -624,20 +624,22 @@ body[data-color-theme="zen"] {
 .characters-stage {
   position: relative;
   width: 100%;
-  height: 195px;
+  height: 215px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-top: 2px;
+  margin-top: 0;
   z-index: 3;
 }
 
 .characters-stage img {
-  width: 94%;
+  width: 98%;
+  max-width: 365px;
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
-  border-radius: 20px 20px 0 0;
+  border-radius: 0;
+  pointer-events: none;
 }
 
 .form-panel {
@@ -646,7 +648,7 @@ body[data-color-theme="zen"] {
   padding: 18px 22px 18px;
   position: relative;
   z-index: 4;
-  margin-top: -14px;
+  margin-top: -26px;
   box-shadow: 
     0 -6px 14px rgba(120, 85, 150, 0.10),
     inset 0 5px 8px rgba(255, 255, 255, 0.95),
