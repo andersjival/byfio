@@ -1,16 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle, X, Sparkles, Heart } from 'lucide-react';
 import { getWhatsAppLink } from '../../utils/formatters';
 
 export const FloatingMascot: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [hasEntered, setHasEntered] = useState(false);
+  const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    // La estrellita sale 5 segundos después de que carga la página
+    const entranceTimer = setTimeout(() => {
+      setIsVisible(true);
+      // Tras 1150ms culmina la subida y vibración rápida, dando paso a la burbujita
+      const speechBubbleTimer = setTimeout(() => {
+        setHasEntered(true);
+        setShowSpeechBubble(true);
+      }, 1150);
+      return () => clearTimeout(speechBubbleTimer);
+    }, 5000);
+
+    return () => clearTimeout(entranceTimer);
+  }, []);
+
+  if (!isVisible) return null;
 
   const defaultMsg = '¡Hola Fio! Vi la tienda online y me gustaría hacer una consulta sobre los talleres y personalizados.';
   const waUrl = getWhatsAppLink('64004640', defaultMsg);
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end">
-      {/* Globo de Diálogo Kawaii */}
+    <div
+      className={`fixed bottom-5 right-5 z-40 flex flex-col items-end ${
+        !hasEntered ? 'animate-bubble-rise-vibrate' : ''
+      }`}
+    >
+      {/* Globo de Diálogo Kawaii Completo */}
       {isOpen && (
         <div className="mb-3 w-72 sm:w-80 bg-white rounded-3xl p-4 shadow-clayLg border-2 border-fio-200 animate-in fade-in slide-in-from-bottom-4 duration-200">
           <div className="flex items-start justify-between gap-2 border-b border-fio-100 pb-2 mb-3">
@@ -25,14 +49,15 @@ export const FloatingMascot: React.FC = () => {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100"
+              className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Cerrar ventana de ayuda"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Video de la Mascota */}
-          <div className="rounded-2xl overflow-hidden bg-fio-100 mb-3 border border-fio-200 shadow-inner max-h-40 flex items-center justify-center">
+          <div className="rounded-2xl overflow-hidden bg-fio-100 mb-3 shadow-inner max-h-40 flex items-center justify-center">
             <video
               src="/assets/vid-estrellita.mp4"
               autoPlay
@@ -59,20 +84,55 @@ export const FloatingMascot: React.FC = () => {
         </div>
       )}
 
-      {/* Botón Flotante con Video / Avatar de la Estrellita */}
+      {/* Mini Burbujita de Saludo (Aparece tras el movimiento y vibración rápida) */}
+      {showSpeechBubble && !isOpen && (
+        <div
+          onClick={() => {
+            setIsOpen(true);
+            setShowSpeechBubble(false);
+          }}
+          className="mb-2 max-w-[230px] bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-fio-200/80 flex items-center gap-2 cursor-pointer hover:shadow-2xl transition-all duration-200 animate-in fade-in zoom-in-95 slide-in-from-bottom-2 relative group"
+        >
+          <div className="flex-1">
+            <p className="text-[12px] font-bold text-fio-900 leading-tight">
+              ¡Hola! Soy <span className="text-fio-pink">Estrellita</span> ✨
+            </p>
+            <p className="text-[11px] text-gray-500 font-medium leading-tight mt-0.5">
+              ¿Tenés alguna consulta?
+            </p>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowSpeechBubble(false);
+            }}
+            className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            aria-label="Cerrar saludo"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+          {/* Colita de la burbujita hacia la estrellita */}
+          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white rotate-45 border-r border-b border-fio-200/80" />
+        </div>
+      )}
+
+      {/* Botón Flotante con Video / Avatar de la Estrellita (SIN BORDE) */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative group p-1 bg-white rounded-full shadow-clayLg border-3 border-fio-300 hover:scale-105 active:scale-95 transition-all duration-300"
+        onClick={() => {
+          setIsOpen(!isOpen);
+          setShowSpeechBubble(false);
+        }}
+        className="relative group rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-0 p-0"
         aria-label="Ayuda con Estrellita by.fio"
       >
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gradient-to-tr from-fio-300 via-fio-200 to-fio-100 flex items-center justify-center relative shadow-inner">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center relative shadow-xl border-0">
           <video
             src="/assets/vid-estrellita.mp4"
             autoPlay
             loop
             muted
             playsInline
-            className="w-full h-full object-cover pointer-events-none scale-105"
+            className="w-full h-full object-cover pointer-events-none scale-105 border-0"
           />
         </div>
 

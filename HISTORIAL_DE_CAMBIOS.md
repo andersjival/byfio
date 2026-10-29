@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.45.0 - Animación de Entrada Retardada, Vibración y Burbuja Sin Borde en Mascota Estrellita
+- [x] **Eliminación Total de Borde ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - Removido el borde grueso y el padding blanco perimetral de la burbuja flotante del video de la estrellita (`border-0 p-0`), conservando una silueta circular pura con sombras suaves `shadow-2xl`.
+- [x] **Aparición Retardada a los 5 Segundos ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - Implementado temporizador de 5000ms al cargar la página para que la estrellita permanezca oculta y no interrumpa la visualización inicial de la tienda.
+- [x] **Animación de Subida, Vibración Rápida y Burbujita de Saludo ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Animación física de resorte `@keyframes bubbleRiseVibrate`: la burbuja asciende fluidamente desde abajo (`translateY(160px)`), alcanza su cúspide, realiza una vibración lateral rápida y se detiene en seco.
+  - Al detenerse la vibración (1150ms post-llegada), emerge de inmediato la burbujita interactiva de saludo ("¡Hola! Soy Estrellita ✨ ¿Tenés alguna consulta?").
+
 ### Versión 1.44.0 - Ilustración Oficial Recortada de Niña y Estrellita en Login 3D
 - [x] **Integración de Ilustración Recortada y Ajuste Escénico ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Añadida la imagen recortada de alta resolución de la niña con suéter morado y la estrellita sonriente en [`public/assets/login-3d-girl-star.png`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/login-3d-girl-star.png).
