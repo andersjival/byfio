@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.56.0 - Corrección Definitiva de Apoyo en Login: Eliminación de Líneas y Calibración
+- [x] **Regeneración de PNG Limpio Sin Extrusión ([`login-3d-girl-star.png`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/login-3d-girl-star.png)):**
+  - Eliminadas las líneas verticales/artefactos inferiores generados por el pixel-stretching anterior.
+  - Recorte exacto y limpio sobre el borde real de los personajes (860 x 575 px) con canal alfa 100% transparente en todo el contorno.
+- [x] **Alineación Continua Sobre el Panel Acolchado ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Calibrado `.characters-stage` a 200px de alto (`width: auto; max-width: 92%`), ubicando los codos de la niña y el cuerpo de la estrella enteramente dentro del tramo horizontal del panel.
+  - Solapamiento de `.form-panel` ajustado a `margin-top: -18px` y radio a 32px, permitiendo que la parte inferior de los personajes quede suavemente oculta tras el lomo del formulario, luciendo 100% apoyados de forma natural y sin cortes.
+
 ### Versión 1.55.0 - Switches de Activación de Sonido en Panel de Administración
 - [x] **Gestión Centralizada de Audio ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) y [`soundEffects.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts)):**
   - Añadidos estados reactivos persistentes (`soundBubbleEnabled` y `soundButtonsEnabled`) con respaldo en `localStorage`.
