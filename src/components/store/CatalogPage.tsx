@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
 import {
   Search, Plus, Minus, MessageCircle, Pencil, X, Check,
-  ExternalLink, CheckCircle2, ChevronRight
+  ExternalLink, CheckCircle2, ChevronRight, ShoppingBag
 } from 'lucide-react';
 
 // Corazoncito azul oficial de by.fio que reemplaza los iconos genéricos de IA
@@ -431,14 +431,14 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       </button>
                     </div>
 
-                    {/* Botón Agregar al Pedido (Neumórfico Táctil) */}
+                    {/* Botón Agregar al Carrito (Pill Lila Pastel a Fucsia Suave) */}
                     <button
                       type="button"
                       onClick={() => handleAddToCart(product)}
-                      className={`flex-1 py-1.5 px-2.5 rounded-xl font-bubble font-bold text-xs flex items-center justify-center gap-1 active:scale-95 transition-all ${
+                      className={`flex-1 py-2 px-3 rounded-full font-bubble font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all ${
                         isAdded
                           ? 'bg-emerald-600 text-white shadow-neuBtn'
-                          : 'neu-btn-primary'
+                          : 'neu-btn-cart text-white'
                       }`}
                     >
                       {isAdded ? (
@@ -448,8 +448,8 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                         </>
                       ) : (
                         <>
-                          <BlueHeart className="w-3 h-3" />
-                          <span>Agregar</span>
+                          <ShoppingBag className="w-3.5 h-3.5 text-white" />
+                          <span>Agregar al Carrito</span>
                         </>
                       )}
                     </button>
@@ -566,10 +566,10 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                     handleAddToCart(detailProduct);
                     setDetailProduct(null);
                   }}
-                  className="flex-1 py-2.5 px-4 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 px-4 rounded-full neu-btn-cart text-white font-bubble font-bold text-xs active:scale-95 transition-all flex items-center justify-center gap-1.5"
                 >
-                  <BlueHeart className="w-3.5 h-3.5" />
-                  <span>Agregar al Pedido</span>
+                  <ShoppingBag className="w-3.5 h-3.5 text-white" />
+                  <span>Agregar al Carrito</span>
                 </button>
 
                 <button
@@ -612,10 +612,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => setIsCartOpen(true)}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-2xl bg-gradient-to-r from-fio-800 to-fio-pink hover:from-fio-900 hover:to-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full neu-btn-cart text-white font-bubble font-bold text-xs sm:text-sm active:scale-95 transition-all flex items-center justify-center gap-2"
           >
+            <ShoppingBag className="w-4 h-4 text-white" />
             <span>Ver Pedido &amp; Proceder al Pago</span>
-            <CheckCircle2 className="w-4 h-4 text-fio-yellow" />
+            <CheckCircle2 className="w-4 h-4 text-white" />
           </button>
         </div>
       )}

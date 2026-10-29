@@ -305,18 +305,18 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                           )}
                         </div>
 
-                        {/* Botón Agregar al Carrito Neumórfico */}
+                        {/* Botón Agregar al Carrito Neumórfico - Estilo Pill Lila a Fucsia Suave */}
                         <button
                           type="button"
                           disabled={isOutOfStock}
                           onClick={() => handleAdd(p)}
                           aria-label={`Agregar ${p.name} al carrito`}
-                          className={`w-full relative flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all duration-200 ${
+                          className={`w-full relative flex items-center justify-center gap-2 py-3 px-5 rounded-full text-xs sm:text-sm font-bubble font-bold transition-all duration-200 ${
                             isOutOfStock
                               ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                               : isAdded
                               ? 'bg-emerald-600 text-white shadow-neuBtn'
-                              : 'neu-btn-primary text-white shadow-neuBtn hover:shadow-neuBtnHover active:scale-95'
+                              : 'neu-btn-cart text-white shadow-neuBtn active:scale-95'
                           }`}
                         >
                           {isAdded ? (
@@ -326,7 +326,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                             </>
                           ) : (
                             <>
-                              <ShoppingBag className="w-4 h-4" />
+                              <ShoppingBag className="w-4 h-4 text-white" />
                               <span>Agregar al Carrito {currentQty > 1 ? `(${currentQty})` : ''}</span>
                             </>
                           )}

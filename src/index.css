@@ -116,24 +116,51 @@ body[data-font-theme="hybrid"] .font-bubble {
   transform: translateY(0px) !important;
 }
 
-/* Botón Neumórfico Acento Primario by.fio (Moradito Táctil Neumórfico) */
+/* Botón Neumórfico Acento Primario by.fio (Lila Pastel Suave a Fucsia Suave en Hover) */
 .neu-btn-primary {
-  background: linear-gradient(135deg, #7C3AED 0%, #6B21A8 100%);
+  background: linear-gradient(135deg, #D4AEFA 0%, #C084FC 100%);
   color: #FFFFFF;
   border-radius: 1rem;
-  box-shadow: 0 8px 20px -3px rgba(107, 33, 168, 0.38), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: all 0.15s ease-in-out;
+  box-shadow: 0 8px 20px -3px rgba(192, 132, 252, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  transition: all 0.22s ease-in-out;
   cursor: pointer;
 }
 
 .neu-btn-primary:hover {
-  box-shadow: 0 12px 25px -4px rgba(107, 33, 168, 0.48), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.45);
+  background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 12px 25px -3px rgba(236, 72, 153, 0.45), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.55);
   transform: translateY(-1px);
 }
 
 .neu-btn-primary:active {
-  box-shadow: inset 3px 3px 6px rgba(59, 7, 100, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.25) !important;
+  background: linear-gradient(135deg, #DB2777 0%, #BE185D 100%) !important;
+  box-shadow: inset 3px 3px 6px rgba(190, 24, 93, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(0px) !important;
+}
+
+/* Botón Especial de Carrito & Catálogo (Lila Pastel Suave a Fucsia Suave en Hover - Pill) */
+.neu-btn-cart {
+  background: linear-gradient(135deg, #D4AEFA 0%, #C084FC 100%);
+  color: #FFFFFF;
+  border-radius: 9999px;
+  box-shadow: 0 8px 20px -3px rgba(192, 132, 252, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  transition: all 0.22s ease-in-out;
+  cursor: pointer;
+}
+
+.neu-btn-cart:hover {
+  background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 12px 25px -3px rgba(236, 72, 153, 0.45), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.55);
+  transform: translateY(-1px);
+}
+
+.neu-btn-cart:active {
+  background: linear-gradient(135deg, #DB2777 0%, #BE185D 100%) !important;
+  box-shadow: inset 3px 3px 6px rgba(190, 24, 93, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.3) !important;
   transform: translateY(0px) !important;
 }
 

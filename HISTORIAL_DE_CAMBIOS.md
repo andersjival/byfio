@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.37.0 - Color Lila Pastel Oficial en Botones de Carrito y Catálogo con Hover Fucsia Suave
+- [x] **Rediseño de Color en Botones de Carrito y Catálogo ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Reemplazado el morado fuerte anterior por el gradiente exacto lila pastel suave de referencia (`linear-gradient(135deg, #D4AEFA 0%, #C084FC 100%)`) en `.neu-btn-primary` y `.neu-btn-cart`.
+  - Configurado efecto hover que transita fluidamente al fucsia suave oficial (`linear-gradient(135deg, #F472B6 0%, #EC4899 100%)`) con sombra suave `rgba(236, 72, 153, 0.45)`.
+- [x] **Botones "Agregar al Carrito" en Tienda y Catálogo ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx) y [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Formato pill táctil idéntico a la imagen de referencia con icono de bolsa de compras `ShoppingBag`, tipografía en blanco puro y respuesta táctil.
+  - Actualizado el botón del carrito en barra superior ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)) y botón de pago en drawer ([`CartDrawer.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CartDrawer.tsx)).
+
 ### Versión 1.36.0 - Reproducción de Intro con Audio Activo e Imagen de Marca HD (logo-byfio-lila-HD)
 - [x] **Video Intro con Inicio de Audio Directo ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
   - Configurado para reproducir directamente con audio activo (`isMuted: false`, `videoRef.current.muted = false`).
