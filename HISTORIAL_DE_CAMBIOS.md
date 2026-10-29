@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.39.0 - Publicación Cruzada Automática (Tienda y Catálogo) Marcada por Defecto y Opcional
+- [x] **Campos de Publicación Cruzada en Productos ([`types/index.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts) y [`NewProductModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx)):**
+  - Incorporados flags `showInStore` y `showInCatalog` activados por defecto (`true`) en creación y edición de productos.
+  - Bloque visual con tarjetas neumórficas e interruptores: al agregar un producto desde la tienda o desde el catálogo, aparece automáticamente en ambos canales, con la opción para el administrador de desmarcar cualquiera según convenga.
+- [x] **Filtrado Dinámico en Tienda, Catálogo y Home ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx) y [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
+  - La Tienda y el Home muestran únicamente productos con `showInStore !== false`.
+  - El Catálogo muestra únicamente productos con `showInCatalog !== false`, sincronizando contadores de categorías.
+  - Botón directo "+ Agregar Producto" y lápiz de edición rápida disponibles directamente en las vistas de Tienda y Catálogo.
+- [x] **Visibilidad en Tabla de Inventario ([`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Distintivos visuales `[Tienda]` y `[Catálogo]` para supervisar los canales asignados a cada artículo.
+
 ### Versión 1.38.0 - Corrección Definitiva del Selector de Impresión de Factura y Generación PDF
 - [x] **Aislamiento Quirúrgico del Contenedor de Impresión ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Corregido el selector CSS de impresión (`body.invoice-open #root > div > *:not(.invoice-modal-overlay)`) que provocaba pantalla en blanco en el diálogo de impresión al ocultar erróneamente el contenedor principal de React `#root > div`.

@@ -143,9 +143,23 @@ export const InventoryTable: React.FC = () => {
                   </td>
 
                   <td className="py-3 px-2">
-                    <span className="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-700 text-[11px] font-semibold">
-                      {prod.category}
-                    </span>
+                    <div className="space-y-1">
+                      <span className="px-2 py-0.5 rounded-lg bg-gray-100 text-gray-700 text-[11px] font-semibold block w-fit">
+                        {prod.category}
+                      </span>
+                      <div className="flex items-center gap-1 text-[9px] font-bold">
+                        {prod.showInStore !== false && (
+                          <span className="px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 border border-purple-200" title="Visible en Tienda">
+                            Tienda
+                          </span>
+                        )}
+                        {prod.showInCatalog !== false && (
+                          <span className="px-1.5 py-0.2 rounded bg-pink-50 text-pink-700 border border-pink-200" title="Visible en Catálogo">
+                            Catálogo
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </td>
 
                   <td className="py-3 px-2 whitespace-nowrap">

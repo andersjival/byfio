@@ -5,7 +5,8 @@ import { formatCRC } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
 import {
   ShoppingBag, Search, Sparkles, Heart,
-  Check, AlertCircle, Flower2, SlidersHorizontal, Plus, Minus
+  Check, AlertCircle, Flower2, SlidersHorizontal, Plus, Minus,
+  Pencil, PlusCircle
 } from 'lucide-react';
 
 const CATEGORIES: ('Todas' | ProductCategory)[] = [
@@ -22,7 +23,7 @@ interface StorePageProps {
 }
 
 export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
-  const { products, addToCart, setIsCartOpen } = useApp();
+  const { products, addToCart, setIsCartOpen, setIsNewProductModalOpen, setEditingProduct } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<'Todas' | ProductCategory>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyCustomizable, setOnlyCustomizable] = useState(false);
@@ -41,13 +42,14 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   };
 
   const filteredProducts = products.filter((p) => {
+    const isVisibleInStore = p.showInStore !== false;
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCustom = !onlyCustomizable || p.isCustomizable;
-    return matchesCategory && matchesSearch && matchesCustom;
+    return isVisibleInStore && matchesCategory && matchesSearch && matchesCustom;
   });
 
   const handleCustomTextChange = (prodId: string, val: string) => {
@@ -164,6 +166,20 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
           </div>
+
+          {/* Botón Admin: Agregar Producto Directo desde Tienda */}
+          <button
+            type="button"
+            onClick={() => {
+              setEditingProduct(null);
+              setIsNewProductModalOpen(true);
+            }}
+            className="neu-btn-primary flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bubble font-bold text-white shadow-neuBtn active:scale-95 transition-all shrink-0 w-full sm:w-auto"
+            title="Crear un nuevo producto para la tienda y catálogo"
+          >
+            <PlusCircle className="w-4 h-4 text-white" />
+            <span>+ Agregar Producto</span>
+          </button>
         </div>
       </div>
 
@@ -229,7 +245,20 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
                       <span>{p.sku}</span>
-                      <span className="text-slate-500 font-sans">{p.unit}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-slate-500 font-sans">{p.unit}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingProduct(p);
+                            setIsNewProductModalOpen(true);
+                          }}
+                          className="p-1 rounded-md bg-white hover:bg-slate-100 text-slate-500 hover:text-fio-pink transition-colors shadow-xs"
+                          title="Editar producto como admin"
+                        >
+                          <Pencil className="w-3 h-3 text-fio-pink" />
+                        </button>
+                      </div>
                     </div>
 
                     <h3 className="font-bubble text-lg text-slate-900 font-bold leading-snug line-clamp-1 group-hover:text-fio-800 transition-colors">

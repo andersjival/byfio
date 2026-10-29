@@ -63,6 +63,8 @@ export interface Product {
   customizationPlaceholder?: string;
   unit: string;
   description: string;
+  showInStore?: boolean; // Visible en la Tienda Online (por default true)
+  showInCatalog?: boolean; // Visible en el Catálogo Online (por default true)
 }
 
 export interface Workshop {

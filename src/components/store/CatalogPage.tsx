@@ -41,14 +41,18 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
   const [addedItemAnim, setAddedItemAnim] = useState<string | null>(null);
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
 
-  // Categorías dinámicas
+  // Categorías dinámicas basadas en productos visibles en el catálogo
+  const catalogProducts = useMemo(() => {
+    return products.filter((p) => p.showInCatalog !== false);
+  }, [products]);
+
   const categories = useMemo(() => {
     const set = new Set<string>();
-    products.forEach((p) => {
+    catalogProducts.forEach((p) => {
       if (p.category) set.add(p.category);
     });
     return ['Todas', ...Array.from(set)];
-  }, [products]);
+  }, [catalogProducts]);
 
   const getQty = (id: string) => quantities[id] || 1;
 
@@ -66,7 +70,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
 
   // Filtrado de productos
   const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
+    return catalogProducts.filter((p) => {
       const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
       const matchesSearch =
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -76,7 +80,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
       const matchesCustom = !onlyCustomizable || p.isCustomizable;
       return matchesCategory && matchesSearch && matchesCustom;
     });
-  }, [products, selectedCategory, searchQuery, onlyCustomizable]);
+  }, [catalogProducts, selectedCategory, searchQuery, onlyCustomizable]);
 
   const handleAddToCart = (product: Product) => {
     const qty = getQty(product.id);
@@ -199,23 +203,38 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
             </div>
           </div>
 
-          {/* Buscador Neumórfico Rehundido */}
-          <div className="relative w-full md:w-64">
-            <input
-              type="text"
-              placeholder="Buscar producto o SKU..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-[#ECEEF2] rounded-2xl border border-white/60 text-xs text-slate-800 placeholder-slate-400 shadow-neuInset focus:outline-none transition-all"
-            />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            {/* Buscador Neumórfico Rehundido */}
+            <div className="relative w-full md:w-64">
+              <input
+                type="text"
+                placeholder="Buscar producto o SKU..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 bg-[#ECEEF2] rounded-2xl border border-white/60 text-xs text-slate-800 placeholder-slate-400 shadow-neuInset focus:outline-none transition-all"
+              />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+            </div>
+
+            {/* Botón Admin: Agregar Producto Directo desde Catálogo */}
+            <button
+              type="button"
+              onClick={() => {
+                setEditingProduct(null);
+                setIsNewProductModalOpen(true);
+              }}
+              className="neu-btn-primary flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl text-xs font-bubble font-bold text-white shadow-neuBtn active:scale-95 transition-all shrink-0"
+              title="Crear un nuevo producto para catálogo y tienda"
+            >
+              <span>+ Nuevo</span>
+            </button>
           </div>
         </div>
 
         {/* Botones de Categorías Neumórficos */}
         <div className="flex flex-wrap items-center gap-2">
           {categories.map((cat) => {
-            const count = cat === 'Todas' ? products.length : products.filter((p) => p.category === cat).length;
+            const count = cat === 'Todas' ? catalogProducts.length : catalogProducts.filter((p) => p.category === cat).length;
             const isSelected = selectedCategory === cat;
 
             return (

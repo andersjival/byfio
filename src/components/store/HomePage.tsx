@@ -17,7 +17,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const { workshops, products, addToCart } = useApp();
 
   const featuredWorkshops = workshops.slice(0, 3);
-  const featuredProducts = products.slice(0, 4);
+  const featuredProducts = products.filter((p) => p.showInStore !== false).slice(0, 4);
 
   return (
     <div className="space-y-8 animate-fadeIn">

@@ -4,7 +4,8 @@ import { ProductCategory } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import {
   X, PlusCircle, Sparkles, Wand2, Image as ImageIcon,
-  CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil
+  CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
+  Store, BookOpen
 } from 'lucide-react';
 import { ImageUploadField } from '../common/ImageUploadField';
 
@@ -42,6 +43,8 @@ export const NewProductModal: React.FC = () => {
   const [description, setDescription] = useState('');
   const [isCustomizable, setIsCustomizable] = useState(false);
   const [customizationPlaceholder, setCustomizationPlaceholder] = useState('');
+  const [showInStore, setShowInStore] = useState(true);
+  const [showInCatalog, setShowInCatalog] = useState(true);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
   // Sincronizar formulario según modo edición o creación
@@ -61,6 +64,8 @@ export const NewProductModal: React.FC = () => {
       setDescription(editingProduct.description || '');
       setIsCustomizable(editingProduct.isCustomizable);
       setCustomizationPlaceholder(editingProduct.customizationPlaceholder || '');
+      setShowInStore(editingProduct.showInStore !== false);
+      setShowInCatalog(editingProduct.showInCatalog !== false);
       setIsCreatingNewCat(false);
       setCustomCategory('');
     } else {
@@ -78,6 +83,8 @@ export const NewProductModal: React.FC = () => {
       setDescription('');
       setIsCustomizable(false);
       setCustomizationPlaceholder('');
+      setShowInStore(true); // Marcado por default
+      setShowInCatalog(true); // Marcado por default
       setIsCreatingNewCat(false);
       setCustomCategory('');
     }
@@ -126,6 +133,8 @@ export const NewProductModal: React.FC = () => {
         description: finalDesc,
         isCustomizable,
         customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
+        showInStore,
+        showInCatalog,
       });
 
       setSuccessToast('¡Artículo actualizado y guardado correctamente!');
@@ -146,6 +155,8 @@ export const NewProductModal: React.FC = () => {
         description: finalDesc,
         isCustomizable,
         customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
+        showInStore,
+        showInCatalog,
       });
 
       setSuccessToast('¡Artículo creado y agregado al inventario!');
@@ -444,6 +455,79 @@ export const NewProductModal: React.FC = () => {
                 />
               </div>
             )}
+          </div>
+
+          {/* Bloque 6: Canales de Publicación (Tienda & Catálogo) */}
+          <div className="p-4 bg-gradient-to-r from-purple-50/70 via-white to-pink-50/50 rounded-2xl border border-purple-200 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bubble font-bold text-slate-800 flex items-center gap-1.5">
+                <Store className="w-3.5 h-3.5 text-fio-800" />
+                <span>Canales de Publicación (Tienda &amp; Catálogo)</span>
+              </span>
+              <span className="text-[10px] text-fio-800 bg-fio-100 px-2 py-0.5 rounded-full font-bold">
+                Marcado por defecto
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-500 leading-tight">
+              Si agregas el producto en la tienda o en el catálogo, aparecerá en ambos de forma predeterminada. Puedes desmarcar cualquiera de forma opcional.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              {/* Opción 1: Mostrar en Tienda Online */}
+              <label
+                htmlFor="showInStore"
+                className={`flex items-start gap-2.5 p-3 rounded-xl border transition-all cursor-pointer ${
+                  showInStore
+                    ? 'bg-white border-fio-300 shadow-sm text-slate-900'
+                    : 'bg-slate-50/80 border-slate-200 text-slate-400'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  id="showInStore"
+                  checked={showInStore}
+                  onChange={(e) => setShowInStore(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 text-fio-800 rounded border-gray-300 focus:ring-fio-400 cursor-pointer"
+                />
+                <div className="text-xs">
+                  <div className="flex items-center gap-1 font-bold">
+                    <Store className="w-3.5 h-3.5 text-fio-pink" />
+                    <span>Mostrar en Tienda</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 block mt-0.5">
+                    Visible en la Tienda Online y en Inicio
+                  </span>
+                </div>
+              </label>
+
+              {/* Opción 2: Mostrar en Catálogo Online */}
+              <label
+                htmlFor="showInCatalog"
+                className={`flex items-start gap-2.5 p-3 rounded-xl border transition-all cursor-pointer ${
+                  showInCatalog
+                    ? 'bg-white border-fio-300 shadow-sm text-slate-900'
+                    : 'bg-slate-50/80 border-slate-200 text-slate-400'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  id="showInCatalog"
+                  checked={showInCatalog}
+                  onChange={(e) => setShowInCatalog(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 text-fio-800 rounded border-gray-300 focus:ring-fio-400 cursor-pointer"
+                />
+                <div className="text-xs">
+                  <div className="flex items-center gap-1 font-bold">
+                    <BookOpen className="w-3.5 h-3.5 text-fio-800" />
+                    <span>Mostrar en Catálogo</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 block mt-0.5">
+                    Visible en la sección oficial /catalogo
+                  </span>
+                </div>
+              </label>
+            </div>
           </div>
 
           {/* Botones de Acción */}
