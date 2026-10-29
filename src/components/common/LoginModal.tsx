@@ -71,16 +71,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   };
 
   const content = (
-    <div className="scene-wrapper relative py-6">
+    <div className="scene-wrapper relative py-2 sm:py-3">
       {/* Botón flotante para cerrar en modo modal */}
       {!isStandalonePage && (
         <button
           type="button"
           onClick={onClose}
-          className="absolute -top-1 -right-1 z-30 w-10 h-10 rounded-full bg-white/95 hover:bg-white text-slate-600 hover:text-fio-pink shadow-lg flex items-center justify-center transition-all active:scale-95 border border-purple-100"
+          className="absolute top-0 right-0 z-30 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-slate-600 hover:text-fio-pink shadow-md flex items-center justify-center transition-all active:scale-95 border border-purple-100"
           title="Cerrar ventana"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
       )}
 
@@ -271,7 +271,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   if (!isStandalonePage) {
     return (
       <div
-        className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+        className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 animate-fadeIn"
         onClick={onClose}
       >
         <div onClick={(e) => e.stopPropagation()} className="max-w-md w-full flex justify-center">
@@ -283,7 +283,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
   // Si es modo página completa (/login)
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-10 px-4 bg-radial from-[#f3e5f5] via-[#c8a7e0] to-[#9c78c2]">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-4 px-2 bg-radial from-[#f3e5f5] via-[#c8a7e0] to-[#9c78c2]">
       {content}
     </div>
   );

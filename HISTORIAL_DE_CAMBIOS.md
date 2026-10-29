@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.47.0 - Ajuste de Escala Completa y Apoyo Exacto en Tarjeta de Login 3D
+- [x] **Ajuste de Escala para Visualización Completa Sin Cortes ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css) y [`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
+  - Calibradas las dimensiones verticales de la tarjeta a escala compacta equilibrada (~500px de altura total) para garantizar que todo el contenido (cabecera con corazón, personajes, campos de entrada, botones sociales y pedestal) se aprecie al 100% sin cortes en la pantalla.
+- [x] **Recorte de Precisión y Apoyo Directo de la Muñequita ([`public/assets/login-3d-girl-star.png`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/assets/login-3d-girl-star.png) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Recortados los 131 píxeles de espacio vacío inferior del asset gráfico, posicionando la línea base de los codos y las patas de la estrellita en el píxel final de la imagen.
+  - Aplicado solapamiento quirúrgico (`margin-top: -18px` en `.form-panel`) para que los personajes descansen de manera continua y natural sobre el marco acolchado del formulario, erradicando el espacio en blanco.
+
 ### Versión 1.46.0 - Reorganización del Header de Administración y Dock de Pestañas Sin Scroll
 - [x] **Limpieza y Reubicación en Encabezado ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Ocultadas las redes sociales (TikTok, Instagram y WhatsApp) en la vista del panel administrativo.

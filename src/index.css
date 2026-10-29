@@ -553,23 +553,23 @@ body[data-color-theme="zen"] {
 }
 
 .login-card {
-  width: 390px;
-  max-width: 100%;
+  width: 360px;
+  max-width: 95vw;
   background: linear-gradient(180deg, #fdf3f4 0%, #f7e6ea 100%);
-  border-radius: 46px;
+  border-radius: 36px;
   box-shadow: 
-    0 25px 45px rgba(74, 42, 117, 0.35),
-    inset 0 6px 10px rgba(255, 255, 255, 0.9),
-    inset 0 -8px 14px rgba(215, 190, 205, 0.6);
+    0 20px 40px rgba(74, 42, 117, 0.30),
+    inset 0 5px 8px rgba(255, 255, 255, 0.9),
+    inset 0 -6px 12px rgba(215, 190, 205, 0.55);
   position: relative;
   z-index: 2;
   overflow: hidden;
-  padding-top: 28px;
+  padding-top: 14px;
 }
 
 .login-card .header {
   text-align: center;
-  padding: 0 24px;
+  padding: 0 16px;
 }
 
 .login-card .heart-badge {
@@ -577,13 +577,13 @@ body[data-color-theme="zen"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
 .login-card .heart-icon {
-  font-size: 32px;
+  font-size: 24px;
   color: #ff7597;
-  filter: drop-shadow(0 5px 6px rgba(255, 105, 145, 0.4));
+  filter: drop-shadow(0 4px 5px rgba(255, 105, 145, 0.35));
   background: linear-gradient(180deg, #ff9eb5 0%, #ff5c8a 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -591,11 +591,11 @@ body[data-color-theme="zen"] {
 }
 
 .login-card .heart-rays {
-  font-size: 18px;
+  font-size: 14px;
   color: #ffbe3b;
-  margin: 0 10px;
+  margin: 0 6px;
   font-weight: bold;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-shadow: 0 2px 4px rgba(255, 190, 59, 0.4);
 }
 
@@ -606,16 +606,17 @@ body[data-color-theme="zen"] {
 
 .login-card .header h1 {
   font-family: 'Fredoka', sans-serif;
-  font-size: 30px;
+  font-size: 22px;
   font-weight: 700;
   color: #6c43b5;
-  letter-spacing: 0.3px;
-  text-shadow: 0 3px 6px rgba(108, 67, 181, 0.18);
-  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(108, 67, 181, 0.16);
+  margin-bottom: 2px;
 }
 
 .login-card .header p {
-  font-size: 13.5px;
+  font-size: 11.5px;
   font-weight: 600;
   color: #6e6478;
 }
@@ -623,11 +624,11 @@ body[data-color-theme="zen"] {
 .characters-stage {
   position: relative;
   width: 100%;
-  height: 195px;
+  height: 145px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-top: 6px;
+  margin-top: 2px;
   z-index: 3;
 }
 
@@ -636,45 +637,45 @@ body[data-color-theme="zen"] {
   height: 100%;
   object-fit: cover;
   object-position: center bottom;
-  border-radius: 24px;
+  border-radius: 20px 20px 0 0;
 }
 
 .floating-hearts {
   position: absolute;
-  right: 38px;
-  top: 15px;
+  right: 28px;
+  top: 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   pointer-events: none;
 }
 
 .floating-hearts .h-pink {
   color: #ff7597;
-  font-size: 22px;
+  font-size: 18px;
   transform: rotate(-15deg);
-  filter: drop-shadow(0 4px 5px rgba(255, 117, 151, 0.35));
+  filter: drop-shadow(0 3px 4px rgba(255, 117, 151, 0.35));
 }
 
 .floating-hearts .h-purple {
   color: #9b6bff;
-  font-size: 20px;
-  margin-left: 14px;
+  font-size: 16px;
+  margin-left: 10px;
   transform: rotate(12deg);
-  filter: drop-shadow(0 4px 5px rgba(155, 107, 255, 0.35));
+  filter: drop-shadow(0 3px 4px rgba(155, 107, 255, 0.35));
 }
 
 .form-panel {
   background: linear-gradient(180deg, #fdf3f4 0%, #f5e4e8 100%);
-  border-radius: 42px;
-  padding: 28px 26px 26px;
+  border-radius: 34px;
+  padding: 16px 20px 16px;
   position: relative;
   z-index: 4;
-  margin-top: -12px;
+  margin-top: -18px;
   box-shadow: 
-    0 -8px 18px rgba(120, 85, 150, 0.12),
-    inset 0 6px 10px rgba(255, 255, 255, 0.95),
-    inset 0 -8px 12px rgba(212, 185, 200, 0.5);
+    0 -6px 14px rgba(120, 85, 150, 0.10),
+    inset 0 5px 8px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 10px rgba(212, 185, 200, 0.45);
 }
 
 .login-card .input-group {
@@ -682,47 +683,47 @@ body[data-color-theme="zen"] {
   display: flex;
   align-items: center;
   background: #fcf6f7;
-  border-radius: 50px;
-  padding: 6px 16px 6px 6px;
-  margin-bottom: 15px;
+  border-radius: 40px;
+  padding: 4px 12px 4px 4px;
+  margin-bottom: 9px;
   box-shadow: 
-    0 6px 12px rgba(145, 115, 165, 0.12),
-    inset 0 2px 5px rgba(255, 255, 255, 1),
-    inset 0 -3px 6px rgba(215, 195, 210, 0.45);
+    0 4px 10px rgba(145, 115, 165, 0.10),
+    inset 0 2px 4px rgba(255, 255, 255, 1),
+    inset 0 -2px 5px rgba(215, 195, 210, 0.40);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .login-card .input-group:focus-within {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: 
-    0 8px 16px rgba(138, 86, 226, 0.22),
-    inset 0 2px 5px rgba(255, 255, 255, 1);
+    0 6px 12px rgba(138, 86, 226, 0.20),
+    inset 0 2px 4px rgba(255, 255, 255, 1);
 }
 
 .login-card .icon-badge {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #a57aff, #7444d6);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  font-size: 18px;
+  font-size: 15px;
   flex-shrink: 0;
   box-shadow: 
-    0 5px 10px rgba(116, 68, 214, 0.4),
-    inset 0 3px 5px rgba(255, 255, 255, 0.45),
-    inset 0 -3px 5px rgba(65, 30, 140, 0.5);
+    0 4px 8px rgba(116, 68, 214, 0.35),
+    inset 0 2px 4px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 4px rgba(65, 30, 140, 0.5);
 }
 
 .login-card .input-group input {
   border: none;
   background: transparent;
   width: 100%;
-  padding: 10px 14px;
+  padding: 7px 10px;
   font-family: 'Quicksand', sans-serif;
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 600;
   color: #4a3a5a;
   outline: none;
@@ -736,8 +737,8 @@ body[data-color-theme="zen"] {
 .login-card .toggle-password {
   color: #4f3d63;
   cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
+  font-size: 15px;
+  padding: 3px;
   transition: color 0.2s;
 }
 
@@ -747,13 +748,13 @@ body[data-color-theme="zen"] {
 
 .login-card .forgot-wrap {
   text-align: right;
-  margin-top: -4px;
-  margin-bottom: 16px;
-  padding-right: 6px;
+  margin-top: -3px;
+  margin-bottom: 9px;
+  padding-right: 4px;
 }
 
 .login-card .forgot-wrap a {
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #7e57c2;
   text-decoration: none;
@@ -766,43 +767,43 @@ body[data-color-theme="zen"] {
 .btn-login {
   width: 100%;
   border: none;
-  border-radius: 50px;
-  padding: 15px 24px;
+  border-radius: 40px;
+  padding: 10px 18px;
   background: linear-gradient(180deg, #9d6bff 0%, #7343d4 100%);
   color: #ffffff;
   font-family: 'Fredoka', sans-serif;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   box-shadow: 
-    0 8px 16px rgba(115, 67, 212, 0.45),
-    inset 0 4px 6px rgba(255, 255, 255, 0.45),
-    inset 0 -5px 8px rgba(68, 32, 145, 0.6);
+    0 6px 14px rgba(115, 67, 212, 0.40),
+    inset 0 3px 5px rgba(255, 255, 255, 0.45),
+    inset 0 -4px 6px rgba(68, 32, 145, 0.55);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-login:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: 
-    0 11px 20px rgba(115, 67, 212, 0.55),
-    inset 0 4px 6px rgba(255, 255, 255, 0.55),
-    inset 0 -5px 8px rgba(68, 32, 145, 0.6);
+    0 8px 16px rgba(115, 67, 212, 0.50),
+    inset 0 3px 5px rgba(255, 255, 255, 0.50),
+    inset 0 -4px 6px rgba(68, 32, 145, 0.55);
 }
 
 .btn-login:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
 }
 
 .login-card .divider {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 18px 0 16px;
+  gap: 8px;
+  margin: 10px 0 8px;
 }
 
 .login-card .divider::before,
@@ -815,7 +816,7 @@ body[data-color-theme="zen"] {
 }
 
 .login-card .divider span {
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #5e506b;
 }
@@ -823,35 +824,35 @@ body[data-color-theme="zen"] {
 .social-row {
   display: flex;
   justify-content: center;
-  gap: 24px;
-  margin-bottom: 18px;
+  gap: 16px;
+  margin-bottom: 10px;
 }
 
 .social-btn {
-  width: 52px;
-  height: 52px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   border: none;
   background: linear-gradient(145deg, #ffffff, #efe3e8);
   box-shadow: 
-    0 7px 14px rgba(135, 105, 155, 0.22),
-    inset 0 3px 5px #ffffff,
-    inset 0 -4px 6px rgba(210, 190, 205, 0.6);
+    0 5px 10px rgba(135, 105, 155, 0.18),
+    inset 0 2px 4px #ffffff,
+    inset 0 -3px 5px rgba(210, 190, 205, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 23px;
+  font-size: 18px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
 
 .social-btn:hover {
-  transform: translateY(-3px) scale(1.04);
+  transform: translateY(-2px) scale(1.04);
 }
 
 .signup-text {
   text-align: center;
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #5e506b;
 }
@@ -872,12 +873,12 @@ body[data-color-theme="zen"] {
 }
 
 .pedestal {
-  width: 430px;
-  max-width: 98vw;
-  height: 36px;
+  width: 380px;
+  max-width: 96vw;
+  height: 24px;
   background: linear-gradient(180deg, #d7b4f3 0%, #aa80d6 100%);
   border-radius: 50%;
-  margin-top: -18px;
+  margin-top: -12px;
   z-index: 1;
   box-shadow: 
     0 14px 28px rgba(68, 35, 110, 0.45),
