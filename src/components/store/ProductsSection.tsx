@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCategory, Product } from '../../types';
 import { formatCRC } from '../../utils/formatters';
-import { ShoppingBag, Search, Sparkles, AlertCircle } from 'lucide-react';
+import { ShoppingBag, Search, Sparkles, AlertCircle, Check } from 'lucide-react';
 
 const CATEGORIES: ('Todas' | ProductCategory)[] = [
   'Todas',
@@ -14,7 +14,7 @@ const CATEGORIES: ('Todas' | ProductCategory)[] = [
 ];
 
 export const ProductsSection: React.FC = () => {
-  const { products, addToCart } = useApp();
+  const { products, addToCart, cart } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<'Todas' | ProductCategory>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
@@ -128,6 +128,14 @@ export const ProductsSection: React.FC = () => {
                 ) : (
                   <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold shadow-sm">
                     {p.stock} en stock
+                  </span>
+                )}
+
+                {/* Etiqueta Sin Bordes: Producto Agregado */}
+                {cart.some((it) => it.id === p.id) && (
+                  <span className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-bubble font-bold shadow-md border-0 flex items-center gap-1 z-10 animate-fadeIn">
+                    <Check className="w-3 h-3 stroke-[2.5]" />
+                    <span>Producto Agregado</span>
                   </span>
                 )}
               </div>

@@ -1,8 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme, ColorTheme, PricingSectionData } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { playAudioBeep } from '../utils/formatters';
+
+export interface CartToastInfo {
+  productName: string;
+  quantity?: number;
+  image?: string;
+  price?: number;
+}
 
 interface AppContextType {
   viewMode: ViewMode;
@@ -13,6 +20,9 @@ interface AppContextType {
   cart: CartItem[];
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
+  cartToast: CartToastInfo | null;
+  showCartSuccessToast: (info: CartToastInfo) => void;
+  closeCartToast: () => void;
   activePickingOrder: Order | null;
   setActivePickingOrder: (order: Order | null) => void;
   invoiceOrder: Order | null;
@@ -111,6 +121,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartToast, setCartToast] = useState<CartToastInfo | null>(null);
+  const cartToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showCartSuccessToast = (info: CartToastInfo) => {
+    if (cartToastTimeoutRef.current) {
+      clearTimeout(cartToastTimeoutRef.current);
+    }
+    setCartToast(info);
+    cartToastTimeoutRef.current = setTimeout(() => {
+      setCartToast(null);
+    }, 3200);
+  };
+
+  const closeCartToast = () => {
+    if (cartToastTimeoutRef.current) {
+      clearTimeout(cartToastTimeoutRef.current);
+    }
+    setCartToast(null);
+  };
+
   const [activePickingOrder, setActivePickingOrder] = useState<Order | null>(null);
   const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
   const [qrModalProduct, setQrModalProduct] = useState<Product | null>(null);
@@ -221,7 +251,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       return [...prev, { ...item, cartId }];
     });
-    setIsCartOpen(true);
+    // No abrir el carrito automáticamente; mostrar cartel de confirmación que auto-desaparece
+    showCartSuccessToast({
+      productName: item.name,
+      quantity: item.quantity,
+      image: item.image,
+      price: item.price,
+    });
   };
 
   const removeFromCart = (cartId: string) => {
@@ -589,6 +625,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isIntroOpen,
         playWebIntro,
         closeWebIntro,
+        cartToast,
+        showCartSuccessToast,
+        closeCartToast,
         addToCart,
         removeFromCart,
         updateCartQuantity,

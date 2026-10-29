@@ -14,7 +14,7 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
-  const { workshops, products, addToCart } = useApp();
+  const { workshops, products, addToCart, cart } = useApp();
 
   const featuredWorkshops = workshops.slice(0, 3);
   const featuredProducts = products.filter((p) => p.showInStore !== false).slice(0, 4);
@@ -123,52 +123,70 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.map((p) => (
-            <div
-              key={p.id}
-              className="bg-[#F1F2F6] rounded-[32px] p-4 border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300 flex flex-col justify-between"
-            >
-              <div>
-                <div className="relative h-40 rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset mb-3">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
-                  <span className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-slate-700 shadow-neuBtn">
-                    {p.category}
-                  </span>
-                </div>
-                <h3 className="font-bubble font-bold text-base text-slate-900 line-clamp-1">
-                  {p.name}
-                </h3>
-                <p className="text-xs text-slate-500 line-clamp-2 mt-1">
-                  {p.description}
-                </p>
-              </div>
+          {featuredProducts.map((p) => {
+            const cartItem = cart.find((it) => it.id === p.id);
+            const isInCart = !!cartItem;
+            const cartQty = cartItem ? cartItem.quantity : 0;
 
-              <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between mt-3">
-                <span className="font-bubble text-lg font-bold text-slate-900">
-                  {formatCRC(p.price)}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    addToCart({
-                      type: 'product',
-                      id: p.id,
-                      sku: p.sku,
-                      name: p.name,
-                      price: p.price,
-                      quantity: 1,
-                      image: p.image,
-                      shelfLocation: p.shelfLocation,
-                    });
-                  }}
-                  className="w-10 h-10 neu-btn-circle text-amber-500 hover:text-amber-600 active:scale-90 transition-all"
-                  title="Agregar al Carrito"
-                >
-                  <ShoppingBag className="w-4 h-4" />
-                </button>
+            return (
+              <div
+                key={p.id}
+                className="bg-[#F1F2F6] rounded-[32px] p-4 border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative h-40 rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset mb-3">
+                    <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                    <span className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-slate-700 shadow-neuBtn">
+                      {p.category}
+                    </span>
+
+                    {/* Etiqueta Sin Bordes: Producto Agregado */}
+                    {isInCart && (
+                      <span className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-bubble font-bold shadow-md border-0 flex items-center gap-1 z-10 animate-fadeIn">
+                        <Check className="w-3 h-3 stroke-[2.5]" />
+                        <span>Producto Agregado{cartQty > 1 ? ` (${cartQty})` : ''}</span>
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-bubble font-bold text-base text-slate-900 line-clamp-1">
+                    {p.name}
+                  </h3>
+                  <p className="text-xs text-slate-500 line-clamp-2 mt-1">
+                    {p.description}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between mt-3">
+                  <span className="font-bubble text-lg font-bold text-slate-900">
+                    {formatCRC(p.price)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addToCart({
+                        type: 'product',
+                        id: p.id,
+                        sku: p.sku,
+                        name: p.name,
+                        price: p.price,
+                        quantity: 1,
+                        image: p.image,
+                        shelfLocation: p.shelfLocation,
+                      });
+                    }}
+                    className={`w-10 h-10 neu-btn-circle ${
+                      isInCart
+                        ? 'text-emerald-600 bg-emerald-50 shadow-neuBtn'
+                        : 'text-slate-700 hover:text-fio-800'
+                    } active:scale-90 transition-all`}
+                    title={isInCart ? `Ya en carrito (${cartQty}) - Agregar 1 más` : 'Agregar al Carrito'}
+                  >
+                    {isInCart ? <Check className="w-4 h-4 text-emerald-600 stroke-[2.5]" /> : <ShoppingBag className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

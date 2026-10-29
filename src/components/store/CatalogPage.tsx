@@ -99,7 +99,6 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
     });
 
     setAddedItemAnim(product.id);
-    setIsCartOpen(true);
     setTimeout(() => setAddedItemAnim(null), 1200);
   };
 
@@ -327,6 +326,9 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
               const currentQty = getQty(product.id);
               const customVal = customTextInputs[product.id] || '';
               const isAdded = addedItemAnim === product.id;
+              const cartItem = cart.find((it) => it.id === product.id);
+              const isInCart = !!cartItem;
+              const cartQty = cartItem ? cartItem.quantity : 0;
 
               return (
                 <div
@@ -353,14 +355,31 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       <span className="absolute top-1.5 left-1.5 px-1.5 py-0.2 rounded bg-black/60 text-white font-mono font-bold text-[9px]">
                         {product.sku}
                       </span>
+
+                      {/* Etiqueta Sin Bordes sobre Foto: Producto Agregado */}
+                      {isInCart && (
+                        <span className="absolute bottom-1.5 left-1.5 right-1.5 px-1 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bubble font-bold shadow-md border-0 flex items-center justify-center gap-0.5 animate-fadeIn z-10">
+                          <Check className="w-2.5 h-2.5 stroke-[2.5]" />
+                          <span className="truncate">Agregado{cartQty > 1 ? ` (${cartQty})` : ''}</span>
+                        </span>
+                      )}
                     </div>
 
                     {/* Datos del Producto */}
                     <div className="flex-1 min-w-0 space-y-1">
                       <div className="flex items-center justify-between gap-1">
-                        <span className="px-2 py-0.5 rounded-md bg-purple-50 text-fio-800 text-[10px] font-semibold truncate">
-                          {product.category}
-                        </span>
+                        <div className="flex items-center gap-1.5 overflow-hidden">
+                          <span className="px-2 py-0.5 rounded-md bg-purple-50 text-fio-800 text-[10px] font-semibold truncate">
+                            {product.category}
+                          </span>
+                          {/* Etiqueta Sin Bordes junto a categoría: Producto Agregado */}
+                          {isInCart && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9.5px] font-bubble font-bold border-0 shadow-sm flex items-center gap-1 shrink-0 animate-fadeIn">
+                              <Check className="w-2.5 h-2.5 stroke-[2.5]" />
+                              <span>Producto Agregado</span>
+                            </span>
+                          )}
+                        </div>
 
                         {/* Botón Admin para Editar Precio */}
                         <button
@@ -462,8 +481,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                     >
                       {isAdded ? (
                         <>
-                          <Check className="w-3.5 h-3.5" />
+                          <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                           <span>¡Listo!</span>
+                        </>
+                      ) : isInCart ? (
+                        <>
+                          <ShoppingBag className="w-3.5 h-3.5 text-white" />
+                          <span>Agregar más ({cartQty})</span>
                         </>
                       ) : (
                         <>
@@ -528,13 +552,19 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
             <div className="w-full md:w-1/2 p-4 sm:p-6 flex flex-col justify-between overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               <div className="space-y-3">
                 {/* Categoría y Personalizable */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="px-2.5 py-0.5 rounded-lg bg-fio-100 text-fio-800 text-xs font-semibold">
                     {detailProduct.category}
                   </span>
                   {detailProduct.isCustomizable && (
                     <span className="text-[11px] text-fio-pink font-semibold flex items-center gap-1">
                       <BlueHeart className="w-2.5 h-2.5" /> Personalizable
+                    </span>
+                  )}
+                  {cart.some((it) => it.id === detailProduct.id) && (
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bubble font-bold border-0 shadow-sm flex items-center gap-1">
+                      <Check className="w-2.5 h-2.5 stroke-[2.5]" />
+                      <span>Producto Agregado</span>
                     </span>
                   )}
                 </div>
@@ -588,7 +618,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                   className="flex-1 py-2.5 px-4 rounded-full neu-btn-cart text-white font-bubble font-bold text-xs active:scale-95 transition-all flex items-center justify-center gap-1.5"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 text-white" />
-                  <span>Agregar al Carrito</span>
+                  <span>
+                    {cart.some((it) => it.id === detailProduct.id)
+                      ? 'Agregar Más al Carrito'
+                      : 'Agregar al Carrito'}
+                  </span>
                 </button>
 
                 <button

@@ -531,3 +531,12 @@ body[data-color-theme="zen"] {
   animation: byfioHeartPulse 1.2s ease-in-out infinite;
   animation-delay: 0.3s;
 }
+
+@keyframes shrinkWidth {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}

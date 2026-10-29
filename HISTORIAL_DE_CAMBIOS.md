@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.40.0 - Etiqueta Sin Bordes "Producto Agregado", Notificación Flotante de Éxito y Carrito Cerrado
+- [x] **Etiqueta Sin Bordes "Producto Agregado" en Tarjetas de Productos ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx), [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
+  - Implementada insignia distintiva sin bordes (`border-0`, `bg-emerald-500`, texto blanco con icono de verificación `Check`) que se activa reactivamente cuando un producto ya se encuentra en el carrito (`cart.some(it => it.id === product.id)`).
+  - Permite a los clientes identificar de un vistazo qué artículos ya han añadido a su pedido y cuáles no.
+  - Actualizado el botón de acción en tarjeta a `Agregar Más (X en Carrito)` para permitir incrementar unidades cómodamente.
+- [x] **Flujo de Carrito Sin Apertura Automática ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Eliminada la apertura forzada del drawer del carrito (`setIsCartOpen(true)`) al agregar productos, permitiendo que el usuario continúe navegando y comprando sin interrupciones.
+- [x] **Cartel / Toast Flotante Auto-Descartable ([`CartSuccessToast.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/CartSuccessToast.tsx)):**
+  - Cartel flotante superior en estilo Neumórfico Glassmorphism con el mensaje `¡Producto agregado con éxito!`, nombre del artículo, foto y resumen reactivo en tiempo real de cantidad y monto total del carrito.
+  - Se auto-descarta suavemente tras 3.2 segundos con barra de progreso animada, o manualmente mediante botón de cierre o acceso opcional a "Ver Carrito".
+  - Sincronización reactiva inmediata de contadores en el navbar y barra flotante de pedidos.
+
 ### Versión 1.39.0 - Publicación Cruzada Automática (Tienda y Catálogo) Marcada por Defecto y Opcional
 - [x] **Campos de Publicación Cruzada en Productos ([`types/index.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts) y [`NewProductModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx)):**
   - Incorporados flags `showInStore` y `showInCatalog` activados por defecto (`true`) en creación y edición de productos.

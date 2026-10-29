@@ -34,6 +34,7 @@ import { PricingStickersSection } from './components/store/PricingStickersSectio
 import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
 import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
+import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film } from 'lucide-react';
 
 interface RouteInfo {
@@ -368,6 +369,7 @@ export const App: React.FC = () => {
       </footer>
 
       {/* Modales y Elementos Flotantes Globales */}
+      <CartSuccessToast />
       <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />
       <FloatingMascot />
       <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />

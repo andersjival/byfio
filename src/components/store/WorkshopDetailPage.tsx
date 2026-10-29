@@ -19,7 +19,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
   workshopId,
   onNavigate,
 }) => {
-  const { workshops, bookWorkshopDirect, addToCart } = useApp();
+  const { workshops, bookWorkshopDirect, addToCart, cart } = useApp();
 
   // Buscar el taller por id o slug
   const workshop: Workshop | undefined = workshops.find((w) => {
@@ -493,7 +493,13 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                   className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs font-bubble font-bold text-slate-700 neu-btn bg-[#F1F2F6] border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
                 >
                   <ShoppingBag className="w-4 h-4 text-fio-pink" />
-                  <span>{addedToCartToast ? '¡Agregado al Carrito!' : 'O agregar al Carrito de la Web'}</span>
+                  <span>
+                    {addedToCartToast
+                      ? '¡Agregado con éxito!'
+                      : cart.some((it) => it.id === workshop.id)
+                      ? 'Agregar Más al Carrito'
+                      : 'O agregar al Carrito de la Web'}
+                  </span>
                 </button>
 
                 <p className="text-[10px] text-center text-slate-400">

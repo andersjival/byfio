@@ -23,7 +23,7 @@ interface StorePageProps {
 }
 
 export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
-  const { products, addToCart, setIsCartOpen, setIsNewProductModalOpen, setEditingProduct } = useApp();
+  const { products, addToCart, cart, setIsCartOpen, setIsNewProductModalOpen, setEditingProduct } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<'Todas' | ProductCategory>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyCustomizable, setOnlyCustomizable] = useState(false);
@@ -71,7 +71,6 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
       customText: product.isCustomizable ? customText : undefined,
     });
     setAddedAnimationId(product.id);
-    setIsCartOpen(true);
     setTimeout(() => setAddedAnimationId(null), 1400);
   };
 
@@ -203,6 +202,9 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
             const isOutOfStock = p.stock <= 0;
             const isLowStock = p.stock > 0 && p.stock <= p.minStock;
             const isAdded = addedAnimationId === p.id;
+            const cartItem = cart.find((it) => it.id === p.id);
+            const isInCart = !!cartItem;
+            const cartQty = cartItem ? cartItem.quantity : 0;
 
             return (
               <div
@@ -222,6 +224,14 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                   <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[10px] font-bold text-slate-700 shadow-neuBtn border border-white/60">
                     {p.category}
                   </span>
+
+                  {/* Etiqueta Sin Bordes: Producto Agregado */}
+                  {isInCart && (
+                    <span className="absolute bottom-2.5 left-2.5 px-3 py-1 rounded-full bg-emerald-500 text-white text-[10px] sm:text-[11px] font-bubble font-bold shadow-md border-0 flex items-center gap-1.5 z-10 animate-fadeIn">
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Producto Agregado{cartQty > 1 ? ` (${cartQty})` : ''}</span>
+                    </span>
+                  )}
 
                   {/* Pastilla de Stock */}
                   {isOutOfStock ? (
@@ -350,8 +360,13 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                         >
                           {isAdded ? (
                             <>
-                              <Check className="w-4 h-4" />
-                              <span>¡Agregado al Carrito!</span>
+                              <Check className="w-4 h-4 stroke-[2.5]" />
+                              <span>¡Agregado con éxito!</span>
+                            </>
+                          ) : isInCart ? (
+                            <>
+                              <ShoppingBag className="w-4 h-4 text-white" />
+                              <span>Agregar Más ({cartQty} en Carrito)</span>
                             </>
                           ) : (
                             <>

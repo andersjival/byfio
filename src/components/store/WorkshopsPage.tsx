@@ -13,7 +13,7 @@ interface WorkshopsPageProps {
 }
 
 export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
-  const { workshops, addToCart } = useApp();
+  const { workshops, addToCart, cart } = useApp();
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const [copiedWsId, setCopiedWsId] = useState<string | null>(null);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
@@ -153,6 +153,12 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
                     {isFull ? 'Cupos agotados' : `${ws.spotsAvailable} cupos`}
                   </span>
                 </div>
+                {cart.some((it) => it.id === ws.id) && (
+                  <span className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-emerald-500 text-white text-[11px] font-bubble font-bold shadow-md border-0 flex items-center gap-1.5 z-10 animate-fadeIn">
+                    <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <span>Taller Agregado</span>
+                  </span>
+                )}
               </div>
 
               {/* Contenido */}
