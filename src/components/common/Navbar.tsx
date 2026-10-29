@@ -84,6 +84,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             >
               Catálogo
             </button>
+
+            <button
+              type="button"
+              onClick={() => handleNav('precios')}
+              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
+                currentRoute === 'precios'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+              }`}
+            >
+              Precios
+            </button>
           </nav>
         ) : (
           <nav className="hidden md:flex items-center gap-2 p-1.5 rounded-2xl bg-[#ECEEF2] shadow-neuInset border border-white/60">
@@ -226,6 +238,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
             }`}
           >
             Catálogo Online
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNav('precios')}
+            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
+              currentRoute === 'precios'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn'
+            }`}
+          >
+            Precios Stickers
           </button>
 
           <div className="pt-2 border-t border-slate-200/40 flex items-center gap-3 px-2">

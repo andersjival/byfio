@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme, ColorTheme } from '../types';
+import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme, ColorTheme, PricingSectionData } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
+import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { playAudioBeep } from '../utils/formatters';
 
 interface AppContextType {
@@ -60,6 +61,11 @@ interface AppContextType {
   setTypographyTheme: (theme: TypographyTheme) => void;
   colorTheme: ColorTheme;
   setColorTheme: (theme: ColorTheme) => void;
+  pricingData: PricingSectionData;
+  updatePricingData: (data: PricingSectionData) => void;
+  resetPricingData: () => void;
+  isPricingModalOpen: boolean;
+  setIsPricingModalOpen: (open: boolean) => void;
   resetToDefaults: () => void;
 }
 
@@ -73,6 +79,7 @@ const STORAGE_KEYS = {
   WORKSHOPS: 'byfio_workshops_v1',
   TYPOGRAPHY_THEME: 'byfio_typography_theme_v1',
   COLOR_THEME: 'byfio_color_theme_v1',
+  PRICING_DATA: 'byfio_pricing_data_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -116,6 +123,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [colorTheme, setColorTheme] = useState<ColorTheme>(() => {
     return (localStorage.getItem(STORAGE_KEYS.COLOR_THEME) as ColorTheme) || 'vibrant';
   });
+
+  const [pricingData, setPricingData] = useState<PricingSectionData>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.PRICING_DATA);
+    return saved ? JSON.parse(saved) : INITIAL_PRICING_DATA;
+  });
+
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+
+  const updatePricingData = (newData: PricingSectionData) => {
+    setPricingData(newData);
+    localStorage.setItem(STORAGE_KEYS.PRICING_DATA, JSON.stringify(newData));
+  };
+
+  const resetPricingData = () => {
+    setPricingData(INITIAL_PRICING_DATA);
+    localStorage.setItem(STORAGE_KEYS.PRICING_DATA, JSON.stringify(INITIAL_PRICING_DATA));
+  };
 
   // Apply typography theme to document body
   useEffect(() => {
@@ -543,6 +567,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setTypographyTheme,
         colorTheme,
         setColorTheme,
+        pricingData,
+        updatePricingData,
+        resetPricingData,
+        isPricingModalOpen,
+        setIsPricingModalOpen,
         addToCart,
         removeFromCart,
         updateCartQuantity,

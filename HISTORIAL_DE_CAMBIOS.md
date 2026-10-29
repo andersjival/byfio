@@ -17,6 +17,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.33.0 - Sección Oficial de Precios de Stickers, Pasos de Pedido y Editor Administrativo Completo
+- [x] **Sección de Precios de Stickers Neumórfica ([`PricingStickersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/PricingStickersSection.tsx)):**
+  - Paquetes oficiales para Stickers 5x5: 15 (₡1.000 con 4-5 regalías), 75 (₡5.000 con 20-25 regalías), 105 (₡7.500 con 28-35 regalías), 150 (₡9.500 con 40-50 regalías).
+  - Paquetes oficiales para Stickers 4x4: 24 (₡1.000), 120 (₡5.000), 168 (₡7.500), 240 (₡9.500).
+  - Notas de especificación ("Las regalías son de tamaño 3x3", "Pregunta por nuestros servicios de diseño") y botón directo para pedir por WhatsApp con mensaje pre-rellenado.
+- [x] **Flujo Visual "¿Cómo Realizar el Pedido?" con Botones de Acción:**
+  - Guía paso a paso de los 5 pasos oficiales: Envío de logo/diseño, afinación de detalles, depósito 50% / 100%, envío de comprobante SINPE/BCR y revisión con 2 modificaciones permitidas.
+  - Botones de acción directa: "Ir a la Tienda", "Ver Catálogo Online" y "Pedir por WhatsApp".
+- [x] **Editor Completo para el Administrador ([`AdminPricingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminPricingModal.tsx)):**
+  - Edición total en tiempo real de títulos, categorías, paquetes de stickers (cantidad, precio, regalías, badge destacado), notas y los 5 pasos del pedido.
+  - Persistencia en almacenamiento local y sincronización de estado global en [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx).
+- [x] **Navegación e Integración Multi-Ruta ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Añadido botón "Precios" en la barra de navegación superior y menú móvil.
+  - Sección integrada en la página de Inicio y con ruta directa `/precios`.
+  - Pestaña "Precios & Stickers" en el panel de administración (`/admin/precios`) con botón "Editar Precios".
+
 ### Versión 1.32.0 - Despliegue Universal del Estilo Neumórfico en Botones Principales (Inicio, Talleres, Tienda) y Secciones
 - [x] **Botones Principales de Navegación Más Grandes y Táctiles ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Implementados botones con relieve físico cerámico `.neu-btn` e iluminado activo `.neu-btn-primary` en la barra de navegación superior (desktop y mobile drawer).

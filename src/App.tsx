@@ -29,6 +29,8 @@ import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
 import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
+import { AdminPricingModal } from './components/admin/AdminPricingModal';
+import { PricingStickersSection } from './components/store/PricingStickersSection';
 import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
 import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin } from 'lucide-react';
@@ -59,11 +61,15 @@ const parseRouteFromLocation = (): RouteInfo => {
   if (path.includes('/admin/talleres') || path.includes('/administracion/talleres') || hash.includes('admin/talleres')) {
     return { route: 'admin', adminTab: 'workshops' };
   }
+  if (path.includes('/admin/precios') || path.includes('/administracion/precios') || hash.includes('admin/precios')) {
+    return { route: 'admin', adminTab: 'pricing' };
+  }
   if (path.startsWith('/admin') || path.startsWith('/administracion') || hash.includes('admin')) {
     return { route: 'admin', adminTab: 'hub' };
   }
 
   // Rutas públicas
+  if (path.includes('/precios') || hash.includes('precios')) return { route: 'precios', adminTab: 'hub' };
   if (path.includes('/catalogo') || hash.includes('catalogo')) return { route: 'catalogo', adminTab: 'hub' };
   if (path.includes('/tienda') || hash.includes('tienda')) return { route: 'store', adminTab: 'hub' };
 
@@ -109,7 +115,8 @@ export const App: React.FC = () => {
     setSelectedWorkshopId(wsId);
 
     let targetPath = '/';
-    if (newRoute === 'catalogo') targetPath = '/catalogo';
+    if (newRoute === 'precios') targetPath = '/precios';
+    else if (newRoute === 'catalogo') targetPath = '/catalogo';
     else if (newRoute === 'store') targetPath = '/tienda';
     else if (newRoute === 'workshops') targetPath = '/talleres';
     else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
@@ -119,6 +126,7 @@ export const App: React.FC = () => {
       else if (tab === 'inventory') targetPath = '/admin/inventario';
       else if (tab === 'reports') targetPath = '/admin/caja';
       else if (tab === 'workshops') targetPath = '/admin/talleres';
+      else if (tab === 'pricing') targetPath = '/admin/precios';
       else targetPath = '/admin';
     }
 
@@ -168,6 +176,8 @@ export const App: React.FC = () => {
                 ? 'inventario & qr'
                 : adminTab === 'reports'
                 ? 'caja & reportes'
+                : adminTab === 'pricing'
+                ? 'precios & stickers'
                 : 'talleres & inscripciones',
           },
         ]),
@@ -189,6 +199,8 @@ export const App: React.FC = () => {
           {currentRoute === 'catalogo' && <CatalogPage onNavigate={navigate} />}
 
           {currentRoute === 'workshops' && <WorkshopsPage onNavigate={navigate} />}
+
+          {currentRoute === 'precios' && <PricingStickersSection onNavigate={navigate} />}
 
           {currentRoute === 'workshop-detail' && (
             <WorkshopDetailPage
@@ -250,6 +262,7 @@ export const App: React.FC = () => {
                     <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
                   )}
                   {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
+                  {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
                 </>
               )}
             </div>
@@ -357,6 +370,7 @@ export const App: React.FC = () => {
       <NewWorkshopModal />
       <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
       <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />
+      <AdminPricingModal />
     </div>
   );
 };

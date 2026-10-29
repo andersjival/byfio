@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
-  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink, Share2
+  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag
 } from 'lucide-react';
 
 interface AdminHubMenuProps {
@@ -74,6 +74,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
       icon: GraduationCap,
       gradient: 'from-[#EC4899] to-[#BE185D]',
     },
+    {
+      id: 'pricing' as AdminTabType,
+      title: 'Precios & Stickers',
+      badge: 'Editor de lista',
+      badgeClass: 'bg-amber-100 text-amber-900',
+      icon: Tag,
+      gradient: 'from-[#F59E0B] to-[#D97706]',
+    },
   ];
 
   return (
@@ -94,7 +102,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
       </div>
 
       {/* Grid de Cajitas Compactas, Redonditas y Profesionales (Todo en 1 Sola Pantalla) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
         {menuItems.map((item) => {
           const Icon = item.icon;
 

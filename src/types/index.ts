@@ -1,10 +1,43 @@
 export type ViewMode = 'store' | 'admin';
 
-export type AppRoute = 'home' | 'store' | 'catalogo' | 'workshops' | 'workshop-detail' | 'admin';
+export type AppRoute = 'home' | 'store' | 'catalogo' | 'workshops' | 'workshop-detail' | 'precios' | 'admin';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 
 export type ColorTheme = 'vibrant' | 'zen' | 'neumorphic';
+
+export interface StickerPriceTier {
+  id: string;
+  quantity: number;
+  price: number;
+  giftText?: string;
+  badge?: string;
+}
+
+export interface StickerPriceCategory {
+  id: string;
+  title: string;
+  subtitle: string;
+  note?: string;
+  tiers: StickerPriceTier[];
+}
+
+export interface HowToOrderStep {
+  id: string;
+  stepNumber: number;
+  title: string;
+  description: string;
+  highlight?: string;
+}
+
+export interface PricingSectionData {
+  title: string;
+  subtitle: string;
+  categories: StickerPriceCategory[];
+  howToOrderTitle: string;
+  howToOrderSubtitle: string;
+  howToOrderSteps: HowToOrderStep[];
+}
 
 export type ProductCategory =
   | 'Agendas Personalizadas'
