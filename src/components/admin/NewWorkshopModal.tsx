@@ -29,7 +29,7 @@ const EMPTY: WorkshopFormData = {
   date: '',
   schedule: '',
   modality: 'Presencial',
-  location: 'Taller Creativo by.fio, San José, CR',
+  location: 'Taller Creativo by.fio, 200 sur del parque de Tibás, San José',
   price: 35000,
   spotsAvailable: 10,
   totalSpots: 10,
@@ -293,7 +293,7 @@ export const NewWorkshopModal: React.FC = () => {
                     <input
                       value={form.location}
                       onChange={(e) => set('location', e.target.value)}
-                      placeholder="Ej: Taller Creativo by.fio, San José, CR"
+                      placeholder="Ej: Taller Creativo by.fio, 200 sur del parque de Tibás, San José"
                       className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none"
                     />
                   </div>

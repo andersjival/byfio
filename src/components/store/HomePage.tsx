@@ -4,6 +4,7 @@ import { AppRoute } from '../../types';
 import { HeroDual } from './HeroDual';
 import { TreeNavigation } from '../common/TreeNavigation';
 import { NeumorphicShowcase } from '../common/NeumorphicShowcase';
+import { StudioLocationScheduleCard } from '../common/StudioLocationScheduleCard';
 import { formatCRC } from '../../utils/formatters';
 import { Sparkles, ArrowRight, Calendar, ShoppingBag, Heart, Check } from 'lucide-react';
 
@@ -169,6 +170,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           ))}
         </div>
       </section>
+
+      {/* =========================================================================
+          UBICACIÓN Y HORARIOS DE ATENCIÓN (TIBÁS, COSTA RICA)
+          ========================================================================= */}
+      <StudioLocationScheduleCard />
 
       {/* =========================================================================
           MÓDULO DE DEMOSTRACIÓN NEUMÓRFICA (SOFT UI TACTILE & MINIMAL)

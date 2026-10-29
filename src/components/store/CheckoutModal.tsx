@@ -35,7 +35,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
       customerName,
       customerPhone,
       deliveryMethod,
-      shippingAddress: deliveryMethod === 'envio' ? shippingAddress : 'Retiro en taller by.fio',
+      shippingAddress: deliveryMethod === 'envio' ? shippingAddress : 'Retiro en Taller (200 sur del parque de Tibás)',
       paymentMethod: 'sinpe',
       notes,
     });
@@ -213,6 +213,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                   <span>Retiro en Taller (Gratis)</span>
                 </button>
               </div>
+
+              {deliveryMethod === 'retiro' && (
+                <div className="mt-2 p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs space-y-1 animate-fadeIn">
+                  <p className="font-bubble font-bold text-amber-900 flex items-center gap-1.5">
+                    <Store className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Lugar y Horarios para Retiro en Tibás:</span>
+                  </p>
+                  <p className="text-[11px] text-slate-700">
+                    📍 <strong>200 sur del parque de Tibás</strong> (Ref: MAYO10 / by.fio).
+                  </p>
+                  <p className="text-[10px] text-slate-600">
+                    ⏰ <strong>Horarios:</strong> Lun, Mar y Vie 9:00 am - 5:00 pm &bull; Jue 10:00 am - 4:00 pm &bull; Sáb 10:00 am - 3:00 pm (Mié y Dom cerrado).
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Datos del Cliente */}

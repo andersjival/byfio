@@ -17,6 +17,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.30.0 - Integración Oficial de Dirección Física (Tibás) y Horarios de Atención Semanales
+- [x] **Componente Neumórfico de Dirección y Horarios ([`StudioLocationScheduleCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StudioLocationScheduleCard.tsx)):**
+  - **Ubicación Física Oficial:** 200 sur del parque de Tibás, San José, Costa Rica (Referencia: MAYO10 / by.fio) con botón de navegación directa hacia Google Maps y WhatsApp oficial `6400-4640`.
+  - **Horarios de Atención Semanales:**
+    - Lunes, Martes y Viernes: 9:00 am – 5:00 pm (badge de horario regular).
+    - Jueves: 10:00 am – 4:00 pm.
+    - Sábado: 10:00 am – 3:00 pm.
+    - Miércoles y Domingo: Cerrado al público (badge ámbar de descanso).
+- [x] **Modal Global de Horarios y Ubicación ([`StudioScheduleModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StudioScheduleModal.tsx) & [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Botón táctil permanente en el footer para consultar dirección exacta y horarios en cualquier momento.
+  - Indicador de estado en tiempo real (Abierto / Cerrado según día de la semana).
+- [x] **Integración en Home y Flujo de Checkout ([`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx) & [`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - Tarjeta destacada en la página principal para visitantes y participantes de talleres.
+  - Alerta detallada en el Checkout al seleccionar "Retiro en Taller (Gratis)" con dirección exacta y horarios de retiro.
+- [x] **Actualización de Ubicación Predeterminada de Talleres ([`seedData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/seedData.ts) y [`NewWorkshopModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewWorkshopModal.tsx)):**
+  - Los talleres presenciales y el formulario de creación configuran automáticamente la sede en Tibás.
+
 ### Versión 1.29.0 - Corrección Integral de la Parte Superior de Reportes de Pedidos en la Web: Eliminación de Recorte Vertical y Rediseño Neumórfico
 - [x] **Eliminación del Recorte Superior en Modales de Pedido ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx) e [`InvoiceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InvoiceModal.tsx)):**
   - Solucionado el bug de flexbox (`items-center` con desborde en coordenadas negativas) que empujaba la cabecera del reporte fuera del margen superior de la pantalla.

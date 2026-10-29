@@ -30,7 +30,8 @@ import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
 import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
 import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
-import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard } from 'lucide-react';
+import { StudioScheduleModal } from './components/common/StudioScheduleModal';
+import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin } from 'lucide-react';
 
 interface RouteInfo {
   route: AppRoute;
@@ -94,6 +95,7 @@ export const App: React.FC = () => {
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
   const [isDesignModalOpen, setIsDesignModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
 
   const navigate = (newRoute: AppRoute, targetTab?: AdminTabType, workshopId?: string) => {
@@ -300,18 +302,30 @@ export const App: React.FC = () => {
 
             <span className="text-slate-300">•</span>
 
-            <span>San José, Costa Rica 🇨🇷</span>
+            <span className="flex items-center gap-1 font-semibold text-slate-800">
+              <MapPin className="w-3.5 h-3.5 text-fio-pink shrink-0" />
+              <span>200 sur del parque de Tibás, San José 🇨🇷</span>
+            </span>
           </div>
 
-          {/* Botón para Abrir Cuentas Bancarias & SINPE Móvil */}
-          <div className="pt-2">
+          {/* Botones Flotantes de Consulta en el Footer: Cuentas Bancarias & Horarios */}
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setIsScheduleModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#F1F2F6] hover:bg-white text-slate-800 font-bubble font-bold text-xs shadow-neuBtn active:scale-95 transition-all border border-white/90"
+            >
+              <Clock className="w-3.5 h-3.5 text-amber-500" />
+              <span>Horarios de Atención &amp; Ubicación Tibás</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setIsPaymentModalOpen(true)}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#F1F2F6] hover:bg-white text-slate-800 font-bubble font-bold text-xs shadow-neuBtn active:scale-95 transition-all border border-white/90"
             >
               <CreditCard className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Ver Cuentas para SINPE Móvil y Pagos BCR</span>
+              <span>Cuentas para SINPE Móvil &amp; BCR</span>
             </button>
           </div>
 
@@ -334,6 +348,7 @@ export const App: React.FC = () => {
       <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
+      <StudioScheduleModal isOpen={isScheduleModalOpen} onClose={() => setIsScheduleModalOpen(false)} />
       <GuidedPickingModal />
       <SupplierOrderModal />
       <QrLabelModal />
