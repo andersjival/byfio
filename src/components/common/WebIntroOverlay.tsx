@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, ArrowRight, Sparkles } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 
 interface WebIntroOverlayProps {
   isOpen: boolean;
@@ -153,7 +154,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
         />
       </div>
 
-      {/* Tarjeta de bienvenida inicial que se difumina con Imagen de la Marca HD */}
+      {/* Presentación inicial de la marca con tipografía oficial en blanco */}
       <div
         className={`absolute z-10 flex flex-col items-center text-center px-4 transition-all duration-700 ease-out pointer-events-none ${
           phase === 'gradient-start'
@@ -161,24 +162,15 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
             : 'opacity-0 scale-95 blur-md'
         }`}
       >
-        <div className="relative mb-3 flex items-center justify-center">
-          {/* Resplandor suave detrás de la imagen */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-fio-pink/35 via-purple-500/40 to-fio-yellow/30 rounded-full blur-2xl scale-125 animate-pulse" />
-          <img
-            src="/assets/logo-byfio-lila-HD.png"
-            alt="by.fio"
-            className="relative w-36 h-36 sm:w-48 sm:h-48 object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.55)] transition-transform duration-700 hover:scale-105"
+        <div className="relative mb-2 flex items-center justify-center">
+          <BrandLogo
+            size="hero"
+            showSlogan={true}
+            textColor="text-white"
+            sloganColor="text-white/85"
+            align="center"
           />
         </div>
-
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-semibold tracking-widest uppercase mb-2 shadow-lg">
-          <Sparkles className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow animate-spin" />
-          <span>Experiencia Oficial</span>
-        </div>
-
-        <p className="text-xs sm:text-sm font-serif italic text-purple-200/90 tracking-widest uppercase">
-          Talleres Creativos &amp; Tienda Online • Costa Rica 🇨🇷
-        </p>
 
         {/* Spinner elegante de carga inicial */}
         <div className="mt-5 flex items-center gap-2">
@@ -241,7 +233,6 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
           <video
             ref={videoRef}
             src="/assets/intro-web-byfio.mp4"
-            poster="/assets/logo-byfio-lila-HD.png"
             playsInline
             autoPlay
             muted={isMuted}

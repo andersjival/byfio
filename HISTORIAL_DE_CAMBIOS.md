@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.50.0 - Eliminación de Cuadro de Carga y Tipografía Oficial Blanca en Splash Intro
+- [x] **Eliminación Total del Marco/Cuadro Cuadrado ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Erradicado el asset de imagen cuadrado `logo-byfio-lila-HD.png` y cualquier marco o caja de fondo en la pantalla de carga/splash.
+  - Retirado el atributo poster que mostraba la imagen cuadrada al iniciar la carga del video.
+- [x] **Tipografía Oficial de Marca en Color Blanco ([`BrandLogo.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BrandLogo.tsx) y [`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Añadido soporte en `BrandLogo` para personalizar el color del texto (`textColor`) y del eslogan (`sloganColor`), manteniendo intactos el corazón celeste interactivo (`#38BDF8`) y la estrellita dorada (`#FBBF24`).
+  - Configurada la marca en formato `hero` con letras blancas limpias y alineación central, idéntica a la tipografía oficial del Navbar.
+
 ### Versión 1.49.0 - Eliminación de Redes Sociales en Login y Visualización Completa de Ilustración 3D
 - [x] **Retiro de Botones de Redes Sociales ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) e [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Eliminados los botones de inicio de sesión con Google, Apple y Facebook, así como el divisor "o continúa con", despejando el formulario y enfocándolo al acceso directo por cuenta.

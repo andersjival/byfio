@@ -4,11 +4,17 @@ interface BrandLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'hero';
   showSlogan?: boolean;
   variant?: 'badge' | 'text';
+  textColor?: string;
+  sloganColor?: string;
+  align?: 'start' | 'center';
 }
 
 export const BrandLogo: React.FC<BrandLogoProps> = ({
   size = 'md',
   showSlogan = true,
+  textColor = 'text-fio-800',
+  sloganColor = 'text-purple-600/90',
+  align = 'start',
 }) => {
   const [isPopped, setIsPopped] = useState(false);
 
@@ -59,10 +65,16 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const dims = getSizes();
 
   return (
-    <div className="flex flex-col items-start select-none group cursor-pointer pt-0.5">
+    <div
+      className={`flex flex-col ${
+        align === 'center' ? 'items-center text-center' : 'items-start'
+      } select-none group cursor-pointer pt-0.5`}
+    >
       {/* Fila Principal: by + corazón interactivo + fio en una sola línea continua */}
-      <div className="flex items-center tracking-tight font-bubble font-bold text-fio-800 leading-none">
-        <span className={`${dims.text} tracking-tight drop-shadow-2xs`}>
+      <div
+        className={`flex items-center tracking-tight font-bubble font-bold ${textColor} leading-none`}
+      >
+        <span className={`${dims.text} tracking-tight drop-shadow-sm`}>
           by
         </span>
 
@@ -109,7 +121,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       {/* Slogan Oficial: TALLERES CREATIVOS & TIENDA */}
       {showSlogan && (
         <span
-          className={`${dims.slogan} font-bold tracking-wider uppercase text-purple-600/90 mt-0.5 leading-tight select-none`}
+          className={`${dims.slogan} font-bold tracking-wider uppercase ${sloganColor} mt-1 leading-tight select-none`}
         >
           Talleres Creativos & Tienda
         </span>
