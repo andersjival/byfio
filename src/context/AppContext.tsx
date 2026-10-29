@@ -42,7 +42,10 @@ interface AppContextType {
   addProduct: (productData: Omit<Product, 'id'>) => Product;
   deleteProduct: (productId: string) => void;
   addWorkshop: (wsData: Omit<Workshop, 'id'>) => Workshop;
+  updateWorkshop: (wsId: string, updatedData: Partial<Workshop>) => void;
   deleteWorkshop: (wsId: string) => void;
+  editingWorkshop: Workshop | null;
+  setEditingWorkshop: (ws: Workshop | null) => void;
   bookWorkshopDirect: (
     workshop: Workshop,
     quantity: number,
@@ -101,6 +104,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
   const [isNewWorkshopModalOpen, setIsNewWorkshopModalOpen] = useState(false);
+  const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
   const [typographyTheme, setTypographyTheme] = useState<TypographyTheme>(() => {
     return (localStorage.getItem(STORAGE_KEYS.TYPOGRAPHY_THEME) as TypographyTheme) || 'hybrid';
   });
@@ -426,6 +430,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setWorkshops((prev) => prev.filter((w) => w.id !== wsId));
   };
 
+  const updateWorkshop = (wsId: string, updatedData: Partial<Workshop>) => {
+    setWorkshops((prev) =>
+      prev.map((w) => (w.id === wsId ? { ...w, ...updatedData } : w))
+    );
+  };
+
   const bookWorkshopDirect = (
     workshop: Workshop,
     quantity: number,
@@ -515,6 +525,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsNewProductModalOpen,
         isNewWorkshopModalOpen,
         setIsNewWorkshopModalOpen,
+        editingWorkshop,
+        setEditingWorkshop,
         typographyTheme,
         setTypographyTheme,
         colorTheme,
@@ -531,6 +543,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addProduct,
         deleteProduct,
         addWorkshop,
+        updateWorkshop,
         deleteWorkshop,
         bookWorkshopDirect,
         resetToDefaults,

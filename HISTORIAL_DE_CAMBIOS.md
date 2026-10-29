@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.18.0 - Modal de Crear/Modificar Taller a Pantalla Completa & Edición Completa Persistente con Fotos y Descripción
+- [x] **Ventana Inmersiva a Pantalla Completa ([`NewWorkshopModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewWorkshopModal.tsx)):**
+  - Transformación del modal a una experiencia de pantalla completa (`fixed inset-0 w-full h-full`), sin cuadros reducidos ni scrolls apretados.
+  - Encabezado superior con botón de cierre rápido y título dinámico contextual (`Crear Nuevo Taller` vs `Modificar Taller Existente`).
+  - Maquetado editorial a 2 columnas con vista previa de fotografía en tiempo real, campos de título, subtítulo, fecha, horario, modalidad, ubicación física, cupos totales y precio en colones.
+  - Editor dinámico de descripción completa del temario y lista editable de materiales incluidos (`¿Qué incluye?`) con opción de agregar o eliminar ítems.
+  - Barra inferior fija de guardado con aviso de confirmación toast.
+- [x] **Edición y Modificación de Talleres Existentes ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Nuevos estados globales `editingWorkshop`, `setEditingWorkshop` y función `updateWorkshop`.
+  - Carga automática de todos los datos vigentes del taller al abrir el modal en modo edición.
+  - Guardado persistente inmediato en `localStorage` (`byfio_workshops_v1`) y reactividad en todo el sitio (página pública del taller, catálogo y panel de administración).
+- [x] **Acceso Rápido de Modificación en Panel Admin ([`WorkshopEnrollmentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/WorkshopEnrollmentsSection.tsx)):**
+  - Añadido botón directo `[✏️ Modificar]` en cada fila de taller (tanto en vista colapsada como en el panel desplegado de acciones).
+  - Al pulsar `+ Crear Taller`, limpia el formulario a blanco; al pulsar `Modificar`, pre-llena los datos del taller seleccionado.
+
 ### Versión 1.17.0 - Selector Dinámico de Cantidad en Catálogo, Precio en Tiempo Real y Carrito Centrado en Móvil con Botón "Seguir Comprando"
 - [x] **Controles de Cantidad y Precio Dinámico en Catálogo ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx)):**
   - Incorporado selector táctil `[-] 1 [+]` directamente en la tarjeta de cada producto antes de añadir.

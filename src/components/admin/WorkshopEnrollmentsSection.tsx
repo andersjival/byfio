@@ -3,11 +3,11 @@ import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   GraduationCap, Users, ChevronDown, ChevronUp, Phone, Hash,
-  Calendar, Plus, Link2, Trash2, CheckCircle2, ExternalLink,
+  Calendar, Plus, Link2, Trash2, CheckCircle2, ExternalLink, Pencil,
 } from 'lucide-react';
 
 export const WorkshopEnrollmentsSection: React.FC = () => {
-  const { workshops, orders, setIsNewWorkshopModalOpen, deleteWorkshop } = useApp();
+  const { workshops, orders, setIsNewWorkshopModalOpen, deleteWorkshop, setEditingWorkshop } = useApp();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
@@ -80,7 +80,10 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
 
           <button
             type="button"
-            onClick={() => setIsNewWorkshopModalOpen(true)}
+            onClick={() => {
+              setEditingWorkshop(null);
+              setIsNewWorkshopModalOpen(true);
+            }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all"
           >
             <Plus className="w-4 h-4" /> Crear Taller
@@ -123,6 +126,21 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
                 <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg hidden sm:block">
                   {formatCRC(totalSold * ws.price)}
                 </span>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingWorkshop(ws);
+                    setIsNewWorkshopModalOpen(true);
+                  }}
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-fio-100 hover:bg-fio-200 text-fio-900 border border-fio-200 transition-all active:scale-95 shadow-2xs"
+                  title="Modificar o editar datos de este taller"
+                >
+                  <Pencil className="w-3.5 h-3.5 text-fio-pink" />
+                  <span className="hidden sm:inline">Modificar</span>
+                </button>
+
                 {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
               </div>
             </button>
@@ -131,6 +149,19 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
               <div className="border-t border-fio-100 px-5 py-3 bg-fio-50/30">
                 {/* Action buttons */}
                 <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingWorkshop(ws);
+                      setIsNewWorkshopModalOpen(true);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-fio-800 text-white hover:bg-fio-900 transition-all shadow-xs active:scale-95"
+                  >
+                    <Pencil className="w-3.5 h-3.5 text-fio-yellow" />
+                    <span>Modificar Taller</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); copyWorkshopLink(ws.id); }}
