@@ -25,8 +25,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const [password, setPassword] = useState('');
   const [pinCode, setPinCode] = useState('');
   const [profileNameInput, setProfileNameInput] = useState('');
-  const [pinStep, setPinStep] = useState<'profile' | 'pin'>('profile');
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [pinAttempts, setPinAttempts] = useState(() => {
     try {
       return Number(sessionStorage.getItem('byfio_pin_attempts') || 0);
@@ -65,33 +63,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
     // Flujo de Autenticación por PIN
     if (loginMethod === 'pin') {
-      if (pinStep === 'profile') {
-        const cleanProfile = profileNameInput.trim().toUpperCase();
-        if (!cleanProfile) {
-          setErrorMessage('Por favor escribe el nombre de tu perfil.');
-          return;
-        }
-
-        const matched = userProfiles.find((p) => p.isActive && p.name.toUpperCase() === cleanProfile);
-        const isMaster = cleanProfile === 'FIO' || cleanProfile === 'FIORELLA' || cleanProfile === 'ADMIN' || cleanProfile === 'ADMINISTRADOR';
-
-        if (!matched && !isMaster) {
-          setErrorMessage('Perfil no encontrado. Verifica el nombre asignado.');
-          return;
-        }
-
-        // Transición suave y profesional al input de PIN
-        setIsTransitioning(true);
-        setTimeout(() => {
-          setPinStep('pin');
-          setIsTransitioning(false);
-        }, 220);
+      if (isPinLocked) {
+        setErrorMessage('Acceso con PIN bloqueado. Has agotado los 3 intentos permitidos.');
         return;
       }
 
-      // Si está en el paso de ingreso de PIN
-      if (isPinLocked) {
-        setErrorMessage('Acceso con PIN bloqueado. Has agotado los 3 intentos permitidos.');
+      const cleanProfile = profileNameInput.trim().toUpperCase();
+      if (!cleanProfile) {
+        setErrorMessage('Por favor escribe el nombre de tu perfil.');
         return;
       }
 
@@ -103,7 +82,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
-        const result = loginWithPin(pinCode, profileNameInput);
+        const result = loginWithPin(pinCode, cleanProfile);
         if (result.success && result.user) {
           try {
             sessionStorage.removeItem('byfio_pin_attempts');
@@ -123,7 +102,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           } else {
             const remaining = 3 - nextAttempts;
             setErrorMessage(
-              `PIN incorrecto. Te ${remaining === 1 ? 'queda 1 intento' : `quedan ${remaining} intentos`}.`
+              `PIN o perfil incorrecto. Te ${remaining === 1 ? 'queda 1 intento' : `quedan ${remaining} intentos`}.`
             );
           }
         }
@@ -284,112 +263,71 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             </div>
           )}
 
-          {/* MODO PIN (SOLICITUD DE NOMBRE DE PERFIL Y TRANSICIÓN SUAVE A PIN CON 3 INTENTOS MÁXIMO) */}
+          {/* MODO PIN (NOMBRE DE PERFIL + INGRESA EL PIN SIMULTÁNEOS, MÁXIMO 3 INTENTOS) */}
           {loginMethod === 'pin' && mode === 'login' ? (
             <div className="space-y-3">
-              {pinStep === 'profile' ? (
-                /* Paso 1: Pide Nombre del Perfil en la misma línea */
-                <div
-                  className={`space-y-2 transition-all duration-300 ${
-                    isTransitioning
-                      ? 'opacity-0 -translate-x-3 pointer-events-none'
-                      : 'opacity-100 translate-x-0'
-                  }`}
-                >
-                  <div className="input-group">
-                    <div className="icon-badge">
-                      <User className="w-4 h-4 text-white" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Nombre del perfil (ej. ALISTO DE PEDIDOS)"
-                      value={profileNameInput}
-                      onChange={(e) => {
-                        setProfileNameInput(e.target.value.toUpperCase());
-                        if (errorMessage) setErrorMessage(null);
-                      }}
-                      autoFocus
-                      required
-                      autoComplete="off"
-                      className="tracking-wider uppercase font-bubble font-bold text-sm"
-                    />
+              {/* Campo 1: Nombre de Perfil */}
+              <div className="space-y-1 text-left">
+                <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                  Perfil de Usuario:
+                </label>
+                <div className="input-group">
+                  <div className="icon-badge">
+                    <User className="w-4 h-4 text-white" />
                   </div>
-                  <p className="text-[11px] text-slate-500 font-sans text-center">
-                    Escribe tu nombre de perfil para continuar
-                  </p>
+                  <input
+                    type="text"
+                    placeholder="Escribe tu perfil (ej. ALISTO DE PEDIDOS)"
+                    value={profileNameInput}
+                    onChange={(e) => {
+                      setProfileNameInput(e.target.value.toUpperCase());
+                      if (errorMessage) setErrorMessage(null);
+                    }}
+                    required
+                    autoComplete="off"
+                    className="tracking-wider uppercase font-bubble font-bold text-xs sm:text-sm"
+                  />
                 </div>
-              ) : (
-                /* Paso 2: Transición suave y profesional hacia "Ingresa el PIN" */
-                <div
-                  className={`space-y-2.5 transition-all duration-300 ${
-                    isTransitioning
-                      ? 'opacity-0 translate-x-3 pointer-events-none'
-                      : 'opacity-100 translate-x-0'
-                  }`}
-                >
-                  {/* Tarjeta del perfil confirmado con opción de cambiar */}
-                  <div className="flex items-center justify-between px-3.5 py-1.5 rounded-xl bg-purple-50/90 border border-purple-200/80 shadow-2xs">
-                    <div className="flex items-center gap-1.5 truncate text-left">
-                      <div className="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[9px] font-bold shrink-0">
-                        ✓
-                      </div>
-                      <span className="text-xs font-bubble font-extrabold text-purple-950 uppercase truncate">
-                        {profileNameInput.trim().toUpperCase()}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsTransitioning(true);
-                        setTimeout(() => {
-                          setPinStep('profile');
-                          setPinCode('');
-                          setErrorMessage(null);
-                          setIsTransitioning(false);
-                        }, 180);
-                      }}
-                      className="text-[11px] font-bubble font-bold text-fio-purple hover:underline shrink-0 ml-2"
-                    >
-                      Cambiar
-                    </button>
+              </div>
+
+              {/* Campo 2: Ingresa el PIN */}
+              <div className="space-y-1 text-left">
+                <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                  Ingresa el PIN:
+                </label>
+                <div className="input-group">
+                  <div className="icon-badge">
+                    <KeyRound className="w-4 h-4 text-white" />
                   </div>
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={4}
+                    placeholder="PIN de 4 dígitos"
+                    value={pinCode}
+                    disabled={isPinLocked}
+                    onChange={(e) => {
+                      const clean = e.target.value.replace(/\D/g, '').slice(0, 4);
+                      setPinCode(clean);
+                      if (errorMessage) setErrorMessage(null);
+                    }}
+                    required
+                    className="tracking-widest text-center text-lg font-mono font-bold"
+                  />
+                </div>
+              </div>
 
-                  {/* Input de PIN */}
-                  <div className="input-group">
-                    <div className="icon-badge">
-                      <KeyRound className="w-4 h-4 text-white" />
-                    </div>
-                    <input
-                      type="password"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      maxLength={4}
-                      placeholder="Ingresa el PIN"
-                      value={pinCode}
-                      disabled={isPinLocked}
-                      onChange={(e) => {
-                        const clean = e.target.value.replace(/\D/g, '').slice(0, 4);
-                        setPinCode(clean);
-                        if (errorMessage) setErrorMessage(null);
-                      }}
-                      required
-                      autoFocus
-                      className="tracking-widest text-center text-lg font-mono font-bold"
-                    />
-                  </div>
+              {/* Contador de intentos restantes */}
+              {!isPinLocked && pinAttempts > 0 && (
+                <div className="text-[11px] font-bubble font-bold text-amber-700 text-center">
+                  Intentos restantes: {3 - pinAttempts} de 3
+                </div>
+              )}
 
-                  {/* Contador de intentos restantes */}
-                  {!isPinLocked && pinAttempts > 0 && (
-                    <div className="text-[11px] font-bubble font-bold text-amber-700 text-center">
-                      Intentos restantes: {3 - pinAttempts} de 3
-                    </div>
-                  )}
-
-                  {isPinLocked && (
-                    <div className="p-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bubble font-bold text-center animate-fadeIn">
-                      Acceso bloqueado por superar los 3 intentos permitidos.
-                    </div>
-                  )}
+              {isPinLocked && (
+                <div className="p-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bubble font-bold text-center animate-fadeIn">
+                  Acceso bloqueado por superar los 3 intentos permitidos.
                 </div>
               )}
             </div>
@@ -473,17 +411,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <button
             type="submit"
             className="btn-login mt-2"
-            disabled={isLoading || (loginMethod === 'pin' && pinStep === 'pin' && isPinLocked)}
+            disabled={isLoading || (loginMethod === 'pin' && isPinLocked)}
           >
             {isLoading ? (
               <span>Verificando...</span>
             ) : loginMethod === 'pin' ? (
-              pinStep === 'profile' ? (
-                <>
-                  <span>Continuar</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              ) : isPinLocked ? (
+              isPinLocked ? (
                 <span>Acceso Bloqueado</span>
               ) : (
                 <>
@@ -536,9 +469,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           )}
         </form>
       </div>
-
-      {/* Base 3D Inferior (Pedestal) */}
-      <div className="pedestal" />
     </div>
   );
 
@@ -546,10 +476,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   if (!isStandalonePage) {
     return (
       <div
-        className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fadeIn"
+        className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 py-6 sm:py-8 animate-fadeIn"
         onClick={onClose}
       >
-        <div onClick={(e) => e.stopPropagation()} className="w-full flex justify-center">
+        <div onClick={(e) => e.stopPropagation()} className="w-full flex justify-center my-auto">
           {content}
         </div>
       </div>

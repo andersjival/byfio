@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.67.0 - Unificación 3D de Tarjeta de Login sin Cortes y Campos de Perfil y PIN Simultáneos
+- [x] **Unificación Total de la Tarjeta 3D sin Cortes de Bordes (`LoginModal.tsx` e `index.css`):**
+  - Desactivado por completo el elemento de pedestal inferior (`.pedestal` a `display: none !important`), eliminando la semiluna oscura saliente y los huecos triangulares inferiores.
+  - Aplanada la curvatura interna de `.form-panel` (`border-radius: 0; background: transparent; box-shadow: none; padding: 10px 0 0`), suprimiendo los arcos cóncavos en los costados que daban aspecto de tarjeta cortada o mordida.
+  - `.login-card` ahora funciona como una sola pieza continua e impecable con `border-radius: 36px` y acolchado completo `18px 20px 24px`.
+  - Contenedor modal overlay ajustado con `flex flex-col items-center justify-start sm:justify-center` y `my-auto` evitando cortes verticales en dispositivos móviles.
+- [x] **Campos de Perfil y PIN Visibles en Pantalla Simultáneamente (`LoginModal.tsx`):**
+  - Mostrados en la misma vista los campos *"Perfil de Usuario"* (con forzado en mayúsculas) y *"Ingresa el PIN"* (4 dígitos), erradicando la confusión de visualización escalonada.
+  - Mantenimiento estricto del límite de 3 intentos máximos con contador reactivo y bloqueo seguro tras fallar 3 veces.
+
 ### Versión 1.66.0 - Flujo de Acceso por PIN con Solicitud de Nombre, Transición Fluida y Límite de 3 Intentos
 - [x] **Limpieza de Interfaz y Nomenclatura Simplificada (`LoginModal.tsx`):**
   - Eliminado el bloque y píldoras públicas de *"Perfiles de Colaborador activos: ALISTO DE PEDIDOS / ATENCIÓN Y TALLERES"*.
