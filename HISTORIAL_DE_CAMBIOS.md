@@ -17,6 +17,26 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.0.0 - Persistencia Universal del Parámetro de Campaña (?ref=...) y Atribución Multi-Sección en Métricas
+- [x] **Persistencia Continua del Parámetro `?ref=` en Toda la Navegación ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`metricsTracker.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/metricsTracker.ts)):**
+  - Resuelto el problema donde al hacer clic en cualquier sección interna de la web el parámetro `?ref=` desaparecía de la URL del navegador.
+  - La función `navigate()` ahora incorpora automáticamente `appendRefToPath()`, garantizando que la URL mantenga el parámetro de campaña activo (ej. `?ref=wa-catalogo`) en todos los cambios de página y subsecciones sin perderse.
+  - Sincronización bidireccional entre la barra de direcciones y `sessionStorage.getItem('byfio_active_campaign_ref')`.
+- [x] **Atribución Completa de Secciones y Cargas al Enlace Compartido ([`metricsTracker.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/metricsTracker.ts), [`metrics.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/metrics.ts)):**
+  - Solucionado el envío nulo de `slug` al navegar internamente: el tracker ahora envía continuamente `activeCampaignSlug` a la API en la nube en cada clic y vista de sección.
+  - Distinción inteligente entre `clicks` (apertura inicial de entrada desde redes/WhatsApp con flag `isFreshClick`) y `pageViews` (páginas recorridas acumuladas por el usuario bajo esa misma campaña).
+  - Cada sección visitada (Catálogo, Tienda, Talleres, Precios, etc.) se registra de inmediato bajo `targetLink.sectionsVisited[secKey]`, mostrándose reflejada con exactitud en el panel de `/metricas`.
+- [x] **Fusión Resiliente Anti-Regresión en Sincronización Remota:**
+  - `fetchRemoteMetrics` ahora fusiona métricas locales y remotas utilizando `Math.max` para evitar sobrescrituras accidentales durante ráfagas de navegación.
+
+### Versión 1.99.0 - Aparición Suave Inicial del Slogan y Calibración Pausada de Escritura
+- [x] **Aparición de Primero Suavemente del Slogan ([`HeroAnimatedSlogan.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroAnimatedSlogan.tsx)):**
+  - La sección insignia *"¡Transformá tu creatividad en tu mejor proyecto!"* ahora aparece **de primero de forma suave** con transición difuminada (`duration-1000 ease-out`) a los 250ms de quitarse la intro.
+- [x] **Ritmo de Escritura Calibrado Más Lento y Serena:**
+  - Ajustada la velocidad de escritura de *"Aprendé, creá y emprendé con"* a **75ms por letra** (duplicando la pausa entre caracteres), permitiendo una lectura cómoda y un efecto de máquina de escribir mucho más elegante.
+- [x] **Secuencia Coordinada en el Hero Principal ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx)):**
+  - Consolidado en un único flujo: Slogan suave primero → Escritura pausada → 1s después la Estrella → Corazón → Palabra BYFIO suave en el centro.
+
 ### Versión 1.98.0 - Incorporación de Beneficios Estratégicos, Ahorro en WhatsApp y Ecosistema Centralizado en la Propuesta
 - [x] **Sección de Transformación Operativa & Beneficios Clave ([`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
   - **Ahorro Radical de Tiempo en WhatsApp:** Eliminación de conversaciones largas de 15 a 20 min por cliente. Proceso 100% automatizado desde la tienda/catálogo con comprobante SINPE directo al panel de pedidos online.

@@ -197,7 +197,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     if (!Array.isArray(currentState.trackedLinks)) currentState.trackedLinks = [];
 
     if (action === 'record_visit') {
-      const { slug, route, isMobile, isNewSession } = body;
+      const { slug, route, isMobile, isNewSession, isFreshClick } = body;
       currentState.totalPageLoads = (currentState.totalPageLoads || 0) + 1;
       currentState.lastVisitTimestamp = new Date().toISOString();
 
@@ -225,13 +225,17 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         );
 
         if (targetLink) {
-          targetLink.clicks = (targetLink.clicks || 0) + 1;
-          targetLink.pageViews = (targetLink.pageViews || 0) + 1;
-          if (isMobile) {
-            targetLink.mobileClicks = (targetLink.mobileClicks || 0) + 1;
-          } else {
-            targetLink.pcClicks = (targetLink.pcClicks || 0) + 1;
+          // Solo sumar al contador de clics si es un clic nuevo/fresco desde el exterior
+          if (isFreshClick !== false) {
+            targetLink.clicks = (targetLink.clicks || 0) + 1;
+            if (isMobile) {
+              targetLink.mobileClicks = (targetLink.mobileClicks || 0) + 1;
+            } else {
+              targetLink.pcClicks = (targetLink.pcClicks || 0) + 1;
+            }
           }
+          // Siempre sumar a cargas de página y registrar la sección visitada por este enlace
+          targetLink.pageViews = (targetLink.pageViews || targetLink.clicks || 0) + 1;
           targetLink.lastClickedAt = new Date().toISOString();
 
           if (!targetLink.sectionsVisited) targetLink.sectionsVisited = {};

@@ -39,7 +39,7 @@ import { LoginModal } from './components/common/LoginModal';
 import { UserProfilesSection } from './components/admin/UserProfilesSection';
 import { MetricsPage } from './components/admin/MetricsPage';
 import { PropuestaPage } from './components/propuesta/PropuestaPage';
-import { metricsTracker } from './services/metricsTracker';
+import { metricsTracker, appendRefToPath, getActiveCampaignRef } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film, Shield } from 'lucide-react';
 
@@ -159,6 +159,9 @@ export const App: React.FC = () => {
       else targetPath = '/admin';
     }
 
+    // Preservar siempre el parámetro de campaña (?ref=...) para que no se pierda en la navegación
+    targetPath = appendRefToPath(targetPath);
+
     try {
       window.history.pushState({ route: newRoute, adminTab: tab, workshopId: wsId }, '', targetPath);
     } catch {
@@ -196,6 +199,11 @@ export const App: React.FC = () => {
       window.removeEventListener('hashchange', handlePop);
     };
   }, [setViewMode]);
+
+  // Inicializar y persistir el parámetro de campaña al entrar al sitio
+  useEffect(() => {
+    getActiveCampaignRef();
+  }, []);
 
   // Sonido háptico/orgánico de gotas de agua al hacer clic en botones
   useEffect(() => {

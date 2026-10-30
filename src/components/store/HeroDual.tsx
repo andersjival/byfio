@@ -29,21 +29,10 @@ export const HeroDual: React.FC<HeroDualProps> = ({
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[450px] bg-[#FFF07C]/12 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       <div className="max-w-6xl mx-auto text-center w-full my-auto space-y-4 sm:space-y-6">
-        {/* Badge Slogan Kawaii */}
-        <div className="flex items-center justify-center">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/95 border border-fio-200/60 shadow-claySm">
-            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFF07C] fill-[#FFF07C]" />
-            <span className="text-[11px] sm:text-sm font-bubble font-bold text-fio-900">
-              ¡Transformá tu creatividad en tu mejor proyecto!
-            </span>
-            <Heart className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-fio-pink fill-fio-pink" />
-          </div>
-        </div>
-
-        {/* Título Principal con Coreografía: Se escribe tras 1s de la intro, luego estrella, corazón y BYFIO en el centro */}
-        <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bubble font-bold text-fio-900 tracking-tight max-w-4xl mx-auto leading-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center">
+        {/* Coreografía Hero: Primero el badge suavemente, luego texto pausado, estrella, corazón y BYFIO */}
+        <div className="w-full">
           <HeroAnimatedSlogan />
-        </h1>
+        </div>
 
         <p className="text-xs sm:text-base text-purple-950/80 max-w-2xl mx-auto leading-relaxed font-medium px-2">
           Talleres creativos de encuadernación, agendas y sublimación, junto a productos personalizados con amor e insumos en Costa Rica.

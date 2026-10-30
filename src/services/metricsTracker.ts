@@ -166,6 +166,45 @@ export const extractRefSlugFromUrl = (): string | null => {
   return null;
 };
 
+// Obtiene el slug de campaña activo persistente (desde URL o sessionStorage)
+export const getActiveCampaignRef = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  const fromUrl = extractRefSlugFromUrl();
+  if (fromUrl) {
+    try {
+      sessionStorage.setItem('byfio_active_campaign_ref', fromUrl);
+    } catch {
+      // Ignorar
+    }
+    return fromUrl;
+  }
+  try {
+    const stored = sessionStorage.getItem('byfio_active_campaign_ref');
+    if (stored) return stored.trim().toLowerCase();
+  } catch {
+    // Ignorar
+  }
+  return null;
+};
+
+// Añade el parámetro ?ref=... a cualquier ruta interna para que no se pierda al navegar
+export const appendRefToPath = (path: string): string => {
+  try {
+    const activeRef = getActiveCampaignRef();
+    if (!activeRef) return path;
+
+    // Si la ruta ya tiene el parámetro ref/link/camp, no duplicarlo
+    if (/[?&](?:ref|link|c|camp)=/i.test(path)) {
+      return path;
+    }
+
+    const separator = path.includes('?') ? '&' : '?';
+    return `${path}${separator}ref=${encodeURIComponent(activeRef)}`;
+  } catch {
+    return path;
+  }
+};
+
 export const metricsTracker = {
   getMetrics(): MetricsState {
     try {
@@ -216,15 +255,71 @@ export const metricsTracker = {
       if (res.ok) {
         const remote: MetricsState = await res.json();
         if (remote && Array.isArray(remote.trackedLinks)) {
-          // Fusionar con local para no perder links recién creados en el cliente
           const local = this.getMetrics();
-          const remoteSlugs = new Set(remote.trackedLinks.map((l) => l.slug.toLowerCase()));
-          const extraLocalLinks = local.trackedLinks.filter((l) => !remoteSlugs.has(l.slug.toLowerCase()));
 
-          const mergedLinks = [...remote.trackedLinks, ...extraLocalLinks];
+          // Fusionar links manteniendo el valor máximo de clicks, pageViews y visitas a secciones
+          const mergedLinks = remote.trackedLinks.map((remoteLink) => {
+            const localLink = local.trackedLinks.find(
+              (l) => l.slug.toLowerCase() === remoteLink.slug.toLowerCase()
+            );
+            if (!localLink) return remoteLink;
+
+            const maxClicks = Math.max(remoteLink.clicks || 0, localLink.clicks || 0);
+            const maxPageViews = Math.max(
+              remoteLink.pageViews || 0,
+              localLink.pageViews || 0,
+              maxClicks
+            );
+            const maxMobile = Math.max(remoteLink.mobileClicks || 0, localLink.mobileClicks || 0);
+            const maxPc = Math.max(remoteLink.pcClicks || 0, localLink.pcClicks || 0);
+
+            const mergedSections: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }> = {
+              ...(remoteLink.sectionsVisited || {}),
+            };
+
+            if (localLink.sectionsVisited) {
+              Object.entries(localLink.sectionsVisited).forEach(([sec, localData]) => {
+                if (!mergedSections[sec]) {
+                  mergedSections[sec] = { ...localData };
+                } else {
+                  mergedSections[sec] = {
+                    views: Math.max(mergedSections[sec].views || 0, localData.views || 0),
+                    likes: Math.max(mergedSections[sec].likes || 0, localData.likes || 0),
+                    timeSpentAvgMinutes: Math.max(
+                      mergedSections[sec].timeSpentAvgMinutes || 0,
+                      localData.timeSpentAvgMinutes || 0
+                    ),
+                  };
+                }
+              });
+            }
+
+            return {
+              ...remoteLink,
+              clicks: maxClicks,
+              pageViews: maxPageViews,
+              mobileClicks: maxMobile,
+              pcClicks: maxPc,
+              sectionsVisited: mergedSections,
+              lastClickedAt: remoteLink.lastClickedAt || localLink.lastClickedAt,
+            };
+          });
+
+          // Agregar links locales nuevos que aún no se hayan propagado a la nube
+          const remoteSlugs = new Set(remote.trackedLinks.map((l) => l.slug.toLowerCase()));
+          const extraLocalLinks = local.trackedLinks.filter(
+            (l) => !remoteSlugs.has(l.slug.toLowerCase())
+          );
+
           const mergedState: MetricsState = {
             ...remote,
-            trackedLinks: mergedLinks,
+            totalPageLoads: Math.max(remote.totalPageLoads || 0, local.totalPageLoads || 0),
+            uniqueSessions: Math.max(remote.uniqueSessions || 0, local.uniqueSessions || 0),
+            devices: {
+              pc: Math.max(remote.devices?.pc || 0, local.devices?.pc || 0),
+              mobile: Math.max(remote.devices?.mobile || 0, local.devices?.mobile || 0),
+            },
+            trackedLinks: [...mergedLinks, ...extraLocalLinks],
           };
 
           this.saveMetrics(mergedState);
@@ -264,22 +359,27 @@ export const metricsTracker = {
       // Ignorar si sessionStorage no está disponible
     }
 
-    // Rastrear apertura mediante enlace específico si existe ref/link/camp en URL
+    // Identificar enlace específico activo (desde URL actual o persistido en la sesión)
     const explicitRef = searchParams
       ? (searchParams.get('ref') || searchParams.get('link') || searchParams.get('c') || searchParams.get('camp'))
       : null;
-    const refSlug = explicitRef ? explicitRef.toLowerCase().trim() : extractRefSlugFromUrl();
+    const activeCampaignSlug = explicitRef ? explicitRef.toLowerCase().trim() : getActiveCampaignRef();
 
-    let activeCampaignSlug: string | null = null;
+    let isFreshClick = false;
 
-    if (refSlug) {
-      activeCampaignSlug = refSlug;
+    if (activeCampaignSlug) {
+      // Registrar si es la primera apertura de este link en esta sesión
       try {
         if (typeof window !== 'undefined') {
+          const clickKey = `byfio_counted_click_${activeCampaignSlug}`;
+          if (!sessionStorage.getItem(clickKey)) {
+            sessionStorage.setItem(clickKey, '1');
+            isFreshClick = true;
+          }
           sessionStorage.setItem('byfio_active_campaign_ref', activeCampaignSlug);
         }
-      } catch (err) {
-        console.warn(err);
+      } catch {
+        isFreshClick = false;
       }
 
       const existingLinkIndex = state.trackedLinks.findIndex(
@@ -287,13 +387,18 @@ export const metricsTracker = {
       );
 
       if (existingLinkIndex >= 0) {
-        state.trackedLinks[existingLinkIndex].clicks += 1;
-        state.trackedLinks[existingLinkIndex].pageViews = (state.trackedLinks[existingLinkIndex].pageViews || 0) + 1;
-        if (isMobile) {
-          state.trackedLinks[existingLinkIndex].mobileClicks += 1;
-        } else {
-          state.trackedLinks[existingLinkIndex].pcClicks += 1;
+        // Clic inicial del enlace desde afuera
+        if (isFreshClick) {
+          state.trackedLinks[existingLinkIndex].clicks += 1;
+          if (isMobile) {
+            state.trackedLinks[existingLinkIndex].mobileClicks += 1;
+          } else {
+            state.trackedLinks[existingLinkIndex].pcClicks += 1;
+          }
         }
+        // Vistas de página acumuladas por este enlace
+        state.trackedLinks[existingLinkIndex].pageViews =
+          (state.trackedLinks[existingLinkIndex].pageViews || state.trackedLinks[existingLinkIndex].clicks || 0) + 1;
         state.trackedLinks[existingLinkIndex].lastClickedAt = new Date().toISOString();
       } else {
         // Auto-crear link si viene un parámetro nuevo
@@ -313,18 +418,9 @@ export const metricsTracker = {
         };
         state.trackedLinks.unshift(newTrackedLink);
       }
-    } else {
-      // Recuperar si el visitante ya traía un link rastreado en esta sesión
-      try {
-        if (typeof window !== 'undefined') {
-          activeCampaignSlug = sessionStorage.getItem('byfio_active_campaign_ref');
-        }
-      } catch {
-        // Ignorar
-      }
     }
 
-    // Registrar sección visitada
+    // Registrar sección visitada global
     const sectionKey = route || 'home';
     if (!state.sections[sectionKey]) {
       state.sections[sectionKey] = {
@@ -358,17 +454,18 @@ export const metricsTracker = {
     // 1. Notificación instantánea 0ms entre pestañas
     notifyMetricsUpdated();
 
-    // 2. Sincronización asíncrona hacia el backend Cloud
+    // 2. Sincronización asíncrona hacia el backend Cloud (enviando SIEMPRE el activeCampaignSlug)
     if (typeof window !== 'undefined') {
       fetch('/api/metrics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'record_visit',
-          slug: refSlug,
+          slug: activeCampaignSlug,
           route: sectionKey,
           isMobile,
           isNewSession,
+          isFreshClick,
         }),
       }).catch(() => {});
     }
