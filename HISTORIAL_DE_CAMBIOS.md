@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.2.0 - Erradicación Total de Iconografía Perceptible como IA en Toda la Aplicación
+- [x] **Eliminación Quirúrgica de Iconos de IA (`Wand2`, `Sparkles`, `Sparkle`):**
+  - Erradicados todos los iconos que evocan herramientas de IA (`Wand2` en generación de SKU y `Sparkles`/`Sparkle` en insignias, badges, modales y cabeceras).
+  - Reemplazados por iconos estándar y coherentes con la identidad de marca (`Star`, `Heart`, `Award`, `Hash`, `CheckCircle2`, `Gift`, `Loader2`).
+  - Cero referencias a animaciones o identificadores `sparkle` en hojas de estilo (`index.css` migrado a `byfioTwinkleFast`).
+  - Verificación estricta: 0 ocurrencias de iconos de IA en todo el directorio `src/`.
+
+
 ### Versión 2.1.0 - Métrica de Agregados al Carrito Global y Atribuida por Enlace de Campaña
 - [x] **Rastreo Automático al Agregar al Carrito ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`metricsTracker.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/metricsTracker.ts)):**
   - Cada vez que un usuario añade un producto o taller al carrito (`addToCart()`), se dispara `metricsTracker.recordCartAddition()`, contabilizando la cantidad de artículos y vinculándolo de inmediato al enlace de origen activo (si ingresó por campaña `?ref=...`).
