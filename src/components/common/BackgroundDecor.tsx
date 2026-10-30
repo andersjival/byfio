@@ -13,23 +13,23 @@ export const BackgroundDecor: React.FC = () => {
   if (colorTheme === 'dark') {
     return (
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none transition-colors duration-500" aria-hidden="true">
-        {/* Base Noche Profunda (#0C0A17) */}
-        <div className="absolute inset-0 bg-[#0C0A17]" />
+        {/* Base Noche Suave & Clarita (#211D35) */}
+        <div className="absolute inset-0 bg-[#211D35]" />
 
-        {/* Halo violeta cósmico superior-izquierdo */}
-        <div className="absolute -top-32 -left-20 w-[580px] h-[580px] rounded-full bg-gradient-to-br from-[#581C87]/35 via-[#3B0764]/25 to-transparent blur-[140px] animate-pulse" />
+        {/* Halo lavanda cósmica superior-izquierdo */}
+        <div className="absolute -top-32 -left-20 w-[580px] h-[580px] rounded-full bg-gradient-to-br from-[#7C3AED]/25 via-[#6D28D9]/18 to-transparent blur-[140px] animate-pulse" />
 
-        {/* Destello púrpura/magenta noche superior-derecho */}
-        <div className="absolute top-10 right-[5%] w-[480px] h-[480px] rounded-full bg-gradient-to-bl from-[#831843]/25 via-[#4C0519]/15 to-transparent blur-[130px]" />
+        {/* Destello rosa magenta estelar superior-derecho */}
+        <div className="absolute top-10 right-[5%] w-[480px] h-[480px] rounded-full bg-gradient-to-bl from-[#EC4899]/20 via-[#BE185D]/12 to-transparent blur-[130px]" />
 
-        {/* Destello azul medianoche centro-izquierdo */}
-        <div className="absolute top-[40%] -left-24 w-[420px] h-[420px] rounded-full bg-[#1E1B4B]/30 blur-[130px]" />
+        {/* Destello lavanda pastel centro-izquierdo */}
+        <div className="absolute top-[40%] -left-24 w-[420px] h-[420px] rounded-full bg-[#A855F7]/18 blur-[130px]" />
 
-        {/* Destello ámbar estelar sutil */}
-        <div className="absolute top-[22%] left-[28%] w-[260px] h-[260px] rounded-full bg-[#F59E0B]/10 blur-[100px]" />
+        {/* Destello ámbar estrella cálida */}
+        <div className="absolute top-[22%] left-[28%] w-[280px] h-[280px] rounded-full bg-[#F59E0B]/12 blur-[100px]" />
 
-        {/* Púrpura profundo inferior-derecho */}
-        <div className="absolute bottom-[2%] -right-16 w-[550px] h-[550px] rounded-full bg-gradient-to-tl from-[#2E1065]/35 via-[#1E1B4B]/20 to-transparent blur-[150px]" />
+        {/* Púrpura suave inferior-derecho */}
+        <div className="absolute bottom-[2%] -right-16 w-[550px] h-[550px] rounded-full bg-gradient-to-tl from-[#4C1D95]/25 via-[#3B0764]/15 to-transparent blur-[150px]" />
       </div>
     );
   }

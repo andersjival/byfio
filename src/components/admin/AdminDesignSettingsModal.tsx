@@ -149,7 +149,7 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
                 {colorTheme === 'dark' && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />}
               </div>
               <p className="text-[10px] text-slate-400 leading-tight">
-                Noche profunda (#0C0A17), sombras cósmicas y destellos violeta.
+                Noche suave (#211D35), contraste claro y descansado.
               </p>
             </button>
           </div>

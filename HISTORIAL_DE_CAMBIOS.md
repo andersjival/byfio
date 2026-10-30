@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.61.0 - Aclarado del Tema Oscuro & Corrección Integral de Contraste Tipográfico
+- [x] **Aclarado Elegante de la Paleta Nocturna ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css) y [`BackgroundDecor.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BackgroundDecor.tsx)):**
+  - Fondo base elevado a `#211D35` (un tono más suave, luminoso y descansado que el negro anterior `#0C0A17`), con tarjetas en `#2C2746` y botones en `#332D52`.
+  - Halos ambientales con lavanda, rosa magenta y destellos ámbar suaves que eliminan la sensación de oscuridad extrema.
+- [x] **Legibilidad y Contraste Total de Textos ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Encabezados y títulos en blanco nítido (`#FFFFFF`), letras BYFIO animadas con gradiente luminoso pastel, subtítulos en lavanda clara (`#E9D5FF`) y textos secundarios en gris suave (`#CBD5E1` / `#D1D5DB`).
+  - Transformación automática de píldoras y cajas blancas a superficies oscuras contrastadas con tipografía brillante.
+
+
 ### Versión 1.60.0 - Reproducción Inmediata con Sonido Activo en Animación Intro
 - [x] **Arranque Inmediato sin Esperas ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
   - Eliminado el retraso de 1.4 segundos; el video arranca a reproducirse de una vez con audio activo (`muted = false`, `volume = 1.0`).

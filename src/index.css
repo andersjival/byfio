@@ -265,56 +265,60 @@ body[data-color-theme="zen"] {
   background-color: #FAF7F2 !important;
 }
 
-/* TEMA 3: OSCURO / NOCHE MÁGICA BY.FIO */
+/* TEMA 3: OSCURO REFINADO & SUAVE (MÁS CLARITO, ELEGANTE Y ULTRA LEGIBLE) */
 body[data-color-theme="dark"],
 html.dark body {
-  background-color: #0C0A17 !important;
+  background-color: #211D35 !important;
   color: #F8FAFC !important;
 }
 
 body[data-color-theme="dark"] header,
 html.dark header {
-  background-color: rgba(12, 10, 23, 0.92) !important;
-  border-bottom-color: rgba(147, 51, 234, 0.25) !important;
+  background-color: rgba(33, 29, 53, 0.94) !important;
+  border-bottom-color: rgba(168, 85, 247, 0.28) !important;
+  box-shadow: 0 4px 20px rgba(10, 8, 20, 0.25) !important;
 }
 
 body[data-color-theme="dark"] footer,
 html.dark footer {
-  background-color: rgba(12, 10, 23, 0.95) !important;
-  border-top-color: rgba(147, 51, 234, 0.25) !important;
-  color: #94A3B8 !important;
+  background-color: rgba(29, 25, 47, 0.96) !important;
+  border-top-color: rgba(168, 85, 247, 0.28) !important;
+  color: #CBD5E1 !important;
 }
 
+/* Superficies principales y fondos generales */
 body[data-color-theme="dark"] .bg-\[\#FAF7F2\],
 html.dark .bg-\[\#FAF7F2\] {
-  background-color: #0C0A17 !important;
+  background-color: #211D35 !important;
 }
 
 body[data-color-theme="dark"] .bg-\[\#FDFBF9\],
 html.dark .bg-\[\#FDFBF9\] {
-  background-color: #171427 !important;
-  border-color: rgba(168, 85, 247, 0.25) !important;
+  background-color: #2C2746 !important;
+  border-color: rgba(192, 132, 252, 0.22) !important;
   color: #F8FAFC !important;
-  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 10px 25px -4px rgba(10, 8, 20, 0.35) !important;
 }
 
 body[data-color-theme="dark"] .bg-\[\#FDFBF9\]:hover,
 html.dark .bg-\[\#FDFBF9\]:hover {
-  border-color: rgba(236, 72, 153, 0.4) !important;
-  box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.65) !important;
+  background-color: #332D52 !important;
+  border-color: rgba(236, 72, 153, 0.45) !important;
+  box-shadow: 0 14px 30px -4px rgba(10, 8, 20, 0.45) !important;
 }
 
+/* Tarjetas, paneles y contenedores secundarios */
 body[data-color-theme="dark"] .bg-\[\#F1F2F6\],
 html.dark .bg-\[\#F1F2F6\] {
-  background-color: #1C1830 !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  color: #F1F5F9 !important;
+  background-color: #2C2746 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F8FAFC !important;
 }
 
 body[data-color-theme="dark"] .bg-\[\#ECEEF2\],
 html.dark .bg-\[\#ECEEF2\] {
-  background-color: #141124 !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: #1E1A30 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 body[data-color-theme="dark"] .bg-\[\#F5F1EB\],
@@ -325,56 +329,234 @@ html.dark .bg-\[\#F5F1EB\],
 html.dark .bg-\[\#F4EFEA\],
 html.dark .bg-\[\#F6F2EC\],
 html.dark .bg-\[\#F2EDE7\] {
-  background-color: #171427 !important;
+  background-color: #2C2746 !important;
   border-color: rgba(168, 85, 247, 0.25) !important;
   color: #F8FAFC !important;
 }
 
-body[data-color-theme="dark"] .text-slate-800,
+/* Reemplazo de cajas blancas/claras en modo oscuro */
+body[data-color-theme="dark"] .bg-white,
+body[data-color-theme="dark"] .bg-white\/60,
+body[data-color-theme="dark"] .bg-white\/70,
+body[data-color-theme="dark"] .bg-white\/75,
+body[data-color-theme="dark"] .bg-white\/80,
+body[data-color-theme="dark"] .bg-white\/85,
+body[data-color-theme="dark"] .bg-white\/90,
+body[data-color-theme="dark"] .bg-white\/95,
+html.dark .bg-white,
+html.dark .bg-white\/80,
+html.dark .bg-white\/90,
+html.dark .bg-white\/95 {
+  background-color: #352F54 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #FFFFFF !important;
+}
+
+body[data-color-theme="dark"] .bg-fio-50,
+body[data-color-theme="dark"] .bg-fio-100,
+body[data-color-theme="dark"] .bg-pink-50,
+body[data-color-theme="dark"] .bg-pink-100,
+body[data-color-theme="dark"] .bg-purple-50,
+body[data-color-theme="dark"] .bg-purple-100,
+html.dark .bg-fio-50,
+html.dark .bg-fio-100,
+html.dark .bg-pink-100,
+html.dark .bg-purple-50 {
+  background-color: #38315B !important;
+  border-color: rgba(168, 85, 247, 0.3) !important;
+  color: #F8FAFC !important;
+}
+
+/* === CORRECCIÓN UNIVERSAL DE TIPOGRAFÍA Y TEXTOS OSCUROS === */
+body[data-color-theme="dark"] h1,
+body[data-color-theme="dark"] h2,
+body[data-color-theme="dark"] h3,
+body[data-color-theme="dark"] h4,
+body[data-color-theme="dark"] h5,
+body[data-color-theme="dark"] .font-bubble,
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark .font-bubble {
+  color: #FFFFFF !important;
+}
+
 body[data-color-theme="dark"] .text-slate-900,
+body[data-color-theme="dark"] .text-slate-800,
 body[data-color-theme="dark"] .text-slate-700,
-html.dark .text-slate-800,
+body[data-color-theme="dark"] .text-gray-900,
+body[data-color-theme="dark"] .text-gray-800,
+body[data-color-theme="dark"] .text-gray-700,
 html.dark .text-slate-900,
-html.dark .text-slate-700 {
-  color: #F1F5F9 !important;
+html.dark .text-slate-800,
+html.dark .text-slate-700,
+html.dark .text-gray-800,
+html.dark .text-gray-700 {
+  color: #F8FAFC !important;
+}
+
+body[data-color-theme="dark"] .text-fio-900,
+body[data-color-theme="dark"] .text-fio-800,
+html.dark .text-fio-900,
+html.dark .text-fio-800 {
+  color: #FFF0F8 !important;
+}
+
+body[data-color-theme="dark"] .text-purple-950,
+body[data-color-theme="dark"] .text-purple-900,
+body[data-color-theme="dark"] .text-purple-800,
+body[data-color-theme="dark"] .text-purple-700,
+body[data-color-theme="dark"] .text-purple-950\/80,
+html.dark .text-purple-950,
+html.dark .text-purple-900,
+html.dark .text-purple-800,
+html.dark .text-purple-700 {
+  color: #E9D5FF !important;
 }
 
 body[data-color-theme="dark"] .text-slate-600,
 body[data-color-theme="dark"] .text-slate-500,
+body[data-color-theme="dark"] .text-gray-600,
+body[data-color-theme="dark"] .text-gray-500,
 html.dark .text-slate-600,
-html.dark .text-slate-500 {
-  color: #94A3B8 !important;
+html.dark .text-slate-500,
+html.dark .text-gray-600,
+html.dark .text-gray-500 {
+  color: #D1D5DB !important;
 }
 
+body[data-color-theme="dark"] .text-slate-400,
+body[data-color-theme="dark"] .text-gray-400,
+html.dark .text-slate-400,
+html.dark .text-gray-400 {
+  color: #A3A3B8 !important;
+}
+
+body[data-color-theme="dark"] .text-fio-600,
+body[data-color-theme="dark"] .text-fio-700,
+html.dark .text-fio-600,
+html.dark .text-fio-700 {
+  color: #F472B6 !important;
+}
+
+/* Botones y controles interactivos en modo oscuro */
 body[data-color-theme="dark"] .neu-btn,
 html.dark .neu-btn {
-  background: #1C1830 !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  color: #E2E8F0 !important;
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5), -3px -3px 8px rgba(255, 255, 255, 0.03) !important;
+  background: #332D52 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F8FAFC !important;
+  box-shadow: 4px 4px 10px rgba(10, 8, 20, 0.35), -2px -2px 6px rgba(255, 255, 255, 0.05) !important;
 }
 
 body[data-color-theme="dark"] .neu-btn:hover,
 html.dark .neu-btn:hover {
-  background: #241F3D !important;
-  box-shadow: 6px 6px 14px rgba(0, 0, 0, 0.6), -4px -4px 10px rgba(255, 255, 255, 0.05) !important;
+  background: #3D3662 !important;
+  color: #FFFFFF !important;
+  box-shadow: 6px 6px 14px rgba(10, 8, 20, 0.45), -3px -3px 8px rgba(255, 255, 255, 0.08) !important;
 }
 
 body[data-color-theme="dark"] .neu-segmented-container,
 html.dark .neu-segmented-container {
-  background: #131022 !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.6), inset -2px -2px 6px rgba(255, 255, 255, 0.03) !important;
+  background: #1C1830 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: inset 3px 3px 7px rgba(10, 8, 20, 0.4), inset -2px -2px 5px rgba(255, 255, 255, 0.04) !important;
 }
 
 body[data-color-theme="dark"] .shadow-neuCard,
 html.dark .shadow-neuCard {
-  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.55), -6px -6px 16px rgba(255, 255, 255, 0.03) !important;
+  box-shadow: 6px 6px 16px rgba(10, 8, 20, 0.35), -4px -4px 12px rgba(255, 255, 255, 0.04) !important;
 }
 
 body[data-color-theme="dark"] .shadow-neuInset,
 html.dark .shadow-neuInset {
-  box-shadow: inset 4px 4px 9px rgba(0, 0, 0, 0.6), inset -3px -3px 8px rgba(255, 255, 255, 0.03) !important;
+  box-shadow: inset 3px 3px 8px rgba(10, 8, 20, 0.4), inset -2px -2px 6px rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Campos de entrada / inputs */
+body[data-color-theme="dark"] input[type="text"],
+body[data-color-theme="dark"] input[type="email"],
+body[data-color-theme="dark"] input[type="password"],
+body[data-color-theme="dark"] input[type="number"],
+body[data-color-theme="dark"] input[type="search"],
+body[data-color-theme="dark"] select,
+body[data-color-theme="dark"] textarea,
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #1E1A30 !important;
+  color: #FFFFFF !important;
+  border-color: #4C4372 !important;
+}
+
+body[data-color-theme="dark"] input::placeholder,
+html.dark input::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Divisores y bordes */
+body[data-color-theme="dark"] .border-slate-100,
+body[data-color-theme="dark"] .border-slate-200,
+body[data-color-theme="dark"] .border-slate-300,
+body[data-color-theme="dark"] .border-fio-100,
+body[data-color-theme="dark"] .border-fio-200,
+html.dark .border-slate-200,
+html.dark .border-fio-100 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Letras BYFIO animadas en modo oscuro (brillantes y contrastadas) */
+body[data-color-theme="dark"] .byfio-letter,
+html.dark .byfio-letter {
+  background: linear-gradient(120deg, #E9D5FF 0%, #F472B6 25%, #FFF07C 50%, #9BE4FF 75%, #E9D5FF 100%) !important;
+  background-size: 280% 280% !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 2px 12px rgba(244, 114, 182, 0.45));
+}
+
+/* Modales y Diálogos en Modo Oscuro */
+body[data-color-theme="dark"] .fixed.inset-0 .max-w-md,
+body[data-color-theme="dark"] .fixed.inset-0 .max-w-lg,
+body[data-color-theme="dark"] .fixed.inset-0 .max-w-xl,
+body[data-color-theme="dark"] .fixed.inset-0 .max-w-2xl,
+body[data-color-theme="dark"] .fixed.inset-0 .max-w-3xl,
+body[data-color-theme="dark"] .fixed.inset-0 .max-w-4xl,
+body[data-color-theme="dark"] .fixed.inset-0 .max-w-5xl {
+  color: #F8FAFC !important;
+}
+
+body[data-color-theme="dark"] .fixed.inset-0 .rounded-3xl.bg-white,
+body[data-color-theme="dark"] .fixed.inset-0 .rounded-2xl.bg-white {
+  background-color: #2C2746 !important;
+  border-color: rgba(168, 85, 247, 0.3) !important;
+  color: #F8FAFC !important;
+}
+
+/* Tablas en administración */
+body[data-color-theme="dark"] thead th {
+  color: #CBD5E1 !important;
+}
+
+body[data-color-theme="dark"] tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+body[data-color-theme="dark"] .divide-fio-100 > * + *,
+body[data-color-theme="dark"] .divide-slate-200 > * + * {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body[data-color-theme="dark"] #hero-section > div:first-child {
+  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.16) 0%, rgba(236, 72, 153, 0.08) 50%, transparent 100%) !important;
+}
+
+body[data-color-theme="dark"] .from-purple-100\/60 {
+  --tw-gradient-from: rgba(147, 51, 234, 0.22) var(--tw-gradient-from-position) !important;
+}
+
+body[data-color-theme="dark"] .to-pink-100\/60 {
+  --tw-gradient-to: rgba(236, 72, 153, 0.18) var(--tw-gradient-to-position) !important;
 }
 
 /* =========================================================================
