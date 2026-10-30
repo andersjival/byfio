@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import {
   ViewMode, Product, Workshop, Order, CartItem, OrderStatus,
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
-  UserProfile, UserPermissions
+  UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -43,6 +43,54 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
       workshops: true,
       pricing: true,
       users: false,
+    },
+  },
+];
+
+export const DEFAULT_CUSTOMER_FIELDS: CustomerFieldDef[] = [
+  { id: 'field-cedula', label: 'Cédula / Identificación' },
+  { id: 'field-instagram', label: 'Instagram / Red Social' },
+  { id: 'field-empresa', label: 'Empresa / Razón Social' },
+];
+
+export const INITIAL_CUSTOMERS: Customer[] = [
+  {
+    id: 'cust-1',
+    name: 'Sofía Brenes Mora',
+    phone: '8823-9911',
+    email: 'sofia.brenes@gmail.com',
+    address: 'Curridabat, San José. Condominio El Roble, Casa 14-B',
+    notes: 'Cliente frecuente de agendas personalizadas y papelería',
+    createdAt: '2026-10-28T09:00:00.000Z',
+    customFields: {
+      'field-cedula': '1-1589-0432',
+      'field-instagram': '@sofibrenes',
+    },
+  },
+  {
+    id: 'cust-2',
+    name: 'Mariela Chaves Quesada',
+    phone: '8712-4499',
+    email: 'mariela.chaves@outlook.com',
+    address: '200 norte de la Iglesia de Tibás, San José',
+    notes: 'Retira pedidos personalmente en el taller',
+    createdAt: '2026-10-29T10:00:00.000Z',
+    customFields: {
+      'field-cedula': '1-1244-0899',
+      'field-instagram': '@mari_chaves',
+    },
+  },
+  {
+    id: 'cust-3',
+    name: 'Carlos Alvarado Rojas',
+    phone: '8344-1122',
+    email: 'carlos.alvarado@empresa.cr',
+    address: 'Heredia Centro, 300m este de la entrada de la UNA',
+    notes: 'Facturación corporativa de tazas y kits',
+    createdAt: '2026-10-29T14:00:00.000Z',
+    customFields: {
+      'field-cedula': '3-101-849201',
+      'field-empresa': 'Alvarado Creativos S.A.',
     },
   },
 ];
@@ -141,6 +189,36 @@ interface AppContextType {
   deleteUserProfile: (id: string) => void;
   toggleUserProfileStatus: (id: string) => void;
   hasPermission: (tab: string) => boolean;
+  customers: Customer[];
+  customerFieldDefs: CustomerFieldDef[];
+  addCustomer: (data: Omit<Customer, 'id' | 'createdAt'>) => Customer;
+  updateCustomer: (id: string, updates: Partial<Customer>) => void;
+  deleteCustomer: (id: string) => void;
+  addCustomerFieldDef: (label: string) => CustomerFieldDef;
+  deleteCustomerFieldDef: (id: string) => void;
+  createDirectInvoiceOrder: (orderData: {
+    orderTitle?: string;
+    customerName: string;
+    customerPhone: string;
+    customerEmail?: string;
+    deliveryMethod: 'envio' | 'retiro';
+    shippingAddress?: string;
+    paymentMethod: PaymentMethod;
+    notes?: string;
+    customFields?: { [key: string]: string };
+    items: {
+      sku: string;
+      name: string;
+      price: number;
+      quantity: number;
+      shelfLocation?: string;
+      customText?: string;
+      image?: string;
+    }[];
+    subtotal: number;
+    shippingFee: number;
+    total: number;
+  }) => Order;
   resetToDefaults: () => void;
 }
 
@@ -160,6 +238,8 @@ const STORAGE_KEYS = {
   AUTH_USER: 'byfio_auth_user_v1',
   REGISTERED_USERS: 'byfio_registered_users_v1',
   USER_PROFILES: 'byfio_user_profiles_v1',
+  CUSTOMERS: 'byfio_customers_v1',
+  CUSTOMER_FIELDS: 'byfio_customer_fields_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -313,6 +393,165 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = userProfiles.map((p) => (p.id === id ? { ...p, isActive: !p.isActive } : p));
     setUserProfiles(updated);
     localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+  };
+
+  const [customers, setCustomers] = useState<Customer[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return INITIAL_CUSTOMERS;
+  });
+
+  const [customerFieldDefs, setCustomerFieldDefs] = useState<CustomerFieldDef[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.CUSTOMER_FIELDS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return DEFAULT_CUSTOMER_FIELDS;
+  });
+
+  const addCustomer = (customerData: Omit<Customer, 'id' | 'createdAt'>): Customer => {
+    const newCustomer: Customer = {
+      ...customerData,
+      id: `cust-${Date.now()}`,
+      name: customerData.name.trim(),
+      phone: customerData.phone.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [newCustomer, ...customers];
+    setCustomers(updated);
+    localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+    return newCustomer;
+  };
+
+  const updateCustomer = (id: string, updates: Partial<Customer>) => {
+    const updated = customers.map((c) => (c.id === id ? { ...c, ...updates } : c));
+    setCustomers(updated);
+    localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+  };
+
+  const deleteCustomer = (id: string) => {
+    const updated = customers.filter((c) => c.id !== id);
+    setCustomers(updated);
+    localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+  };
+
+  const addCustomerFieldDef = (label: string): CustomerFieldDef => {
+    const newDef: CustomerFieldDef = {
+      id: `field-${Date.now()}`,
+      label: label.trim(),
+    };
+    const updated = [...customerFieldDefs, newDef];
+    setCustomerFieldDefs(updated);
+    localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(updated));
+    return newDef;
+  };
+
+  const deleteCustomerFieldDef = (id: string) => {
+    const updated = customerFieldDefs.filter((f) => f.id !== id);
+    setCustomerFieldDefs(updated);
+    localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(updated));
+  };
+
+  const createDirectInvoiceOrder = (orderData: {
+    orderTitle?: string;
+    customerName: string;
+    customerPhone: string;
+    customerEmail?: string;
+    deliveryMethod: 'envio' | 'retiro';
+    shippingAddress?: string;
+    paymentMethod: PaymentMethod;
+    notes?: string;
+    customFields?: { [key: string]: string };
+    items: {
+      sku: string;
+      name: string;
+      price: number;
+      quantity: number;
+      shelfLocation?: string;
+      customText?: string;
+      image?: string;
+    }[];
+    subtotal: number;
+    shippingFee: number;
+    total: number;
+  }): Order => {
+    const nextNumber = 1000 + orders.length + 1;
+    const orderNumber = `#FIO-${nextNumber}`;
+
+    const orderItems: OrderItem[] = orderData.items.map((item, idx) => ({
+      id: `ord-direct-item-${Date.now()}-${idx}`,
+      type: 'product',
+      sku: item.sku,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      shelfLocation: item.shelfLocation,
+      customText: item.customText,
+      isPicked: true,
+      image: item.image,
+    }));
+
+    const newOrder: Order = {
+      id: `ord-${Date.now()}`,
+      orderNumber,
+      orderTitle: orderData.orderTitle,
+      customerName: orderData.customerName,
+      customerPhone: orderData.customerPhone,
+      customerEmail: orderData.customerEmail,
+      deliveryMethod: orderData.deliveryMethod,
+      shippingAddress: orderData.shippingAddress,
+      paymentMethod: orderData.paymentMethod,
+      paymentStatus: 'paid',
+      orderStatus: 'packed',
+      items: orderItems,
+      subtotal: orderData.subtotal,
+      shippingFee: orderData.shippingFee,
+      total: orderData.total,
+      createdAt: new Date().toISOString(),
+      packedAt: new Date().toISOString(),
+      notes: orderData.notes,
+      customFields: orderData.customFields,
+    };
+
+    const updatedOrders = [newOrder, ...orders];
+    setOrders(updatedOrders);
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder),
+    }).catch(() => {});
+
+    // Descontar inventario
+    setProducts((prev) => {
+      const updatedProds = prev.map((prod) => {
+        const sold = orderData.items.find((it) => it.sku === prod.sku);
+        if (sold) {
+          const newStock = Math.max(0, prod.stock - sold.quantity);
+          fetch(`/api/products/${prod.id}/stock`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ stock: newStock }),
+          }).catch(() => {});
+          return { ...prod, stock: newStock };
+        }
+        return prod;
+      });
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProds));
+      return updatedProds;
+    });
+
+    setInvoiceOrder(newOrder);
+    return newOrder;
   };
 
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
@@ -973,10 +1212,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setProducts(INITIAL_PRODUCTS);
     setOrders(INITIAL_ORDERS);
     setWorkshops(INITIAL_WORKSHOPS);
+    setCustomers(INITIAL_CUSTOMERS);
+    setCustomerFieldDefs(DEFAULT_CUSTOMER_FIELDS);
     localStorage.removeItem(STORAGE_KEYS.PRODUCTS);
     localStorage.removeItem(STORAGE_KEYS.ORDERS);
     localStorage.removeItem(STORAGE_KEYS.CART);
     localStorage.removeItem(STORAGE_KEYS.WORKSHOPS);
+    localStorage.removeItem(STORAGE_KEYS.CUSTOMERS);
+    localStorage.removeItem(STORAGE_KEYS.CUSTOMER_FIELDS);
   };
 
   return (
@@ -1037,6 +1280,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteUserProfile,
         toggleUserProfileStatus,
         hasPermission,
+        customers,
+        customerFieldDefs,
+        addCustomer,
+        updateCustomer,
+        deleteCustomer,
+        addCustomerFieldDef,
+        deleteCustomerFieldDef,
+        createDirectInvoiceOrder,
         cartToast,
         showCartSuccessToast,
         closeCartToast,

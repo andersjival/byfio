@@ -103,12 +103,29 @@ export type OrderStatus =
   | 'packed' // Empacado / Facturado
   | 'delivered'; // Entregado
 
-export type PaymentMethod = 'sinpe' | 'transferencia' | 'tarjeta';
+export type PaymentMethod = 'sinpe' | 'transferencia' | 'tarjeta' | 'efectivo';
 export type DeliveryMethod = 'envio' | 'retiro';
+
+export interface CustomerFieldDef {
+  id: string;
+  label: string;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  address?: string;
+  notes?: string;
+  createdAt: string;
+  customFields?: { [fieldId: string]: string };
+}
 
 export interface Order {
   id: string;
   orderNumber: string; // ej: #FIO-1001
+  orderTitle?: string;
   customerName: string;
   customerPhone: string;
   customerEmail?: string;
@@ -124,6 +141,7 @@ export interface Order {
   createdAt: string;
   packedAt?: string;
   notes?: string;
+  customFields?: { [key: string]: string };
 }
 
 export interface CartItem {

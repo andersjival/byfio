@@ -17,6 +17,24 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.84.0 - Creación Directa de Facturas (POS), Buscador Rápido de Productos y Ficha de Clientes Dinámica
+- [x] **Flujo Rápido de Facturación en Mostrador / POS (`QuickBillingSection.tsx`):**
+  - Buscador predictivo de productos en tiempo real con selector de cantidad (+ / - / input numérico) y botón directo de inclusión.
+  - Tabla de partidas con recálculo automático de subtotales, totales, eliminación rápida de ítems y ajuste de cantidades.
+  - Generación instantánea de la factura oficial con modal de impresión/compartir (`InvoiceModal.tsx`) y descuento automático de stock de inventario.
+- [x] **Captura de Datos de Cliente y Entrega al Final del Pedido:**
+  - Los datos del cliente (nombre, teléfono, correo, método de entrega, dirección y método de pago) se solicitan al final para acelerar el alisto de productos sin demoras en mostrador.
+  - Selector de método de entrega: Retiro en tienda (₡0) o Envío Correos de Costa Rica (+₡2,500).
+  - Medios de pago soportados: SINPE Móvil, Efectivo en Caja, Tarjeta / Datafono y Transferencia Bancaria.
+- [x] **Buscador de Clientes Registrados y Auto-Completado:**
+  - Buscador de clientes frecuentes por nombre, cédula, teléfono o correo con selección a un solo clic para autocompletar todo el formulario de facturación.
+- [x] **Ficha de Clientes Dinámica y Personalizable por el Administrador:**
+  - Directorio completo de clientes con modal para registrar nuevos clientes (nombre, teléfono, correo, dirección y campos dinámicos).
+  - Gestor de campos personalizados: el administrador puede agregar o eliminar nuevos datos requeridos en la ficha de clientes (ej. Cédula/DIMEX, Usuario Instagram, Razón Social, Cumpleaños) sin tocar la base de código.
+- [x] **Tipos y Contexto Global Actualizados (`types/index.ts`, `AppContext.tsx`):**
+  - Agregadas interfaces `CustomerFieldDef` y `Customer`.
+  - Agregado método `createDirectInvoiceOrder` para crear pedidos directos con código correlativo `#FIO-XXXX`, reduciendo stock y enlazando la factura inmediatamente.
+
 ### Versión 1.83.0 - Corrección de Contraste en Módulos de Perfiles, Botón Pausar y Tipografía de la Mascota
 - [x] **Legibilidad Total en Chips de Módulos Autorizados (`UserProfilesSection.tsx`):**
   - Eliminado el tachado (`line-through`) y la opacidad excesiva (`opacity-40`) que hacían invisibles los módulos no concedidos en tema oscuro.
