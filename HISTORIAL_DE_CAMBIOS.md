@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.73.0 - Optimización de Intervalo a 1 Segundo en Coreografía de Inicio de Sesión
+- [x] **Reducción de Intervalo a 1 Segundo (`AppContext.tsx`):**
+  - Actualizado el escalonamiento temporal de `triggerLoginCinematic` de 2 segundos a **1 segundo** por elemento para una experiencia ágil, cinematográfica y dinámica:
+    - **Paso 1 (0s):** Salida vertical de la tarjeta de login hacia arriba (`.login-exit-up`).
+    - **Paso 2 (1s):** Desvanecimiento suave del fondo difuminado (`.backdrop-fade-out`).
+    - **Paso 3 (2s):** Descenso de la barra superior de menú (`.navbar-slide-down`).
+    - **Paso 4 (3s):** Deslizamiento del Panel de Control de izquierda a derecha (`.panel-slide-left`).
+    - **Paso 5 (4s):** Deslizamiento del Menú Principal de derecha a izquierda (`.menu-slide-right`).
+    - **Paso 6 (5s):** Deslizamiento del Catálogo Comercial de abajo hacia arriba (`.catalog-slide-up`).
+    - **Culminación (6s):** Retorno de estado a reposo sin bloqueos.
+- [x] **Ajuste de Duraciones CSS en Animaciones (`index.css`):**
+  - Duraciones de transición y keyframes ajustadas a `0.8s` (curva `cubic-bezier(0.16, 1, 0.3, 1)`), logrando una cadencia visual fluida que concluye con precisión justo antes de iniciarse el siguiente paso.
+
 ### Versión 1.72.0 - Corrección de Capas y Sincronización Temporal en Animación de Cierre de Sesión (Logout)
 - [x] **Secuencia Temporal Estricta (Cortina Primero, Login Después) (`index.css` y `LoginModal.tsx`):**
   - La cortina translúcida desciende cubriendo toda la web (0s a 0.65s).

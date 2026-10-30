@@ -529,36 +529,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // 1. El login se mueve hacia arriba y se esconde
     setLoginIntroStage(1);
 
-    // 2 segundos después: 2. El difuminado de atrás se quita pero suavemente desaparece
+    // 1 segundo después: 2. El difuminado de atrás se quita suavemente
     setTimeout(() => {
       setLoginIntroStage(2);
-    }, 2000);
+    }, 1000);
 
-    // 2 segundos después (4s total): 3. La barra de menú superior sale de arriba hacia abajo suavemente
+    // 1 segundo después (2s total): 3. La barra de menú superior sale de arriba hacia abajo suavemente
     setTimeout(() => {
       setLoginIntroStage(3);
       onComplete();
-    }, 4000);
+    }, 2000);
 
-    // 2 segundos después (6s total): 4. Aparece la sección panel de control de izquierda hacia derecha
+    // 1 segundo después (3s total): 4. Aparece la sección panel de control de izquierda hacia derecha
     setTimeout(() => {
       setLoginIntroStage(4);
-    }, 6000);
+    }, 3000);
 
-    // 2 segundos después (8s total): 5. Aparece la sección menú principal de administración de derecha a izquierda
+    // 1 segundo después (4s total): 5. Aparece la sección menú principal de administración de derecha a izquierda
     setTimeout(() => {
       setLoginIntroStage(5);
-    }, 8000);
+    }, 4000);
 
-    // 2 segundos después (10s total): 6. Aparece la sección de catálogo comercial online de abajo hacia arriba suavemente
+    // 1 segundo después (5s total): 6. Aparece la sección de catálogo comercial online de abajo hacia arriba suavemente
     setTimeout(() => {
       setLoginIntroStage(6);
-    }, 10000);
+    }, 5000);
 
-    // 2 segundos después (12s total): Culminación completa de la coreografía
+    // 1 segundo después (6s total): Culminación completa de la coreografía
     setTimeout(() => {
       setLoginIntroStage(0);
-    }, 12000);
+    }, 6000);
   };
 
   const updatePricingData = (newData: PricingSectionData) => {
