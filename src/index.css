@@ -1390,6 +1390,101 @@ html.dark .login-curtain-backdrop {
   }
 }
 
+/* =========================================================================
+   COREOGRAFÍA CINEMÁTICA DE INICIO DE SESIÓN
+   1. Login se mueve hacia arriba y se esconde
+   2. Difuminado de atrás se quita suavemente
+   3. Barra de menú superior sale de arriba hacia abajo
+   4. Sección Panel de Control de izquierda a derecha
+   5. Sección Menú Principal de Administración de derecha a izquierda
+   6. Sección Catálogo Comercial Online de abajo hacia arriba
+   ========================================================================= */
+
+/* 1. La tarjeta de login se mueve hacia arriba y se esconde */
+.login-exit-up {
+  transform: translateY(-130vh) scale(0.9) !important;
+  opacity: 0 !important;
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-in !important;
+  pointer-events: none !important;
+}
+
+/* 2. El difuminado de atrás se quita suavemente */
+.backdrop-fade-out {
+  opacity: 0 !important;
+  backdrop-filter: blur(0px) !important;
+  -webkit-backdrop-filter: blur(0px) !important;
+  transition: opacity 1s ease-out, backdrop-filter 1s ease-out !important;
+  pointer-events: none !important;
+}
+
+/* 3. La barra de menú superior sale de arriba hacia abajo suavemente */
+.navbar-slide-down {
+  animation: navSlideDownSmooth 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes navSlideDownSmooth {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 4. Sección Panel de Control de izquierda hacia derecha */
+.panel-slide-left {
+  animation: panelSlideInLeft 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes panelSlideInLeft {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 5. Sección Menú Principal de Administración de derecha a izquierda */
+.menu-slide-right {
+  animation: menuSlideInRight 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes menuSlideInRight {
+  0% {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 6. Sección Catálogo Comercial Online de abajo hacia arriba suavemente */
+.catalog-slide-up {
+  animation: catalogSlideInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes catalogSlideInUp {
+  0% {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .login-curtain-backdrop {
     animation: none !important;

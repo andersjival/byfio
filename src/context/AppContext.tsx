@@ -133,6 +133,8 @@ interface AppContextType {
   logoutUser: () => void;
   isLogoutTransitionOpen: boolean;
   closeLogoutTransition: () => void;
+  loginIntroStage: number;
+  triggerLoginCinematic: (user: AuthUser, onComplete: () => void) => void;
   userProfiles: UserProfile[];
   addUserProfile: (profile: Omit<UserProfile, 'id' | 'createdAt'>) => UserProfile;
   updateUserProfile: (id: string, updates: Partial<UserProfile>) => void;
@@ -519,6 +521,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const closeLogoutTransition = () => {
     setIsLogoutTransitionOpen(false);
+  };
+
+  const [loginIntroStage, setLoginIntroStage] = useState(0);
+
+  const triggerLoginCinematic = (_user: AuthUser, onComplete: () => void) => {
+    // 1. El login se mueve hacia arriba y se esconde
+    setLoginIntroStage(1);
+
+    // 2 segundos después: 2. El difuminado de atrás se quita pero suavemente desaparece
+    setTimeout(() => {
+      setLoginIntroStage(2);
+    }, 2000);
+
+    // 2 segundos después (4s total): 3. La barra de menú superior sale de arriba hacia abajo suavemente
+    setTimeout(() => {
+      setLoginIntroStage(3);
+      onComplete();
+    }, 4000);
+
+    // 2 segundos después (6s total): 4. Aparece la sección panel de control de izquierda hacia derecha
+    setTimeout(() => {
+      setLoginIntroStage(4);
+    }, 6000);
+
+    // 2 segundos después (8s total): 5. Aparece la sección menú principal de administración de derecha a izquierda
+    setTimeout(() => {
+      setLoginIntroStage(5);
+    }, 8000);
+
+    // 2 segundos después (10s total): 6. Aparece la sección de catálogo comercial online de abajo hacia arriba suavemente
+    setTimeout(() => {
+      setLoginIntroStage(6);
+    }, 10000);
+
+    // 2 segundos después (12s total): Culminación completa de la coreografía
+    setTimeout(() => {
+      setLoginIntroStage(0);
+    }, 12000);
   };
 
   const updatePricingData = (newData: PricingSectionData) => {
@@ -989,6 +1029,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         logoutUser,
         isLogoutTransitionOpen,
         closeLogoutTransition,
+        loginIntroStage,
+        triggerLoginCinematic,
         userProfiles,
         addUserProfile,
         updateUserProfile,

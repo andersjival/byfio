@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectAdminHub,
   isAdminHub = false,
 }) => {
-  const { cart, setIsCartOpen, colorTheme, setColorTheme, currentUser, logoutUser } = useApp();
+  const { cart, setIsCartOpen, colorTheme, setColorTheme, currentUser, logoutUser, loginIntroStage } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const totalCartCount = cart.reduce((acc, it) => acc + it.quantity, 0);
@@ -32,8 +32,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     setMobileOpen(false);
   };
 
+  let navAnimationClass = '';
+  if (loginIntroStage > 0) {
+    if (loginIntroStage < 3) {
+      navAnimationClass = 'opacity-0 -translate-y-full pointer-events-none';
+    } else if (loginIntroStage >= 3) {
+      navAnimationClass = 'navbar-slide-down';
+    }
+  }
+
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-white/70 shadow-[0_2px_12px_rgba(180,160,200,0.05)] transition-all">
+    <header className={`sticky top-0 z-40 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-white/70 shadow-[0_2px_12px_rgba(180,160,200,0.05)] transition-all ${navAnimationClass}`}>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-[50px] sm:min-h-[54px] py-1.5 flex items-center justify-between gap-2">
         {/* Logo de Marca con botón de Volver a Tienda inmediatamente al lado en Admin */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">

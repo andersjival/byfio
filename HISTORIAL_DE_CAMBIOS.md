@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.69.0 - Coreografía Cinemática de Inicio de Sesión y Eliminación del Footer
+- [x] **Secuencia Cinemática Cronometrada (cada 2 segundos) (`AppContext.tsx`, `LoginModal.tsx`, `Navbar.tsx`, `AdminHeader.tsx`, `AdminHubMenu.tsx` e `index.css`):**
+  - **Paso 1 (0s):** Al autenticarse, la tarjeta de login asciende hacia arriba (`.login-exit-up`, `translateY(-130vh)`) y se esconde suavemente.
+  - **Paso 2 (2s después):** El difuminado y fondo translúcido (`.backdrop-fade-out`) desaparece con transición suave y fluida.
+  - **Paso 3 (2s después):** La barra de menú superior (`Navbar`) desciende suavemente de arriba hacia abajo (`.navbar-slide-down`).
+  - **Paso 4 (2s después):** La sección *"Panel de Control & Alisto QR"* con sus métricas y KPIs (`AdminHeader`) ingresa suavemente de izquierda a derecha (`.panel-slide-left`).
+  - **Paso 5 (2s después):** La sección *"Menú Principal de Administración"* con el grid modular (`AdminHubMenu`) ingresa suavemente de derecha a izquierda (`.menu-slide-right`).
+  - **Paso 6 (2s después):** La sección *"Catálogo Comercial Online"* (`AdminHubMenu`) ingresa suavemente de abajo hacia arriba (`.catalog-slide-up`).
+- [x] **Eliminación Total del Bloque Footer (`App.tsx`):**
+  - Removida por completo la sección del pie de página inferior que contenía el texto *"by.fio — Talleres Creativos & Tienda Online • Costa Rica"*, enlaces y botones flotantes, logrando una interfaz limpia y despejada.
+
 ### Versión 1.68.0 - Animación Cinemática de Cierre de Sesión (Cortina Translúcida + Caída Suave + Flotación 3D)
 - [x] **Secuencia Cinemática al Cerrar Sesión (`AppContext.tsx`, `App.tsx`, `LoginModal.tsx` e `index.css`):**
   - Al hacer clic en *"Salir"* o *"Cerrar Sesión"* (admin, colaboradores o clientes), se activa automáticamente la transición global `isLogoutTransitionOpen` que lleva directamente a la ventana de login.

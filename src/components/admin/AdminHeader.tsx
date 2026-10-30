@@ -12,7 +12,7 @@ interface AdminHeaderProps {
 }
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal }) => {
-  const { products, orders, setIsSupplierModalOpen, resetToDefaults, colorTheme, typographyTheme } = useApp();
+  const { products, orders, setIsSupplierModalOpen, resetToDefaults, colorTheme, typographyTheme, loginIntroStage } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
 
   const handleOpenDesign = onOpenDesignModal || (() => setInternalDesignModalOpen(true));
@@ -21,8 +21,17 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal }) =
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
   const totalInventoryValue = products.reduce((acc, p) => acc + p.stock * p.costPrice, 0);
 
+  let headerAnimationClass = '';
+  if (loginIntroStage > 0) {
+    if (loginIntroStage < 4) {
+      headerAnimationClass = 'opacity-0 -translate-x-24 pointer-events-none';
+    } else if (loginIntroStage >= 4) {
+      headerAnimationClass = 'panel-slide-left';
+    }
+  }
+
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${headerAnimationClass}`}>
       {/* Barra de Título y Acciones Globales Compacta */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>

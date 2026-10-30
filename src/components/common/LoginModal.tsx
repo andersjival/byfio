@@ -20,7 +20,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   onSuccess,
   isLogoutCurtain = false,
 }) => {
-  const { currentUser, loginUser, loginWithPin, registerUser, logoutUser, userProfiles } = useApp();
+  const {
+    currentUser,
+    loginUser,
+    loginWithPin,
+    registerUser,
+    logoutUser,
+    userProfiles,
+    loginIntroStage,
+    triggerLoginCinematic,
+  } = useApp();
   const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>('email');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -53,10 +62,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       });
     } catch {}
 
+    // Enrutamos de inmediato para que la vista quede preparada bajo la cortina
     if (onSuccess) {
       onSuccess(user);
     }
-    onClose();
+
+    triggerLoginCinematic(user, () => {
+      onClose();
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -481,23 +494,29 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         className="fixed inset-0 z-50 overflow-y-auto flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 py-6 sm:py-8"
         onClick={onClose}
       >
-        {/* Cortina translúcida que tapa la web de arriba hacia abajo y se queda fija */}
+        {/* Cortina translúcida que tapa la web de arriba hacia abajo y luego se desvanece suavemente */}
         <div
           className={`fixed inset-0 pointer-events-none ${
-            isLogoutCurtain
+            loginIntroStage >= 2
+              ? 'backdrop-fade-out'
+              : isLogoutCurtain
               ? 'login-curtain-backdrop'
               : 'bg-slate-950/70 backdrop-blur-md animate-fadeIn'
           }`}
         />
 
-        {/* Ventana de login con caída suave de arriba hacia abajo y flotación permanente */}
+        {/* Ventana de login: caída suave de arriba hacia abajo, flotación y salida hacia arriba al iniciar sesión */}
         <div
           onClick={(e) => e.stopPropagation()}
           className={`w-full flex justify-center my-auto z-10 ${
-            isLogoutCurtain ? 'login-drop-motion' : 'animate-fadeIn'
+            loginIntroStage >= 1
+              ? 'login-exit-up'
+              : isLogoutCurtain
+              ? 'login-drop-motion'
+              : 'animate-fadeIn'
           }`}
         >
-          <div className="login-floating-card w-full flex justify-center">
+          <div className={loginIntroStage >= 1 ? 'w-full flex justify-center' : 'login-floating-card w-full flex justify-center'}>
             {content}
           </div>
         </div>
@@ -508,8 +527,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   // Si es modo página completa (/login) o embebido en /admin
   return (
     <div className="w-full flex items-center justify-center py-4 sm:py-8 px-2 sm:px-4">
-      <div className="login-drop-motion w-full flex justify-center">
-        <div className="login-floating-card w-full flex justify-center">
+      <div
+        className={`w-full flex justify-center ${
+          loginIntroStage >= 1 ? 'login-exit-up' : 'login-drop-motion'
+        }`}
+      >
+        <div className={loginIntroStage >= 1 ? 'w-full flex justify-center' : 'login-floating-card w-full flex justify-center'}>
           {content}
         </div>
       </div>

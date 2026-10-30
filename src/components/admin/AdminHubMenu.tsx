@@ -11,7 +11,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
-  const { orders, products, workshops, userProfiles, hasPermission } = useApp();
+  const { orders, products, workshops, userProfiles, hasPermission, loginIntroStage } = useApp();
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
   const copyCatalogLink = () => {
@@ -95,116 +95,139 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
 
   const menuItems = allMenuItems.filter((item) => hasPermission(item.id));
 
+  let menuAnimationClass = '';
+  if (loginIntroStage > 0) {
+    if (loginIntroStage < 5) {
+      menuAnimationClass = 'opacity-0 translate-x-24 pointer-events-none';
+    } else if (loginIntroStage >= 5) {
+      menuAnimationClass = 'menu-slide-right';
+    }
+  }
+
+  let catalogAnimationClass = '';
+  if (loginIntroStage > 0) {
+    if (loginIntroStage < 6) {
+      catalogAnimationClass = 'opacity-0 translate-y-16 pointer-events-none';
+    } else if (loginIntroStage >= 6) {
+      catalogAnimationClass = 'catalog-slide-up';
+    }
+  }
+
   return (
-    <div className="space-y-4 animate-fadeIn">
-      {/* Título Compacto de una Sola Línea */}
-      <div className="flex items-center justify-between gap-2 px-1">
-        <div className="flex items-center gap-2">
-          <span className="p-1 rounded-lg bg-purple-100 text-fio-700">
-            <Sparkles className="w-3.5 h-3.5" />
+    <div className="space-y-4">
+      {/* Sección Menú Principal de Administración (Aparece de derecha a izquierda) */}
+      <div className={`space-y-4 ${menuAnimationClass}`}>
+        {/* Título Compacto de una Sola Línea */}
+        <div className="flex items-center justify-between gap-2 px-1">
+          <div className="flex items-center gap-2">
+            <span className="p-1 rounded-lg bg-purple-100 text-fio-700">
+              <Sparkles className="w-3.5 h-3.5" />
+            </span>
+            <h2 className="font-bubble font-bold text-sm sm:text-base text-fio-900">
+              Menú Principal de Administración
+            </h2>
+          </div>
+          <span className="text-[11px] text-slate-400 font-sans hidden sm:inline">
+            Selecciona una sección para ingresar
           </span>
-          <h2 className="font-bubble font-bold text-sm sm:text-base text-fio-900">
-            Menú Principal de Administración
-          </h2>
         </div>
-        <span className="text-[11px] text-slate-400 font-sans hidden sm:inline">
-          Selecciona una sección para ingresar
-        </span>
-      </div>
 
-      {/* Grid de Cajitas Compactas, Redonditas y Profesionales (Todo en 1 Sola Pantalla) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-3.5">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
+        {/* Grid de Cajitas Compactas, Redonditas y Profesionales (Todo en 1 Sola Pantalla) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-3.5">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
 
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onSelectTab(item.id)}
-              className="group text-left rounded-2xl p-4 bg-[#FDFBF9] hover:bg-pink-50/40 border border-white/90 hover:border-pink-200/90 shadow-[0_4px_16px_rgba(180,160,200,0.08)] hover:shadow-[0_8px_24px_rgba(236,72,153,0.18)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[125px] sm:min-h-[140px]"
-            >
-              {/* Icono Elegante con Gradiente & Badge */}
-              <div className="flex items-start justify-between gap-2 mb-3">
-                <div
-                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}
-                >
-                  <Icon className="w-5 h-5" />
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSelectTab(item.id)}
+                className="group text-left rounded-2xl p-4 bg-[#FDFBF9] hover:bg-pink-50/40 border border-white/90 hover:border-pink-200/90 shadow-[0_4px_16px_rgba(180,160,200,0.08)] hover:shadow-[0_8px_24px_rgba(236,72,153,0.18)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[125px] sm:min-h-[140px]"
+              >
+                {/* Icono Elegante con Gradiente & Badge */}
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div
+                    className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </div>
+
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-pink group-hover:translate-x-0.5 transition-all" />
                 </div>
 
-                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-pink group-hover:translate-x-0.5 transition-all" />
-              </div>
+                {/* Título & Badge Limpio (Sin Párrafos Relleno) */}
+                <div className="space-y-1.5">
+                  <h3 className="font-bubble font-bold text-xs sm:text-sm text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
+                    {item.title}
+                  </h3>
 
-              {/* Título & Badge Limpio (Sin Párrafos Relleno) */}
-              <div className="space-y-1.5">
-                <h3 className="font-bubble font-bold text-xs sm:text-sm text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
-                  {item.title}
-                </h3>
-
-                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${item.badgeClass}`}>
-                  {item.badge}
-                </span>
-              </div>
-            </button>
-          );
-        })}
+                  <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${item.badgeClass}`}>
+                    {item.badge}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Acceso y Enlace Compartible del Catálogo Online */}
-      <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/70 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
-            <BookOpen className="w-4 h-4" />
+      {/* Sección Catálogo Comercial Online (Aparece de abajo hacia arriba) */}
+      <div className={catalogAnimationClass}>
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/70 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900">
+                Catálogo Comercial Online (Vista en Lista &amp; Pedidos)
+              </h4>
+              <p className="text-[11px] text-slate-500 font-sans">
+                Comparte el enlace oficial con clientes mayoristas o en redes para que ordenen directo por WhatsApp y SINPE.
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900">
-              Catálogo Comercial Online (Vista en Lista &amp; Pedidos)
-            </h4>
-            <p className="text-[11px] text-slate-500 font-sans">
-              Comparte el enlace oficial con clientes mayoristas o en redes para que ordenen directo por WhatsApp y SINPE.
-            </p>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={copyCatalogLink}
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
+              title="Copiar link directo del catálogo online"
+            >
+              {copiedCatalog ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>¡Copiado!</span>
+                </>
+              ) : (
+                <>
+                  <Link2 className="w-3.5 h-3.5 text-fio-pink" />
+                  <span>Copiar Link</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={shareCatalogWhatsApp}
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
+              title="Compartir catálogo completo por WhatsApp"
+            >
+              <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Compartir por WhatsApp</span>
+            </button>
+
+            <a
+              href="/catalogo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-xs active:scale-95 transition-all"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
+              <span>Ver Catálogo</span>
+            </a>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
-            type="button"
-            onClick={copyCatalogLink}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
-            title="Copiar link directo del catálogo online"
-          >
-            {copiedCatalog ? (
-              <>
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>¡Copiado!</span>
-              </>
-            ) : (
-              <>
-                <Link2 className="w-3.5 h-3.5 text-fio-pink" />
-                <span>Copiar Link</span>
-              </>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={shareCatalogWhatsApp}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
-            title="Compartir catálogo completo por WhatsApp"
-          >
-            <Share2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Compartir por WhatsApp</span>
-          </button>
-
-          <a
-            href="/catalogo"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-xs active:scale-95 transition-all"
-          >
-            <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
-            <span>Ver Catálogo</span>
-          </a>
         </div>
       </div>
     </div>
