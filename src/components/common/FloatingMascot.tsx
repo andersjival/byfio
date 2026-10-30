@@ -98,6 +98,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState('');
   const [typedText, setTypedText] = useState('');
+  const [mascotStatus, setMascotStatus] = useState<'idle' | 'typing' | 'reading' | 'goodbye' | 'exiting'>('idle');
   const adminTriggeredRef = useRef(false);
   const clientTriggeredRef = useRef(false);
 
@@ -125,6 +126,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
       const msg = getNextMotivationalMessage();
       setSelectedMessage(msg);
       setTypedText('');
+      setMascotStatus('typing');
       setIsVisible(true);
       setHasEntered(false);
       setIsExiting(false);
@@ -141,43 +143,54 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
     return () => window.clearTimeout(timer);
   }, [currentRoute, loginIntroStage]);
 
-  // Efecto Máquina de Escribir (Letra por Letra), lectura pausada y despedida hacia abajo
+  // Efecto Máquina de Escribir respetando caracteres Unicode/Emojis y lectura pausada
   useEffect(() => {
     if (currentRoute !== 'admin' || !showSpeechBubble || !selectedMessage) {
       return;
     }
 
-    // Cadencia de escritura suave y pausada (62ms por letra) para lectura natural
-    if (typedText.length < selectedMessage.length) {
-      const charTimer = window.setTimeout(() => {
-        setTypedText(selectedMessage.slice(0, typedText.length + 1));
-      }, 62);
-      return () => window.clearTimeout(charTimer);
+    if (mascotStatus === 'typing') {
+      const allChars = Array.from(selectedMessage);
+      const currChars = Array.from(typedText);
+
+      if (currChars.length < allChars.length) {
+        const charTimer = window.setTimeout(() => {
+          setTypedText(allChars.slice(0, currChars.length + 1).join(''));
+        }, 55);
+        return () => window.clearTimeout(charTimer);
+      } else {
+        setMascotStatus('reading');
+      }
     }
 
-    // Al completarse la última letra del mensaje original:
-    // Espera 6 segundos completos para lectura tranquila antes de despedirse
-    const byeTimer = window.setTimeout(() => {
-      setTypedText('¡Adiós! 👋✨');
+    if (mascotStatus === 'reading') {
+      // 7 segundos completos para lectura tranquila del mensaje motivacional
+      const readTimer = window.setTimeout(() => {
+        setTypedText('¡Adiós! 👋✨');
+        setMascotStatus('goodbye');
+      }, 7000);
+      return () => window.clearTimeout(readTimer);
+    }
 
-      // 1.6 segundos después de mostrar la despedida, se cierra deslizándose hacia abajo
+    if (mascotStatus === 'goodbye') {
+      // 1.8 segundos mostrando la despedida antes de descender animadamente
       const exitTimer = window.setTimeout(() => {
+        setMascotStatus('exiting');
         setIsExiting(true);
 
         const hideTimer = window.setTimeout(() => {
           setIsVisible(false);
           setShowSpeechBubble(false);
           setIsExiting(false);
+          setMascotStatus('idle');
         }, 750);
 
         return () => window.clearTimeout(hideTimer);
-      }, 1600);
+      }, 1800);
 
       return () => window.clearTimeout(exitTimer);
-    }, 6000);
-
-    return () => window.clearTimeout(byeTimer);
-  }, [currentRoute, showSpeechBubble, selectedMessage, typedText]);
+    }
+  }, [currentRoute, showSpeechBubble, selectedMessage, typedText, mascotStatus]);
 
   // Flujo para páginas públicas (tienda, catálogo, talleres, inicio)
   useEffect(() => {
@@ -296,11 +309,13 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
                 </span>
                 <span className="text-[10px] text-slate-400 dark:text-slate-400 font-sans font-medium">by.fio</span>
               </div>
-              <p className="text-[13.5px] sm:text-[14px] font-sans font-semibold text-slate-900 dark:text-white leading-relaxed tracking-normal">
-                {typedText}
-                {typedText.length < selectedMessage.length && (
-                  <span className="inline-block w-1.5 h-3.5 ml-1 bg-fio-pink animate-pulse align-middle rounded-full" />
-                )}
+              <p className="mascot-speech-text text-[14px] sm:text-[15px] font-bubble font-bold leading-relaxed tracking-wide min-h-[46px] flex items-center">
+                <span>
+                  {typedText}
+                  {mascotStatus === 'typing' && (
+                    <span className="inline-block w-2 h-4 ml-1 bg-fio-pink animate-pulse align-middle rounded-full" />
+                  )}
+                </span>
               </p>
               {/* Colita de la burbujita hacia la estrellita */}
               <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-[#1a142a] rotate-45 border-r border-b border-fio-200/80 dark:border-purple-500/30" />

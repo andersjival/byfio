@@ -330,14 +330,14 @@ export const UserProfilesSection: React.FC = () => {
                       return (
                         <span
                           key={mod.key}
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all ${
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold transition-all border ${
                             hasIt
-                              ? 'bg-white text-slate-800 border border-white/90 shadow-2xs'
-                              : 'bg-slate-200/50 text-slate-400 line-through opacity-40'
+                              ? 'bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950/80 dark:text-purple-200 dark:border-purple-500/50 shadow-2xs'
+                              : 'bg-slate-100/90 text-slate-600 border-slate-200/80 dark:bg-[#201B34] dark:text-slate-300 dark:border-white/10'
                           }`}
                         >
-                          <Icon className={`w-3 h-3 ${hasIt ? 'text-fio-purple' : 'text-slate-400'}`} />
-                          <span>{mod.label}</span>
+                          <Icon className={`w-3.5 h-3.5 ${hasIt ? 'text-fio-pink dark:text-pink-300' : 'text-slate-400 dark:text-slate-500'}`} />
+                          <span className={hasIt ? '' : 'text-slate-600 dark:text-slate-300'}>{mod.label}</span>
                         </span>
                       );
                     })}
@@ -346,14 +346,14 @@ export const UserProfilesSection: React.FC = () => {
               </div>
 
               {/* Botones de Acción al Pie de la Tarjeta */}
-              <div className="flex items-center justify-between gap-2 pt-4 mt-4 border-t border-slate-200/60">
+              <div className="flex items-center justify-between gap-2 pt-4 mt-4 border-t border-slate-200/60 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => toggleUserProfileStatus(prof.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all active:scale-95 ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all active:scale-95 border ${
                     prof.isActive
-                      ? 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                      : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                      ? 'btn-pause-profile bg-amber-100 text-amber-900 border-amber-300/80 hover:bg-amber-200 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-600/40 dark:hover:bg-amber-900/60'
+                      : 'btn-activate-profile bg-emerald-100 text-emerald-900 border-emerald-300/80 hover:bg-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-200 dark:border-emerald-600/40 dark:hover:bg-emerald-900/60'
                   }`}
                 >
                   {prof.isActive ? 'Pausar Perfil' : 'Activar Perfil'}
@@ -363,7 +363,7 @@ export const UserProfilesSection: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleOpenEdit(prof)}
-                    className="neu-btn bg-[#F1F2F6] px-3 py-1.5 rounded-xl text-xs font-bubble font-bold text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover flex items-center gap-1 active:scale-95"
+                    className="neu-btn bg-[#F1F2F6] dark:bg-[#332D52] px-3 py-1.5 rounded-xl text-xs font-bubble font-bold text-slate-700 dark:text-slate-200 hover:text-fio-pink border border-white/80 dark:border-white/15 shadow-neuBtn hover:shadow-neuBtnHover flex items-center gap-1 active:scale-95"
                     title="Editar perfil y permisos"
                   >
                     <Edit3 className="w-3.5 h-3.5" />

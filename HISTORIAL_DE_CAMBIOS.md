@@ -17,6 +17,20 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.83.0 - Corrección de Contraste en Módulos de Perfiles, Botón Pausar y Tipografía de la Mascota
+- [x] **Legibilidad Total en Chips de Módulos Autorizados (`UserProfilesSection.tsx`):**
+  - Eliminado el tachado (`line-through`) y la opacidad excesiva (`opacity-40`) que hacían invisibles los módulos no concedidos en tema oscuro.
+  - Implementado contraste AAA con bordes y fondos balanceados tanto en tema claro (`text-slate-600` / `bg-slate-100`) como en tema oscuro (`text-slate-300` / `bg-[#201B34]`).
+  - Módulos concedidos resaltados con píldora morada de alta visibilidad (`bg-purple-100` / `dark:bg-purple-950/80`).
+- [x] **Botones de Estado con Contraste Protegido (`UserProfilesSection.tsx` e `index.css`):**
+  - Creación de `.btn-pause-profile` y `.btn-activate-profile` con colores forzados independientes del override de botones generales.
+  - El botón *"Pausar Perfil"* ahora muestra texto ámbar cálido legible `#78350F` en tema claro y `#FDE68A` en tema oscuro, erradicando el texto blanco sobre fondo blanco.
+- [x] **Tipografía y Estabilidad del Mensaje de la Mascota (`FloatingMascot.tsx` e `index.css`):**
+  - Máquina de estados (`mascotStatus`: typing -> reading -> goodbye -> exiting) con manejo seguro de caracteres Unicode y emojis mediante `Array.from()`, evitando re-cortes o loops.
+  - Tiempo de lectura extendido a **7 segundos completos** tras completarse la escritura del mensaje.
+  - Tipografía `font-bubble` en 15px con color forzado `.mascot-speech-text`: índigo profundo `#1E1B4B` en tema claro y blanco puro `#FFFFFF` en tema oscuro sobre fondo sólido.
+  - Asignada altura mínima `min-h-[46px]` para evitar que el cartel se vea vacío al inicio.
+
 ### Versión 1.82.0 - Diagnóstico, Visibilidad Inmediata de Perfiles de Usuario y Badge en Admin Navbar
 - [x] **Apertura Directa en Modo PIN con Selector de Perfiles (`LoginModal.tsx`):**
   - Establecido `pin` como método predeterminado en lugar de `email`, haciendo inmediatamente visibles el campo *"Perfil de Usuario"* y los botones de acceso rápido de los perfiles activos (`ALISTO DE PEDIDOS`, `ATENCIÓN Y TALLERES` y los perfiles creados por el admin).
