@@ -4,13 +4,14 @@ import {
   Trash2, RotateCcw, Heart, TrendingUp, BarChart3, Clock,
   ArrowRight, ShieldCheck, Share2, ExternalLink, RefreshCw,
   ShoppingBag, BookOpen, Sparkles, Tag, GraduationCap, Home,
-  Info, AlertCircle, Globe, Filter, Eye, CheckCircle2
+  Info, AlertCircle, Globe, Filter, Eye, CheckCircle2,
+  Receipt, Boxes, Landmark, QrCode, Users, Layers, Shield
 } from 'lucide-react';
 import { metricsTracker } from '../../services/metricsTracker';
 import { MetricsState, TrackedLink, AppRoute } from '../../types';
 
 interface MetricsPageProps {
-  onNavigate: (route: AppRoute) => void;
+  onNavigate: (route: AppRoute, adminTab?: any) => void;
 }
 
 interface DestinationSectionOption {
@@ -57,44 +58,164 @@ const DESTINATION_OPTIONS: DestinationSectionOption[] = [
     badge: 'Lista Precios',
     icon: Tag,
   },
+  {
+    id: 'admin',
+    name: 'Panel de Administración',
+    path: '/admin',
+    badge: 'Gestión Interna',
+    icon: ShieldCheck,
+  },
 ];
 
-const SECTION_METADATA: Record<string, { label: string; icon: any; routePath: string; color: string }> = {
+interface SectionMetadataItem {
+  label: string;
+  category: 'store' | 'admin';
+  icon: any;
+  routePath: string;
+  color: string;
+  routeKey: AppRoute;
+  adminTabKey?: string;
+}
+
+const SECTION_METADATA: Record<string, SectionMetadataItem> = {
+  // --- SECCIONES PÚBLICAS Y TIENDA ---
   home: {
     label: 'Portada / Inicio',
+    category: 'store',
     icon: Home,
     routePath: '/',
     color: 'from-purple-600 to-indigo-600',
+    routeKey: 'home',
   },
   catalogo: {
     label: 'Catálogo Digital',
+    category: 'store',
     icon: BookOpen,
     routePath: '/catalogo',
     color: 'from-purple-500 to-fio-pink',
+    routeKey: 'catalogo',
   },
   store: {
     label: 'Tienda Online',
+    category: 'store',
     icon: ShoppingBag,
     routePath: '/tienda',
     color: 'from-pink-500 to-rose-600',
+    routeKey: 'store',
   },
   workshops: {
     label: 'Talleres Creativos',
+    category: 'store',
     icon: GraduationCap,
     routePath: '/talleres',
     color: 'from-amber-500 to-orange-600',
+    routeKey: 'workshops',
   },
   precios: {
     label: 'Precios de Stickers',
+    category: 'store',
     icon: Tag,
     routePath: '/precios',
     color: 'from-emerald-500 to-teal-600',
+    routeKey: 'precios',
   },
   'workshop-detail': {
     label: 'Detalle de Taller',
+    category: 'store',
     icon: Sparkles,
-    routePath: '/talleres',
+    routePath: '/talleres/:id',
     color: 'from-blue-500 to-cyan-600',
+    routeKey: 'workshops',
+  },
+  login: {
+    label: 'Portal de Acceso / Login',
+    category: 'store',
+    icon: Lock,
+    routePath: '/login',
+    color: 'from-violet-600 to-purple-800',
+    routeKey: 'login',
+  },
+
+  // --- TODAS LAS PARTES DEL PANEL DE ADMINISTRACIÓN ---
+  admin: {
+    label: 'Panel Admin - Menú Principal (Hub)',
+    category: 'admin',
+    icon: ShieldCheck,
+    routePath: '/admin',
+    color: 'from-purple-700 to-indigo-900',
+    routeKey: 'admin',
+    adminTabKey: 'hub',
+  },
+  'admin-billing': {
+    label: 'Panel Admin - Facturación Rápida & POS',
+    category: 'admin',
+    icon: Receipt,
+    routePath: '/admin/facturacion',
+    color: 'from-fio-pink to-purple-600',
+    routeKey: 'admin',
+    adminTabKey: 'billing',
+  },
+  'admin-orders': {
+    label: 'Panel Admin - Cola de Pedidos & Alisto',
+    category: 'admin',
+    icon: QrCode,
+    routePath: '/admin/pedidos',
+    color: 'from-fio-purple to-pink-600',
+    routeKey: 'admin',
+    adminTabKey: 'orders',
+  },
+  'admin-inventory': {
+    label: 'Panel Admin - Inventario & Stock QR',
+    category: 'admin',
+    icon: Boxes,
+    routePath: '/admin/inventario',
+    color: 'from-sky-500 to-indigo-600',
+    routeKey: 'admin',
+    adminTabKey: 'inventory',
+  },
+  'admin-reports': {
+    label: 'Panel Admin - Caja & Reportería',
+    category: 'admin',
+    icon: Landmark,
+    routePath: '/admin/caja',
+    color: 'from-emerald-600 to-teal-700',
+    routeKey: 'admin',
+    adminTabKey: 'reports',
+  },
+  'admin-workshops': {
+    label: 'Panel Admin - Alumnos & Talleres',
+    category: 'admin',
+    icon: GraduationCap,
+    routePath: '/admin/talleres',
+    color: 'from-amber-600 to-orange-700',
+    routeKey: 'admin',
+    adminTabKey: 'workshops',
+  },
+  'admin-pricing': {
+    label: 'Panel Admin - Editor de Precios & Stickers',
+    category: 'admin',
+    icon: Tag,
+    routePath: '/admin/precios',
+    color: 'from-amber-500 to-yellow-600',
+    routeKey: 'admin',
+    adminTabKey: 'pricing',
+  },
+  'admin-users': {
+    label: 'Panel Admin - Perfiles de Usuarios & PINs',
+    category: 'admin',
+    icon: Users,
+    routePath: '/admin/usuarios',
+    color: 'from-purple-600 to-violet-800',
+    routeKey: 'admin',
+    adminTabKey: 'users',
+  },
+  metricas: {
+    label: 'Panel Admin - Métricas & Rastreo Privado',
+    category: 'admin',
+    icon: BarChart3,
+    routePath: '/metricas',
+    color: 'from-indigo-600 to-blue-700',
+    routeKey: 'metricas',
   },
 };
 
@@ -119,6 +240,9 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
 
   // FILTRO ACTIVO DE MÉTRICAS: 'all' (Todo el Sitio) o ID de un enlace creado específico
   const [selectedLinkFilter, setSelectedLinkFilter] = useState<string>('all');
+
+  // FILTRO DE CATEGORÍA EN "QUÉ SECCIONES GUSTARON MÁS": 'all' | 'store' | 'admin'
+  const [sectionFilterCategory, setSectionFilterCategory] = useState<'all' | 'store' | 'admin'>('all');
 
   // Formulario para nuevo link rastreado
   const [linkName, setLinkName] = useState('');
@@ -241,17 +365,15 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
       const pcPct = Math.round((pc / totalDev) * 100);
       const mobPct = Math.round((mobile / totalDev) * 100);
 
-      // Secciones visitadas por las personas que abrieron este enlace
-      const sectionsData = activeLink.sectionsVisited && Object.keys(activeLink.sectionsVisited).length > 0
-        ? activeLink.sectionsVisited
-        : {
-            // Si el link aún no tiene navegación de secciones, inicializar con su destino
-            [activeLink.targetRoute === '/' ? 'home' : activeLink.targetRoute.replace('/', '')]: {
-              views: linkClicks,
-              likes: Math.round(linkClicks * 0.25),
-              timeSpentAvgMinutes: 2.2,
-            },
-          };
+      // Fusionar todas las secciones registradas para el enlace
+      const sectionsData: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }> = {};
+      Object.keys(SECTION_METADATA).forEach((secKey) => {
+        if (activeLink.sectionsVisited && activeLink.sectionsVisited[secKey]) {
+          sectionsData[secKey] = activeLink.sectionsVisited[secKey];
+        } else {
+          sectionsData[secKey] = { views: 0, likes: 0, timeSpentAvgMinutes: 1.5 };
+        }
+      });
 
       return {
         isLinkSpecific: true,
@@ -273,10 +395,16 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
     const pcPct = Math.round((metrics.devices.pc / totalDev) * 100);
     const mobPct = Math.round((metrics.devices.mobile / totalDev) * 100);
 
+    // Asegurar que todas las secciones del mapa existan en sectionsData
+    const sectionsData: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }> = {};
+    Object.keys(SECTION_METADATA).forEach((secKey) => {
+      sectionsData[secKey] = metrics.sections[secKey] || { views: 0, likes: 0, timeSpentAvgMinutes: 2.0 };
+    });
+
     return {
       isLinkSpecific: false,
       title: 'Métricas Globales de Todo el Sitio Web',
-      subtitle: 'Supervisa en tiempo real cargas de página, dispositivos conectados y qué secciones gustan más.',
+      subtitle: 'Supervisa en tiempo real cargas de página, dispositivos conectados y todas las partes de la web.',
       totalPageLoads: metrics.totalPageLoads,
       totalOpens: metrics.trackedLinks.reduce((acc, l) => acc + l.clicks, 0),
       uniqueSessions: metrics.uniqueSessions,
@@ -284,18 +412,20 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
       mobileCount: metrics.devices.mobile,
       pcPercentage: pcPct,
       mobilePercentage: mobPct,
-      sections: metrics.sections,
+      sections: sectionsData,
     };
   }, [activeLink, metrics]);
 
-  // Ranking de secciones ordenadas por interés del público
-  const rankedSections = useMemo(() => {
+  // Ranking de TODAS las secciones (públicas y de administración) ordenadas por popularidad
+  const allRankedSections = useMemo(() => {
     return Object.entries(currentDisplayMetrics.sections).map(([id, data]) => {
       const meta = SECTION_METADATA[id] || {
         label: id.toUpperCase(),
+        category: 'store' as const,
         icon: Sparkles,
         routePath: `/${id}`,
         color: 'from-purple-500 to-indigo-600',
+        routeKey: 'home' as AppRoute,
       };
       const score = data.views + (data.likes * 3);
       return {
@@ -307,7 +437,17 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
     }).sort((a, b) => b.score - a.score);
   }, [currentDisplayMetrics.sections]);
 
-  const maxSectionScore = Math.max(...rankedSections.map((s) => s.score), 1);
+  // Filtrado por categoría si el usuario selecciona ver solo Tienda o solo Admin
+  const filteredSections = useMemo(() => {
+    if (sectionFilterCategory === 'all') return allRankedSections;
+    return allRankedSections.filter((s) => s.category === sectionFilterCategory);
+  }, [allRankedSections, sectionFilterCategory]);
+
+  const maxSectionScore = Math.max(...allRankedSections.map((s) => s.score), 1);
+
+  // Conteo de secciones por categoría
+  const storeCount = allRankedSections.filter((s) => s.category === 'store').length;
+  const adminCount = allRankedSections.filter((s) => s.category === 'admin').length;
 
   // Copiar reporte en texto
   const copyMetricsReport = () => {
@@ -317,8 +457,8 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
 • Aperturas / Clics: ${currentDisplayMetrics.totalOpens.toLocaleString()}
 • Dispositivos: 📱 Móvil ${currentDisplayMetrics.mobilePercentage}% (${currentDisplayMetrics.mobileCount}) | 💻 PC ${currentDisplayMetrics.pcPercentage}% (${currentDisplayMetrics.pcCount})
 
-❤️ PREFERENCIAS POR SECCIÓN:
-${rankedSections.map((s) => `  - ${s.label}: ${s.views} vistas | ${s.likes} me gusta`).join('\n')}
+❤️ TODAS LAS PARTES DE LA WEB (PÚBLICAS & ADMIN):
+${allRankedSections.map((s) => `  - [${s.category === 'admin' ? 'ADMIN' : 'WEB'}] ${s.label}: ${s.views} vistas | ${s.likes} me gusta`).join('\n')}
 ------------------------------------
 Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeString('es-CR')}`;
 
@@ -326,6 +466,15 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
       setCopiedReport(true);
       setTimeout(() => setCopiedReport(false), 2500);
     });
+  };
+
+  // Navegar a una sección desde el panel
+  const handleGoToSection = (section: (typeof allRankedSections)[0]) => {
+    if (section.routeKey === 'admin') {
+      onNavigate('admin', section.adminTabKey || 'hub');
+    } else {
+      onNavigate(section.routeKey);
+    }
   };
 
   // PANTALLA DE ACCESO CON PIN DE SEGURIDAD (CÓDIGO 1985 OCULTO)
@@ -384,7 +533,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
             <button
               type="button"
               onClick={() => onNavigate('home')}
-              className="text-xs text-slate-500 dark:text-slate-400 hover:text-fio-purple dark:hover:text-fio-pink transition-colors font-bubble font-bold inline-flex items-center gap-1"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-fio-purple dark:hover:text-fio-pink transition-colors font-bubble font-bold inline-flex items-center gap-1 cursor-pointer"
             >
               <span>← Volver a la página principal</span>
             </button>
@@ -718,7 +867,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
             </label>
 
             {/* Fila de Botones Rápidos (Incluyendo botón destacado: "Todas las Secciones") */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
               {DESTINATION_OPTIONS.map((opt) => {
                 const IconComponent = opt.icon;
                 const isSelected = targetSectionId === opt.id;
@@ -922,108 +1071,162 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
         </div>
       </div>
 
-      {/* RANKING DE SECCIONES MÁS VISITADAS Y QUE MÁS GUSTARON (DEL LINK O GLOBALES) */}
+      {/* TODAS LAS PARTES DE LA WEB: QUÉ SECCIONES GUSTARON MÁS (HASTA EL PANEL DE ADMIN) */}
       <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-purple-900/30 pb-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-purple-900/30 pb-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-950/80 text-fio-pink dark:text-pink-300 font-bubble font-bold text-xs mb-1">
               <Heart className="w-3.5 h-3.5" />
               <span>Preferencia y Gustos de los Visitantes</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-              ¿Qué Secciones Gustaron Más? {currentDisplayMetrics.isLinkSpecific ? `(En este Link)` : `(Todo el Sitio)`}
+              ¿Qué Secciones Gustaron Más? {currentDisplayMetrics.isLinkSpecific ? `(En este Link)` : `(Todas las Partes de la Web)`}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {currentDisplayMetrics.isLinkSpecific
                 ? `Desglose de navegación de los usuarios que entraron a través de: "${activeLink?.name}"`
-                : 'Métricas de interés acumuladas de todo el sitio web por volumen de vistas y me gusta.'}
+                : 'Métricas completas de cada sección pública y de cada módulo del Panel de Administración.'}
             </p>
           </div>
 
-          {activeLink && (
-            <span className="text-xs px-3 py-1 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold">
-              Filtrado por: {activeLink.name}
-            </span>
-          )}
+          {/* Filtro Rápido de Categorías: Todas las Partes vs Tienda vs Admin */}
+          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-[#252038] border border-slate-200/80 dark:border-white/10 shrink-0">
+            <button
+              type="button"
+              onClick={() => setSectionFilterCategory('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                sectionFilterCategory === 'all'
+                  ? 'bg-fio-purple text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple'
+              }`}
+            >
+              🌐 Todas ({allRankedSections.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setSectionFilterCategory('store')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                sectionFilterCategory === 'store'
+                  ? 'bg-fio-purple text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple'
+              }`}
+            >
+              🛍️ Tienda & Clientes ({storeCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setSectionFilterCategory('admin')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                sectionFilterCategory === 'admin'
+                  ? 'bg-fio-purple text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple'
+              }`}
+            >
+              🛡️ Panel Admin ({adminCount})
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {rankedSections.map((section, index) => {
+        {/* Grid de Secciones */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          {filteredSections.map((section, index) => {
             const IconComponent = section.icon;
             const percentage = Math.round((section.score / maxSectionScore) * 100);
+            const isAdmin = section.category === 'admin';
 
             return (
               <div
                 key={section.id}
-                className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-[#252038] border border-slate-200 dark:border-purple-900/40 hover:border-purple-300 dark:hover:border-purple-700 transition-all space-y-3"
+                className="p-4 rounded-2xl bg-slate-50 dark:bg-[#252038] border border-slate-200 dark:border-purple-900/40 hover:border-purple-300 dark:hover:border-purple-700 transition-all space-y-3 flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-200 dark:bg-purple-900 text-slate-700 dark:text-white font-bubble font-bold text-xs">
-                      #{index + 1}
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-200 dark:bg-purple-900 text-slate-700 dark:text-white font-bubble font-bold text-[11px] shrink-0">
+                        #{index + 1}
+                      </div>
+                      <div className={`w-8 h-8 rounded-xl bg-gradient-to-tr ${section.color} text-white flex items-center justify-center shadow-xs shrink-0`}>
+                        <IconComponent className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-xs sm:text-sm font-bubble font-bold text-slate-900 dark:text-white truncate" title={section.label}>
+                          {section.label}
+                        </h4>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase ${
+                            isAdmin
+                              ? 'bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300'
+                              : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                          }`}>
+                            {isAdmin ? 'Admin' : 'Público'}
+                          </span>
+                          <span className="text-[10px] font-mono text-slate-400 truncate">
+                            {section.routePath}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-tr ${section.color} text-white flex items-center justify-center shadow-md`}>
-                      <IconComponent className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bubble font-bold text-slate-900 dark:text-white">
-                        {section.label}
-                      </h4>
-                      <span className="text-[11px] font-mono text-slate-500">
-                        Ruta: {section.routePath}
-                      </span>
+
+                    <div className="text-right shrink-0">
+                      <div className="text-xs font-bubble font-bold text-fio-purple dark:text-fio-pink">
+                        {percentage}%
+                      </div>
+                      <div className="text-[9px] text-slate-400">
+                        Afinidad
+                      </div>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <div className="text-sm font-bubble font-bold text-fio-purple dark:text-fio-pink">
-                      {percentage}% Popularidad
+                  {/* Barra de Progreso */}
+                  <div className="h-2 w-full bg-slate-200 dark:bg-[#1E1B2E] rounded-full overflow-hidden">
+                    <div
+                      style={{ width: `${percentage}%` }}
+                      className={`h-full bg-gradient-to-r ${section.color} rounded-full transition-all duration-700 ease-out`}
+                    />
+                  </div>
+
+                  {/* Métricas: Vistas, Likes y Tiempo */}
+                  <div className="grid grid-cols-3 gap-1.5 text-center">
+                    <div className="p-1.5 rounded-xl bg-white dark:bg-[#1E1B2E] border border-slate-200/60 dark:border-white/5">
+                      <div className="text-xs font-bubble font-bold text-slate-900 dark:text-white">
+                        {section.views.toLocaleString()}
+                      </div>
+                      <div className="text-[9px] text-slate-400 uppercase font-bubble">
+                        Vistas
+                      </div>
                     </div>
-                    <div className="text-[10px] text-slate-400">
-                      Índice de afinidad
+
+                    <div className="p-1.5 rounded-xl bg-white dark:bg-[#1E1B2E] border border-slate-200/60 dark:border-white/5">
+                      <div className="text-xs font-bubble font-bold text-pink-600 dark:text-pink-400 flex items-center justify-center gap-1">
+                        <Heart className="w-2.5 h-2.5 fill-pink-500 text-pink-500" />
+                        <span>{section.likes.toLocaleString()}</span>
+                      </div>
+                      <div className="text-[9px] text-slate-400 uppercase font-bubble">
+                        Me Gusta
+                      </div>
+                    </div>
+
+                    <div className="p-1.5 rounded-xl bg-white dark:bg-[#1E1B2E] border border-slate-200/60 dark:border-white/5">
+                      <div className="text-xs font-bubble font-bold text-indigo-600 dark:text-indigo-400 flex items-center justify-center gap-1">
+                        <Clock className="w-2.5 h-2.5" />
+                        <span>{section.timeSpentAvgMinutes}m</span>
+                      </div>
+                      <div className="text-[9px] text-slate-400 uppercase font-bubble">
+                        Tiempo
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Barra de Progreso */}
-                <div className="h-2.5 w-full bg-slate-200 dark:bg-[#1E1B2E] rounded-full overflow-hidden">
-                  <div
-                    style={{ width: `${percentage}%` }}
-                    className={`h-full bg-gradient-to-r ${section.color} rounded-full transition-all duration-700 ease-out`}
-                  />
-                </div>
-
-                {/* Números de la sección */}
-                <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-200/60 dark:border-purple-900/30 text-center">
-                  <div className="p-2 rounded-xl bg-white dark:bg-[#1E1B2E]">
-                    <div className="text-xs sm:text-sm font-bubble font-bold text-slate-900 dark:text-white">
-                      {section.views.toLocaleString()}
-                    </div>
-                    <div className="text-[10px] text-slate-500 uppercase font-bubble">
-                      Vistas
-                    </div>
-                  </div>
-
-                  <div className="p-2 rounded-xl bg-white dark:bg-[#1E1B2E]">
-                    <div className="text-xs sm:text-sm font-bubble font-bold text-pink-600 dark:text-pink-400 flex items-center justify-center gap-1">
-                      <Heart className="w-3 h-3 fill-pink-500 text-pink-500" />
-                      <span>{section.likes.toLocaleString()}</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500 uppercase font-bubble">
-                      Me Gusta
-                    </div>
-                  </div>
-
-                  <div className="p-2 rounded-xl bg-white dark:bg-[#1E1B2E]">
-                    <div className="text-xs sm:text-sm font-bubble font-bold text-indigo-600 dark:text-indigo-400 flex items-center justify-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      <span>{section.timeSpentAvgMinutes}m</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500 uppercase font-bubble">
-                      Tiempo Prom.
-                    </div>
-                  </div>
-                </div>
+                {/* Botón para Abrir / Navegar a la Sección */}
+                <button
+                  type="button"
+                  onClick={() => handleGoToSection(section)}
+                  className="w-full mt-2 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1E1B2E] hover:bg-purple-100 dark:hover:bg-purple-900/40 text-slate-700 dark:text-slate-200 text-[11px] font-bubble font-bold transition-all border border-slate-200/80 dark:border-white/10 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                >
+                  <span>Abrir Sección</span>
+                  <ArrowRight className="w-3 h-3 text-fio-purple" />
+                </button>
               </div>
             );
           })}

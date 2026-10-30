@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.89.0 - Inclusión de Todas las Partes de la Web hasta el Panel Admin en Secciones Más Gustadas
+- [x] **Monitoreo Integral de Toda la Web hasta el Panel de Administración (`MetricsPage.tsx` & `metricsTracker.ts`):**
+  - La sección *"¿Qué Secciones Gustaron Más?"* ahora incluye absolutamente todas las partes del ecosistema web:
+    - **Públicas / Tienda:** Portada / Inicio, Catálogo Digital, Tienda Online, Talleres Creativos, Detalle de Taller, Precios & Stickers, Portal de Acceso / Login.
+    - **Panel de Administración:** Menú Principal (Hub), Facturación Rápida & POS, Cola de Pedidos & Alisto QR, Inventario & Stock QR, Caja & Reportería / Cierre Diario, Gestión de Alumnos & Talleres, Editor de Precios & Stickers, Gestión de Perfiles & PINs, y Panel de Métricas Privado.
+  - Filtro interactivo de 3 vistas en cabecera:
+    - `🌐 Todas las Partes` (16 secciones combinadas ordenadas por popularidad)
+    - `🛍️ Tienda & Clientes` (7 secciones públicas)
+    - `🛡️ Panel de Administración` (9 submódulos administrativos)
+- [x] **Rastreo Automático Activo de Módulos Admin (`App.tsx` & `metricsTracker.ts`):**
+  - Conexión del listener de rutas para registrar la navegación activa entre los submódulos de administración (`admin`, `admin-billing`, `admin-orders`, `admin-inventory`, etc.).
+  - Botón *"Abrir Sección →"* en cada tarjeta de métrica para saltar de inmediato a la sección correspondiente.
+
 ### Versión 1.88.0 - Métricas Específicas por Enlace Creado & Opción "Todas las Secciones"
 - [x] **Métricas Específicas por Enlace Creado (`MetricsPage.tsx` & `metricsTracker.ts`):**
   - Selector interactivo de enlaces en cabecera: permite alternar entre **Métricas Globales (Todo el Sitio)** y **Métricas Exclusivas de cada Enlace Creado**.

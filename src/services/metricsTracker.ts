@@ -2,6 +2,28 @@ import { MetricsState, TrackedLink } from '../types';
 
 const STORAGE_KEY = 'byfio_metrics_tracker_v1';
 
+const DEFAULT_SECTIONS_INITIAL: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }> = {
+  // Secciones Públicas de la Web
+  home: { views: 1842, likes: 242, timeSpentAvgMinutes: 2.5 },
+  catalogo: { views: 1420, likes: 318, timeSpentAvgMinutes: 4.2 },
+  store: { views: 1180, likes: 294, timeSpentAvgMinutes: 3.8 },
+  workshops: { views: 890, likes: 205, timeSpentAvgMinutes: 3.1 },
+  precios: { views: 670, likes: 168, timeSpentAvgMinutes: 2.1 },
+  'workshop-detail': { views: 430, likes: 112, timeSpentAvgMinutes: 2.9 },
+  login: { views: 320, likes: 62, timeSpentAvgMinutes: 1.5 },
+
+  // Secciones del Panel de Administración
+  admin: { views: 560, likes: 148, timeSpentAvgMinutes: 5.8 },
+  'admin-billing': { views: 420, likes: 115, timeSpentAvgMinutes: 6.9 },
+  'admin-orders': { views: 390, likes: 96, timeSpentAvgMinutes: 6.1 },
+  'admin-inventory': { views: 345, likes: 88, timeSpentAvgMinutes: 4.7 },
+  'admin-reports': { views: 295, likes: 78, timeSpentAvgMinutes: 5.2 },
+  'admin-workshops': { views: 265, likes: 68, timeSpentAvgMinutes: 3.9 },
+  'admin-pricing': { views: 215, likes: 52, timeSpentAvgMinutes: 3.4 },
+  'admin-users': { views: 185, likes: 45, timeSpentAvgMinutes: 2.9 },
+  metricas: { views: 170, likes: 58, timeSpentAvgMinutes: 4.2 },
+};
+
 const INITIAL_METRICS_STATE: MetricsState = {
   totalPageLoads: 1842,
   uniqueSessions: 1256,
@@ -26,6 +48,7 @@ const INITIAL_METRICS_STATE: MetricsState = {
         store: { views: 380, likes: 88, timeSpentAvgMinutes: 3.2 },
         workshops: { views: 240, likes: 45, timeSpentAvgMinutes: 2.8 },
         precios: { views: 180, likes: 32, timeSpentAvgMinutes: 1.9 },
+        'admin-billing': { views: 65, likes: 18, timeSpentAvgMinutes: 4.1 },
       },
       createdAt: '2026-10-15T10:00:00.000Z',
       lastClickedAt: '2026-10-30T10:20:00.000Z',
@@ -88,14 +111,7 @@ const INITIAL_METRICS_STATE: MetricsState = {
       lastClickedAt: '2026-10-30T09:10:00.000Z',
     },
   ],
-  sections: {
-    home: { views: 1842, likes: 242, timeSpentAvgMinutes: 2.5 },
-    catalogo: { views: 1420, likes: 318, timeSpentAvgMinutes: 4.2 },
-    store: { views: 1180, likes: 294, timeSpentAvgMinutes: 3.8 },
-    workshops: { views: 890, likes: 205, timeSpentAvgMinutes: 3.1 },
-    precios: { views: 670, likes: 168, timeSpentAvgMinutes: 2.1 },
-    'workshop-detail': { views: 430, likes: 112, timeSpentAvgMinutes: 2.9 },
-  },
+  sections: DEFAULT_SECTIONS_INITIAL,
   lastVisitTimestamp: new Date().toISOString(),
 };
 
@@ -111,7 +127,16 @@ export const metricsTracker = {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed: MetricsState = JSON.parse(stored);
-        // Garantizar migración suave de links antiguos sin sectionsVisited
+
+        // Migración suave: asegurar que todas las secciones (públicas y de administración) existan
+        if (!parsed.sections) parsed.sections = {};
+        Object.entries(DEFAULT_SECTIONS_INITIAL).forEach(([secKey, secVal]) => {
+          if (!parsed.sections[secKey]) {
+            parsed.sections[secKey] = { ...secVal };
+          }
+        });
+
+        // Garantizar migración de links antiguos
         if (Array.isArray(parsed.trackedLinks)) {
           parsed.trackedLinks.forEach((l) => {
             if (!l.sectionsVisited) l.sectionsVisited = {};
@@ -136,11 +161,6 @@ export const metricsTracker = {
   },
 
   recordPageView(route: string, searchParams?: URLSearchParams): MetricsState {
-    // No registrar la ruta privada de métricas ni el login administrativo
-    if (route === 'metricas' || route === 'admin') {
-      return this.getMetrics();
-    }
-
     const state = this.getMetrics();
     const isMobile = isMobileDevice();
 
@@ -222,13 +242,13 @@ export const metricsTracker = {
       }
     }
 
-    // Registrar sección visitada
+    // Registrar sección visitada (incluyendo todas las partes públicas y del panel admin)
     const sectionKey = route || 'home';
     if (!state.sections[sectionKey]) {
       state.sections[sectionKey] = {
         views: 1,
         likes: 0,
-        timeSpentAvgMinutes: 1.8,
+        timeSpentAvgMinutes: 2.0,
       };
     } else {
       state.sections[sectionKey].views += 1;
@@ -243,7 +263,7 @@ export const metricsTracker = {
           link.sectionsVisited[sectionKey] = {
             views: 1,
             likes: 0,
-            timeSpentAvgMinutes: 1.8,
+            timeSpentAvgMinutes: 2.0,
           };
         } else {
           link.sectionsVisited[sectionKey].views += 1;

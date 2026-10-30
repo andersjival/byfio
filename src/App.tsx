@@ -200,15 +200,18 @@ export const App: React.FC = () => {
     return cleanupSounds;
   }, []);
 
-  // Rastrear vistas de páginas, dispositivos (PC/Móvil) y enlaces generados
+  // Rastrear vistas de páginas, dispositivos (PC/Móvil) y enlaces generados (incluyendo panel admin y submódulos)
   useEffect(() => {
     try {
       const searchParams = new URLSearchParams(window.location.search);
-      metricsTracker.recordPageView(currentRoute, searchParams);
+      const effectiveSection = currentRoute === 'admin'
+        ? (adminTab === 'hub' ? 'admin' : `admin-${adminTab}`)
+        : currentRoute;
+      metricsTracker.recordPageView(effectiveSection, searchParams);
     } catch (e) {
       console.warn('Metrics tracking error', e);
     }
-  }, [currentRoute]);
+  }, [currentRoute, adminTab]);
 
   const adminBreadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },
