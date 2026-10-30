@@ -17,6 +17,20 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.65.0 - Erradicación de Cortes en Bordes del Login (Tema Oscuro y Claro)
+- [x] **Enmarcado 3D Completo y Bordes Delicados (`LoginModal.tsx` e `index.css`):**
+  - Incorporado borde definido `1.5px solid rgba(216, 180, 254, 0.45)` y sombra con halo perimetral en modo oscuro, además de borde sutil `rgba(255, 255, 255, 0.85)` en modo claro, eliminando sensaciones de tarjeta cortada o bordes duros.
+  - El pedestal inferior (`.pedestal`) ahora cuenta con degradado oscuro ambientado (`#5b3e8a` a `#2f1d4f`) con brillo púrpura suave en tema oscuro y ancho contenido anti-desborde en móviles.
+- [x] **Contención Íntegra de Ilustración de Niña y Estrella (`index.css`):**
+  - Ajustada la cápsula `.characters-stage` con padding horizontal de seguridad (`14px` desktop / `10px` móvil) y escala `max-width: 100%; max-height: 100%`.
+  - La estrella violeta con su mini-estrella dorada, los brazos, dedos, manos y el peinado de la niña se despliegan al 100% completos sin ser recortados por el `overflow` de la tarjeta.
+- [x] **Botón de Cierre "X" Protegido contra Cortes (`LoginModal.tsx` e `index.css`):**
+  - Reubicado el botón de cierre dentro de la tarjeta (`.login-card`), con anclaje seguro `top-3.5 right-3.5` y estilos adaptados a ambos temas, eliminando el corte que sufría en esquinas de pantalla.
+- [x] **Eliminación del Contenedor Rígido Radial en Páginas Autónomas (`LoginModal.tsx`):**
+  - Sustituido el bloque rectangular con fondo radial púrpura que generaba cortes cuadrados en `/login` y en `/admin` por una alineación fluida y limpia que respeta el fondo natural del tema activo.
+- [x] **Integración Continua del Selector de Método (`LoginModal.tsx` e `index.css`):**
+  - Selector de "Correo / Fio" vs "PIN 4 Dígitos" integrado de forma armónica dentro de `.form-panel`, manteniendo la continuidad anatómica donde la niña y la estrella descansan sobre el panel.
+
 ### Versión 1.64.0 - Corrección Visual y Contraste de Elementos en Tema Oscuro
 - [x] **Notificación Flotante de Carrito (`CartSuccessToast.tsx` e `index.css`):**
   - Fondo oscuro con desenfoque `rgba(44, 39, 70, 0.98)` y borde lila translúcido en lugar de blanco deslumbrante.

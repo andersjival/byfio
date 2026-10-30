@@ -89,23 +89,24 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     : null;
 
   const content = (
-    <div className="scene-wrapper relative py-2 sm:py-3 w-full max-w-sm sm:max-w-md mx-auto">
-      {/* Botón flotante para cerrar en modo modal */}
-      {!isStandalonePage && (
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-0 right-0 z-30 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-slate-600 hover:text-fio-pink shadow-md flex items-center justify-center transition-all active:scale-95 border border-purple-100"
-          title="Cerrar ventana"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      )}
-
+    <div className="scene-wrapper relative py-2 sm:py-3 w-full max-w-sm sm:max-w-md mx-auto flex flex-col items-center">
       {/* Tarjeta Principal Estilo Claymorphism 3D */}
-      <div className="login-card">
+      <div className="login-card relative">
+        {/* Botón flotante para cerrar en modo modal (dentro de la tarjeta para evitar cortes en bordes) */}
+        {!isStandalonePage && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="login-close-btn absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-30 w-8 h-8 rounded-full bg-white/85 hover:bg-white text-slate-600 hover:text-fio-pink shadow-sm flex items-center justify-center transition-all active:scale-90 border border-purple-200/80 cursor-pointer"
+            title="Cerrar ventana"
+            aria-label="Cerrar"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+
         {/* Encabezado */}
-        <div className="header">
+        <div className="header px-8 sm:px-10">
           <div className="heart-badge">
             <span className="heart-rays">彡</span>
             <Heart className="w-6 h-6 fill-current heart-icon inline-block" />
@@ -134,47 +135,46 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           />
         </div>
 
-        {/* Selector de Método: Correo vs PIN de Colaborador */}
-        {mode === 'login' && (
-          <div className="px-5 pt-1 pb-2">
-            <div className="flex items-center p-1 rounded-2xl bg-white/70 border border-purple-200/80 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => {
-                  setLoginMethod('email');
-                  setErrorMessage(null);
-                }}
-                className={`flex-1 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
-                  loginMethod === 'email'
-                    ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>Correo / Fio</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setLoginMethod('pin');
-                  setErrorMessage(null);
-                }}
-                className={`flex-1 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
-                  loginMethod === 'pin'
-                    ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <KeyRound className="w-3.5 h-3.5" />
-                <span>PIN 4 Dígitos</span>
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Formulario */}
         <form className="form-panel" onSubmit={handleSubmit}>
+          {/* Selector de Método: Correo vs PIN de Colaborador (integrado dentro del panel para continuidad visual 3D) */}
+          {mode === 'login' && (
+            <div className="mb-3.5">
+              <div className="flex items-center p-1 rounded-2xl bg-white/80 border border-purple-200/80 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginMethod('email');
+                    setErrorMessage(null);
+                  }}
+                  className={`flex-1 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    loginMethod === 'email'
+                      ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <User className="w-3.5 h-3.5" />
+                  <span>Correo / Fio</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginMethod('pin');
+                    setErrorMessage(null);
+                  }}
+                  className={`flex-1 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    loginMethod === 'pin'
+                      ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>PIN 4 Dígitos</span>
+                </button>
+              </div>
+            </div>
+          )}
           {/* Mensaje de Sesión Activa con Botón Directo al Admin */}
           {currentUser && (
             <div className="mb-3 p-3 rounded-2xl bg-purple-50 border border-purple-200 text-xs text-purple-950 shadow-xs space-y-2">
@@ -420,19 +420,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   if (!isStandalonePage) {
     return (
       <div
-        className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 animate-fadeIn"
+        className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fadeIn"
         onClick={onClose}
       >
-        <div onClick={(e) => e.stopPropagation()} className="max-w-md w-full flex justify-center">
+        <div onClick={(e) => e.stopPropagation()} className="w-full flex justify-center">
           {content}
         </div>
       </div>
     );
   }
 
-  // Si es modo página completa (/login)
+  // Si es modo página completa (/login) o embebido en /admin
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-4 px-2 bg-radial from-[#f3e5f5] via-[#c8a7e0] to-[#9c78c2]">
+    <div className="w-full flex items-center justify-center py-4 sm:py-8 px-2 sm:px-4">
       {content}
     </div>
   );
