@@ -30,7 +30,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     loginIntroStage,
     triggerLoginCinematic,
   } = useApp();
-  const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>('email');
+  const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>('pin');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

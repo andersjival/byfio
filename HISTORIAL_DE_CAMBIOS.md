@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.82.0 - Diagnóstico, Visibilidad Inmediata de Perfiles de Usuario y Badge en Admin Navbar
+- [x] **Apertura Directa en Modo PIN con Selector de Perfiles (`LoginModal.tsx`):**
+  - Establecido `pin` como método predeterminado en lugar de `email`, haciendo inmediatamente visibles el campo *"Perfil de Usuario"* y los botones de acceso rápido de los perfiles activos (`ALISTO DE PEDIDOS`, `ATENCIÓN Y TALLERES` y los perfiles creados por el admin).
+  - Erradicado el problema donde los perfiles quedaban ocultos tras la pestaña de correo.
+- [x] **Indicador Visual del Perfil Activo en la Barra de Administración (`Navbar.tsx`):**
+  - Agregada píldora identificadora con punto verde pulsante, nombre del perfil y etiqueta `Admin`/`Staff` en la barra superior al estar dentro del panel de administración.
+- [x] **Persistencia y Clarificación de Perfiles Locales:**
+  - Garantizada la compatibilidad con el almacenamiento `byfio_user_profiles_v1` en `localStorage` y verificada la restricción de visibilidad según los permisos asignados en el perfil de cada colaborador.
+
 ### Versión 1.81.0 - Optimización de Legibilidad y Cadencia Pausada en Mascota Motivacional
 - [x] **Cadencia de Escritura Cómoda y Pausada (`FloatingMascot.tsx`):**
   - Velocidad de mecanografía ajustada de 34ms a **62ms por carácter**, logrando una lectura fluida, natural y comprensible.

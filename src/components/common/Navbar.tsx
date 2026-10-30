@@ -346,6 +346,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>Menú Principal</span>
               </button>
 
+              {/* Indicador de Perfil de Usuario Activo en Admin */}
+              {currentUser && (
+                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-purple-50/90 border border-purple-200/80 text-xs font-bubble font-bold text-slate-700 shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <span className="truncate max-w-[120px]">{currentUser.name}</span>
+                  <span className="px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
+                    {currentUser.role === 'admin' ? 'Admin' : 'Staff'}
+                  </span>
+                </div>
+              )}
+
               {/* Botón Cerrar Sesión en Admin */}
               {currentUser && (
                 <button
