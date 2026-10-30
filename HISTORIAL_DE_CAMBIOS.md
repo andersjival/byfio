@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.85.0 - Actualización del Video de Introducción Oficial
+- [x] **Reemplazo del Video de la Intro Web (`public/assets/intro-web-byfio.mp4`):**
+  - Actualizado el archivo del video de intro con la versión descargada `INTRO BYFIO WEB.mp4` (3.64 MB).
+  - Copiado tanto a `public/assets/intro-web-byfio.mp4` como a `public/intro-web-byfio.mp4`.
+  - Agregado parámetro de cache-busting (`?v=20261030`) en [`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx#L291) para forzar la recarga limpia en todos los navegadores sin retención de caché.
+
 ### Versión 1.84.0 - Creación Directa de Facturas (POS), Buscador Rápido de Productos y Ficha de Clientes Dinámica
 - [x] **Flujo Rápido de Facturación en Mostrador / POS (`QuickBillingSection.tsx`):**
   - Buscador predictivo de productos en tiempo real con selector de cantidad (+ / - / input numérico) y botón directo de inclusión.

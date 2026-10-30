@@ -288,7 +288,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
         <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black/60 border border-white/25 shadow-[0_25px_80px_rgba(74,14,120,0.7)] backdrop-blur-md">
           <video
             ref={videoRef}
-            src="/assets/intro-web-byfio.mp4"
+            src="/assets/intro-web-byfio.mp4?v=20261030"
             playsInline
             autoPlay
             muted={isMuted}
