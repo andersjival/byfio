@@ -357,11 +357,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const syncProfilesToCloud = (profiles: UserProfile[]) => {
-    fetch('/api/user-profiles', {
+    fetch('/api/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ profiles }),
-    }).catch(() => {});
+    }).catch(() => {
+      fetch('/api/user-profiles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profiles }),
+      }).catch(() => {});
+    });
   };
 
   const addUserProfile = (profileData: Omit<UserProfile, 'id' | 'createdAt'>) => {
@@ -862,23 +868,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       })
       .catch(() => {});
 
-    fetch('/api/user-profiles')
+    const handleLoadedProfiles = (data: any) => {
+      if (data && Array.isArray(data.profiles) && data.profiles.length > 0) {
+        const cloudProfiles: UserProfile[] = data.profiles;
+        setUserProfiles((prev) => {
+          const map = new Map<string, UserProfile>();
+          DEFAULT_USER_PROFILES.forEach((p) => map.set(p.id, p));
+          prev.forEach((p) => map.set(p.id, p));
+          cloudProfiles.forEach((p) => map.set(p.id, p));
+          const merged = Array.from(map.values());
+          localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged));
+          return merged;
+        });
+      }
+    };
+
+    fetch('/api/users')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data && Array.isArray(data.profiles) && data.profiles.length > 0) {
-          const cloudProfiles: UserProfile[] = data.profiles;
-          setUserProfiles((prev) => {
-            const map = new Map<string, UserProfile>();
-            DEFAULT_USER_PROFILES.forEach((p) => map.set(p.id, p));
-            prev.forEach((p) => map.set(p.id, p));
-            cloudProfiles.forEach((p) => map.set(p.id, p));
-            const merged = Array.from(map.values());
-            localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged));
-            return merged;
-          });
+        if (data?.profiles?.length) {
+          handleLoadedProfiles(data);
+        } else {
+          fetch('/api/user-profiles')
+            .then((res) => (res.ok ? res.json() : null))
+            .then(handleLoadedProfiles)
+            .catch(() => {});
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        fetch('/api/user-profiles')
+          .then((res) => (res.ok ? res.json() : null))
+          .then(handleLoadedProfiles)
+          .catch(() => {});
+      });
   }, []);
 
   useEffect(() => {
