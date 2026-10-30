@@ -194,9 +194,12 @@ export interface TrackedLink {
   name: string; // ej. "Instagram Bio", "WhatsApp Clientes", "Promo Feria"
   slug: string; // ej. "insta-bio", "wa-promo"
   targetRoute: string; // ej. "/", "/catalogo", "/tienda", "/talleres"
+  targetLabel?: string; // ej. "Todo el Sitio Web", "Catálogo Digital", etc.
   clicks: number; // Veces que se abrió el link
+  pageViews?: number; // Cargas de página generadas por este link
   pcClicks: number; // Clics desde PC / Desktop
   mobileClicks: number; // Clics desde Celular / Móvil
+  sectionsVisited?: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }>;
   createdAt: string;
   lastClickedAt?: string;
 }

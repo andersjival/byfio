@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.88.0 - Métricas Específicas por Enlace Creado & Opción "Todas las Secciones"
+- [x] **Métricas Específicas por Enlace Creado (`MetricsPage.tsx` & `metricsTracker.ts`):**
+  - Selector interactivo de enlaces en cabecera: permite alternar entre **Métricas Globales (Todo el Sitio)** y **Métricas Exclusivas de cada Enlace Creado**.
+  - Al seleccionar un enlace creado, se muestran sus datos 100% aislados:
+    - Cuántas veces se abrió ese enlace específico (`clicks`).
+    - Cuántas cargas de página generó (`pageViews`).
+    - En cuántas computadoras (PC) y teléfonos celulares se abrió ese enlace específico con su barra comparativa porcentual.
+    - Qué secciones navegaron y gustaron más a las personas que abrieron ese enlace en particular (`sectionsVisited`).
+  - Botón directo *"Ver Métricas de este Link"* en cada tarjeta de enlace de la lista para cargarlo a pantalla con un solo clic.
+- [x] **Opción y Botón "Todas las Secciones" en Generador de Enlaces (`MetricsPage.tsx`):**
+  - Añadido el botón destacado **"🌐 Todas las Secciones / Todo el Sitio Web"** para generar enlaces que abren la portada y rastrean la navegación completa del visitante en cualquier sección del sitio web.
+  - Botones de selección rápida de un clic para destino: [Todas las Secciones], [Tienda Online], [Catálogo Digital], [Talleres Creativos] y [Precios de Stickers].
+
 ### Versión 1.87.0 - Corrección de Tema Claro en Facturación & Configuración Estricta darkMode: class
 - [x] **Configuración Estricta `darkMode: 'class'` en Tailwind (`tailwind.config.js`):**
   - Añadido `darkMode: 'class'` para erradicar el conflicto donde el modo oscuro del sistema operativo (Windows `@media prefers-color-scheme: dark`) forzaba clases oscuras en componentes mientras la app estaba en Tema Claro (`vibrant`).

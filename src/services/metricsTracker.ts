@@ -15,9 +15,18 @@ const INITIAL_METRICS_STATE: MetricsState = {
       name: 'Instagram Bio Oficial',
       slug: 'insta-bio',
       targetRoute: '/',
+      targetLabel: 'Todo el Sitio Web (Portada)',
       clicks: 540,
+      pageViews: 1280,
       pcClicks: 110,
       mobileClicks: 430,
+      sectionsVisited: {
+        home: { views: 540, likes: 98, timeSpentAvgMinutes: 2.4 },
+        catalogo: { views: 420, likes: 115, timeSpentAvgMinutes: 4.5 },
+        store: { views: 380, likes: 88, timeSpentAvgMinutes: 3.2 },
+        workshops: { views: 240, likes: 45, timeSpentAvgMinutes: 2.8 },
+        precios: { views: 180, likes: 32, timeSpentAvgMinutes: 1.9 },
+      },
       createdAt: '2026-10-15T10:00:00.000Z',
       lastClickedAt: '2026-10-30T10:20:00.000Z',
     },
@@ -26,9 +35,17 @@ const INITIAL_METRICS_STATE: MetricsState = {
       name: 'Catálogo WhatsApp Clientes',
       slug: 'wa-catalogo',
       targetRoute: '/catalogo',
+      targetLabel: 'Catálogo Digital',
       clicks: 388,
+      pageViews: 860,
       pcClicks: 48,
       mobileClicks: 340,
+      sectionsVisited: {
+        catalogo: { views: 388, likes: 142, timeSpentAvgMinutes: 5.1 },
+        store: { views: 260, likes: 74, timeSpentAvgMinutes: 3.4 },
+        home: { views: 190, likes: 30, timeSpentAvgMinutes: 1.8 },
+        precios: { views: 110, likes: 22, timeSpentAvgMinutes: 2.0 },
+      },
       createdAt: '2026-10-18T14:30:00.000Z',
       lastClickedAt: '2026-10-30T11:15:00.000Z',
     },
@@ -37,9 +54,17 @@ const INITIAL_METRICS_STATE: MetricsState = {
       name: 'TikTok Enlace Perfil',
       slug: 'tiktok-bio',
       targetRoute: '/tienda',
+      targetLabel: 'Tienda Online',
       clicks: 295,
+      pageViews: 620,
       pcClicks: 25,
       mobileClicks: 270,
+      sectionsVisited: {
+        store: { views: 295, likes: 96, timeSpentAvgMinutes: 4.0 },
+        catalogo: { views: 190, likes: 52, timeSpentAvgMinutes: 3.2 },
+        home: { views: 150, likes: 28, timeSpentAvgMinutes: 1.5 },
+        workshops: { views: 85, likes: 18, timeSpentAvgMinutes: 2.1 },
+      },
       createdAt: '2026-10-20T09:00:00.000Z',
       lastClickedAt: '2026-10-29T18:40:00.000Z',
     },
@@ -48,9 +73,17 @@ const INITIAL_METRICS_STATE: MetricsState = {
       name: 'Código QR Tarjetas y Taller',
       slug: 'qr-taller',
       targetRoute: '/talleres',
+      targetLabel: 'Talleres Creativos',
       clicks: 215,
+      pageViews: 480,
       pcClicks: 18,
       mobileClicks: 197,
+      sectionsVisited: {
+        workshops: { views: 215, likes: 78, timeSpentAvgMinutes: 4.8 },
+        'workshop-detail': { views: 140, likes: 42, timeSpentAvgMinutes: 3.6 },
+        home: { views: 95, likes: 16, timeSpentAvgMinutes: 1.9 },
+        catalogo: { views: 60, likes: 12, timeSpentAvgMinutes: 2.5 },
+      },
       createdAt: '2026-10-22T16:00:00.000Z',
       lastClickedAt: '2026-10-30T09:10:00.000Z',
     },
@@ -77,7 +110,15 @@ export const metricsTracker = {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed: MetricsState = JSON.parse(stored);
+        // Garantizar migración suave de links antiguos sin sectionsVisited
+        if (Array.isArray(parsed.trackedLinks)) {
+          parsed.trackedLinks.forEach((l) => {
+            if (!l.sectionsVisited) l.sectionsVisited = {};
+            if (l.pageViews === undefined) l.pageViews = l.clicks;
+          });
+        }
+        return parsed;
       }
     } catch (e) {
       console.warn('Error reading metrics from localStorage', e);
@@ -106,7 +147,7 @@ export const metricsTracker = {
     state.totalPageLoads += 1;
     state.lastVisitTimestamp = new Date().toISOString();
 
-    // Rastrear por dispositivo
+    // Rastrear por dispositivo global
     if (isMobile) {
       state.devices.mobile += 1;
     } else {
@@ -127,14 +168,25 @@ export const metricsTracker = {
     const params = searchParams || (typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null);
     const refSlug = params ? (params.get('ref') || params.get('link') || params.get('c') || params.get('camp')) : null;
 
+    let activeCampaignSlug: string | null = null;
+
     if (refSlug) {
-      const cleanSlug = refSlug.toLowerCase().trim();
+      activeCampaignSlug = refSlug.toLowerCase().trim();
+      try {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('byfio_active_campaign_ref', activeCampaignSlug);
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+
       const existingLinkIndex = state.trackedLinks.findIndex(
-        (l) => l.slug.toLowerCase() === cleanSlug
+        (l) => l.slug.toLowerCase() === activeCampaignSlug
       );
 
       if (existingLinkIndex >= 0) {
         state.trackedLinks[existingLinkIndex].clicks += 1;
+        state.trackedLinks[existingLinkIndex].pageViews = (state.trackedLinks[existingLinkIndex].pageViews || 0) + 1;
         if (isMobile) {
           state.trackedLinks[existingLinkIndex].mobileClicks += 1;
         } else {
@@ -145,20 +197,32 @@ export const metricsTracker = {
         // Auto-crear link si viene un parámetro nuevo
         const newTrackedLink: TrackedLink = {
           id: `link-${Date.now()}`,
-          name: `Enlace ref: ${cleanSlug}`,
-          slug: cleanSlug,
+          name: `Enlace ref: ${activeCampaignSlug}`,
+          slug: activeCampaignSlug,
           targetRoute: route === 'home' ? '/' : `/${route}`,
+          targetLabel: route === 'home' ? 'Todo el Sitio Web' : route.toUpperCase(),
           clicks: 1,
+          pageViews: 1,
           pcClicks: isMobile ? 0 : 1,
           mobileClicks: isMobile ? 1 : 0,
+          sectionsVisited: {},
           createdAt: new Date().toISOString(),
           lastClickedAt: new Date().toISOString(),
         };
         state.trackedLinks.unshift(newTrackedLink);
       }
+    } else {
+      // Recuperar si el visitante ya traía un link rastreado en esta sesión
+      try {
+        if (typeof window !== 'undefined') {
+          activeCampaignSlug = sessionStorage.getItem('byfio_active_campaign_ref');
+        }
+      } catch {
+        // Ignorar
+      }
     }
 
-    // Rastrear sección
+    // Registrar sección visitada
     const sectionKey = route || 'home';
     if (!state.sections[sectionKey]) {
       state.sections[sectionKey] = {
@@ -168,6 +232,23 @@ export const metricsTracker = {
       };
     } else {
       state.sections[sectionKey].views += 1;
+    }
+
+    // Vincular la navegación y sección visitada AL LINK ESPECÍFICO CREADO
+    if (activeCampaignSlug) {
+      const link = state.trackedLinks.find((l) => l.slug.toLowerCase() === activeCampaignSlug);
+      if (link) {
+        if (!link.sectionsVisited) link.sectionsVisited = {};
+        if (!link.sectionsVisited[sectionKey]) {
+          link.sectionsVisited[sectionKey] = {
+            views: 1,
+            likes: 0,
+            timeSpentAvgMinutes: 1.8,
+          };
+        } else {
+          link.sectionsVisited[sectionKey].views += 1;
+        }
+      }
     }
 
     this.saveMetrics(state);
@@ -185,11 +266,27 @@ export const metricsTracker = {
     } else {
       state.sections[sectionKey].likes += 1;
     }
+
+    // Si viene de un link rastreado, sumar el like a ese link
+    try {
+      if (typeof window !== 'undefined') {
+        const activeRef = sessionStorage.getItem('byfio_active_campaign_ref');
+        if (activeRef) {
+          const link = state.trackedLinks.find((l) => l.slug.toLowerCase() === activeRef);
+          if (link && link.sectionsVisited && link.sectionsVisited[sectionKey]) {
+            link.sectionsVisited[sectionKey].likes += 1;
+          }
+        }
+      }
+    } catch {
+      // Ignorar
+    }
+
     this.saveMetrics(state);
     return state;
   },
 
-  createTrackedLink(name: string, targetRoute: string, customSlug?: string): TrackedLink {
+  createTrackedLink(name: string, targetRoute: string, targetLabel?: string, customSlug?: string): TrackedLink {
     const state = this.getMetrics();
     let slug = customSlug
       ? customSlug.toLowerCase().replace(/[^a-z0-9_-]/g, '-').replace(/^-+|-+$/g, '')
@@ -210,9 +307,12 @@ export const metricsTracker = {
       name: name.trim() || `Campaña ${finalSlug}`,
       slug: finalSlug,
       targetRoute: targetRoute || '/',
+      targetLabel: targetLabel || 'Todo el Sitio Web',
       clicks: 0,
+      pageViews: 0,
       pcClicks: 0,
       mobileClicks: 0,
+      sectionsVisited: {},
       createdAt: new Date().toISOString(),
     };
 
@@ -233,8 +333,10 @@ export const metricsTracker = {
     const link = state.trackedLinks.find((l) => l.id === id);
     if (link) {
       link.clicks = 0;
+      link.pageViews = 0;
       link.pcClicks = 0;
       link.mobileClicks = 0;
+      link.sectionsVisited = {};
       link.lastClickedAt = undefined;
     }
     this.saveMetrics(state);
