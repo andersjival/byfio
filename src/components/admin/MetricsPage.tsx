@@ -3,7 +3,7 @@ import {
   Lock, Unlock, Monitor, Smartphone, Link2, Plus, Copy, Check,
   Trash2, RotateCcw, Heart, TrendingUp, BarChart3, Clock,
   ArrowRight, ShieldCheck, Share2, ExternalLink, RefreshCw,
-  ShoppingBag, BookOpen, Sparkles, Tag, GraduationCap, Home,
+  ShoppingBag, BookOpen, Star, Award, Tag, GraduationCap, Home,
   Info, AlertCircle, Globe, Filter, Eye, CheckCircle2,
   Receipt, Boxes, Landmark, QrCode, Users, Layers, Shield
 } from 'lucide-react';
@@ -70,7 +70,7 @@ const DESTINATION_OPTIONS: DestinationSectionOption[] = [
     name: 'Propuesta Integral & Ecosistema',
     path: '/propuesta',
     badge: 'Propuesta',
-    icon: Sparkles,
+    icon: Award,
   },
 ];
 
@@ -129,7 +129,7 @@ const SECTION_METADATA: Record<string, SectionMetadataItem> = {
   'workshop-detail': {
     label: 'Detalle de Taller',
     category: 'store',
-    icon: Sparkles,
+    icon: GraduationCap,
     routePath: '/talleres/:id',
     color: 'from-blue-500 to-cyan-600',
     routeKey: 'workshops',
@@ -227,7 +227,7 @@ const SECTION_METADATA: Record<string, SectionMetadataItem> = {
   propuesta: {
     label: 'Propuesta Integral & Ficha Técnica',
     category: 'admin',
-    icon: Sparkles,
+    icon: Award,
     routePath: '/propuesta',
     color: 'from-fio-purple to-pink-600',
     routeKey: 'propuesta',
@@ -462,6 +462,7 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
         totalPageLoads: linkPageViews,
         totalOpens: linkClicks,
         uniqueSessions: linkClicks,
+        cartAdditions: activeLink.cartAdditions || 0,
         pcCount: pc,
         mobileCount: mobile,
         pcPercentage: pcPct,
@@ -488,6 +489,9 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
       totalPageLoads: metrics.totalPageLoads,
       totalOpens: metrics.trackedLinks.reduce((acc, l) => acc + l.clicks, 0),
       uniqueSessions: metrics.uniqueSessions,
+      cartAdditions:
+        metrics.totalCartAdditions ??
+        metrics.trackedLinks.reduce((acc, l) => acc + (l.cartAdditions || 0), 0),
       pcCount: metrics.devices.pc,
       mobileCount: metrics.devices.mobile,
       pcPercentage: pcPct,
@@ -502,7 +506,7 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
       const meta = SECTION_METADATA[id] || {
         label: id.toUpperCase(),
         category: 'store' as const,
-        icon: Sparkles,
+        icon: Star,
         routePath: `/${id}`,
         color: 'from-purple-500 to-indigo-600',
         routeKey: 'home' as AppRoute,
@@ -535,6 +539,7 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
 ------------------------------------
 • Cargas Totales: ${currentDisplayMetrics.totalPageLoads.toLocaleString()}
 • Aperturas / Clics: ${currentDisplayMetrics.totalOpens.toLocaleString()}
+• Agregados al Carrito: ${currentDisplayMetrics.cartAdditions.toLocaleString()}
 • Dispositivos: 📱 Móvil ${currentDisplayMetrics.mobilePercentage}% (${currentDisplayMetrics.mobileCount}) | 💻 PC ${currentDisplayMetrics.pcPercentage}% (${currentDisplayMetrics.pcCount})
 
 ❤️ TODAS LAS PARTES DE LA WEB (PÚBLICAS & ADMIN):
@@ -795,7 +800,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
       </div>
 
       {/* TARJETAS PRINCIPALES DE MÉTRICAS (KPIS) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {/* Total Cargas de Página */}
         <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 relative overflow-hidden">
           <div className="flex items-center justify-between mb-2">
@@ -830,6 +835,27 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
           </div>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
             {currentDisplayMetrics.isLinkSpecific ? 'Aperturas directas del link' : 'Navegadores individuales'}
+          </p>
+        </div>
+
+        {/* Agregados al Carrito */}
+        <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-amber-200/80 dark:border-amber-900/40 shadow-lg shadow-purple-950/5 relative overflow-hidden">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bubble font-bold text-slate-500 dark:text-slate-400">
+              {currentDisplayMetrics.isLinkSpecific ? 'Al Carrito (Este Link)' : 'Al Carrito'}
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+              <ShoppingBag className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="text-2xl sm:text-3xl font-bubble font-bold text-amber-600 dark:text-amber-400">
+            {currentDisplayMetrics.cartAdditions.toLocaleString()}
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+            <span className="font-semibold text-amber-600 dark:text-amber-400">
+              {Math.round((currentDisplayMetrics.cartAdditions / Math.max(1, currentDisplayMetrics.totalOpens)) * 100)}%
+            </span>
+            <span>de conversión de clics</span>
           </p>
         </div>
 
@@ -1108,7 +1134,14 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                         <div className="text-xs font-bubble font-bold text-fio-purple dark:text-fio-pink">
                           {link.clicks} clics
                         </div>
-                        <div className="flex items-center gap-1 text-[11px] text-slate-500 border-l border-slate-200 pl-2">
+                        <div
+                          className="flex items-center gap-1 text-[11px] text-amber-600 dark:text-amber-400 border-l border-slate-200 dark:border-purple-900/50 pl-2 font-bold"
+                          title="Productos añadidos al carrito por visitantes de este link"
+                        >
+                          <ShoppingBag className="w-3 h-3 text-amber-500" />
+                          <span>{link.cartAdditions || 0} carrito</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 border-l border-slate-200 dark:border-purple-900/50 pl-2">
                           <Smartphone className="w-3 h-3 text-pink-500" />
                           <span>{link.mobileClicks}</span>
                           <Monitor className="w-3 h-3 text-blue-500 ml-1" />

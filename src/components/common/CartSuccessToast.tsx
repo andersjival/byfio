@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
-import { Check, ShoppingBag, X, Sparkles } from 'lucide-react';
+import { Check, ShoppingBag, X, CheckCircle2 } from 'lucide-react';
 
 export const CartSuccessToast: React.FC = () => {
   const { cartToast, closeCartToast, setIsCartOpen, cart } = useApp();
@@ -43,7 +43,7 @@ export const CartSuccessToast: React.FC = () => {
           {/* Información del Mensaje */}
           <div className="flex-1 min-w-0">
             <div className="toast-title flex items-center gap-1.5 text-emerald-700 font-bubble font-bold text-xs sm:text-sm">
-              <Sparkles className="w-3.5 h-3.5 text-fio-pink shrink-0 animate-pulse" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>¡Producto agregado con éxito!</span>
             </div>
 

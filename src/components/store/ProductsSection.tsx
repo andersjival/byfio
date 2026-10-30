@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCategory, Product } from '../../types';
 import { formatCRC } from '../../utils/formatters';
-import { ShoppingBag, Search, Sparkles, AlertCircle, Check } from 'lucide-react';
+import { ShoppingBag, Search, Star, AlertCircle, Check } from 'lucide-react';
 
 const CATEGORIES: ('Todas' | ProductCategory)[] = [
   'Todas',
@@ -51,7 +51,7 @@ export const ProductsSection: React.FC = () => {
       {/* Encabezado */}
       <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-fio-pink text-xs font-bold mb-2">
-          <Sparkles className="w-3.5 h-3.5 fill-current" />
+          <Star className="w-3.5 h-3.5 fill-current" />
           <span>Tienda Creativa & Insumos</span>
         </div>
         <h2 className="text-2xl sm:text-4xl font-bubble font-bold text-fio-900">

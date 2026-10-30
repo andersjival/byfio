@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
-  Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink,
+  Star, Award, BookOpen, Link2, CheckCircle2, ExternalLink,
   Share2, Tag, Users, BarChart3, ShieldCheck, ShoppingBag,
-  Clock, Check, Copy, ArrowRight, Printer, Star, Heart,
-  Smartphone, Monitor, Award, Sliders, Volume2, Database,
+  Clock, Check, Copy, ArrowRight, Printer, Heart,
+  Smartphone, Monitor, Sliders, Volume2, Database,
   ArrowUpRight, Palette, HelpCircle, Layers
 } from 'lucide-react';
 import { AppRoute } from '../../types';
@@ -121,7 +121,7 @@ MÓDULOS DEL SISTEMA:
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bubble font-bold text-xs mb-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <Award className="w-3.5 h-3.5 text-emerald-600" />
               <span>Transformación Operativa del Negocio</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
@@ -775,7 +775,7 @@ MÓDULOS DEL SISTEMA:
           <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
             <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-fio-pink to-purple-600 text-white flex items-center justify-center shadow-md">
-                <Sparkles className="w-6 h-6" />
+                <Star className="w-6 h-6 fill-current" />
               </div>
               <div>
                 <span className="text-[11px] font-bold text-fio-pink uppercase tracking-wider">Módulo 8</span>

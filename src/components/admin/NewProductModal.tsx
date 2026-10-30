@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { ProductCategory } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import {
-  X, PlusCircle, Sparkles, Wand2, Image as ImageIcon,
+  X, PlusCircle, Hash, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
   Store, BookOpen
 } from 'lucide-react';
@@ -256,7 +256,7 @@ export const NewProductModal: React.FC = () => {
                       className="text-[10px] text-fio-600 hover:text-fio-800 font-bold flex items-center gap-0.5"
                       title="Generar SKU automáticamente"
                     >
-                      <Wand2 className="w-3 h-3" /> Auto
+                      <Hash className="w-3 h-3" /> Auto
                     </button>
                   </div>
                   <input
@@ -543,7 +543,7 @@ export const NewProductModal: React.FC = () => {
               type="submit"
               className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-semibold text-xs shadow-clayBtn active:scale-95 transition-all"
             >
-              <Sparkles className="w-4 h-4 text-fio-yellow" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>{editingProduct ? 'Guardar Cambios del Artículo' : 'Guardar & Generar QR'}</span>
             </button>
           </div>

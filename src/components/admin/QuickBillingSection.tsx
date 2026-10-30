@@ -5,7 +5,7 @@ import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatt
 import {
   Search, FileText, Printer, MessageCircle, CheckCircle2, Clock,
   Plus, Trash2, User, UserPlus, Phone, Mail, MapPin, Tag,
-  ShoppingBag, Sparkles, X, Edit3, Settings, Check, CreditCard,
+  ShoppingBag, Star, X, Edit3, Settings, Check, CreditCard,
   DollarSign, ArrowRight, UserCheck, Package, Store, Truck
 } from 'lucide-react';
 

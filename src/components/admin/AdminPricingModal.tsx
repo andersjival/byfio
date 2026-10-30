@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { PricingSectionData, StickerPriceCategory, StickerPriceTier, HowToOrderStep } from '../../types';
 import {
   X, Save, RotateCcw, Plus, Trash2, Tag, HelpCircle,
-  CheckCircle2, Sparkles, Gift, Edit3, ArrowUp, ArrowDown
+  CheckCircle2, Star, Gift, Edit3, ArrowUp, ArrowDown
 } from 'lucide-react';
 
 export const AdminPricingModal: React.FC = () => {

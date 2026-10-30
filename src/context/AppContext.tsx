@@ -7,6 +7,7 @@ import {
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { playAudioBeep } from '../utils/formatters';
+import { metricsTracker } from '../services/metricsTracker';
 
 export const DEFAULT_USER_PROFILES: UserProfile[] = [
   {
@@ -890,6 +891,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       image: item.image,
       price: item.price,
     });
+
+    // Registrar en analítica de métricas (global y atribuida al enlace de origen si existe)
+    try {
+      metricsTracker.recordCartAddition(item.name, item.quantity, item.price);
+    } catch (e) {
+      console.warn('Error registrando producto en métricas de carrito', e);
+    }
   };
 
   const removeFromCart = (cartId: string) => {

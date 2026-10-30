@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.1.0 - Métrica de Agregados al Carrito Global y Atribuida por Enlace de Campaña
+- [x] **Rastreo Automático al Agregar al Carrito ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`metricsTracker.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/metricsTracker.ts)):**
+  - Cada vez que un usuario añade un producto o taller al carrito (`addToCart()`), se dispara `metricsTracker.recordCartAddition()`, contabilizando la cantidad de artículos y vinculándolo de inmediato al enlace de origen activo (si ingresó por campaña `?ref=...`).
+- [x] **Persistencia en la Nube y Sincronización Edge ([`metrics.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/metrics.ts)):**
+  - Nueva acción `record_cart_addition` en el backend serverless para incrementar de forma atómica `totalCartAdditions` global y `cartAdditions` específico bajo el enlace correspondiente en Cloudflare D1.
+- [x] **Tarjeta KPI y Reporte en el Panel de Métricas ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Añadida tarjeta principal de KPI "Al Carrito" con icono de bolsa de compras, total acumulado y porcentaje de conversión sobre aperturas de enlaces.
+  - Indicador rápido de productos al carrito en el listado de enlaces rastreados (`{link.cartAdditions} carrito`).
+  - Reporte copiable de WhatsApp actualizado con la métrica de agregados al carrito.
+
 ### Versión 2.0.0 - Persistencia Universal del Parámetro de Campaña (?ref=...) y Atribución Multi-Sección en Métricas
 - [x] **Persistencia Continua del Parámetro `?ref=` en Toda la Navegación ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`metricsTracker.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/metricsTracker.ts)):**
   - Resuelto el problema donde al hacer clic en cualquier sección interna de la web el parámetro `?ref=` desaparecía de la URL del navegador.

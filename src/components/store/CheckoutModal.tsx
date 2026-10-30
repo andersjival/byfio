@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { X, CheckCircle, Truck, Store, ArrowRight, Sparkles, MessageCircle, Printer } from 'lucide-react';
+import { X, CheckCircle, Truck, Store, ArrowRight, MessageCircle, Printer } from 'lucide-react';
 import { PaymentAccountsCard } from '../common/PaymentAccountsCard';
 import confetti from 'canvas-confetti';
 

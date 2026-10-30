@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, CheckCircle, AlertTriangle, MapPin, Sparkles, Scan, ArrowRight } from 'lucide-react';
+import { X, CheckCircle, AlertTriangle, MapPin, Heart, Scan, ArrowRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const GuidedPickingModal: React.FC = () => {
@@ -134,7 +134,7 @@ export const GuidedPickingModal: React.FC = () => {
                 {currentItem.customText && (
                   <div className="p-3 bg-pink-50 rounded-2xl border border-pink-200 text-xs">
                     <p className="font-bold text-pink-900 flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-fio-pink" />
+                      <Heart className="w-4 h-4 text-fio-pink fill-fio-pink" />
                       <span>Detalle Personalizado a Verificar:</span>
                     </p>
                     <p className="text-pink-800 font-semibold mt-1">"{currentItem.customText}"</p>

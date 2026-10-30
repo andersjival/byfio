@@ -6,7 +6,7 @@ import { TreeNavigation } from '../common/TreeNavigation';
 import { StudioLocationScheduleCard } from '../common/StudioLocationScheduleCard';
 import { PricingStickersSection } from './PricingStickersSection';
 import { formatCRC } from '../../utils/formatters';
-import { Sparkles, ArrowRight, Calendar, ShoppingBag, Heart, Check } from 'lucide-react';
+import { Star, ArrowRight, Calendar, ShoppingBag, Heart, Check } from 'lucide-react';
 
 interface HomePageProps {
   onNavigate: (route: AppRoute) => void;
@@ -49,7 +49,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF5FF] border border-fio-200 text-fio-800 text-[11px] font-semibold tracking-widest uppercase mb-2">
-              <Sparkles className="w-3 h-3 text-fio-yellow fill-fio-yellow" />
+              <Star className="w-3 h-3 text-fio-yellow fill-fio-yellow" />
               <span>Academia Creativa</span>
             </div>
             <h2 className="font-serif text-2xl sm:text-4xl text-slate-800 tracking-wide font-normal">

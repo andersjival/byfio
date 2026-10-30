@@ -4,7 +4,7 @@ import { Workshop, AppRoute } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
 import {
-  Calendar, Users, Sparkles, Check, ArrowRight,
+  Calendar, Users, Star, Check, ArrowRight,
   GraduationCap, MapPin, Clock, Share2, CheckCircle2, Eye, Link2
 } from 'lucide-react';
 
@@ -101,7 +101,7 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
           </div>
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-white/90 text-fio-800 text-[11px] font-bubble font-bold tracking-widest uppercase shadow-neuBtn">
-            <Sparkles className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow" />
+            <Star className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow" />
             <span>Academia Creativa by.fio</span>
           </div>
 

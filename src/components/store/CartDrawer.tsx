@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Heart } from 'lucide-react';
 
 interface CartDrawerProps {
   onOpenCheckout: () => void;
@@ -98,7 +98,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
 
                   {item.customText && (
                     <p className="text-[11px] text-fio-pink font-semibold truncate mt-0.5 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 shrink-0" />
+                      <Heart className="w-3 h-3 text-fio-pink fill-fio-pink shrink-0" />
                       <span>"{item.customText}"</span>
                     </p>
                   )}

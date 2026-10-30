@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Upload, Image as ImageIcon, Link2, Clipboard, Trash2, CheckCircle2, Sparkles, AlertCircle } from 'lucide-react';
+import { Upload, Image as ImageIcon, Link2, Clipboard, Trash2, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 
 interface ImageUploadFieldProps {
   value: string;
@@ -250,7 +250,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
           </div>
         ) : isProcessing ? (
           <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex flex-col items-center justify-center text-white p-4 text-center">
-            <Sparkles className="w-6 h-6 animate-spin text-fio-pink mb-1" />
+            <Loader2 className="w-6 h-6 animate-spin text-fio-pink mb-1" />
             <p className="font-bubble font-bold text-xs">Optimizando imagen...</p>
           </div>
         ) : (

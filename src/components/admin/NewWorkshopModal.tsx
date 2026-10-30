@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Workshop } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import {
-  X, Plus, Trash2, GraduationCap, Sparkles, Image as ImageIcon,
+  X, Plus, Trash2, GraduationCap, Star, Image as ImageIcon,
   Calendar, Clock, MapPin, DollarSign, Users, CheckCircle2, Eye, Link2
 } from 'lucide-react';
 import { ImageUploadField } from '../common/ImageUploadField';
@@ -209,7 +209,7 @@ export const NewWorkshopModal: React.FC = () => {
               {/* Título y Subtítulo */}
               <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-fio-800 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-fio-pink" />
+                  <Star className="w-3.5 h-3.5 text-fio-pink fill-fio-pink" />
                   Identidad del Taller
                 </span>
 
@@ -426,7 +426,7 @@ export const NewWorkshopModal: React.FC = () => {
               {/* Guía Rápida */}
               <div className="p-4 rounded-2xl bg-[#FAF5FF] border border-fio-200/60 text-xs text-slate-600 space-y-1.5">
                 <p className="font-bold text-fio-900 flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-fio-pink" />
+                  <Star className="w-3.5 h-3.5 text-fio-pink fill-fio-pink" />
                   Consejo para tus talleres by.fio
                 </p>
                 <p className="text-[11px] leading-relaxed">

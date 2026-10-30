@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { AppRoute, StickerPriceCategory } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import {
-  Sparkles, Tag, ShoppingBag, BookOpen, MessageCircle,
+  Award, Tag, ShoppingBag, BookOpen, MessageCircle,
   Gift, CheckCircle2, Star, ArrowRight, Palette, HelpCircle, Heart
 } from 'lucide-react';
 

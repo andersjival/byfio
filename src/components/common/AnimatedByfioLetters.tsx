@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 interface AnimatedByfioLettersProps {
   size?: 'md' | 'lg' | 'xl' | 'hero';
@@ -42,7 +42,7 @@ export const AnimatedByfioLetters: React.FC<AnimatedByfioLettersProps> = ({
     >
       {/* Estrellita Amarilla Oficial Destellante a la Izquierda */}
       {showDecorations && (
-        <span className="byfio-sparkle-star inline-flex items-center -mr-1 sm:-mr-2 z-10">
+        <span className="byfio-twinkle-star inline-flex items-center -mr-1 sm:-mr-2 z-10">
           <svg
             viewBox="0 0 100 100"
             className="w-5 h-5 sm:w-7 sm:h-7 lg:w-9 lg:h-9 drop-shadow-[0_2px_8px_rgba(255,240,124,0.65)]"

@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
-  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
+  ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
   BarChart3, Lock
 } from 'lucide-react';
 
@@ -122,7 +122,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
         <div className="flex items-center justify-between gap-2 px-1">
           <div className="flex items-center gap-2">
             <span className="p-1 rounded-lg bg-purple-100 text-fio-700">
-              <Sparkles className="w-3.5 h-3.5" />
+              <Star className="w-3.5 h-3.5 fill-current" />
             </span>
             <h2 className="font-bubble font-bold text-sm sm:text-base text-fio-900">
               Menú Principal de Administración
@@ -235,7 +235,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#2D1B4E] via-[#4A1E6D] to-[#1E1035] text-white shadow-md border border-purple-600/40">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-fio-pink/20 border border-fio-pink/40 flex items-center justify-center shrink-0 text-fio-yellow">
-              <Sparkles className="w-5 h-5 text-fio-yellow" />
+              <Star className="w-5 h-5 text-fio-yellow fill-fio-yellow" />
             </div>
             <div>
               <div className="flex items-center gap-2">

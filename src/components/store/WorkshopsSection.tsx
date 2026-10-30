@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Workshop } from '../../types';
 import { formatCRC } from '../../utils/formatters';
-import { Calendar, Users, Sparkles, Check, ArrowRight } from 'lucide-react';
+import { Calendar, Users, Star, Check, ArrowRight } from 'lucide-react';
 
 export const WorkshopsSection: React.FC = () => {
   const { workshops, addToCart } = useApp();
@@ -40,7 +40,7 @@ export const WorkshopsSection: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 text-fio-800 text-xs font-bold mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow" />
+            <Star className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow" />
             <span>Academia Creativa by.fio</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bubble font-bold text-fio-900">

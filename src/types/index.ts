@@ -199,6 +199,7 @@ export interface TrackedLink {
   pageViews?: number; // Cargas de página generadas por este link
   pcClicks: number; // Clics desde PC / Desktop
   mobileClicks: number; // Clics desde Celular / Móvil
+  cartAdditions?: number; // Productos añadidos al carrito desde este link
   sectionsVisited?: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }>;
   createdAt: string;
   lastClickedAt?: string;
@@ -217,6 +218,7 @@ export interface SectionMetricData {
 export interface MetricsState {
   totalPageLoads: number;
   uniqueSessions: number;
+  totalCartAdditions?: number;
   devices: {
     pc: number;
     mobile: number;

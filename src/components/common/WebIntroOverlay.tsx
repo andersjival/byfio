@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, ArrowRight, Sparkles } from 'lucide-react';
+import { Volume2, VolumeX, ArrowRight } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 
 interface WebIntroOverlayProps {

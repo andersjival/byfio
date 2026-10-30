@@ -5,9 +5,9 @@ import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
 import { PaymentAccountsCard } from '../common/PaymentAccountsCard';
 import {
-  Calendar, Clock, MapPin, Sparkles, Check, ArrowLeft,
+  Calendar, Clock, MapPin, Star, Check, ArrowLeft,
   Share2, CheckCircle2, Phone, Copy, Heart, Users,
-  ShoppingBag, ShieldCheck, Coffee, Sparkle, AlertCircle
+  ShoppingBag, ShieldCheck, Coffee, Gift, AlertCircle
 } from 'lucide-react';
 
 interface WorkshopDetailPageProps {
@@ -198,7 +198,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
               {/* Badges Flotantes sobre la Imagen */}
               <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                 <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-xs font-bubble font-bold text-slate-800 shadow-neuBtn border border-white/80 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow" />
+                  <Star className="w-3.5 h-3.5 text-fio-yellow fill-fio-yellow" />
                   {workshop.modality}
                 </span>
                 <span
@@ -250,7 +250,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
           {/* Bloque Editorial: Título y Descripción Detallada */}
           <div className="bg-[#F1F2F6] rounded-[32px] p-6 sm:p-8 border border-white/90 shadow-neuCard space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-white/90 text-fio-800 text-[11px] font-bubble font-bold tracking-wider uppercase shadow-neuBtn">
-              <Sparkle className="w-3 h-3 text-fio-pink" />
+              <Star className="w-3 h-3 text-fio-pink fill-fio-pink" />
               <span>Academia de Arte y Creación</span>
             </div>
 
@@ -300,7 +300,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
           <div className="bg-[#F1F2F6] rounded-[32px] p-6 border border-white/90 shadow-neuCard space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
               <h2 className="font-bubble text-lg text-slate-900 font-bold flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-fio-pink" />
+                <Gift className="w-4 h-4 text-fio-pink" />
                 Materiales y Todo lo que Incluye
               </h2>
               <span className="text-[10px] font-bubble font-bold uppercase tracking-wider text-emerald-700 bg-white shadow-neuBtn px-2.5 py-0.5 rounded-full border border-white/80">
@@ -330,7 +330,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                 <span>Uso ilimitado de herramientas de alta precisión durante el taller.</span>
               </div>
               <div className="flex items-center gap-2 text-slate-600">
-                <Sparkle className="w-4 h-4 text-fio-pink shrink-0" />
+                <Star className="w-4 h-4 text-fio-pink fill-fio-pink shrink-0" />
                 <span>Te llevás tu proyecto completo y terminado a casa el mismo día.</span>
               </div>
             </div>

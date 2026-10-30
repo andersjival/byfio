@@ -42,6 +42,7 @@ const DEFAULT_SECTIONS_INITIAL: Record<string, { views: number; likes: number; t
 const INITIAL_METRICS_STATE: MetricsState = {
   totalPageLoads: 1842,
   uniqueSessions: 1256,
+  totalCartAdditions: 342,
   devices: {
     pc: 512,
     mobile: 744,
@@ -57,6 +58,7 @@ const INITIAL_METRICS_STATE: MetricsState = {
       pageViews: 1280,
       pcClicks: 110,
       mobileClicks: 430,
+      cartAdditions: 114,
       sectionsVisited: {
         home: { views: 540, likes: 98, timeSpentAvgMinutes: 2.4 },
         catalogo: { views: 420, likes: 115, timeSpentAvgMinutes: 4.5 },
@@ -78,6 +80,7 @@ const INITIAL_METRICS_STATE: MetricsState = {
       pageViews: 860,
       pcClicks: 48,
       mobileClicks: 340,
+      cartAdditions: 96,
       sectionsVisited: {
         catalogo: { views: 388, likes: 142, timeSpentAvgMinutes: 5.1 },
         store: { views: 260, likes: 74, timeSpentAvgMinutes: 3.4 },
@@ -97,6 +100,7 @@ const INITIAL_METRICS_STATE: MetricsState = {
       pageViews: 620,
       pcClicks: 25,
       mobileClicks: 270,
+      cartAdditions: 82,
       sectionsVisited: {
         store: { views: 295, likes: 96, timeSpentAvgMinutes: 4.0 },
         catalogo: { views: 190, likes: 52, timeSpentAvgMinutes: 3.2 },
@@ -116,6 +120,7 @@ const INITIAL_METRICS_STATE: MetricsState = {
       pageViews: 480,
       pcClicks: 18,
       mobileClicks: 197,
+      cartAdditions: 50,
       sectionsVisited: {
         workshops: { views: 215, likes: 78, timeSpentAvgMinutes: 4.8 },
         'workshop-detail': { views: 140, likes: 42, timeSpentAvgMinutes: 3.6 },
@@ -220,11 +225,16 @@ export const metricsTracker = {
           }
         });
 
+        if (parsed.totalCartAdditions === undefined) {
+          parsed.totalCartAdditions = 342;
+        }
+
         // Garantizar migración de links antiguos
         if (Array.isArray(parsed.trackedLinks)) {
           parsed.trackedLinks.forEach((l) => {
             if (!l.sectionsVisited) l.sectionsVisited = {};
             if (l.pageViews === undefined) l.pageViews = l.clicks;
+            if (l.cartAdditions === undefined) l.cartAdditions = Math.round((l.clicks || 0) * 0.22);
           });
         }
         return parsed;
@@ -272,6 +282,7 @@ export const metricsTracker = {
             );
             const maxMobile = Math.max(remoteLink.mobileClicks || 0, localLink.mobileClicks || 0);
             const maxPc = Math.max(remoteLink.pcClicks || 0, localLink.pcClicks || 0);
+            const maxCartAdditions = Math.max(remoteLink.cartAdditions || 0, localLink.cartAdditions || 0);
 
             const mergedSections: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }> = {
               ...(remoteLink.sectionsVisited || {}),
@@ -300,6 +311,7 @@ export const metricsTracker = {
               pageViews: maxPageViews,
               mobileClicks: maxMobile,
               pcClicks: maxPc,
+              cartAdditions: maxCartAdditions,
               sectionsVisited: mergedSections,
               lastClickedAt: remoteLink.lastClickedAt || localLink.lastClickedAt,
             };
@@ -315,6 +327,10 @@ export const metricsTracker = {
             ...remote,
             totalPageLoads: Math.max(remote.totalPageLoads || 0, local.totalPageLoads || 0),
             uniqueSessions: Math.max(remote.uniqueSessions || 0, local.uniqueSessions || 0),
+            totalCartAdditions: Math.max(
+              remote.totalCartAdditions || 0,
+              local.totalCartAdditions || 0
+            ),
             devices: {
               pc: Math.max(remote.devices?.pc || 0, local.devices?.pc || 0),
               mobile: Math.max(remote.devices?.mobile || 0, local.devices?.mobile || 0),
@@ -473,6 +489,42 @@ export const metricsTracker = {
     return state;
   },
 
+  recordCartAddition(productName?: string, quantity: number = 1, price?: number): MetricsState {
+    const state = this.getMetrics();
+    const qty = Math.max(1, quantity || 1);
+
+    state.totalCartAdditions = (state.totalCartAdditions || 0) + qty;
+    state.lastVisitTimestamp = new Date().toISOString();
+
+    const activeCampaignSlug = getActiveCampaignRef();
+    if (activeCampaignSlug) {
+      const link = state.trackedLinks.find((l) => l.slug.toLowerCase() === activeCampaignSlug);
+      if (link) {
+        link.cartAdditions = (link.cartAdditions || 0) + qty;
+      }
+    }
+
+    this.saveMetrics(state);
+    notifyMetricsUpdated();
+
+    // Sincronización asíncrona hacia la base de datos Cloud
+    if (typeof window !== 'undefined') {
+      fetch('/api/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'record_cart_addition',
+          slug: activeCampaignSlug,
+          productName,
+          quantity: qty,
+          price,
+        }),
+      }).catch(() => {});
+    }
+
+    return state;
+  },
+
   recordLike(sectionKey: string): MetricsState {
     const state = this.getMetrics();
     if (!state.sections[sectionKey]) {
@@ -585,6 +637,7 @@ export const metricsTracker = {
       link.pageViews = 0;
       link.pcClicks = 0;
       link.mobileClicks = 0;
+      link.cartAdditions = 0;
       link.sectionsVisited = {};
       link.lastClickedAt = undefined;
     }

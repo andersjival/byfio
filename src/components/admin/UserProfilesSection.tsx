@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { UserProfile, UserPermissions } from '../../types';
 import {
   Users, Plus, KeyRound, Shield, Check, X, Edit3, Trash2,
-  CheckCircle2, AlertCircle, Copy, Eye, EyeOff, Sparkles,
+  CheckCircle2, AlertCircle, Copy, Eye, EyeOff, Star,
   QrCode, Receipt, Boxes, Landmark, GraduationCap, Tag, UserCheck
 } from 'lucide-react';
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Sparkles, Heart } from 'lucide-react';
+import { Star, Heart } from 'lucide-react';
 
 export const HeroAnimatedSlogan: React.FC = () => {
   const { isIntroOpen } = useApp();
@@ -136,7 +136,7 @@ export const HeroAnimatedSlogan: React.FC = () => {
               : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFF07C] fill-[#FFF07C] animate-pulse" />
+          <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFF07C] fill-[#FFF07C]" />
           <span className="text-[11px] sm:text-sm font-bubble font-bold text-fio-900 dark:text-purple-100">
             ¡Transformá tu creatividad en tu mejor proyecto!
           </span>

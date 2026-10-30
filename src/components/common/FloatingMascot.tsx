@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Sparkles, Heart } from 'lucide-react';
+import { MessageCircle, X, Star, Heart } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getWhatsAppLink } from '../../utils/formatters';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
@@ -236,7 +236,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
           <div className="flex items-start justify-between gap-2 border-b border-fio-100 dark:border-purple-500/20 pb-2 mb-3">
             <div className="flex items-center gap-2">
               <span className="p-1.5 rounded-full bg-fio-100 dark:bg-purple-900/40 text-fio-700 dark:text-purple-300">
-                <Sparkles className="w-4 h-4 text-fio-yellow fill-fio-yellow" />
+                <Star className="w-4 h-4 text-fio-yellow fill-fio-yellow" />
               </span>
               <div>
                 <h4 className="font-bubble font-bold text-sm text-fio-900 dark:text-purple-100">by.fio Creativa</h4>
@@ -304,7 +304,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
             <div className="mascot-border-beam-inner p-3.5 sm:p-4 shadow-xl relative">
               <div className="flex items-center justify-between gap-1.5 mb-1.5 border-b border-purple-100/70 dark:border-purple-800/40 pb-1">
                 <span className="inline-flex items-center gap-1.5 text-[11px] font-bubble font-bold text-fio-pink dark:text-pink-300">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                  <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                   <span>Mensaje Positivo</span>
                 </span>
                 <span className="text-[10px] text-slate-400 dark:text-slate-400 font-sans font-medium">by.fio</span>

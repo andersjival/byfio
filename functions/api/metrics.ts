@@ -36,6 +36,7 @@ const DEFAULT_SECTIONS_INITIAL: Record<string, { views: number; likes: number; t
 const getInitialMetricsState = () => ({
   totalPageLoads: 1842,
   uniqueSessions: 1256,
+  totalCartAdditions: 342,
   devices: {
     pc: 512,
     mobile: 744,
@@ -51,6 +52,7 @@ const getInitialMetricsState = () => ({
       pageViews: 1280,
       pcClicks: 110,
       mobileClicks: 430,
+      cartAdditions: 114,
       sectionsVisited: {
         home: { views: 540, likes: 98, timeSpentAvgMinutes: 2.4 },
         catalogo: { views: 420, likes: 115, timeSpentAvgMinutes: 4.5 },
@@ -72,6 +74,7 @@ const getInitialMetricsState = () => ({
       pageViews: 860,
       pcClicks: 48,
       mobileClicks: 340,
+      cartAdditions: 96,
       sectionsVisited: {
         catalogo: { views: 388, likes: 142, timeSpentAvgMinutes: 5.1 },
         store: { views: 260, likes: 74, timeSpentAvgMinutes: 3.4 },
@@ -91,6 +94,7 @@ const getInitialMetricsState = () => ({
       pageViews: 620,
       pcClicks: 25,
       mobileClicks: 270,
+      cartAdditions: 82,
       sectionsVisited: {
         store: { views: 295, likes: 96, timeSpentAvgMinutes: 4.0 },
         catalogo: { views: 190, likes: 52, timeSpentAvgMinutes: 3.2 },
@@ -110,6 +114,7 @@ const getInitialMetricsState = () => ({
       pageViews: 480,
       pcClicks: 18,
       mobileClicks: 197,
+      cartAdditions: 50,
       sectionsVisited: {
         workshops: { views: 215, likes: 78, timeSpentAvgMinutes: 4.8 },
         'workshop-detail': { views: 140, likes: 42, timeSpentAvgMinutes: 3.6 },
@@ -265,6 +270,21 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
           currentState.trackedLinks.unshift(newTrackedLink);
         }
       }
+    } else if (action === 'record_cart_addition') {
+      const { slug, quantity = 1 } = body;
+      const qty = Math.max(1, Number(quantity) || 1);
+      currentState.totalCartAdditions = (currentState.totalCartAdditions || 0) + qty;
+      currentState.lastVisitTimestamp = new Date().toISOString();
+
+      if (slug) {
+        const cleanSlug = String(slug).toLowerCase().trim();
+        const targetLink = currentState.trackedLinks.find(
+          (l: any) => l.slug && l.slug.toLowerCase() === cleanSlug
+        );
+        if (targetLink) {
+          targetLink.cartAdditions = (targetLink.cartAdditions || 0) + qty;
+        }
+      }
     } else if (action === 'create_link') {
       const newLink = body.link;
       if (newLink && newLink.slug) {
@@ -293,6 +313,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         targetLink.pageViews = 0;
         targetLink.pcClicks = 0;
         targetLink.mobileClicks = 0;
+        targetLink.cartAdditions = 0;
         targetLink.sectionsVisited = {};
         targetLink.lastClickedAt = undefined;
       }

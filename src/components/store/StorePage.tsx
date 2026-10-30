@@ -4,7 +4,7 @@ import { ProductCategory, Product, AppRoute } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
 import {
-  ShoppingBag, Search, Sparkles, Heart,
+  ShoppingBag, Search, Star, Heart,
   Check, AlertCircle, Flower2, SlidersHorizontal, Plus, Minus,
   Pencil, PlusCircle
 } from 'lucide-react';
@@ -99,7 +99,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
           </div>
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-white/90 text-fio-800 text-[11px] font-bubble font-bold tracking-widest uppercase shadow-neuBtn">
-            <Sparkles className="w-3 h-3 text-fio-pink" />
+            <Star className="w-3 h-3 text-fio-pink fill-fio-pink" />
             <span>Tienda Online &amp; Personalizados</span>
           </div>
 
@@ -160,7 +160,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                 : 'neu-btn bg-[#F1F2F6] text-slate-700 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Heart className="w-3.5 h-3.5 text-fio-pink fill-fio-pink" />
             <span>Personalizables</span>
           </button>
 
@@ -292,7 +292,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                     {p.isCustomizable && (
                       <div className="pt-2">
                         <label className="block text-[11px] font-bold text-fio-800 mb-1 flex items-center gap-1">
-                          <Sparkles className="w-3 h-3 text-fio-pink" />
+                          <Heart className="w-3 h-3 text-fio-pink fill-fio-pink" />
                           <span>Personalizar (nombre o frase):</span>
                         </label>
                         <input

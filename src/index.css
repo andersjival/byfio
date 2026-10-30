@@ -975,7 +975,7 @@ html.dark .border-white\/90 {
   }
 }
 
-@keyframes byfioSparkleFast {
+@keyframes byfioTwinkleFast {
   0%, 100% {
     transform: scale(0.85) rotate(0deg);
     opacity: 0.7;
@@ -1025,9 +1025,9 @@ html.dark .border-white\/90 {
   filter: drop-shadow(0 12px 24px rgba(236, 72, 153, 0.65)) !important;
 }
 
-.byfio-sparkle-star {
+.byfio-twinkle-star {
   display: inline-block;
-  animation: byfioSparkleFast 1.2s ease-in-out infinite;
+  animation: byfioTwinkleFast 1.2s ease-in-out infinite;
 }
 
 .byfio-pulse-heart {

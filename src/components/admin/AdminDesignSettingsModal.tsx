@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme } from '../../types';
-import { X, Type, Palette, CheckCircle2, Heart, Sparkles, Volume2, Droplets, Sun, Moon } from 'lucide-react';
+import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
 interface AdminDesignSettingsModalProps {
@@ -222,7 +222,7 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
                     soundBubbleEnabled ? 'bg-purple-100 text-fio-700' : 'bg-slate-100 text-slate-400'
                   }`}
                 >
-                  <Sparkles className="w-4 h-4 text-fio-yellow fill-fio-yellow" />
+                  <Star className="w-4 h-4 text-fio-yellow fill-fio-yellow" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">

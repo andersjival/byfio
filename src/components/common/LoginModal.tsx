@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2, AlertCircle, LogOut, KeyRound, Shield, Sparkles } from 'lucide-react';
+import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2, AlertCircle, LogOut, KeyRound, Shield } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
 import { AuthUser } from '../../types';
@@ -263,7 +263,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   onClick={() => handleLoginSuccess(currentUser)}
                   className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white font-bubble font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Shield className="w-3.5 h-3.5" />
                   <span>Ingresar Directo al Panel de Administración &rarr;</span>
                 </button>
               )}

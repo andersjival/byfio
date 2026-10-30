@@ -2,7 +2,7 @@ import React from 'react';
 import { AppRoute } from '../../types';
 import { AnimatedByfioLetters } from '../common/AnimatedByfioLetters';
 import { HeroAnimatedSlogan } from './HeroAnimatedSlogan';
-import { Sparkles, ShoppingBag, Calendar, Heart, Star, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Calendar, Heart, Star, CheckCircle2 } from 'lucide-react';
 
 interface HeroDualProps {
   onScrollToWorkshops: () => void;
@@ -93,7 +93,7 @@ export const HeroDual: React.FC<HeroDualProps> = ({
 
           <div className="hero-quality-pill bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
             <span className="p-1.5 sm:p-2 rounded-xl neu-btn-circle text-amber-600 shadow-neuBtn shrink-0">
-              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 fill-amber-400" />
             </span>
             <div className="min-w-0">
               <p className="text-[11px] sm:text-xs font-bold text-slate-800 truncate">Envíos a todo CR</p>

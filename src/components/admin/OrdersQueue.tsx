@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, Sparkles } from 'lucide-react';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export const OrdersQueue: React.FC = () => {
   const { orders, startPicking, setInvoiceOrder, updateOrderStatus } = useApp();
@@ -37,7 +37,7 @@ export const OrdersQueue: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 bg-purple-50 text-purple-900 px-3 py-1.5 rounded-2xl border border-purple-200 text-xs font-semibold">
-          <Sparkles className="w-4 h-4 text-fio-pink" />
+          <CheckCircle2 className="w-4 h-4 text-fio-pink" />
           <span>Validación paso a paso con Escáner QR</span>
         </div>
       </div>
