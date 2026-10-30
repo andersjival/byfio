@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.81.0 - Optimización de Legibilidad y Cadencia Pausada en Mascota Motivacional
+- [x] **Cadencia de Escritura Cómoda y Pausada (`FloatingMascot.tsx`):**
+  - Velocidad de mecanografía ajustada de 34ms a **62ms por carácter**, logrando una lectura fluida, natural y comprensible.
+- [x] **Ampliación del Tiempo de Lectura en Pantalla:**
+  - El mensaje se mantiene en pantalla durante **6 segundos completos** tras completarse la última letra (antes 3s), otorgando tiempo generoso para leer y reflexionar.
+  - La despedida *"¡Adiós! 👋✨"* se visualiza durante 1.6s antes de iniciar el descenso animado.
+- [x] **Mejora de Contraste y Espaciado del Cartel (`FloatingMascot.tsx` e `index.css`):**
+  - Ancho ampliado a `max-w-[340px]` con espaciado interno `p-3.5 sm:p-4`.
+  - Tipografía `font-sans` en `14px` con peso seminegrilla, `leading-relaxed` y contraste nítido (`text-slate-900` / `text-white`).
+  - Fondo interior sólido `#FFFFFF` en tema claro y `#1e1932` en tema oscuro.
+  - Encabezado con distintivo *"Mensaje Positivo by.fio"*.
+
 ### Versión 1.80.0 - Ajuste Textual de Copyright (byfio) y Armonización Neutra de Píldora
 - [x] **Corrección Textual Sin Punto (`App.tsx` y `LoginModal.tsx`):**
   - Actualizado el texto oficial a *"© Copyright en byfio by GeoSoft"*, eliminando el punto en *"byfio"*.

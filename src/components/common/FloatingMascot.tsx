@@ -141,26 +141,26 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
     return () => window.clearTimeout(timer);
   }, [currentRoute, loginIntroStage]);
 
-  // Efecto Máquina de Escribir (Letra por Letra), espera de 3s y despedida hacia abajo
+  // Efecto Máquina de Escribir (Letra por Letra), lectura pausada y despedida hacia abajo
   useEffect(() => {
     if (currentRoute !== 'admin' || !showSpeechBubble || !selectedMessage) {
       return;
     }
 
-    // Si aún no ha completado el mensaje seleccionado, escribimos letra por letra
+    // Cadencia de escritura suave y pausada (62ms por letra) para lectura natural
     if (typedText.length < selectedMessage.length) {
       const charTimer = window.setTimeout(() => {
         setTypedText(selectedMessage.slice(0, typedText.length + 1));
-      }, 34);
+      }, 62);
       return () => window.clearTimeout(charTimer);
     }
 
-    // Si ya completó la última letra del mensaje original:
-    // Espera exactamente 3 segundos, dice adiós y luego se desliza hacia abajo
+    // Al completarse la última letra del mensaje original:
+    // Espera 6 segundos completos para lectura tranquila antes de despedirse
     const byeTimer = window.setTimeout(() => {
       setTypedText('¡Adiós! 👋✨');
 
-      // 1.2 segundos después de mostrar la despedida, se cierra deslizándose hacia abajo
+      // 1.6 segundos después de mostrar la despedida, se cierra deslizándose hacia abajo
       const exitTimer = window.setTimeout(() => {
         setIsExiting(true);
 
@@ -171,10 +171,10 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
         }, 750);
 
         return () => window.clearTimeout(hideTimer);
-      }, 1200);
+      }, 1600);
 
       return () => window.clearTimeout(exitTimer);
-    }, 3000);
+    }, 6000);
 
     return () => window.clearTimeout(byeTimer);
   }, [currentRoute, showSpeechBubble, selectedMessage, typedText]);
@@ -285,14 +285,21 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
                 setIsExiting(false);
               }, 700);
             }}
-            className="mb-2.5 max-w-[270px] sm:max-w-[290px] mascot-border-beam cursor-pointer group animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-300"
+            className="mb-2.5 max-w-[315px] sm:max-w-[340px] mascot-border-beam cursor-pointer group animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-300"
             title="Toca para despedir"
           >
-            <div className="mascot-border-beam-inner p-3 sm:p-3.5 shadow-xl relative">
-              <p className="text-[12.5px] sm:text-[13px] font-bubble font-bold text-slate-800 dark:text-slate-100 leading-snug tracking-wide">
+            <div className="mascot-border-beam-inner p-3.5 sm:p-4 shadow-xl relative">
+              <div className="flex items-center justify-between gap-1.5 mb-1.5 border-b border-purple-100/70 dark:border-purple-800/40 pb-1">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-bubble font-bold text-fio-pink dark:text-pink-300">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                  <span>Mensaje Positivo</span>
+                </span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-400 font-sans font-medium">by.fio</span>
+              </div>
+              <p className="text-[13.5px] sm:text-[14px] font-sans font-semibold text-slate-900 dark:text-white leading-relaxed tracking-normal">
                 {typedText}
                 {typedText.length < selectedMessage.length && (
-                  <span className="inline-block w-1.5 h-3.5 ml-0.5 bg-fio-pink animate-pulse align-middle" />
+                  <span className="inline-block w-1.5 h-3.5 ml-1 bg-fio-pink animate-pulse align-middle rounded-full" />
                 )}
               </p>
               {/* Colita de la burbujita hacia la estrellita */}
