@@ -280,19 +280,48 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
           {/* MODO PIN (NOMBRE DE PERFIL + INGRESA EL PIN SIMULTÁNEOS, MÁXIMO 3 INTENTOS) */}
           {loginMethod === 'pin' && mode === 'login' ? (
-            <div className="space-y-3">
-              {/* Campo 1: Nombre de Perfil */}
+            <div className="space-y-2.5">
+              {/* Campo 1: Nombre de Perfil con selector rápido de perfiles activos */}
               <div className="space-y-1 text-left">
-                <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
-                  Perfil de Usuario:
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                    Perfil de Usuario:
+                  </label>
+                  <span className="text-[10px] text-fio-purple font-bold">Toca o escribe:</span>
+                </div>
+
+                {/* Chips rápidos de perfiles existentes para no tener que adivinar */}
+                {userProfiles.filter((p) => p.isActive).length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-1.5">
+                    {userProfiles
+                      .filter((p) => p.isActive)
+                      .map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            setProfileNameInput(p.name);
+                            if (errorMessage) setErrorMessage(null);
+                          }}
+                          className={`px-2 py-0.5 rounded-lg text-[10px] font-bubble font-bold transition-all border cursor-pointer ${
+                            profileNameInput === p.name
+                              ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white border-transparent shadow-xs scale-102'
+                              : 'bg-white/80 text-purple-900 border-purple-200/80 hover:bg-purple-50 shadow-2xs'
+                          }`}
+                        >
+                          {p.name}
+                        </button>
+                      ))}
+                  </div>
+                )}
+
                 <div className="input-group">
                   <div className="icon-badge">
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <input
                     type="text"
-                    placeholder="Escribe tu perfil (ej. ALISTO DE PEDIDOS)"
+                    placeholder="Escribe o toca tu perfil"
                     value={profileNameInput}
                     onChange={(e) => {
                       setProfileNameInput(e.target.value.toUpperCase());
@@ -486,13 +515,13 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       </div>
 
       {/* Badge de Copyright Animado de GeoSoft (Estilo BOSUNI CR) */}
-      <div className="mt-3.5 text-center">
-        <div className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-full bg-white/85 dark:bg-[#2C2746]/90 backdrop-blur-sm border border-purple-200/70 dark:border-purple-500/30 shadow-xs">
+      <div className="mt-2 text-center pb-1">
+        <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-white/85 dark:bg-[#2C2746]/90 backdrop-blur-sm border border-purple-200/70 dark:border-purple-500/30 shadow-xs">
           <a
             href="https://www.geosoft.lat"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] sm:text-xs tracking-wider hover:opacity-90 transition-opacity font-bubble"
+            className="text-[10px] sm:text-[11px] tracking-wider hover:opacity-90 transition-opacity font-bubble"
             title="Desarrollado por GeoSoft"
           >
             <span className="animate-copyright-sweep font-bold">
@@ -508,7 +537,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   if (!isStandalonePage) {
     return (
       <div
-        className="fixed inset-0 z-[100] overflow-y-auto flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 py-6 sm:py-8"
+        className="fixed inset-0 z-[100] overflow-y-auto flex flex-col items-center justify-start p-2 sm:p-4 min-h-screen"
         onClick={onClose}
       >
         {/* Cortina translúcida que tapa la web de arriba hacia abajo y luego se desvanece suavemente */}
@@ -522,10 +551,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           }`}
         />
 
-        {/* Ventana de login: caída suave de arriba hacia abajo estrictamente DELANTE de la cortina */}
+        {/* Ventana de login: centrada con margen vertical seguro para que NUNCA se corte arriba ni abajo */}
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`relative z-30 w-full max-w-[340px] mx-auto flex justify-center my-auto ${
+          className={`relative z-30 w-full max-w-[340px] mx-auto my-auto py-2 flex justify-center ${
             loginIntroStage >= 1
               ? 'login-exit-up'
               : isLogoutCurtain

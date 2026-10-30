@@ -365,7 +365,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Menú Desplegable en Móvil (Solo en modo Tienda/Público) */}
       {mobileOpen && currentRoute !== 'admin' && (
-        <nav className="md:hidden border-t border-slate-200/40 bg-[#FAF7F2]/95 backdrop-blur-md px-4 py-3 space-y-2 animate-fadeIn">
+        <nav className="lg:hidden border-t border-slate-200/40 bg-[#FAF7F2]/95 backdrop-blur-md px-4 py-3 space-y-2 animate-fadeIn">
           <button
             type="button"
             onClick={() => handleNav('home')}
