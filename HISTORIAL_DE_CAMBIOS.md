@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.3.0 - Previsualización de Imagen en Enlaces Compartidos (Open Graph / WhatsApp / Redes Sociales)
+- [x] **Configuración de Open Graph y Twitter Cards ([`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html)):**
+  - Implementadas etiquetas canónicas `<meta property="og:image">`, `<meta property="og:image:secure_url">`, `<meta property="og:title">`, `<meta property="og:description">` y `<meta name="twitter:image">`.
+  - Vinculada la imagen oficial de la web (`https://byfiocr.pages.dev/assets/og-image.jpg`) optimizada a 135 KB (bajo el límite estricto de 300 KB de WhatsApp) y con dimensiones 1200x630.
+- [x] **Integración con Web Share API y WhatsApp ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - La función `shareWhatsApp()` ahora aprovecha `navigator.share` en móviles para generar previsualizaciones ricas nativas con título, descripción y foto de portada al compartir desde el panel de métricas.
+- [x] **Disponibilidad de Activos Estáticos:**
+  - Desplegados `public/og-image.jpg` y `public/assets/og-image.jpg` directamente en la CDN global para respuesta inmediata a crawlers de mensajería.
+
 ### Versión 2.2.0 - Erradicación Total de Iconografía Perceptible como IA en Toda la Aplicación
 - [x] **Eliminación Quirúrgica de Iconos de IA (`Wand2`, `Sparkles`, `Sparkle`):**
   - Erradicados todos los iconos que evocan herramientas de IA (`Wand2` en generación de SKU y `Sparkles`/`Sparkle` en insignias, badges, modales y cabeceras).

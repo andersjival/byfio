@@ -427,9 +427,26 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
     });
   };
 
-  const shareWhatsApp = (link: TrackedLink) => {
+  const shareWhatsApp = async (link: TrackedLink) => {
     const url = getFullTrackedUrl(link);
-    const msg = encodeURIComponent(`¡Hola! Te comparto este enlace especial de By.Fio: ${url}`);
+    const title = `by.fio — ${link.name}`;
+    const text = `¡Hola! Te comparto este enlace especial de by.fio 💖✨:`;
+
+    // Intentar Web Share API nativo si está disponible en móvil para previsualizar imagen de la web
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text: `${text}\n${url}`,
+          url,
+        });
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    const msg = encodeURIComponent(`${text}\n\n${url}`);
     window.open(`https://wa.me/?text=${msg}`, '_blank');
   };
 
