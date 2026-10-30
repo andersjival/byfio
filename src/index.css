@@ -1538,6 +1538,59 @@ html.dark .login-curtain-backdrop {
 }
 
 /* =========================================================================
+   ANIMACIÓN DE COPYRIGHT BY GEOSOFT (ESTILO BOSUNI CR)
+   ========================================================================= */
+
+@keyframes textLightSweep {
+  0% {
+    background-position: 250% 0;
+  }
+  45%, 100% {
+    background-position: -150% 0;
+  }
+}
+
+.animate-copyright-sweep {
+  background: linear-gradient(
+    90deg,
+    #64748B 0%,
+    #64748B 25%,
+    #D97706 38%,
+    #059669 46%,
+    #2563EB 54%,
+    #9333EA 62%,
+    #EC4899 70%,
+    #64748B 80%,
+    #64748B 100%
+  );
+  background-size: 320% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textLightSweep 4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+body[data-color-theme="dark"] .animate-copyright-sweep,
+html.dark .animate-copyright-sweep {
+  background: linear-gradient(
+    90deg,
+    #94A3B8 0%,
+    #94A3B8 25%,
+    #FBBF24 38%,
+    #34D399 46%,
+    #60A5FA 54%,
+    #C084FC 62%,
+    #F472B6 70%,
+    #94A3B8 80%,
+    #94A3B8 100%
+  );
+  background-size: 320% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* =========================================================================
    REGLAS DE ADAPTACIÓN RESPONSIVA Y ERGONOMÍA MÓVIL (iOS / Android)
    ========================================================================= */
 @media (max-width: 640px) {

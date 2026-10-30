@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.70.0 - Badge de Copyright Animado de GeoSoft en el Login (Estilo BOSUNI CR)
+- [x] **Inclusión del Badge de Copyright en Login (`LoginModal.tsx`):**
+  - Incorporada la píldora flotante con fondo translúcido y borde sutil debajo de la tarjeta de login (`.scene-wrapper`), visible tanto en el modal overlay como en la vista de `/login`.
+  - Enlace oficial a `https://www.geosoft.lat` con texto *"© Copyright en by.fio by GeoSoft"*.
+- [x] **Animación de Barrido de Luz Cromática (`index.css`):**
+  - Implementada la animación de barrido de color `.animate-copyright-sweep` (`@keyframes textLightSweep`), con gradiente espectral continuo en ciclo de 4 segundos tomado de la arquitectura de BOSUNI CR.
+  - Soporte completo y contraste optimizado tanto en tema claro como en tema oscuro.
+
 ### Versión 1.69.0 - Coreografía Cinemática de Inicio de Sesión y Eliminación del Footer
 - [x] **Secuencia Cinemática Cronometrada (cada 2 segundos) (`AppContext.tsx`, `LoginModal.tsx`, `Navbar.tsx`, `AdminHeader.tsx`, `AdminHubMenu.tsx` e `index.css`):**
   - **Paso 1 (0s):** Al autenticarse, la tarjeta de login asciende hacia arriba (`.login-exit-up`, `translateY(-130vh)`) y se esconde suavemente.
