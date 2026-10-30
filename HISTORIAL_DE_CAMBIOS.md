@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.60.0 - Reproducción Inmediata con Sonido Activo en Animación Intro
+- [x] **Arranque Inmediato sin Esperas ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Eliminado el retraso de 1.4 segundos; el video arranca a reproducirse de una vez con audio activo (`muted = false`, `volume = 1.0`).
+- [x] **Desbloqueo Táctil y Gestual Universal ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Configurados escuchadores globales en captura para `pointerdown`, `touchstart`, `mousedown` y `click` sobre toda la ventana y el overlay completo, garantizando que el audio se active de inmediato sin quedar bloqueado por políticas del navegador.
+- [x] **Indicador y Botón Táctil de Audio HD ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Botón superior con estados dinámicos ("Sonido activo 🎵" vs "Activar sonido 🔊") y banner interactivo de activación instantánea al tocar la pantalla.
+
+
 ### Versión 1.59.0 - Eliminación de Módulo Neumórfico y Activación de Switcher Claro/Oscuro con Botones Sol y Luna
 - [x] **Eliminación de Sección Neumórfica ([`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
   - Removido por completo el bloque demostrativo con textos de neomorfismo, soft UI, táctil minimal y dial circular.

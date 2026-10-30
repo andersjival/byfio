@@ -16,28 +16,46 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const finishTimeoutRef = useRef<number | null>(null);
 
-  // Fase 1 y 2: Orquestación de inicio
+  // Desbloqueo universal de audio
+  const unlockAudio = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+      videoRef.current.volume = 1.0;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsMuted(false);
+            setAudioBlocked(false);
+          })
+          .catch(() => {});
+      } else {
+        setIsMuted(false);
+        setAudioBlocked(false);
+      }
+    }
+  };
+
+  // Orquestación de inicio inmediato con sonido
   useEffect(() => {
     if (!isOpen) {
       setPhase('gradient-start');
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
       return;
     }
 
-    setPhase('gradient-start');
     setProgress(0);
     setAudioBlocked(false);
 
-    // 1. Mostrar gradiente púrpura profesional 850ms con logo HD
-    const t1 = window.setTimeout(() => {
-      setPhase('video-reveal');
-    }, 850);
-
-    // 2. Revelar video e iniciar reproducción con audio activado
-    const t2 = window.setTimeout(() => {
-      setPhase('video-playing');
+    // 1. Intento de reproducción INMEDIATO con sonido desmuteado al 100% de volumen
+    const startImmediatePlayback = () => {
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
-        videoRef.current.muted = false; // Empezar con audio
+        videoRef.current.muted = false;
+        videoRef.current.volume = 1.0;
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
           playPromise
@@ -46,22 +64,52 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
               setAudioBlocked(false);
             })
             .catch(() => {
-              // Si la directiva de seguridad del navegador requiere interacción para desmutear:
+              // Si la directiva de seguridad del navegador requiere un primer toque en carga fría:
               if (videoRef.current) {
                 videoRef.current.muted = true;
                 setIsMuted(true);
                 setAudioBlocked(true);
-                videoRef.current.play();
+                videoRef.current.play().catch(() => {});
               }
             });
         }
       }
-    }, 1400);
+    };
 
-    // 3. Fallback de seguridad: Si el evento onEnded no dispara en 12 segundos, salir
+    // Ejecutar de inmediato sin esperas para aprovechar el evento de activación de usuario
+    startImmediatePlayback();
+
+    // 2. Transición visual ágil: 300ms de logo y despliegue del video
+    const t1 = window.setTimeout(() => {
+      setPhase('video-reveal');
+    }, 300);
+
+    const t2 = window.setTimeout(() => {
+      setPhase('video-playing');
+      // Asegurar que el audio continúe activo
+      if (videoRef.current && videoRef.current.muted && !hasInteracted) {
+        unlockAudio();
+      }
+    }, 600);
+
+    // 3. Escuchador de desbloqueo táctil/clic global: cualquier toque en pantalla activa el sonido al instante
+    const handleGlobalGesture = () => {
+      setHasInteracted(true);
+      unlockAudio();
+      gestureEvents.forEach((evt) => {
+        window.removeEventListener(evt, handleGlobalGesture, true);
+      });
+    };
+
+    const gestureEvents = ['pointerdown', 'touchstart', 'mousedown', 'keydown', 'click'];
+    gestureEvents.forEach((evt) => {
+      window.addEventListener(evt, handleGlobalGesture, true);
+    });
+
+    // 4. Fallback de seguridad: Si el video termina o tras 11.5 segundos, salir suavemente
     const t3 = window.setTimeout(() => {
       handleStartExit();
-    }, 12500);
+    }, 11500);
 
     finishTimeoutRef.current = t3;
 
@@ -69,6 +117,9 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       window.clearTimeout(t1);
       window.clearTimeout(t2);
       window.clearTimeout(t3);
+      gestureEvents.forEach((evt) => {
+        window.removeEventListener(evt, handleGlobalGesture, true);
+      });
     };
   }, [isOpen]);
 
@@ -101,25 +152,29 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     if (videoRef.current) {
       const nextMuted = !videoRef.current.muted;
       videoRef.current.muted = nextMuted;
+      videoRef.current.volume = 1.0;
       setIsMuted(nextMuted);
+      if (!nextMuted) {
+        setAudioBlocked(false);
+        videoRef.current.play().catch(() => {});
+      }
     }
   };
 
-  // Permitir activar sonido haciendo clic en cualquier parte del video
-  const handleOverlayClick = () => {
-    if (isMuted && videoRef.current) {
-      videoRef.current.muted = false;
-      setIsMuted(false);
-      setHasInteracted(true);
-    }
+  // Permitir activar sonido haciendo clic o tocando en cualquier parte de la pantalla
+  const handleOverlayTouchOrClick = () => {
+    setHasInteracted(true);
+    unlockAudio();
   };
 
   if (!isOpen) return null;
 
   return (
     <div
-      onClick={handleOverlayClick}
-      className={`fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out ${
+      onClick={handleOverlayTouchOrClick}
+      onPointerDown={handleOverlayTouchOrClick}
+      onTouchStart={handleOverlayTouchOrClick}
+      className={`fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out cursor-pointer ${
         phase === 'fading-out'
           ? 'opacity-0 scale-105 pointer-events-none'
           : 'opacity-100 scale-100 pointer-events-auto'
@@ -194,21 +249,22 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
           <button
             type="button"
             onClick={toggleSound}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md text-white text-xs font-medium border border-white/25 shadow-lg transition-all active:scale-95 group"
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md text-xs font-bubble font-bold transition-all active:scale-95 group ${
+              isMuted
+                ? 'bg-amber-400 text-slate-900 shadow-[0_0_20px_rgba(251,191,36,0.6)] animate-pulse'
+                : 'bg-white/20 text-emerald-200 border border-white/25 shadow-lg'
+            }`}
             title={isMuted ? 'Activar sonido' : 'Silenciar'}
           >
             {isMuted ? (
               <>
-                <VolumeX className="w-4 h-4 text-purple-200 group-hover:text-white" />
-                <span>Activar sonido</span>
-                <span className="hidden sm:inline text-[10px] bg-purple-500/40 px-1.5 py-0.5 rounded-full text-purple-100">
-                  Audio HD
-                </span>
+                <Volume2 className="w-4 h-4 text-slate-900 animate-bounce" />
+                <span>Activar sonido 🔊</span>
               </>
             ) : (
               <>
                 <Volume2 className="w-4 h-4 text-emerald-300 animate-pulse" />
-                <span className="text-emerald-100">Sonido activo</span>
+                <span className="text-emerald-100">Sonido activo 🎵</span>
               </>
             )}
           </button>
@@ -241,14 +297,14 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
             className="w-full h-full object-cover"
           />
 
-          {/* Hint sutil para activar sonido si el navegador lo bloqueó */}
-          {isMuted && phase === 'video-playing' && (
+          {/* Hint interactivo si el navegador retiene audio hasta tocar la pantalla */}
+          {isMuted && (
             <div
               onClick={toggleSound}
-              className="absolute bottom-4 left-4 z-10 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-950/85 backdrop-blur-md text-white text-xs font-semibold border border-purple-400/40 cursor-pointer hover:bg-fio-pink transition-all shadow-lg animate-bounce"
+              className="absolute inset-x-4 bottom-4 sm:bottom-6 z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-amber-400 text-slate-900 text-xs sm:text-sm font-bubble font-bold shadow-2xl cursor-pointer hover:bg-amber-300 transition-all animate-bounce"
             >
-              <Volume2 className="w-4 h-4 text-fio-yellow" />
-              <span>Toca aquí para escuchar el video 🎵</span>
+              <Volume2 className="w-5 h-5 text-slate-900" />
+              <span>¡Toca la pantalla para escuchar la música de By.Fio! 🎵</span>
             </div>
           )}
 
