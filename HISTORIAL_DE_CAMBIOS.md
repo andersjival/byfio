@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.80.0 - Ajuste Textual de Copyright (byfio) y Armonización Neutra de Píldora
+- [x] **Corrección Textual Sin Punto (`App.tsx` y `LoginModal.tsx`):**
+  - Actualizado el texto oficial a *"© Copyright en byfio by GeoSoft"*, eliminando el punto en *"byfio"*.
+- [x] **Armonización Visual de la Píldora (`index.css`):**
+  - Implementada la clase `.geosoft-copyright-pill` sustituyendo el fondo morado estridente (`#2C2746`) y sus bordes morados.
+  - En tema claro, adopta un fondo blanco translúcido (`rgba(255, 255, 255, 0.72)`) con borde suave (`rgba(226, 232, 240, 0.85)`).
+  - En tema oscuro, utiliza una superficie sutil neutra (`rgba(25, 22, 38, 0.65)`) con borde translúcido (`rgba(255, 255, 255, 0.08)`), integrándose orgánicamente sin contrastes molestos.
+
 ### Versión 1.79.0 - Incremento Proporcional del 10% en Tarjeta de Login
 - [x] **Ampliación Armónica del 10% (`index.css`, `LoginModal.tsx` y `App.tsx`):**
   - Ancho de tarjeta expandido exactamente un 10% de 360px a **395px** (`max-w-[395px]`), con border-radius en 30px y padding a `16px 20px 18px`.

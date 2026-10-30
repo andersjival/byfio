@@ -1626,6 +1626,39 @@ html.dark .mascot-border-beam-inner {
   }
 }
 
+/* Píldora de Copyright GeoSoft adaptada armónicamente al tema (sin contraste morado invasivo) */
+.geosoft-copyright-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.geosoft-copyright-pill:hover {
+  background: rgba(255, 255, 255, 0.90);
+  border-color: rgba(203, 213, 225, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+body[data-color-theme="dark"] .geosoft-copyright-pill,
+html.dark .geosoft-copyright-pill {
+  background: rgba(25, 22, 38, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+body[data-color-theme="dark"] .geosoft-copyright-pill:hover,
+html.dark .geosoft-copyright-pill:hover {
+  background: rgba(32, 28, 48, 0.80) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
 .animate-copyright-sweep {
   background: linear-gradient(
     90deg,
@@ -1647,7 +1680,40 @@ html.dark .mascot-border-beam-inner {
 }
 
 body[data-color-theme="dark"] .animate-copyright-sweep,
-html.dark .animate-copyright-sweep {
+html.dark /* Píldora de Copyright GeoSoft adaptada armónicamente al tema (sin contraste morado invasivo) */
+.geosoft-copyright-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.geosoft-copyright-pill:hover {
+  background: rgba(255, 255, 255, 0.90);
+  border-color: rgba(203, 213, 225, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+body[data-color-theme="dark"] .geosoft-copyright-pill,
+html.dark .geosoft-copyright-pill {
+  background: rgba(25, 22, 38, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+body[data-color-theme="dark"] .geosoft-copyright-pill:hover,
+html.dark .geosoft-copyright-pill:hover {
+  background: rgba(32, 28, 48, 0.80) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.animate-copyright-sweep {
   background: linear-gradient(
     90deg,
     #94A3B8 0%,

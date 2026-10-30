@@ -516,7 +516,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
       {/* Badge de Copyright Animado de GeoSoft (Estilo BOSUNI CR) */}
       <div className="mt-2.5 text-center pb-0.5">
-        <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-white/85 dark:bg-[#2C2746]/90 backdrop-blur-sm border border-purple-200/70 dark:border-purple-500/30 shadow-2xs">
+        <div className="geosoft-copyright-pill px-3 py-1">
           <a
             href="https://www.geosoft.lat"
             target="_blank"
@@ -525,7 +525,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             title="Desarrollado por GeoSoft"
           >
             <span className="animate-copyright-sweep font-bold">
-              © Copyright en by.fio by GeoSoft
+              © Copyright en byfio by GeoSoft
             </span>
           </a>
         </div>

@@ -342,7 +342,7 @@ export const App: React.FC = () => {
       {/* Footer Global: Badge animado de GeoSoft visible en todo momento excepto en la sección admin */}
       {currentRoute !== 'admin' && (
         <footer className="w-full py-5 text-center mt-auto pb-8 z-10">
-          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white/85 dark:bg-[#2C2746]/90 backdrop-blur-sm border border-purple-200/70 dark:border-purple-500/30 shadow-xs">
+          <div className="geosoft-copyright-pill px-4 py-1.5">
             <a
               href="https://www.geosoft.lat"
               target="_blank"
@@ -351,7 +351,7 @@ export const App: React.FC = () => {
               title="Desarrollado por GeoSoft"
             >
               <span className="animate-copyright-sweep font-bold">
-                © Copyright en by.fio by GeoSoft
+                © Copyright en byfio by GeoSoft
               </span>
             </a>
           </div>
