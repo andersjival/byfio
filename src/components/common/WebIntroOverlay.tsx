@@ -237,7 +237,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
 
       {/* Contenedor del Video de Intro */}
       <div
-        className={`relative z-20 w-full max-w-4xl mx-4 transition-all duration-1000 ease-out ${
+        className={`relative z-20 w-full max-w-4xl px-3 sm:px-4 transition-all duration-1000 ease-out ${
           phase === 'video-reveal' || phase === 'video-playing'
             ? 'opacity-100 scale-100 translate-y-0 blur-0'
             : 'opacity-0 scale-95 translate-y-4 blur-sm pointer-events-none'

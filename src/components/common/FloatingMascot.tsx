@@ -51,13 +51,13 @@ export const FloatingMascot: React.FC = () => {
 
   return (
     <div
-      className={`fixed bottom-5 right-5 z-40 flex flex-col items-end ${
+      className={`fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-40 flex flex-col items-end max-w-[calc(100vw-1.5rem)] ${
         !hasEntered ? 'animate-bubble-rise-vibrate' : ''
       }`}
     >
       {/* Globo de Diálogo Kawaii Completo */}
       {isOpen && (
-        <div className="mb-3 w-72 sm:w-80 bg-white rounded-3xl p-4 shadow-clayLg border-2 border-fio-200 animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="mb-3 w-[calc(100vw-2rem)] max-w-xs sm:w-80 bg-white rounded-3xl p-4 shadow-clayLg border-2 border-fio-200 animate-in fade-in slide-in-from-bottom-4 duration-200">
           <div className="flex items-start justify-between gap-2 border-b border-fio-100 pb-2 mb-3">
             <div className="flex items-center gap-2">
               <span className="p-1.5 rounded-full bg-fio-100 text-fio-700">

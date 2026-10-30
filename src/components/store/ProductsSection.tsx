@@ -47,30 +47,30 @@ export const ProductsSection: React.FC = () => {
   };
 
   return (
-    <section id="products-section" className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="products-section" className="py-8 sm:py-12 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Encabezado */}
-      <div className="text-center max-w-3xl mx-auto mb-8">
+      <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-fio-pink text-xs font-bold mb-2">
           <Sparkles className="w-3.5 h-3.5 fill-current" />
           <span>Tienda Creativa & Insumos</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bubble font-bold text-fio-900">
+        <h2 className="text-2xl sm:text-4xl font-bubble font-bold text-fio-900">
           Productos Hechos con Amor e Insumos
         </h2>
-        <p className="text-sm sm:text-base text-gray-600 mt-1">
+        <p className="text-xs sm:text-base text-gray-600 mt-1">
           Inventario en tiempo real sincronizado con nuestro taller para envíos rápidos y seguros.
         </p>
       </div>
 
       {/* Barra de Filtros y Búsqueda */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-        {/* Pills de Categorías */}
-        <div className="flex flex-wrap items-center justify-center gap-1.5 w-full md:w-auto">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6 sm:mb-8">
+        {/* Pills de Categorías con scroll táctil suave en móvil */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none sm:flex-wrap sm:justify-center w-full md:w-auto -mx-1 px-1 sm:mx-0 sm:px-0">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+              className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                 selectedCategory === cat
                   ? 'bg-fio-800 text-white shadow-claySm scale-105'
                   : 'bg-white text-gray-700 border border-fio-200 hover:bg-fio-50'

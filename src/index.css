@@ -3,9 +3,14 @@
 @tailwind utilities;
 
 @layer base {
-  body {
+  html, body {
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   }
 }
@@ -847,8 +852,8 @@ body[data-color-theme="dark"] .to-pink-100\/60 {
 }
 
 .login-card {
-  width: 360px;
-  max-width: 95vw;
+  width: 100%;
+  max-width: 360px;
   background: linear-gradient(180deg, #fdf3f4 0%, #f7e6ea 100%);
   border-radius: 36px;
   box-shadow: 
@@ -1095,8 +1100,8 @@ body[data-color-theme="dark"] .to-pink-100\/60 {
 }
 
 .pedestal {
-  width: 380px;
-  max-width: 96vw;
+  width: 100%;
+  max-width: 380px;
   height: 24px;
   background: linear-gradient(180deg, #d7b4f3 0%, #aa80d6 100%);
   border-radius: 50%;
@@ -1140,4 +1145,30 @@ body[data-color-theme="dark"] .to-pink-100\/60 {
 
 .animate-bubble-rise-vibrate {
   animation: bubbleRiseVibrate 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* =========================================================================
+   REGLAS DE ADAPTACIÓN RESPONSIVA Y ERGONOMÍA MÓVIL (iOS / Android)
+   ========================================================================= */
+@media (max-width: 640px) {
+  /* Prevenir zoom automático involuntario en iOS Safari en campos de texto */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Ajuste de tarjetas de login y pedestales en pantallas ultra angostas */
+  .login-card {
+    width: 100% !important;
+    max-width: calc(100vw - 28px) !important;
+  }
+  .pedestal {
+    width: 100% !important;
+    max-width: calc(100vw - 20px) !important;
+  }
 }

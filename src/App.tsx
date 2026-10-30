@@ -197,7 +197,7 @@ export const App: React.FC = () => {
   ];
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800">
+    <div className="relative min-h-screen flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800 overflow-x-hidden w-full max-w-full">
       {/* Fondo Decorativo Sereno Estilo Cerámico / Zen */}
       <BackgroundDecor />
 
@@ -216,7 +216,7 @@ export const App: React.FC = () => {
             <HomePage onNavigate={navigate} />
           </main>
         ) : (
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8">
+          <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8">
             {currentRoute === 'login' && (
               <LoginModal
                 isOpen={true}

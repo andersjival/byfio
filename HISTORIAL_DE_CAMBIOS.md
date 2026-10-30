@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.62.0 - Optimización Responsiva Universal y Adaptación Ergonómica para Celulares
+- [x] **Meta Viewport & Anti-Overflow Global ([`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html) y [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Incorporado `viewport-fit=cover` y escala táctil en meta tag; reglas globales `overflow-x: hidden; width: 100%; max-width: 100vw` y prevención de auto-zoom molesto en inputs en Safari iOS (`font-size: 16px !important`).
+- [x] **Adaptación de Tarjetas y Pedestales 3D ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Reemplazados anchos rígidos de login card y pedestal inferior por escalas fluidas `width: 100%; max-width: ...` con `max-width: calc(100vw - 28px)` para pantallas angostas.
+- [x] **Barra Superior y Navegación Móvil Limpia ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx) y [`BrandLogo.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BrandLogo.tsx)):**
+  - Ajuste ergonómico en móviles: red social TikTok visible en menú desplegable y ocultada de la barra ultra angosta para dar espacio al selector de Sol/Luna, Carrito y Menú.
+  - Píldora de usuario activo compacta para no desplazar elementos en resoluciones de 320px a 390px.
+- [x] **Escalabilidad de Tipografía Hero y Filtros ([`AnimatedByfioLetters.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/AnimatedByfioLetters.tsx), [`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx), [`ProductsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/ProductsSection.tsx) y [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Letras animadas BYFIO adaptadas con escala fluida desde móvil (`text-3xl xs:text-4xl...`).
+  - Botones de categorías y filtros convertidos en carrusel horizontal táctil deslizable con `overflow-x-auto scrollbar-none`.
+- [x] **Modales, Notificaciones y Mascota Flotante Seguros ([`FloatingMascot.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx), [`CartSuccessToast.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/CartSuccessToast.tsx) y [`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Globos de Estrellita delimitados a `calc(100vw - 2rem)` y toasts centrados sin superar el ancho de la pantalla.
+
+
 ### Versión 1.61.0 - Aclarado del Tema Oscuro & Corrección Integral de Contraste Tipográfico
 - [x] **Aclarado Elegante de la Paleta Nocturna ([`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css) y [`BackgroundDecor.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BackgroundDecor.tsx)):**
   - Fondo base elevado a `#211D35` (un tono más suave, luminoso y descansado que el negro anterior `#0C0A17`), con tarjetas en `#2C2746` y botones en `#332D52`.

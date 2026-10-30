@@ -239,8 +239,8 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Botones de Categorías Neumórficos */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Botones de Categorías Neumórficos con scroll horizontal en móvil */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none sm:flex-wrap -mx-1 px-1 sm:mx-0 sm:px-0">
           {categories.map((cat) => {
             const count = cat === 'Todas' ? catalogProducts.length : catalogProducts.filter((p) => p.category === cat).length;
             const isSelected = selectedCategory === cat;
@@ -250,7 +250,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center gap-1.5 active:scale-95 ${
+                className={`shrink-0 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center gap-1.5 active:scale-95 ${
                   isSelected
                     ? 'neu-btn-primary text-white shadow-neuBtnHover'
                     : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'

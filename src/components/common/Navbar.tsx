@@ -34,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-white/70 shadow-[0_2px_12px_rgba(180,160,200,0.05)] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[50px] sm:min-h-[54px] py-1.5 flex items-center justify-between gap-2.5">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-[50px] sm:min-h-[54px] py-1.5 flex items-center justify-between gap-2">
         {/* Logo de Marca con botón de Volver a Tienda inmediatamente al lado en Admin */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button
@@ -129,14 +129,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Si NO es admin: Redes Sociales, Carrito y Login */}
           {currentRoute !== 'admin' ? (
             <>
-              {/* TikTok Oficial */}
+              {/* TikTok Oficial (En desktop y tablet; en móvil ya vive dentro del menú) */}
               <a
                 href="https://www.tiktok.com/@by_fio/"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="TikTok oficial @by_fio"
                 aria-label="TikTok @by_fio"
-                className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-slate-700 hover:text-black hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all"
+                className="hidden sm:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-slate-700 hover:text-black hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all"
               >
                 <TikTokIcon className="w-3.5 h-3.5" />
               </a>
@@ -166,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </a>
 
               {/* Selector de Tema Claro / Oscuro (Botones Sol y Luna) */}
-              <div className="flex items-center p-0.5 sm:p-1 rounded-full bg-[#ECEEF2] shadow-neuInset border border-white/60">
+              <div className="flex items-center p-0.5 sm:p-1 rounded-full bg-[#ECEEF2] shadow-neuInset border border-white/60 shrink-0">
                 <button
                   type="button"
                   onClick={() => setColorTheme('vibrant')}
@@ -197,10 +197,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* Sesión de Usuario o Botón Iniciar Sesión 3D */}
               {currentUser ? (
-                <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white/90 border border-purple-200/80 rounded-2xl shadow-xs">
-                  <div className="flex items-center gap-1.5 px-2 py-1 text-xs font-bubble font-bold text-slate-700 max-w-[130px] sm:max-w-[160px]">
+                <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white/90 border border-purple-200/80 rounded-2xl shadow-xs shrink-0">
+                  <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 text-xs font-bubble font-bold text-slate-700 max-w-[85px] sm:max-w-[160px]">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                    <span className="truncate">{currentUser.name}</span>
+                    <span className="truncate">{currentUser.name.split(' ')[0]}</span>
                     {currentUser.role === 'admin' && (
                       <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
                         Admin
@@ -211,7 +211,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       type="button"
                       onClick={() => handleNav('admin')}
-                      className="px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold transition-all shrink-0"
+                      className="hidden sm:inline-block px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold transition-all shrink-0"
                       title="Ir al panel de administración"
                     >
                       Panel
@@ -220,7 +220,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <button
                     type="button"
                     onClick={logoutUser}
-                    className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-all shrink-0"
+                    className="p-1 sm:p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-all shrink-0"
                     title="Cerrar sesión"
                   >
                     <LogOut className="w-3.5 h-3.5" />
@@ -231,10 +231,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="button"
                   onClick={onOpenLogin || (() => handleNav('login'))}
                   aria-label="Iniciar Sesión"
-                  className="flex items-center gap-1.5 px-3 py-2 sm:py-2.5 rounded-xl neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95 shrink-0"
                   title="Iniciar Sesión 3D"
                 >
-                  <User className="w-4 h-4 text-fio-pink" />
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink" />
                   <span className="hidden xl:inline">Iniciar Sesión</span>
                 </button>
               )}
@@ -244,12 +244,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 type="button"
                 onClick={() => setIsCartOpen(true)}
                 aria-label="Abrir Carrito"
-                className="relative flex items-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
+                className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0"
               >
                 <ShoppingBag className="w-4 h-4 text-white" />
                 <span className="hidden sm:inline">Carrito</span>
                 {totalCartCount > 0 && (
-                  <span className="flex items-center justify-center min-w-[20px] h-5 px-1 bg-fio-pink text-white rounded-full text-[10px] font-bold ring-2 ring-white">
+                  <span className="flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4.5 sm:h-5 px-1 bg-fio-pink text-white rounded-full text-[9px] sm:text-[10px] font-bold ring-1.5 sm:ring-2 ring-white">
                     {totalCartCount}
                   </span>
                 )}
@@ -259,7 +259,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="md:hidden p-2 rounded-xl neu-btn bg-[#F1F2F6] border border-white/80 text-slate-700 shadow-neuBtn active:scale-95 transition-all"
+                className="md:hidden p-2 rounded-xl neu-btn bg-[#F1F2F6] border border-white/80 text-slate-700 shadow-neuBtn active:scale-95 transition-all shrink-0"
                 aria-label="Abrir menú"
               >
                 {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}

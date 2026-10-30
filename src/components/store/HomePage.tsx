@@ -28,7 +28,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       />
 
       {/* Contenido Restante con Contenedor Central Estándar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
         {/* Sección Destacada: Talleres Creativos */}
         <section className="space-y-6">
           {/* Banner Ilustrado Oficial: Taller Creativo */}

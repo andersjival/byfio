@@ -72,7 +72,7 @@ export const PricingStickersSection: React.FC<PricingStickersSectionProps> = ({
               return (
                 <div
                   key={cat.id}
-                  className="bg-[#F1F2F6] rounded-[32px] p-5 sm:p-7 border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all flex flex-col justify-between"
+                  className="bg-[#F1F2F6] rounded-[32px] p-4 sm:p-7 border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-4">
                     {/* Encabezado de la Tarjeta de Categoría */}
@@ -101,7 +101,7 @@ export const PricingStickersSection: React.FC<PricingStickersSectionProps> = ({
                       {cat.tiers.map((tier) => (
                         <div
                           key={tier.id}
-                          className="p-3 sm:p-3.5 rounded-2xl bg-[#ECEEF2] border border-white/70 shadow-neuInset flex items-center justify-between gap-3 group/tier hover:bg-[#E9ECF0] transition-colors"
+                          className="p-2.5 sm:p-3.5 rounded-2xl bg-[#ECEEF2] border border-white/70 shadow-neuInset flex items-center justify-between gap-2.5 sm:gap-3 group/tier hover:bg-[#E9ECF0] transition-colors"
                         >
                           {/* Cantidad y Regalías */}
                           <div className="space-y-0.5">
@@ -160,7 +160,7 @@ export const PricingStickersSection: React.FC<PricingStickersSectionProps> = ({
       {/* =========================================================================
           BLOQUE 2: ¿CÓMO REALIZAR EL PEDIDO? PASO A PASO (CON BOTONES TIENDA/CATÁLOGO)
           ========================================================================= */}
-      <div className="bg-[#F1F2F6] rounded-[36px] p-6 sm:p-8 lg:p-10 border border-white/90 shadow-neuCard space-y-6">
+      <div className="bg-[#F1F2F6] rounded-[36px] p-4 sm:p-8 lg:p-10 border border-white/90 shadow-neuCard space-y-6">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-white/90 text-fio-800 text-[11px] font-bubble font-bold tracking-widest uppercase shadow-neuBtn">
             <HelpCircle className="w-3.5 h-3.5 text-fio-pink" />

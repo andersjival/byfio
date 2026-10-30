@@ -28,11 +28,11 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     switch (size) {
       case 'sm':
         return {
-          text: 'text-xl sm:text-2xl',
+          text: 'text-lg sm:text-2xl',
           heart: 'w-3.5 h-3.5 sm:w-4 sm:h-4',
           star: 'w-3.5 h-3.5 sm:w-4 sm:h-4',
           starPos: 'top-[-1px] sm:top-[-2px]',
-          slogan: 'text-[8px] sm:text-[9.5px]',
+          slogan: 'text-[7.5px] sm:text-[9.5px]',
         };
       case 'lg':
         return {

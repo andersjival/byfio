@@ -27,7 +27,7 @@ export const AnimatedByfioLetters: React.FC<AnimatedByfioLettersProps> = ({
     md: 'text-2xl sm:text-3xl font-extrabold',
     lg: 'text-3xl sm:text-4xl lg:text-5xl font-black',
     xl: 'text-4xl sm:text-5xl lg:text-6xl font-black',
-    hero: 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black',
+    hero: 'text-3xl xs:text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black',
   };
 
   const handleLetterClick = (idx: number) => {

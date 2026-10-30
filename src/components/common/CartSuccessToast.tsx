@@ -15,7 +15,7 @@ export const CartSuccessToast: React.FC = () => {
     <div
       role="status"
       aria-live="polite"
-      className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[100] w-[94%] sm:w-auto min-w-[320px] max-w-lg pointer-events-auto animate-in fade-in slide-in-from-top-4 duration-300"
+      className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[100] w-[calc(100vw-1.5rem)] sm:w-auto max-w-lg pointer-events-auto animate-in fade-in slide-in-from-top-4 duration-300"
     >
       <div className="relative bg-[#F1F2F6]/95 backdrop-blur-xl border border-white/90 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-2xl overflow-hidden">
         {/* Glow de fondo */}
