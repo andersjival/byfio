@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.92.0 - Control de Duración por el Video y Entrada a la Web Exclusiva al Finalizar la Reproducción
+- [x] **Eliminación Total de Temporizadores Artificiales de Cierre (`WebIntroOverlay.tsx`):**
+  - Erradicado cualquier temporizador de cuenta regresiva fija o fallback arbitrario que cerraba la animación antes de tiempo.
+  - El video de introducción es ahora el único que gobierna el tiempo exacto de permanencia en el intro.
+- [x] **Entrada a la Web Exclusiva tras Finalización del Video (`WebIntroOverlay.tsx`):**
+  - La transición hacia la web se activa estrictamente cuando el video emite su evento de término natural (`onEnded`) o si el usuario pulsa explícitamente el botón "Saltar intro".
+  - Si el usuario tarda en presionar el botón de volumen o activar el audio, el video no se corta prematuramente. Al activar el sonido en los primeros compases, el video se rebobina suavemente al inicio (`currentTime = 0`) para escuchar la melodía completa.
+
 ### Versión 1.91.0 - Visualización de Letras de Marca por al Menos 2 Segundos Antes del Video Intro
 - [x] **Retención Temporal de 2 Segundos en Letras Previas al Video (`WebIntroOverlay.tsx`):**
   - Las letras oficiales de la marca (`BrandLogo` en formato hero con eslogan oficial y puntos de carga) ahora se muestran nítidas y en foco durante al menos 2 segundos completos (`2000ms`) antes de retirarse.

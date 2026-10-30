@@ -14,7 +14,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
   const [hasInteracted, setHasInteracted] = useState(false);
   const [audioBlocked, setAudioBlocked] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const finishTimeoutRef = useRef<number | null>(null);
+  const exitTimeoutRef = useRef<number | null>(null);
   const canPlayVideoRef = useRef(false);
 
   // Desbloqueo universal de audio
@@ -33,7 +33,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     }
   };
 
-  // Orquestación: letras visibles por al menos 2 segundos antes del video
+  // Orquestación: letras por al menos 2 segundos y luego el video dicta el tiempo exacto
   useEffect(() => {
     if (!isOpen) {
       setPhase('gradient-start');
@@ -110,34 +110,32 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       window.addEventListener(evt, handleGlobalGesture, true);
     });
 
-    // 4. Fallback de seguridad: 2s de letras + duración completa del video (~12s)
-    const t3 = window.setTimeout(() => {
-      handleStartExit();
-    }, 14000);
-
-    finishTimeoutRef.current = t3;
+    // NOTA: Se eliminó el temporizador artificial. El video es quien dicta el tiempo:
+    // Solo cuando el video termina de reproducirse (onEnded) entra a la web, salvo clic en Saltar Intro.
 
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
-      window.clearTimeout(t3);
+      if (exitTimeoutRef.current) {
+        window.clearTimeout(exitTimeoutRef.current);
+      }
       gestureEvents.forEach((evt) => {
         window.removeEventListener(evt, handleGlobalGesture, true);
       });
     };
   }, [isOpen]);
 
-  // Manejar el término del video (desaparece lentamente hacia la web)
+  // Manejar el término del video (únicamente cuando termina el video o por clic en saltar intro)
   const handleStartExit = () => {
     if (phase === 'fading-out') return;
     setPhase('fading-out');
 
-    if (finishTimeoutRef.current) {
-      window.clearTimeout(finishTimeoutRef.current);
+    if (exitTimeoutRef.current) {
+      window.clearTimeout(exitTimeoutRef.current);
     }
 
     // Esperar a que la transición de opacidad (1100ms) se complete
-    window.setTimeout(() => {
+    exitTimeoutRef.current = window.setTimeout(() => {
       onFinish();
     }, 1100);
   };
@@ -160,6 +158,10 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       setIsMuted(nextMuted);
       if (!nextMuted) {
         setAudioBlocked(false);
+        // Si el usuario tardó en activar el sonido en los primeros compases, rebobinar a 0 para disfrutar la melodía completa
+        if (videoRef.current.currentTime > 0 && videoRef.current.currentTime < 4) {
+          videoRef.current.currentTime = 0;
+        }
         videoRef.current.play().catch(() => {});
       }
     }
@@ -273,7 +275,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
             )}
           </button>
 
-          {/* Botón Saltar Intro / Entrar Directo */}
+          {/* Botón Saltar Intro */}
           <button
             type="button"
             onClick={(e) => {
@@ -281,9 +283,9 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
               handleStartExit();
             }}
             className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/90 hover:bg-white text-fio-900 text-xs font-bubble font-bold shadow-neuBtn hover:shadow-neuBtnHover border border-white transition-all active:scale-95"
-            title="Saltar y entrar a la web"
+            title="Saltar intro y entrar a la web"
           >
-            <span>Entrar a la web</span>
+            <span>Saltar intro</span>
             <ArrowRight className="w-3.5 h-3.5 text-fio-pink" />
           </button>
         </div>
@@ -298,6 +300,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
             muted={isMuted}
             onTimeUpdate={handleTimeUpdate}
             onEnded={handleStartExit}
+            onError={handleStartExit}
             className="w-full h-full object-cover"
           />
 
