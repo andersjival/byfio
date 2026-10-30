@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.74.0 - Incorporación Global del Badge de Copyright GeoSoft en el Footer
+- [x] **Footer Global con Badge Animado de GeoSoft (`App.tsx`):**
+  - Incorporado en la base del layout principal el badge de copyright flotante con animación de barrido de color (`.animate-copyright-sweep`), enlace oficial a `https://www.geosoft.lat` y texto *"© Copyright en by.fio by GeoSoft"*.
+  - Configurado para mostrarse en todo momento en todas las rutas públicas (`home`, `store`, `catalogo`, `workshops`, `workshop-detail`, `precios`, `login`) y suprimirse estrictamente en la sección de administración (`currentRoute !== 'admin'`).
+  - Totalmente adaptado para tema claro y tema oscuro con sombras y bordes sutiles con desenfoque de fondo (`backdrop-blur-sm`).
+
 ### Versión 1.73.0 - Optimización de Intervalo a 1 Segundo en Coreografía de Inicio de Sesión
 - [x] **Reducción de Intervalo a 1 Segundo (`AppContext.tsx`):**
   - Actualizado el escalonamiento temporal de `triggerLoginCinematic` de 2 segundos a **1 segundo** por elemento para una experiencia ágil, cinematográfica y dinámica:

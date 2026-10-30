@@ -225,7 +225,7 @@ export const App: React.FC = () => {
       {/* Fondo Decorativo Sereno Estilo Cerámico / Zen */}
       <BackgroundDecor />
 
-      <div>
+      <div className="flex-1 flex flex-col">
         <Navbar
           currentRoute={currentRoute}
           onNavigate={navigate}
@@ -338,6 +338,25 @@ export const App: React.FC = () => {
         </main>
       )}
       </div>
+
+      {/* Footer Global: Badge animado de GeoSoft visible en todo momento excepto en la sección admin */}
+      {currentRoute !== 'admin' && (
+        <footer className="w-full py-5 text-center mt-auto pb-8 z-10">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white/85 dark:bg-[#2C2746]/90 backdrop-blur-sm border border-purple-200/70 dark:border-purple-500/30 shadow-xs">
+            <a
+              href="https://www.geosoft.lat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs sm:text-sm tracking-wider hover:opacity-90 transition-opacity font-bubble"
+              title="Desarrollado por GeoSoft"
+            >
+              <span className="animate-copyright-sweep font-bold">
+                © Copyright en by.fio by GeoSoft
+              </span>
+            </a>
+          </div>
+        </footer>
+      )}
 
       {/* Modales y Elementos Flotantes Globales */}
       <LoginModal
