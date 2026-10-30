@@ -149,7 +149,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   };
 
   const content = (
-    <div className="scene-wrapper relative py-1 w-full max-w-[360px] mx-auto flex flex-col items-center px-1">
+    <div className="scene-wrapper relative py-1 w-full max-w-[395px] mx-auto flex flex-col items-center px-1">
       {/* Tarjeta Principal Estilo Claymorphism 3D */}
       <div className="login-card relative">
         {/* Botón flotante para cerrar en modo modal (dentro de la tarjeta para evitar cortes en bordes) */}
@@ -555,7 +555,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         {/* Ventana de login: centrada con margen vertical seguro para que NUNCA se corte arriba ni abajo */}
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`relative z-30 w-full max-w-[360px] mx-auto my-auto py-2 flex justify-center ${
+          className={`relative z-30 w-full max-w-[395px] mx-auto my-auto py-2 flex justify-center ${
             loginIntroStage >= 1
               ? 'login-exit-up'
               : isLogoutCurtain
@@ -575,7 +575,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   return (
     <div className="w-full flex items-center justify-center py-4 sm:py-8 px-2 sm:px-4">
       <div
-        className={`w-full max-w-[360px] mx-auto flex justify-center ${
+        className={`w-full max-w-[395px] mx-auto flex justify-center ${
           loginIntroStage >= 1 ? 'login-exit-up' : 'animate-fadeIn'
         }`}
       >

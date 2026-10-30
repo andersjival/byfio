@@ -275,7 +275,7 @@ export const App: React.FC = () => {
               !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
                 /* Puerta de Entrada Segura a Administración con URL Protegida (oculta durante la cortina de logout) */
                 !isLogoutTransitionOpen ? (
-                  <div className="py-6 sm:py-10 max-w-[360px] mx-auto space-y-4 animate-fadeIn">
+                  <div className="py-6 sm:py-10 max-w-[395px] mx-auto space-y-4 animate-fadeIn">
                     <div className="text-center space-y-2 mb-2">
                       <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs shadow-neuBtn">
                         <Shield className="w-3.5 h-3.5" />

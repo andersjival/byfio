@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.79.0 - Incremento Proporcional del 10% en Tarjeta de Login
+- [x] **Ampliación Armónica del 10% (`index.css`, `LoginModal.tsx` y `App.tsx`):**
+  - Ancho de tarjeta expandido exactamente un 10% de 360px a **395px** (`max-w-[395px]`), con border-radius en 30px y padding a `16px 20px 18px`.
+  - Escena 3D de personajes reescalada proporcionalmente a `clamp(138px, 17.5vh, 168px)` (en móvil a `clamp(132px, 16.5vh, 160px)`).
+  - Tipografías y botones escalados en un 10%: título a `20px`, subtítulo a `12.5px`, botón principal a `16px`, inputs a `14px` y badges a `33px`.
+  - Preservado el centrado vertical seguro con `my-auto` y padding libre superior e inferior sin recortes en pantalla.
+
 ### Versión 1.78.0 - Mascota Motivacional en Panel de Administración con Borde de Luz y Despedida Animada
 - [x] **Secuencia Cinemática Cronometrada (5s después de la última animación) (`FloatingMascot.tsx`):**
   - En el panel de administración (`currentRoute === 'admin'`), la burbuja emerge automáticamente exactamente 5 segundos después de completarse la última animación de carga del login (`loginIntroStage === 0`).
