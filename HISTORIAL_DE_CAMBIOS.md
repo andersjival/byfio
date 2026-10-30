@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.76.0 - Erradicación Definitiva del Corte Superior en Login (Centrado Seguro y Desactivación de Sobrescritura Móvil)
+- [x] **Alineación Vertical Segura Sin Recortes (`LoginModal.tsx`):**
+  - Removido `justify-center` del contenedor de overlay con scroll (`fixed inset-0 overflow-y-auto`) y aplicado padding vertical seguro `p-2 sm:p-4 py-4 sm:py-6`.
+  - El centrado vertical ahora es gestionado exclusivamente por `my-auto` en la tarjeta: cuando hay espacio se centra perfectamente, y si la pantalla es reducida se ajusta desde el margen superior sin empujar el encabezado fuera del viewport.
+- [x] **Eliminación de Sobrescritura Móvil en Escena 3D (`index.css`):**
+  - Removida la regla heredada en `@media (max-width: 640px)` que forzaba `.characters-stage` a `180px !important`, causante de que la tarjeta se expandiera verticalmente y se cortara arriba en pantallas móviles y laptops.
+  - Estandarizada la altura de la ilustración a `clamp(72px, 10vh, 95px)` con padding compacto en la tarjeta (`10px 14px 12px`), logrando un alto total de ~430px que cabe holgadamente en cualquier pantalla.
+  - Dirección de micro-flotación en `loginSoftFloat` configurada en `translateY(3px)` para no ascender hacia el límite superior.
+
 ### Versión 1.75.0 - Ajuste Anti-Desborde de Navbar, Corrección de Recorte en Login y Selector Visual de Perfiles
 - [x] **Ajuste Anti-Desborde de Barra Superior (`Navbar.tsx`):**
   - Ocultamiento responsivo del eslogan de marca en pantallas `<xl` (`hidden xl:inline`).

@@ -149,7 +149,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   };
 
   const content = (
-    <div className="scene-wrapper relative py-2 sm:py-3 w-full max-w-[340px] mx-auto flex flex-col items-center px-1 sm:px-2">
+    <div className="scene-wrapper relative py-0.5 w-full max-w-[325px] mx-auto flex flex-col items-center px-1">
       {/* Tarjeta Principal Estilo Claymorphism 3D */}
       <div className="login-card relative">
         {/* Botón flotante para cerrar en modo modal (dentro de la tarjeta para evitar cortes en bordes) */}
@@ -157,11 +157,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="login-close-btn absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-30 w-8 h-8 rounded-full bg-white/85 hover:bg-white text-slate-600 hover:text-fio-pink shadow-sm flex items-center justify-center transition-all active:scale-90 border border-purple-200/80 cursor-pointer"
+            className="login-close-btn absolute top-2.5 right-2.5 z-30 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-600 hover:text-fio-pink shadow-xs flex items-center justify-center transition-all active:scale-90 border border-purple-200/80 cursor-pointer"
             title="Cerrar ventana"
             aria-label="Cerrar"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         )}
 
@@ -169,7 +169,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         <div className="header px-3 sm:px-4">
           <div className="heart-badge">
             <span className="heart-rays">彡</span>
-            <Heart className="w-6 h-6 fill-current heart-icon inline-block" />
+            <Heart className="w-5 h-5 fill-current heart-icon inline-block" />
             <span className="heart-rays">彡</span>
           </div>
           <h1>
@@ -199,21 +199,21 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         <form className="form-panel" onSubmit={handleSubmit}>
           {/* Selector de Método: Correo vs PIN (integrado dentro del panel para continuidad visual 3D) */}
           {mode === 'login' && (
-            <div className="mb-3.5">
-              <div className="flex items-center p-1 rounded-2xl bg-white/80 border border-purple-200/80 shadow-2xs">
+            <div className="mb-2">
+              <div className="flex items-center p-0.5 rounded-xl bg-white/80 border border-purple-200/80 shadow-2xs">
                 <button
                   type="button"
                   onClick={() => {
                     setLoginMethod('email');
                     setErrorMessage(null);
                   }}
-                  className={`flex-1 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-1 rounded-lg text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
                     loginMethod === 'email'
                       ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <User className="w-3.5 h-3.5" />
+                  <User className="w-3 h-3" />
                   <span>Correo</span>
                 </button>
 
@@ -223,13 +223,13 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     setLoginMethod('pin');
                     setErrorMessage(null);
                   }}
-                  className={`flex-1 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-1 rounded-lg text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
                     loginMethod === 'pin'
                       ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <KeyRound className="w-3.5 h-3.5" />
+                  <KeyRound className="w-3 h-3" />
                   <span>PIN</span>
                 </button>
               </div>
@@ -515,13 +515,13 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       </div>
 
       {/* Badge de Copyright Animado de GeoSoft (Estilo BOSUNI CR) */}
-      <div className="mt-2 text-center pb-1">
-        <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-white/85 dark:bg-[#2C2746]/90 backdrop-blur-sm border border-purple-200/70 dark:border-purple-500/30 shadow-xs">
+      <div className="mt-1.5 text-center pb-0.5">
+        <div className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-white/85 dark:bg-[#2C2746]/90 backdrop-blur-sm border border-purple-200/70 dark:border-purple-500/30 shadow-2xs">
           <a
             href="https://www.geosoft.lat"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] sm:text-[11px] tracking-wider hover:opacity-90 transition-opacity font-bubble"
+            className="text-[9.5px] sm:text-[10px] tracking-wider hover:opacity-90 transition-opacity font-bubble"
             title="Desarrollado por GeoSoft"
           >
             <span className="animate-copyright-sweep font-bold">
@@ -537,7 +537,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   if (!isStandalonePage) {
     return (
       <div
-        className="fixed inset-0 z-[100] overflow-y-auto flex flex-col items-center justify-start p-2 sm:p-4 min-h-screen"
+        className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain flex flex-col items-center p-2 sm:p-4 py-4 sm:py-6"
+        style={{ minHeight: '100dvh' }}
         onClick={onClose}
       >
         {/* Cortina translúcida que tapa la web de arriba hacia abajo y luego se desvanece suavemente */}
@@ -554,7 +555,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         {/* Ventana de login: centrada con margen vertical seguro para que NUNCA se corte arriba ni abajo */}
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`relative z-30 w-full max-w-[340px] mx-auto my-auto py-2 flex justify-center ${
+          className={`relative z-30 w-full max-w-[325px] mx-auto my-auto py-1 flex justify-center ${
             loginIntroStage >= 1
               ? 'login-exit-up'
               : isLogoutCurtain
@@ -574,7 +575,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   return (
     <div className="w-full flex items-center justify-center py-4 sm:py-8 px-2 sm:px-4">
       <div
-        className={`w-full max-w-[340px] mx-auto flex justify-center ${
+        className={`w-full max-w-[325px] mx-auto flex justify-center ${
           loginIntroStage >= 1 ? 'login-exit-up' : 'animate-fadeIn'
         }`}
       >
