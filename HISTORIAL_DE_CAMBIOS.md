@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.75.0 - Ajuste Anti-Desborde de Navbar, Corrección de Recorte en Login y Selector Visual de Perfiles
+- [x] **Ajuste Anti-Desborde de Barra Superior (`Navbar.tsx`):**
+  - Ocultamiento responsivo del eslogan de marca en pantallas `<xl` (`hidden xl:inline`).
+  - Reducción de espaciados y padding en botones de navegación (`px-2.5 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm`).
+  - Redes sociales condicionadas a pantallas extra-grandes (`hidden xl:flex`) y cambio del breakpoint del menú hamburguesa a `lg:hidden`, evitando que la barra se corte de lado en laptops intermedias (1024px-1280px).
+- [x] **Corrección de Cortes Verticales en Login (`LoginModal.tsx` e `index.css`):**
+  - Reescalado y acotamiento de la escena 3D a `clamp(125px, 17vh, 155px)`, reduciendo más de 120px de altura total de la tarjeta.
+  - Padding vertical compacto en inputs y tarjeta (`12px 16px 14px`).
+  - Sustitución de centrado flex rígido por contenedor con `overflow-y-auto` y margen dinámico `m-auto`, eliminando cortes superior e inferior en cualquier resolución o nivel de zoom.
+- [x] **Selector Visual de Perfiles Activos en PIN Login (`LoginModal.tsx`):**
+  - Renderizado de chips / botones interactivos con los perfiles existentes (`userProfiles.filter(p => p.isActive)`).
+  - Selección inmediata con un clic para rellenar el perfil deseado sin necesidad de escribir a mano.
+
 ### Versión 1.74.0 - Incorporación Global del Badge de Copyright GeoSoft en el Footer
 - [x] **Footer Global con Badge Animado de GeoSoft (`App.tsx`):**
   - Incorporado en la base del layout principal el badge de copyright flotante con animación de barrido de color (`.animate-copyright-sweep`), enlace oficial a `https://www.geosoft.lat` y texto *"© Copyright en by.fio by GeoSoft"*.
