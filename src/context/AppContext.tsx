@@ -131,6 +131,8 @@ interface AppContextType {
   loginWithPin: (pin: string, targetProfileName?: string) => { success: boolean; error?: string; user?: AuthUser };
   registerUser: (email: string, pass: string, name?: string) => { success: boolean; error?: string; user?: AuthUser };
   logoutUser: () => void;
+  isLogoutTransitionOpen: boolean;
+  closeLogoutTransition: () => void;
   userProfiles: UserProfile[];
   addUserProfile: (profile: Omit<UserProfile, 'id' | 'createdAt'>) => UserProfile;
   updateUserProfile: (id: string, updates: Partial<UserProfile>) => void;
@@ -226,6 +228,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [isLogoutTransitionOpen, setIsLogoutTransitionOpen] = useState(false);
 
   // Web Intro Video Overlay state: Auto-plays on app load (initial visit)
   const [isIntroOpen, setIsIntroOpen] = useState(true);
@@ -511,6 +514,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const logoutUser = () => {
     setCurrentUser(null);
     localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
+    setIsLogoutTransitionOpen(true);
+  };
+
+  const closeLogoutTransition = () => {
+    setIsLogoutTransitionOpen(false);
   };
 
   const updatePricingData = (newData: PricingSectionData) => {
@@ -979,6 +987,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         loginWithPin,
         registerUser,
         logoutUser,
+        isLogoutTransitionOpen,
+        closeLogoutTransition,
         userProfiles,
         addUserProfile,
         updateUserProfile,

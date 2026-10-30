@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.68.0 - Animación Cinemática de Cierre de Sesión (Cortina Translúcida + Caída Suave + Flotación 3D)
+- [x] **Secuencia Cinemática al Cerrar Sesión (`AppContext.tsx`, `App.tsx`, `LoginModal.tsx` e `index.css`):**
+  - Al hacer clic en *"Salir"* o *"Cerrar Sesión"* (admin, colaboradores o clientes), se activa automáticamente la transición global `isLogoutTransitionOpen` que lleva directamente a la ventana de login.
+  - **Paso 1 (Cortina Translúcida):** Una cortina translúcida con desenfoque de fondo profundo (`backdrop-filter: blur(14px)`, `background-color: rgba(15, 10, 30, 0.72)`) desciende suavemente de arriba hacia abajo (`@keyframes curtainSlideDown`) cubriendo y velando toda la vista de la web de manera permanente.
+  - **Paso 2 (Caída Suave del Login):** Tras descender la cortina, la tarjeta 3D de login aparece deslizándose desde la parte superior (`@keyframes loginDropIn`) con desaceleración orgánica y física elástica (`cubic-bezier(0.16, 1, 0.3, 1)`).
+  - **Paso 3 (Flotación Suave Perpetua):** Una vez centrada en pantalla, la tarjeta entra en un bucle continuo de flotación suave y relajante (`@keyframes loginSoftFloat`), oscilando verticalmente de forma hipnótica y elegante.
+  - Al completar el login o cerrar el modal se restituye el flujo normal y se redirige con seguridad.
+
 ### Versión 1.67.0 - Unificación 3D de Tarjeta de Login sin Cortes y Campos de Perfil y PIN Simultáneos
 - [x] **Unificación Total de la Tarjeta 3D sin Cortes de Bordes (`LoginModal.tsx` e `index.css`):**
   - Desactivado por completo el elemento de pedestal inferior (`.pedestal` a `display: none !important`), eliminando la semiluna oscura saliente y los huecos triangulares inferiores.

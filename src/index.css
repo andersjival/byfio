@@ -1317,6 +1317,96 @@ html.dark .border-white\/90 {
     inset 0 4px 8px rgba(255, 255, 255, 0.65);
 }
 
+/* =========================================================================
+   ANIMACIÓN DE CIERRE DE SESIÓN: CORTINA TRANSLÚCIDA + CAÍDA SUAVE + FLOTACIÓN 3D
+   ========================================================================= */
+
+/* 1. Cortina translúcida que cae de arriba hacia abajo tapando la web */
+.login-curtain-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: rgba(15, 10, 30, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: curtainSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+body[data-color-theme="dark"] .login-curtain-backdrop,
+html.dark .login-curtain-backdrop {
+  background-color: rgba(8, 6, 18, 0.82) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+@keyframes curtainSlideDown {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 2. Entrada suave de la ventana de login desde arriba hacia abajo */
+.login-drop-motion {
+  animation: loginDropIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
+  will-change: transform, opacity;
+}
+
+@keyframes loginDropIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-110vh) scale(0.92);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(10px) scale(1.008);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 3. Flotación suave y orgánica permanente de la tarjeta de login */
+.login-floating-card {
+  animation: loginSoftFloat 4s ease-in-out infinite 1.15s;
+  will-change: transform;
+}
+
+@keyframes loginSoftFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-curtain-backdrop {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .login-drop-motion {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .login-floating-card {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 /* Animación de Entrada Profesional y Vibración Rápida para Estrellita */
 @keyframes bubbleRiseVibrate {
   0% {

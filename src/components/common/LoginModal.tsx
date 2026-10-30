@@ -10,6 +10,7 @@ interface LoginModalProps {
   isStandalonePage?: boolean;
   onSuccess?: (user: AuthUser) => void;
   forcedRole?: 'admin' | 'staff' | 'all';
+  isLogoutCurtain?: boolean;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
@@ -17,6 +18,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   onClose,
   isStandalonePage = false,
   onSuccess,
+  isLogoutCurtain = false,
 }) => {
   const { currentUser, loginUser, loginWithPin, registerUser, logoutUser, userProfiles } = useApp();
   const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>('email');
@@ -476,11 +478,28 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   if (!isStandalonePage) {
     return (
       <div
-        className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 py-6 sm:py-8 animate-fadeIn"
+        className="fixed inset-0 z-50 overflow-y-auto flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 py-6 sm:py-8"
         onClick={onClose}
       >
-        <div onClick={(e) => e.stopPropagation()} className="w-full flex justify-center my-auto">
-          {content}
+        {/* Cortina translúcida que tapa la web de arriba hacia abajo y se queda fija */}
+        <div
+          className={`fixed inset-0 pointer-events-none ${
+            isLogoutCurtain
+              ? 'login-curtain-backdrop'
+              : 'bg-slate-950/70 backdrop-blur-md animate-fadeIn'
+          }`}
+        />
+
+        {/* Ventana de login con caída suave de arriba hacia abajo y flotación permanente */}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`w-full flex justify-center my-auto z-10 ${
+            isLogoutCurtain ? 'login-drop-motion' : 'animate-fadeIn'
+          }`}
+        >
+          <div className="login-floating-card w-full flex justify-center">
+            {content}
+          </div>
         </div>
       </div>
     );
@@ -489,7 +508,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   // Si es modo página completa (/login) o embebido en /admin
   return (
     <div className="w-full flex items-center justify-center py-4 sm:py-8 px-2 sm:px-4">
-      {content}
+      <div className="login-drop-motion w-full flex justify-center">
+        <div className="login-floating-card w-full flex justify-center">
+          {content}
+        </div>
+      </div>
     </div>
   );
 };

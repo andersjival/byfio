@@ -102,7 +102,17 @@ const parseRouteFromLocation = (): RouteInfo => {
 };
 
 export const App: React.FC = () => {
-  const { setViewMode, colorTheme, isIntroOpen, closeWebIntro, playWebIntro, currentUser, hasPermission } = useApp();
+  const {
+    setViewMode,
+    colorTheme,
+    isIntroOpen,
+    closeWebIntro,
+    playWebIntro,
+    currentUser,
+    hasPermission,
+    isLogoutTransitionOpen,
+    closeLogoutTransition,
+  } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(initial.workshopId || null);
@@ -428,10 +438,19 @@ export const App: React.FC = () => {
 
       {/* Modales y Elementos Flotantes Globales */}
       <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
+        key={isLogoutTransitionOpen ? 'logout-curtain' : 'standard-login'}
+        isOpen={isLoginModalOpen || isLogoutTransitionOpen}
+        isLogoutCurtain={isLogoutTransitionOpen}
+        onClose={() => {
+          setIsLoginModalOpen(false);
+          closeLogoutTransition();
+          if (currentRoute === 'admin') {
+            navigate('home');
+          }
+        }}
         onSuccess={(user) => {
           setIsLoginModalOpen(false);
+          closeLogoutTransition();
           if (user.role === 'admin' || user.role === 'staff') {
             navigate('admin');
           } else {
