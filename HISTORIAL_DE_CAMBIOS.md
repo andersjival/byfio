@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.78.0 - Mascota Motivacional en Panel de Administración con Borde de Luz y Despedida Animada
+- [x] **Secuencia Cinemática Cronometrada (5s después de la última animación) (`FloatingMascot.tsx`):**
+  - En el panel de administración (`currentRoute === 'admin'`), la burbuja emerge automáticamente exactamente 5 segundos después de completarse la última animación de carga del login (`loginIntroStage === 0`).
+  - Emerge con efecto sonoro orgánico y animación de elevación elástica (`animate-bubble-rise-vibrate`).
+- [x] **Colección de 60 Mensajes Positivos y Motivacionales:**
+  - Integrado un banco de 60 mensajes inspiradores, creativos y de alta energía diseñados para el equipo de by.fio.
+  - Cada vez que el usuario se conecta se selecciona aleatoriamente un mensaje diferente evitando repeticiones consecutivas mediante memoria de sesión.
+  - Eliminado por completo el texto *"Soy Estrellita"* tanto en administración como en la vista pública.
+- [x] **Cartel con Borde de Luz Multicolor (Border Beam) (`index.css` y `FloatingMascot.tsx`):**
+  - Implementado el efecto visual `.mascot-border-beam` con rotación continua de gradiente espectral luminoso (`@keyframes rotateMascotBeam`), destacando el cartel a la vista del usuario.
+- [x] **Efecto Máquina de Escribir y Despedida Hacia Abajo:**
+  - El mensaje se escribe progresivamente letra por letra (34ms por carácter).
+  - Exactamente **3 segundos** después de escribirse la última letra, el cartel muestra *"¡Adiós! 👋✨"*.
+  - 1.2 segundos después, la burbuja completa se desliza suavemente hacia abajo (`.animate-mascot-slide-down`) y se cierra de forma limpia.
+
 ### Versión 1.77.0 - Rebalanceo Óptimo de Proporciones y Escala en Tarjeta de Login
 - [x] **Ampliación Balanceada del Contenedor y Escena 3D (`LoginModal.tsx` e `index.css`):**
   - Ancho de tarjeta expandido a **360px** (`max-w-[360px]`), devolviendo cuerpo, presencia y comodidad de lectura sin tocar bordes de pantalla.

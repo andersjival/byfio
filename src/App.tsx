@@ -382,7 +382,7 @@ export const App: React.FC = () => {
       />
       <CartSuccessToast />
       <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />
-      <FloatingMascot />
+      <FloatingMascot currentRoute={currentRoute} />
       <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
