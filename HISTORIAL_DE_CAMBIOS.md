@@ -17,6 +17,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.63.0 - Redirección Inmediata a Administración, URL Segura y Sistema de Perfiles con PIN (4 Dígitos)
+- [x] **Ingreso Real e Inmediato a Administración ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) y [`src/App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Eliminado el bloqueo/congelamiento del modal; al autenticarse se cierra el diálogo al instante y redirige de inmediato al panel de administración en la URL segura `/admin`.
+  - Tolerancia de mayúsculas/minúsculas para contraseña `Fio777` / `fio777` y accesos directos si ya existe sesión activa.
+- [x] **URL Segura y Puerta de Autenticación en `/admin` ([`src/App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Protección de ruta: cualquier visita directa a `https://byfiocr.pages.dev/admin` sin sesión activa muestra la pantalla de acceso seguro con autenticación integrada, garantizando que nunca quede en blanco ni desprotegida.
+- [x] **Módulo de Gestión de Perfiles de Usuario ([`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx) y [`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx)):**
+  - Nuevo panel en el Administrador accesible desde `/admin/usuarios` y en el Menú Principal con icono de Perfiles.
+  - Creación y edición de perfiles (ej: `ALISTO DE PEDIDOS`, `ATENCIÓN Y TALLERES`) con nombre forzado en **MAYÚSCULAS**.
+  - Asignación de código de acceso PIN de 4 dígitos numéricos con botón de generación aleatoria.
+  - Selección granular de accesos con casillas de verificación (checkboxes) para cada módulo del sistema: Pedidos & Alisto, Facturación, Inventario, Caja & Reportes, Talleres, Precios y Perfiles, además de botón para marcar todos los accesos (Admin Total).
+- [x] **Acceso Rápido por PIN de 4 Dígitos ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) y [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Selector de método en el formulario de inicio de sesión: "Correo / Fio" vs "PIN 4 Dígitos".
+  - Detección automática en tiempo real del perfil correspondiente al código digitado (ej: PIN `1001` identifica automáticamente a `ALISTO DE PEDIDOS`).
+  - Restricción visual de módulos: los colaboradores solo ven y acceden a las secciones marcadas en sus casillas de verificación.
+
+
 ### Versión 1.62.0 - Optimización Responsiva Universal y Adaptación Ergonómica para Celulares
 - [x] **Meta Viewport & Anti-Overflow Global ([`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html) y [`src/index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Incorporado `viewport-fit=cover` y escala táctil en meta tag; reglas globales `overflow-x: hidden; width: 100%; max-width: 100vw` y prevención de auto-zoom molesto en inputs en Safari iOS (`font-size: 16px !important`).

@@ -206,8 +206,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                         Admin
                       </span>
                     )}
+                    {currentUser.role === 'staff' && (
+                      <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[9px] font-bold uppercase tracking-wider shrink-0">
+                        Staff
+                      </span>
+                    )}
                   </div>
-                  {currentUser.role === 'admin' && (
+                  {(currentUser.role === 'admin' || currentUser.role === 'staff') && (
                     <button
                       type="button"
                       onClick={() => handleNav('admin')}
@@ -415,10 +420,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                     Admin
                   </span>
                 )}
+                {currentUser.role === 'staff' && (
+                  <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-bold uppercase tracking-wider">
+                    Staff
+                  </span>
+                )}
               </div>
-              <p className="text-xs text-slate-500 truncate">{currentUser.email}</p>
+              <p className="text-xs text-slate-500 truncate">{currentUser.email || 'Perfil con código PIN'}</p>
               <div className="flex items-center gap-2 pt-1 border-t border-purple-100">
-                {currentUser.role === 'admin' && (
+                {(currentUser.role === 'admin' || currentUser.role === 'staff') && (
                   <button
                     type="button"
                     onClick={() => handleNav('admin')}

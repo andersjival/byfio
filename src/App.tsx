@@ -36,8 +36,9 @@ import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { LoginModal } from './components/common/LoginModal';
+import { UserProfilesSection } from './components/admin/UserProfilesSection';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
-import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film } from 'lucide-react';
+import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film, Shield } from 'lucide-react';
 
 interface RouteInfo {
   route: AppRoute;
@@ -67,6 +68,9 @@ const parseRouteFromLocation = (): RouteInfo => {
   }
   if (path.includes('/admin/precios') || path.includes('/administracion/precios') || hash.includes('admin/precios')) {
     return { route: 'admin', adminTab: 'pricing' };
+  }
+  if (path.includes('/admin/usuarios') || path.includes('/admin/perfiles') || path.includes('/administracion/usuarios') || hash.includes('admin/usuarios') || hash.includes('admin/perfiles')) {
+    return { route: 'admin', adminTab: 'users' };
   }
   if (path.startsWith('/admin') || path.startsWith('/administracion') || hash.includes('admin')) {
     return { route: 'admin', adminTab: 'hub' };
@@ -98,7 +102,7 @@ const parseRouteFromLocation = (): RouteInfo => {
 };
 
 export const App: React.FC = () => {
-  const { setViewMode, colorTheme, isIntroOpen, closeWebIntro, playWebIntro } = useApp();
+  const { setViewMode, colorTheme, isIntroOpen, closeWebIntro, playWebIntro, currentUser, hasPermission } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(initial.workshopId || null);
@@ -134,6 +138,7 @@ export const App: React.FC = () => {
       else if (tab === 'reports') targetPath = '/admin/caja';
       else if (tab === 'workshops') targetPath = '/admin/talleres';
       else if (tab === 'pricing') targetPath = '/admin/precios';
+      else if (tab === 'users') targetPath = '/admin/usuarios';
       else targetPath = '/admin';
     }
 
@@ -191,6 +196,8 @@ export const App: React.FC = () => {
                 ? 'caja & reportes'
                 : adminTab === 'pricing'
                 ? 'precios & stickers'
+                : adminTab === 'users'
+                ? 'perfiles de usuarios'
                 : 'talleres & inscripciones',
           },
         ]),
@@ -223,7 +230,7 @@ export const App: React.FC = () => {
                 onClose={() => navigate('home')}
                 isStandalonePage={true}
                 onSuccess={(user) => {
-                  if (user.role === 'admin') {
+                  if (user.role === 'admin' || user.role === 'staff') {
                     navigate('admin');
                   } else {
                     navigate('home');
@@ -248,35 +255,67 @@ export const App: React.FC = () => {
             )}
 
             {currentRoute === 'admin' && (
-            <div className="space-y-3 sm:space-y-4">
-              {/* Barra de Árbol de Navegación Compacta */}
-              <div className="flex items-center justify-between gap-2.5 pb-0.5">
-                <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
-              </div>
+              !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
+                /* Puerta de Entrada Segura a Administración con URL Protegida */
+                <div className="py-6 sm:py-10 max-w-lg mx-auto space-y-4 animate-fadeIn">
+                  <div className="text-center space-y-2 mb-2">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs shadow-neuBtn">
+                      <Shield className="w-3.5 h-3.5" />
+                      <span>Acceso Seguro a Administración</span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bubble font-bold text-slate-900">
+                      Inicia Sesión para Continuar
+                    </h2>
+                    <p className="text-xs text-slate-500 font-sans max-w-sm mx-auto">
+                      Esta área está protegida. Ingresa tus credenciales maestras de administradora o tu código PIN de 4 dígitos.
+                    </p>
+                  </div>
 
-              {/* Si está en el Menú Principal (Hub) */}
-              {adminTab === 'hub' ? (
-                <>
-                  <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} />
-                  <AdminHubMenu onSelectTab={handleSelectAdminTab} />
-                </>
+                  <LoginModal
+                    isOpen={true}
+                    onClose={() => navigate('home')}
+                    isStandalonePage={true}
+                    onSuccess={(user) => {
+                      if (user.role === 'admin' || user.role === 'staff') {
+                        navigate('admin');
+                      } else {
+                        navigate('home');
+                      }
+                    }}
+                  />
+                </div>
               ) : (
-                /* Si está dentro de una sección específica */
-                <>
-                  <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
+                <div className="space-y-3 sm:space-y-4">
+                  {/* Barra de Árbol de Navegación Compacta */}
+                  <div className="flex items-center justify-between gap-2.5 pb-0.5">
+                    <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
+                  </div>
 
-                  {adminTab === 'orders' && <OrdersQueue />}
-                  {adminTab === 'billing' && <QuickBillingSection />}
-                  {adminTab === 'inventory' && <InventoryTable />}
-                  {adminTab === 'reports' && (
-                    <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
+                  {/* Si está en el Menú Principal (Hub) */}
+                  {adminTab === 'hub' ? (
+                    <>
+                      <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} />
+                      <AdminHubMenu onSelectTab={handleSelectAdminTab} />
+                    </>
+                  ) : (
+                    /* Si está dentro de una sección específica */
+                    <>
+                      <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
+
+                      {adminTab === 'orders' && <OrdersQueue />}
+                      {adminTab === 'billing' && <QuickBillingSection />}
+                      {adminTab === 'inventory' && <InventoryTable />}
+                      {adminTab === 'reports' && (
+                        <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
+                      )}
+                      {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
+                      {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
+                      {adminTab === 'users' && <UserProfilesSection />}
+                    </>
                   )}
-                  {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
-                  {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
-                </>
-              )}
-            </div>
-          )}
+                </div>
+              )
+            )}
         </main>
       )}
       </div>
@@ -392,8 +431,11 @@ export const App: React.FC = () => {
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
         onSuccess={(user) => {
-          if (user.role === 'admin') {
+          setIsLoginModalOpen(false);
+          if (user.role === 'admin' || user.role === 'staff') {
             navigate('admin');
+          } else {
+            navigate('home');
           }
         }}
       />

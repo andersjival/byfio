@@ -1,8 +1,51 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { ViewMode, Product, Workshop, Order, CartItem, OrderStatus, TypographyTheme, ColorTheme, PricingSectionData, AuthUser } from '../types';
+import {
+  ViewMode, Product, Workshop, Order, CartItem, OrderStatus,
+  TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
+  UserProfile, UserPermissions
+} from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { playAudioBeep } from '../utils/formatters';
+
+export const DEFAULT_USER_PROFILES: UserProfile[] = [
+  {
+    id: 'prof-alisto',
+    name: 'ALISTO DE PEDIDOS',
+    pin: '1001',
+    role: 'staff',
+    isActive: true,
+    createdAt: '2026-10-30T00:00:00.000Z',
+    note: 'Operario de alisto, picking y empaque de órdenes',
+    permissions: {
+      orders: true,
+      billing: false,
+      inventory: false,
+      reports: false,
+      workshops: false,
+      pricing: false,
+      users: false,
+    },
+  },
+  {
+    id: 'prof-mostrador',
+    name: 'ATENCIÓN Y TALLERES',
+    pin: '2026',
+    role: 'staff',
+    isActive: true,
+    createdAt: '2026-10-30T00:00:00.000Z',
+    note: 'Atención presencial en Tibás, inscripciones y catálogo',
+    permissions: {
+      orders: true,
+      billing: true,
+      inventory: true,
+      reports: false,
+      workshops: true,
+      pricing: true,
+      users: false,
+    },
+  },
+];
 
 export interface CartToastInfo {
   productName: string;
@@ -85,8 +128,15 @@ interface AppContextType {
   setSoundButtonsEnabled: (enabled: boolean) => void;
   currentUser: AuthUser | null;
   loginUser: (email: string, pass: string) => { success: boolean; error?: string; user?: AuthUser };
+  loginWithPin: (pin: string) => { success: boolean; error?: string; user?: AuthUser };
   registerUser: (email: string, pass: string, name?: string) => { success: boolean; error?: string; user?: AuthUser };
   logoutUser: () => void;
+  userProfiles: UserProfile[];
+  addUserProfile: (profile: Omit<UserProfile, 'id' | 'createdAt'>) => UserProfile;
+  updateUserProfile: (id: string, updates: Partial<UserProfile>) => void;
+  deleteUserProfile: (id: string) => void;
+  toggleUserProfileStatus: (id: string) => void;
+  hasPermission: (tab: string) => boolean;
   resetToDefaults: () => void;
 }
 
@@ -105,6 +155,7 @@ const STORAGE_KEYS = {
   SOUND_BUTTONS: 'byfio_sound_buttons_v1',
   AUTH_USER: 'byfio_auth_user_v1',
   REGISTERED_USERS: 'byfio_registered_users_v1',
+  USER_PROFILES: 'byfio_user_profiles_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -208,6 +259,57 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.SOUND_BUTTONS, String(enabled));
   };
 
+  const [userProfiles, setUserProfiles] = useState<UserProfile[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.USER_PROFILES);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return DEFAULT_USER_PROFILES;
+  });
+
+  const addUserProfile = (profileData: Omit<UserProfile, 'id' | 'createdAt'>) => {
+    const newProfile: UserProfile = {
+      ...profileData,
+      id: `prof-${Date.now()}`,
+      name: profileData.name.trim().toUpperCase(),
+      pin: profileData.pin.trim().slice(0, 4),
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [newProfile, ...userProfiles];
+    setUserProfiles(updated);
+    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+    return newProfile;
+  };
+
+  const updateUserProfile = (id: string, updates: Partial<UserProfile>) => {
+    const updated = userProfiles.map((p) => {
+      if (p.id !== id) return p;
+      return {
+        ...p,
+        ...updates,
+        name: updates.name ? updates.name.trim().toUpperCase() : p.name,
+        pin: updates.pin ? updates.pin.trim().slice(0, 4) : p.pin,
+      };
+    });
+    setUserProfiles(updated);
+    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+  };
+
+  const deleteUserProfile = (id: string) => {
+    const updated = userProfiles.filter((p) => p.id !== id);
+    setUserProfiles(updated);
+    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+  };
+
+  const toggleUserProfileStatus = (id: string) => {
+    const updated = userProfiles.map((p) => (p.id === id ? { ...p, isActive: !p.isActive } : p));
+    setUserProfiles(updated);
+    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+  };
+
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
@@ -217,27 +319,129 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
-  const loginUser = (emailInput: string, passwordInput: string) => {
-    const cleanEmail = emailInput.trim().toLowerCase();
-    const cleanPass = passwordInput.trim();
+  const hasPermission = (tab: string) => {
+    if (!currentUser) return false;
+    if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
+    if (tab === 'hub') return true;
+    if (currentUser.role === 'staff' && currentUser.permissions) {
+      return Boolean((currentUser.permissions as any)[tab]);
+    }
+    return false;
+  };
 
-    // Cuenta Maestra Oficial: fio@byfiocr.com / Fio777
-    if ((cleanEmail === 'fio@byfiocr.com' || cleanEmail === 'fio') && cleanPass === 'Fio777') {
+  const loginWithPin = (pinInput: string) => {
+    const cleanPin = pinInput.trim();
+    if (!cleanPin || cleanPin.length !== 4) {
+      return { success: false, error: 'El código PIN debe tener exactamente 4 dígitos numéricos.' };
+    }
+
+    const fullPermissions: UserPermissions = {
+      orders: true,
+      billing: true,
+      inventory: true,
+      reports: true,
+      workshops: true,
+      pricing: true,
+      users: true,
+    };
+
+    // PIN Maestro de Fio (7777 o 0777)
+    if (cleanPin === '7777' || cleanPin === '0777') {
       const adminUser: AuthUser = {
         email: 'fio@byfiocr.com',
         name: 'Fiorella (Fio)',
         role: 'admin',
+        isMasterAdmin: true,
+        permissions: fullPermissions,
       };
       setCurrentUser(adminUser);
       localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(adminUser));
       return { success: true, user: adminUser };
     }
 
-    // Cuentas de clientes registradas localmente
+    const found = userProfiles.find((p) => p.isActive && p.pin === cleanPin);
+    if (!found) {
+      return { success: false, error: 'Código PIN no asignado a ningún perfil de usuario activo.' };
+    }
+
+    const staffUser: AuthUser = {
+      id: found.id,
+      name: found.name.toUpperCase(),
+      role: found.role,
+      permissions: found.permissions,
+      isMasterAdmin: found.role === 'admin',
+    };
+    setCurrentUser(staffUser);
+    localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(staffUser));
+    return { success: true, user: staffUser };
+  };
+
+  const loginUser = (emailInput: string, passwordInput: string) => {
+    const cleanEmail = emailInput.trim();
+    const cleanEmailLower = cleanEmail.toLowerCase();
+    const cleanPass = passwordInput.trim();
+
+    const fullPermissions: UserPermissions = {
+      orders: true,
+      billing: true,
+      inventory: true,
+      reports: true,
+      workshops: true,
+      pricing: true,
+      users: true,
+    };
+
+    // 1. Cuenta Maestra Oficial: fio@byfiocr.com / Fio777 (insensible a mayúsculas)
+    if (
+      (cleanEmailLower === 'fio@byfiocr.com' || cleanEmailLower === 'fio' || cleanEmailLower === 'fio@byfio.com') &&
+      cleanPass.toLowerCase() === 'fio777'
+    ) {
+      const adminUser: AuthUser = {
+        email: 'fio@byfiocr.com',
+        name: 'Fiorella (Fio)',
+        role: 'admin',
+        isMasterAdmin: true,
+        permissions: fullPermissions,
+      };
+      setCurrentUser(adminUser);
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(adminUser));
+      return { success: true, user: adminUser };
+    }
+
+    // 2. Acceso por Código PIN de 4 Dígitos si se introduce en contraseña o usuario
+    const pinCandidate = (cleanPass.length === 4 && /^\d{4}$/.test(cleanPass))
+      ? cleanPass
+      : (cleanEmail.length === 4 && /^\d{4}$/.test(cleanEmail))
+      ? cleanEmail
+      : null;
+
+    if (pinCandidate) {
+      const pinResult = loginWithPin(pinCandidate);
+      if (pinResult.success) return pinResult;
+    }
+
+    // 3. Acceso por Nombre de Perfil (en Mayúsculas) y PIN de 4 dígitos
+    const profileMatch = userProfiles.find(
+      (p) => p.isActive && p.name.toUpperCase() === cleanEmail.toUpperCase() && p.pin === cleanPass
+    );
+    if (profileMatch) {
+      const staffUser: AuthUser = {
+        id: profileMatch.id,
+        name: profileMatch.name.toUpperCase(),
+        role: profileMatch.role,
+        permissions: profileMatch.permissions,
+        isMasterAdmin: profileMatch.role === 'admin',
+      };
+      setCurrentUser(staffUser);
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(staffUser));
+      return { success: true, user: staffUser };
+    }
+
+    // 4. Cuentas de clientes registradas localmente
     try {
       const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
       const found = registered.find(
-        (u: any) => u.email.toLowerCase() === cleanEmail && u.password === cleanPass
+        (u: any) => u.email.toLowerCase() === cleanEmailLower && u.password === cleanPass
       );
       if (found) {
         const normalUser: AuthUser = {
@@ -251,7 +455,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     } catch {}
 
-    return { success: false, error: 'Correo o contraseña incorrectos. Verifica tus credenciales.' };
+    return { success: false, error: 'Credenciales incorrectas. Verifica tu correo, contraseña o PIN de 4 dígitos.' };
   };
 
   const registerUser = (emailInput: string, passwordInput: string, nameInput?: string) => {
@@ -758,8 +962,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSoundButtonsEnabled,
         currentUser,
         loginUser,
+        loginWithPin,
         registerUser,
         logoutUser,
+        userProfiles,
+        addUserProfile,
+        updateUserProfile,
+        deleteUserProfile,
+        toggleUserProfileStatus,
+        hasPermission,
         cartToast,
         showCartSuccessToast,
         closeCartToast,

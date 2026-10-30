@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
-  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag
+  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users
 } from 'lucide-react';
 
 interface AdminHubMenuProps {
@@ -11,7 +11,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
-  const { orders, products, workshops } = useApp();
+  const { orders, products, workshops, userProfiles, hasPermission } = useApp();
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
   const copyCatalogLink = () => {
@@ -32,8 +32,9 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
+  const activeProfiles = userProfiles.filter((p) => p.isActive);
 
-  const menuItems = [
+  const allMenuItems = [
     {
       id: 'orders' as AdminTabType,
       title: 'Cola de Pedidos',
@@ -82,7 +83,17 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
       icon: Tag,
       gradient: 'from-[#F59E0B] to-[#D97706]',
     },
+    {
+      id: 'users' as AdminTabType,
+      title: 'Perfiles de Usuarios',
+      badge: `${activeProfiles.length} activos`,
+      badgeClass: 'bg-purple-100 text-purple-900',
+      icon: Users,
+      gradient: 'from-[#8B5CF6] to-[#6D28D9]',
+    },
   ];
+
+  const menuItems = allMenuItems.filter((item) => hasPermission(item.id));
 
   return (
     <div className="space-y-4 animate-fadeIn">
@@ -102,7 +113,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
       </div>
 
       {/* Grid de Cajitas Compactas, Redonditas y Profesionales (Todo en 1 Sola Pantalla) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-3.5">
         {menuItems.map((item) => {
           const Icon = item.icon;
 

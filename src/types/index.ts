@@ -140,10 +140,34 @@ export interface CartItem {
   spotsLeft?: number;
 }
 
+export interface UserPermissions {
+  orders: boolean;     // Cola de Pedidos y Alisto QR
+  billing: boolean;    // Facturación Rápida
+  inventory: boolean;  // Inventario & Etiquetas QR
+  reports: boolean;    // Caja & Reportería
+  workshops: boolean;  // Talleres & Alumnos
+  pricing: boolean;    // Precios & Stickers
+  users: boolean;      // Gestión de Perfiles
+}
+
+export interface UserProfile {
+  id: string;
+  name: string; // Nombre guardado y leído SIEMPRE EN MAYÚSCULAS
+  pin: string;  // Código de acceso numérico de 4 dígitos
+  role: 'admin' | 'staff';
+  permissions: UserPermissions;
+  isActive: boolean;
+  createdAt: string;
+  note?: string;
+}
+
 export interface AuthUser {
-  email: string;
+  id?: string;
+  email?: string;
   name: string;
-  role: 'admin' | 'customer';
+  role: 'admin' | 'staff' | 'customer';
+  permissions?: UserPermissions;
+  isMasterAdmin?: boolean;
   avatar?: string;
 }
 
