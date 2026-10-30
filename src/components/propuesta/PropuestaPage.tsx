@@ -18,7 +18,15 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
   const [activeTabFilter, setActiveTabFilter] = useState<'all' | 'wms' | 'store' | 'academy' | 'finance' | 'admin' | 'metrics'>('all');
 
   const handleCopySummary = () => {
-    const text = `PROYECTO TECNOLÓGICO BY.FIO - RESUMEN DE FUNCIONALIDADES
+    const text = `PROYECTO TECNOLÓGICO BY.FIO - RESUMEN DE FUNCIONALIDADES & BENEFICIOS
+
+BENEFICIOS ESTRATÉGICOS CLAVE:
+• Ahorro de tiempo en conversaciones largas por WhatsApp: Todo queda automatizado hacia el panel de pedidos online.
+• Orden riguroso de Pedidos: Cola cronológica FIFO y alisto guiado con validación QR para cero confusiones.
+• Orden y control de Inventario: Mínimos/máximos, alertas automáticas y cálculo sugerido para compras a proveedores.
+• Todo Organizado y Centralizado: Un único ecosistema que unifica tienda, catálogo, talleres, WMS, facturación y analítica.
+
+MÓDULOS DEL SISTEMA:
 1. Gestión de Pedidos y Alisto (Logística WMS): FIFO, Control de Estados, Alisto Guiado QR, Validación por Escaneo.
 2. Inventario Inteligente y Abastecimiento: Stock Actual, Mínimos/Máximos, Alertas Reabastecimiento, Cantidad Sugerida, Etiquetas QR.
 3. Tienda Online & Catálogo Digital: Mobile-First, Categorías Dinámicas, Personalización Interactiva, Checkout SINPE 6400-4640.
@@ -107,6 +115,143 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
           </div>
         </div>
       </div>
+
+      {/* SECCIÓN ESTRATÉGICA: TRANSFORMACIÓN OPERATIVA & BENEFICIOS CLAVE */}
+      <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bubble font-bold text-xs mb-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Transformación Operativa del Negocio</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+              Beneficios Clave & Impacto en la Operación Diaria
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-sans mt-0.5">
+              Cómo la plataforma elimina los cuellos de botella más costosos y centraliza toda la gestión de By.Fio:
+            </p>
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-fio-purple dark:text-fio-pink text-xs font-bubble font-bold shrink-0">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            <span>100% Organizado & Centralizado</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Beneficio 1: Ahorro de tiempo en WhatsApp */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 dark:from-emerald-950/20 dark:via-[#1E1B2E] dark:to-teal-950/10 border-2 border-emerald-200/80 dark:border-emerald-800/40 space-y-2.5 shadow-xs">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  💬
+                </span>
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                  Ahorro Radical de Tiempo en WhatsApp
+                </h3>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
+                Cero Chats Largos
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              <strong>Se acabaron las conversaciones largas y repetitivas de 15 a 20 minutos por cliente</strong> para enviar fotos sueltas, cotizar medidas, pedir el nombre de la personalización y solicitar comprobantes.
+            </p>
+            <div className="p-3 rounded-xl bg-white/80 dark:bg-purple-950/30 border border-emerald-100 dark:border-emerald-900/30 text-[11px] text-slate-700 dark:text-slate-200 font-sans space-y-1">
+              <p className="font-semibold text-emerald-700 dark:text-emerald-400">
+                ✓ Todo Queda 100% Automatizado:
+              </p>
+              <p>
+                El cliente navega la tienda o catálogo online, personaliza su artículo, adjunta su comprobante SINPE y el pedido ingresa estructurado y listo para alistar directamente en el <strong>Panel de Pedidos Online</strong>.
+              </p>
+            </div>
+          </div>
+
+          {/* Beneficio 2: Orden y Control del Inventario */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-sky-50/70 via-white to-indigo-50/40 dark:from-sky-950/20 dark:via-[#1E1B2E] dark:to-indigo-950/10 border-2 border-sky-200/80 dark:border-sky-800/40 space-y-2.5 shadow-xs">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  📦
+                </span>
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                  Beneficios en Orden de Inventario
+                </h3>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-200">
+                Cero Quiebres de Stock
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Control total de existencias físicas en tiempo real. Sabrás con exactitud <strong>qué hay, qué falta y cuánto pedir</strong> a los proveedores antes de que se agote un producto crítico.
+            </p>
+            <div className="p-3 rounded-xl bg-white/80 dark:bg-purple-950/30 border border-sky-100 dark:border-sky-900/30 text-[11px] text-slate-700 dark:text-slate-200 font-sans space-y-1">
+              <p className="font-semibold text-sky-700 dark:text-sky-400">
+                ✓ Alertas Automáticas & Ubicación QR:
+              </p>
+              <p>
+                Umbrales de Mínimos/Máximos, cálculo automático de reposición <em>(Máximo - Actual)</em> y etiquetas QR vinculadas a la ubicación exacta de cada estante en bodega.
+              </p>
+            </div>
+          </div>
+
+          {/* Beneficio 3: Orden y Flujo de Pedidos */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-50/70 via-white to-pink-50/40 dark:from-purple-950/20 dark:via-[#1E1B2E] dark:to-pink-950/10 border-2 border-purple-200/80 dark:border-purple-800/40 space-y-2.5 shadow-xs">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-xl bg-fio-purple text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  ⚡
+                </span>
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                  Beneficios en Orden de Pedidos (WMS)
+                </h3>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-200">
+                Flujo FIFO & Cero Errores
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Organización secuencial cronológica (el primero en entrar es el primero en alistarse), erradicando pedidos olvidados, extraviados o duplicados.
+            </p>
+            <div className="p-3 rounded-xl bg-white/80 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/30 text-[11px] text-slate-700 dark:text-slate-200 font-sans space-y-1">
+              <p className="font-semibold text-fio-purple dark:text-fio-pink">
+                ✓ Alisto Guiado Paso a Paso:
+              </p>
+              <p>
+                La pantalla guía al operario artículo por artículo indicando el estante exacto y valida por escáner QR que el producto empacado sea el correcto.
+              </p>
+            </div>
+          </div>
+
+          {/* Beneficio 4: Todo Organizado y Centralizado */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-50/70 via-white to-orange-50/40 dark:from-amber-950/20 dark:via-[#1E1B2E] dark:to-orange-950/10 border-2 border-amber-200/80 dark:border-amber-800/40 space-y-2.5 shadow-xs">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  🎯
+                </span>
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                  Todo Organizado & Centralizado
+                </h3>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-900/60 dark:text-amber-200">
+                Ecosistema Unificado
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              <strong>Fin a las libretas de papel, capturas dispersas en chats y notas sueltas.</strong> Toda la información comercial, operativa y contable en una sola plataforma.
+            </p>
+            <div className="p-3 rounded-xl bg-white/80 dark:bg-purple-950/30 border border-amber-100 dark:border-amber-900/30 text-[11px] text-slate-700 dark:text-slate-200 font-sans space-y-1">
+              <p className="font-semibold text-amber-800 dark:text-amber-400">
+                ✓ Control Absoluto desde Cualquier Lugar:
+              </p>
+              <p>
+                Tienda, catálogo mayorista, alisto WMS, academia de talleres, facturación POS, cierre diario y analítica integrados en un único panel accesible desde PC o móvil.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* FILTROS RÁPIDOS POR CATEGORÍA */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
@@ -749,6 +894,10 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
                 <span>Lista Automatizada para Proveedores</span>
               </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                <span>Trazabilidad y Ubicación por Estantería</span>
+              </li>
             </ul>
           </div>
 
@@ -803,6 +952,14 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 <span>Envío Directo de Factura a WhatsApp</span>
               </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>Ahorro de Tiempo en Pedidos por WhatsApp</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>Panel de Pedidos Online Automatizado</span>
+              </li>
             </ul>
           </div>
 
@@ -856,6 +1013,10 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
                 <span>Base de Datos en la Nube de Alta Disponibilidad</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
+                <span>Ecosistema Centralizado Unificado</span>
               </li>
             </ul>
           </div>

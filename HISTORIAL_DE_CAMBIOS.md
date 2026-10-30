@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.98.0 - Incorporación de Beneficios Estratégicos, Ahorro en WhatsApp y Ecosistema Centralizado en la Propuesta
+- [x] **Sección de Transformación Operativa & Beneficios Clave ([`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
+  - **Ahorro Radical de Tiempo en WhatsApp:** Eliminación de conversaciones largas de 15 a 20 min por cliente. Proceso 100% automatizado desde la tienda/catálogo con comprobante SINPE directo al panel de pedidos online.
+  - **Beneficios en Orden de Inventario:** Existencias en tiempo real, alertas de reabastecimiento antes del quiebre, cálculo de compras para proveedores *(Máximo - Actual)* y ubicación QR por estantería.
+  - **Beneficios en Orden de Pedidos:** Cola cronológica FIFO, alisto guiado paso a paso y validación por escáner QR para cero errores en paquetes personalizados.
+  - **Beneficios de Todo Organizado & Centralizado:** Erradicación de libretas de papel y capturas dispersas. Tienda, WMS, academia de talleres, caja, reportes y métricas unificados en una sola pantalla.
+- [x] **Actualización de Resumen Copiable y Lista Final de Nombres:**
+  - Inclusión de los 4 pilares de transformación en el portapapeles y en el inventario terminal de la plataforma.
+
 ### Versión 1.97.0 - Erradicación Total de Referencias Técnicas de Infraestructura en la Web y Propuesta
 - [x] **Eliminación Total de Nombres de Proveedores en UI & Propuesta (`PropuestaPage.tsx`, `DailyClosingModal.tsx`, `health.ts`):**
   - Eliminada de forma absoluta cualquier mención visible o textual de marcas de infraestructura ("Cloudflare", "Pages", "D1").
