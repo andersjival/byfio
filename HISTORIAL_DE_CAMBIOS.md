@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.66.0 - Flujo de Acceso por PIN con Solicitud de Nombre, Transición Fluida y Límite de 3 Intentos
+- [x] **Limpieza de Interfaz y Nomenclatura Simplificada (`LoginModal.tsx`):**
+  - Eliminado el bloque y píldoras públicas de *"Perfiles de Colaborador activos: ALISTO DE PEDIDOS / ATENCIÓN Y TALLERES"*.
+  - Renombradas las opciones del selector: *"Correo / Fio"* ahora es estrictamente *"Correo"*, y *"PIN 4 Dígitos"* simplificado a *"PIN"*.
+- [x] **Flujo en 2 Pasos con Transición Suave para PIN (`LoginModal.tsx` y `AppContext.tsx`):**
+  - **Paso 1:** Solicita en la misma línea el nombre del perfil (`Nombre del perfil`), forzando mayúsculas automáticas y validándolo contra perfiles activos.
+  - **Transición Profesional:** Al confirmar, el campo de perfil se desvanece con animación lateral suave (`duration-300`) y da paso inmediato al campo de ingreso de PIN con enfoque automático.
+  - El perfil validado se muestra en una cápsula con opción rápida *"Cambiar"* para reescribir el nombre si se desea.
+- [x] **Límite de Seguridad Estricto de 3 Intentos (`LoginModal.tsx` y `AppContext.tsx`):**
+  - Monitoreo de intentos fallidos en `sessionStorage`; muestra contador reactivo (*"Intentos restantes: X de 3"*).
+  - Al tercer intento fallido, bloquea el campo de PIN y el botón de ingreso de forma segura con mensaje de advertencia.
+
 ### Versión 1.65.0 - Erradicación de Cortes en Bordes del Login (Tema Oscuro y Claro)
 - [x] **Enmarcado 3D Completo y Bordes Delicados (`LoginModal.tsx` e `index.css`):**
   - Incorporado borde definido `1.5px solid rgba(216, 180, 254, 0.45)` y sombra con halo perimetral en modo oscuro, además de borde sutil `rgba(255, 255, 255, 0.85)` en modo claro, eliminando sensaciones de tarjeta cortada o bordes duros.

@@ -128,7 +128,7 @@ interface AppContextType {
   setSoundButtonsEnabled: (enabled: boolean) => void;
   currentUser: AuthUser | null;
   loginUser: (email: string, pass: string) => { success: boolean; error?: string; user?: AuthUser };
-  loginWithPin: (pin: string) => { success: boolean; error?: string; user?: AuthUser };
+  loginWithPin: (pin: string, targetProfileName?: string) => { success: boolean; error?: string; user?: AuthUser };
   registerUser: (email: string, pass: string, name?: string) => { success: boolean; error?: string; user?: AuthUser };
   logoutUser: () => void;
   userProfiles: UserProfile[];
@@ -329,10 +329,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return false;
   };
 
-  const loginWithPin = (pinInput: string) => {
+  const loginWithPin = (pinInput: string, targetProfileName?: string) => {
     const cleanPin = pinInput.trim();
     if (!cleanPin || cleanPin.length !== 4) {
-      return { success: false, error: 'El código PIN debe tener exactamente 4 dígitos numéricos.' };
+      return { success: false, error: 'El código PIN debe tener exactamente 4 dígitos.' };
     }
 
     const fullPermissions: UserPermissions = {
@@ -359,9 +359,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true, user: adminUser };
     }
 
-    const found = userProfiles.find((p) => p.isActive && p.pin === cleanPin);
+    let found = userProfiles.find((p) => p.isActive && p.pin === cleanPin);
+
+    // Si se especificó nombre de perfil, validar que el PIN pertenezca a ese perfil
+    if (targetProfileName) {
+      const expected = userProfiles.find(
+        (p) => p.isActive && p.name.toUpperCase() === targetProfileName.trim().toUpperCase()
+      );
+      if (expected) {
+        if (expected.pin !== cleanPin) {
+          return { success: false, error: 'Código PIN incorrecto para este perfil.' };
+        }
+        found = expected;
+      }
+    }
+
     if (!found) {
-      return { success: false, error: 'Código PIN no asignado a ningún perfil de usuario activo.' };
+      return { success: false, error: 'Código PIN incorrecto o no asignado a ningún perfil de usuario activo.' };
     }
 
     const staffUser: AuthUser = {
