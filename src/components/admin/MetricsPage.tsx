@@ -65,6 +65,13 @@ const DESTINATION_OPTIONS: DestinationSectionOption[] = [
     badge: 'Gestión Interna',
     icon: ShieldCheck,
   },
+  {
+    id: 'propuesta',
+    name: 'Propuesta Integral & Ecosistema',
+    path: '/propuesta',
+    badge: 'Propuesta',
+    icon: Sparkles,
+  },
 ];
 
 interface SectionMetadataItem {
@@ -216,6 +223,14 @@ const SECTION_METADATA: Record<string, SectionMetadataItem> = {
     routePath: '/metricas',
     color: 'from-indigo-600 to-blue-700',
     routeKey: 'metricas',
+  },
+  propuesta: {
+    label: 'Propuesta Integral & Ficha Técnica',
+    category: 'admin',
+    icon: Sparkles,
+    routePath: '/propuesta',
+    color: 'from-fio-purple to-pink-600',
+    routeKey: 'propuesta',
   },
 };
 
@@ -690,19 +705,28 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
           )}
         </div>
 
+        {/* Texto Explicativo de Alto Contraste Justo Abajo del Título */}
+        <p className="text-xs sm:text-sm font-sans font-medium text-slate-700 dark:text-slate-200">
+          Toca una de las siguientes opciones para filtrar las métricas en tiempo real:
+        </p>
+
         {/* Píldoras / Botones de Enlaces */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
           <button
             onClick={() => setSelectedLinkFilter('all')}
             className={`px-3.5 py-2 rounded-2xl text-xs font-bubble font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
               selectedLinkFilter === 'all'
-                ? 'bg-gradient-to-r from-fio-purple to-purple-700 text-white shadow-md scale-102'
-                : 'bg-slate-100 dark:bg-[#252038] text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-900/30'
+                ? 'bg-gradient-to-r from-fio-purple to-purple-700 text-white shadow-md scale-102 ring-2 ring-purple-400/50'
+                : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white border-2 border-slate-300 dark:border-purple-800 hover:border-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/40 shadow-xs'
             }`}
           >
-            <Globe className="w-3.5 h-3.5" />
-            <span>🌐 Todo el Sitio Web (Global)</span>
-            <span className="ml-1 px-1.5 py-0.2 rounded-full bg-white/20 text-[10px]">
+            <Globe className="w-3.5 h-3.5 shrink-0" />
+            <span className="font-bold text-slate-900 dark:text-white">🌐 Todo el Sitio Web (Global)</span>
+            <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+              selectedLinkFilter === 'all'
+                ? 'bg-white/25 text-white'
+                : 'bg-purple-100 dark:bg-purple-900/60 text-purple-950 dark:text-purple-100 border border-purple-200 dark:border-purple-700'
+            }`}>
               {metrics.totalPageLoads} cargas
             </span>
           </button>
@@ -716,13 +740,17 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                 onClick={() => setSelectedLinkFilter(link.id)}
                 className={`px-3 py-2 rounded-2xl text-xs font-bubble font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
                   isSelected
-                    ? 'bg-gradient-to-r from-fio-purple to-purple-700 text-white shadow-md scale-102'
-                    : 'bg-slate-100 dark:bg-[#252038] text-slate-700 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 border border-slate-200/80 dark:border-white/10'
+                    ? 'bg-gradient-to-r from-fio-purple to-purple-700 text-white shadow-md scale-102 ring-2 ring-purple-400/50'
+                    : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white border-2 border-slate-300 dark:border-purple-800 hover:border-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/40 shadow-xs'
                 }`}
               >
                 <Link2 className="w-3.5 h-3.5 text-fio-pink shrink-0" />
-                <span className="truncate max-w-[140px]">{link.name}</span>
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-purple-200/50 dark:bg-purple-900/50 text-slate-900 dark:text-white font-mono font-bold">
+                <span className="truncate max-w-[140px] font-bold text-slate-900 dark:text-white">{link.name}</span>
+                <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                  isSelected
+                    ? 'bg-white/25 text-white'
+                    : 'bg-purple-100 dark:bg-purple-900/60 text-purple-950 dark:text-purple-100 border border-purple-200 dark:border-purple-700'
+                }`}>
                   {link.clicks} clics
                 </span>
               </button>
@@ -732,14 +760,14 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
 
         {/* Alerta de Modo de Enlace Específico */}
         {activeLink && (
-          <div className="p-3 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-fadeIn">
+          <div className="p-3.5 rounded-2xl bg-purple-50 dark:bg-purple-950/60 border-2 border-purple-300 dark:border-purple-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-fadeIn">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
               <div>
-                <span className="font-bubble font-bold text-purple-900 dark:text-purple-200">
+                <span className="font-bubble font-bold text-purple-950 dark:text-purple-100">
                   Estás viendo las métricas del enlace: "{activeLink.name}"
                 </span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 ml-1.5 font-mono">
+                <span className="text-[11px] text-slate-800 dark:text-slate-200 ml-1.5 font-mono font-semibold">
                   (ref={activeLink.slug}) • Destino: {activeLink.targetLabel || activeLink.targetRoute}
                 </span>
               </div>
@@ -1167,14 +1195,14 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
           </div>
 
           {/* Filtro Rápido de Categorías: Todas las Partes vs Tienda vs Admin */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-[#252038] border border-slate-200/80 dark:border-white/10 shrink-0">
+          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-200/90 dark:bg-[#1E1B2E] border border-slate-300 dark:border-purple-900/50 shrink-0">
             <button
               type="button"
               onClick={() => setSectionFilterCategory('all')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'all'
-                  ? 'bg-fio-purple text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple'
+                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
+                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
               🌐 Todas ({allRankedSections.length})
@@ -1184,8 +1212,8 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               onClick={() => setSectionFilterCategory('store')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'store'
-                  ? 'bg-fio-purple text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple'
+                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
+                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
               🛍️ Tienda & Clientes ({storeCount})
@@ -1195,8 +1223,8 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               onClick={() => setSectionFilterCategory('admin')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'admin'
-                  ? 'bg-fio-purple text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple'
+                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
+                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
               🛡️ Panel Admin ({adminCount})

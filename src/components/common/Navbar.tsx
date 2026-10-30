@@ -433,6 +433,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             Precios Stickers
           </button>
 
+          <button
+            type="button"
+            onClick={() => handleNav('propuesta')}
+            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn ${
+              currentRoute === 'propuesta'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                : 'bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn'
+            }`}
+          >
+            📋 Propuesta del Sistema
+          </button>
+
           {currentUser ? (
             <div className="p-3 rounded-2xl bg-white/80 border border-purple-200/80 shadow-xs space-y-2">
               <div className="flex items-center justify-between">

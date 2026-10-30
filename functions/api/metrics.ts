@@ -30,6 +30,7 @@ const DEFAULT_SECTIONS_INITIAL: Record<string, { views: number; likes: number; t
   'admin-pricing': { views: 215, likes: 52, timeSpentAvgMinutes: 3.4 },
   'admin-users': { views: 185, likes: 45, timeSpentAvgMinutes: 2.9 },
   metricas: { views: 170, likes: 58, timeSpentAvgMinutes: 4.2 },
+  propuesta: { views: 95, likes: 34, timeSpentAvgMinutes: 3.5 },
 };
 
 const getInitialMetricsState = () => ({

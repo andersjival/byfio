@@ -38,6 +38,7 @@ import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { LoginModal } from './components/common/LoginModal';
 import { UserProfilesSection } from './components/admin/UserProfilesSection';
 import { MetricsPage } from './components/admin/MetricsPage';
+import { PropuestaPage } from './components/propuesta/PropuestaPage';
 import { metricsTracker } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film, Shield } from 'lucide-react';
@@ -79,6 +80,7 @@ const parseRouteFromLocation = (): RouteInfo => {
   }
 
   // Rutas públicas y privadas
+  if (path.includes('/propuesta') || hash.includes('propuesta')) return { route: 'propuesta', adminTab: 'hub' };
   if (path.includes('/metricas') || hash.includes('metricas')) return { route: 'metricas', adminTab: 'hub' };
   if (path.includes('/login') || hash.includes('login')) return { route: 'login', adminTab: 'hub' };
   if (path.includes('/precios') || hash.includes('precios')) return { route: 'precios', adminTab: 'hub' };
@@ -138,7 +140,8 @@ export const App: React.FC = () => {
     setSelectedWorkshopId(wsId);
 
     let targetPath = '/';
-    if (newRoute === 'metricas') targetPath = '/metricas';
+    if (newRoute === 'propuesta') targetPath = '/propuesta';
+    else if (newRoute === 'metricas') targetPath = '/metricas';
     else if (newRoute === 'login') targetPath = '/login';
     else if (newRoute === 'precios') targetPath = '/precios';
     else if (newRoute === 'catalogo') targetPath = '/catalogo';
@@ -290,6 +293,10 @@ export const App: React.FC = () => {
 
             {currentRoute === 'metricas' && (
               <MetricsPage onNavigate={navigate} />
+            )}
+
+            {currentRoute === 'propuesta' && (
+              <PropuestaPage onNavigate={navigate} />
             )}
 
             {currentRoute === 'admin' && (

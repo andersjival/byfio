@@ -17,6 +17,33 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.94.0 - Corrección Integral de Contraste Tipográfico en Filtros de Métricas y Categorías de Secciones
+- [x] **Visibilidad Total en Selector de Enlaces Rastreables (`MetricsPage.tsx`):**
+  - Añadido texto explicativo de alto contraste directamente bajo el título de filtrado para orientar al administrador en tiempo real.
+  - Píldoras de enlaces no seleccionadas convertidas a tarjetas sólidas (`bg-white dark:bg-[#252038]`) con borde definido (`border-2 border-slate-300 dark:border-purple-800`) y tipografía nítida de máxima legibilidad (`text-slate-900 dark:text-white`).
+  - Badges numéricos de cargas y clics con contraste reforzado en modo claro y modo oscuro.
+- [x] **Contraste de Alta Definición en Filtros de Categoría de Secciones (`MetricsPage.tsx`):**
+  - Erradicado el texto lavado `text-slate-600` en los botones deseleccionados `🛍️ Tienda & Clientes` y `🛡️ Panel Admin`.
+  - Aplicado fondo sólido con relieve y tipografía en negrita pura `text-slate-900 dark:text-white` para visualización nítida y descanso visual en cualquier monitor y tema.
+
+### Versión 1.93.0 - Creación de la Página de Propuesta Integral (/propuesta) & Acceso en Panel Admin
+- [x] **Página de Propuesta Integral y Ficha Técnica Oficial (`/propuesta` & `PropuestaPage.tsx`):**
+  - Desarrollo de una vista ejecutiva de alta fidelidad estética con hero header, KPIs, filtros interactivos y presentación estructurada en orden riguroso de todos los módulos:
+    1. **Gestión de Pedidos y Alisto (Logística WMS):** Cola FIFO, Control de Estados, Alisto Guiado Paso a Paso y Validación por Escáner QR.
+    2. **Inventario Inteligente y Abastecimiento:** Stock Actual, Mínimos y Máximos, Alertas de Reabastecimiento, Cantidad Sugerida y Generador de Etiquetas QR.
+    3. **Tienda Online & Catálogo Digital:** Vitrina Mobile-First para TikTok e Instagram, Categorías Dinámicas, Personalización Interactiva y Checkout Rápido SINPE 6400-4640.
+    4. **Academia y Talleres Creativos:** Cartelera de los 5 Pilares Formativos, Cupos en Tiempo Real, Fichas de Contenido y Registro de Alumnos con Control de Asistencia.
+    5. **Caja, Facturación y Reportería:** Facturación Rápida en Mostrador & POS, Cierre Diario de Caja, Gráficos Financieros y Envío Directo por WhatsApp.
+    6. **Administración, Precios y Usuarios:** Editor de Precios y Listas, Perfiles de Usuarios con PINs de 4 Dígitos y Mascota Interactiva Estrellita Animada.
+    7. **Analítica & Rastreo en Tiempo Real (/metricas):** Enlaces Rastreados para Redes, Telemetría PC vs Celulares, Sincronización Cloudflare D1 y Mapeo de Popularidad de 16 Secciones.
+    8. **Multimedia, Audio & Cloud Edge:** Video Intro Oficial By.Fio, Sonido Háptico de Gotas de Agua, Modo Claro/Oscuro y Base de Datos SQLite D1 en el Borde.
+- [x] **Lista Exhaustiva al Final con Solo el Nombre de Cada Cosa:**
+  - Sección final estructurada en 3 columnas limpias con el inventario completo de herramientas, submódulos y pantallas de la plataforma sin párrafos de relleno.
+- [x] **Botón de Acceso a la Propuesta en el Panel de Administración:**
+  - Botón *"Propuesta"* en cabecera de administración ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)).
+  - Tarjeta destacada *"Propuesta Integral & Ficha Técnica Oficial (/propuesta) - Documento Dueño"* en el menú central de administración ([`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)).
+  - Acceso desde menú móvil en la barra de navegación ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)).
+
 ### Versión 1.92.0 - Control de Duración por el Video y Entrada a la Web Exclusiva al Finalizar la Reproducción
 - [x] **Eliminación Total de Temporizadores Artificiales de Cierre (`WebIntroOverlay.tsx`):**
   - Erradicado cualquier temporizador de cuenta regresiva fija o fallback arbitrario que cerraba la animación antes de tiempo.

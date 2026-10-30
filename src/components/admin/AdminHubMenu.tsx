@@ -231,6 +231,36 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
           </div>
         </div>
 
+        {/* Tarjeta de Acceso a la Propuesta Oficial para el Dueño */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#2D1B4E] via-[#4A1E6D] to-[#1E1035] text-white shadow-md border border-purple-600/40">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-fio-pink/20 border border-fio-pink/40 flex items-center justify-center shrink-0 text-fio-yellow">
+              <Sparkles className="w-5 h-5 text-fio-yellow" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bubble font-bold text-sm text-white">
+                  Propuesta Integral & Ficha Técnica Oficial (/propuesta)
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-200 font-bubble font-bold">
+                  ★ Documento Dueño
+                </span>
+              </div>
+              <p className="text-[11px] text-purple-200/80 font-sans">
+                Resumen ejecutivo de todas las características: WMS, Inventario QR, Tienda, Academia, Facturación POS y Analítica.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="/propuesta"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-fio-pink to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bubble font-bold shadow-md active:scale-95 transition-all shrink-0 cursor-pointer"
+          >
+            <span>Ver Propuesta Completa</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
+
         {/* Tarjeta de Acceso Rápido a Métricas & Rastreo de Enlaces */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 text-white shadow-md border border-purple-800/40">
           <div className="flex items-center gap-3">

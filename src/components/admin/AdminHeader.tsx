@@ -45,6 +45,16 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal }) =
 
         {/* Acciones Rápidas & Botón Discreto de Personalización Visual */}
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Botón de Propuesta Oficial para el Dueño */}
+          <a
+            href="/propuesta"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs transition-all active:scale-95"
+            title="Ver propuesta integral y ficha de funcionalidades"
+          >
+            <FileText className="w-3.5 h-3.5 text-fio-yellow" />
+            <span>Propuesta</span>
+          </a>
+
           {/* Botón Discreto de Diseño & Tipografía */}
           <button
             type="button"
