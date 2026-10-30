@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.4.0 - Persistencia en Nube Cloudflare D1 de Perfiles de Usuario y Sincronización Multi-Dispositivo
+- [x] **Diagnóstico de Pérdida de Perfiles Locales:**
+  - Identificada la causa por la que desaparecían perfiles creados: se almacenaban exclusivamente en la memoria local (`localStorage`) del dispositivo del usuario. Al cambiar de dispositivo (celular/PC), entrar en incógnito o limpiar datos de navegación, el navegador recurría a los 2 perfiles predeterminados en código.
+- [x] **Endpoint Serverless de Persistencia en la Nube ([`user-profiles.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/user-profiles.ts)):**
+  - Creado endpoint `/api/user-profiles` con soporte GET, POST y PUT respaldado en la base de datos distribuida Cloudflare D1.
+- [x] **Sincronización Bidireccional en Aplicación ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - `syncProfilesToCloud()` sincroniza de inmediato a la nube cualquier creación, edición, borrado o cambio de estado de perfil.
+  - Al iniciar en cualquier dispositivo, se descargan los perfiles almacenados en D1 y se combinan con la memoria local para garantizar disponibilidad permanente cross-device.
+
 ### Versión 2.3.0 - Previsualización de Imagen en Enlaces Compartidos (Open Graph / WhatsApp / Redes Sociales)
 - [x] **Configuración de Open Graph y Twitter Cards ([`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html)):**
   - Implementadas etiquetas canónicas `<meta property="og:image">`, `<meta property="og:image:secure_url">`, `<meta property="og:title">`, `<meta property="og:description">` y `<meta name="twitter:image">`.

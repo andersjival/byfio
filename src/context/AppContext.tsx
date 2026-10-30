@@ -356,6 +356,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return DEFAULT_USER_PROFILES;
   });
 
+  const syncProfilesToCloud = (profiles: UserProfile[]) => {
+    fetch('/api/user-profiles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profiles }),
+    }).catch(() => {});
+  };
+
   const addUserProfile = (profileData: Omit<UserProfile, 'id' | 'createdAt'>) => {
     const newProfile: UserProfile = {
       ...profileData,
@@ -367,6 +375,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = [newProfile, ...userProfiles];
     setUserProfiles(updated);
     localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+    syncProfilesToCloud(updated);
     return newProfile;
   };
 
@@ -382,18 +391,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
     setUserProfiles(updated);
     localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+    syncProfilesToCloud(updated);
   };
 
   const deleteUserProfile = (id: string) => {
     const updated = userProfiles.filter((p) => p.id !== id);
     setUserProfiles(updated);
     localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+    syncProfilesToCloud(updated);
   };
 
   const toggleUserProfileStatus = (id: string) => {
     const updated = userProfiles.map((p) => (p.id === id ? { ...p, isActive: !p.isActive } : p));
     setUserProfiles(updated);
     localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
+    syncProfilesToCloud(updated);
   };
 
   const [customers, setCustomers] = useState<Customer[]>(() => {
@@ -846,6 +858,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setOrders(data);
+        }
+      })
+      .catch(() => {});
+
+    fetch('/api/user-profiles')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.profiles) && data.profiles.length > 0) {
+          const cloudProfiles: UserProfile[] = data.profiles;
+          setUserProfiles((prev) => {
+            const map = new Map<string, UserProfile>();
+            DEFAULT_USER_PROFILES.forEach((p) => map.set(p.id, p));
+            prev.forEach((p) => map.set(p.id, p));
+            cloudProfiles.forEach((p) => map.set(p.id, p));
+            const merged = Array.from(map.values());
+            localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged));
+            return merged;
+          });
         }
       })
       .catch(() => {});
