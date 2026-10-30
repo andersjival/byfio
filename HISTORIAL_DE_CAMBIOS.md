@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.77.0 - Rebalanceo Óptimo de Proporciones y Escala en Tarjeta de Login
+- [x] **Ampliación Balanceada del Contenedor y Escena 3D (`LoginModal.tsx` e `index.css`):**
+  - Ancho de tarjeta expandido a **360px** (`max-w-[360px]`), devolviendo cuerpo, presencia y comodidad de lectura sin tocar bordes de pantalla.
+  - Altura de la escena 3D reajustada a `clamp(125px, 16vh, 152px)` (con `clamp(120px, 15vh, 145px)` en móviles), logrando que la ilustración de la niña y la estrellita luzca destacada y adorable.
+- [x] **Restauración de Tipografías, Botones e Inputs (`index.css` y `LoginModal.tsx`):**
+  - Título a `18px`, subtítulo a `11.5px`, botón principal a `14.5px` y campos de texto con altura ergonómica.
+  - Pestañas de Correo / PIN y badge de copyright GeoSoft con tamaños equilibrados.
+- [x] **Blindaje Anti-Cortes y Centrado Seguro Preservado:**
+  - El overlay mantiene `my-auto` dinámico y padding seguro `py-4 sm:py-6`, garantizando que la tarjeta nunca toque el límite superior ni sufra recortes.
+
 ### Versión 1.76.0 - Erradicación Definitiva del Corte Superior en Login (Centrado Seguro y Desactivación de Sobrescritura Móvil)
 - [x] **Alineación Vertical Segura Sin Recortes (`LoginModal.tsx`):**
   - Removido `justify-center` del contenedor de overlay con scroll (`fixed inset-0 overflow-y-auto`) y aplicado padding vertical seguro `p-2 sm:p-4 py-4 sm:py-6`.
