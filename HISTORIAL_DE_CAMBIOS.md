@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.95.0 - Coreografía Secuencial Post-Intro: Escritura de Texto, Estrella, Corazón y BYFIO Suave en el Centro
+- [x] **Coreografía Post-Intro en Hero Principal (`HeroAnimatedSlogan.tsx` & `HeroDual.tsx`):**
+  - **Paso 1 (1 segundo después de quitar la intro):** Se escribe automáticamente con efecto máquina de escribir letra por letra la frase: *"Aprendé, creá y emprendé con"*.
+  - **Paso 2 (1 segundo después de terminar la escritura):**
+    - Aparece la **Estrella Amarilla By.Fio** destellante a la izquierda con animación spring/pop.
+    - 400ms después aparece el **Corazón Celeste** a la derecha con latido suave.
+    - 400ms después emerge en el centro con transición suave (`transition-all duration-1000 ease-out`) la palabra **BYFIO** con sus ondas de color interactivas y relieve cerámico.
+  - Sincronización automática con el estado global `isIntroOpen` del video intro.
+
 ### Versión 1.94.0 - Corrección Integral de Contraste Tipográfico en Filtros de Métricas y Categorías de Secciones
 - [x] **Visibilidad Total en Selector de Enlaces Rastreables (`MetricsPage.tsx`):**
   - Añadido texto explicativo de alto contraste directamente bajo el título de filtrado para orientar al administrador en tiempo real.

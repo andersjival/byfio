@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppRoute } from '../../types';
 import { AnimatedByfioLetters } from '../common/AnimatedByfioLetters';
+import { HeroAnimatedSlogan } from './HeroAnimatedSlogan';
 import { Sparkles, ShoppingBag, Calendar, Heart, Star, CheckCircle2 } from 'lucide-react';
 
 interface HeroDualProps {
@@ -39,12 +40,9 @@ export const HeroDual: React.FC<HeroDualProps> = ({
           </div>
         </div>
 
-        {/* Título Principal con Letras "BYFIO" Animadas en el Centro */}
-        <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bubble font-bold text-fio-900 tracking-tight max-w-4xl mx-auto leading-tight">
-          <span className="block text-slate-800">Aprendé, creá y emprendé con</span>
-          <span className="block mt-2 sm:mt-3">
-            <AnimatedByfioLetters size="hero" />
-          </span>
+        {/* Título Principal con Coreografía: Se escribe tras 1s de la intro, luego estrella, corazón y BYFIO en el centro */}
+        <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bubble font-bold text-fio-900 tracking-tight max-w-4xl mx-auto leading-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center">
+          <HeroAnimatedSlogan />
         </h1>
 
         <p className="text-xs sm:text-base text-purple-950/80 max-w-2xl mx-auto leading-relaxed font-medium px-2">
