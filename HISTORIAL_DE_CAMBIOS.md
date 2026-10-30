@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.91.0 - Visualización de Letras de Marca por al Menos 2 Segundos Antes del Video Intro
+- [x] **Retención Temporal de 2 Segundos en Letras Previas al Video (`WebIntroOverlay.tsx`):**
+  - Las letras oficiales de la marca (`BrandLogo` en formato hero con eslogan oficial y puntos de carga) ahora se muestran nítidas y en foco durante al menos 2 segundos completos (`2000ms`) antes de retirarse.
+  - El video se precarga (`preload="auto"`) en pausa durante esos 2 segundos para no perder fotogramas ni reproducir audio desincronizado.
+- [x] **Transición Quirúrgica y Desbloqueo Gestual Coordinado (`WebIntroOverlay.tsx`):**
+  - Al cumplirse los 2 segundos, las letras se desvanecen y se ocultan por completo, dando paso al video que inicia inmediatamente desde el segundo 0 con sonido activo.
+  - Añadido control de bloqueo preventivo (`canPlayVideoRef`) para impedir reproducción anticipada si el visitante toca la pantalla durante la fase de letras.
+
 ### Versión 1.90.0 - Sincronización en Tiempo Real de Enlaces & Métricas (Cross-Tab y Cloudflare D1)
 - [x] **Sincronización en Tiempo Real Reactiva Instantánea (0ms entre pestañas):**
   - Implementación de `BroadcastChannel('byfio_metrics_channel')` y escuchador `window.addEventListener('storage')`.

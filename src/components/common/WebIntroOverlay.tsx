@@ -15,31 +15,29 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
   const [audioBlocked, setAudioBlocked] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const finishTimeoutRef = useRef<number | null>(null);
+  const canPlayVideoRef = useRef(false);
 
   // Desbloqueo universal de audio
   const unlockAudio = () => {
     if (videoRef.current) {
       videoRef.current.muted = false;
       videoRef.current.volume = 1.0;
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsMuted(false);
-            setAudioBlocked(false);
-          })
-          .catch(() => {});
-      } else {
-        setIsMuted(false);
-        setAudioBlocked(false);
+      setIsMuted(false);
+      setAudioBlocked(false);
+      if (canPlayVideoRef.current) {
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {});
+        }
       }
     }
   };
 
-  // Orquestación de inicio inmediato con sonido
+  // Orquestación: letras visibles por al menos 2 segundos antes del video
   useEffect(() => {
     if (!isOpen) {
       setPhase('gradient-start');
+      canPlayVideoRef.current = false;
       if (videoRef.current) {
         videoRef.current.pause();
         videoRef.current.currentTime = 0;
@@ -47,11 +45,18 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       return;
     }
 
+    setPhase('gradient-start');
     setProgress(0);
     setAudioBlocked(false);
+    canPlayVideoRef.current = false;
 
-    // 1. Intento de reproducción INMEDIATO con sonido desmuteado al 100% de volumen
-    const startImmediatePlayback = () => {
+    // Asegurar que el video no inicie antes de que transcurran los 2 segundos de las letras
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+
+    const startVideoPlayback = () => {
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
         videoRef.current.muted = false;
@@ -76,21 +81,20 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       }
     };
 
-    // Ejecutar de inmediato sin esperas para aprovechar el evento de activación de usuario
-    startImmediatePlayback();
-
-    // 2. Transición visual ágil: 300ms de logo y despliegue del video
+    // 1. Las letras permanecen visibles por al menos 2 segundos (2000ms) antes de quitarlas y dar paso al video
     const t1 = window.setTimeout(() => {
+      canPlayVideoRef.current = true;
       setPhase('video-reveal');
-    }, 300);
+      startVideoPlayback();
+    }, 2000);
 
+    // 2. Transición fluida a reproducción activa
     const t2 = window.setTimeout(() => {
       setPhase('video-playing');
-      // Asegurar que el audio continúe activo
       if (videoRef.current && videoRef.current.muted && !hasInteracted) {
         unlockAudio();
       }
-    }, 600);
+    }, 2400);
 
     // 3. Escuchador de desbloqueo táctil/clic global: cualquier toque en pantalla activa el sonido al instante
     const handleGlobalGesture = () => {
@@ -106,10 +110,10 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       window.addEventListener(evt, handleGlobalGesture, true);
     });
 
-    // 4. Fallback de seguridad: Si el video termina o tras 11.5 segundos, salir suavemente
+    // 4. Fallback de seguridad: 2s de letras + duración completa del video (~12s)
     const t3 = window.setTimeout(() => {
       handleStartExit();
-    }, 11500);
+    }, 14000);
 
     finishTimeoutRef.current = t3;
 
@@ -209,13 +213,13 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
         />
       </div>
 
-      {/* Presentación inicial de la marca con tipografía oficial en blanco */}
+      {/* Presentación inicial de la marca con tipografía oficial en blanco (visible por al menos 2 segundos) */}
       <div
         className={`absolute z-10 flex flex-col items-center text-center px-4 transition-all duration-700 ease-out pointer-events-none ${
           phase === 'gradient-start'
             ? 'opacity-100 scale-100 blur-0'
             : 'opacity-0 scale-95 blur-md'
-        }`}
+        } ${phase === 'video-playing' || phase === 'fading-out' ? 'hidden' : ''}`}
       >
         <div className="relative mb-2 flex items-center justify-center">
           <BrandLogo
@@ -289,8 +293,8 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
           <video
             ref={videoRef}
             src="/assets/intro-web-byfio.mp4?v=20261030"
+            preload="auto"
             playsInline
-            autoPlay
             muted={isMuted}
             onTimeUpdate={handleTimeUpdate}
             onEnded={handleStartExit}
