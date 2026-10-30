@@ -508,12 +508,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   if (!isStandalonePage) {
     return (
       <div
-        className="fixed inset-0 z-50 overflow-y-auto flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 py-6 sm:py-8"
+        className="fixed inset-0 z-[100] overflow-y-auto flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 py-6 sm:py-8"
         onClick={onClose}
       >
         {/* Cortina translúcida que tapa la web de arriba hacia abajo y luego se desvanece suavemente */}
         <div
-          className={`fixed inset-0 pointer-events-none ${
+          className={`fixed inset-0 pointer-events-none z-10 ${
             loginIntroStage >= 2
               ? 'backdrop-fade-out'
               : isLogoutCurtain
@@ -522,10 +522,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           }`}
         />
 
-        {/* Ventana de login: caída suave de arriba hacia abajo, flotación y salida hacia arriba al iniciar sesión */}
+        {/* Ventana de login: caída suave de arriba hacia abajo estrictamente DELANTE de la cortina */}
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`w-full max-w-[340px] mx-auto flex justify-center my-auto z-10 ${
+          className={`relative z-30 w-full max-w-[340px] mx-auto flex justify-center my-auto ${
             loginIntroStage >= 1
               ? 'login-exit-up'
               : isLogoutCurtain
@@ -546,7 +546,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     <div className="w-full flex items-center justify-center py-4 sm:py-8 px-2 sm:px-4">
       <div
         className={`w-full max-w-[340px] mx-auto flex justify-center ${
-          loginIntroStage >= 1 ? 'login-exit-up' : 'login-drop-motion'
+          loginIntroStage >= 1 ? 'login-exit-up' : 'animate-fadeIn'
         }`}
       >
         <div className={loginIntroStage >= 1 ? 'w-full flex justify-center' : 'login-floating-card w-full flex justify-center'}>

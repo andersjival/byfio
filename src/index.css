@@ -1327,7 +1327,7 @@ html.dark .border-white\/90 {
 .login-curtain-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 10;
   background-color: rgba(15, 10, 30, 0.72);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -1356,9 +1356,11 @@ html.dark .login-curtain-backdrop {
   }
 }
 
-/* 2. Entrada suave de la ventana de login desde arriba hacia abajo */
+/* 2. Entrada suave de la ventana de login desde arriba hacia abajo (estrictamente delante de la cortina tras su despliegue) */
 .login-drop-motion {
-  animation: loginDropIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
+  position: relative;
+  z-index: 30;
+  animation: loginDropIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
   will-change: transform, opacity;
 }
 
@@ -1377,9 +1379,9 @@ html.dark .login-curtain-backdrop {
   }
 }
 
-/* 3. Flotación suave y orgánica permanente de la tarjeta de login */
+/* 3. Flotación suave y orgánica permanente de la tarjeta de login tras completarse la caída */
 .login-floating-card {
-  animation: loginSoftFloat 4s ease-in-out infinite 1.15s;
+  animation: loginSoftFloat 4s ease-in-out infinite 1.5s;
   will-change: transform;
 }
 

@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.72.0 - Corrección de Capas y Sincronización Temporal en Animación de Cierre de Sesión (Logout)
+- [x] **Secuencia Temporal Estricta (Cortina Primero, Login Después) (`index.css` y `LoginModal.tsx`):**
+  - La cortina translúcida desciende cubriendo toda la web (0s a 0.65s).
+  - La ventana de login permanece completamente oculta e invisible durante los primeros 0.70s (`loginDropIn` con delay 0.70s y `animation-fill-mode: both`), iniciando su suave descenso desde la parte superior estrictamente después de que la cortina ha cubierto la pantalla.
+  - La flotación permanente suave (`loginSoftFloat`) se activa armónicamente a los 1.50s al asentarse la tarjeta.
+- [x] **Corrección de Jerarquía de Capas (Login Delante de la Cortina) (`LoginModal.tsx` e `index.css`):**
+  - Ajustado `.login-curtain-backdrop` a `z-index: 10`.
+  - Tarjeta de login (`.login-drop-motion` y wrapper modal) configurada con posición `relative` y `z-index: 30`, garantizando que la ventana de login siempre quede delante de la cortina translúcida sin desenfoques ni velos por encima.
+  - Envoltorio de modal overlay elevado a `z-[100]`.
+- [x] **Supresión de Tarjeta Duplicada en Admin (`App.tsx`):**
+  - Al cerrar sesión en `/admin`, se redirige hacia la vista principal y se desactiva la renderización estática de la compuerta administrativa mientras `isLogoutTransitionOpen` está activa, impidiendo que aparezca una tarjeta detrás de la cortina.
+
 ### Versión 1.71.0 - Redimensión Compacta y Erradicación de Desborde/Cortes en Extremos del Login
 - [x] **Ajuste de Proporción y Ancho Máximo Seguro (`LoginModal.tsx`, `App.tsx` e `index.css`):**
   - Reducido el ancho máximo de la tarjeta de login (`.login-card` y `.scene-wrapper`) de 380px/448px a **335px**, logrando una tarjeta vertical armónica, compacta y proporcionada.

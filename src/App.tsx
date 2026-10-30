@@ -165,6 +165,13 @@ export const App: React.FC = () => {
     navigate('admin', tab);
   };
 
+  // Redirigir a portada si se cierra sesión estando en admin para que la cortina cubra la tienda limpia
+  useEffect(() => {
+    if (isLogoutTransitionOpen && currentRoute === 'admin') {
+      navigate('home');
+    }
+  }, [isLogoutTransitionOpen, currentRoute]);
+
   // Sync with browser Back/Forward & hash changes
   useEffect(() => {
     const handlePop = () => {
@@ -266,34 +273,36 @@ export const App: React.FC = () => {
 
             {currentRoute === 'admin' && (
               !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
-                /* Puerta de Entrada Segura a Administración con URL Protegida */
-                <div className="py-6 sm:py-10 max-w-[360px] mx-auto space-y-4 animate-fadeIn">
-                  <div className="text-center space-y-2 mb-2">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs shadow-neuBtn">
-                      <Shield className="w-3.5 h-3.5" />
-                      <span>Acceso Seguro a Administración</span>
+                /* Puerta de Entrada Segura a Administración con URL Protegida (oculta durante la cortina de logout) */
+                !isLogoutTransitionOpen ? (
+                  <div className="py-6 sm:py-10 max-w-[360px] mx-auto space-y-4 animate-fadeIn">
+                    <div className="text-center space-y-2 mb-2">
+                      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs shadow-neuBtn">
+                        <Shield className="w-3.5 h-3.5" />
+                        <span>Acceso Seguro a Administración</span>
+                      </div>
+                      <h2 className="text-2xl sm:text-3xl font-bubble font-bold text-slate-900">
+                        Inicia Sesión para Continuar
+                      </h2>
+                      <p className="text-xs text-slate-500 font-sans max-w-sm mx-auto">
+                        Esta área está protegida. Ingresa tus credenciales maestras de administradora o tu código PIN de 4 dígitos.
+                      </p>
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-bubble font-bold text-slate-900">
-                      Inicia Sesión para Continuar
-                    </h2>
-                    <p className="text-xs text-slate-500 font-sans max-w-sm mx-auto">
-                      Esta área está protegida. Ingresa tus credenciales maestras de administradora o tu código PIN de 4 dígitos.
-                    </p>
-                  </div>
 
-                  <LoginModal
-                    isOpen={true}
-                    onClose={() => navigate('home')}
-                    isStandalonePage={true}
-                    onSuccess={(user) => {
-                      if (user.role === 'admin' || user.role === 'staff') {
-                        navigate('admin');
-                      } else {
-                        navigate('home');
-                      }
-                    }}
-                  />
-                </div>
+                    <LoginModal
+                      isOpen={true}
+                      onClose={() => navigate('home')}
+                      isStandalonePage={true}
+                      onSuccess={(user) => {
+                        if (user.role === 'admin' || user.role === 'staff') {
+                          navigate('admin');
+                        } else {
+                          navigate('home');
+                        }
+                      }}
+                    />
+                  </div>
+                ) : null
               ) : (
                 <div className="space-y-3 sm:space-y-4">
                   {/* Barra de Árbol de Navegación Compacta */}
