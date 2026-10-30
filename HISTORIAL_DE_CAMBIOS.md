@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.87.0 - Corrección de Tema Claro en Facturación & Configuración Estricta darkMode: class
+- [x] **Configuración Estricta `darkMode: 'class'` en Tailwind (`tailwind.config.js`):**
+  - Añadido `darkMode: 'class'` para erradicar el conflicto donde el modo oscuro del sistema operativo (Windows `@media prefers-color-scheme: dark`) forzaba clases oscuras en componentes mientras la app estaba en Tema Claro (`vibrant`).
+  - Ahora las clases `dark:` se activan exclusivamente cuando el usuario conmuta a modo oscuro en la aplicación y `document.documentElement` contiene la clase `.dark`.
+- [x] **Refinamiento Visual del Módulo de Facturación & POS en Tema Claro (`QuickBillingSection.tsx`):**
+  - Contenedor principal en blanco puro brillante con sombra orgánica y borde sutil lila.
+  - Subpaneles de alisto y formulario de cliente con fondo slate claro suave (`#F8FAFC`).
+  - Buscador de productos con fondo blanco, texto oscuro de alto contraste y botones de cantidad limpios.
+  - Caja de estado vacío de la factura rediseñada con borde punteado lila, ícono morado suave y tipografía nítida con contraste AAA.
+
 ### Versión 1.86.0 - Página Privada de Métricas (/metricas), Generador de Enlaces y Rastreo por Dispositivos y Secciones
 - [x] **Página Privada de Métricas (`/metricas` y `MetricsPage.tsx`):**
   - Creada la ruta `/metricas` accesible tanto directamente por URL como desde el Menú Principal de Administración.

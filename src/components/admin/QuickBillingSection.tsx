@@ -416,7 +416,7 @@ export const QuickBillingSection: React.FC = () => {
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
               activeTab === 'create'
                 ? 'neu-btn-primary text-white shadow-neuBtnHover scale-102'
-                : 'text-slate-600 dark:text-slate-300 hover:text-fio-pink'
+                : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple hover:bg-white/60 dark:hover:bg-white/5'
             }`}
           >
             <Plus className="w-4 h-4 text-fio-yellow shrink-0" />
@@ -429,7 +429,7 @@ export const QuickBillingSection: React.FC = () => {
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
               activeTab === 'search'
                 ? 'neu-btn-primary text-white shadow-neuBtnHover scale-102'
-                : 'text-slate-600 dark:text-slate-300 hover:text-fio-pink'
+                : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple hover:bg-white/60 dark:hover:bg-white/5'
             }`}
           >
             <Search className="w-3.5 h-3.5 shrink-0" />
@@ -442,7 +442,7 @@ export const QuickBillingSection: React.FC = () => {
             className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
               activeTab === 'customers'
                 ? 'neu-btn-primary text-white shadow-neuBtnHover scale-102'
-                : 'text-slate-600 dark:text-slate-300 hover:text-fio-pink'
+                : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple hover:bg-white/60 dark:hover:bg-white/5'
             }`}
           >
             <User className="w-3.5 h-3.5 shrink-0" />
@@ -707,10 +707,14 @@ export const QuickBillingSection: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="p-4 text-center text-slate-400 bg-white/60 dark:bg-[#2A2444]/60 rounded-2xl border border-dashed border-slate-200 dark:border-white/10">
-                  <ShoppingBag className="w-6 h-6 mx-auto mb-1 opacity-40 text-purple-400" />
-                  <p className="text-xs font-bubble">Ningún producto agregado a la factura todavía.</p>
-                  <p className="text-[11px] text-slate-400">Escribe en el buscador de arriba para agregar productos.</p>
+                <div className="p-6 text-center rounded-2xl border-2 border-dashed border-purple-200/80 dark:border-white/10 bg-white/80 dark:bg-[#2A2444]/60">
+                  <ShoppingBag className="w-7 h-7 mx-auto mb-2 text-fio-purple/50 dark:text-purple-300" />
+                  <p className="text-xs sm:text-sm font-bubble font-bold text-slate-700 dark:text-slate-200">
+                    Ningún producto agregado a la factura todavía
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    Escribe en el buscador de arriba para seleccionar productos y sumarlos al pedido.
+                  </p>
                 </div>
               )}
             </div>
