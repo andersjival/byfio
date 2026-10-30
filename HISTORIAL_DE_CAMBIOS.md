@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.71.0 - Redimensión Compacta y Erradicación de Desborde/Cortes en Extremos del Login
+- [x] **Ajuste de Proporción y Ancho Máximo Seguro (`LoginModal.tsx`, `App.tsx` e `index.css`):**
+  - Reducido el ancho máximo de la tarjeta de login (`.login-card` y `.scene-wrapper`) de 380px/448px a **335px**, logrando una tarjeta vertical armónica, compacta y proporcionada.
+  - En móviles (`max-width: 640px`), ajustado el ancho a `min(335px, calc(100vw - 36px))` con padding `14px 16px 18px`, garantizando un margen libre mínimo de 18px a cada lado para que ni los bordes ni las sombras 3D se corten contra los extremos de la pantalla.
+  - Reescalada la escena de personajes (`.characters-stage`) a 195px (180px móvil) con `max-width: 95%`, impidiendo que la ilustración toque o desborde los laterales del contenedor.
+  - Contenedor seguro en administración (`App.tsx`) ajustado a `max-w-[360px]` para máxima elegancia visual.
+
 ### Versión 1.70.0 - Badge de Copyright Animado de GeoSoft en el Login (Estilo BOSUNI CR)
 - [x] **Inclusión del Badge de Copyright en Login (`LoginModal.tsx`):**
   - Incorporada la píldora flotante con fondo translúcido y borde sutil debajo de la tarjeta de login (`.scene-wrapper`), visible tanto en el modal overlay como en la vista de `/login`.
