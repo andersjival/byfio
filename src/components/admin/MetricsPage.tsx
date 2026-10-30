@@ -298,7 +298,7 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
     };
     window.addEventListener('storage', handleStorage);
 
-    // 3. Sincronización Remota desde Cloudflare D1 con Polling Inteligente (Anti-Drain)
+    // 3. Sincronización Remota desde la base de datos Cloud con Polling Inteligente (Anti-Drain)
     let isSubscribed = true;
     const syncRemoteMetrics = async () => {
       // Si la pestaña está oculta, pausar para ahorro de cuota y batería

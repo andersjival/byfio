@@ -206,7 +206,7 @@ export const metricsTracker = {
     }
   },
 
-  // Sincronización remota desde Cloudflare D1
+  // Sincronización remota desde la base de datos Cloud
   async fetchRemoteMetrics(): Promise<MetricsState | null> {
     if (typeof window === 'undefined') return null;
     try {

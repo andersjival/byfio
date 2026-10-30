@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.96.0 - Optimización Responsiva Integral del Catálogo Online para Celulares y Pantallas Móviles
+- [x] **Depuración de Banners y Ahorro de Espacio Vertical en Móvil (`CatalogPage.tsx`):**
+  - Ocultado el banner estático duplicado en pantallas móviles (`hidden sm:block`) para que los productos aparezcan de inmediato sin scroll muerto.
+  - Hero banner del catálogo adaptado con paddings responsivos (`p-4 sm:p-8`), títulos proporcionales y descripción condensada en móvil.
+- [x] **Barra de Categorías y Filtros Touch-Friendly (`CatalogPage.tsx`):**
+  - Eliminado el selector desplegable duplicado; las categorías ahora se deslizan fluidamente con desplazamiento táctil horizontal y contadores claros.
+  - Buscador integrado y botón de administración con anchos fluidos sin provocar desbordamiento.
+- [x] **Tarjetas de Producto de Alto Rendimiento en Celulares (`CatalogPage.tsx`):**
+  - Títulos de producto con soporte para dos líneas completas (`line-clamp-2`) sin recortes prematuros de nombres largos.
+  - Fila inferior de compras reestructurada (`flex-row items-center gap-1.5`) evitando saltos de línea antiestéticos o truncamiento en botones de carrito y WhatsApp.
+  - Retirado el badge redundante "Producto Agregado" del encabezado interno, conservando la pastilla limpia sobre la imagen.
+- [x] **Barra Flotante de Carrito y Modal de Detalle Móvil (`CatalogPage.tsx`):**
+  - Barra inferior flotante convertida a una sola fila delgada (`flex-row items-center justify-between`) que no tapa los productos.
+  - Modal ampliado con fotografía proporcionada (`h-40 sm:h-56`) y área de texto con scroll táctil suave.
+
 ### Versión 1.95.0 - Coreografía Secuencial Post-Intro: Escritura de Texto, Estrella, Corazón y BYFIO Suave en el Centro
 - [x] **Coreografía Post-Intro en Hero Principal (`HeroAnimatedSlogan.tsx` & `HeroDual.tsx`):**
   - **Paso 1 (1 segundo después de quitar la intro):** Se escribe automáticamente con efecto máquina de escribir letra por letra la frase: *"Aprendé, creá y emprendé con"*.

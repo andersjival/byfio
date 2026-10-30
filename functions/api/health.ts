@@ -2,7 +2,7 @@ export const onRequestGet = async () => {
   return new Response(
     JSON.stringify({
       status: 'ok',
-      service: 'by.fio Cloudflare Pages & D1 API',
+      service: 'by.fio Cloud API',
       timestamp: new Date().toISOString(),
     }),
     {

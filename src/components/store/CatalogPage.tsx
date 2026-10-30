@@ -136,19 +136,19 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
         <TreeNavigation nodes={breadcrumbs} onNavigate={onNavigate} />
       </div>
 
-      {/* Banner Ilustrado Oficial: Catálogo Digital */}
-      <div className="rounded-[32px] overflow-hidden shadow-neuCard border border-white/90 bg-[#FAF5FF] group">
+      {/* Banner Ilustrado Oficial: Catálogo Digital (Visible en pantallas medianas y grandes para no saturar en móvil) */}
+      <div className="hidden sm:block rounded-[32px] overflow-hidden shadow-neuCard border border-white/90 bg-[#FAF5FF] group">
         <img
           src="/assets/imagen-catalogo-digital.jpeg"
           alt="Catálogo Digital by.fio"
-          className="w-full h-44 sm:h-64 md:h-80 object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+          className="w-full h-56 md:h-80 object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
         />
       </div>
 
       {/* =========================================================================
           BANNER FOTOGRÁFICO EN GRANDE & DESCRIPCIÓN DEL CATÁLOGO
           ========================================================================= */}
-      <div className="relative rounded-[32px] overflow-hidden shadow-clayLg border-2 border-white/90 bg-gradient-to-r from-purple-900 via-fio-900 to-pink-900 text-white">
+      <div className="relative rounded-2xl sm:rounded-[32px] overflow-hidden shadow-clayLg border-2 border-white/90 bg-gradient-to-r from-purple-900 via-fio-900 to-pink-900 text-white">
         {/* Imagen de Fondo */}
         <div className="absolute inset-0 z-0 opacity-25 mix-blend-overlay">
           <img
@@ -163,30 +163,30 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#FFF07C]/20 rounded-full blur-3xl pointer-events-none" />
 
         {/* Contenido del Banner con Corazoncito Azul */}
-        <div className="relative z-10 p-5 sm:p-8 lg:p-10 max-w-4xl space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-bold uppercase tracking-wider text-white">
-            <BlueHeart className="w-3.5 h-3.5" />
+        <div className="relative z-10 p-4 sm:p-8 lg:p-10 max-w-4xl space-y-2.5 sm:space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-white">
+            <BlueHeart className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             <span>Colección &amp; Catálogo Comercial Oficial</span>
           </div>
 
-          <h1 className="font-bubble font-bold text-2xl sm:text-4xl text-white tracking-tight leading-tight">
+          <h1 className="font-bubble font-bold text-xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-tight">
             Catálogo Online by.fio
           </h1>
 
-          <p className="text-xs sm:text-sm text-purple-100/95 leading-relaxed font-sans max-w-3xl">
+          <p className="text-xs sm:text-sm text-purple-100/95 leading-relaxed font-sans max-w-3xl line-clamp-3 sm:line-clamp-none">
             Explora toda nuestra papelería bonita, agendas personalizadas con grabado en foil, libros pediátricos de vacunas, libretas de cuero y artículos artesanales hechos a mano en Costa Rica por Fiorella Patricia Jara Gutiérrez (Fio). Precios en colones costarricenses (₡), con entrega en todo el país y pago directo por SINPE Móvil al 6400-4640 o transferencia BCR.
           </p>
 
-          <div className="pt-1 flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-white/90 font-medium">
-            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-xl backdrop-blur-xs">
+          <div className="pt-1 flex flex-wrap items-center gap-1.5 sm:gap-4 text-[11px] sm:text-xs text-white/90 font-medium">
+            <div className="flex items-center gap-1.5 bg-white/10 px-2.5 sm:px-3 py-1 rounded-xl backdrop-blur-xs">
               <BlueHeart className="w-3 h-3" />
               <span>{products.length} Productos</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-xl backdrop-blur-xs">
+            <div className="flex items-center gap-1.5 bg-white/10 px-2.5 sm:px-3 py-1 rounded-xl backdrop-blur-xs">
               <BlueHeart className="w-3 h-3" />
               <span>Personalización Artesanal</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-xl backdrop-blur-xs">
+            <div className="flex items-center gap-1.5 bg-white/10 px-2.5 sm:px-3 py-1 rounded-xl backdrop-blur-xs">
               <BlueHeart className="w-3 h-3" />
               <span>SINPE Móvil 6400-4640</span>
             </div>
@@ -195,17 +195,17 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* =========================================================================
-          SECCIÓN DE CATEGORÍAS CON BOTONES, SELECTOR Y BUSCADOR (NEUMÓRFICO TÁCTIL)
+          SECCIÓN DE CATEGORÍAS CON BOTONES Y BUSCADOR (NEUMÓRFICO TÁCTIL)
           ========================================================================= */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard space-y-3">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard space-y-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-3">
           <div className="flex items-center gap-2">
             <BlueHeart className="w-4 h-4" />
             <div>
               <span className="text-[10px] font-bubble font-bold uppercase tracking-wider text-fio-800">
                 Categorías del Catálogo
               </span>
-              <p className="text-xs text-slate-500 font-sans">
+              <p className="text-xs text-slate-500 font-sans hidden sm:block">
                 Selecciona una categoría o busca por nombre o código.
               </p>
             </div>
@@ -213,15 +213,15 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
 
           <div className="flex items-center gap-2 w-full md:w-auto">
             {/* Buscador Neumórfico Rehundido */}
-            <div className="relative w-full md:w-64">
+            <div className="relative flex-1 md:w-64">
               <input
                 type="text"
                 placeholder="Buscar producto o SKU..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-[#ECEEF2] rounded-2xl border border-white/60 text-xs text-slate-800 placeholder-slate-400 shadow-neuInset focus:outline-none transition-all"
+                className="w-full pl-9 pr-4 py-2 bg-[#ECEEF2] rounded-2xl border border-white/60 text-xs text-slate-800 placeholder-slate-400 shadow-neuInset focus:outline-none transition-all"
               />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
             </div>
 
             {/* Botón Admin: Agregar Producto Directo desde Catálogo */}
@@ -231,7 +231,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                 setEditingProduct(null);
                 setIsNewProductModalOpen(true);
               }}
-              className="neu-btn-primary flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl text-xs font-bubble font-bold text-white shadow-neuBtn active:scale-95 transition-all shrink-0"
+              className="neu-btn-primary flex items-center justify-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-bubble font-bold text-white shadow-neuBtn active:scale-95 transition-all shrink-0"
               title="Crear un nuevo producto para catálogo y tienda"
             >
               <span>+ Nuevo</span>
@@ -239,8 +239,8 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Botones de Categorías Neumórficos con scroll horizontal en móvil */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none sm:flex-wrap -mx-1 px-1 sm:mx-0 sm:px-0">
+        {/* Botones de Categorías Neumórficos con scroll horizontal fluido en móvil */}
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 scrollbar-none sm:flex-wrap -mx-1 px-1 sm:mx-0 sm:px-0">
           {categories.map((cat) => {
             const count = cat === 'Todas' ? catalogProducts.length : catalogProducts.filter((p) => p.category === cat).length;
             const isSelected = selectedCategory === cat;
@@ -250,7 +250,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`shrink-0 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center gap-1.5 active:scale-95 ${
+                className={`shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center gap-1.5 active:scale-95 ${
                   isSelected
                     ? 'neu-btn-primary text-white shadow-neuBtnHover'
                     : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
@@ -269,24 +269,8 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
           })}
         </div>
 
-        {/* Selector Rápido para Celular y Filtro Personalizable */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-600">Selector rápido:</span>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              aria-label="Filtrar por categoría del catálogo"
-              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none"
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat} ({cat === 'Todas' ? products.length : products.filter((p) => p.category === cat).length})
-                </option>
-              ))}
-            </select>
-          </div>
-
+        {/* Filtro de Solo personalizables */}
+        <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/80">
           <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer select-none">
             <input
               type="checkbox"
@@ -330,7 +314,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
           </div>
         ) : (
           /* GRID DE 2 PRODUCTOS POR FILA (50% ANCHO EN CADA ESPACIO CON ESTILO NEUMÓRFICO) */
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
             {filteredProducts.map((product) => {
               const currentQty = getQty(product.id);
               const customVal = customTextInputs[product.id] || '';
@@ -342,10 +326,10 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
               return (
                 <div
                   key={product.id}
-                  className="p-3.5 sm:p-4 rounded-2xl bg-[#F1F2F6] border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all flex flex-col justify-between group"
+                  className="p-3 sm:p-4 rounded-2xl bg-[#F1F2F6] border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all flex flex-col justify-between group"
                 >
                   {/* Fila Superior: Foto + Información Básica */}
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-2.5 sm:gap-3">
                     {/* Foto Clickable que abre descripción detallada */}
                     <div
                       onClick={() => setDetailProduct(product)}
@@ -377,18 +361,9 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                     {/* Datos del Producto */}
                     <div className="flex-1 min-w-0 space-y-1">
                       <div className="flex items-center justify-between gap-1">
-                        <div className="flex items-center gap-1.5 overflow-hidden">
-                          <span className="px-2 py-0.5 rounded-md bg-purple-50 text-fio-800 text-[10px] font-semibold truncate">
-                            {product.category}
-                          </span>
-                          {/* Etiqueta Sin Bordes junto a categoría: Producto Agregado */}
-                          {isInCart && (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9.5px] font-bubble font-bold border-0 shadow-sm flex items-center gap-1 shrink-0 animate-fadeIn">
-                              <Check className="w-2.5 h-2.5 stroke-[2.5]" />
-                              <span>Producto Agregado</span>
-                            </span>
-                          )}
-                        </div>
+                        <span className="px-2 py-0.5 rounded-md bg-purple-50 text-fio-800 text-[10px] font-semibold truncate max-w-[130px] sm:max-w-none">
+                          {product.category}
+                        </span>
 
                         {/* Botón Admin para Editar Precio */}
                         <button
@@ -404,10 +379,10 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                         </button>
                       </div>
 
-                      {/* Nombre Clickable */}
+                      {/* Nombre Clickable con soporte para 2 líneas completas */}
                       <h3
                         onClick={() => setDetailProduct(product)}
-                        className="font-bubble font-bold text-sm sm:text-base text-fio-900 group-hover:text-fio-700 transition-colors line-clamp-1 cursor-pointer"
+                        className="font-bubble font-bold text-sm sm:text-base text-fio-900 group-hover:text-fio-700 transition-colors line-clamp-2 cursor-pointer leading-snug"
                         title="Toca para ver descripción detallada"
                       >
                         {product.name}
@@ -417,20 +392,20 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       <button
                         type="button"
                         onClick={() => setDetailProduct(product)}
-                        className="text-[11px] text-fio-800 font-semibold hover:text-fio-600 flex items-center gap-1 transition-colors text-left"
+                        className="text-[11px] text-fio-800 font-semibold hover:text-fio-600 flex items-center gap-0.5 transition-colors text-left"
                       >
                         <BlueHeart className="w-2.5 h-2.5" />
-                        <span>Ver descripción completa</span>
+                        <span>Ver descripción</span>
                         <ChevronRight className="w-3 h-3" />
                       </button>
 
                       {/* Precio Destacado */}
-                      <div className="pt-0.5">
+                      <div className="pt-0.5 flex items-baseline gap-1.5 flex-wrap">
                         <span className="font-bubble font-bold text-base sm:text-lg text-fio-900">
                           {formatCRC(product.price * currentQty)}
                         </span>
                         {currentQty > 1 && (
-                          <span className="text-[10px] text-slate-400 ml-1.5">
+                          <span className="text-[10px] text-slate-400">
                             ({formatCRC(product.price)} c/u)
                           </span>
                         )}
@@ -446,13 +421,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                         placeholder={product.customizationPlaceholder || 'Nombre para personalizar...'}
                         value={customVal}
                         onChange={(e) => handleCustomTextChange(product.id, e.target.value)}
-                        className="w-full px-2.5 py-1 rounded-lg border border-purple-200 bg-purple-50/30 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-fio-300"
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-purple-200 bg-purple-50/30 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-fio-300"
                       />
                     </div>
                   )}
 
-                  {/* Fila Inferior: Selector de Cantidad + Botones */}
-                  <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-2">
+                  {/* Fila Inferior Adaptativa para Móviles: Selector de Cantidad + Botones */}
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2">
                     {/* Selector de Cantidad [-] 1 [+] con Relieve Neumórfico Inset */}
                     <div className="flex items-center bg-[#ECEEF2] rounded-xl border border-white/70 shadow-neuInset p-0.5 shrink-0">
                       <button
@@ -464,7 +439,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       >
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="font-bubble font-bold text-xs text-slate-800 w-6 text-center">
+                      <span className="font-bubble font-bold text-xs text-slate-800 w-5 sm:w-6 text-center">
                         {currentQty}
                       </span>
                       <button
@@ -478,11 +453,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       </button>
                     </div>
 
-                    {/* Botón Agregar al Carrito (Pill Lila Pastel a Fucsia Suave) */}
+                    {/* Botón Agregar al Carrito Responsive */}
                     <button
                       type="button"
                       onClick={() => handleAddToCart(product)}
-                      className={`flex-1 py-2 px-3 rounded-full font-bubble font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all ${
+                      className={`flex-1 min-w-0 py-2 px-2.5 sm:px-3 rounded-full font-bubble font-bold text-xs flex items-center justify-center gap-1 sm:gap-1.5 active:scale-95 transition-all ${
                         isAdded
                           ? 'bg-emerald-600 text-white shadow-neuBtn'
                           : 'neu-btn-cart text-white'
@@ -491,17 +466,17 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       {isAdded ? (
                         <>
                           <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                          <span>¡Listo!</span>
+                          <span className="truncate">¡Listo!</span>
                         </>
                       ) : isInCart ? (
                         <>
-                          <ShoppingBag className="w-3.5 h-3.5 text-white" />
-                          <span>Agregar más ({cartQty})</span>
+                          <ShoppingBag className="w-3.5 h-3.5 text-white shrink-0" />
+                          <span className="truncate">Agregar + ({cartQty})</span>
                         </>
                       ) : (
                         <>
-                          <ShoppingBag className="w-3.5 h-3.5 text-white" />
-                          <span>Agregar al Carrito</span>
+                          <ShoppingBag className="w-3.5 h-3.5 text-white shrink-0" />
+                          <span className="truncate">Agregar al Carrito</span>
                         </>
                       )}
                     </button>
@@ -510,7 +485,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                     <button
                       type="button"
                       onClick={() => handleDirectWhatsAppOrder(product)}
-                      className="p-1.5 rounded-xl neu-btn text-emerald-700 shrink-0 transition-all active:scale-95"
+                      className="p-2 rounded-xl neu-btn text-emerald-700 shrink-0 transition-all active:scale-95"
                       title="Pedir este producto por WhatsApp"
                     >
                       <MessageCircle className="w-4 h-4 text-emerald-600" />
@@ -528,38 +503,38 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
           ========================================================================= */}
       {detailProduct && (
         <div
-          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fadeIn"
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-6 animate-fadeIn"
           onClick={() => setDetailProduct(null)}
         >
           <div
-            className="relative w-full max-w-2xl lg:max-w-3xl bg-white rounded-3xl shadow-2xl border border-white/80 overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col md:flex-row max-h-[92vh] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="relative w-full max-w-2xl lg:max-w-3xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-white/80 overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col md:flex-row max-h-[90vh] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Botón cerrar flotante */}
             <button
               type="button"
               onClick={() => setDetailProduct(null)}
-              className="absolute top-3 right-3 z-20 p-1.5 rounded-xl bg-white/90 hover:bg-white text-slate-500 hover:text-slate-900 shadow-md transition-all active:scale-95"
+              className="absolute top-2.5 right-2.5 z-20 p-1.5 rounded-xl bg-white/90 hover:bg-white text-slate-500 hover:text-slate-900 shadow-md transition-all active:scale-95 cursor-pointer"
               title="Cerrar ventana"
             >
               <X className="w-4 h-4" />
             </button>
 
             {/* Columna Izquierda: Fotografía */}
-            <div className="w-full md:w-1/2 h-48 sm:h-56 md:h-auto bg-slate-100 relative shrink-0">
+            <div className="w-full md:w-1/2 h-40 sm:h-56 md:h-auto bg-slate-100 relative shrink-0">
               <img
                 src={detailProduct.image}
                 alt={detailProduct.name}
                 className="w-full h-full object-cover"
               />
-              <span className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white font-mono font-bold text-[10px]">
+              <span className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-black/60 backdrop-blur-md text-white font-mono font-bold text-[9px] sm:text-[10px]">
                 SKU: {detailProduct.sku}
               </span>
             </div>
 
             {/* Columna Derecha: Detalles, Descripción y Acciones (Sin Scrollbar) */}
-            <div className="w-full md:w-1/2 p-4 sm:p-6 flex flex-col justify-between overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-              <div className="space-y-3">
+            <div className="w-full md:w-1/2 p-3.5 sm:p-6 flex flex-col justify-between overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <div className="space-y-2.5 sm:space-y-3">
                 {/* Categoría y Personalizable */}
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="px-2.5 py-0.5 rounded-lg bg-fio-100 text-fio-800 text-xs font-semibold">
@@ -580,10 +555,10 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
 
                 {/* Nombre y Precio */}
                 <div>
-                  <h2 className="font-bubble font-bold text-lg sm:text-xl text-fio-900 leading-tight">
+                  <h2 className="font-bubble font-bold text-base sm:text-xl text-fio-900 leading-tight">
                     {detailProduct.name}
                   </h2>
-                  <p className="font-bubble font-bold text-xl sm:text-2xl text-fio-800 mt-1">
+                  <p className="font-bubble font-bold text-lg sm:text-2xl text-fio-800 mt-1">
                     {formatCRC(detailProduct.price * getQty(detailProduct.id))}
                   </p>
                 </div>
@@ -594,7 +569,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                     <BlueHeart className="w-3 h-3" />
                     Descripción
                   </span>
-                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans line-clamp-4 md:line-clamp-none">
+                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-sans line-clamp-3 sm:line-clamp-none">
                     {detailProduct.description || `${detailProduct.name} elaborado de forma artesanal y personalizada por by.fio en Costa Rica.`}
                   </p>
                 </div>
@@ -624,12 +599,12 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                     handleAddToCart(detailProduct);
                     setDetailProduct(null);
                   }}
-                  className="flex-1 py-2.5 px-4 rounded-full neu-btn-cart text-white font-bubble font-bold text-xs active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 px-3 sm:px-4 rounded-full neu-btn-cart text-white font-bubble font-bold text-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 text-white" />
-                  <span>
+                  <span className="truncate">
                     {cart.some((it) => it.id === detailProduct.id)
-                      ? 'Agregar Más al Carrito'
+                      ? 'Agregar Más'
                       : 'Agregar al Carrito'}
                   </span>
                 </button>
@@ -640,7 +615,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                     handleDirectWhatsAppOrder(detailProduct);
                     setDetailProduct(null);
                   }}
-                  className="py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 font-bubble font-bold text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-95"
+                  className="py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 font-bubble font-bold text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-95 cursor-pointer shrink-0"
                   title="Pedir por WhatsApp"
                 >
                   <MessageCircle className="w-4 h-4 text-emerald-600" />
@@ -653,20 +628,20 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
       )}
 
       {/* =========================================================================
-          BARRA RESUMEN DE PEDIDO FLOTANTE
+          BARRA RESUMEN DE PEDIDO FLOTANTE COMPACTA Y RESPONSIVA
           ========================================================================= */}
       {totalCartCount > 0 && (
-        <div className="sticky bottom-4 z-30 p-3 sm:p-4 rounded-3xl bg-white/95 backdrop-blur-md border border-fio-200/80 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3 animate-fadeIn">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-fio-800 text-white flex items-center justify-center shadow-xs">
-              <BlueHeart className="w-4 h-4" />
+        <div className="sticky bottom-3 sm:bottom-4 z-30 p-2.5 sm:p-4 rounded-2xl sm:rounded-3xl bg-white/95 backdrop-blur-md border border-fio-200/80 shadow-2xl flex flex-row items-center justify-between gap-2.5 sm:gap-3 animate-fadeIn">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-fio-800 text-white flex items-center justify-center shadow-xs shrink-0">
+              <BlueHeart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div>
-              <p className="font-bubble font-bold text-sm text-fio-900">
-                Tu Pedido ({totalCartCount} {totalCartCount === 1 ? 'artículo' : 'artículos'})
+            <div className="min-w-0">
+              <p className="font-bubble font-bold text-xs sm:text-sm text-fio-900 truncate">
+                Pedido ({totalCartCount} {totalCartCount === 1 ? 'art.' : 'artículos'})
               </p>
-              <p className="text-xs text-slate-500 font-sans">
-                Total acumulado: <span className="font-bold text-fio-800">{formatCRC(totalCartPrice)}</span>
+              <p className="text-[11px] sm:text-xs text-slate-500 font-sans truncate">
+                Total: <span className="font-bold text-fio-800">{formatCRC(totalCartPrice)}</span>
               </p>
             </div>
           </div>
@@ -674,11 +649,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => setIsCartOpen(true)}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-full neu-btn-cart text-white font-bubble font-bold text-xs sm:text-sm active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full neu-btn-cart text-white font-bubble font-bold text-xs sm:text-sm active:scale-95 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shrink-0 cursor-pointer"
           >
-            <ShoppingBag className="w-4 h-4 text-white" />
-            <span>Ver Pedido &amp; Proceder al Pago</span>
-            <CheckCircle2 className="w-4 h-4 text-white" />
+            <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+            <span>Ver Pedido</span>
+            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white hidden xs:inline" />
           </button>
         </div>
       )}

@@ -122,7 +122,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
 
           <p className="text-center text-[11px] text-fio-pink font-semibold pt-2 flex items-center justify-center gap-1">
             <Heart className="w-3.5 h-3.5 fill-current" />
-            <span>Cierre verificado y registrado en el sistema Cloudflare D1</span>
+            <span>Cierre verificado y registrado en el sistema</span>
           </p>
         </div>
 

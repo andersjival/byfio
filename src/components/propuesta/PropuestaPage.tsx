@@ -25,8 +25,8 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
 4. Academia y Talleres Creativos: 5 Pilares Formativos, Cupos en Tiempo Real, Fichas de Contenido, Registro de Alumnos.
 5. Caja, Facturación y Reportería: Factura Rápida, Cierre Diario e Ingresos, Envío por WhatsApp.
 6. Administración, Precios y Usuarios: Editor de Precios, Perfiles de Usuarios y PINs, Mascota Interactiva Estrellita.
-7. Analítica y Métricas en Tiempo Real (/metricas): Enlaces Rastreados, Sincronización Cloudflare D1, PC vs Celulares, Secciones Favoritas.
-8. Multimedia & Experiencia Sensorial: Video Intro Cinematográfico, Efectos de Sonido Gotas de Agua, Modo Claro/Oscuro, Edge Serverless.`;
+7. Analítica y Métricas en Tiempo Real (/metricas): Enlaces Rastreados, Sincronización en la Nube, PC vs Celulares, Secciones Favoritas.
+8. Multimedia & Experiencia Sensorial: Video Intro Cinematográfico, Efectos de Sonido Gotas de Agua, Modo Claro/Oscuro, Alta Disponibilidad Cloud.`;
 
     navigator.clipboard.writeText(text).then(() => {
       setCopiedSummary(true);
@@ -57,7 +57,7 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
           </h1>
 
           <p className="text-sm sm:text-base text-purple-100/90 font-sans leading-relaxed">
-            Plataforma digital completa que integra <strong className="text-white">Logística de Alisto WMS</strong>, <strong className="text-white">Tienda E-Commerce Mobile-First</strong>, <strong className="text-white">Academia de Talleres Creativos</strong>, <strong className="text-white">Facturación & POS</strong> y <strong className="text-white">Analítica en Tiempo Real con Cloudflare D1</strong>.
+            Plataforma digital completa que integra <strong className="text-white">Logística de Alisto WMS</strong>, <strong className="text-white">Tienda E-Commerce Mobile-First</strong>, <strong className="text-white">Academia de Talleres Creativos</strong>, <strong className="text-white">Facturación & POS</strong> y <strong className="text-white">Analítica en Tiempo Real</strong>.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -103,7 +103,7 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
           </div>
           <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
             <span className="block text-2xl sm:text-3xl font-bubble font-bold text-sky-300">Cloud</span>
-            <span className="text-[11px] text-purple-200 font-sans">Cloudflare Pages & D1</span>
+            <span className="text-[11px] text-purple-200 font-sans">Infraestructura Segura</span>
           </div>
         </div>
       </div>
@@ -567,7 +567,7 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Módulo 7</span>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 font-bold animate-pulse">
-                      ● En Vivo (Cloudflare D1)
+                      ● En Vivo (Tiempo Real)
                     </span>
                   </div>
                   <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
@@ -597,10 +597,10 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
 
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
                 <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Sincronización en Vivo Cross-Tab y Cloudflare D1
+                  Sincronización en Vivo Multi-Dispositivo
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  0 ms de latencia entre pestañas abiertas vía BroadcastChannel y persistencia multi-dispositivo con polling inteligente (2.5s) con pausa automática en segundo plano.
+                  0 ms de latencia entre pestañas abiertas y persistencia multi-dispositivo en la nube con polling inteligente (2.5s) y pausa automática en segundo plano.
                 </p>
               </div>
 
@@ -674,10 +674,10 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
                 <div className="flex items-center gap-2 text-sky-500">
                   <Database className="w-4 h-4" />
-                  <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Cloudflare D1 & Pages</h3>
+                  <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Base de Datos en la Nube</h3>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Arquitectura Edge Serverless con base de datos SQLite distribuida globalmente, veloz y sin costos de servidor fijos.
+                  Arquitectura moderna con almacenamiento en la nube de alta disponibilidad, ultrarrápida, escalable y sin caídas de servicio.
                 </p>
               </div>
             </div>
@@ -855,7 +855,7 @@ export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Base de Datos Cloudflare D1 (SQLite Edge)</span>
+                <span>Base de Datos en la Nube de Alta Disponibilidad</span>
               </li>
             </ul>
           </div>
