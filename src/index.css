@@ -565,6 +565,186 @@ body[data-color-theme="dark"] .to-pink-100\/60 {
 }
 
 /* =========================================================================
+   CORRECCIONES QUIRÚRGICAS DE TEMA OSCURO (NOTIFICACIÓN, HERO PILLS, BOTÓN CÍRCULO Y LOGIN 3D)
+   ========================================================================= */
+
+/* 1. Botón Circular Neumórfico (neu-btn-circle) en Modo Oscuro */
+body[data-color-theme="dark"] .neu-btn-circle,
+html.dark .neu-btn-circle {
+  background: #332D52 !important;
+  border: 1px solid rgba(168, 85, 247, 0.35) !important;
+  color: #E9D5FF !important;
+  box-shadow: 4px 4px 10px rgba(10, 8, 20, 0.45), -2px -2px 6px rgba(255, 255, 255, 0.05) !important;
+}
+
+body[data-color-theme="dark"] .neu-btn-circle:hover,
+html.dark .neu-btn-circle:hover {
+  background: #3E3763 !important;
+  border-color: rgba(236, 72, 153, 0.55) !important;
+  color: #FFFFFF !important;
+  box-shadow: 6px 6px 14px rgba(10, 8, 20, 0.55), -3px -3px 8px rgba(255, 255, 255, 0.08) !important;
+}
+
+body[data-color-theme="dark"] .neu-btn-circle:active,
+html.dark .neu-btn-circle:active {
+  background: #25203D !important;
+  box-shadow: inset 3px 3px 6px rgba(10, 8, 20, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.04) !important;
+}
+
+body[data-color-theme="dark"] .neu-btn-circle.bg-emerald-50,
+html.dark .neu-btn-circle.bg-emerald-50 {
+  background: rgba(6, 78, 59, 0.75) !important;
+  border-color: rgba(52, 211, 153, 0.5) !important;
+  color: #34D399 !important;
+}
+
+/* 2. Píldoras de Calidad en Hero (HeroDual) en Modo Oscuro */
+body[data-color-theme="dark"] .hero-quality-pill,
+body[data-color-theme="dark"] .bg-\[\#F1F2F6\]\/90,
+html.dark .hero-quality-pill,
+html.dark .bg-\[\#F1F2F6\]\/90 {
+  background-color: #2C2746 !important;
+  border-color: rgba(168, 85, 247, 0.3) !important;
+  box-shadow: 0 8px 20px rgba(10, 8, 20, 0.35) !important;
+}
+
+body[data-color-theme="dark"] .hero-quality-pill p:first-child,
+html.dark .hero-quality-pill p:first-child {
+  color: #FFFFFF !important;
+}
+
+body[data-color-theme="dark"] .hero-quality-pill p:last-child,
+html.dark .hero-quality-pill p:last-child {
+  color: #CBD5E1 !important;
+}
+
+body[data-color-theme="dark"] .hero-quality-pill .neu-btn-circle,
+html.dark .hero-quality-pill .neu-btn-circle {
+  background-color: #352F54 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.08), 2px 2px 6px rgba(10, 8, 20, 0.35) !important;
+}
+
+/* 3. Notificación Flotante de Carrito (CartSuccessToast) en Modo Oscuro */
+body[data-color-theme="dark"] .cart-toast-card,
+body[data-color-theme="dark"] .bg-\[\#F1F2F6\]\/95,
+html.dark .cart-toast-card,
+html.dark .bg-\[\#F1F2F6\]\/95 {
+  background-color: rgba(44, 39, 70, 0.98) !important;
+  border-color: rgba(168, 85, 247, 0.35) !important;
+  box-shadow: 0 16px 36px rgba(10, 8, 20, 0.6) !important;
+}
+
+body[data-color-theme="dark"] .cart-toast-card .toast-title,
+html.dark .cart-toast-card .toast-title {
+  color: #34D399 !important;
+}
+
+body[data-color-theme="dark"] .cart-toast-card .toast-product-name,
+html.dark .cart-toast-card .toast-product-name {
+  color: #FFFFFF !important;
+}
+
+body[data-color-theme="dark"] .cart-toast-card .toast-subtitle,
+html.dark .cart-toast-card .toast-subtitle {
+  color: #CBD5E1 !important;
+}
+
+body[data-color-theme="dark"] .cart-toast-card strong,
+html.dark .cart-toast-card strong {
+  color: #F8FAFC !important;
+}
+
+body[data-color-theme="dark"] .cart-toast-card .toast-thumb,
+html.dark .cart-toast-card .toast-thumb {
+  background-color: #1E1A30 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* 4. Tarjeta 3D de Login en Modo Oscuro (Proteger sus colores originales, campos blancos y tipografía) */
+body[data-color-theme="dark"] .login-card,
+html.dark .login-card {
+  background: linear-gradient(180deg, #fdf3f4 0%, #f7e6ea 100%) !important;
+  color: #2D1E40 !important;
+  box-shadow: 0 20px 40px rgba(10, 8, 20, 0.55), inset 0 5px 8px rgba(255, 255, 255, 0.9), inset 0 -6px 12px rgba(215, 190, 205, 0.55) !important;
+}
+
+body[data-color-theme="dark"] .login-card .header h1,
+html.dark .login-card .header h1 {
+  color: #2D1E40 !important;
+}
+
+body[data-color-theme="dark"] .login-card .header p,
+html.dark .login-card .header p {
+  color: #554466 !important;
+}
+
+body[data-color-theme="dark"] .login-card .input-group,
+html.dark .login-card .input-group {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(215, 195, 210, 0.6) !important;
+  box-shadow: 0 4px 10px rgba(145, 115, 165, 0.12), inset 0 2px 4px rgba(255, 255, 255, 1), inset 0 -2px 5px rgba(215, 195, 210, 0.4) !important;
+}
+
+body[data-color-theme="dark"] .login-card .input-group input,
+html.dark .login-card .input-group input {
+  background-color: transparent !important;
+  background: transparent !important;
+  color: #2D1E40 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+body[data-color-theme="dark"] .login-card .input-group input::placeholder,
+html.dark .login-card .input-group input::placeholder {
+  color: #7C7087 !important;
+}
+
+body[data-color-theme="dark"] .login-card .toggle-password,
+html.dark .login-card .toggle-password {
+  color: #4F3D63 !important;
+}
+
+body[data-color-theme="dark"] .login-card .forgot-wrap a,
+html.dark .login-card .forgot-wrap a {
+  color: #7444D6 !important;
+}
+
+body[data-color-theme="dark"] .login-card .signup-text,
+html.dark .login-card .signup-text {
+  color: #4A3A5A !important;
+}
+
+body[data-color-theme="dark"] .login-card .signup-text button,
+html.dark .login-card .signup-text button {
+  color: #7444D6 !important;
+}
+
+body[data-color-theme="dark"] .login-card .bg-white\/70,
+body[data-color-theme="dark"] .login-card .bg-white\/90,
+html.dark .login-card .bg-white\/70,
+html.dark .login-card .bg-white\/90 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #2D1E40 !important;
+}
+
+body[data-color-theme="dark"] .login-card .bg-purple-50,
+html.dark .login-card .bg-purple-50 {
+  background-color: #F3E8FF !important;
+  color: #581C87 !important;
+}
+
+/* 5. Suavizado de Bordes Blancos Translúcidos en Modo Oscuro */
+body[data-color-theme="dark"] .border-white\/70,
+body[data-color-theme="dark"] .border-white\/80,
+body[data-color-theme="dark"] .border-white\/90,
+html.dark .border-white\/70,
+html.dark .border-white\/80,
+html.dark .border-white\/90 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* =========================================================================
    ESTILOS DE IMPRESIÓN PROFESIONAL (HOJA CARTA/A4, LÍNEAS NÍTIDAS, COLOR MARCA)
    ========================================================================= */
 @page {

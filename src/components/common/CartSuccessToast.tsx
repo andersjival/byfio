@@ -17,14 +17,14 @@ export const CartSuccessToast: React.FC = () => {
       aria-live="polite"
       className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[100] w-[calc(100vw-1.5rem)] sm:w-auto max-w-lg pointer-events-auto animate-in fade-in slide-in-from-top-4 duration-300"
     >
-      <div className="relative bg-[#F1F2F6]/95 backdrop-blur-xl border border-white/90 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-2xl overflow-hidden">
+      <div className="cart-toast-card relative bg-[#F1F2F6]/95 backdrop-blur-xl border border-white/90 rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-2xl overflow-hidden">
         {/* Glow de fondo */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex items-center gap-3">
           {/* Thumbnail o Ícono de Check */}
           {cartToast.image ? (
-            <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white shadow-neuInset shrink-0 border border-white/80">
+            <div className="toast-thumb relative w-12 h-12 rounded-xl overflow-hidden bg-white shadow-neuInset shrink-0 border border-white/80">
               <img
                 src={cartToast.image}
                 alt={cartToast.productName}
@@ -42,22 +42,22 @@ export const CartSuccessToast: React.FC = () => {
 
           {/* Información del Mensaje */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 text-emerald-700 font-bubble font-bold text-xs sm:text-sm">
+            <div className="toast-title flex items-center gap-1.5 text-emerald-700 font-bubble font-bold text-xs sm:text-sm">
               <Sparkles className="w-3.5 h-3.5 text-fio-pink shrink-0 animate-pulse" />
               <span>¡Producto agregado con éxito!</span>
             </div>
 
-            <p className="font-bubble font-bold text-xs sm:text-sm text-slate-800 line-clamp-1 mt-0.5">
+            <p className="toast-product-name font-bubble font-bold text-xs sm:text-sm text-slate-800 line-clamp-1 mt-0.5">
               {cartToast.productName}{' '}
               {cartToast.quantity && cartToast.quantity > 1 ? (
-                <span className="text-slate-500 font-sans font-normal text-xs">
+                <span className="toast-subtitle text-slate-500 font-sans font-normal text-xs">
                   ({cartToast.quantity} un.)
                 </span>
               ) : null}
             </p>
 
             {/* Actualización Reactiva de Productos y Montos en el Carrito */}
-            <p className="text-[11px] font-sans text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
+            <p className="toast-subtitle text-[11px] font-sans text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
               <span>
                 Carrito:{' '}
                 <strong className="text-fio-800 font-bold">

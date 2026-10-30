@@ -17,6 +17,20 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.64.0 - Corrección Visual y Contraste de Elementos en Tema Oscuro
+- [x] **Notificación Flotante de Carrito (`CartSuccessToast.tsx` e `index.css`):**
+  - Fondo oscuro con desenfoque `rgba(44, 39, 70, 0.98)` y borde lila translúcido en lugar de blanco deslumbrante.
+  - Título en verde esmeralda luminoso (`#34D399`), nombre del producto en blanco puro (`#FFFFFF`) y textos secundarios en lavanda suave (`#CBD5E1`), erradicando textos blancos sobre fondo claro.
+- [x] **Píldoras de Información de Calidad del Hero (`HeroDual.tsx` e `index.css`):**
+  - Contenedores estilizados en `#2C2746` con borde suave `rgba(168, 85, 247, 0.3)`.
+  - Títulos en blanco nítido (`#FFFFFF`), subtítulos en `#CBD5E1` e iconos con cápsulas adaptadas `#352F54`.
+- [x] **Botones Circulares de Acción (`neu-btn-circle` en `index.css`):**
+  - Reemplazado el fondo blanco plano por tono nocturno `#332D52` con borde sutil, icono violeta claro (`#E9D5FF`) y estados activos/hover con sombras invertidas.
+  - Estado verde esmeralda para productos ya agregados al carrito con contraste óptimo.
+- [x] **Protección Estética del Modal 3D de Login (`index.css`):**
+  - Aislada la tarjeta de login 3D frente a reglas globales de inputs en modo oscuro.
+  - Campos de texto preservados con fondo blanco crema, texto oscuro legible (`#2D1E40`), placeholder claro y textos/enlaces respetando la paleta original del formulario.
+
 ### Versión 1.63.0 - Redirección Inmediata a Administración, URL Segura y Sistema de Perfiles con PIN (4 Dígitos)
 - [x] **Ingreso Real e Inmediato a Administración ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx) y [`src/App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
   - Eliminado el bloqueo/congelamiento del modal; al autenticarse se cierra el diálogo al instante y redirige de inmediato al panel de administración en la URL segura `/admin`.

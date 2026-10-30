@@ -74,7 +74,7 @@ export const HeroDual: React.FC<HeroDualProps> = ({
 
         {/* Píldoras de Calidad / Cajas de Información Neumórficas */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 max-w-4xl mx-auto pt-2 px-1 sm:px-0">
-          <div className="bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
+          <div className="hero-quality-pill bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
             <span className="p-1.5 sm:p-2 rounded-xl neu-btn-circle text-amber-500 shadow-neuBtn shrink-0">
               <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400 text-amber-500" />
             </span>
@@ -84,7 +84,7 @@ export const HeroDual: React.FC<HeroDualProps> = ({
             </div>
           </div>
 
-          <div className="bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
+          <div className="hero-quality-pill bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
             <span className="p-1.5 sm:p-2 rounded-xl neu-btn-circle text-fio-pink shadow-neuBtn shrink-0">
               <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-fio-pink text-fio-pink" />
             </span>
@@ -94,7 +94,7 @@ export const HeroDual: React.FC<HeroDualProps> = ({
             </div>
           </div>
 
-          <div className="bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
+          <div className="hero-quality-pill bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
             <span className="p-1.5 sm:p-2 rounded-xl neu-btn-circle text-[#38BDF8] shadow-neuBtn shrink-0">
               <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
@@ -104,7 +104,7 @@ export const HeroDual: React.FC<HeroDualProps> = ({
             </div>
           </div>
 
-          <div className="bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
+          <div className="hero-quality-pill bg-[#F1F2F6]/90 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-white/80 shadow-neuCard flex items-center gap-2 sm:gap-2.5 text-left">
             <span className="p-1.5 sm:p-2 rounded-xl neu-btn-circle text-amber-600 shadow-neuBtn shrink-0">
               <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
