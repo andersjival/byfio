@@ -829,7 +829,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.COLOR_THEME, colorTheme);
   }, [colorTheme]);
 
-  // Sync initial data from Cloudflare D1 Database
+  // Sync initial data from Cloud Database
   useEffect(() => {
     fetch('/api/products')
       .then((res) => (res.ok ? res.json() : null))

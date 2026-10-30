@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.97.0 - Erradicación Total de Referencias Técnicas de Infraestructura en la Web y Propuesta
+- [x] **Eliminación Total de Nombres de Proveedores en UI & Propuesta (`PropuestaPage.tsx`, `DailyClosingModal.tsx`, `health.ts`):**
+  - Eliminada de forma absoluta cualquier mención visible o textual de marcas de infraestructura ("Cloudflare", "Pages", "D1").
+  - Sustituidas en la página de propuesta, modales de cierre de caja y tarjetas por terminología empresarial de alto nivel: *"Infraestructura Cloud Segura"*, *"Base de Datos en la Nube de Alta Disponibilidad"* y *"Sincronización en Tiempo Real"*.
+  - Limpieza de comentarios internos en código para mantener privacidad y confidencialidad técnica 100%.
+
 ### Versión 1.96.0 - Optimización Responsiva Integral del Catálogo Online para Celulares y Pantallas Móviles
 - [x] **Depuración de Banners y Ahorro de Espacio Vertical en Móvil (`CatalogPage.tsx`):**
   - Ocultado el banner estático duplicado en pantallas móviles (`hidden sm:block`) para que los productos aparezcan de inmediato sin scroll muerto.

@@ -358,7 +358,7 @@ export const metricsTracker = {
     // 1. Notificación instantánea 0ms entre pestañas
     notifyMetricsUpdated();
 
-    // 2. Sincronización asíncrona hacia el backend de Cloudflare D1
+    // 2. Sincronización asíncrona hacia el backend Cloud
     if (typeof window !== 'undefined') {
       fetch('/api/metrics', {
         method: 'POST',
@@ -444,7 +444,7 @@ export const metricsTracker = {
     // Notificar entre pestañas locales de inmediato
     notifyMetricsUpdated();
 
-    // Persistir de inmediato en Cloudflare D1
+    // Persistir de inmediato en base de datos Cloud
     if (typeof window !== 'undefined') {
       fetch('/api/metrics', {
         method: 'POST',
