@@ -17,6 +17,25 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.86.0 - Página Privada de Métricas (/metricas), Generador de Enlaces y Rastreo por Dispositivos y Secciones
+- [x] **Página Privada de Métricas (`/metricas` y `MetricsPage.tsx`):**
+  - Creada la ruta `/metricas` accesible tanto directamente por URL como desde el Menú Principal de Administración.
+  - Puerta de acceso de seguridad con código privado `1985`: campo con bullets ocultos (`type="password"` / `••••`) sin pistas visuales ni texto del código en la interfaz.
+  - Persistencia de sesión en `sessionStorage` y botón de bloqueo rápido.
+- [x] **Rastreo Global de Cargas y Dispositivos (PC vs Celulares):**
+  - Contador de cargas totales de la web y sesiones únicas individuales.
+  - Clasificación de dispositivos en tiempo real: Computadoras de Escritorio (PC) vs Teléfonos Celulares (Móviles) con porcentaje visual comparativo.
+- [x] **Generador de Enlaces Específicos Rastreables:**
+  - Formulario para crear enlaces con etiquetas personalizadas (ej. Instagram Bio, WhatsApp, TikTok, Promociones o Clientes).
+  - Formato generado: `https://byfiocr.pages.dev/?ref=slug` o a sección específica.
+  - Contador individual de aperturas por link, desglose de aperturas en PC y Celular, y última fecha de acceso.
+  - Botones de 1-clic para copiar enlace, compartir por WhatsApp, probar en nueva pestaña, reiniciar o eliminar.
+- [x] **Métricas de Preferencias por Sección:**
+  - Ranking de secciones más vistas y gustadas (Catálogo Digital, Tienda, Talleres, Portada, Precios de Stickers, etc.).
+  - Desglose de vistas, índice de me gusta y tiempo promedio de permanencia.
+- [x] **Servicio Central de Rastreo (`src/services/metricsTracker.ts`):**
+  - Motor de tracking automático que detecta parámetros de enlace (`?ref=...`), dispositivo del visitante y sección navegada.
+
 ### Versión 1.85.0 - Actualización del Video de Introducción Oficial
 - [x] **Reemplazo del Video de la Intro Web (`public/assets/intro-web-byfio.mp4`):**
   - Actualizado el archivo del video de intro con la versión descargada `INTRO BYFIO WEB.mp4` (3.64 MB).

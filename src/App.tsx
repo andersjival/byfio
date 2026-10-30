@@ -37,6 +37,8 @@ import { WebIntroOverlay } from './components/common/WebIntroOverlay';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { LoginModal } from './components/common/LoginModal';
 import { UserProfilesSection } from './components/admin/UserProfilesSection';
+import { MetricsPage } from './components/admin/MetricsPage';
+import { metricsTracker } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film, Shield } from 'lucide-react';
 
@@ -76,7 +78,8 @@ const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'hub' };
   }
 
-  // Rutas públicas
+  // Rutas públicas y privadas
+  if (path.includes('/metricas') || hash.includes('metricas')) return { route: 'metricas', adminTab: 'hub' };
   if (path.includes('/login') || hash.includes('login')) return { route: 'login', adminTab: 'hub' };
   if (path.includes('/precios') || hash.includes('precios')) return { route: 'precios', adminTab: 'hub' };
   if (path.includes('/catalogo') || hash.includes('catalogo')) return { route: 'catalogo', adminTab: 'hub' };
@@ -135,7 +138,8 @@ export const App: React.FC = () => {
     setSelectedWorkshopId(wsId);
 
     let targetPath = '/';
-    if (newRoute === 'login') targetPath = '/login';
+    if (newRoute === 'metricas') targetPath = '/metricas';
+    else if (newRoute === 'login') targetPath = '/login';
     else if (newRoute === 'precios') targetPath = '/precios';
     else if (newRoute === 'catalogo') targetPath = '/catalogo';
     else if (newRoute === 'store') targetPath = '/tienda';
@@ -195,6 +199,16 @@ export const App: React.FC = () => {
     const cleanupSounds = initWaterDropButtonSounds();
     return cleanupSounds;
   }, []);
+
+  // Rastrear vistas de páginas, dispositivos (PC/Móvil) y enlaces generados
+  useEffect(() => {
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      metricsTracker.recordPageView(currentRoute, searchParams);
+    } catch (e) {
+      console.warn('Metrics tracking error', e);
+    }
+  }, [currentRoute]);
 
   const adminBreadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },
@@ -269,6 +283,10 @@ export const App: React.FC = () => {
                 workshopId={selectedWorkshopId}
                 onNavigate={navigate}
               />
+            )}
+
+            {currentRoute === 'metricas' && (
+              <MetricsPage onNavigate={navigate} />
             )}
 
             {currentRoute === 'admin' && (

@@ -1,6 +1,6 @@
 export type ViewMode = 'store' | 'admin';
 
-export type AppRoute = 'home' | 'store' | 'catalogo' | 'workshops' | 'workshop-detail' | 'precios' | 'admin' | 'login';
+export type AppRoute = 'home' | 'store' | 'catalogo' | 'workshops' | 'workshop-detail' | 'precios' | 'admin' | 'login' | 'metricas';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 
@@ -187,5 +187,39 @@ export interface AuthUser {
   permissions?: UserPermissions;
   isMasterAdmin?: boolean;
   avatar?: string;
+}
+
+export interface TrackedLink {
+  id: string;
+  name: string; // ej. "Instagram Bio", "WhatsApp Clientes", "Promo Feria"
+  slug: string; // ej. "insta-bio", "wa-promo"
+  targetRoute: string; // ej. "/", "/catalogo", "/tienda", "/talleres"
+  clicks: number; // Veces que se abrió el link
+  pcClicks: number; // Clics desde PC / Desktop
+  mobileClicks: number; // Clics desde Celular / Móvil
+  createdAt: string;
+  lastClickedAt?: string;
+}
+
+export interface SectionMetricData {
+  id: string;
+  name: string;
+  iconName: string;
+  route: string;
+  views: number;
+  likes: number;
+  timeSpentAvgMinutes: number;
+}
+
+export interface MetricsState {
+  totalPageLoads: number;
+  uniqueSessions: number;
+  devices: {
+    pc: number;
+    mobile: number;
+  };
+  trackedLinks: TrackedLink[];
+  sections: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }>;
+  lastVisitTimestamp?: string;
 }
 

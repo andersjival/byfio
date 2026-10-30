@@ -3,7 +3,8 @@ import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
-  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users
+  ChevronRight, Sparkles, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
+  BarChart3, Lock
 } from 'lucide-react';
 
 interface AdminHubMenuProps {
@@ -228,6 +229,36 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
               <span>Ver Catálogo</span>
             </a>
           </div>
+        </div>
+
+        {/* Tarjeta de Acceso Rápido a Métricas & Rastreo de Enlaces */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 text-white shadow-md border border-purple-800/40">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center shrink-0 text-fio-yellow">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bubble font-bold text-sm text-white">
+                  Métricas de Visitas & Rastreo de Enlaces (/metricas)
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200 font-mono flex items-center gap-1">
+                  <Lock className="w-3 h-3" /> Privado
+                </span>
+              </div>
+              <p className="text-[11px] text-purple-200/80 font-sans">
+                Genera links específicos, rastrea aperturas por campañas, dispositivos (PC vs Celular) y preferencias por sección.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="/metricas"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white text-purple-950 hover:bg-purple-50 text-xs font-bubble font-bold shadow-md active:scale-95 transition-all shrink-0 cursor-pointer"
+          >
+            <BarChart3 className="w-3.5 h-3.5 text-fio-purple" />
+            <span>Abrir Panel de Métricas</span>
+          </a>
         </div>
       </div>
     </div>
