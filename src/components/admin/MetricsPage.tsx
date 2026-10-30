@@ -258,6 +258,71 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
 
   useEffect(() => {
     refreshMetrics();
+
+    // 1. Canal en tiempo real entre pestañas (0ms latencia instantánea)
+    const channel =
+      typeof window !== 'undefined' && 'BroadcastChannel' in window
+        ? new BroadcastChannel('byfio_metrics_channel')
+        : null;
+
+    const handleBroadcast = (evt: MessageEvent) => {
+      if (evt.data?.type === 'METRICS_UPDATED') {
+        refreshMetrics();
+      }
+    };
+
+    if (channel) {
+      channel.addEventListener('message', handleBroadcast);
+    }
+
+    // 2. Storage event listener (sincronización entre ventanas)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'byfio_metrics_tracker_v1') {
+        refreshMetrics();
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+
+    // 3. Sincronización Remota desde Cloudflare D1 con Polling Inteligente (Anti-Drain)
+    let isSubscribed = true;
+    const syncRemoteMetrics = async () => {
+      // Si la pestaña está oculta, pausar para ahorro de cuota y batería
+      if (typeof document !== 'undefined' && document.hidden) return;
+      try {
+        const remote = await metricsTracker.fetchRemoteMetrics();
+        if (remote && isSubscribed) {
+          setMetrics({ ...remote });
+        }
+      } catch {
+        // Red silenciosa
+      }
+    };
+
+    // Sincronización remota inicial
+    syncRemoteMetrics();
+
+    // Intervalo de 2.5s mientras la pestaña esté en foco activo
+    const intervalId = setInterval(syncRemoteMetrics, 2500);
+
+    // Reactivación inmediata al regresar a la pestaña
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refreshMetrics();
+        syncRemoteMetrics();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      isSubscribed = false;
+      if (channel) {
+        channel.removeEventListener('message', handleBroadcast);
+        channel.close();
+      }
+      window.removeEventListener('storage', handleStorage);
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   // Manejo de validación del PIN privado
@@ -549,9 +614,18 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
       {/* Barra Superior con Acciones y Bloqueo */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 backdrop-blur-md">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-fio-purple dark:text-fio-pink font-bubble font-bold text-xs">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Panel Privado de Analítica & Rastreo</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-fio-purple dark:text-fio-pink font-bubble font-bold text-xs">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Panel Privado de Analítica & Rastreo</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 font-bubble font-bold text-xs shadow-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>En Vivo · Tiempo Real Activo</span>
+            </div>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bubble font-bold text-slate-900 dark:text-white tracking-wide">
             {currentDisplayMetrics.title}
@@ -563,9 +637,12 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
-            onClick={refreshMetrics}
+            onClick={() => {
+              refreshMetrics();
+              metricsTracker.fetchRemoteMetrics().then((r) => r && setMetrics({ ...r }));
+            }}
             className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-2xl bg-slate-100 dark:bg-purple-900/40 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-purple-900/60 font-bubble font-bold text-xs transition-all active:scale-95 cursor-pointer"
-            title="Refrescar métricas"
+            title="Sincronizar métricas en tiempo real"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Refrescar</span>

@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 1.90.0 - Sincronización en Tiempo Real de Enlaces & Métricas (Cross-Tab y Cloudflare D1)
+- [x] **Sincronización en Tiempo Real Reactiva Instantánea (0ms entre pestañas):**
+  - Implementación de `BroadcastChannel('byfio_metrics_channel')` y escuchador `window.addEventListener('storage')`.
+  - Cuando un visitante o usuario abre cualquier enlace rastreado en otra pestaña o ventana, la pantalla `/metricas` detecta el evento de inmediato y refresca los contadores de clics, cargas de página y dispositivos en tiempo real sin recargar la página.
+- [x] **Persistencia y Sincronización Multi-Dispositivo con Cloudflare D1 (`functions/api/metrics.ts`):**
+  - Creación del endpoint `/api/metrics` conectado a la base de datos Cloudflare D1 (`byfiocr-db`, tabla `site_metrics`).
+  - Cada vez que un usuario abre un enlace desde su teléfono celular, tablet u otra computadora (ej. enlaces compartidos por WhatsApp o redes), la visita se persiste en Cloudflare D1 y se sincroniza en vivo con el panel del administrador.
+- [x] **Polling Inteligente Anti-Consumo (Anti-Drain Polling según `polling-inteligente`):**
+  - La página `/metricas` consulta actualizaciones remotas cada 2.5 segundos únicamente cuando la pestaña está activa y visible (`!document.hidden`).
+  - Si la pestaña se oculta o minimiza, el polling se suspende al 100% para ahorro de cuota y batería, y se reactiva de inmediato en el microsegundo en que el usuario vuelve a enfocar la pestaña.
+- [x] **Extracción Robusta de Parámetros en URL (`extractRefSlugFromUrl`):**
+  - Soporte de captura de slug desde `window.location.search`, `window.location.hash` y expresiones regulares en la URL completa (`ref`, `link`, `c`, `camp`).
+- [x] **Indicador Visual de Estado en Vivo:**
+  - Badge pulsante en cabecera: `🟢 En Vivo · Tiempo Real Activo`.
+
 ### Versión 1.89.0 - Inclusión de Todas las Partes de la Web hasta el Panel Admin en Secciones Más Gustadas
 - [x] **Monitoreo Integral de Toda la Web hasta el Panel de Administración (`MetricsPage.tsx` & `metricsTracker.ts`):**
   - La sección *"¿Qué Secciones Gustaron Más?"* ahora incluye absolutamente todas las partes del ecosistema web:

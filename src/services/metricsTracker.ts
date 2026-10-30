@@ -2,6 +2,20 @@ import { MetricsState, TrackedLink } from '../types';
 
 const STORAGE_KEY = 'byfio_metrics_tracker_v1';
 
+// Canal de difusión en tiempo real entre pestañas del mismo navegador (0ms latencia)
+const metricsChannel =
+  typeof window !== 'undefined' && 'BroadcastChannel' in window
+    ? new BroadcastChannel('byfio_metrics_channel')
+    : null;
+
+const notifyMetricsUpdated = () => {
+  try {
+    metricsChannel?.postMessage({ type: 'METRICS_UPDATED', timestamp: Date.now() });
+  } catch (e) {
+    console.warn('BroadcastChannel error', e);
+  }
+};
+
 const DEFAULT_SECTIONS_INITIAL: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }> = {
   // Secciones Públicas de la Web
   home: { views: 1842, likes: 242, timeSpentAvgMinutes: 2.5 },
@@ -121,6 +135,36 @@ export const isMobileDevice = (): boolean => {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
 };
 
+// Extractor robusto de slug de campaña desde search, hash o href completo
+export const extractRefSlugFromUrl = (): string | null => {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    // 1. Verificar window.location.search
+    const searchParams = new URLSearchParams(window.location.search);
+    const searchRef = searchParams.get('ref') || searchParams.get('link') || searchParams.get('c') || searchParams.get('camp');
+    if (searchRef) return searchRef.toLowerCase().trim();
+
+    // 2. Verificar window.location.hash si tiene parámetros (?ref=...)
+    if (window.location.hash && window.location.hash.includes('?')) {
+      const hashQuery = window.location.hash.substring(window.location.hash.indexOf('?'));
+      const hashParams = new URLSearchParams(hashQuery);
+      const hashRef = hashParams.get('ref') || hashParams.get('link') || hashParams.get('c') || hashParams.get('camp');
+      if (hashRef) return hashRef.toLowerCase().trim();
+    }
+
+    // 3. Regex universal sobre la URL completa
+    const hrefMatch = window.location.href.match(/[?&](?:ref|link|c|camp)=([^&#]+)/i);
+    if (hrefMatch && hrefMatch[1]) {
+      return decodeURIComponent(hrefMatch[1]).toLowerCase().trim();
+    }
+  } catch (e) {
+    console.warn('Error parsing ref slug from URL', e);
+  }
+
+  return null;
+};
+
 export const metricsTracker = {
   getMetrics(): MetricsState {
     try {
@@ -128,7 +172,7 @@ export const metricsTracker = {
       if (stored) {
         const parsed: MetricsState = JSON.parse(stored);
 
-        // Migración suave: asegurar que todas las secciones (públicas y de administración) existan
+        // Migración suave: asegurar que todas las secciones existan
         if (!parsed.sections) parsed.sections = {};
         Object.entries(DEFAULT_SECTIONS_INITIAL).forEach(([secKey, secVal]) => {
           if (!parsed.sections[secKey]) {
@@ -148,6 +192,7 @@ export const metricsTracker = {
     } catch (e) {
       console.warn('Error reading metrics from localStorage', e);
     }
+
     this.saveMetrics(INITIAL_METRICS_STATE);
     return INITIAL_METRICS_STATE;
   },
@@ -158,6 +203,38 @@ export const metricsTracker = {
     } catch (e) {
       console.warn('Error saving metrics to localStorage', e);
     }
+  },
+
+  // Sincronización remota desde Cloudflare D1
+  async fetchRemoteMetrics(): Promise<MetricsState | null> {
+    if (typeof window === 'undefined') return null;
+    try {
+      const res = await fetch('/api/metrics', {
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+      if (res.ok) {
+        const remote: MetricsState = await res.json();
+        if (remote && Array.isArray(remote.trackedLinks)) {
+          // Fusionar con local para no perder links recién creados en el cliente
+          const local = this.getMetrics();
+          const remoteSlugs = new Set(remote.trackedLinks.map((l) => l.slug.toLowerCase()));
+          const extraLocalLinks = local.trackedLinks.filter((l) => !remoteSlugs.has(l.slug.toLowerCase()));
+
+          const mergedLinks = [...remote.trackedLinks, ...extraLocalLinks];
+          const mergedState: MetricsState = {
+            ...remote,
+            trackedLinks: mergedLinks,
+          };
+
+          this.saveMetrics(mergedState);
+          notifyMetricsUpdated();
+          return mergedState;
+        }
+      }
+    } catch (e) {
+      // Ignorar fallas temporales de red
+    }
+    return null;
   },
 
   recordPageView(route: string, searchParams?: URLSearchParams): MetricsState {
@@ -174,24 +251,28 @@ export const metricsTracker = {
       state.devices.pc += 1;
     }
 
+    let isNewSession = false;
     // Comprobar nueva sesión
     try {
       if (typeof window !== 'undefined' && !sessionStorage.getItem('byfio_session_active')) {
         sessionStorage.setItem('byfio_session_active', '1');
         state.uniqueSessions += 1;
+        isNewSession = true;
       }
     } catch {
       // Ignorar si sessionStorage no está disponible
     }
 
     // Rastrear apertura mediante enlace específico si existe ref/link/camp en URL
-    const params = searchParams || (typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null);
-    const refSlug = params ? (params.get('ref') || params.get('link') || params.get('c') || params.get('camp')) : null;
+    const explicitRef = searchParams
+      ? (searchParams.get('ref') || searchParams.get('link') || searchParams.get('c') || searchParams.get('camp'))
+      : null;
+    const refSlug = explicitRef ? explicitRef.toLowerCase().trim() : extractRefSlugFromUrl();
 
     let activeCampaignSlug: string | null = null;
 
     if (refSlug) {
-      activeCampaignSlug = refSlug.toLowerCase().trim();
+      activeCampaignSlug = refSlug;
       try {
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('byfio_active_campaign_ref', activeCampaignSlug);
@@ -242,7 +323,7 @@ export const metricsTracker = {
       }
     }
 
-    // Registrar sección visitada (incluyendo todas las partes públicas y del panel admin)
+    // Registrar sección visitada
     const sectionKey = route || 'home';
     if (!state.sections[sectionKey]) {
       state.sections[sectionKey] = {
@@ -272,6 +353,25 @@ export const metricsTracker = {
     }
 
     this.saveMetrics(state);
+
+    // 1. Notificación instantánea 0ms entre pestañas
+    notifyMetricsUpdated();
+
+    // 2. Sincronización asíncrona hacia el backend de Cloudflare D1
+    if (typeof window !== 'undefined') {
+      fetch('/api/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'record_visit',
+          slug: refSlug,
+          route: sectionKey,
+          isMobile,
+          isNewSession,
+        }),
+      }).catch(() => {});
+    }
+
     return state;
   },
 
@@ -303,6 +403,7 @@ export const metricsTracker = {
     }
 
     this.saveMetrics(state);
+    notifyMetricsUpdated();
     return state;
   },
 
@@ -338,6 +439,22 @@ export const metricsTracker = {
 
     state.trackedLinks.unshift(newLink);
     this.saveMetrics(state);
+
+    // Notificar entre pestañas locales de inmediato
+    notifyMetricsUpdated();
+
+    // Persistir de inmediato en Cloudflare D1
+    if (typeof window !== 'undefined') {
+      fetch('/api/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create_link',
+          link: newLink,
+        }),
+      }).catch(() => {});
+    }
+
     return newLink;
   },
 
@@ -345,6 +462,20 @@ export const metricsTracker = {
     const state = this.getMetrics();
     state.trackedLinks = state.trackedLinks.filter((l) => l.id !== id);
     this.saveMetrics(state);
+
+    notifyMetricsUpdated();
+
+    if (typeof window !== 'undefined') {
+      fetch('/api/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_link',
+          id,
+        }),
+      }).catch(() => {});
+    }
+
     return state;
   },
 
@@ -360,11 +491,36 @@ export const metricsTracker = {
       link.lastClickedAt = undefined;
     }
     this.saveMetrics(state);
+
+    notifyMetricsUpdated();
+
+    if (typeof window !== 'undefined') {
+      fetch('/api/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'reset_link',
+          id,
+        }),
+      }).catch(() => {});
+    }
+
     return state;
   },
 
   resetAllMetrics(): MetricsState {
     this.saveMetrics(INITIAL_METRICS_STATE);
+    notifyMetricsUpdated();
+    if (typeof window !== 'undefined') {
+      fetch('/api/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'sync_state',
+          state: INITIAL_METRICS_STATE,
+        }),
+      }).catch(() => {});
+    }
     return INITIAL_METRICS_STATE;
   },
 };
