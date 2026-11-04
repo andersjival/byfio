@@ -11,6 +11,22 @@ import { playNewOrderChimeSound } from '../utils/soundEffects';
 import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 
+// Generador de número de orden secuencial garantizado libre de colisiones
+export const getNextOrderNumber = (ordersList: Order[]): string => {
+  let maxNum = 1000;
+  for (const o of ordersList) {
+    if (!o.orderNumber) continue;
+    const match = o.orderNumber.match(/#?FIO-(\d+)/i);
+    if (match) {
+      const val = parseInt(match[1], 10);
+      if (!isNaN(val) && val > maxNum) {
+        maxNum = val;
+      }
+    }
+  }
+  return `#FIO-${maxNum + 1}`;
+};
+
 export const DEFAULT_USER_PROFILES: UserProfile[] = [
   {
     id: 'prof-alisto',
@@ -571,8 +587,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     shippingFee: number;
     total: number;
   }): Order => {
-    const nextNumber = 1000 + orders.length + 1;
-    const orderNumber = `#FIO-${nextNumber}`;
+    const orderNumber = getNextOrderNumber(orders);
 
     const orderItems: OrderItem[] = orderData.items.map((item, idx) => ({
       id: `ord-direct-item-${Date.now()}-${idx}`,
@@ -619,7 +634,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newOrder),
-    }).catch(() => {});
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.orderNumber && data.orderNumber !== newOrder.orderNumber) {
+          setOrders((prev) =>
+            prev.map((o) => (o.id === newOrder.id ? { ...o, orderNumber: data.orderNumber } : o))
+          );
+        }
+      })
+      .catch(() => {});
 
     // Rebajar inventario automáticamente y sincronizar con D1
     const deductionsBySku = new Map<string, number>();
@@ -917,7 +941,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const handleSync = (event: MessageEvent) => {
       if (event.data?.type === 'SYNC_UPDATE') {
         if (Array.isArray(event.data.orders)) {
-          setOrders(event.data.orders);
+          setOrders((prev) => {
+            const map = new Map<string, Order>();
+            prev.forEach((o) => map.set(o.id, o));
+            event.data.orders.forEach((o: Order) => map.set(o.id, o));
+            return Array.from(map.values()).sort(
+              (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
+          });
           checkAndNotifyNewOrders(event.data.orders);
         }
         if (Array.isArray(event.data.products)) {
@@ -1012,9 +1043,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (Array.isArray(data) && data.length > 0) {
             checkAndNotifyNewOrders(data);
             setOrders((prev) => {
-              if (data.length !== prev.length || JSON.stringify(data) !== JSON.stringify(prev)) {
-                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(data));
-                return data;
+              const map = new Map<string, Order>();
+              prev.forEach((o) => map.set(o.id, o));
+              data.forEach((o: Order) => map.set(o.id, o));
+              const merged = Array.from(map.values()).sort(
+                (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+              );
+              if (merged.length !== prev.length || JSON.stringify(merged) !== JSON.stringify(prev)) {
+                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(merged));
+                return merged;
               }
               return prev;
             });
@@ -1191,8 +1228,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const shippingFee = orderInfo.deliveryMethod === 'envio' ? 2500 : 0;
     const total = subtotal + shippingFee;
 
-    const nextNumber = 1000 + orders.length + 1;
-    const orderNumber = `#FIO-${nextNumber}`;
+    const orderNumber = getNextOrderNumber(orders);
 
     const orderItems = cart.map((item, idx) => ({
       id: `ord-item-${Date.now()}-${idx}`,
@@ -1231,7 +1267,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newOrder),
-    }).catch(() => {});
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.orderNumber && data.orderNumber !== newOrder.orderNumber) {
+          setOrders((prev) =>
+            prev.map((o) => (o.id === newOrder.id ? { ...o, orderNumber: data.orderNumber } : o))
+          );
+        }
+      })
+      .catch(() => {});
 
     // Rebajar inventario automáticamente y sincronizar con D1
     const deductionsByProdId = new Map<string, number>();
@@ -1613,8 +1658,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     customerInfo: { name: string; phone: string; email?: string; notes?: string }
   ): Order => {
     const total = workshop.price * quantity;
-    const nextNumber = 1000 + orders.length + 1;
-    const orderNumber = `#FIO-${nextNumber}`;
+    const orderNumber = getNextOrderNumber(orders);
 
     const newOrder: Order = {
       id: `ord-ws-${Date.now()}`,
@@ -1649,7 +1693,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newOrder),
-    }).catch(() => {});
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.orderNumber && data.orderNumber !== newOrder.orderNumber) {
+          setOrders((prev) =>
+            prev.map((o) => (o.id === newOrder.id ? { ...o, orderNumber: data.orderNumber } : o))
+          );
+        }
+      })
+      .catch(() => {});
 
     let updatedWorkshops: Workshop[] = [];
     setWorkshops((prev) => {

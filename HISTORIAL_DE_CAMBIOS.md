@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.9.2 - Blindaje Definitivo de Persistencia de Pedidos, Secuencia Única Anti-Colisión y Restauración Histórica
+- [x] **Erradicación Total de Sobrescritura de Pedidos ([`functions/api/orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Identificada y resuelta la causa raíz: los números de pedido se calculaban erróneamente con `1000 + orders.length + 1`, lo que provocaba que al llegar a 5 o 6 pedidos se repitiera el mismo `#FIO-1006` / `#FIO-1007` y SQLite (`INSERT OR REPLACE`) eliminara silenciosamente el pedido anterior por la restricción `UNIQUE(order_number)`.
+  - Reemplazado `INSERT OR REPLACE` por `INSERT INTO ... ON CONFLICT(id) DO UPDATE SET ...` en Cloudflare D1, garantizando que NUNCA se borre un pedido existente de otro ID.
+  - Implementado generador estricto `getNextOrderNumber()` que analiza el número numérico máximo real (`Math.max(1000, ...dbNumbers)`) tanto en el cliente como en el backend, asignando siempre números crecientes estrictamente libres de colisiones (`#FIO-1008`, `#FIO-1009`, etc.).
+- [x] **Fusión Aditiva Segura en Sincronización y Polling ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - La sincronización en tiempo real y el polling continuo ahora realizan una unión aditiva de pedidos por `id` (`Map<string, Order>`), preservando todos los pedidos locales y los recibidos de la nube sin sobrescrituras destructivas.
+- [x] **Restauración del Pedido Histórico Inicial #FIO-1001 ([`functions/api/orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
+  - Autosembrada la orden fundacional `#FIO-1001` (Sofía Solano Brenes) en Cloudflare D1 en caso de no encontrarse en la base de datos, garantizando la integridad de todo el historial.
+
 ### Versión 3.9.1 - Formato de Documento Formal para Requisición y Lista de Pedidos a Proveedor
 - [x] **Generación de Formato Documento Oficial de Requisición ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
   - Transformada la salida impresa de una captura de pantalla del modal web a un documento formal y elegante de Requisición y Orden de Reposición (`ORDEN DE COMPRA & REPOSICIÓN DE INVENTARIO`) optimizado para papel Carta/A4 y exportación a PDF.
