@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, ArrowRight } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
+import { isHomeLocation } from '../../utils/routeHelpers';
 
 interface WebIntroOverlayProps {
   isOpen: boolean;
@@ -173,7 +174,8 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     unlockAudio();
   };
 
-  if (!isOpen) return null;
+  // El video de intro SOLO debe salir en la página principal cuando carga
+  if (!isOpen || !isHomeLocation()) return null;
 
   return (
     <div
