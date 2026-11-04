@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.5.0 - Edición Manual de Cantidades en Pedido a Proveedor y Ajuste Personalizado
+- [x] **Cantidades Modificables por Ítem ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - Implementado control numérico interactivo por producto en la columna *"Cantidad a Pedir"*: permite escribir el número exacto deseado mediante input manual o ajustarlo con botones de incremento/decremento `[-]` y `[+]`.
+  - Recálculo dinámico en tiempo real de costos estimados por fila, unidades totales a solicitar e inversión estimada.
+- [x] **Gestión Flexible de Orden y Mensajería Dinámica ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - Botón para remover artículos particulares de la orden actual (`Trash2`) y selector desplegable para añadir cualquier otro producto del inventario general aunque no esté en stock crítico.
+  - Botón de restauración de sugerencias automáticas basadas en la fórmula `Meta Máx - Stock Actual`.
+  - El mensaje generado para WhatsApp y el documento de impresión ahora reflejan con total fidelidad las cantidades personalizadas que digitó el usuario.
+
 ### Versión 3.4.0 - Eliminación y Actualización en Vivo de Productos para Usuarios Activos (0ms / Tiempo Real Sin Refrescar)
 - [x] **Eliminación y Desaparición en Vivo en Pantalla del Cliente ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts)):**
   - Implementado endpoint `onRequestDelete` en `functions/api/products.ts` para ejecutar `DELETE FROM products WHERE id = ?` en Cloudflare D1.
