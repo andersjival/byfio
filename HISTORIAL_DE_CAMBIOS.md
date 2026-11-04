@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.9.2 - Flujo Guiado Post-Alisto: "¿Continuar con el Siguiente Pedido?"
+- [x] **Modal de Decisión al Finalizar Pedido ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Al completar el alisto del último artículo de un pedido, la ventana ya no se cierra bruscamente.
+  - Presenta una tarjeta interactiva con la pregunta: "¿Continuar con el siguiente pedido?" junto con una previsualización clara del siguiente pedido pendiente en cola FIFO (`#Orden`, nombre de cliente y total de artículos).
+  - **Botón "Aceptar / Continuar":** Carga y muestra automáticamente el siguiente pedido pendiente para continuar el alisto sin salir de la vista operativa.
+  - **Botón "Salir":** Cierra la ventana y regresa al operador a la cola general de pedidos de clientes (`OrdersQueue`).
+  - **Acceso a Factura:** Incluye acceso directo opcional "Ver / Imprimir Factura de este Pedido" para quienes necesiten imprimir de inmediato.
+  - Si no quedan pedidos pendientes en cola, felicita al operador y habilita el botón directo para salir a la lista de pedidos.
+
 ### Versión 4.10.0 - Sección Superadmin con Autenticación Real y Control Modular Granular
 - [x] **Portal y Autenticación Real de Superadmin ([`SuperadminSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx), [`SuperadminLogin.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminLogin.tsx), [`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
   - Creada la ruta independiente y segura `/superadmin` con compuerta de autenticación real con credenciales maestras (`superadmin@byfio.com` / `superadmin`, contraseña `SuperAdmin2026!`).

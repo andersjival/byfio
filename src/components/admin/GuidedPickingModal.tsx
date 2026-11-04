@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   X, CheckCircle, AlertTriangle, MapPin, Heart, Scan, QrCode,
-  ClipboardList, Printer, FileCheck
+  ClipboardList, Printer, FileCheck, Check, LogOut, FileText
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const GuidedPickingModal: React.FC = () => {
   const {
+    orders,
     activePickingOrder,
     setActivePickingOrder,
     pickingMode,
     setPickingMode,
+    startPicking,
     markItemPicked,
     markItemMissing,
     setInvoiceOrder,
@@ -32,6 +34,11 @@ export const GuidedPickingModal: React.FC = () => {
   const handledCount = pickedCount + missingCount;
   const totalCount = items.length;
 
+  // Siguiente pedido en cola FIFO (pendiente o en alisto que no sea el actual)
+  const nextPendingOrder = orders.find(
+    (o) => o.id !== activePickingOrder.id && (o.orderStatus === 'pending' || o.orderStatus === 'picking')
+  );
+
   const triggerCompletion = () => {
     confetti({
       particleCount: 100,
@@ -39,14 +46,6 @@ export const GuidedPickingModal: React.FC = () => {
       origin: { y: 0.5 },
       colors: ['#A855F7', '#EC4899', '#38BDF8', '#FACC15'],
     });
-
-    const completedOrder = {
-      ...activePickingOrder,
-      orderStatus: 'packed' as const,
-      packedAt: new Date().toISOString(),
-    };
-    setActivePickingOrder(null);
-    setInvoiceOrder(completedOrder);
   };
 
   const handleProcessScan = (scannedSku: string) => {
@@ -342,24 +341,103 @@ export const GuidedPickingModal: React.FC = () => {
               </div>
             </div>
           ) : (
-            /* Alisto Completado */
-            <div className="text-center py-8 sm:py-12 space-y-3 sm:space-y-4">
-              <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-emerald-500 mx-auto animate-bounce" />
-              <h3 className="font-bubble font-bold text-xl sm:text-2xl text-fio-900">
-                {missingCount === 0 ? '¡Alisto Completado al 100%!' : '¡Alisto Finalizado con Reporte!'}
-              </h3>
-              <p className="text-xs text-gray-500 max-w-sm mx-auto">
-                {missingCount === 0
-                  ? 'Todos los artículos fueron verificados y alistados exitosamente. El pedido está listo para empacar y generar la factura.'
-                  : `Se alistaron ${pickedCount} artículo(s) y se reportaron ${missingCount} faltante(s) a inventario.`}
-              </p>
-              <button
-                type="button"
-                onClick={triggerCompletion}
-                className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn transition-all active:scale-95 cursor-pointer"
-              >
-                Finalizar Alisto y Ver Factura Oficial
-              </button>
+            /* Flujo Post-Finalización: Continuar con el siguiente pedido */
+            <div className="py-4 sm:py-6 px-2 sm:px-6 text-center space-y-4">
+              <div className="inline-flex p-3 sm:p-4 rounded-full bg-emerald-100 text-emerald-600 shadow-sm animate-bounce">
+                <CheckCircle className="w-10 h-10 sm:w-14 sm:h-14" />
+              </div>
+
+              <div>
+                <h3 className="font-bubble font-bold text-lg sm:text-2xl text-fio-900 leading-snug">
+                  ¡Alisto del Pedido {activePickingOrder.orderNumber} Finalizado!
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mt-1">
+                  {missingCount === 0
+                    ? `Se alistaron exitosamente los ${pickedCount} producto(s).`
+                    : `Se alistaron ${pickedCount} producto(s) y se reportaron ${missingCount} con faltante.`}
+                </p>
+              </div>
+
+              {/* Pregunta: Continuar con el siguiente pedido */}
+              {nextPendingOrder ? (
+                <div className="bg-purple-50/80 border-2 border-purple-200 rounded-2xl p-3.5 sm:p-5 max-w-md mx-auto text-left shadow-sm space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-600 animate-ping" />
+                    <h4 className="font-bubble font-bold text-sm sm:text-base text-purple-950">
+                      ¿Continuar con el siguiente pedido?
+                    </h4>
+                  </div>
+
+                  {/* Previsualización del Siguiente Pedido */}
+                  <div className="bg-white rounded-xl p-2.5 sm:p-3 border border-purple-200 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-purple-700 font-bold uppercase tracking-wider">Siguiente en Cola FIFO</p>
+                      <p className="font-bubble font-bold text-xs sm:text-sm text-slate-900 truncate">
+                        Pedido {nextPendingOrder.orderNumber} — {nextPendingOrder.customerName}
+                      </p>
+                      <p className="text-[11px] text-slate-500 font-medium">
+                        {nextPendingOrder.items.length} artículo(s) para alistar
+                      </p>
+                    </div>
+                    <span className="shrink-0 px-2 py-1 rounded-lg bg-purple-100 text-purple-800 font-bold text-[10px]">
+                      En Espera
+                    </span>
+                  </div>
+
+                  {/* Botones de Acción: Aceptar / Continuar o Salir */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => startPicking(nextPendingOrder.id, pickingMode)}
+                      className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-clayBtn transition-all cursor-pointer"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>Aceptar / Continuar</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActivePickingOrder(null)}
+                      className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-700 border border-slate-300 rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 text-slate-500" />
+                      <span>Salir a Pedidos</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 max-w-md mx-auto text-center shadow-sm space-y-2">
+                  <p className="font-bubble font-bold text-sm text-emerald-950">
+                    🎉 ¡Excelente trabajo!
+                  </p>
+                  <p className="text-xs text-emerald-800">
+                    No hay más pedidos pendientes en la cola por el momento.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setActivePickingOrder(null)}
+                    className="mt-2 w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-clayBtn transition-all cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Salir a la Cola de Pedidos</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Opción Secundaria: Ver Factura del Pedido Finalizado */}
+              <div className="pt-2 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInvoiceOrder(activePickingOrder);
+                    setActivePickingOrder(null);
+                  }}
+                  className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-bold underline cursor-pointer py-1"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Ver / Imprimir Factura de este Pedido ({activePickingOrder.orderNumber})</span>
+                </button>
+              </div>
             </div>
           )}
 
