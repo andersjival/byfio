@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.4.0 - Eliminación y Actualización en Vivo de Productos para Usuarios Activos (0ms / Tiempo Real Sin Refrescar)
+- [x] **Eliminación y Desaparición en Vivo en Pantalla del Cliente ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts)):**
+  - Implementado endpoint `onRequestDelete` en `functions/api/products.ts` para ejecutar `DELETE FROM products WHERE id = ?` en Cloudflare D1.
+  - Al eliminar un producto desde el inventario del administrador, se elimina del estado local, se persiste en Cloudflare D1 y se transmite de inmediato vía `BroadcastChannel('byfio_realtime_sync')`.
+  - El producto desaparece al instante de la pantalla de cualquier cliente que esté navegando en ese momento en la tienda, catálogo o portada sin necesidad de refrescar la página.
+- [x] **Limpieza Automática de Carritos y Modales Abiertos ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Si un usuario tiene en su carrito un producto que el administrador elimina o desactiva en ese momento, el producto se extrae de su carrito automáticamente para evitar errores de compra.
+  - Si el usuario tenía abierto el modal de detalles del producto en el catálogo, se cierra de inmediato en vivo.
+- [x] **Sincronización Rápida Multidispositivo Anti-Drain (4s en foco) ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Sincronización continua de 4 segundos mientras la pestaña esté activa y en pantalla, pausándose a 0 peticiones cuando el usuario minimiza o cambia de pestaña (`document.hidden`).
+  - Detección precisa de altas, bajas y modificaciones comparando IDs entre cliente y base de datos D1 en la nube.
+
 ### Versión 3.3.0 - Rebaja Automática de Inventario al Confirmar Pedidos y Sincronización en Tiempo Real Sin Refrescar
 - [x] **Deducción Automática de Stock al Generar y Confirmar Pedidos ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx), [`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx)):**
   - En [`createOrder`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) y [`createDirectInvoiceOrder`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), apenas el cliente o el personal confirma el pedido, se calculan las cantidades vendidas por SKU y por ID de producto, descontándolas de inmediato del inventario local (`Math.max(0, prod.stock - qty)`).

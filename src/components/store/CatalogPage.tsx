@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Product, AppRoute } from '../../types';
 import { formatCRC } from '../../utils/formatters';
@@ -50,6 +50,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
       return true;
     });
   }, [products]);
+
+  // Si el producto que está viendo en detalle es eliminado o desactivado en vivo por el admin, cerrar el modal de inmediato
+  useEffect(() => {
+    if (detailProduct && !catalogProducts.some((p) => p.id === detailProduct.id)) {
+      setDetailProduct(null);
+    }
+  }, [detailProduct, catalogProducts]);
 
   const categories = useMemo(() => {
     const set = new Set<string>();

@@ -871,6 +871,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
         if (Array.isArray(event.data.products)) {
           setProducts(event.data.products);
+          if (event.data.deletedProductId) {
+            setCart((prev) => prev.filter((it) => it.type !== 'product' || it.id !== event.data.deletedProductId));
+          }
         }
         if (Array.isArray(event.data.workshops)) {
           setWorkshops(event.data.workshops);
@@ -883,7 +886,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, []);
 
-  // Sincronización Inteligente Anti-Drain Polling (10s en foco, 0 peticiones en segundo plano)
+  // Sincronización Inteligente Anti-Drain Polling (4s activo en pantalla, 0 peticiones en segundo plano)
   useEffect(() => {
     const fetchLatestData = () => {
       if (typeof document !== 'undefined' && document.hidden) return;
@@ -892,10 +895,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       fetch('/api/products')
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
             setProducts((prev) => {
+              const cloudIds = new Set(data.map((p: Product) => p.id));
+              const prevIds = new Set(prev.map((p) => p.id));
+
+              let idsChanged = cloudIds.size !== prevIds.size;
+              if (!idsChanged) {
+                for (const id of cloudIds) {
+                  if (!prevIds.has(id)) {
+                    idsChanged = true;
+                    break;
+                  }
+                }
+              }
+
               const prevMap = new Map(prev.map((p) => [p.id, p]));
-              let hasChanges = false;
+              let hasFieldChanges = false;
               const merged = data.map((cloudProd: Product) => {
                 const local = prevMap.get(cloudProd.id);
                 const isAvail = cloudProd.isAvailable !== undefined 
@@ -908,8 +924,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   ? cloudProd.showInCatalog
                   : (local?.showInCatalog !== undefined ? local.showInCatalog : isAvail);
 
-                if (!local || local.stock !== cloudProd.stock || local.isAvailable !== isAvail) {
-                  hasChanges = true;
+                if (
+                  !local ||
+                  local.stock !== cloudProd.stock ||
+                  local.isAvailable !== isAvail ||
+                  local.price !== cloudProd.price ||
+                  local.name !== cloudProd.name
+                ) {
+                  hasFieldChanges = true;
                 }
 
                 return {
@@ -920,8 +942,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 };
               });
 
-              if (hasChanges || merged.length !== prev.length) {
+              if (idsChanged || hasFieldChanges || merged.length !== prev.length) {
                 localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(merged));
+                // Remover del carrito si fue eliminado de la nube
+                setCart((prevCart) => prevCart.filter((item) => item.type !== 'product' || cloudIds.has(item.id)));
                 return merged;
               }
               return prev;
@@ -985,7 +1009,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           .catch(() => {});
       });
 
-    // Temporizador inteligente: 10s únicamente si la pestaña está activa y visible
+    // Temporizador inteligente: 4s únicamente si la pestaña está activa y visible
     let pollingTimer: ReturnType<typeof setInterval> | null = null;
 
     const startPolling = () => {
@@ -994,7 +1018,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (!document.hidden) {
             fetchLatestData();
           }
-        }, 10000);
+        }, 4000);
       }
     };
 
@@ -1418,26 +1442,96 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ...productData,
       id: `prod-${Date.now()}`,
     };
-    setProducts((prev) => [newProduct, ...prev]);
+    let updatedProducts: Product[] = [];
+    setProducts((prev) => {
+      updatedProducts = [newProduct, ...prev];
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      return updatedProducts;
+    });
 
-    // Save to D1 database
+    // Guardar en base de datos D1
     fetch('/api/products', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newProduct),
     }).catch(() => {});
 
+    // Notificación en vivo (0ms) a todas las pestañas abiertas
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        products: updatedProducts,
+      });
+    } catch {}
+
     return newProduct;
   };
 
   const deleteProduct = (productId: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== productId));
+    let updatedProducts: Product[] = [];
+    setProducts((prev) => {
+      updatedProducts = prev.filter((p) => p.id !== productId);
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      return updatedProducts;
+    });
+
+    // Eliminar también del carrito si algún usuario lo tenía seleccionado
+    setCart((prevCart) => {
+      const nextCart = prevCart.filter((it) => it.type !== 'product' || it.id !== productId);
+      if (nextCart.length !== prevCart.length) {
+        localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(nextCart));
+      }
+      return nextCart;
+    });
+
+    // Sincronizar eliminación inmediata en D1 en la nube
+    fetch(`/api/products?id=${encodeURIComponent(productId)}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: productId }),
+    }).catch(() => {});
+
+    // Notificación en vivo (0ms) a todas las pestañas abiertas para que desaparezca en el acto
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        products: updatedProducts,
+        deletedProductId: productId,
+      });
+    } catch {}
   };
 
   const updateProduct = (productId: string, updatedData: Partial<Product>) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === productId ? { ...p, ...updatedData } : p))
-    );
+    let updatedProducts: Product[] = [];
+    let updatedTarget: Product | null = null;
+    setProducts((prev) => {
+      updatedProducts = prev.map((p) => {
+        if (p.id === productId) {
+          updatedTarget = { ...p, ...updatedData };
+          return updatedTarget;
+        }
+        return p;
+      });
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      return updatedProducts;
+    });
+
+    // Sincronizar cambios en D1
+    if (updatedTarget) {
+      fetch('/api/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTarget),
+      }).catch(() => {});
+    }
+
+    // Notificación en vivo (0ms) a todas las pestañas abiertas
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        products: updatedProducts,
+      });
+    } catch {}
   };
 
   const addWorkshop = (wsData: Omit<Workshop, 'id'>): Workshop => {
