@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.3.0 - Doble Modalidad de Despacho (Release List con Código vs Release List Manual) y Erradicación Total de Errores de Chunk
+- [x] **Doble Botón de Alisto en Cola de Pedidos ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - Implementados los dos botones independientes y claramente identificados para cada pedido pendiente:
+    1. `Release List con Código`: Botón morado destacado con icono QR para alisto asistido con lector láser o código QR.
+    2. `Release List Manual`: Botón neomórfico blanco con borde violeta e icono de checklist para gestión manual y física.
+- [x] **Módulo Dual de Picking ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Selector superior de pestaña para alternar en cualquier momento entre "Con Código" y "Manual".
+  - En modo Manual: Checklist interactivo de productos con miniatura, SKU, estantería asignada, cantidad, botón de alternancia alistado/pendiente, opción de reporte de faltante, botón "Marcar Todos" e impresión física de la hoja de alisto (`window.print()`).
+  - Al completar el alisto en cualquiera de los dos modos se disparan confetis y se activa el acceso a la factura oficial.
+- [x] **Erradicación de Errores de Chunks y Pantalla de Actualización ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`_headers`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/_headers)):**
+  - Eliminados todos los `React.lazy` diferidos e importadas las vistas de forma síncrona en el bundle principal, erradicando al 100% las fallas "Failed to fetch dynamically imported module" causadas por versiones en caché.
+  - Configurado encabezado de caché `no-cache, no-store, must-revalidate` para `/` e `/index.html` asegurando que el navegador siempre cargue el index más reciente.
+
 ### Versión 4.2.0 - Conversión del Módulo de Pagos SINPE BCR en Página Independiente Nube
 - [x] **Página de Sección Independiente ([`SinpePaymentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx)):**
   - Transformado el módulo de verificación de pagos SINPE BCR de un pop-up modal a una vista de página completa e independiente dentro del Panel de Administración (`/admin/sinpe`).

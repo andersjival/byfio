@@ -21,9 +21,11 @@
 /*.mp3
   Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
 
-# 3. Documento HTML raíz: Validación instantánea para detectar nuevas versiones de inmediato
+# 3. Documento HTML raíz y rutas: Validación instantánea para detectar nuevas versiones de inmediato sin caché obsoleta
+/
+  Cache-Control: no-cache, no-store, must-revalidate
 /index.html
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: no-cache, no-store, must-revalidate
 
 # 4. Endpoints de API Edge y D1: En vivo, nunca en caché
 /api/*

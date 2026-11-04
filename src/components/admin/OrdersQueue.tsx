@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff } from 'lucide-react';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan } from 'lucide-react';
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
@@ -83,7 +83,7 @@ export const OrdersQueue: React.FC = () => {
 
           <div className="flex items-center gap-2 bg-purple-50 text-purple-900 px-3 py-1.5 rounded-2xl border border-purple-200 text-xs font-semibold">
             <CheckCircle2 className="w-4 h-4 text-fio-pink" />
-            <span>Validación paso a paso con Escáner QR</span>
+            <span>Release List con Código y Release List Manual</span>
           </div>
         </div>
       </div>
@@ -209,17 +209,30 @@ export const OrdersQueue: React.FC = () => {
                   </div>
                 </div>
 
-                {/* BOTÓN PROMINENTE DE ACCIÓN DE ALISTO */}
-                <div className="flex items-center gap-2 shrink-0">
+                {/* BOTONES PROMINENTES DE ALISTO (CÓDIGO Y MANUAL) */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
                   {!isFinished ? (
-                    <button
-                      onClick={() => startPicking(order.id)}
-                      className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn transition-all active:scale-95"
-                    >
-                      <QrCode className="w-5 h-5 text-fio-yellow animate-bounce" />
-                      <span>{order.orderStatus === 'picking' ? 'Continuar Alisto QR' : 'Iniciar Alisto con Escáner QR'}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => startPicking(order.id, 'barcode')}
+                        className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer"
+                        title="Alisto guiado con escáner QR o código de barras"
+                      >
+                        <QrCode className="w-4 h-4 text-fio-yellow" />
+                        <span>Release List con Código</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => startPicking(order.id, 'manual')}
+                        className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white hover:bg-purple-50/80 text-fio-800 border-2 border-purple-300 hover:border-purple-500 font-bubble font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
+                        title="Lista de despacho manual con checklist y opción de impresión"
+                      >
+                        <ClipboardList className="w-4 h-4 text-fio-pink" />
+                        <span>Release List Manual</span>
+                      </button>
+                    </>
                   ) : (
                     <div className="flex items-center gap-2">
                       <button

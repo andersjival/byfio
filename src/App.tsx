@@ -40,9 +40,8 @@ import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettings
 import { AdminPricingModal } from './components/admin/AdminPricingModal';
 import { SinpePaymentsSection } from './components/admin/SinpePaymentsSection';
 
-// Code-splitting diferido únicamente para páginas secundarias independientes
-const MetricsPage = React.lazy(() => import('./components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
-const PropuestaPage = React.lazy(() => import('./components/propuesta/PropuestaPage').then((m) => ({ default: m.PropuestaPage })));
+import { MetricsPage } from './components/admin/MetricsPage';
+import { PropuestaPage } from './components/propuesta/PropuestaPage';
 
 import { metricsTracker, appendRefToPath, getActiveCampaignRef } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
@@ -273,17 +272,9 @@ export const App: React.FC = () => {
                 />
               )}
 
-              {currentRoute === 'metricas' && (
-                <React.Suspense fallback={<div className="py-20 text-center font-bubble text-purple-600 animate-pulse">Cargando métricas en tiempo real...</div>}>
-                  <MetricsPage onNavigate={navigate} />
-                </React.Suspense>
-              )}
+              {currentRoute === 'metricas' && <MetricsPage onNavigate={navigate} />}
 
-              {currentRoute === 'propuesta' && (
-                <React.Suspense fallback={<div className="py-20 text-center font-bubble text-purple-600 animate-pulse">Cargando propuesta...</div>}>
-                  <PropuestaPage onNavigate={navigate} />
-                </React.Suspense>
-              )}
+              {currentRoute === 'propuesta' && <PropuestaPage onNavigate={navigate} />}
 
               {currentRoute === 'admin' && (
                 !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
@@ -335,18 +326,16 @@ export const App: React.FC = () => {
                       <>
                         <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
 
-                        <React.Suspense fallback={<div className="py-12 text-center font-bubble text-purple-600 animate-pulse">Cargando panel...</div>}>
-                          {adminTab === 'orders' && <OrdersQueue />}
-                          {adminTab === 'billing' && <QuickBillingSection />}
-                          {adminTab === 'inventory' && <InventoryTable />}
-                          {adminTab === 'reports' && (
-                            <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />
-                          )}
-                          {adminTab === 'sinpe' && <SinpePaymentsSection />}
-                          {adminTab === 'workshops' && <WorkshopEnrollmentsSection onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />}
-                          {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
-                          {adminTab === 'users' && <UserProfilesSection />}
-                        </React.Suspense>
+                        {adminTab === 'orders' && <OrdersQueue />}
+                        {adminTab === 'billing' && <QuickBillingSection />}
+                        {adminTab === 'inventory' && <InventoryTable />}
+                        {adminTab === 'reports' && (
+                          <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />
+                        )}
+                        {adminTab === 'sinpe' && <SinpePaymentsSection />}
+                        {adminTab === 'workshops' && <WorkshopEnrollmentsSection onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />}
+                        {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
+                        {adminTab === 'users' && <UserProfilesSection />}
                       </>
                     )}
                   </div>

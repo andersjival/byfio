@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
@@ -157,8 +157,12 @@ interface AppContextType {
     paymentMethod: 'sinpe' | 'transferencia' | 'tarjeta';
     notes?: string;
   }) => Order;
-  startPicking: (orderId: string) => void;
+  pickingMode: 'barcode' | 'manual';
+  setPickingMode: (mode: 'barcode' | 'manual') => void;
+  startPicking: (orderId: string, mode?: 'barcode' | 'manual') => void;
   markItemPicked: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
+  unmarkItemPicked: (orderId: string, itemSku: string) => void;
+  markAllItemsPicked: (orderId: string) => { isComplete: boolean };
   markItemMissing: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
   missingInventoryReports: InventoryMissingReport[];
   resolveMissingReport: (reportId: string) => void;
@@ -351,6 +355,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const [activePickingOrder, setActivePickingOrder] = useState<Order | null>(null);
+  const [pickingMode, setPickingMode] = useState<'barcode' | 'manual'>('barcode');
   const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
   const [qrModalProduct, setQrModalProduct] = useState<Product | null>(null);
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
@@ -1415,9 +1420,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return newOrder;
   };
 
-  const startPicking = (orderId: string) => {
+  const startPicking = (orderId: string, mode: 'barcode' | 'manual' = 'barcode') => {
     const target = orders.find((o) => o.id === orderId);
     if (!target) return;
+    setPickingMode(mode);
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, orderStatus: 'picking' } : o))
     );
@@ -1492,6 +1498,73 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     return { isComplete: completed };
+  };
+
+  const unmarkItemPicked = (orderId: string, itemSku: string) => {
+    setOrders((prev) =>
+      prev.map((order) => {
+        if (order.id !== orderId) return order;
+        const updatedItems = order.items.map((it) =>
+          it.sku === itemSku ? { ...it, isPicked: false, pickedAt: undefined, isMissing: false } : it
+        );
+        const updatedOrder: Order = {
+          ...order,
+          items: updatedItems,
+          orderStatus: 'picking',
+        };
+        if (activePickingOrder?.id === orderId) {
+          setActivePickingOrder(updatedOrder);
+        }
+        fetch('/api/orders', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: orderId,
+            orderStatus: 'picking',
+            items: updatedItems,
+          }),
+        }).catch(() => {});
+        return updatedOrder;
+      })
+    );
+  };
+
+  const markAllItemsPicked = (orderId: string) => {
+    let completedOrder: Order | null = null;
+    const now = new Date().toISOString();
+    setOrders((prev) =>
+      prev.map((order) => {
+        if (order.id !== orderId) return order;
+        const updatedItems = order.items.map((it) => ({
+          ...it,
+          isPicked: true,
+          pickedAt: it.pickedAt || now,
+          isMissing: false,
+        }));
+        completedOrder = {
+          ...order,
+          items: updatedItems,
+          orderStatus: 'packed',
+          packedAt: now,
+        };
+        if (activePickingOrder?.id === orderId) {
+          setActivePickingOrder(completedOrder);
+        }
+        fetch('/api/orders', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: orderId,
+            orderStatus: 'packed',
+            packedAt: now,
+            items: updatedItems,
+          }),
+        }).catch(() => {});
+        return completedOrder;
+      })
+    );
+    playAudioBeep('finish');
+    return { isComplete: true };
   };
 
   const markItemMissing = (orderId: string, itemSku: string) => {
@@ -2081,8 +2154,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateCartQuantity,
         clearCart,
         createOrder,
+        pickingMode,
+        setPickingMode,
         startPicking,
         markItemPicked,
+        unmarkItemPicked,
+        markAllItemsPicked,
         markItemMissing,
         missingInventoryReports,
         resolveMissingReport,
