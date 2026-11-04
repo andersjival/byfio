@@ -117,7 +117,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
         isComplete: false,
       });
       setSecondSinpeReference('');
-      playAudioBeep(260, 0.25);
+      playAudioBeep('error');
       return;
     }
 
@@ -526,7 +526,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
               amount={total}
               compact
               activeTab={paymentTab}
-              onTabChange={(tab) => setPaymentTab(tab)}
+              onTabChange={(tab) => {
+                setPaymentTab(tab);
+                handleResetPartialPayment();
+              }}
               showValidation={true}
               referenceNumber={sinpeReference}
               onReferenceChange={handleSinpeRefChange}
@@ -534,6 +537,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
               onValidatePayment={handleValidatePayment}
               isValidating={isValidating}
               validationError={refValidationError}
+              partialPayment={partialPayment}
+              secondReferenceNumber={secondSinpeReference}
+              onSecondReferenceChange={handleSecondRefChange}
+              onValidateSecondPayment={handleValidateSecondPayment}
+              onResetPartialPayment={handleResetPartialPayment}
+              onSimulateBcrEmail={handleSimulateBcrEmail}
             />
 
             {/* Resumen Totales y Botón de Confirmación */}

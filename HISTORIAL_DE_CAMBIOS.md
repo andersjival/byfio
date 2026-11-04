@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.7.0 - Verificación Cruzada de Correo BCR (Monto Exacto y Gestión de Faltante con Segundo Comprobante)
+- [x] **Verificación Cruzada Obligatoria en Correos del BCR ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - Al presionar "Validar Pago", el sistema busca en los correos de `mensajero@bancobcr.com` (`sinpeTransactions` y Cloudflare D1) el número de referencia y el monto.
+  - El monto del comprobante debe coincidir exactamente con el total del carrito del usuario; si no coincide o no existe el correo, se marca como inválido.
+- [x] **Detección de Monto Incompleto y Apertura de Ventana de Faltante ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx)):**
+  - Si el comprobante registrado en el correo es por un monto menor al total del carrito, el sistema lo marca de inmediato como inválido/incompleto e indica con exactitud el monto faltante: `"Te faltó por pagar ₡X. Por favor realiza otra transferencia SINPE Móvil y digita el comprobante del faltante."`.
+  - Despliega automáticamente la "Ventana de Comprobante Faltante" con el desglose del total, el primer abono registrado y un nuevo campo para ingresar el segundo comprobante.
+- [x] **Generación de Cobro Completo con Coincidencia Total:**
+  - Al ingresar el segundo comprobante, el sistema verifica que coincida con el correo bancario por el saldo restante exacto.
+  - Una vez validados ambos comprobantes (o el comprobante único por el 100%), se activa el cobro completo y se habilita el botón "Confirmar Pedido". Ambos comprobantes quedan registrados e inmutables para impedir su reutilización.
+- [x] **Backend Cloudflare D1 ([`sinpe-transactions.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/sinpe-transactions.ts)):**
+  - Añadido soporte para búsqueda filtrada por referencia `?ref=...` y método PATCH para asociar `order_id` inmutablemente a los comprobantes acreditados.
+
 ### Versión 4.6.0 - Eliminación de Botón de Envío de Comprobante y Marcado Inmediato de Pago Verificado
 - [x] **Eliminación Total de Botones de Envío de Comprobante ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx), [`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
   - Removido el pie y botón `"Enviar Comprobante"` de WhatsApp de la tarjeta de cuentas bancarias.
