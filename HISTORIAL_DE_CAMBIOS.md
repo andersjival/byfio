@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.9.0 - Mensaje Limpio de Verificación SINPE y Activación Directa de Confirmar Pedido
+- [x] **Mensaje Estricto y Limpio de Validación ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Eliminada cualquier mención interna sobre "correo del Banco BCR" o "mensajero@bancobcr.com" en las alertas de cara al cliente.
+  - El mensaje al validar el pago indica estrictamente: `"Pago verificado con éxito, comprobante número #[número] y monto confirmado de [monto]. El botón de 'Confirmar pedido' está activado."`.
+- [x] **Activación y Paso Final ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - El botón `"Confirmar Pedido"` se desbloquea en verde esmeralda inmediatamente después de la validación exitosa.
+  - El usuario hace clic en `"Confirmar Pedido"` y avanza directamente al paso final con su orden registrada oficialmente.
+
 ### Versión 4.8.0 - Alisto Manual Producto por Producto con Botones de Listo / Faltante y Españolización Total
 - [x] **Flujo Producto por Producto en Alisto Manual ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
   - Homologada la interfaz del Alisto Manual para que muestre exactamente la misma ventana guiada paso a paso que el modo con código: imagen amplia del artículo, ubicación destacada en estante (`Estante A-2`, `Bodega Central`), nombre del producto, SKU y cantidad a alistar.
