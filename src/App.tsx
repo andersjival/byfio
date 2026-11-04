@@ -13,32 +13,36 @@ import { WorkshopsPage } from './components/store/WorkshopsPage';
 import { WorkshopDetailPage } from './components/store/WorkshopDetailPage';
 import { CartDrawer } from './components/store/CartDrawer';
 import { CheckoutModal } from './components/store/CheckoutModal';
-import { AdminHeader } from './components/admin/AdminHeader';
-import { AdminTabs, AdminTabType } from './components/admin/AdminTabs';
-import { AdminHubMenu } from './components/admin/AdminHubMenu';
-import { OrdersQueue } from './components/admin/OrdersQueue';
-import { QuickBillingSection } from './components/admin/QuickBillingSection';
-import { InventoryTable } from './components/admin/InventoryTable';
-import { CashRegisterReports } from './components/admin/CashRegisterReports';
-import { GuidedPickingModal } from './components/admin/GuidedPickingModal';
-import { SupplierOrderModal } from './components/admin/SupplierOrderModal';
-import { QrLabelModal } from './components/admin/QrLabelModal';
-import { InvoiceModal } from './components/admin/InvoiceModal';
-import { NewProductModal } from './components/admin/NewProductModal';
-import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
-import { DailyClosingModal } from './components/admin/DailyClosingModal';
-import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
-import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
-import { AdminPricingModal } from './components/admin/AdminPricingModal';
 import { PricingStickersSection } from './components/store/PricingStickersSection';
 import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
 import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { LoginModal } from './components/common/LoginModal';
-import { UserProfilesSection } from './components/admin/UserProfilesSection';
-import { MetricsPage } from './components/admin/MetricsPage';
-import { PropuestaPage } from './components/propuesta/PropuestaPage';
+import type { AdminTabType } from './components/admin/AdminTabs';
+
+// Code-splitting diferido para máxima velocidad de carga de la tienda y portada
+const AdminHeader = React.lazy(() => import('./components/admin/AdminHeader').then((m) => ({ default: m.AdminHeader })));
+const AdminTabs = React.lazy(() => import('./components/admin/AdminTabs').then((m) => ({ default: m.AdminTabs })));
+const AdminHubMenu = React.lazy(() => import('./components/admin/AdminHubMenu').then((m) => ({ default: m.AdminHubMenu })));
+const MetricsPage = React.lazy(() => import('./components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
+const PropuestaPage = React.lazy(() => import('./components/propuesta/PropuestaPage').then((m) => ({ default: m.PropuestaPage })));
+const OrdersQueue = React.lazy(() => import('./components/admin/OrdersQueue').then((m) => ({ default: m.OrdersQueue })));
+const QuickBillingSection = React.lazy(() => import('./components/admin/QuickBillingSection').then((m) => ({ default: m.QuickBillingSection })));
+const InventoryTable = React.lazy(() => import('./components/admin/InventoryTable').then((m) => ({ default: m.InventoryTable })));
+const CashRegisterReports = React.lazy(() => import('./components/admin/CashRegisterReports').then((m) => ({ default: m.CashRegisterReports })));
+const WorkshopEnrollmentsSection = React.lazy(() => import('./components/admin/WorkshopEnrollmentsSection').then((m) => ({ default: m.WorkshopEnrollmentsSection })));
+const UserProfilesSection = React.lazy(() => import('./components/admin/UserProfilesSection').then((m) => ({ default: m.UserProfilesSection })));
+const GuidedPickingModal = React.lazy(() => import('./components/admin/GuidedPickingModal').then((m) => ({ default: m.GuidedPickingModal })));
+const SupplierOrderModal = React.lazy(() => import('./components/admin/SupplierOrderModal').then((m) => ({ default: m.SupplierOrderModal })));
+const QrLabelModal = React.lazy(() => import('./components/admin/QrLabelModal').then((m) => ({ default: m.QrLabelModal })));
+const InvoiceModal = React.lazy(() => import('./components/admin/InvoiceModal').then((m) => ({ default: m.InvoiceModal })));
+const NewProductModal = React.lazy(() => import('./components/admin/NewProductModal').then((m) => ({ default: m.NewProductModal })));
+const NewWorkshopModal = React.lazy(() => import('./components/admin/NewWorkshopModal').then((m) => ({ default: m.NewWorkshopModal })));
+const DailyClosingModal = React.lazy(() => import('./components/admin/DailyClosingModal').then((m) => ({ default: m.DailyClosingModal })));
+const AdminDesignSettingsModal = React.lazy(() => import('./components/admin/AdminDesignSettingsModal').then((m) => ({ default: m.AdminDesignSettingsModal })));
+const AdminPricingModal = React.lazy(() => import('./components/admin/AdminPricingModal').then((m) => ({ default: m.AdminPricingModal })));
+
 import { metricsTracker, appendRefToPath, getActiveCampaignRef } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film, Shield } from 'lucide-react';
@@ -300,11 +304,15 @@ export const App: React.FC = () => {
             )}
 
             {currentRoute === 'metricas' && (
-              <MetricsPage onNavigate={navigate} />
+              <React.Suspense fallback={<div className="py-20 text-center font-bubble text-purple-600 animate-pulse">Cargando métricas en tiempo real...</div>}>
+                <MetricsPage onNavigate={navigate} />
+              </React.Suspense>
             )}
 
             {currentRoute === 'propuesta' && (
-              <PropuestaPage onNavigate={navigate} />
+              <React.Suspense fallback={<div className="py-20 text-center font-bubble text-purple-600 animate-pulse">Cargando propuesta...</div>}>
+                <PropuestaPage onNavigate={navigate} />
+              </React.Suspense>
             )}
 
             {currentRoute === 'admin' && (
@@ -348,24 +356,26 @@ export const App: React.FC = () => {
 
                   {/* Si está en el Menú Principal (Hub) */}
                   {adminTab === 'hub' ? (
-                    <>
+                    <React.Suspense fallback={<div className="py-12 text-center font-bubble text-purple-600 animate-pulse">Cargando administración...</div>}>
                       <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} />
                       <AdminHubMenu onSelectTab={handleSelectAdminTab} />
-                    </>
+                    </React.Suspense>
                   ) : (
                     /* Si está dentro de una sección específica */
                     <>
                       <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
 
-                      {adminTab === 'orders' && <OrdersQueue />}
-                      {adminTab === 'billing' && <QuickBillingSection />}
-                      {adminTab === 'inventory' && <InventoryTable />}
-                      {adminTab === 'reports' && (
-                        <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
-                      )}
-                      {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
-                      {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
-                      {adminTab === 'users' && <UserProfilesSection />}
+                      <React.Suspense fallback={<div className="py-12 text-center font-bubble text-purple-600 animate-pulse">Cargando panel...</div>}>
+                        {adminTab === 'orders' && <OrdersQueue />}
+                        {adminTab === 'billing' && <QuickBillingSection />}
+                        {adminTab === 'inventory' && <InventoryTable />}
+                        {adminTab === 'reports' && (
+                          <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
+                        )}
+                        {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
+                        {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
+                        {adminTab === 'users' && <UserProfilesSection />}
+                      </React.Suspense>
                     </>
                   )}
                 </div>
@@ -423,15 +433,18 @@ export const App: React.FC = () => {
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
       <StudioScheduleModal isOpen={isScheduleModalOpen} onClose={() => setIsScheduleModalOpen(false)} />
-      <GuidedPickingModal />
-      <SupplierOrderModal />
-      <QrLabelModal />
-      <InvoiceModal />
-      <NewProductModal />
-      <NewWorkshopModal />
-      <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
-      <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />
-      <AdminPricingModal />
+      {/* Modales Administrativos Diferidos (cargados bajo demanda) */}
+      <React.Suspense fallback={null}>
+        <GuidedPickingModal />
+        <SupplierOrderModal />
+        <QrLabelModal />
+        <InvoiceModal />
+        <NewProductModal />
+        <NewWorkshopModal />
+        <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
+        <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />
+        <AdminPricingModal />
+      </React.Suspense>
     </div>
   );
 };

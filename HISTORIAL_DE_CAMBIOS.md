@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.5.0 - Nuevo Video Intro "INTRO BYFIO WEB (1)", Streaming FastStart y Optimización Extrema de Velocidad (68% Menor Carga Inicial)
+- [x] **Actualización y Optimización de Video Intro ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Procesado el video oficial `INTRO BYFIO WEB (1).mp4` con FFmpeg aplicando `-movflags +faststart` para mover los metadatos al inicio del archivo, permitiendo reproducción inmediata por streaming sin esperar la descarga completa.
+  - Compresión de alta fidelidad H.264 CRF 23 que redujo el peso de 2.27 MB a 1.47 MB (35% más liviano) manteniendo resolución nítida 720p y audio AAC 128 kbps.
+  - Desplegado en `public/assets/intro-web-byfio.mp4` y `public/intro-web-byfio.mp4` con URL de versión fresca `?v=20261104`.
+  - Agregada etiqueta `<link rel="preload" as="video" ...>` en [`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html) para pre-carga paralela desde el inicio del documento.
+- [x] **Optimización Extrema de Velocidad de la Web (Code-Splitting Modular) ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`vite.config.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/vite.config.ts)):**
+  - Dividido el paquete JavaScript monolítico mediante `React.lazy` y `Suspense`: todos los paneles de administración, modales pesados, escáneres QR, páginas de métricas y propuesta se cargan exclusivamente bajo demanda.
+  - Configurados `manualChunks` en Vite para cachear por separado librerías críticas de React, iconos y utilidades.
+  - Paquete JavaScript inicial reducido de 741 kB a solo 235 kB (reducción del 68%), acelerando drásticamente el First Contentful Paint (FCP) y la velocidad en redes móviles.
+
 ### Versión 2.4.0 - Persistencia en Nube Cloudflare D1 de Perfiles de Usuario y Sincronización Multi-Dispositivo
 - [x] **Diagnóstico de Pérdida de Perfiles Locales:**
   - Identificada la causa por la que desaparecían perfiles creados: se almacenaban exclusivamente en la memoria local (`localStorage`) del dispositivo del usuario. Al cambiar de dispositivo (celular/PC), entrar en incógnito o limpiar datos de navegación, el navegador recurría a los 2 perfiles predeterminados en código.
