@@ -2264,9 +2264,9 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
       </div>
 
       {/* TODAS LAS PARTES DE LA WEB: QUÉ SECCIONES GUSTARON MÁS (HASTA EL PANEL DE ADMIN) */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-purple-900/30 pb-4">
-          <div>
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 space-y-6 overflow-hidden">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-100 dark:border-purple-900/30 pb-4">
+          <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-950/80 text-fio-pink dark:text-pink-300 font-bubble font-bold text-xs mb-1">
               <Heart className="w-3.5 h-3.5" />
               <span>Preferencia y Gustos de los Visitantes</span>
@@ -2282,7 +2282,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
           </div>
 
           {/* Filtro Rápido de Categorías: Todas las Partes vs Tienda vs Admin */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-200/90 dark:bg-[#1E1B2E] border border-slate-300 dark:border-purple-900/50 shrink-0">
+          <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-slate-200/90 dark:bg-[#1E1B2E] border border-slate-300 dark:border-purple-900/50">
             <button
               type="button"
               onClick={() => setSectionFilterCategory('all')}
