@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.9.0 - Suite Integral de Gráficas Analíticas (Ecosistema Total, Web Pública de Clientes y Distribución por Uso) en /metricas
+- [x] **Gráfica 1: Ecosistema Completo de Todas las Secciones ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Implementada gráfica comparativa integral con selector interactivo de tres vistas: `[ 🌐 Todas ]`, `[ 🛍️ Tienda & Clientes ]` y `[ 🛡️ Panel Admin ]`.
+  - Monitorea las 17 secciones de la web reflejando vistas, me gusta (❤️), clics directos a cursos (`workshop-detail`), agregados al carrito y alumnos suscritos/inscritos a los talleres (`totalWorkshopSubscribers` extraído de cupos ocupados).
+- [x] **Gráfica 2: Tráfico Exclusivo de la Web Pública de Clientes ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Gráfica dedicada exclusivamente a la experiencia de compra y navegación de los usuarios sin la parte administrativa.
+  - Compara la navegación entre Portada (`home`), Tienda Online (`store`), Catálogo (`catalogo`), Cursos (`workshops`), Clics a cursos (`workshop-detail`), Precios (`precios`) y Login (`login`), indicando visitas exactas y porcentaje del tráfico público total.
+- [x] **Suite de Gráficas Circulares SVG ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - **Gráfica Circular 1 (Distribución por Uso de la Web):** Dona SVG interactiva que representa la cuota porcentual exacta de usuarios en cada sección de la página web con visor central dinámico al pasar el cursor.
+  - **Gráfica Circular 2 (Dispositivos & Canales):** Dona SVG interactiva con alternador entre Celulares vs Computadoras (PC) y Canales de Enlaces rastreados.
+
 ### Versión 2.8.0 - Modo Dual de Inventario (Stock Real vs Disponibilidad Rápida) y Zona Horaria Local en Pedidos
 - [x] **Selector de Modo en Módulo de Inventario ([`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
   - Incorporados dos botones de acción directa: *"Desactivar stock de inventario"* y *"Activar disponibilidad de producto"*, permitiendo alternar al instante entre **Modo Stock Numérico Real** y **Modo Disponibilidad Rápida**.

@@ -5,10 +5,11 @@ import {
   ArrowRight, ShieldCheck, Share2, ExternalLink, RefreshCw,
   ShoppingBag, BookOpen, Star, Award, Tag, GraduationCap, Home,
   Info, AlertCircle, Globe, Filter, Eye, CheckCircle2,
-  Receipt, Boxes, Landmark, QrCode, Users, Layers, Shield
+  Receipt, Boxes, Landmark, QrCode, Users, Layers, Shield, Sparkles
 } from 'lucide-react';
 import { metricsTracker } from '../../services/metricsTracker';
 import { MetricsState, TrackedLink, AppRoute } from '../../types';
+import { useApp } from '../../context/AppContext';
 
 interface MetricsPageProps {
   onNavigate: (route: AppRoute, adminTab?: any) => void;
@@ -235,6 +236,8 @@ const SECTION_METADATA: Record<string, SectionMetadataItem> = {
 };
 
 export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
+  const { workshops } = useApp();
+
   // Estado de autenticación privada por código numérico (1985)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     try {
@@ -259,6 +262,9 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
   // FILTRO DE CATEGORÍA EN "QUÉ SECCIONES GUSTARON MÁS": 'all' | 'store' | 'admin'
   const [sectionFilterCategory, setSectionFilterCategory] = useState<'all' | 'store' | 'admin'>('all');
 
+  // FILTRO DE CATEGORÍA EN LA GRÁFICA DEL ECOSISTEMA TOTAL: 'all' | 'store' | 'admin'
+  const [ecosystemFilter, setEcosystemFilter] = useState<'all' | 'store' | 'admin'>('all');
+
   // Formulario para nuevo link rastreado
   const [linkName, setLinkName] = useState('');
   const [targetSectionId, setTargetSectionId] = useState<string>('all');
@@ -269,6 +275,7 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
   const [barChartMode, setBarChartMode] = useState<'links' | 'sections'>('links');
   const [pieChartMode, setPieChartMode] = useState<'devices' | 'links'>('devices');
   const [hoveredPieIndex, setHoveredPieIndex] = useState<number | null>(null);
+  const [hoveredUsagePieIndex, setHoveredUsagePieIndex] = useState<number | null>(null);
   const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null);
 
   // Cargar métricas actualizadas
@@ -552,6 +559,163 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
 
   const maxSectionScore = Math.max(...allRankedSections.map((s) => s.score), 1);
 
+  // Conteo de alumnos suscritos/inscritos a talleres y cupos totales
+  const totalWorkshopSubscribers = useMemo(() => {
+    if (!workshops || !Array.isArray(workshops)) return 0;
+    return workshops.reduce((acc, w) => acc + Math.max(0, (w.totalSpots || 0) - (w.spotsAvailable || 0)), 0);
+  }, [workshops]);
+
+  const totalWorkshopSpots = useMemo(() => {
+    if (!workshops || !Array.isArray(workshops)) return 0;
+    return workshops.reduce((acc, w) => acc + (w.totalSpots || 0), 0);
+  }, [workshops]);
+
+  // Gráfica 1: Ecosistema Total de Secciones con Selector (Todas, Tienda & Clientes, Panel Admin)
+  const ecosystemChartItems = useMemo(() => {
+    const list = allRankedSections.map((sec) => {
+      const isWorkshops = sec.id === 'workshops';
+      const isWorkshopDetail = sec.id === 'workshop-detail';
+      const isStore = sec.id === 'store';
+
+      return {
+        ...sec,
+        views: sec.views || 0,
+        likes: sec.likes || 0,
+        time: sec.timeSpentAvgMinutes || 1.5,
+        courseClicks: isWorkshops ? (currentDisplayMetrics.sections['workshop-detail']?.views || 0) : (isWorkshopDetail ? sec.views : 0),
+        subscribers: isWorkshops ? totalWorkshopSubscribers : 0,
+        totalSpots: isWorkshops ? totalWorkshopSpots : 0,
+        cartAdditions: isStore ? currentDisplayMetrics.cartAdditions : 0,
+      };
+    });
+
+    if (ecosystemFilter === 'all') return list;
+    return list.filter((item) => item.category === ecosystemFilter);
+  }, [allRankedSections, ecosystemFilter, currentDisplayMetrics, totalWorkshopSubscribers, totalWorkshopSpots]);
+
+  const maxEcosystemViews = useMemo(() => {
+    return Math.max(...ecosystemChartItems.map((item) => item.views), 10);
+  }, [ecosystemChartItems]);
+
+  // Gráfica 2: Tráfico Exclusivo de la Web Pública de Clientes (Sin Panel Admin)
+  const publicWebData = useMemo(() => {
+    const publicKeys = ['home', 'store', 'catalogo', 'workshops', 'workshop-detail', 'precios', 'login'];
+    const items = publicKeys.map((key) => {
+      const meta = SECTION_METADATA[key];
+      const data = currentDisplayMetrics.sections[key] || { views: 0, likes: 0, timeSpentAvgMinutes: 1.5 };
+      const isWorkshops = key === 'workshops';
+      const isWorkshopDetail = key === 'workshop-detail';
+      const isStore = key === 'store';
+
+      return {
+        id: key,
+        label: meta?.label || key,
+        icon: meta?.icon || Globe,
+        color: meta?.color || 'from-purple-500 to-indigo-600',
+        routePath: meta?.routePath || `/${key}`,
+        routeKey: meta?.routeKey || ('home' as AppRoute),
+        views: data.views || 0,
+        likes: data.likes || 0,
+        time: data.timeSpentAvgMinutes || 1.5,
+        courseClicks: isWorkshops ? (currentDisplayMetrics.sections['workshop-detail']?.views || 0) : (isWorkshopDetail ? data.views : 0),
+        subscribers: isWorkshops ? totalWorkshopSubscribers : 0,
+        cartAdditions: isStore ? currentDisplayMetrics.cartAdditions : 0,
+      };
+    }).sort((a, b) => b.views - a.views);
+
+    const totalPublicViews = items.reduce((acc, item) => acc + item.views, 0) || 1;
+    const maxPublicViews = Math.max(...items.map((item) => item.views), 10);
+
+    return {
+      items: items.map((item) => ({
+        ...item,
+        percentageOfPublic: Math.round((item.views / totalPublicViews) * 100),
+        relativeBarWidth: Math.max(8, Math.round((item.views / maxPublicViews) * 100)),
+      })),
+      totalPublicViews,
+      maxPublicViews,
+    };
+  }, [currentDisplayMetrics, totalWorkshopSubscribers]);
+
+  // Gráfica Circular de Distribución por Uso de la Web (Porcentaje del tráfico de usuarios por sección)
+  const usagePieChartData = useMemo(() => {
+    const radius = 54;
+    const circumference = 2 * Math.PI * radius; // ~339.292
+
+    const sections = [
+      {
+        id: 'store',
+        label: 'Tienda Online',
+        value: currentDisplayMetrics.sections.store?.views || 0,
+        color: '#EC4899',
+        badgeBg: 'bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300',
+      },
+      {
+        id: 'catalogo',
+        label: 'Catálogo Digital',
+        value: currentDisplayMetrics.sections.catalogo?.views || 0,
+        color: '#8B5CF6',
+        badgeBg: 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300',
+      },
+      {
+        id: 'home',
+        label: 'Portada / Inicio',
+        value: currentDisplayMetrics.sections.home?.views || 0,
+        color: '#6366F1',
+        badgeBg: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300',
+      },
+      {
+        id: 'workshops',
+        label: 'Cursos & Talleres',
+        value: (currentDisplayMetrics.sections.workshops?.views || 0) + (currentDisplayMetrics.sections['workshop-detail']?.views || 0),
+        color: '#F59E0B',
+        badgeBg: 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300',
+      },
+      {
+        id: 'precios',
+        label: 'Precios Stickers',
+        value: currentDisplayMetrics.sections.precios?.views || 0,
+        color: '#10B981',
+        badgeBg: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+      },
+      {
+        id: 'login',
+        label: 'Portal Acceso',
+        value: currentDisplayMetrics.sections.login?.views || 0,
+        color: '#06B6D4',
+        badgeBg: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300',
+      },
+      {
+        id: 'admin',
+        label: 'Panel Admin',
+        value: Object.entries(currentDisplayMetrics.sections)
+          .filter(([k]) => SECTION_METADATA[k]?.category === 'admin')
+          .reduce((acc, [, d]) => acc + (d.views || 0), 0),
+        color: '#9333EA',
+        badgeBg: 'bg-purple-200 text-purple-900 dark:bg-purple-900/80 dark:text-purple-200',
+      },
+    ];
+
+    const total = sections.reduce((acc, s) => acc + s.value, 0) || 1;
+    let offset = 0;
+    const slices = sections.map((s) => {
+      const fraction = total > 0 ? s.value / total : 0;
+      const length = fraction * circumference;
+      const dasharray = `${length} ${Math.max(0, circumference - length)}`;
+      const dashoffset = -offset;
+      offset += length;
+      return {
+        ...s,
+        percent: Math.round(fraction * 100),
+        fraction,
+        dasharray,
+        dashoffset,
+      };
+    });
+
+    return { total, slices, radius, circumference };
+  }, [currentDisplayMetrics.sections]);
+
   // Cálculo de datos para Gráfica 1: Barras Comparativas
   const barChartData = useMemo(() => {
     if (barChartMode === 'links') {
@@ -714,7 +878,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
   };
 
   // Navegar a una sección desde el panel
-  const handleGoToSection = (section: (typeof allRankedSections)[0]) => {
+  const handleGoToSection = (section: { routeKey: AppRoute; adminTabKey?: string }) => {
     if (section.routeKey === 'admin') {
       onNavigate('admin', section.adminTabKey || 'hub');
     } else {
@@ -1056,195 +1220,456 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
         </div>
       </div>
 
-      {/* SECCIÓN DE GRÁFICAS ANALÍTICAS: COMPARATIVA Y CIRCULAR */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-        {/* GRÁFICA 1: BARRAS COMPARATIVAS (7 cols) */}
-        <div className="lg:col-span-7 p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 flex flex-col justify-between space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-fio-purple dark:text-fio-pink font-bubble font-bold text-xs mb-1">
-                <BarChart3 className="w-3.5 h-3.5" />
-                <span>Gráfica Comparativa</span>
-              </div>
-              <h3 className="text-base sm:text-lg font-bubble font-bold text-slate-900 dark:text-white">
-                {barChartData.mode === 'links' ? 'Rendimiento por Enlace' : 'Rendimiento por Sección'}
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {barChartData.mode === 'links'
-                  ? 'Comparativa directa de clics, vistas y agregados al carrito.'
-                  : 'Comparativa de visitas e interacciones en las secciones más populares.'}
-              </p>
+      {/* 1. GRÁFICA DEL ECOSISTEMA TOTAL: TODAS LAS SECCIONES (PÚBLICAS & ADMIN) */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 space-y-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-purple-900/30 pb-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-fio-purple dark:text-fio-pink font-bubble font-bold text-xs mb-1">
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span>Ecosistema Total de Navegación</span>
             </div>
-
-            {/* Selector de Modo de la Gráfica de Barras */}
-            <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-[#252038] rounded-2xl border border-slate-200 dark:border-purple-900/50 self-start sm:self-auto shrink-0">
-              <button
-                type="button"
-                onClick={() => setBarChartMode('links')}
-                className={`px-3 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer ${
-                  barChartMode === 'links'
-                    ? 'bg-fio-purple text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-purple-600'
-                }`}
-              >
-                Por Enlaces
-              </button>
-              <button
-                type="button"
-                onClick={() => setBarChartMode('sections')}
-                className={`px-3 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer ${
-                  barChartMode === 'sections'
-                    ? 'bg-fio-purple text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-purple-600'
-                }`}
-              >
-                Por Secciones
-              </button>
-            </div>
+            <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+              Gráfica Completa del Ecosistema ({ecosystemChartItems.length} Secciones)
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Visualiza en una sola gráfica comparativa todas las opciones de la página que las personas navegaron: Vistas, Me Gusta, Clics a Cursos y Alumnos Suscritos.
+            </p>
           </div>
 
-          {/* Leyenda de Colores de la Gráfica de Barras */}
-          <div className="flex flex-wrap items-center gap-3 text-[11px] font-bubble font-bold border-b border-slate-100 dark:border-purple-900/30 pb-2">
-            {barChartData.mode === 'links' ? (
-              <>
-                <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-300">
-                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-fio-purple to-purple-500" />
-                  <span>Clics Directos</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300">
-                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-blue-600 to-indigo-400" />
-                  <span>Vistas Acumuladas</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300">
-                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-amber-500 to-yellow-400" />
-                  <span>Al Carrito</span>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-300">
-                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-fio-purple to-purple-500" />
-                  <span>Vistas de Sección</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-pink-700 dark:text-pink-300">
-                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-pink-500 to-rose-400" />
-                  <span>Me Gusta (Likes)</span>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Contenedor de Barras Verticales con escala */}
-          <div className="h-56 sm:h-64 flex items-end justify-between gap-2 sm:gap-4 pt-6 pb-2 px-1 sm:px-3 bg-slate-50/70 dark:bg-[#252038]/50 rounded-2xl border border-slate-100 dark:border-purple-900/30 relative">
-            {barChartData.items.map((item, idx) => {
-              const isHovered = hoveredBarIndex === idx;
-
-              if (barChartData.mode === 'links') {
-                const h1 = Math.max(6, Math.round(((item.val1 || 0) / barChartData.maxVal) * 100));
-                const h2 = Math.max(6, Math.round(((item.val2 || 0) / barChartData.maxVal) * 100));
-                const h3 = Math.max(6, Math.round(((item.val3 || 0) / barChartData.maxVal) * 100));
-
-                return (
-                  <div
-                    key={item.id}
-                    onMouseEnter={() => setHoveredBarIndex(idx)}
-                    onMouseLeave={() => setHoveredBarIndex(null)}
-                    className="flex-1 flex flex-col items-center h-full justify-end group cursor-pointer"
-                  >
-                    {/* Tooltip emergente al pasar el cursor */}
-                    <div
-                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md mb-1 transition-all ${
-                        isHovered ? 'opacity-100 scale-100 -translate-y-1' : 'opacity-0 scale-90 pointer-events-none'
-                      }`}
-                    >
-                      {item.tooltip}
-                    </div>
-
-                    {/* Grupo de 3 barras */}
-                    <div className="w-full flex items-end justify-center gap-1 sm:gap-1.5 h-full max-h-[175px]">
-                      {/* Barra Clics */}
-                      <div
-                        style={{ height: `${h1}%` }}
-                        className="w-2.5 sm:w-4 rounded-t-lg bg-gradient-to-t from-fio-purple to-purple-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
-                        title={`Clics: ${item.val1}`}
-                      />
-                      {/* Barra Vistas */}
-                      <div
-                        style={{ height: `${h2}%` }}
-                        className="w-2.5 sm:w-4 rounded-t-lg bg-gradient-to-t from-blue-600 to-indigo-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
-                        title={`Vistas: ${item.val2}`}
-                      />
-                      {/* Barra Carrito */}
-                      <div
-                        style={{ height: `${h3}%` }}
-                        className="w-2.5 sm:w-4 rounded-t-lg bg-gradient-to-t from-amber-500 to-yellow-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
-                        title={`Al Carrito: ${item.val3 || 0}`}
-                      />
-                    </div>
-
-                    {/* Etiqueta del Enlace */}
-                    <span className="text-[10px] sm:text-[11px] font-bubble font-bold text-slate-700 dark:text-slate-300 truncate max-w-[65px] sm:max-w-[90px] mt-2 text-center group-hover:text-fio-purple">
-                      {item.name}
-                    </span>
-                  </div>
-                );
-              } else {
-                const h1 = Math.max(6, Math.round(((item.val1 || 0) / barChartData.maxVal) * 100));
-                const h2 = Math.max(6, Math.round((((item.val2 || 0) * 3) / barChartData.maxVal) * 100));
-
-                return (
-                  <div
-                    key={item.id}
-                    onMouseEnter={() => setHoveredBarIndex(idx)}
-                    onMouseLeave={() => setHoveredBarIndex(null)}
-                    className="flex-1 flex flex-col items-center h-full justify-end group cursor-pointer"
-                  >
-                    {/* Tooltip emergente al pasar el cursor */}
-                    <div
-                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md mb-1 transition-all ${
-                        isHovered ? 'opacity-100 scale-100 -translate-y-1' : 'opacity-0 scale-90 pointer-events-none'
-                      }`}
-                    >
-                      {item.tooltip}
-                    </div>
-
-                    {/* Grupo de 2 barras */}
-                    <div className="w-full flex items-end justify-center gap-1.5 sm:gap-2 h-full max-h-[175px]">
-                      {/* Barra Vistas */}
-                      <div
-                        style={{ height: `${h1}%` }}
-                        className="w-3.5 sm:w-5 rounded-t-lg bg-gradient-to-t from-fio-purple to-purple-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
-                        title={`Vistas: ${item.val1}`}
-                      />
-                      {/* Barra Likes */}
-                      <div
-                        style={{ height: `${h2}%` }}
-                        className="w-3.5 sm:w-5 rounded-t-lg bg-gradient-to-t from-pink-500 to-rose-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
-                        title={`Me Gusta: ${item.val2}`}
-                      />
-                    </div>
-
-                    {/* Etiqueta de la Sección */}
-                    <span className="text-[10px] sm:text-[11px] font-bubble font-bold text-slate-700 dark:text-slate-300 truncate max-w-[65px] sm:max-w-[90px] mt-2 text-center group-hover:text-fio-pink">
-                      {item.name}
-                    </span>
-                  </div>
-                );
-              }
-            })}
+          {/* Selector de Pestañas: Todas | Tienda & Clientes | Panel Admin */}
+          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-200/90 dark:bg-[#1E1B2E] border border-slate-300 dark:border-purple-900/50 shrink-0">
+            <button
+              type="button"
+              onClick={() => setEcosystemFilter('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                ecosystemFilter === 'all'
+                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
+                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+              }`}
+            >
+              🌐 Todas ({allRankedSections.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setEcosystemFilter('store')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                ecosystemFilter === 'store'
+                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
+                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+              }`}
+            >
+              🛍️ Tienda & Clientes ({storeCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setEcosystemFilter('admin')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                ecosystemFilter === 'admin'
+                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
+                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+              }`}
+            >
+              🛡️ Panel Admin ({adminCount})
+            </button>
           </div>
         </div>
 
-        {/* GRÁFICA 2: CIRCULAR / DONA (5 cols) */}
-        <div className="lg:col-span-5 p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 flex flex-col justify-between space-y-4">
+        {/* Cinta Resumen de Cursos y Tienda */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="p-3 rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+              <GraduationCap className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] font-bubble font-bold text-amber-900 dark:text-amber-200 uppercase">
+                Alumnos Suscritos a Cursos
+              </div>
+              <div className="text-lg font-bubble font-bold text-amber-700 dark:text-amber-300">
+                {totalWorkshopSubscribers} alumnos <span className="text-xs font-normal text-amber-600/80">({totalWorkshopSpots} cupos tot.)</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-2xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+              <Eye className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] font-bubble font-bold text-blue-900 dark:text-blue-200 uppercase">
+                Clics Directos a Cursos
+              </div>
+              <div className="text-lg font-bubble font-bold text-blue-700 dark:text-blue-300">
+                {(currentDisplayMetrics.sections['workshop-detail']?.views || 0).toLocaleString()} clics
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-2xl bg-pink-50/80 dark:bg-pink-950/40 border border-pink-200 dark:border-pink-900/50 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+              <ShoppingBag className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] font-bubble font-bold text-pink-900 dark:text-pink-200 uppercase">
+                Visitas en Tienda Online
+              </div>
+              <div className="text-lg font-bubble font-bold text-pink-700 dark:text-pink-300">
+                {(currentDisplayMetrics.sections.store?.views || 0).toLocaleString()} visitas
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] font-bubble font-bold text-emerald-900 dark:text-emerald-200 uppercase">
+                Conversión al Carrito
+              </div>
+              <div className="text-lg font-bubble font-bold text-emerald-700 dark:text-emerald-300">
+                {currentDisplayMetrics.cartAdditions.toLocaleString()} productos
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Barras de Navegación del Ecosistema */}
+        <div className="space-y-3 pt-2">
+          {ecosystemChartItems.map((sec, idx) => {
+            const IconComponent = sec.icon;
+            const barWidth = Math.max(6, Math.round((sec.views / maxEcosystemViews) * 100));
+            const isAdmin = sec.category === 'admin';
+
+            return (
+              <div
+                key={sec.id}
+                className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 dark:bg-[#252038]/60 border border-slate-200/80 dark:border-purple-900/40 hover:border-purple-300 dark:hover:border-purple-700 transition-all space-y-2.5"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-200 dark:bg-purple-900 text-slate-700 dark:text-white font-bubble font-bold text-[11px] shrink-0">
+                      #{idx + 1}
+                    </span>
+                    <div className={`w-8 h-8 rounded-xl bg-gradient-to-tr ${sec.color} text-white flex items-center justify-center shadow-xs shrink-0`}>
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                          {sec.label}
+                        </span>
+                        <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase ${
+                          isAdmin
+                            ? 'bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300'
+                            : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                        }`}>
+                          {isAdmin ? 'Admin' : 'Público'}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        Ruta: {sec.routePath}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-auto shrink-0 flex-wrap">
+                    {/* Pills especiales de contexto */}
+                    {sec.id === 'workshops' && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 font-bubble font-bold text-[11px] border border-amber-300 dark:border-amber-800">
+                        <GraduationCap className="w-3 h-3 text-amber-600" />
+                        <span>{totalWorkshopSubscribers} alumnos inscritos</span>
+                      </span>
+                    )}
+
+                    {sec.id === 'workshop-detail' && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 font-bubble font-bold text-[11px] border border-blue-300 dark:border-blue-800">
+                        <Eye className="w-3 h-3 text-blue-600" />
+                        <span>{sec.views} clics a ver cursos</span>
+                      </span>
+                    )}
+
+                    {sec.id === 'store' && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-pink-100 dark:bg-pink-950/70 text-pink-800 dark:text-pink-300 font-bubble font-bold text-[11px] border border-pink-300 dark:border-pink-800">
+                        <ShoppingBag className="w-3 h-3 text-pink-600" />
+                        <span>{currentDisplayMetrics.cartAdditions} al carrito</span>
+                      </span>
+                    )}
+
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1E1B2E] border border-slate-200 dark:border-purple-900/50 text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
+                      <span className="text-fio-purple font-bubble">{sec.views.toLocaleString()}</span>
+                      <span className="text-[10px] text-slate-400 font-sans">vistas</span>
+                      <span className="text-slate-300 dark:text-purple-900">|</span>
+                      <span className="text-pink-600 flex items-center gap-0.5">
+                        <Heart className="w-2.5 h-2.5 fill-pink-500" />
+                        {sec.likes}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleGoToSection(sec)}
+                      className="px-2.5 py-1 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold border border-purple-200 dark:border-purple-800 transition-all active:scale-95 cursor-pointer flex items-center gap-1"
+                      title={`Ir a ${sec.label}`}
+                    >
+                      <span>Abrir</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Barra Visual Proporcional */}
+                <div className="h-2.5 w-full bg-slate-200 dark:bg-[#1E1B2E] rounded-full overflow-hidden">
+                  <div
+                    style={{ width: `${barWidth}%` }}
+                    className={`h-full bg-gradient-to-r ${sec.color} rounded-full transition-all duration-700 ease-out`}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 2. GRÁFICA EXCLUSIVA DE LA WEB PÚBLICA (SIN PANEL ADMIN) */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-purple-900/30 pb-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bubble font-bold text-xs mb-1">
+              <Globe className="w-3.5 h-3.5" />
+              <span>Web Pública de Clientes Exclusiva</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+              Navegación de Clientes en la Web (Sin Administración)
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Comparativa dedicada 100% al comportamiento de los compradores: cuántos ingresaron a Portada, Tienda, Catálogo, Cursos, Clics a Cursos, Precios y Portal.
+            </p>
+          </div>
+
+          <div className="px-3.5 py-1.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bubble font-bold text-xs self-start sm:self-auto shrink-0 flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-emerald-600" />
+            <span>{publicWebData.totalPublicViews.toLocaleString()} visitas cliente totales</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          {publicWebData.items.map((sec, idx) => {
+            const IconComponent = sec.icon;
+
+            return (
+              <div
+                key={sec.id}
+                className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-white dark:from-[#252038] dark:to-[#1E1B2E] border border-slate-200/90 dark:border-purple-900/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all space-y-3 flex flex-col justify-between"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bubble font-bold text-[11px] shrink-0">
+                        #{idx + 1}
+                      </div>
+                      <div className={`w-9 h-9 rounded-xl bg-gradient-to-tr ${sec.color} text-white flex items-center justify-center shadow-xs shrink-0`}>
+                        <IconComponent className="w-4.5 h-4.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-xs sm:text-sm font-bubble font-bold text-slate-900 dark:text-white truncate">
+                          {sec.label}
+                        </h4>
+                        <span className="text-[10px] font-mono text-slate-400">
+                          {sec.routePath}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <div className="text-sm font-bubble font-bold text-emerald-600 dark:text-emerald-400">
+                        {sec.views.toLocaleString()} <span className="text-[10px] font-normal text-slate-400">visitas</span>
+                      </div>
+                      <div className="text-[10px] font-mono font-bold text-slate-500">
+                        {sec.percentageOfPublic}% de la web
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Barra Proporcional del Tráfico Público */}
+                  <div className="h-2 w-full bg-slate-200 dark:bg-[#1E1B2E] rounded-full overflow-hidden">
+                    <div
+                      style={{ width: `${sec.relativeBarWidth}%` }}
+                      className={`h-full bg-gradient-to-r ${sec.color} rounded-full transition-all duration-700 ease-out`}
+                    />
+                  </div>
+
+                  {/* Badges de Métricas Clave */}
+                  <div className="flex items-center gap-2 flex-wrap text-[11px]">
+                    <span className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-purple-900/50 text-slate-700 dark:text-slate-300 font-mono font-bold">
+                      {sec.views} ingresos
+                    </span>
+                    <span className="px-2 py-0.5 rounded-lg bg-pink-100 dark:bg-pink-950/60 text-pink-700 dark:text-pink-300 font-bold flex items-center gap-1">
+                      <Heart className="w-2.5 h-2.5 fill-pink-500 text-pink-500" />
+                      <span>{sec.likes} likes</span>
+                    </span>
+
+                    {sec.id === 'workshops' && (
+                      <span className="px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold flex items-center gap-1">
+                        <GraduationCap className="w-3 h-3 text-amber-600" />
+                        <span>{totalWorkshopSubscribers} alumnos inscritos</span>
+                      </span>
+                    )}
+
+                    {sec.id === 'workshop-detail' && (
+                      <span className="px-2 py-0.5 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 font-bold flex items-center gap-1">
+                        <Eye className="w-3 h-3 text-blue-600" />
+                        <span>{sec.views} personas vieron detalles</span>
+                      </span>
+                    )}
+
+                    {sec.id === 'store' && (
+                      <span className="px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold flex items-center gap-1">
+                        <ShoppingBag className="w-3 h-3 text-amber-600" />
+                        <span>{currentDisplayMetrics.cartAdditions} al carrito</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleGoToSection(sec)}
+                  className="w-full py-1.5 px-3 rounded-xl bg-white dark:bg-[#1E1B2E] hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 text-[11px] font-bubble font-bold transition-all border border-slate-200/80 dark:border-white/10 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                >
+                  <span>Ver Página Web</span>
+                  <ArrowRight className="w-3 h-3 text-emerald-600" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. SUITE DE GRÁFICAS CIRCULARES (DONAS SVG INTERACTIVAS) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* GRÁFICA CIRCULAR 1: DISTRIBUCIÓN POR USO DE LA WEB */}
+        <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 flex flex-col justify-between space-y-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-fio-purple dark:text-fio-pink font-bubble font-bold text-xs mb-1">
+              <ChartPie className="w-3.5 h-3.5" />
+              <span>Gráfica Circular de Uso</span>
+            </div>
+            <h3 className="text-base sm:text-lg font-bubble font-bold text-slate-900 dark:text-white">
+              Distribución de Tráfico por Uso de la Web
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Proporción porcentual del tráfico según las secciones donde los usuarios navegan y pasan más tiempo.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 py-2">
+            {/* Dona SVG Interactiva */}
+            <div className="relative w-40 h-40 sm:w-44 sm:h-44 shrink-0 flex items-center justify-center">
+              <svg viewBox="0 0 160 160" className="w-full h-full transform -rotate-90">
+                <circle
+                  cx="80"
+                  cy="80"
+                  r={usagePieChartData.radius}
+                  fill="transparent"
+                  stroke="currentColor"
+                  strokeWidth="20"
+                  className="text-slate-100 dark:text-purple-950/40"
+                />
+
+                {usagePieChartData.slices.map((slice, idx) => {
+                  const isHovered = hoveredUsagePieIndex === idx;
+
+                  return (
+                    <circle
+                      key={slice.id}
+                      cx="80"
+                      cy="80"
+                      r={usagePieChartData.radius}
+                      fill="transparent"
+                      stroke={slice.color}
+                      strokeWidth={isHovered ? "24" : "20"}
+                      strokeDasharray={slice.dasharray}
+                      strokeDashoffset={slice.dashoffset}
+                      strokeLinecap="butt"
+                      className="transition-all duration-300 cursor-pointer"
+                      onMouseEnter={() => setHoveredUsagePieIndex(idx)}
+                      onMouseLeave={() => setHoveredUsagePieIndex(null)}
+                    />
+                  );
+                })}
+              </svg>
+
+              {/* Centro de la Dona */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4">
+                <span className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white leading-tight">
+                  {hoveredUsagePieIndex !== null && usagePieChartData.slices[hoveredUsagePieIndex]
+                    ? usagePieChartData.slices[hoveredUsagePieIndex].value.toLocaleString()
+                    : usagePieChartData.total.toLocaleString()}
+                </span>
+                <span className="text-[10px] sm:text-[11px] font-sans font-medium text-slate-500 dark:text-slate-400 truncate max-w-[85px]">
+                  {hoveredUsagePieIndex !== null && usagePieChartData.slices[hoveredUsagePieIndex]
+                    ? usagePieChartData.slices[hoveredUsagePieIndex].label
+                    : 'Visitas Totales'}
+                </span>
+                <span className="text-[10px] font-mono font-bold text-fio-purple dark:text-fio-pink">
+                  {hoveredUsagePieIndex !== null && usagePieChartData.slices[hoveredUsagePieIndex]
+                    ? `${usagePieChartData.slices[hoveredUsagePieIndex].percent}%`
+                    : '100%'}
+                </span>
+              </div>
+            </div>
+
+            {/* Leyenda de la Gráfica de Uso */}
+            <div className="w-full sm:w-auto flex-1 space-y-1.5 max-h-56 overflow-y-auto scrollbar-thin pr-1">
+              {usagePieChartData.slices.map((slice, idx) => {
+                const isHovered = hoveredUsagePieIndex === idx;
+
+                return (
+                  <div
+                    key={slice.id}
+                    onMouseEnter={() => setHoveredUsagePieIndex(idx)}
+                    onMouseLeave={() => setHoveredUsagePieIndex(null)}
+                    className={`flex items-center justify-between gap-2 p-1.5 rounded-xl transition-all cursor-pointer ${
+                      isHovered
+                        ? 'bg-purple-50 dark:bg-purple-950/70 scale-102 ring-1 ring-purple-300 dark:ring-purple-700'
+                        : 'hover:bg-slate-50 dark:hover:bg-[#252038]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span
+                        style={{ backgroundColor: slice.color }}
+                        className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs"
+                      />
+                      <span className="text-xs font-bubble font-bold text-slate-800 dark:text-slate-200 truncate">
+                        {slice.label}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className={`px-1.5 py-0.2 rounded-md font-mono font-bold text-[11px] ${slice.badgeBg}`}>
+                        {slice.percent}%
+                      </span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                        ({slice.value.toLocaleString()})
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* GRÁFICA CIRCULAR 2: DISPOSITIVOS & CANALES */}
+        <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 flex flex-col justify-between space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-950/80 text-fio-pink dark:text-pink-300 font-bubble font-bold text-xs mb-1">
                 <ChartPie className="w-3.5 h-3.5" />
-                <span>Gráfica Circular</span>
+                <span>Dispositivos & Canales</span>
               </div>
               <h3 className="text-base sm:text-lg font-bubble font-bold text-slate-900 dark:text-white">
-                {pieChartMode === 'devices' ? 'Distribución por Dispositivo' : 'Distribución por Canales'}
+                {pieChartMode === 'devices' ? 'Celulares vs Computadoras (PC)' : 'Distribución por Canales'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 {pieChartMode === 'devices'
@@ -1253,7 +1678,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               </p>
             </div>
 
-            {/* Selector de Modo de la Gráfica Circular */}
+            {/* Selector de Modo */}
             <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-[#252038] rounded-2xl border border-slate-200 dark:border-purple-900/50 self-start sm:self-auto shrink-0">
               <button
                 type="button"
@@ -1264,7 +1689,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                     : 'text-slate-600 dark:text-slate-400 hover:text-pink-600'
                 }`}
               >
-                Dispositivos
+                📱 Dispositivos
               </button>
               <button
                 type="button"
@@ -1275,16 +1700,15 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                     : 'text-slate-600 dark:text-slate-400 hover:text-pink-600'
                 }`}
               >
-                Canales
+                🔗 Canales
               </button>
             </div>
           </div>
 
-          {/* Dona SVG Interactiva */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 py-2">
+            {/* Dona SVG Interactiva */}
             <div className="relative w-40 h-40 sm:w-44 sm:h-44 shrink-0 flex items-center justify-center">
               <svg viewBox="0 0 160 160" className="w-full h-full transform -rotate-90">
-                {/* Círculo base de fondo */}
                 <circle
                   cx="80"
                   cy="80"
@@ -1295,7 +1719,6 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                   className="text-slate-100 dark:text-purple-950/40"
                 />
 
-                {/* Segmentos de la dona */}
                 {pieChartData.slices.map((slice, idx) => {
                   const isHovered = hoveredPieIndex === idx;
 
@@ -1319,7 +1742,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                 })}
               </svg>
 
-              {/* Centro de la dona */}
+              {/* Centro de la Dona */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4">
                 <span className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white leading-tight">
                   {hoveredPieIndex !== null && pieChartData.slices[hoveredPieIndex]
@@ -1339,7 +1762,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               </div>
             </div>
 
-            {/* Lista y Leyenda de Segmentos */}
+            {/* Leyenda de Dispositivos / Canales */}
             <div className="w-full sm:w-auto flex-1 space-y-2">
               {pieChartData.slices.map((slice, idx) => {
                 const isHovered = hoveredPieIndex === idx;
