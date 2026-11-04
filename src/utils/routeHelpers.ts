@@ -64,6 +64,14 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'reports' };
   }
   if (
+    path.includes('/admin/sinpe') ||
+    path.includes('/administracion/sinpe') ||
+    hash.includes('admin/sinpe') ||
+    seccionParam === 'sinpe'
+  ) {
+    return { route: 'admin', adminTab: 'sinpe' };
+  }
+  if (
     path.includes('/admin/talleres') ||
     path.includes('/administracion/talleres') ||
     hash.includes('admin/talleres')

@@ -9,9 +9,10 @@ import {
 
 interface CashRegisterReportsProps {
   onOpenDailyClosing: () => void;
+  onNavigateToSinpe?: () => void;
 }
 
-export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpenDailyClosing }) => {
+export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpenDailyClosing, onNavigateToSinpe }) => {
   const { orders, products, sinpeTransactions, setIsSinpeModalOpen, workshops } = useApp();
   const [timeRange, setTimeRange] = useState<'today' | 'week'>('today');
 
@@ -125,9 +126,9 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
           {/* Botón Verificador y Redirección SINPE BCR */}
           <button
             type="button"
-            onClick={() => setIsSinpeModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-gradient-to-r from-purple-800 to-fio-900 hover:from-purple-900 hover:to-black text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95"
-            title="Abrir Centro de Verificación de Pagos SINPE Móvil Banco BCR"
+            onClick={onNavigateToSinpe || (() => setIsSinpeModalOpen(true))}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-gradient-to-r from-purple-800 to-fio-900 hover:from-purple-900 hover:to-black text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+            title="Ir al Módulo Independiente de Pagos SINPE Móvil Banco BCR"
           >
             <Landmark className="w-4 h-4 text-amber-300" />
             <span>Verificador SINPE BCR</span>
@@ -256,11 +257,11 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
           <button
             type="button"
-            onClick={() => setIsSinpeModalOpen(true)}
+            onClick={onNavigateToSinpe || (() => setIsSinpeModalOpen(true))}
             className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 text-xs font-bubble font-bold transition-all active:scale-95 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5 text-purple-700" />
-            <span>Verificar / Extraer Correo BCR</span>
+            <span>Módulo de Pagos SINPE BCR →</span>
           </button>
         </div>
 

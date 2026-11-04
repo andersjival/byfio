@@ -7,7 +7,11 @@ import {
   Landmark, ShieldCheck, Sparkles, DollarSign
 } from 'lucide-react';
 
-export const WorkshopEnrollmentsSection: React.FC = () => {
+interface WorkshopEnrollmentsSectionProps {
+  onNavigateToSinpe?: () => void;
+}
+
+export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProps> = ({ onNavigateToSinpe }) => {
   const {
     workshops,
     orders,
@@ -198,11 +202,11 @@ export const WorkshopEnrollmentsSection: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => setIsSinpeModalOpen(true)}
+              onClick={onNavigateToSinpe || (() => setIsSinpeModalOpen(true))}
               className="px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-purple-950 font-bubble text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 self-start sm:self-auto active:scale-95 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Verificar Pago SINPE BCR</span>
+              <span>Módulo Pagos SINPE BCR →</span>
             </button>
           </div>
 

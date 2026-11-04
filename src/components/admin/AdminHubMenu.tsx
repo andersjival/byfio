@@ -66,10 +66,18 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'reports' as AdminTabType,
       title: 'Caja & Reportería',
-      badge: sinpeTransactions.length > 0 ? `${sinpeTransactions.length} SINPE BCR` : 'Cierre diario',
-      badgeClass: sinpeTransactions.length > 0 ? 'bg-purple-100 text-purple-900 font-bold' : 'bg-amber-50 text-amber-800',
+      badge: 'Cierre diario & arqueo',
+      badgeClass: 'bg-amber-50 text-amber-800',
       icon: Landmark,
       gradient: 'from-[#34D399] to-[#047857]',
+    },
+    {
+      id: 'sinpe' as AdminTabType,
+      title: 'Pagos SINPE BCR',
+      badge: sinpeTransactions.length > 0 ? `${sinpeTransactions.length} verificados` : 'Redirección BCR',
+      badgeClass: sinpeTransactions.length > 0 ? 'bg-purple-100 text-purple-900 font-bold' : 'bg-slate-100 text-slate-700',
+      icon: Landmark,
+      gradient: 'from-[#6B21A8] to-[#4C1D95]',
     },
     {
       id: 'workshops' as AdminTabType,

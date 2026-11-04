@@ -1,8 +1,8 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Package, FileText, QrCode, DollarSign, GraduationCap, Tag, Users } from 'lucide-react';
+import { Package, FileText, QrCode, DollarSign, GraduationCap, Tag, Users, Landmark } from 'lucide-react';
 
-export type AdminTabType = 'hub' | 'orders' | 'billing' | 'inventory' | 'reports' | 'workshops' | 'pricing' | 'users';
+export type AdminTabType = 'hub' | 'orders' | 'billing' | 'inventory' | 'reports' | 'sinpe' | 'workshops' | 'pricing' | 'users';
 
 interface AdminTabsProps {
   activeTab: AdminTabType;
@@ -18,7 +18,7 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
 
   return (
     <div className="p-1.5 sm:p-2 rounded-3xl bg-[#ECEEF2] shadow-neuInset border border-white/60 mb-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 sm:gap-2">
         {/* Tab 1: Pedidos & Alisto */}
         {hasPermission('orders') && (
           <button
@@ -108,7 +108,32 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
           </button>
         )}
 
-        {/* Tab 5: Talleres */}
+        {/* Tab 5: Pagos SINPE BCR */}
+        {(hasPermission('reports') || hasPermission('sinpe')) && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('sinpe')}
+            className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2.5 rounded-2xl text-xs sm:text-sm font-bubble font-bold transition-all text-center select-none active:scale-95 ${
+              activeTab === 'sinpe'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01]'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+            }`}
+            title="Módulo Independiente de Pagos SINPE BCR"
+          >
+            <Landmark className="w-4 h-4 text-purple-600 shrink-0" />
+            <span className="truncate">Pagos SINPE</span>
+            {sinpeTransactions.length > 0 && (
+              <span
+                className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-purple-700 text-white ml-0.5 shrink-0"
+                title={`${sinpeTransactions.length} pagos SINPE BCR verificados`}
+              >
+                {sinpeTransactions.length}
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Tab 6: Talleres */}
         {hasPermission('workshops') && (
           <button
             type="button"

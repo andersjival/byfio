@@ -8,13 +8,15 @@ import {
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
+import { AdminTabType } from './AdminTabs';
 
 interface AdminHeaderProps {
   onOpenDesignModal?: () => void;
   onNavigate?: (route: AppRoute) => void;
+  onSelectTab?: (tab: AdminTabType) => void;
 }
 
-export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onNavigate }) => {
+export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onNavigate, onSelectTab }) => {
   const {
     products,
     orders,
@@ -76,12 +78,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
             </span>
           </button>
 
-          {/* Botón Verificador SINPE BCR */}
+          {/* Botón Módulo SINPE BCR */}
           <button
             type="button"
-            onClick={() => setIsSinpeModalOpen(true)}
+            onClick={() => onSelectTab ? onSelectTab('sinpe') : (onNavigate ? onNavigate('admin') : setIsSinpeModalOpen(true))}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
-            title="Verificación de Pagos SINPE Móvil Banco BCR"
+            title="Ir al Módulo Independiente de Pagos SINPE Móvil Banco BCR"
           >
             <Landmark className="w-3.5 h-3.5 text-purple-700" />
             <span>SINPE BCR</span>

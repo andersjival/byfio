@@ -38,7 +38,7 @@ import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
 import { AdminPricingModal } from './components/admin/AdminPricingModal';
-import { SinpeBcrVerificationModal } from './components/admin/SinpeBcrVerificationModal';
+import { SinpePaymentsSection } from './components/admin/SinpePaymentsSection';
 
 // Code-splitting diferido únicamente para páginas secundarias independientes
 const MetricsPage = React.lazy(() => import('./components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
@@ -110,6 +110,7 @@ export const App: React.FC = () => {
       else if (tab === 'billing') targetPath = '/admin/facturacion';
       else if (tab === 'inventory') targetPath = '/admin/inventario';
       else if (tab === 'reports') targetPath = '/admin/caja';
+      else if (tab === 'sinpe') targetPath = '/admin/sinpe';
       else if (tab === 'workshops') targetPath = '/admin/talleres';
       else if (tab === 'pricing') targetPath = '/admin/precios';
       else if (tab === 'users') targetPath = '/admin/usuarios';
@@ -138,6 +139,14 @@ export const App: React.FC = () => {
       navigate('home');
     }
   }, [isLogoutTransitionOpen, currentRoute]);
+
+  // Redirigir al módulo independiente de pagos SINPE si se solicita su apertura
+  useEffect(() => {
+    if (isSinpeModalOpen) {
+      setIsSinpeModalOpen(false);
+      navigate('admin', 'sinpe');
+    }
+  }, [isSinpeModalOpen]);
 
   // Sync with browser Back/Forward & hash changes
   useEffect(() => {
@@ -199,6 +208,8 @@ export const App: React.FC = () => {
                 ? 'inventario & qr'
                 : adminTab === 'reports'
                 ? 'caja & reportes'
+                : adminTab === 'sinpe'
+                ? 'pagos sinpe bcr'
                 : adminTab === 'pricing'
                 ? 'precios & stickers'
                 : adminTab === 'users'
@@ -316,7 +327,7 @@ export const App: React.FC = () => {
                     {/* Si está en el Menú Principal (Hub) - Renderizado Instantáneo 0ms */}
                     {adminTab === 'hub' ? (
                       <>
-                        <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} onNavigate={navigate} />
+                        <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} onNavigate={navigate} onSelectTab={handleSelectAdminTab} />
                         <AdminHubMenu onSelectTab={handleSelectAdminTab} onNavigate={navigate} />
                       </>
                     ) : (
@@ -329,9 +340,10 @@ export const App: React.FC = () => {
                           {adminTab === 'billing' && <QuickBillingSection />}
                           {adminTab === 'inventory' && <InventoryTable />}
                           {adminTab === 'reports' && (
-                            <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
+                            <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />
                           )}
-                          {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
+                          {adminTab === 'sinpe' && <SinpePaymentsSection />}
+                          {adminTab === 'workshops' && <WorkshopEnrollmentsSection onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />}
                           {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
                           {adminTab === 'users' && <UserProfilesSection />}
                         </React.Suspense>
@@ -407,7 +419,6 @@ export const App: React.FC = () => {
         {isDailyClosingOpen && <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />}
         {isDesignModalOpen && <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />}
         {isPricingModalOpen && <AdminPricingModal />}
-        {isSinpeModalOpen && <SinpeBcrVerificationModal isOpen={isSinpeModalOpen} onClose={() => setIsSinpeModalOpen(false)} />}
       </React.Suspense>
     </div>
   );

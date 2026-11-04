@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+﻿import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,

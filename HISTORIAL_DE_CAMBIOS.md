@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.2.0 - Conversión del Módulo de Pagos SINPE BCR en Página Independiente Nube
+- [x] **Página de Sección Independiente ([`SinpePaymentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx)):**
+  - Transformado el módulo de verificación de pagos SINPE BCR de un pop-up modal a una vista de página completa e independiente dentro del Panel de Administración (`/admin/sinpe`).
+  - Incluye ribete completo de KPIs de caja (Total verificado, Tienda y Talleres), sub-pestañas integradas para extracción rápida, vinculación de redirección automática por correo y tabla de historial con eliminación controlada.
+- [x] **Integración con Pestañas y Navegación de Administración ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`routeHelpers.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts)):**
+  - Incorporada la pestaña `📲 Pagos SINPE` en la barra de navegación neomórfica de administración con contador dinámico de transacciones en vivo.
+  - Añadida tarjeta interactiva en el menú principal del Hub de Administración y soporte nativo de subruta `/admin/sinpe`.
+- [x] **Enrutamiento Directo sin Pop-ups ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [`CashRegisterReports.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx)):**
+  - Eliminado el renderizado en ventana flotante/pop-up; los accesos desde cabecera, arqueo de caja y talleres conducen de forma fluida a la página completa de SINPE.
+
 ### Versión 4.1.0 - Corrección Integral de Botones de Filtro en Métricas: Cero Desbordamiento, Contraste Absoluto y Distribución Espaciosa
 - [x] **Distribución Espaciosa en Dos Filas Independientes ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
   - Reorganizada la barra de control en 2 filas limpias y holgadas: Fila 1 (`Métrica: Dual, Solo Me Gusta, Solo Vistas`) y Fila 2 (`Mostrar: Todas, Tienda, Admin`).
