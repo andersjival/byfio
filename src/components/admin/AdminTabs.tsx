@@ -34,7 +34,10 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
             <QrCode className="w-4 h-4 text-fio-yellow shrink-0" />
             <span className="truncate">Pedidos &amp; Alisto</span>
             {pendingCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-fio-pink text-white ml-0.5 shrink-0">
+              <span
+                className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-fio-pink text-white ml-0.5 shrink-0"
+                title={`${pendingCount} pedidos pendientes de alisto (${orders.length} totales)`}
+              >
                 {pendingCount}
               </span>
             )}

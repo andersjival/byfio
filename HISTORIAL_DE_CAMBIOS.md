@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.9.0 - Clarificación y Sincronización de Contadores de Pedidos (Pendientes vs Totales)
+- [x] **Distinción Clara de Métricas en Cola de Pedidos ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - Unificados los indicadores visuales: el encabezado ahora muestra tanto el badge destacado en rosa de pedidos pendientes de alisto (`{pendingOrders.length} pendientes`) como el badge neutro de pedidos históricos (`{orders.length} totales`).
+  - Añadido selector de filtros rápidos segmentados: `Todos ({orders.length})`, `Pendientes de Alisto ({pendingOrders.length})` y `Empacados / Listos ({completedOrders.length})` con contador dinámico y estado vacío amigable.
+- [x] **Claridad en Pestaña Superior de Administración ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx)):**
+  - Añadido tooltip explícito en el badge rosa de la pestaña *Pedidos & Alisto*: `${pendingCount} pedidos pendientes de alisto (${orders.length} totales)`, eliminando la discrepancia cognitiva entre el badge de tareas pendientes y la lista completa.
+
 ### Versión 3.8.2 - Rediseño Armónico, Espacioso y Segmentado de Filtros de Métricas
 - [x] **Arquitectura Espaciosa y Separación Funcional ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
   - Erradicado el amontonamiento de botones en el encabezado de la Gráfica del Ecosistema. Se estructuró una barra de control dedicada de ancho completo (`p-3 rounded-2xl bg-slate-50 border border-slate-200/80`) que distribuye holgadamente los controles con `justify-between`.

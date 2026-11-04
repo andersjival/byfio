@@ -801,6 +801,10 @@ html.dark .border-white\/90 {
   .no-print,
   .invoice-header-bar,
   .invoice-actions-bar,
+  .supplier-header-bar,
+  .supplier-actions-bar,
+  .orders-list-header-bar,
+  .orders-list-actions-bar,
   button:not(.force-print),
   nav,
   header,
@@ -813,7 +817,11 @@ html.dark .border-white\/90 {
   body.invoice-open #root,
   body.invoice-open #root > div,
   body.closing-report-open #root,
-  body.closing-report-open #root > div {
+  body.closing-report-open #root > div,
+  body.supplier-order-open #root,
+  body.supplier-order-open #root > div,
+  body.orders-list-open #root,
+  body.orders-list-open #root > div {
     display: block !important;
     position: static !important;
     width: 100% !important;
@@ -823,7 +831,7 @@ html.dark .border-white\/90 {
     background: transparent !important;
   }
 
-  /* Si la factura está abierta, ocultar los demás elementos dentro del contenedor principal */
+  /* Si el modal está abierto, ocultar los demás elementos dentro del contenedor principal */
   body.invoice-open #root > div > *:not(.invoice-modal-overlay) {
     display: none !important;
   }
@@ -832,9 +840,19 @@ html.dark .border-white\/90 {
     display: none !important;
   }
 
+  body.supplier-order-open #root > div > *:not(.supplier-order-modal-overlay) {
+    display: none !important;
+  }
+
+  body.orders-list-open #root > div > *:not(.orders-list-modal-overlay) {
+    display: none !important;
+  }
+
   /* Desactivar modales fijos para que fluyan como documento de hoja completa */
   .invoice-modal-overlay,
-  .closing-modal-overlay {
+  .closing-modal-overlay,
+  .supplier-order-modal-overlay,
+  .orders-list-modal-overlay {
     position: static !important;
     inset: auto !important;
     background: transparent !important;
@@ -851,7 +869,9 @@ html.dark .border-white\/90 {
   }
 
   .invoice-modal-card,
-  .closing-modal-card {
+  .closing-modal-card,
+  .supplier-order-modal-card,
+  .orders-list-modal-card {
     position: static !important;
     max-width: 100% !important;
     width: 100% !important;
@@ -869,7 +889,9 @@ html.dark .border-white\/90 {
 
   #printable-invoice,
   #printable-closing-report,
-  #printable-qr-label {
+  #printable-qr-label,
+  #printable-supplier-order,
+  #printable-orders-list {
     position: static !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -884,7 +906,9 @@ html.dark .border-white\/90 {
 
   #printable-invoice *,
   #printable-closing-report *,
-  #printable-qr-label * {
+  #printable-qr-label *,
+  #printable-supplier-order *,
+  #printable-orders-list * {
     visibility: visible !important;
   }
 

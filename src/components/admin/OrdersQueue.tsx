@@ -7,6 +7,16 @@ import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
   const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled } = useApp();
+  const [filterMode, setFilterMode] = React.useState<'pending' | 'all' | 'completed'>('all');
+
+  const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
+  const completedOrders = orders.filter((o) => o.orderStatus === 'packed' || o.orderStatus === 'delivered');
+
+  const displayedOrders = filterMode === 'pending'
+    ? pendingOrders
+    : filterMode === 'completed'
+    ? completedOrders
+    : orders;
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
@@ -26,13 +36,23 @@ export const OrdersQueue: React.FC = () => {
       {/* Encabezado con Banner Explicativo */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-fio-100 pb-3">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h2 className="font-bubble font-bold text-xl text-fio-900">Cola de Pedidos de Clientes (FIFO)</h2>
-            <span className="text-xs font-bold text-fio-800 bg-fio-100 px-3 py-0.5 rounded-full">
-              {orders.length} pedidos
+            <span
+              className="text-xs font-bold text-fio-pink bg-pink-50 border border-pink-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5"
+              title="Pedidos pendientes de alisto o en alisto QR activo"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-fio-pink animate-pulse" />
+              {pendingOrders.length} pendientes
+            </span>
+            <span
+              className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full"
+              title="Total histórico de pedidos registrados en el sistema"
+            >
+              {orders.length} totales
             </span>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 mt-0.5">
             Alisto secuencial cronológico por orden de llegada para empaque y despacho.
           </p>
         </div>
@@ -68,9 +88,66 @@ export const OrdersQueue: React.FC = () => {
         </div>
       </div>
 
+      {/* Pestañas de Filtro Rápido de Cola */}
+      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200/80 mb-4 w-fit flex-wrap">
+        <button
+          type="button"
+          onClick={() => setFilterMode('all')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+            filterMode === 'all'
+              ? 'bg-white text-fio-900 shadow-xs'
+              : 'text-slate-600 hover:text-fio-900'
+          }`}
+        >
+          Todos ({orders.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilterMode('pending')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+            filterMode === 'pending'
+              ? 'bg-fio-pink text-white shadow-xs'
+              : 'text-slate-600 hover:text-fio-pink'
+          }`}
+        >
+          <span>Pendientes de Alisto</span>
+          <span
+            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+              filterMode === 'pending' ? 'bg-white text-fio-pink' : 'bg-pink-100 text-fio-pink'
+            }`}
+          >
+            {pendingOrders.length}
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilterMode('completed')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+            filterMode === 'completed'
+              ? 'bg-emerald-600 text-white shadow-xs'
+              : 'text-slate-600 hover:text-emerald-700'
+          }`}
+        >
+          <span>Empacados / Listos</span>
+          <span
+            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+              filterMode === 'completed' ? 'bg-white text-emerald-700' : 'bg-emerald-100 text-emerald-700'
+            }`}
+          >
+            {completedOrders.length}
+          </span>
+        </button>
+      </div>
+
       {/* Lista de Pedidos */}
       <div className="space-y-4">
-        {orders.map((order: Order) => {
+        {displayedOrders.length === 0 ? (
+          <div className="text-center py-10 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            <p className="text-sm font-bubble font-bold text-slate-600">No hay pedidos con este filtro</p>
+            <p className="text-xs text-slate-400 mt-1">Selecciona "Todos" para ver el historial completo.</p>
+          </div>
+        ) : (
+          displayedOrders.map((order: Order) => {
           const totalItems = order.items.length;
           const pickedItems = order.items.filter((it) => it.isPicked).length;
           const progressPercent = Math.round((pickedItems / totalItems) * 100);
@@ -167,7 +244,7 @@ export const OrdersQueue: React.FC = () => {
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   );
