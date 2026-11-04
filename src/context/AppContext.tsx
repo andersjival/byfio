@@ -2137,11 +2137,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch {}
     }
 
-    // 3. Si no existe en los correos del Banco BCR
+    // 3. Si no existe en las notificaciones
     if (!foundTx) {
       return {
         status: 'not_found',
-        message: `⚠️ No se encontró ninguna notificación de correo del Banco BCR con el comprobante #${ref.trim()}. El sistema busca en los correos de mensajero@bancobcr.com para verificar el número de referencia y el monto exacto. Verifica tu comprobante bancario.`,
+        message: `⚠️ No se encontró ninguna notificación con el comprobante #${ref.trim()}. Verifica tu número de comprobante bancario.`,
         requiredTotal,
       };
     }
@@ -2170,11 +2170,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const voucherAmount = foundTx.amount;
 
-    // 5. Comparación estricta de montos: Tiene que coincidir siempre con el correo
+    // 5. Comparación de montos:
     if (voucherAmount === requiredTotal) {
       return {
         status: 'valid_exact',
-        message: `¡Pago verificado con éxito! Comprobante #${foundTx.referenceNumber} coincide con el correo del Banco BCR por el monto exacto de ₡${voucherAmount.toLocaleString('es-CR')}.`,
+        message: `Pago verificado con éxito, comprobante número #${foundTx.referenceNumber} y monto confirmado de ₡${voucherAmount.toLocaleString('es-CR')}.`,
         transaction: foundTx,
         voucherAmount,
         missingAmount: 0,
@@ -2186,7 +2186,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const missingAmount = requiredTotal - voucherAmount;
       return {
         status: 'invalid_incomplete',
-        message: `⚠️ Comprobante con monto incompleto. El comprobante #${foundTx.referenceNumber} encontrado en el correo es por ₡${voucherAmount.toLocaleString('es-CR')}, pero el total a pagar es ₡${requiredTotal.toLocaleString('es-CR')}. Te faltó por pagar ₡${missingAmount.toLocaleString('es-CR')}. Por favor realiza otra transferencia SINPE Móvil y digita el comprobante del faltante.`,
+        message: `⚠️ Comprobante con monto incompleto. El comprobante #${foundTx.referenceNumber} registra ₡${voucherAmount.toLocaleString('es-CR')}, pero el total a pagar es ₡${requiredTotal.toLocaleString('es-CR')}. Te faltó por pagar ₡${missingAmount.toLocaleString('es-CR')}. Por favor realiza otra transferencia SINPE Móvil y digita el comprobante del faltante.`,
         transaction: foundTx,
         voucherAmount,
         missingAmount,
@@ -2196,7 +2196,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     return {
       status: 'invalid_mismatch',
-      message: `⚠️ Monto inválido. El comprobante #${foundTx.referenceNumber} en el correo del Banco BCR es por ₡${voucherAmount.toLocaleString('es-CR')}, pero el total a pagar es ₡${requiredTotal.toLocaleString('es-CR')}. El monto y el número de referencia tienen que coincidir exactamente con el correo.`,
+      message: `⚠️ Monto inválido. El comprobante #${foundTx.referenceNumber} registra ₡${voucherAmount.toLocaleString('es-CR')}, pero el total a pagar es ₡${requiredTotal.toLocaleString('es-CR')}. El monto y el número de referencia tienen que coincidir exactamente.`,
       transaction: foundTx,
       voucherAmount,
       missingAmount: 0,

@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.8.0 - Alisto Manual Producto por Producto con Botones de Listo / Faltante y Españolización Total
+- [x] **Flujo Producto por Producto en Alisto Manual ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Homologada la interfaz del Alisto Manual para que muestre exactamente la misma ventana guiada paso a paso que el modo con código: imagen amplia del artículo, ubicación destacada en estante (`Estante A-2`, `Bodega Central`), nombre del producto, SKU y cantidad a alistar.
+  - Al procesar un artículo, avanza automáticamente al siguiente de la secuencia cronológica hasta completar el 100% de la orden.
+- [x] **Sustitución de Validación por Botones Directos de Acción ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Reemplazado el área de validación con lector láser por dos botones prominentes y táctiles:
+    1. **Botón Listo (Alistado):** Verde esmeralda, marca el producto como alistado y pasa al siguiente con feedback sonoro/visual.
+    2. **Botón Sin Existencias / Faltante:** Ámbar de alerta, marca el artículo como faltante, genera el reporte automático en el módulo de inventario y pasa al siguiente.
+  - Añadida sección plegable opcional para ver el resumen completo de la lista e imprimir la hoja de despacho cuando se requiera.
+- [x] **Españolización Integral de Términos ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Erradicadas las frases en inglés `"Release List con Código"` y `"Release List Manual"`, renombradas formalmente a **`Alisto con Código`** y **`Alisto Manual`** en los botones de acción, encabezados y modales.
+
 ### Versión 4.7.0 - Verificación Cruzada de Correo BCR (Monto Exacto y Gestión de Faltante con Segundo Comprobante)
 - [x] **Verificación Cruzada Obligatoria en Correos del BCR ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
   - Al presionar "Validar Pago", el sistema busca en los correos de `mensajero@bancobcr.com` (`sinpeTransactions` y Cloudflare D1) el número de referencia y el monto.

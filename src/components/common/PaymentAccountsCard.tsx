@@ -348,7 +348,7 @@ export const PaymentAccountsCard: React.FC<PaymentAccountsCardProps> = ({
                     </span>
                   </div>
                   <p className="text-xs text-rose-950 font-sans">
-                    El comprobante <strong className="font-mono">#{partialPayment.firstVoucher.ref}</strong> encontrado en el correo del Banco BCR registra <strong>{formatCRC(partialPayment.firstVoucher.amount)}</strong>.
+                    El comprobante <strong className="font-mono">#{partialPayment.firstVoucher.ref}</strong> registra <strong>{formatCRC(partialPayment.firstVoucher.amount)}</strong>.
                   </p>
                 </div>
               </div>
@@ -416,7 +416,7 @@ export const PaymentAccountsCard: React.FC<PaymentAccountsCardProps> = ({
 
                 <div className="flex items-center justify-between text-[11px] pt-1">
                   <span className="text-slate-500">
-                    💡 Ambos comprobantes deben coincidir con los correos del Banco BCR.
+                    💡 Ambos comprobantes deben cubrir el monto total de la orden.
                   </span>
                   {onResetPartialPayment && (
                     <button
@@ -438,7 +438,7 @@ export const PaymentAccountsCard: React.FC<PaymentAccountsCardProps> = ({
               <div className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-emerald-700 shrink-0" />
                 <h5 className="font-bubble font-bold text-xs sm:text-sm text-emerald-900">
-                  ¡Cobro completo verificado con éxito en el correo del Banco BCR!
+                  Pago verificado con éxito, comprobantes números #{partialPayment.firstVoucher.ref} y #{partialPayment.secondVoucher?.ref} y monto confirmado de {formatCRC(partialPayment.requiredTotal)}.
                 </h5>
               </div>
               <p className="text-[11px] text-emerald-800 font-sans">
@@ -458,7 +458,7 @@ export const PaymentAccountsCard: React.FC<PaymentAccountsCardProps> = ({
               </div>
               <div className="flex items-center justify-between pt-1">
                 <span className="text-[11px] font-bubble font-bold text-emerald-900">
-                  ✓ El botón de Confirmar Pedido está activado.
+                  ✓ El botón de "Confirmar pedido" está activado.
                 </span>
                 {onResetPartialPayment && (
                   <button
@@ -478,7 +478,7 @@ export const PaymentAccountsCard: React.FC<PaymentAccountsCardProps> = ({
             <div className="p-3 rounded-2xl bg-emerald-100/80 border border-emerald-300 text-[11px] text-emerald-900 font-semibold flex items-center gap-2.5 animate-fadeIn">
               <Check className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>
-                ¡Pago verificado con éxito! Comprobante #{referenceNumber.trim()} coincide con el correo del Banco BCR por el monto exacto de {formatCRC(amount || 0)}. El botón de Confirmar Pedido está activado.
+                Pago verificado con éxito, comprobante número #{referenceNumber.trim()} y monto confirmado de {formatCRC(amount || 0)}. El botón de "Confirmar pedido" está activado.
               </span>
             </div>
           )}
