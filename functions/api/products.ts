@@ -108,28 +108,46 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
 export const onRequestPut = async (context: { request: Request; env: Env }) => {
   try {
-    const { id, stock, minStock, maxStock, isAvailable } = await context.request.json() as any;
+    const body = await context.request.json() as any;
 
-    if (context.env.DB && id) {
+    if (context.env.DB) {
       await context.env.DB.prepare(
         'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
       ).run().catch(() => {});
 
-      if (isAvailable !== undefined) {
-        await context.env.DB.prepare(
-          'UPDATE products SET is_available = ? WHERE id = ?'
-        ).bind(isAvailable ? 1 : 0, id).run();
+      // Soporte para actualización de stock en lote (batch de pedidos)
+      if (Array.isArray(body)) {
+        for (const item of body) {
+          if (item && item.id && item.stock !== undefined) {
+            await context.env.DB.prepare(
+              'UPDATE products SET stock = ? WHERE id = ?'
+            ).bind(item.stock, item.id).run();
+          }
+        }
+        return new Response(JSON.stringify({ success: true, updatedCount: body.length }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
       }
 
-      if (stock !== undefined) {
-        if (minStock !== undefined && maxStock !== undefined) {
+      // Actualización individual estándar
+      const { id, stock, minStock, maxStock, isAvailable } = body;
+      if (id) {
+        if (isAvailable !== undefined) {
           await context.env.DB.prepare(
-            'UPDATE products SET stock = ?, min_stock = ?, max_stock = ? WHERE id = ?'
-          ).bind(stock, minStock, maxStock, id).run();
-        } else {
-          await context.env.DB.prepare(
-            'UPDATE products SET stock = ? WHERE id = ?'
-          ).bind(stock, id).run();
+            'UPDATE products SET is_available = ? WHERE id = ?'
+          ).bind(isAvailable ? 1 : 0, id).run();
+        }
+
+        if (stock !== undefined) {
+          if (minStock !== undefined && maxStock !== undefined) {
+            await context.env.DB.prepare(
+              'UPDATE products SET stock = ?, min_stock = ?, max_stock = ? WHERE id = ?'
+            ).bind(stock, minStock, maxStock, id).run();
+          } else {
+            await context.env.DB.prepare(
+              'UPDATE products SET stock = ? WHERE id = ?'
+            ).bind(stock, id).run();
+          }
         }
       }
     }

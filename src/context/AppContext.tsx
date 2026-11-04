@@ -248,6 +248,12 @@ const STORAGE_KEYS = {
   INVENTORY_MODE: 'byfio_inventory_mode_v1',
 };
 
+// Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
+const syncChannel =
+  typeof window !== 'undefined' && 'BroadcastChannel' in window
+    ? new BroadcastChannel('byfio_realtime_sync')
+    : null;
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem(STORAGE_KEYS.VIEW_MODE) as ViewMode) || 'store';
@@ -565,24 +571,46 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       body: JSON.stringify(newOrder),
     }).catch(() => {});
 
-    // Descontar inventario
+    // Rebajar inventario automáticamente y sincronizar con D1
+    const deductionsBySku = new Map<string, number>();
+    orderData.items.forEach((it) => {
+      if (it.sku) {
+        deductionsBySku.set(it.sku, (deductionsBySku.get(it.sku) || 0) + it.quantity);
+      }
+    });
+
+    const batchUpdates: { id: string; stock: number }[] = [];
+    let updatedProducts: Product[] = [];
+
     setProducts((prev) => {
-      const updatedProds = prev.map((prod) => {
-        const sold = orderData.items.find((it) => it.sku === prod.sku);
-        if (sold) {
-          const newStock = Math.max(0, prod.stock - sold.quantity);
-          fetch(`/api/products/${prod.id}/stock`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ stock: newStock }),
-          }).catch(() => {});
+      updatedProducts = prev.map((prod) => {
+        const qty = deductionsBySku.get(prod.sku) || 0;
+        if (qty > 0) {
+          const newStock = Math.max(0, prod.stock - qty);
+          batchUpdates.push({ id: prod.id, stock: newStock });
           return { ...prod, stock: newStock };
         }
         return prod;
       });
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProds));
-      return updatedProds;
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      return updatedProducts;
     });
+
+    if (batchUpdates.length > 0) {
+      fetch('/api/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(batchUpdates),
+      }).catch(() => {});
+    }
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        orders: updatedOrders,
+        products: updatedProducts,
+      });
+    } catch {}
 
     setInvoiceOrder(newOrder);
     return newOrder;
@@ -833,48 +861,96 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.COLOR_THEME, colorTheme);
   }, [colorTheme]);
 
-  // Sync initial data from Cloud Database
+  // Escucha del canal de difusión para sincronización en tiempo real (0ms) entre pestañas
   useEffect(() => {
-    fetch('/api/products')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setProducts((prev) => {
-            const prevMap = new Map(prev.map((p) => [p.id, p]));
-            return data.map((cloudProd: Product) => {
-              const local = prevMap.get(cloudProd.id);
-              // Priorizar estado de disponibilidad
-              const isAvail = cloudProd.isAvailable !== undefined 
-                ? cloudProd.isAvailable 
-                : (local?.isAvailable !== undefined ? local.isAvailable : true);
-              const inStore = cloudProd.showInStore !== undefined
-                ? cloudProd.showInStore
-                : (local?.showInStore !== undefined ? local.showInStore : isAvail);
-              const inCat = cloudProd.showInCatalog !== undefined
-                ? cloudProd.showInCatalog
-                : (local?.showInCatalog !== undefined ? local.showInCatalog : isAvail);
+    if (!syncChannel) return;
+    const handleSync = (event: MessageEvent) => {
+      if (event.data?.type === 'SYNC_UPDATE') {
+        if (Array.isArray(event.data.orders)) {
+          setOrders(event.data.orders);
+        }
+        if (Array.isArray(event.data.products)) {
+          setProducts(event.data.products);
+        }
+        if (Array.isArray(event.data.workshops)) {
+          setWorkshops(event.data.workshops);
+        }
+      }
+    };
+    syncChannel.addEventListener('message', handleSync);
+    return () => {
+      syncChannel.removeEventListener('message', handleSync);
+    };
+  }, []);
 
-              return {
-                ...cloudProd,
-                isAvailable: isAvail,
-                showInStore: inStore,
-                showInCatalog: inCat,
-              };
+  // Sincronización Inteligente Anti-Drain Polling (10s en foco, 0 peticiones en segundo plano)
+  useEffect(() => {
+    const fetchLatestData = () => {
+      if (typeof document !== 'undefined' && document.hidden) return;
+
+      // 1. Sincronizar productos e inventario actualizado
+      fetch('/api/products')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setProducts((prev) => {
+              const prevMap = new Map(prev.map((p) => [p.id, p]));
+              let hasChanges = false;
+              const merged = data.map((cloudProd: Product) => {
+                const local = prevMap.get(cloudProd.id);
+                const isAvail = cloudProd.isAvailable !== undefined 
+                  ? cloudProd.isAvailable 
+                  : (local?.isAvailable !== undefined ? local.isAvailable : true);
+                const inStore = cloudProd.showInStore !== undefined
+                  ? cloudProd.showInStore
+                  : (local?.showInStore !== undefined ? local.showInStore : isAvail);
+                const inCat = cloudProd.showInCatalog !== undefined
+                  ? cloudProd.showInCatalog
+                  : (local?.showInCatalog !== undefined ? local.showInCatalog : isAvail);
+
+                if (!local || local.stock !== cloudProd.stock || local.isAvailable !== isAvail) {
+                  hasChanges = true;
+                }
+
+                return {
+                  ...cloudProd,
+                  isAvailable: isAvail,
+                  showInStore: inStore,
+                  showInCatalog: inCat,
+                };
+              });
+
+              if (hasChanges || merged.length !== prev.length) {
+                localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(merged));
+                return merged;
+              }
+              return prev;
             });
-          });
-        }
-      })
-      .catch(() => {});
+          }
+        })
+        .catch(() => {});
 
-    fetch('/api/orders')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setOrders(data);
-        }
-      })
-      .catch(() => {});
+      // 2. Sincronizar pedidos en tiempo real
+      fetch('/api/orders')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setOrders((prev) => {
+              if (data.length !== prev.length || JSON.stringify(data) !== JSON.stringify(prev)) {
+                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(data));
+                return data;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+    };
 
+    // Carga inicial inmediata
+    fetchLatestData();
+
+    // Carga inicial de perfiles de usuario
     const handleLoadedProfiles = (data: any) => {
       if (data && Array.isArray(data.profiles) && data.profiles.length > 0) {
         const cloudProfiles: UserProfile[] = data.profiles;
@@ -908,6 +984,48 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           .then(handleLoadedProfiles)
           .catch(() => {});
       });
+
+    // Temporizador inteligente: 10s únicamente si la pestaña está activa y visible
+    let pollingTimer: ReturnType<typeof setInterval> | null = null;
+
+    const startPolling = () => {
+      if (pollingTimer === null && typeof document !== 'undefined' && !document.hidden) {
+        pollingTimer = setInterval(() => {
+          if (!document.hidden) {
+            fetchLatestData();
+          }
+        }, 10000);
+      }
+    };
+
+    const stopPolling = () => {
+      if (pollingTimer !== null) {
+        clearInterval(pollingTimer);
+        pollingTimer = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopPolling();
+      } else {
+        fetchLatestData();
+        startPolling();
+      }
+    };
+
+    if (typeof document !== 'undefined' && !document.hidden) {
+      startPolling();
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', fetchLatestData);
+
+    return () => {
+      stopPolling();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', fetchLatestData);
+    };
   }, []);
 
   useEffect(() => {
@@ -1036,24 +1154,76 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       body: JSON.stringify(newOrder),
     }).catch(() => {});
 
-    // Deduct stock locally and in D1
-    setProducts((prev) =>
-      prev.map((prod) => {
-        const inCart = cart.find((c) => c.sku === prod.sku);
-        if (inCart) {
-          const newStock = Math.max(0, prod.stock - inCart.quantity);
-          fetch('/api/products', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: prod.id, stock: newStock }),
-          }).catch(() => {});
+    // Rebajar inventario automáticamente y sincronizar con D1
+    const deductionsByProdId = new Map<string, number>();
+    const deductionsBySku = new Map<string, number>();
+
+    cart.forEach((c) => {
+      if (c.type === 'product') {
+        if (c.id) {
+          deductionsByProdId.set(c.id, (deductionsByProdId.get(c.id) || 0) + c.quantity);
+        }
+        if (c.sku) {
+          deductionsBySku.set(c.sku, (deductionsBySku.get(c.sku) || 0) + c.quantity);
+        }
+      }
+    });
+
+    const batchUpdates: { id: string; stock: number }[] = [];
+    let updatedProducts: Product[] = [];
+
+    setProducts((prev) => {
+      updatedProducts = prev.map((prod) => {
+        const qtyToDeduct = deductionsByProdId.get(prod.id) || deductionsBySku.get(prod.sku) || 0;
+        if (qtyToDeduct > 0) {
+          const newStock = Math.max(0, prod.stock - qtyToDeduct);
+          batchUpdates.push({ id: prod.id, stock: newStock });
           return { ...prod, stock: newStock };
         }
         return prod;
-      })
-    );
+      });
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      return updatedProducts;
+    });
 
-    setOrders((prev) => [...prev, newOrder]);
+    if (batchUpdates.length > 0) {
+      fetch('/api/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(batchUpdates),
+      }).catch(() => {});
+    }
+
+    // Si hay talleres en el pedido, rebajar cupos automáticamente
+    let updatedWorkshops: Workshop[] = [];
+    setWorkshops((prev) => {
+      updatedWorkshops = prev.map((w) => {
+        const inCartWs = cart.find(
+          (c) => c.type === 'workshop' && (c.id === w.id || c.sku === `WS-${w.id.toUpperCase()}`)
+        );
+        if (inCartWs) {
+          return { ...w, spotsAvailable: Math.max(0, w.spotsAvailable - inCartWs.quantity) };
+        }
+        return w;
+      });
+      localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(updatedWorkshops));
+      return updatedWorkshops;
+    });
+
+    const updatedOrders = [...orders, newOrder];
+    setOrders(updatedOrders);
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+
+    // Notificación en tiempo real (0ms) a todas las pestañas de administración y clientes
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        orders: updatedOrders,
+        products: updatedProducts,
+        workshops: updatedWorkshops,
+      });
+    } catch {}
+
     clearCart();
     return newOrder;
   };
@@ -1139,8 +1309,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
     const packedAt = newStatus === 'packed' ? new Date().toISOString() : undefined;
-    setOrders((prev) =>
-      prev.map((o) =>
+    let updatedOrders: Order[] = [];
+    setOrders((prev) => {
+      updatedOrders = prev.map((o) =>
         o.id === orderId
           ? {
               ...o,
@@ -1148,14 +1319,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               packedAt: packedAt || o.packedAt,
             }
           : o
-      )
-    );
+      );
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+      return updatedOrders;
+    });
 
     fetch('/api/orders', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: orderId, orderStatus: newStatus, packedAt }),
     }).catch(() => {});
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        orders: updatedOrders,
+      });
+    } catch {}
   };
 
   const updateProductStock = (
@@ -1164,8 +1344,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     minStock?: number,
     maxStock?: number
   ) => {
-    setProducts((prev) =>
-      prev.map((p) =>
+    let updatedProducts: Product[] = [];
+    setProducts((prev) => {
+      updatedProducts = prev.map((p) =>
         p.id === productId
           ? {
               ...p,
@@ -1174,20 +1355,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               maxStock: maxStock !== undefined ? maxStock : p.maxStock,
             }
           : p
-      )
-    );
+      );
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      return updatedProducts;
+    });
 
     fetch('/api/products', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: productId, stock, minStock, maxStock }),
     }).catch(() => {});
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        products: updatedProducts,
+      });
+    } catch {}
   };
 
   const toggleProductAvailability = (productId: string) => {
     let nextAvailable = false;
+    let updatedProducts: Product[] = [];
     setProducts((prev) => {
-      const updated = prev.map((p) => {
+      updatedProducts = prev.map((p) => {
         if (p.id === productId) {
           nextAvailable = p.isAvailable === false ? true : false;
           return {
@@ -1200,8 +1391,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return p;
       });
 
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updated));
-      return updated;
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      return updatedProducts;
     });
 
     // Si se desactiva el producto, eliminarlo de inmediato del carrito para que nadie lo compre por error
@@ -1213,6 +1404,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: productId, isAvailable: nextAvailable }),
     }).catch(() => {});
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        products: updatedProducts,
+      });
+    } catch {}
   };
 
   const addProduct = (productData: Omit<Product, 'id'>): Product => {
@@ -1302,15 +1500,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       body: JSON.stringify(newOrder),
     }).catch(() => {});
 
-    setWorkshops((prev) =>
-      prev.map((w) =>
+    let updatedWorkshops: Workshop[] = [];
+    setWorkshops((prev) => {
+      updatedWorkshops = prev.map((w) =>
         w.id === workshop.id
           ? { ...w, spotsAvailable: Math.max(0, w.spotsAvailable - quantity) }
           : w
-      )
-    );
+      );
+      localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(updatedWorkshops));
+      return updatedWorkshops;
+    });
 
-    setOrders((prev) => [...prev, newOrder]);
+    const updatedOrders = [...orders, newOrder];
+    setOrders(updatedOrders);
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        orders: updatedOrders,
+        workshops: updatedWorkshops,
+      });
+    } catch {}
+
     return newOrder;
   };
 

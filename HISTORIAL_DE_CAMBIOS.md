@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.3.0 - Rebaja Automática de Inventario al Confirmar Pedidos y Sincronización en Tiempo Real Sin Refrescar
+- [x] **Deducción Automática de Stock al Generar y Confirmar Pedidos ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx), [`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx)):**
+  - En [`createOrder`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) y [`createDirectInvoiceOrder`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), apenas el cliente o el personal confirma el pedido, se calculan las cantidades vendidas por SKU y por ID de producto, descontándolas de inmediato del inventario local (`Math.max(0, prod.stock - qty)`).
+  - Si el pedido contiene talleres, se descuentan automáticamente los cupos disponibles (`spotsAvailable`).
+- [x] **Sincronización en Lote (Batch) en Base de Datos Cloudflare D1 ([`products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts)):**
+  - Implementado soporte en `PUT /api/products` para recibir arreglos en lote (`[{ id, stock }]`) de todos los productos del pedido en una única petición atómica y veloz.
+- [x] **Canal de Difusión en Tiempo Real (0ms) entre Pestañas ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Integrado canal de difusión `BroadcastChannel('byfio_realtime_sync')` que transmite al instante el pedido generado y los stocks rebajados a todas las pestañas abiertas del navegador (cliente y administración).
+- [x] **Polling Inteligente Edge Anti-Drain ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Aplicado el estándar de la regla `polling-inteligente`: sondeo periódico cada 10 segundos únicamente mientras la pestaña está visible (`!document.hidden`).
+  - Pausa instantánea a **0 peticiones** cuando la pestaña se minimiza o pasa a segundo plano.
+  - Refresco inmediato automático al reenfocar la ventana (`focus` y `visibilitychange`), garantizando que el administrador vea el inventario rebajado y los pedidos nuevos sin tener que pulsar F5 o recargar la página.
+
 ### Versión 3.2.0 - Filtros Rápidos de Inventario (Existencias en Cero, No Disponibles y Combinado) y Enlace Directo a Pedidos
 - [x] **Filtros Rápidos en Módulo de Inventario ([`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
   - Incorporados 4 botones de filtrado instantáneo con contadores dinámicos en tiempo real:
