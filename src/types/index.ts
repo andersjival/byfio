@@ -2,7 +2,18 @@ export type ViewMode = 'store' | 'admin';
 
 export type InventoryMode = 'stock' | 'availability';
 
-export type AppRoute = 'home' | 'store' | 'catalogo' | 'workshops' | 'workshop-detail' | 'precios' | 'admin' | 'login' | 'metricas' | 'propuesta';
+export type AppRoute =
+  | 'home'
+  | 'store'
+  | 'catalogo'
+  | 'workshops'
+  | 'workshop-detail'
+  | 'precios'
+  | 'admin'
+  | 'login'
+  | 'metricas'
+  | 'propuesta'
+  | 'superadmin';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 
@@ -280,5 +291,22 @@ export interface SinpeCheckoutValidationResult {
   voucherAmount?: number;
   missingAmount?: number;
   requiredTotal: number;
+}
+
+export interface SuperadminSubFeature {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+}
+
+export interface SuperadminModuleConfig {
+  id: string;
+  name: string;
+  category: 'Operaciones & WMS' | 'Ventas & Caja' | 'Tienda & Catálogo' | 'Configuración & Analítica';
+  description: string;
+  iconName: string;
+  enabled: boolean;
+  features: SuperadminSubFeature[];
 }
 

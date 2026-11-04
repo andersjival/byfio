@@ -42,6 +42,7 @@ import { SinpePaymentsSection } from './components/admin/SinpePaymentsSection';
 
 import { MetricsPage } from './components/admin/MetricsPage';
 import { PropuestaPage } from './components/propuesta/PropuestaPage';
+import { SuperadminSection } from './components/superadmin/SuperadminSection';
 
 import { metricsTracker, appendRefToPath, getActiveCampaignRef } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
@@ -68,6 +69,7 @@ export const App: React.FC = () => {
     isPricingModalOpen,
     isSinpeModalOpen,
     setIsSinpeModalOpen,
+    isModuleEnabled,
   } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
@@ -96,7 +98,8 @@ export const App: React.FC = () => {
     setSelectedWorkshopId(wsId);
 
     let targetPath = '/';
-    if (newRoute === 'propuesta') targetPath = '/propuesta';
+    if (newRoute === 'superadmin') targetPath = '/superadmin';
+    else if (newRoute === 'propuesta') targetPath = '/propuesta';
     else if (newRoute === 'metricas') targetPath = '/metricas';
     else if (newRoute === 'login') targetPath = '/login';
     else if (newRoute === 'precios') targetPath = '/precios';
@@ -129,8 +132,19 @@ export const App: React.FC = () => {
   };
 
   const handleSelectAdminTab = (tab: AdminTabType) => {
+    if (tab !== 'hub' && !isModuleEnabled(tab)) {
+      navigate('admin', 'hub');
+      return;
+    }
     navigate('admin', tab);
   };
+
+  // Protección: Si el módulo activo fue desactivado por Superadmin, volver al Hub de inmediato
+  useEffect(() => {
+    if (currentRoute === 'admin' && adminTab !== 'hub' && !isModuleEnabled(adminTab)) {
+      setAdminTab('hub');
+    }
+  }, [currentRoute, adminTab, isModuleEnabled]);
 
   // Redirigir a portada si se cierra sesión estando en admin para que la cortina cubra la tienda limpia
   useEffect(() => {
@@ -276,6 +290,8 @@ export const App: React.FC = () => {
 
               {currentRoute === 'propuesta' && <PropuestaPage onNavigate={navigate} />}
 
+              {currentRoute === 'superadmin' && <SuperadminSection onNavigate={navigate} />}
+
               {currentRoute === 'admin' && (
                 !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
                   /* Puerta de Entrada Segura a Administración con URL Protegida (oculta durante la cortina de logout) */
@@ -346,8 +362,8 @@ export const App: React.FC = () => {
         )}
       </div>
 
-      {/* Footer Global: Badge animado de GeoSoft visible en todo momento excepto en la sección admin */}
-      {currentRoute !== 'admin' && (
+      {/* Footer Global: Badge animado de GeoSoft visible en todo momento excepto en la sección admin o superadmin */}
+      {currentRoute !== 'admin' && currentRoute !== 'superadmin' && (
         <footer className="w-full py-5 text-center mt-auto pb-8 z-10">
           <div className="geosoft-copyright-pill px-4 py-1.5">
             <a

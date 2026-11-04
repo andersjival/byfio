@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.9.1 - Optimización Vertical Móvil Sin Scroll y Limpieza de Encabezado de Alisto
+- [x] **Eliminación de Iconos Selectores Superiores ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Removidos por completo los botones e iconos de selección superior (`[Alisto con Código]` / `[Alisto Manual]`) de la cabecera de la ventana activa de alisto para evitar redundancia y despejar espacio.
+  - La cabecera ahora muestra únicamente la información del pedido y el botón de cierre `X`, luciendo limpia y compacta.
+- [x] **Elevación de Ventana y Diseño Móvil Cero Scroll ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Elevada la posición de la ventana hacia la parte superior en celulares (`items-start pt-1.5 sm:pt-4`).
+  - Rediseñada la visualización del producto en pantallas móviles: distribución compacta de miniatura (`w-28 h-28`), estantería en badge integrado y botones de acción accesibles (`Listo` y `Sin Existencias`), permitiendo ver el producto completo sin necesidad de hacer scroll en el celular.
+
 ### Versión 4.9.0 - Mensaje Limpio de Verificación SINPE y Activación Directa de Confirmar Pedido
 - [x] **Mensaje Estricto y Limpio de Validación ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Eliminada cualquier mención interna sobre "correo del Banco BCR" o "mensajero@bancobcr.com" en las alertas de cara al cliente.

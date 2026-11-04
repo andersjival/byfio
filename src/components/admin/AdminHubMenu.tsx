@@ -15,7 +15,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate }) => {
-  const { orders, products, workshops, userProfiles, hasPermission, sinpeTransactions } = useApp();
+  const { orders, products, workshops, userProfiles, hasPermission, sinpeTransactions, isModuleEnabled } = useApp();
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
   const copyCatalogLink = () => {
@@ -166,63 +166,65 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       </div>
 
       {/* Sección Catálogo Comercial Online (Aparece de abajo hacia arriba) */}
-      <div className="pt-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/70 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
-              <BookOpen className="w-4 h-4" />
+      <div className="pt-2 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        {isModuleEnabled('catalogo') && (
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/70 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900">
+                  Catálogo Comercial Online (Vista en Lista &amp; Pedidos)
+                </h4>
+                <p className="text-[11px] text-slate-500 font-sans">
+                  Comparte el enlace oficial con clientes mayoristas o en redes para que ordenen directo por WhatsApp y SINPE.
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900">
-                Catálogo Comercial Online (Vista en Lista &amp; Pedidos)
-              </h4>
-              <p className="text-[11px] text-slate-500 font-sans">
-                Comparte el enlace oficial con clientes mayoristas o en redes para que ordenen directo por WhatsApp y SINPE.
-              </p>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={copyCatalogLink}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
+                title="Copiar link directo del catálogo online"
+              >
+                {copiedCatalog ? (
+                  <>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>¡Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="w-3.5 h-3.5 text-fio-pink" />
+                    <span>Copiar Link</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={shareCatalogWhatsApp}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
+                title="Compartir catálogo completo por WhatsApp"
+              >
+                <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Compartir por WhatsApp</span>
+              </button>
+
+              <a
+                href="/catalogo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-xs active:scale-95 transition-all"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
+                <span>Ver Catálogo</span>
+              </a>
             </div>
           </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={copyCatalogLink}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
-              title="Copiar link directo del catálogo online"
-            >
-              {copiedCatalog ? (
-                <>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>¡Copiado!</span>
-                </>
-              ) : (
-                <>
-                  <Link2 className="w-3.5 h-3.5 text-fio-pink" />
-                  <span>Copiar Link</span>
-                </>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={shareCatalogWhatsApp}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
-              title="Compartir catálogo completo por WhatsApp"
-            >
-              <Share2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Compartir por WhatsApp</span>
-            </button>
-
-            <a
-              href="/catalogo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-xs active:scale-95 transition-all"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
-              <span>Ver Catálogo</span>
-            </a>
-          </div>
-        </div>
+        )}
 
         {/* Tarjeta de Acceso a la Propuesta Oficial para el Dueño */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#2D1B4E] via-[#4A1E6D] to-[#1E1035] text-white shadow-md border border-purple-600/40">
@@ -259,38 +261,40 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
         </div>
 
         {/* Tarjeta de Acceso Rápido a Métricas & Rastreo de Enlaces */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 text-white shadow-md border border-purple-800/40">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center shrink-0 text-fio-yellow">
-              <BarChart3 className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bubble font-bold text-sm text-white">
-                  Métricas de Visitas & Rastreo de Enlaces (/metricas)
-                </h3>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200 font-mono flex items-center gap-1">
-                  <Lock className="w-3 h-3" /> Privado
-                </span>
+        {isModuleEnabled('metricas') && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 text-white shadow-md border border-purple-800/40">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center shrink-0 text-fio-yellow">
+                <BarChart3 className="w-5 h-5" />
               </div>
-              <p className="text-[11px] text-purple-200/80 font-sans">
-                Genera links específicos, rastrea aperturas por campañas, dispositivos (PC vs Celular) y preferencias por sección.
-              </p>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bubble font-bold text-sm text-white">
+                    Métricas de Visitas & Rastreo de Enlaces (/metricas)
+                  </h3>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200 font-mono flex items-center gap-1">
+                    <Lock className="w-3 h-3" /> Privado
+                  </span>
+                </div>
+                <p className="text-[11px] text-purple-200/80 font-sans">
+                  Genera links específicos, rastrea aperturas por campañas, dispositivos (PC vs Celular) y preferencias por sección.
+                </p>
+              </div>
             </div>
-          </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              if (onNavigate) onNavigate('metricas');
-              else window.location.href = '/metricas';
-            }}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white text-purple-950 hover:bg-purple-50 text-xs font-bubble font-bold shadow-md active:scale-95 transition-all shrink-0 cursor-pointer"
-          >
-            <BarChart3 className="w-3.5 h-3.5 text-fio-purple" />
-            <span>Abrir Panel de Métricas</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigate) onNavigate('metricas');
+                else window.location.href = '/metricas';
+              }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white text-purple-950 hover:bg-purple-50 text-xs font-bubble font-bold shadow-md active:scale-95 transition-all shrink-0 cursor-pointer"
+            >
+              <BarChart3 className="w-3.5 h-3.5 text-fio-purple" />
+              <span>Abrir Panel de Métricas</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

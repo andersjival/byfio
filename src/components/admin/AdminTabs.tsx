@@ -109,7 +109,7 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
         )}
 
         {/* Tab 5: Pagos SINPE BCR */}
-        {(hasPermission('reports') || hasPermission('sinpe')) && (
+        {hasPermission('sinpe') && (
           <button
             type="button"
             onClick={() => setActiveTab('sinpe')}

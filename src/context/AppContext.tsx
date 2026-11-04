@@ -3,10 +3,17 @@ import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
-  SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult
+  SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
+  SuperadminModuleConfig, SuperadminSubFeature
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
+import {
+  SUPERADMIN_CREDENTIALS,
+  SUPERADMIN_STORAGE_KEY,
+  SUPERADMIN_AUTH_KEY,
+  INITIAL_SUPERADMIN_MODULES
+} from '../utils/superadminModulesData';
 import { playAudioBeep } from '../utils/formatters';
 import { playNewOrderChimeSound } from '../utils/soundEffects';
 import { isHomeLocation } from '../utils/routeHelpers';
@@ -283,6 +290,16 @@ interface AppContextType {
   updateSinpeSettings: (settings: Partial<SinpeSettings>) => void;
   isSinpeModalOpen: boolean;
   setIsSinpeModalOpen: (open: boolean) => void;
+  superadminModules: SuperadminModuleConfig[];
+  isSuperAdminAuthenticated: boolean;
+  loginSuperAdmin: (user: string, pass: string) => { success: boolean; error?: string };
+  logoutSuperAdmin: () => void;
+  toggleSuperadminModule: (moduleId: string, enabled?: boolean) => void;
+  toggleSuperadminFeature: (moduleId: string, featureId: string, enabled?: boolean) => void;
+  resetSuperadminModules: () => void;
+  setAllSuperadminModules: (enabled: boolean) => void;
+  isModuleEnabled: (moduleIdOrAlias: string) => boolean;
+  isFeatureEnabled: (moduleId: string, featureId: string) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -308,6 +325,7 @@ const STORAGE_KEYS = {
   SINPE_TRANSACTIONS: 'byfio_sinpe_transactions_v1',
   SINPE_SETTINGS: 'byfio_sinpe_settings_v1',
   MISSING_INVENTORY: 'byfio_missing_inventory_v1',
+  SUPERADMIN_MODULES: SUPERADMIN_STORAGE_KEY,
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -752,6 +770,151 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return newOrder;
   };
 
+  // -------------------------------------------------------------
+  // ESTADO Y MÉTODOS DE SUPERADMINISTRADOR (GESTIÓN MODULAR GLOBAL)
+  // -------------------------------------------------------------
+  const [superadminModules, setSuperadminModules] = useState<SuperadminModuleConfig[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.SUPERADMIN_MODULES);
+      if (saved) {
+        const parsed: SuperadminModuleConfig[] = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return INITIAL_SUPERADMIN_MODULES.map((initialMod) => {
+            const found = parsed.find((p) => p.id === initialMod.id);
+            if (!found) return initialMod;
+            return {
+              ...initialMod,
+              enabled: found.enabled,
+              features: initialMod.features.map((feat) => {
+                const foundFeat = found.features?.find((f) => f.id === feat.id);
+                return foundFeat ? { ...feat, enabled: foundFeat.enabled } : feat;
+              }),
+            };
+          });
+        }
+      }
+    } catch {}
+    return INITIAL_SUPERADMIN_MODULES;
+  });
+
+  const [isSuperAdminAuthenticated, setIsSuperAdminAuthenticated] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(SUPERADMIN_AUTH_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const saveSuperadminModules = (newModules: SuperadminModuleConfig[]) => {
+    setSuperadminModules(newModules);
+    try {
+      localStorage.setItem(STORAGE_KEYS.SUPERADMIN_MODULES, JSON.stringify(newModules));
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        superadminModules: newModules,
+      });
+    } catch {}
+  };
+
+  const toggleSuperadminModule = (moduleId: string, enabled?: boolean) => {
+    const updated = superadminModules.map((m) => {
+      if (m.id === moduleId) {
+        const nextState = enabled !== undefined ? enabled : !m.enabled;
+        return { ...m, enabled: nextState };
+      }
+      return m;
+    });
+    saveSuperadminModules(updated);
+  };
+
+  const toggleSuperadminFeature = (moduleId: string, featureId: string, enabled?: boolean) => {
+    const updated = superadminModules.map((m) => {
+      if (m.id === moduleId) {
+        return {
+          ...m,
+          features: m.features.map((f) => {
+            if (f.id === featureId) {
+              const nextState = enabled !== undefined ? enabled : !f.enabled;
+              return { ...f, enabled: nextState };
+            }
+            return f;
+          }),
+        };
+      }
+      return m;
+    });
+    saveSuperadminModules(updated);
+  };
+
+  const resetSuperadminModules = () => {
+    saveSuperadminModules(INITIAL_SUPERADMIN_MODULES);
+  };
+
+  const setAllSuperadminModules = (enabled: boolean) => {
+    const updated = superadminModules.map((m) => ({
+      ...m,
+      enabled,
+      features: m.features.map((f) => ({ ...f, enabled })),
+    }));
+    saveSuperadminModules(updated);
+  };
+
+  const normalizeModuleId = (id: string): string => {
+    const clean = id.trim().toLowerCase();
+    if (clean === 'pedidos' || clean === 'orders') return 'orders';
+    if (clean === 'facturacion' || clean === 'billing') return 'billing';
+    if (clean === 'inventario' || clean === 'inventory') return 'inventory';
+    if (clean === 'faltantes' || clean === 'missing_inventory' || clean === 'missing-inventory') return 'missing_inventory';
+    if (clean === 'caja' || clean === 'reportes' || clean === 'reports') return 'reports';
+    if (clean === 'sinpe') return 'sinpe';
+    if (clean === 'talleres' || clean === 'workshops') return 'workshops';
+    if (clean === 'precios' || clean === 'stickers' || clean === 'pricing') return 'pricing';
+    if (clean === 'usuarios' || clean === 'perfiles' || clean === 'users') return 'users';
+    if (clean === 'metricas') return 'metricas';
+    if (clean === 'catalogo') return 'catalogo';
+    if (clean === 'tienda' || clean === 'store') return 'store';
+    return clean;
+  };
+
+  const isModuleEnabled = (moduleIdOrAlias: string): boolean => {
+    if (moduleIdOrAlias === 'hub') return true;
+    const normalized = normalizeModuleId(moduleIdOrAlias);
+    const mod = superadminModules.find((m) => m.id === normalized);
+    return mod ? mod.enabled : true;
+  };
+
+  const isFeatureEnabled = (moduleId: string, featureId: string): boolean => {
+    const normalized = normalizeModuleId(moduleId);
+    const mod = superadminModules.find((m) => m.id === normalized);
+    if (!mod) return true;
+    if (!mod.enabled) return false;
+    const feat = mod.features.find((f) => f.id === featureId);
+    return feat ? feat.enabled : true;
+  };
+
+  const loginSuperAdmin = (user: string, pass: string) => {
+    const trimmedUser = user.trim().toLowerCase();
+    if (
+      (trimmedUser === SUPERADMIN_CREDENTIALS.username.toLowerCase() ||
+        trimmedUser === SUPERADMIN_CREDENTIALS.secondaryUsername.toLowerCase()) &&
+      pass === SUPERADMIN_CREDENTIALS.password
+    ) {
+      setIsSuperAdminAuthenticated(true);
+      try {
+        localStorage.setItem(SUPERADMIN_AUTH_KEY, 'true');
+      } catch {}
+      return { success: true };
+    }
+    return { success: false, error: 'Usuario o contraseña de Superadmin incorrectos.' };
+  };
+
+  const logoutSuperAdmin = () => {
+    setIsSuperAdminAuthenticated(false);
+    try {
+      localStorage.removeItem(SUPERADMIN_AUTH_KEY);
+    } catch {}
+  };
+
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
@@ -762,6 +925,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const hasPermission = (tab: string) => {
+    // Si el módulo está desactivado globalmente por el Superadmin, se oculta para todos en el panel
+    if (!isModuleEnabled(tab)) return false;
     if (!currentUser) return false;
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
     if (tab === 'hub') return true;
@@ -1024,6 +1189,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
         if (Array.isArray(event.data.sinpeTransactions)) {
           setSinpeTransactions(event.data.sinpeTransactions);
+        }
+        if (Array.isArray(event.data.superadminModules)) {
+          setSuperadminModules(event.data.superadminModules);
         }
       }
     };
@@ -2404,6 +2572,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateSinpeSettings,
         isSinpeModalOpen,
         setIsSinpeModalOpen,
+        superadminModules,
+        isSuperAdminAuthenticated,
+        loginSuperAdmin,
+        logoutSuperAdmin,
+        toggleSuperadminModule,
+        toggleSuperadminFeature,
+        resetSuperadminModules,
+        setAllSuperadminModules,
+        isModuleEnabled,
+        isFeatureEnabled,
       }}
     >
       {children}

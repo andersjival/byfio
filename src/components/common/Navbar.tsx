@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectAdminHub,
   isAdminHub = false,
 }) => {
-  const { cart, setIsCartOpen, colorTheme, setColorTheme, currentUser, logoutUser } = useApp();
+  const { cart, setIsCartOpen, colorTheme, setColorTheme, currentUser, logoutUser, isModuleEnabled } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [likePopped, setLikePopped] = useState(false);
 
@@ -59,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </button>
 
-          {currentRoute === 'admin' && (
+          {(currentRoute === 'admin' || currentRoute === 'superadmin') && (
             <button
               type="button"
               onClick={() => handleNav('home')}
@@ -73,7 +73,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Links de Navegación de Páginas Principales con Estilo Neumórfico Táctil (Solo en Modo Público) */}
-        {currentRoute !== 'admin' && (
+        {currentRoute !== 'admin' && currentRoute !== 'superadmin' && (
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2 p-1 xl:p-1.5 rounded-2xl bg-[#ECEEF2] shadow-neuInset border border-white/60 shrink">
             <button
               type="button"
@@ -87,53 +87,61 @@ export const Navbar: React.FC<NavbarProps> = ({
               Inicio
             </button>
 
-            <button
-              type="button"
-              onClick={() => handleNav('workshops')}
-              className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
-                currentRoute === 'workshops' || currentRoute === 'workshop-detail'
-                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
-              }`}
-            >
-              Talleres
-            </button>
+            {isModuleEnabled('workshops') && (
+              <button
+                type="button"
+                onClick={() => handleNav('workshops')}
+                className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                  currentRoute === 'workshops' || currentRoute === 'workshop-detail'
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                }`}
+              >
+                Talleres
+              </button>
+            )}
 
-            <button
-              type="button"
-              onClick={() => handleNav('store')}
-              className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
-                currentRoute === 'store'
-                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
-              }`}
-            >
-              Tienda
-            </button>
+            {isModuleEnabled('store') && (
+              <button
+                type="button"
+                onClick={() => handleNav('store')}
+                className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                  currentRoute === 'store'
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                }`}
+              >
+                Tienda
+              </button>
+            )}
 
-            <button
-              type="button"
-              onClick={() => handleNav('catalogo')}
-              className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
-                currentRoute === 'catalogo'
-                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
-              }`}
-            >
-              Catálogo
-            </button>
+            {isModuleEnabled('catalogo') && (
+              <button
+                type="button"
+                onClick={() => handleNav('catalogo')}
+                className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                  currentRoute === 'catalogo'
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                }`}
+              >
+                Catálogo
+              </button>
+            )}
 
-            <button
-              type="button"
-              onClick={() => handleNav('precios')}
-              className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
-                currentRoute === 'precios'
-                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
-              }`}
-            >
-              Precios
-            </button>
+            {isModuleEnabled('pricing') && (
+              <button
+                type="button"
+                onClick={() => handleNav('precios')}
+                className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                  currentRoute === 'precios'
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                }`}
+              >
+                Precios
+              </button>
+            )}
           </nav>
         )}
 
@@ -411,50 +419,58 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             Inicio
           </button>
-          <button
-            type="button"
-            onClick={() => handleNav('workshops')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
-              currentRoute === 'workshops' || currentRoute === 'workshop-detail'
-                ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
-            }`}
-          >
-            Talleres
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNav('store')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
-              currentRoute === 'store'
-                ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
-            }`}
-          >
-            Tienda
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNav('catalogo')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
-              currentRoute === 'catalogo'
-                ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn'
-            }`}
-          >
-            Catálogo Online
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNav('precios')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
-              currentRoute === 'precios'
-                ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn'
-            }`}
-          >
-            Precios Stickers
-          </button>
+          {isModuleEnabled('workshops') && (
+            <button
+              type="button"
+              onClick={() => handleNav('workshops')}
+              className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
+                currentRoute === 'workshops' || currentRoute === 'workshop-detail'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
+              }`}
+            >
+              Talleres
+            </button>
+          )}
+          {isModuleEnabled('store') && (
+            <button
+              type="button"
+              onClick={() => handleNav('store')}
+              className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
+                currentRoute === 'store'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn'
+              }`}
+            >
+              Tienda
+            </button>
+          )}
+          {isModuleEnabled('catalogo') && (
+            <button
+              type="button"
+              onClick={() => handleNav('catalogo')}
+              className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
+                currentRoute === 'catalogo'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn'
+              }`}
+            >
+              Catálogo Online
+            </button>
+          )}
+          {isModuleEnabled('pricing') && (
+            <button
+              type="button"
+              onClick={() => handleNav('precios')}
+              className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
+                currentRoute === 'precios'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn'
+              }`}
+            >
+              Precios Stickers
+            </button>
+          )}
 
           <button
             type="button"
@@ -497,6 +513,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                     Panel Admin
                   </button>
                 )}
+                <button
+                  type="button"
+                  onClick={() => handleNav('superadmin')}
+                  className="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bubble font-bold text-center flex items-center justify-center gap-1 transition-all"
+                  title="Panel Maestro Superadmin"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-pink-400" />
+                  <span>Superadmin</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => {

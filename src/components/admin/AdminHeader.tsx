@@ -4,7 +4,7 @@ import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
 import {
   Package, AlertTriangle, ShoppingCart, RefreshCw,
-  FileText, Palette, DollarSign, Landmark
+  FileText, Palette, DollarSign, Landmark, Shield
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -25,7 +25,8 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
     colorTheme,
     typographyTheme,
     setIsSinpeModalOpen,
-    sinpeTransactions
+    sinpeTransactions,
+    isModuleEnabled,
   } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
 
@@ -50,6 +51,20 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
 
         {/* Acciones Rápidas & Botón Discreto de Personalización Visual */}
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Botón de Acceso Superadmin */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onNavigate) onNavigate('superadmin');
+              else window.location.href = '/superadmin';
+            }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bubble font-bold border border-slate-700 shadow-xs transition-all active:scale-95 cursor-pointer"
+            title="Abrir panel maestro de Superadmin (Activar/Desactivar Módulos)"
+          >
+            <Shield className="w-3.5 h-3.5 text-pink-400" />
+            <span>Superadmin</span>
+          </button>
+
           {/* Botón de Propuesta Oficial para el Dueño */}
           <button
             type="button"
@@ -79,20 +94,22 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
           </button>
 
           {/* Botón Módulo SINPE BCR */}
-          <button
-            type="button"
-            onClick={() => onSelectTab ? onSelectTab('sinpe') : (onNavigate ? onNavigate('admin') : setIsSinpeModalOpen(true))}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
-            title="Ir al Módulo Independiente de Pagos SINPE Móvil Banco BCR"
-          >
-            <Landmark className="w-3.5 h-3.5 text-purple-700" />
-            <span>SINPE BCR</span>
-            {sinpeTransactions.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-purple-800 text-white text-[10px] font-bold">
-                {sinpeTransactions.length}
-              </span>
-            )}
-          </button>
+          {isModuleEnabled('sinpe') && (
+            <button
+              type="button"
+              onClick={() => onSelectTab ? onSelectTab('sinpe') : (onNavigate ? onNavigate('admin') : setIsSinpeModalOpen(true))}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+              title="Ir al Módulo Independiente de Pagos SINPE Móvil Banco BCR"
+            >
+              <Landmark className="w-3.5 h-3.5 text-purple-700" />
+              <span>SINPE BCR</span>
+              {sinpeTransactions.length > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-purple-800 text-white text-[10px] font-bold">
+                  {sinpeTransactions.length}
+                </span>
+              )}
+            </button>
+          )}
 
           {/* Lista de Compra */}
           <button

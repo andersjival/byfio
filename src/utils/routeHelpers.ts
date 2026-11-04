@@ -106,6 +106,9 @@ export const parseRouteFromLocation = (): RouteInfo => {
   }
 
   // Rutas públicas y privadas específicas
+  if (path.includes('/superadmin') || hash.includes('superadmin') || seccionParam === 'superadmin') {
+    return { route: 'superadmin', adminTab: 'hub' };
+  }
   if (path.includes('/propuesta') || hash.includes('propuesta') || seccionParam === 'propuesta') {
     return { route: 'propuesta', adminTab: 'hub' };
   }
