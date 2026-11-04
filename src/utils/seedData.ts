@@ -436,6 +436,32 @@ export const INITIAL_SINPE_TRANSACTIONS: SinpeTransaction[] = [
     status: 'verified',
     createdAt: new Date().toISOString(),
   },
+  {
+    id: 'sinpe-bcr-004',
+    referenceNumber: 'BCR-20261104-10000',
+    originPhone: '8712-4433',
+    originName: 'MARÍA JOSÉ CASTRO',
+    originBank: 'BANCO DE COSTA RICA',
+    amount: 10000,
+    description: 'Pago parcial / abono tienda by.fio',
+    transactionDate: '2026-11-04 14:05:00',
+    category: 'store',
+    status: 'verified',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'sinpe-bcr-005',
+    referenceNumber: 'BCR-20261104-05000',
+    originPhone: '8712-4433',
+    originName: 'MARÍA JOSÉ CASTRO',
+    originBank: 'BANCO DE COSTA RICA',
+    amount: 5000,
+    description: 'Segundo pago faltante SINPE by.fio',
+    transactionDate: '2026-11-04 14:10:00',
+    category: 'store',
+    status: 'verified',
+    createdAt: new Date().toISOString(),
+  },
 ];
 
 export const INITIAL_SINPE_SETTINGS: SinpeSettings = {

@@ -60,7 +60,7 @@ const ensureTableExists = async (db: any) => {
   `).run();
 };
 
-export const onRequestGet = async (context: { env: Env }) => {
+export const onRequestGet = async (context: { env: Env; request: Request }) => {
   try {
     if (!context.env.DB) {
       return new Response(JSON.stringify({ error: 'DB binding not available' }), { status: 500 });
@@ -68,9 +68,21 @@ export const onRequestGet = async (context: { env: Env }) => {
 
     await ensureTableExists(context.env.DB);
 
-    const { results } = await context.env.DB.prepare(
-      'SELECT * FROM sinpe_transactions ORDER BY created_at DESC'
-    ).all();
+    const url = new URL(context.request.url);
+    const ref = url.searchParams.get('ref');
+
+    let results: any[];
+    if (ref) {
+      const q = await context.env.DB.prepare(
+        'SELECT * FROM sinpe_transactions WHERE LOWER(TRIM(reference_number)) = LOWER(TRIM(?)) ORDER BY created_at DESC'
+      ).bind(ref).all();
+      results = q.results || [];
+    } else {
+      const q = await context.env.DB.prepare(
+        'SELECT * FROM sinpe_transactions ORDER BY created_at DESC'
+      ).all();
+      results = q.results || [];
+    }
 
     const transactions = (results || []).map(mapRowToTransaction);
     return new Response(JSON.stringify(transactions), {
@@ -201,6 +213,32 @@ export const onRequestDelete = async (context: { env: Env; request: Request }) =
     await context.env.DB.prepare('DELETE FROM sinpe_transactions WHERE id = ?').bind(id).run();
 
     return new Response(JSON.stringify({ success: true, id }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error: any) {
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+  }
+};
+
+export const onRequestPatch = async (context: { env: Env; request: Request }) => {
+  try {
+    if (!context.env.DB) {
+      return new Response(JSON.stringify({ error: 'DB binding not available' }), { status: 500 });
+    }
+
+    await ensureTableExists(context.env.DB);
+    const body: any = await context.request.json();
+    const { referenceNumber, orderId } = body;
+
+    if (!referenceNumber || !orderId) {
+      return new Response(JSON.stringify({ error: 'referenceNumber y orderId requeridos' }), { status: 400 });
+    }
+
+    await context.env.DB.prepare(
+      'UPDATE sinpe_transactions SET order_id = ? WHERE LOWER(TRIM(reference_number)) = LOWER(TRIM(?))'
+    ).bind(orderId, referenceNumber).run();
+
+    return new Response(JSON.stringify({ success: true, referenceNumber, orderId }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error: any) {

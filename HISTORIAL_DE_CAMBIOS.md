@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.6.0 - Eliminación de Botón de Envío de Comprobante y Marcado Inmediato de Pago Verificado
+- [x] **Eliminación Total de Botones de Envío de Comprobante ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx), [`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - Removido el pie y botón `"Enviar Comprobante"` de WhatsApp de la tarjeta de cuentas bancarias.
+  - Removido el botón redundante de `"Enviar por WhatsApp"` en la pantalla posterior al pago.
+- [x] **Marcado Inmediato de Pedido Pagado y Verificado ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx), [`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - Al validar y confirmar la orden, el cliente visualiza de inmediato la tarjeta destacada de transacción acreditada: `"Pedido Pagado por SINPE Móvil — Ya Verificado"`.
+  - En la cola de administración de pedidos se refleja instantáneamente el badge en verde esmeralda: `"Pagado por SINPE Móvil (Verificado)"` con el número de comprobante/referencia guardado.
+
 ### Versión 4.5.0 - Validación Estricta de Uso Único de Comprobantes SINPE Móvil y Alerta de Referencia Reutilizada
 - [x] **Regla Estricta de Validación de Uso Único ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Implementada función universal `validateSinpeReference(ref)` que verifica si un número de comprobante o referencia ya fue acreditado o utilizado con anterioridad en cualquier orden, taller o facturación rápida.

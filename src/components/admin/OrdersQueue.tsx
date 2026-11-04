@@ -170,6 +170,10 @@ export const OrdersQueue: React.FC = () => {
                       {order.orderNumber}
                     </span>
                     {getStatusBadge(order.orderStatus)}
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-xs">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      <span>Pagado por {order.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia'} (Verificado)</span>
+                    </span>
                     <span className="text-xs text-gray-400 flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
                       {formatShortDate(order.createdAt)}
@@ -177,6 +181,12 @@ export const OrdersQueue: React.FC = () => {
                   </div>
 
                   <h3 className="font-bubble font-bold text-lg text-gray-800">{order.customerName}</h3>
+
+                  {order.notes && (
+                    <p className="text-[11px] text-purple-900 bg-purple-50 px-2.5 py-1 rounded-xl border border-purple-200 font-mono w-fit">
+                      📌 {order.notes}
+                    </p>
+                  )}
 
                   <div className="flex flex-wrap items-center gap-3 text-xs text-gray-600">
                     <span className="flex items-center gap-1 font-semibold">

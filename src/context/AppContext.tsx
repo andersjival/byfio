@@ -3,7 +3,7 @@ import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
-  SinpeTransaction, SinpeSettings, InventoryMissingReport
+  SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -267,6 +267,18 @@ interface AppContextType {
     message: string;
     transaction?: SinpeTransaction;
   };
+  verifySinpePaymentForCheckout: (
+    ref: string,
+    requiredTotal: number,
+    isSecondVoucher?: boolean,
+    firstVoucherRef?: string
+  ) => Promise<SinpeCheckoutValidationResult>;
+  markSinpeTransactionUsed: (referenceNumber: string, orderId: string) => void;
+  simulateBcrEmailNotification: (
+    referenceNumber: string,
+    amount: number,
+    clientName?: string
+  ) => SinpeTransaction;
   deleteSinpeTransaction: (id: string) => void;
   updateSinpeSettings: (settings: Partial<SinpeSettings>) => void;
   isSinpeModalOpen: boolean;
@@ -2081,6 +2093,181 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   };
 
+  const verifySinpePaymentForCheckout = async (
+    ref: string,
+    requiredTotal: number,
+    isSecondVoucher: boolean = false,
+    firstVoucherRef?: string
+  ): Promise<SinpeCheckoutValidationResult> => {
+    const cleanRef = ref.trim().toLowerCase();
+    if (!cleanRef) {
+      return {
+        status: 'not_found',
+        message: 'Por favor digite el número de referencia de la transferencia.',
+        requiredTotal,
+      };
+    }
+
+    if (isSecondVoucher && firstVoucherRef && cleanRef === firstVoucherRef.trim().toLowerCase()) {
+      return {
+        status: 'already_used',
+        message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
+        requiredTotal,
+      };
+    }
+
+    // 1. Buscar en la lista local de notificaciones BCR
+    let foundTx = sinpeTransactions.find(
+      (tx) => tx.referenceNumber.trim().toLowerCase() === cleanRef
+    );
+
+    // 2. Si no se encontró localmente, consultar la base de datos de correos en Cloudflare D1
+    if (!foundTx) {
+      try {
+        const res = await fetch(`/api/sinpe-transactions?ref=${encodeURIComponent(cleanRef)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            foundTx = data.find((t: any) => t.referenceNumber.trim().toLowerCase() === cleanRef);
+            if (foundTx) {
+              setSinpeTransactions((prev) => [foundTx!, ...prev.filter((p) => p.referenceNumber !== foundTx!.referenceNumber)]);
+            }
+          }
+        }
+      } catch {}
+    }
+
+    // 3. Si no existe en los correos del Banco BCR
+    if (!foundTx) {
+      return {
+        status: 'not_found',
+        message: `⚠️ No se encontró ninguna notificación de correo del Banco BCR con el comprobante #${ref.trim()}. El sistema busca en los correos de mensajero@bancobcr.com para verificar el número de referencia y el monto exacto. Verifica tu comprobante bancario.`,
+        requiredTotal,
+      };
+    }
+
+    // 4. Si ya fue utilizado por una orden previa
+    if (foundTx.orderId) {
+      return {
+        status: 'already_used',
+        message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
+        transaction: foundTx,
+        requiredTotal,
+      };
+    }
+
+    const alreadyUsedInOrders = orders.some(
+      (o) => o.notes && o.notes.toLowerCase().includes(cleanRef)
+    );
+    if (alreadyUsedInOrders) {
+      return {
+        status: 'already_used',
+        message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
+        transaction: foundTx,
+        requiredTotal,
+      };
+    }
+
+    const voucherAmount = foundTx.amount;
+
+    // 5. Comparación estricta de montos: Tiene que coincidir siempre con el correo
+    if (voucherAmount === requiredTotal) {
+      return {
+        status: 'valid_exact',
+        message: `¡Pago verificado con éxito! Comprobante #${foundTx.referenceNumber} coincide con el correo del Banco BCR por el monto exacto de ₡${voucherAmount.toLocaleString('es-CR')}.`,
+        transaction: foundTx,
+        voucherAmount,
+        missingAmount: 0,
+        requiredTotal,
+      };
+    }
+
+    if (voucherAmount < requiredTotal) {
+      const missingAmount = requiredTotal - voucherAmount;
+      return {
+        status: 'invalid_incomplete',
+        message: `⚠️ Comprobante con monto incompleto. El comprobante #${foundTx.referenceNumber} encontrado en el correo es por ₡${voucherAmount.toLocaleString('es-CR')}, pero el total a pagar es ₡${requiredTotal.toLocaleString('es-CR')}. Te faltó por pagar ₡${missingAmount.toLocaleString('es-CR')}. Por favor realiza otra transferencia SINPE Móvil y digita el comprobante del faltante.`,
+        transaction: foundTx,
+        voucherAmount,
+        missingAmount,
+        requiredTotal,
+      };
+    }
+
+    return {
+      status: 'invalid_mismatch',
+      message: `⚠️ Monto inválido. El comprobante #${foundTx.referenceNumber} en el correo del Banco BCR es por ₡${voucherAmount.toLocaleString('es-CR')}, pero el total a pagar es ₡${requiredTotal.toLocaleString('es-CR')}. El monto y el número de referencia tienen que coincidir exactamente con el correo.`,
+      transaction: foundTx,
+      voucherAmount,
+      missingAmount: 0,
+      requiredTotal,
+    };
+  };
+
+  const markSinpeTransactionUsed = (referenceNumber: string, orderId: string) => {
+    const cleanRef = referenceNumber.trim().toLowerCase();
+    const updated = sinpeTransactions.map((tx) =>
+      tx.referenceNumber.trim().toLowerCase() === cleanRef
+        ? { ...tx, orderId }
+        : tx
+    );
+    setSinpeTransactions(updated);
+    localStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(updated));
+
+    fetch('/api/sinpe-transactions', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ referenceNumber, orderId }),
+    }).catch(() => {});
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        sinpeTransactions: updated,
+      });
+    } catch {}
+  };
+
+  const simulateBcrEmailNotification = (
+    referenceNumber: string,
+    amount: number,
+    clientName: string = 'Cliente SINPE Móvil BCR'
+  ): SinpeTransaction => {
+    const newTx: SinpeTransaction = {
+      id: `sinpe-sim-${Date.now()}`,
+      referenceNumber: referenceNumber.trim(),
+      originPhone: '8888-4444',
+      originName: clientName.toUpperCase(),
+      originBank: 'BANCO DE COSTA RICA',
+      amount,
+      description: `Pago SINPE notificado por mensajero@bancobcr.com`,
+      transactionDate: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      category: 'store',
+      status: 'verified',
+      rawEmail: `De: mensajero@bancobcr.com\nAsunto: SINPE MÓVIL: Notificación de transacción realizada\nMonto: ₡${amount}\nReferencia: ${referenceNumber}\nOrigen: ${clientName}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    const nextTxs = [newTx, ...sinpeTransactions.filter(t => t.referenceNumber.trim().toLowerCase() !== referenceNumber.trim().toLowerCase())];
+    setSinpeTransactions(nextTxs);
+    localStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(nextTxs));
+
+    fetch('/api/sinpe-transactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newTx),
+    }).catch(() => {});
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        sinpeTransactions: nextTxs,
+      });
+    } catch {}
+
+    return newTx;
+  };
+
   const updateSinpeSettings = (updates: Partial<SinpeSettings>) => {
     setSinpeSettings((prev) => {
       const next = { ...prev, ...updates };
@@ -2210,6 +2397,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         sinpeSettings,
         registerSinpeTransaction,
         validateSinpeReference,
+        verifySinpePaymentForCheckout,
+        markSinpeTransactionUsed,
+        simulateBcrEmailNotification,
         deleteSinpeTransaction,
         updateSinpeSettings,
         isSinpeModalOpen,

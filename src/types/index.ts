@@ -273,3 +273,12 @@ export interface SinpeSettings {
   autoVerify: boolean; // Auto-verificación de referencias activada
 }
 
+export interface SinpeCheckoutValidationResult {
+  status: 'valid_exact' | 'invalid_incomplete' | 'invalid_mismatch' | 'already_used' | 'not_found';
+  message: string;
+  transaction?: SinpeTransaction;
+  voucherAmount?: number;
+  missingAmount?: number;
+  requiredTotal: number;
+}
+

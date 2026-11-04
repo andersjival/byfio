@@ -3,8 +3,9 @@ import { useApp } from '../../context/AppContext';
 import { Order } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { X, CheckCircle, Truck, Store, ArrowRight, MessageCircle, Printer, AlertTriangle, Hash, Lock, CheckCircle2 } from 'lucide-react';
-import { PaymentAccountsCard } from '../common/PaymentAccountsCard';
+import { PaymentAccountsCard, PartialPaymentInfo } from '../common/PaymentAccountsCard';
 import { playBubblePopSound } from '../../utils/soundEffects';
+import { playAudioBeep } from '../../utils/formatters';
 import confetti from 'canvas-confetti';
 
 interface CheckoutModalProps {
@@ -20,6 +21,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     setInvoiceOrder,
     validateSinpeReference,
     registerSinpeTransaction,
+    verifySinpePaymentForCheckout,
+    markSinpeTransactionUsed,
+    simulateBcrEmailNotification,
   } = useApp();
 
   const [deliveryMethod, setDeliveryMethod] = useState<'envio' | 'retiro'>('envio');
@@ -28,6 +32,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   const [shippingAddress, setShippingAddress] = useState('');
   const [paymentTab, setPaymentTab] = useState<'sinpe' | 'transferencia'>('sinpe');
   const [sinpeReference, setSinpeReference] = useState('');
+  const [secondSinpeReference, setSecondSinpeReference] = useState('');
+  const [partialPayment, setPartialPayment] = useState<PartialPaymentInfo | null>(null);
   const [isPaymentValidated, setIsPaymentValidated] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [refValidationError, setRefValidationError] = useState<string | null>(null);
@@ -48,29 +54,168 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     }
   };
 
-  const handleValidatePayment = () => {
+  const handleSecondRefChange = (val: string) => {
+    setSecondSinpeReference(val);
+    setRefValidationError(null);
+  };
+
+  const handleResetPartialPayment = () => {
+    setPartialPayment(null);
+    setSecondSinpeReference('');
+    setRefValidationError(null);
+    setIsPaymentValidated(false);
+  };
+
+  // Validación estricta con búsqueda directa en correos del BCR
+  const handleValidatePayment = async () => {
     const clean = sinpeReference.trim();
-    if (!clean || clean.length < 4) {
-      setRefValidationError('Digita un número de comprobante o referencia válido (mínimo 4 dígitos/caracteres).');
+    if (!clean || clean.length < 3) {
+      setRefValidationError('Digita un número de comprobante o referencia válido (mínimo 3 dígitos/caracteres).');
       setIsPaymentValidated(false);
+      setPartialPayment(null);
       return;
     }
 
-    const check = validateSinpeReference(clean);
-    if (check.isUsed) {
+    setIsValidating(true);
+    setRefValidationError(null);
+
+    const res = await verifySinpePaymentForCheckout(clean, total, false);
+    setIsValidating(false);
+
+    if (res.status === 'already_used') {
       setRefValidationError('⚠️ Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.');
       setIsPaymentValidated(false);
+      setPartialPayment(null);
       return;
     }
 
-    setRefValidationError(null);
-    setIsValidating(true);
+    if (res.status === 'not_found') {
+      setRefValidationError(res.message);
+      setIsPaymentValidated(false);
+      setPartialPayment(null);
+      return;
+    }
 
-    setTimeout(() => {
-      setIsValidating(false);
+    if (res.status === 'invalid_mismatch') {
+      setRefValidationError(res.message);
+      setIsPaymentValidated(false);
+      setPartialPayment(null);
+      return;
+    }
+
+    if (res.status === 'invalid_incomplete') {
+      setRefValidationError(res.message);
+      setIsPaymentValidated(false);
+      setPartialPayment({
+        requiredTotal: total,
+        missingAmount: res.missingAmount || (total - (res.voucherAmount || 0)),
+        firstVoucher: {
+          ref: res.transaction?.referenceNumber || clean,
+          amount: res.voucherAmount || 0,
+          originName: res.transaction?.originName,
+        },
+        isComplete: false,
+      });
+      setSecondSinpeReference('');
+      playAudioBeep(260, 0.25);
+      return;
+    }
+
+    if (res.status === 'valid_exact') {
       setIsPaymentValidated(true);
-      playBubblePopSound(0.35);
-    }, 350);
+      setPartialPayment(null);
+      setRefValidationError(null);
+      playBubblePopSound(0.4);
+    }
+  };
+
+  // Validación del segundo comprobante para cubrir el saldo faltante
+  const handleValidateSecondPayment = async () => {
+    if (!partialPayment) return;
+    const clean2 = secondSinpeReference.trim();
+    if (!clean2 || clean2.length < 3) {
+      setRefValidationError('Por favor digite el número de referencia del segundo comprobante.');
+      return;
+    }
+
+    setIsValidating(true);
+    setRefValidationError(null);
+
+    const res = await verifySinpePaymentForCheckout(
+      clean2,
+      partialPayment.missingAmount,
+      true,
+      partialPayment.firstVoucher.ref
+    );
+    setIsValidating(false);
+
+    if (res.status === 'already_used') {
+      setRefValidationError('⚠️ Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.');
+      return;
+    }
+
+    if (res.status === 'not_found') {
+      setRefValidationError(res.message);
+      return;
+    }
+
+    if (res.status === 'invalid_mismatch' || res.status === 'invalid_incomplete') {
+      setRefValidationError(
+        `⚠️ Monto inválido. El segundo comprobante encontrado en el correo registra ₡${(res.voucherAmount || 0).toLocaleString('es-CR')}, pero el saldo faltante exacto es ₡${partialPayment.missingAmount.toLocaleString('es-CR')}. El monto tiene que coincidir exactamente con el correo.`
+      );
+      return;
+    }
+
+    if (res.status === 'valid_exact') {
+      setPartialPayment({
+        ...partialPayment,
+        secondVoucher: {
+          ref: res.transaction?.referenceNumber || clean2,
+          amount: res.voucherAmount || partialPayment.missingAmount,
+          originName: res.transaction?.originName,
+        },
+        isComplete: true,
+      });
+      setIsPaymentValidated(true);
+      setRefValidationError(null);
+      playBubblePopSound(0.4);
+    }
+  };
+
+  // Simulación para pruebas rápidas
+  const handleSimulateBcrEmail = (type: 'exact' | 'partial') => {
+    if (type === 'exact') {
+      const isSecond = partialPayment && !partialPayment.isComplete;
+      const refToUse = isSecond
+        ? (secondSinpeReference.trim() || `BCR-SIM-${Date.now().toString().slice(-5)}`)
+        : (sinpeReference.trim() || `BCR-SIM-${Date.now().toString().slice(-5)}`);
+
+      const amountToUse = isSecond ? partialPayment.missingAmount : total;
+
+      if (isSecond) {
+        setSecondSinpeReference(refToUse);
+      } else {
+        setSinpeReference(refToUse);
+      }
+
+      simulateBcrEmailNotification(refToUse, amountToUse, customerName || 'Cliente by.fio');
+
+      setTimeout(() => {
+        if (isSecond) {
+          handleValidateSecondPayment();
+        } else {
+          handleValidatePayment();
+        }
+      }, 150);
+    } else {
+      const refToUse = sinpeReference.trim() || `BCR-SIM-${Date.now().toString().slice(-5)}`;
+      const partialAmount = Math.round(total * 0.6); // 60%
+      setSinpeReference(refToUse);
+      simulateBcrEmailNotification(refToUse, partialAmount, customerName || 'Cliente by.fio');
+      setTimeout(() => {
+        handleValidatePayment();
+      }, 150);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -82,10 +227,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
       return;
     }
 
-    const cleanRef = sinpeReference.trim();
-    const orderNotesCombined = cleanRef
-      ? `Comprobante ${paymentTab === 'sinpe' ? 'SINPE Móvil' : 'Transferencia BCR'}: #${cleanRef}${notes ? ` | ${notes}` : ''}`
-      : notes;
+    let orderNotesCombined = notes;
+    if (partialPayment && partialPayment.isComplete && partialPayment.secondVoucher) {
+      orderNotesCombined = `Comprobantes SINPE BCR Multi-Pago: #1 ${partialPayment.firstVoucher.ref} (${formatCRC(partialPayment.firstVoucher.amount)}) + #2 ${partialPayment.secondVoucher.ref} (${formatCRC(partialPayment.secondVoucher.amount)}) | Total: ${formatCRC(total)}${notes ? ` | ${notes}` : ''}`;
+    } else {
+      const cleanRef = sinpeReference.trim();
+      orderNotesCombined = `Comprobante ${paymentTab === 'sinpe' ? 'SINPE Móvil' : 'Transferencia BCR'}: #${cleanRef} (${formatCRC(total)})${notes ? ` | ${notes}` : ''}`;
+    }
 
     const order = createOrder({
       customerName,
@@ -96,18 +244,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
       notes: orderNotesCombined,
     });
 
-    if (cleanRef) {
-      registerSinpeTransaction({
-        referenceNumber: cleanRef,
-        originPhone: customerPhone.trim(),
-        originName: customerName.trim(),
-        originBank: paymentTab === 'sinpe' ? 'SINPE Móvil Cliente' : 'Transferencia BCR Cliente',
-        amount: total,
-        description: `Pedido de tienda #${order.orderNumber}`,
-        transactionDate: new Date().toLocaleString('es-CR'),
-        category: 'store',
-        status: 'verified',
-      });
+    // Marcar los comprobantes como utilizados en el sistema inmutablemente
+    if (partialPayment && partialPayment.isComplete && partialPayment.secondVoucher) {
+      markSinpeTransactionUsed(partialPayment.firstVoucher.ref, order.id);
+      markSinpeTransactionUsed(partialPayment.secondVoucher.ref, order.id);
+    } else {
+      const cleanRef = sinpeReference.trim();
+      if (cleanRef) {
+        markSinpeTransactionUsed(cleanRef, order.id);
+      }
     }
 
     confetti({
@@ -159,15 +304,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
             <div className="p-4 sm:p-5 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-300/40 pb-3">
                 <div>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                    <CheckCircle className="w-3 h-3 text-emerald-600" />
-                    Pedido Generado con Éxito
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 font-bubble font-bold text-xs border border-emerald-300 shadow-xs">
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Pedido Pagado por {confirmedOrder.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia'} — Ya Verificado</span>
                   </span>
                   <h2 className="font-bubble font-bold text-lg sm:text-xl text-slate-900 mt-1">
                     ¡Gracias por tu compra, {confirmedOrder.customerName.split(' ')[0]}!
                   </h2>
                   <p className="text-[11px] text-slate-500 font-sans">
-                    Tu pedido ha sido registrado oficialmente en el sistema de by.fio.
+                    Tu pago ha sido verificado con éxito y el pedido está registrado oficialmente.
                   </p>
                 </div>
 
@@ -222,34 +367,47 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                 <span className="text-slate-700">Total Oficial:</span>
                 <span className="text-emerald-700 text-base">{formatCRC(confirmedOrder.total)}</span>
               </div>
+              {confirmedOrder.notes && (
+                <div className="pt-2 border-t border-slate-300/40">
+                  <p className="text-[11px] text-emerald-800 font-mono bg-emerald-50 p-2 rounded-xl border border-emerald-200">
+                    📌 {confirmedOrder.notes}
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* Cuentas Bancarias & SINPE Móvil Oficial */}
-            <PaymentAccountsCard amount={confirmedOrder.total} orderNumber={confirmedOrder.orderNumber} compact />
+            {/* Tarjeta de Pago Verificado Inmediato */}
+            <div className="p-4 rounded-3xl bg-gradient-to-br from-emerald-50 to-[#ECEEF2] border-2 border-emerald-300 shadow-neuCard text-slate-800 space-y-2 animate-fadeIn">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white shadow-neuBtn flex items-center justify-center">
+                    <CheckCircle className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-emerald-700 block">
+                      Transacción Acreditada
+                    </span>
+                    <h4 className="font-bubble font-bold text-sm text-emerald-950">
+                      Pagado por {confirmedOrder.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia Bancaria'}
+                    </h4>
+                  </div>
+                </div>
 
-            {/* Botones de Acción */}
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-bubble font-bold text-xs shadow-xs">
+                  ✓ VERIFICADO
+                </span>
+              </div>
+            </div>
+
+            {/* Botones de Acción Oficiales */}
             <div className="pt-2 flex flex-col sm:flex-row gap-2">
-              <a
-                href={`https://wa.me/50664004640?text=${encodeURIComponent(
-                  `¡Hola Fio! Acabo de registrar mi pedido ${confirmedOrder.orderNumber} por ${formatCRC(
-                    confirmedOrder.total
-                  )} en la web. Te adjunto el comprobante oficial:`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs flex items-center justify-center gap-2 shadow-neuBtn active:scale-95 transition-all text-center"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Enviar por WhatsApp</span>
-              </a>
-
               <button
                 type="button"
                 onClick={() => {
                   setInvoiceOrder(confirmedOrder);
                   handleClose();
                 }}
-                className="py-3 px-4 rounded-2xl bg-white hover:bg-slate-50 text-fio-900 border border-slate-200 shadow-neuBtn font-bubble font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                className="flex-1 py-3 px-4 rounded-2xl bg-white hover:bg-slate-50 text-fio-900 border border-slate-200 shadow-neuBtn font-bubble font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer"
               >
                 <Printer className="w-4 h-4 text-fio-800" />
                 <span>Imprimir Factura / PDF</span>
@@ -258,7 +416,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
               <button
                 type="button"
                 onClick={handleClose}
-                className="py-3 px-4 rounded-2xl neu-btn text-slate-700 font-bubble font-bold text-xs active:scale-95 transition-all"
+                className="flex-1 py-3 px-4 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs flex items-center justify-center gap-1.5 shadow-clayBtn active:scale-95 transition-all cursor-pointer"
               >
                 Seguir Comprando
               </button>
