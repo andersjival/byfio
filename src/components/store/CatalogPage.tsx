@@ -353,6 +353,8 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                         src={product.image}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
                             'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80';

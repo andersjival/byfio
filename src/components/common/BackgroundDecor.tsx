@@ -54,14 +54,6 @@ export const BackgroundDecor: React.FC = () => {
 
         {/* Morado profundo inferior-derecho (#6B21A8) */}
         <div className="absolute bottom-[2%] -right-16 w-[520px] h-[520px] rounded-full bg-gradient-to-tl from-[#6B21A8]/18 via-[#9333EA]/12 to-transparent blur-[130px]" />
-
-        {/* Micro-textura lila sutil */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03] mix-blend-multiply">
-          <filter id="vibrantNoise">
-            <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#vibrantNoise)" fill="#6B21A8" />
-        </svg>
       </div>
     );
   }
@@ -74,12 +66,6 @@ export const BackgroundDecor: React.FC = () => {
       <div className="absolute top-12 right-[5%] w-[420px] h-[420px] rounded-full bg-gradient-to-bl from-[#FFF07C]/15 via-[#FCE7F3]/20 to-transparent blur-[120px]" />
       <div className="absolute top-[45%] -left-24 w-[400px] h-[400px] rounded-full bg-[#9BE4FF]/12 blur-[130px]" />
       <div className="absolute bottom-[5%] -right-16 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-[#C084FC]/15 via-[#FAF5FF]/10 to-transparent blur-[140px]" />
-      <svg className="absolute inset-0 w-full h-full opacity-[0.025] mix-blend-multiply">
-        <filter id="zenNoise">
-          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
-        </filter>
-        <rect width="100%" height="100%" filter="url(#zenNoise)" />
-      </svg>
     </div>
   );
 };

@@ -82,7 +82,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             >
               <div>
                 <div className="relative h-44 rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset mb-3">
-                  <img src={ws.image} alt={ws.title} className="w-full h-full object-cover" />
+                  <img src={ws.image} alt={ws.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-slate-700 shadow-neuBtn">
                     {ws.modality}
                   </span>
@@ -127,6 +127,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             src="/assets/imagen-tienda-online.jpeg"
             alt="Tienda Online by.fio"
             className="w-full h-36 sm:h-52 md:h-64 object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+            loading="lazy"
+            decoding="async"
           />
         </div>
 
@@ -167,7 +169,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               >
                 <div>
                   <div className="relative h-40 rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset mb-3">
-                    <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                    <img src={p.image} alt={p.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     <span className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-slate-700 shadow-neuBtn">
                       {p.category}
                     </span>

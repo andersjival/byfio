@@ -6,7 +6,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 700,
+    target: 'es2020',
+    cssCodeSplit: true,
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks: {

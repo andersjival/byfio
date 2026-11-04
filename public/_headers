@@ -1,0 +1,30 @@
+# Cloudflare Pages Caching Headers — Máximo Rendimiento y Aceleración Global
+
+# 1. Chunks inmutables con hash (JS, CSS): Caché perpetua en navegador y CDN
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+# 2. Archivos estáticos de medios (imágenes, fuentes, audios, videos)
+/*.png
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/*.jpg
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/*.jpeg
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/*.svg
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/*.webp
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/*.mp4
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/*.mp3
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+
+# 3. Documento HTML raíz: Validación instantánea para detectar nuevas versiones de inmediato
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# 4. Endpoints de API Edge y D1: En vivo, nunca en caché
+/api/*
+  Cache-Control: no-cache, no-store, must-revalidate
