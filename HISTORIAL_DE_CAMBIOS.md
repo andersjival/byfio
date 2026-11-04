@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.10.0 - Sección Superadmin con Autenticación Real y Control Modular Granular
+- [x] **Portal y Autenticación Real de Superadmin ([`SuperadminSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx), [`SuperadminLogin.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminLogin.tsx), [`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
+  - Creada la ruta independiente y segura `/superadmin` con compuerta de autenticación real con credenciales maestras (`superadmin@byfio.com` / `superadmin`, contraseña `SuperAdmin2026!`).
+  - Incluye selector de visibilidad de contraseña, validación estricta y botón de autocompletado rápido para pruebas oficiales.
+- [x] **Panel Maestro de Control Modular y Funcionalidades Granulares ([`SuperadminModuleCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminModuleCard.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Desglose exhaustivo de los 12 módulos independientes de la plataforma (`orders`, `billing`, `inventory`, `missing_inventory`, `reports`, `sinpe`, `workshops`, `pricing`, `users`, `metricas`, `catalogo`, `store`).
+  - Interruptor maestro por módulo con badges de estado ("Visible en Admin" vs "Oculto en Admin").
+  - Sub-funcionalidades internas desglosadas por cada módulo con checkboxes interactivos individuales para activar o desactivar capacidades específicas.
+- [x] **Desaparición Dinámica en Tiempo Real del Panel de Administración ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Vinculación directa con `hasPermission` e `isModuleEnabled`: si el Superadmin desactiva un módulo, desaparece automáticamente de las pestañas (`AdminTabs`), de las tarjetas del menú principal (`AdminHubMenu`) y de la navegación pública.
+  - Sincronización instantánea (0ms) entre pestañas mediante `BroadcastChannel` y persistencia en `localStorage` (`byfio_superadmin_modules_v1`).
+- [x] **Acceso Rápido y Navegación Protegida ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Botón de acceso directo en el encabezado administrativo (`AdminHeader`) y en el menú móvil para alternar con la consola de Superadmin.
+  - Si un usuario intenta acceder por URL directa a un tab desactivado, el sistema redirige automáticamente al Hub principal.
+
 ### Versión 4.9.1 - Optimización Vertical Móvil Sin Scroll y Limpieza de Encabezado de Alisto
 - [x] **Eliminación de Iconos Selectores Superiores ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
   - Removidos por completo los botones e iconos de selección superior (`[Alisto con Código]` / `[Alisto Manual]`) de la cabecera de la ventana activa de alisto para evitar redundancia y despejar espacio.
