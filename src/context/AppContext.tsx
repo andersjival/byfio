@@ -1165,10 +1165,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [workshops]);
 
   const addToCart = (item: Omit<CartItem, 'cartId'>) => {
-    // Si el producto está desactivado o marcado como no disponible, bloquear la adición al carrito
+    // Si el producto está en cero o desactivado, bloquear la adición al carrito
     if (item.type === 'product') {
       const prod = products.find((p) => p.id === item.id);
-      if (prod && (prod.isAvailable === false || prod.showInStore === false || prod.showInCatalog === false)) {
+      if (prod && (prod.stock <= 0 || prod.isAvailable === false || prod.showInStore === false || prod.showInCatalog === false)) {
         return;
       }
     }
@@ -1485,6 +1485,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
       return updatedProducts;
     });
+
+    // Si el stock llega a cero, extraer de inmediato del carrito activo
+    if (stock <= 0) {
+      setCart((prevCart) => {
+        const nextCart = prevCart.filter((it) => it.type !== 'product' || it.id !== productId);
+        if (nextCart.length !== prevCart.length) {
+          localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(nextCart));
+        }
+        return nextCart;
+      });
+    }
 
     fetch('/api/products', {
       method: 'PUT',

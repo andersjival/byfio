@@ -45,8 +45,8 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
   // Categorías dinámicas basadas en productos visibles en el catálogo
   const catalogProducts = useMemo(() => {
     return products.filter((p) => {
-      // Apenas el administrador desactiva un producto o lo pone como no disponible, desaparece del catálogo
-      if (p.isAvailable === false || p.showInCatalog === false) return false;
+      // Si el producto está en cero o se desactiva, desaparece automáticamente del catálogo
+      if (p.stock <= 0 || p.isAvailable === false || p.showInCatalog === false) return false;
       return true;
     });
   }, [products]);

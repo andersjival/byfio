@@ -43,8 +43,8 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   };
 
   const filteredProducts = products.filter((p) => {
-    // Apenas el administrador desactiva un producto o lo pone como no disponible, desaparece de la tienda
-    if (p.isAvailable === false || p.showInStore === false) return false;
+    // Si el producto está en cero o se desactiva, desaparece automáticamente de la tienda
+    if (p.stock <= 0 || p.isAvailable === false || p.showInStore === false) return false;
 
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
     const matchesSearch =

@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.9.3 - Desaparición Automática de Productos con Stock en Cero de Tienda/Catálogo y Marcado Rojo de Alerta en Inventario
+- [x] **Desaparición Automática en Cero en Tienda, Catálogo y Home ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx), [`ProductsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/ProductsSection.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Aplicada la regla estricta: `if (p.stock <= 0 || p.isAvailable === false || p.showInStore === false) return false` en Tienda y Portada; y `showInCatalog === false` en Catálogo.
+  - Apenas un producto llega a 0 existencias (por compra de cliente, venta manual o ajuste del administrador), desaparece automáticamente de la vista pública sin requerir recargar la página.
+  - `addToCart` bloquea cualquier adición de productos con existencias en cero, y `updateProductStock` retira inmediatamente del carrito activo cualquier producto que llegue a 0.
+- [x] **Marcado de Fila en Rojo y Alerta de Reposición en Inventario ([`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Toda fila con `stock <= 0` se resalta visualmente en rojo intenso (`bg-red-50/90`, borde izquierdo rojo `border-l-4 border-l-red-600` y borde inferior `border-red-300`).
+  - Distintivo visual claro: `EN CERO • HACER PEDIDO` bajo el nombre del producto, pastilla roja de stock `0`, etiqueta `¡EN CERO! Pedir Urgente` y cantidad a reponer en botón rojo destacado.
+  - Botón de acceso directo *"Pedir"* en las acciones de la fila para abrir la orden de compra a proveedor al instante.
+
 ### Versión 3.9.2 - Blindaje Definitivo de Persistencia de Pedidos, Secuencia Única Anti-Colisión y Restauración Histórica
 - [x] **Erradicación Total de Sobrescritura de Pedidos ([`functions/api/orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Identificada y resuelta la causa raíz: los números de pedido se calculaban erróneamente con `1000 + orders.length + 1`, lo que provocaba que al llegar a 5 o 6 pedidos se repitiera el mismo `#FIO-1006` / `#FIO-1007` y SQLite (`INSERT OR REPLACE`) eliminara silenciosamente el pedido anterior por la restricción `UNIQUE(order_number)`.

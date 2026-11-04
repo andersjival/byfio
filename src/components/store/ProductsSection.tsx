@@ -20,8 +20,8 @@ export const ProductsSection: React.FC = () => {
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
 
   const filteredProducts = products.filter((p) => {
-    // Si el producto no está disponible o está desactivado, desaparece de la tienda
-    if (p.isAvailable === false || p.showInStore === false) return false;
+    // Si el producto está en cero o se desactiva, desaparece automáticamente de la tienda
+    if (p.stock <= 0 || p.isAvailable === false || p.showInStore === false) return false;
 
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
     const matchesSearch =

@@ -333,12 +333,22 @@ export const InventoryTable: React.FC = () => {
           </thead>
           <tbody className="divide-y divide-fio-100">
             {filtered.map((prod) => {
+              const isZeroStock = prod.stock <= 0;
               const isCritical = prod.stock <= prod.minStock;
               const suggestedOrder = Math.max(0, prod.maxStock - prod.stock);
               const isAvailable = prod.isAvailable !== false;
 
               return (
-                <tr key={prod.id} className="hover:bg-fio-50/40 transition-colors">
+                <tr
+                  key={prod.id}
+                  className={`transition-colors border-b ${
+                    isZeroStock
+                      ? 'bg-red-50/90 hover:bg-red-100/90 border-l-4 border-l-red-600 border-red-300'
+                      : isCritical
+                      ? 'bg-amber-50/40 hover:bg-amber-100/50 border-fio-100'
+                      : 'hover:bg-fio-50/40 border-fio-100'
+                  }`}
+                >
                   <td className="py-3 px-2">
                     <div
                       onClick={() => {
@@ -351,15 +361,27 @@ export const InventoryTable: React.FC = () => {
                       <img
                         src={prod.image}
                         alt={prod.name}
-                        className="w-9 h-9 rounded-xl object-cover shrink-0 group-hover:ring-2 group-hover:ring-fio-300 transition-all"
+                        className={`w-9 h-9 rounded-xl object-cover shrink-0 transition-all ${
+                          isZeroStock ? 'ring-2 ring-red-400' : 'group-hover:ring-2 group-hover:ring-fio-300'
+                        }`}
                       />
                       <div>
-                        <span className="font-mono font-bold text-[11px] text-fio-800 bg-fio-100 px-1.5 py-0.5 rounded">
+                        <span className={`font-mono font-bold text-[11px] px-1.5 py-0.5 rounded ${
+                          isZeroStock ? 'bg-red-200 text-red-900 font-black' : 'text-fio-800 bg-fio-100'
+                        }`}>
                           {prod.sku}
                         </span>
-                        <p className="font-semibold text-gray-800 line-clamp-1 group-hover:text-fio-800 transition-colors">
+                        <p className={`font-semibold line-clamp-1 transition-colors ${
+                          isZeroStock ? 'text-red-900 font-bold' : 'text-gray-800 group-hover:text-fio-800'
+                        }`}>
                           {prod.name}
                         </p>
+                        {isZeroStock && (
+                          <span className="inline-flex items-center gap-1 mt-0.5 px-2 py-0.2 rounded-md bg-red-600 text-white font-bubble font-bold text-[9px] uppercase tracking-wide shadow-2xs">
+                            <AlertOctagon className="w-2.5 h-2.5 stroke-[2.5]" />
+                            <span>EN CERO • HACER PEDIDO</span>
+                          </span>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -370,7 +392,11 @@ export const InventoryTable: React.FC = () => {
                         {prod.category}
                       </span>
                       <div className="flex items-center gap-1 text-[9px] font-bold">
-                        {!isAvailable ? (
+                        {isZeroStock ? (
+                          <span className="px-1.5 py-0.2 rounded bg-red-600 text-white font-bold" title="Agotado: Oculto automáticamente de Tienda y Catálogo">
+                            Agotado (Oculto)
+                          </span>
+                        ) : !isAvailable ? (
                           <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200 font-semibold" title="Oculto de tienda y catálogo">
                             Desactivado
                           </span>
@@ -404,11 +430,15 @@ export const InventoryTable: React.FC = () => {
                   {inventoryMode === 'stock' ? (
                     <>
                       <td className="py-3 px-2 text-center">
-                        <div className="inline-flex items-center gap-1.5 bg-fio-100/60 px-2 py-1 rounded-xl border border-fio-200">
+                        <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-xl border ${
+                          isZeroStock ? 'bg-red-100 border-red-300 ring-2 ring-red-200' : 'bg-fio-100/60 border-fio-200'
+                        }`}>
                           <button onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))} className="p-0.5 text-gray-500 hover:text-red-600">
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className={`font-bubble font-bold text-sm w-6 ${isCritical ? 'text-red-600' : 'text-gray-900'}`}>
+                          <span className={`font-bubble font-bold text-sm w-6 ${
+                            isZeroStock ? 'text-red-700 font-black' : isCritical ? 'text-red-600' : 'text-gray-900'
+                          }`}>
                             {prod.stock}
                           </span>
                           <button onClick={() => updateProductStock(prod.id, prod.stock + 1)} className="p-0.5 text-gray-500 hover:text-emerald-600">
@@ -418,7 +448,12 @@ export const InventoryTable: React.FC = () => {
                       </td>
 
                       <td className="py-3 px-2 text-center">
-                        {isCritical ? (
+                        {isZeroStock ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-600 text-white font-bold text-[10px] shadow-sm animate-pulse">
+                            <AlertOctagon className="w-3 h-3 stroke-[2.5]" />
+                            <span>¡EN CERO! Pedir Urgente</span>
+                          </span>
+                        ) : isCritical ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-100 text-red-700 font-bold text-[10px] animate-pulse">
                             <AlertOctagon className="w-3 h-3" />
                             <span>¡Reabastecer! (≤{prod.minStock})</span>
@@ -428,9 +463,13 @@ export const InventoryTable: React.FC = () => {
                         )}
                       </td>
 
-                      <td className="py-3 px-2 text-center font-bold text-fio-800">
+                      <td className="py-3 px-2 text-center font-bold">
                         {suggestedOrder > 0 ? (
-                          <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-lg">+{suggestedOrder}</span>
+                          <span className={`px-2 py-0.5 rounded-lg font-bubble ${
+                            isZeroStock ? 'bg-red-600 text-white font-black shadow-sm' : 'bg-amber-100 text-amber-800'
+                          }`}>
+                            +{suggestedOrder}
+                          </span>
                         ) : (
                           <span className="text-gray-400">0</span>
                         )}
@@ -461,7 +500,12 @@ export const InventoryTable: React.FC = () => {
 
                       {/* Columna Estado en Tienda / Catálogo */}
                       <td className="py-3 px-2 text-center">
-                        {isAvailable ? (
+                        {isZeroStock ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-100 text-red-800 border border-red-300 font-bold text-[10px]">
+                            <AlertOctagon className="w-3 h-3 text-red-600" />
+                            <span>En Cero (Oculto del público)</span>
+                          </span>
+                        ) : isAvailable ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                             <Check className="w-3 h-3 stroke-[2.5]" />
                             <span>En Tienda, Catálogo y Carrito</span>
@@ -478,6 +522,17 @@ export const InventoryTable: React.FC = () => {
 
                   <td className="py-3 px-2 text-right">
                     <div className="inline-flex items-center gap-1.5">
+                      {isZeroStock && (
+                        <button
+                          type="button"
+                          onClick={() => setIsSupplierModalOpen(true)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bubble text-xs font-bold shadow-sm active:scale-95 transition-all"
+                          title="Hacer pedido al proveedor para reabastecer este artículo"
+                        >
+                          <Truck className="w-3.5 h-3.5 text-white" />
+                          <span>Pedir</span>
+                        </button>
+                      )}
                       <button
                         onClick={() => {
                           setEditingProduct(prod);
