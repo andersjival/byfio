@@ -537,23 +537,41 @@ export const metricsTracker = {
       state.sections[sectionKey].likes += 1;
     }
 
-    // Si viene de un link rastreado, sumar el like a ese link
-    try {
-      if (typeof window !== 'undefined') {
-        const activeRef = sessionStorage.getItem('byfio_active_campaign_ref');
-        if (activeRef) {
-          const link = state.trackedLinks.find((l) => l.slug.toLowerCase() === activeRef);
-          if (link && link.sectionsVisited && link.sectionsVisited[sectionKey]) {
-            link.sectionsVisited[sectionKey].likes += 1;
-          }
+    state.lastVisitTimestamp = new Date().toISOString();
+
+    const activeRef = getActiveCampaignRef();
+    if (activeRef) {
+      const link = state.trackedLinks.find((l) => l.slug.toLowerCase() === activeRef);
+      if (link) {
+        if (!link.sectionsVisited) link.sectionsVisited = {};
+        if (!link.sectionsVisited[sectionKey]) {
+          link.sectionsVisited[sectionKey] = {
+            views: 1,
+            likes: 1,
+            timeSpentAvgMinutes: 2.0,
+          };
+        } else {
+          link.sectionsVisited[sectionKey].likes += 1;
         }
       }
-    } catch {
-      // Ignorar
     }
 
     this.saveMetrics(state);
     notifyMetricsUpdated();
+
+    // Sincronización asíncrona hacia la base de datos Cloud
+    if (typeof window !== 'undefined') {
+      fetch('/api/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'record_like',
+          slug: activeRef,
+          route: sectionKey,
+        }),
+      }).catch(() => {});
+    }
+
     return state;
   },
 

@@ -40,7 +40,7 @@ const InvoiceModal = React.lazy(() => import('./components/admin/InvoiceModal').
 const NewProductModal = React.lazy(() => import('./components/admin/NewProductModal').then((m) => ({ default: m.NewProductModal })));
 const NewWorkshopModal = React.lazy(() => import('./components/admin/NewWorkshopModal').then((m) => ({ default: m.NewWorkshopModal })));
 const DailyClosingModal = React.lazy(() => import('./components/admin/DailyClosingModal').then((m) => ({ default: m.DailyClosingModal })));
-const AdminDesignSettingsModal = React.lazy(() => import('./components/admin/AdminDesignSettingsModal').then((m) => ({ default: m.AdminDesignSettingsModal })));
+import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
 const AdminPricingModal = React.lazy(() => import('./components/admin/AdminPricingModal').then((m) => ({ default: m.AdminPricingModal })));
 
 import { metricsTracker, appendRefToPath, getActiveCampaignRef } from './services/metricsTracker';

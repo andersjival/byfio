@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { metricsTracker } from '../../services/metricsTracker';
 
 interface BrandLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'hero';
@@ -21,6 +22,14 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsPopped(true);
+    try {
+      const currentRoute = typeof window !== 'undefined'
+        ? (window.location.pathname.replace(/^\//, '').split('/')[0] || 'home')
+        : 'home';
+      metricsTracker.recordLike(currentRoute);
+    } catch {
+      // Ignorar
+    }
     setTimeout(() => setIsPopped(false), 700);
   };
 

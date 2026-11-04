@@ -285,6 +285,31 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
           targetLink.cartAdditions = (targetLink.cartAdditions || 0) + qty;
         }
       }
+    } else if (action === 'record_like') {
+      const { route, slug } = body;
+      const secKey = route || 'home';
+      if (!currentState.sections) currentState.sections = {};
+      if (!currentState.sections[secKey]) {
+        currentState.sections[secKey] = { views: 1, likes: 1, timeSpentAvgMinutes: 2.0 };
+      } else {
+        currentState.sections[secKey].likes = (currentState.sections[secKey].likes || 0) + 1;
+      }
+      currentState.lastVisitTimestamp = new Date().toISOString();
+
+      if (slug) {
+        const cleanSlug = String(slug).toLowerCase().trim();
+        const targetLink = currentState.trackedLinks.find(
+          (l: any) => l.slug && l.slug.toLowerCase() === cleanSlug
+        );
+        if (targetLink) {
+          if (!targetLink.sectionsVisited) targetLink.sectionsVisited = {};
+          if (!targetLink.sectionsVisited[secKey]) {
+            targetLink.sectionsVisited[secKey] = { views: 1, likes: 1, timeSpentAvgMinutes: 2.0 };
+          } else {
+            targetLink.sectionsVisited[secKey].likes = (targetLink.sectionsVisited[secKey].likes || 0) + 1;
+          }
+        }
+      }
     } else if (action === 'create_link') {
       const newLink = body.link;
       if (newLink && newLink.slug) {

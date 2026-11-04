@@ -4,7 +4,7 @@ import { formatCRC } from '../../utils/formatters';
 import {
   QrCode, AlertOctagon, Plus, Minus, Search, MapPin,
   PlusCircle, Trash2, Pencil, Boxes, Sparkles, ToggleLeft,
-  ToggleRight, CheckCircle2, Check, EyeOff
+  ToggleRight, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck
 } from 'lucide-react';
 
 export const InventoryTable: React.FC = () => {
@@ -16,11 +16,30 @@ export const InventoryTable: React.FC = () => {
     toggleProductAvailability,
     setQrModalProduct,
     setIsNewProductModalOpen,
+    setIsSupplierModalOpen,
     deleteProduct,
     setEditingProduct,
   } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable'>('all');
+
+  const zeroStockCount = useMemo(() => products.filter((p) => p.stock <= 0).length, [products]);
+  const unavailableCount = useMemo(
+    () => products.filter((p) => p.isAvailable === false || p.showInStore === false || p.showInCatalog === false).length,
+    [products]
+  );
+  const zeroOrUnavailableCount = useMemo(
+    () =>
+      products.filter(
+        (p) =>
+          p.stock <= 0 ||
+          p.isAvailable === false ||
+          p.showInStore === false ||
+          p.showInCatalog === false
+      ).length,
+    [products]
+  );
 
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -34,7 +53,20 @@ export const InventoryTable: React.FC = () => {
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.shelfLocation.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+
+    const isZero = p.stock <= 0;
+    const isUnavail = p.isAvailable === false || p.showInStore === false || p.showInCatalog === false;
+
+    let matchesStatus = true;
+    if (statusFilter === 'zero_stock') {
+      matchesStatus = isZero;
+    } else if (statusFilter === 'unavailable') {
+      matchesStatus = isUnavail;
+    } else if (statusFilter === 'zero_or_unavailable') {
+      matchesStatus = isZero || isUnavail;
+    }
+
+    return matchesCategory && matchesSearch && matchesStatus;
   });
 
   return (

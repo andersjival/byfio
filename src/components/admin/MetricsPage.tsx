@@ -273,10 +273,20 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
 
   // Estados interactivos para las gráficas de métricas
   const [barChartMode, setBarChartMode] = useState<'links' | 'sections'>('links');
+  const [ecosystemMetricView, setEcosystemMetricView] = useState<'both' | 'likes' | 'views'>('both');
+  const [likeFeedbackSec, setLikeFeedbackSec] = useState<string | null>(null);
   const [pieChartMode, setPieChartMode] = useState<'devices' | 'links'>('devices');
   const [hoveredPieIndex, setHoveredPieIndex] = useState<number | null>(null);
   const [hoveredUsagePieIndex, setHoveredUsagePieIndex] = useState<number | null>(null);
   const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null);
+
+  // Acción interactiva para el botón de Me Gusta
+  const handleLikeSection = (sectionId: string) => {
+    metricsTracker.recordLike(sectionId);
+    refreshMetrics();
+    setLikeFeedbackSec(sectionId);
+    setTimeout(() => setLikeFeedbackSec(null), 1200);
+  };
 
   // Cargar métricas actualizadas
   const refreshMetrics = () => {
@@ -596,6 +606,15 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
   const maxEcosystemViews = useMemo(() => {
     return Math.max(...ecosystemChartItems.map((item) => item.views), 10);
   }, [ecosystemChartItems]);
+
+  const maxEcosystemLikes = useMemo(() => {
+    return Math.max(...ecosystemChartItems.map((item) => item.likes), 10);
+  }, [ecosystemChartItems]);
+
+  // Total acumulado de Me Gusta en todas las secciones
+  const totalLikes = useMemo(() => {
+    return Object.values(currentDisplayMetrics.sections).reduce((acc, s) => acc + (s.likes || 0), 0);
+  }, [currentDisplayMetrics.sections]);
 
   // Gráfica 2: Tráfico Exclusivo de la Web Pública de Clientes (Sin Panel Admin)
   const publicWebData = useMemo(() => {
@@ -1124,7 +1143,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
       </div>
 
       {/* TARJETAS PRINCIPALES DE MÉTRICAS (KPIS) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* Total Cargas de Página */}
         <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 relative overflow-hidden">
           <div className="flex items-center justify-between mb-2">
@@ -1159,6 +1178,27 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
           </div>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
             {currentDisplayMetrics.isLinkSpecific ? 'Aperturas directas del link' : 'Navegadores individuales'}
+          </p>
+        </div>
+
+        {/* Total Me Gusta (Likes) */}
+        <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-pink-200/80 dark:border-pink-900/40 shadow-lg shadow-purple-950/5 relative overflow-hidden group">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bubble font-bold text-slate-500 dark:text-slate-400">
+              Total Me Gusta (Likes)
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-pink-100 dark:bg-pink-950/60 text-pink-600 dark:text-pink-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Heart className="w-4 h-4 fill-pink-500 text-pink-500" />
+            </div>
+          </div>
+          <div className="text-2xl sm:text-3xl font-bubble font-bold text-pink-600 dark:text-pink-400">
+            {totalLikes.toLocaleString()}
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+            <span className="font-semibold text-pink-600 dark:text-pink-400">
+              {Math.round((totalLikes / Math.max(1, currentDisplayMetrics.totalPageLoads)) * 100)}%
+            </span>
+            <span>de afinidad por visita</span>
           </p>
         </div>
 
