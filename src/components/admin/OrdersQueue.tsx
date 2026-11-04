@@ -2,10 +2,11 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff } from 'lucide-react';
+import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
-  const { orders, startPicking, setInvoiceOrder, updateOrderStatus } = useApp();
+  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled } = useApp();
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
@@ -36,9 +37,34 @@ export const OrdersQueue: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-purple-50 text-purple-900 px-3 py-1.5 rounded-2xl border border-purple-200 text-xs font-semibold">
-          <CheckCircle2 className="w-4 h-4 text-fio-pink" />
-          <span>Validación paso a paso con Escáner QR</span>
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Botón Switch Sonido de Nuevos Pedidos */}
+          <button
+            type="button"
+            onClick={() => {
+              const next = !soundNewOrderEnabled;
+              setSoundNewOrderEnabled(next);
+              if (next) playNewOrderChimeSound(0.35);
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border text-xs font-bold transition-all active:scale-95 cursor-pointer ${
+              soundNewOrderEnabled
+                ? 'bg-amber-50 border-amber-300 text-amber-900 hover:bg-amber-100 shadow-xs'
+                : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+            }`}
+            title={soundNewOrderEnabled ? 'Sonido de pedidos activado (clic para silenciar)' : 'Sonido de pedidos desactivado (clic para activar)'}
+          >
+            {soundNewOrderEnabled ? (
+              <Bell className="w-4 h-4 text-amber-600 fill-amber-500/20" />
+            ) : (
+              <BellOff className="w-4 h-4 text-slate-400" />
+            )}
+            <span>{soundNewOrderEnabled ? 'Sonido: Activado' : 'Sonido: Silenciado'}</span>
+          </button>
+
+          <div className="flex items-center gap-2 bg-purple-50 text-purple-900 px-3 py-1.5 rounded-2xl border border-purple-200 text-xs font-semibold">
+            <CheckCircle2 className="w-4 h-4 text-fio-pink" />
+            <span>Validación paso a paso con Escáner QR</span>
+          </div>
         </div>
       </div>
 

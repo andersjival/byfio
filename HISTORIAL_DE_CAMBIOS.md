@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.7.0 - Sonido de Notificación de Nuevos Pedidos y Conmutador de Control para Administrador
+- [x] **Alerta Sonora Agradable y Melodiosa de Nuevos Pedidos ([`soundEffects.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts)):**
+  - Creada la función `playNewOrderChimeSound()` mediante Web Audio API con cero dependencias externas ni archivos de audio pesados.
+  - Genera una secuencia armónica ascendente cristalina tipo celesta/marimba en Mi Mayor (E5, G#5, B5, E6) con ataque suave de 12ms y decaimiento exponencial cálido.
+- [x] **Detección Automática de Pedidos Entrantes y Estado Persistente ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Implementado estado `soundNewOrderEnabled` persistido en `localStorage` bajo la clave `byfio_sound_new_order_v1` (activo por defecto).
+  - Detección precisa de nuevos pedidos reales mediante `knownOrderIdsRef` tanto en sincronización instantánea vía `BroadcastChannel` (0ms), como en la sincronización continua inteligente de Cloudflare D1 y al crearse pedidos locales/facturas.
+- [x] **Conmutadores de Activación/Desactivación para el Administrador ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx)):**
+  - Botón de alternancia rápida colocado en el encabezado de la Cola de Pedidos (FIFO) con icono `Bell`/`BellOff` e indicador de estado `Sonido: Activado` / `Sonido: Silenciado`.
+  - Interruptor tipo iOS con animación y previsualización acústica en el modal de *Personalización Visual y Sonido* accesible desde el botón "Diseño & Letra".
+
 ### Versión 3.6.0 - Alto Contraste en Filtros/Destinos de Métricas y Limpieza Visual
 - [x] **Contraste y Legibilidad en Botones Activos ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx), [`tailwind.config.js`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/tailwind.config.js)):**
   - Solucionado el problema de contraste en los 7 botones de destino ("Sección a Abrir con este Enlace") al aplicar gradiente púrpura intenso (`from-purple-700 via-purple-800 to-indigo-900`), texto blanco en negrita (`drop-shadow-xs`), borde luminoso y anillo exterior (`ring-2 ring-purple-400/50`).

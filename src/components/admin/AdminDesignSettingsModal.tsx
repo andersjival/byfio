@@ -1,8 +1,8 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme } from '../../types';
-import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon } from 'lucide-react';
-import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
+import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell } from 'lucide-react';
+import { playBubblePopSound, playWaterDropSound, playNewOrderChimeSound } from '../../utils/soundEffects';
 
 interface AdminDesignSettingsModalProps {
   isOpen: boolean;
@@ -19,6 +19,8 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
     setSoundBubbleEnabled,
     soundButtonsEnabled,
     setSoundButtonsEnabled,
+    soundNewOrderEnabled,
+    setSoundNewOrderEnabled,
   } = useApp();
 
   if (!isOpen) return null;
@@ -301,6 +303,52 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
                     soundButtonsEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Switch 3: Sonido de Nuevos Pedidos */}
+            <div className="p-3 rounded-2xl border border-slate-200 bg-[#FDFBF9] flex items-center justify-between gap-3 transition-colors hover:border-purple-200">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                    soundNewOrderEnabled ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-400'
+                  }`}
+                >
+                  <Bell className="w-4 h-4 text-amber-600" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-900">Alerta de Nuevos Pedidos</span>
+                    <span className="text-[9.5px] font-semibold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded-md">
+                      Campanilla Chime
+                    </span>
+                  </div>
+                  <p className="text-[10.5px] text-slate-500 leading-tight mt-0.5">
+                    Sonido melodioso y agradable al ingresar un nuevo pedido de cliente a la plataforma.
+                  </p>
+                </div>
+              </div>
+
+              {/* Interruptor Switch */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={soundNewOrderEnabled}
+                onClick={() => {
+                  const next = !soundNewOrderEnabled;
+                  setSoundNewOrderEnabled(next);
+                  if (next) playNewOrderChimeSound(0.35);
+                }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-inner ${
+                  soundNewOrderEnabled ? 'bg-amber-500' : 'bg-slate-300'
+                }`}
+                title={soundNewOrderEnabled ? 'Desactivar sonido de nuevos pedidos' : 'Activar sonido de nuevos pedidos'}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    soundNewOrderEnabled ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>

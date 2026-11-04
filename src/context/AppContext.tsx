@@ -7,6 +7,7 @@ import {
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { playAudioBeep } from '../utils/formatters';
+import { playNewOrderChimeSound } from '../utils/soundEffects';
 import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 
@@ -179,6 +180,8 @@ interface AppContextType {
   setSoundBubbleEnabled: (enabled: boolean) => void;
   soundButtonsEnabled: boolean;
   setSoundButtonsEnabled: (enabled: boolean) => void;
+  soundNewOrderEnabled: boolean;
+  setSoundNewOrderEnabled: (enabled: boolean) => void;
   currentUser: AuthUser | null;
   loginUser: (email: string, pass: string) => { success: boolean; error?: string; user?: AuthUser };
   loginWithPin: (pin: string, targetProfileName?: string) => { success: boolean; error?: string; user?: AuthUser };
@@ -240,6 +243,7 @@ const STORAGE_KEYS = {
   PRICING_DATA: 'byfio_pricing_data_v1',
   SOUND_BUBBLE: 'byfio_sound_bubble_v1',
   SOUND_BUTTONS: 'byfio_sound_buttons_v1',
+  SOUND_NEW_ORDER: 'byfio_sound_new_order_v1',
   AUTH_USER: 'byfio_auth_user_v1',
   REGISTERED_USERS: 'byfio_registered_users_v1',
   USER_PROFILES: 'byfio_user_profiles_v1',
@@ -356,6 +360,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved !== null ? saved === 'true' : true;
   });
 
+  const [soundNewOrderEnabled, setSoundNewOrderEnabledState] = useState<boolean>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.SOUND_NEW_ORDER);
+    return saved !== null ? saved === 'true' : true;
+  });
+
   const setSoundBubbleEnabled = (enabled: boolean) => {
     setSoundBubbleEnabledState(enabled);
     localStorage.setItem(STORAGE_KEYS.SOUND_BUBBLE, String(enabled));
@@ -364,6 +373,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setSoundButtonsEnabled = (enabled: boolean) => {
     setSoundButtonsEnabledState(enabled);
     localStorage.setItem(STORAGE_KEYS.SOUND_BUTTONS, String(enabled));
+  };
+
+  const setSoundNewOrderEnabled = (enabled: boolean) => {
+    setSoundNewOrderEnabledState(enabled);
+    localStorage.setItem(STORAGE_KEYS.SOUND_NEW_ORDER, String(enabled));
+  };
+
+  // Rastreo de pedidos conocidos para emitir campanilla únicamente ante nuevos pedidos reales
+  const knownOrderIdsRef = useRef<Set<string>>(
+    new Set((() => {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
+        const list: Order[] = saved ? JSON.parse(saved) : INITIAL_ORDERS;
+        return Array.isArray(list) ? list.map((o) => o.id) : [];
+      } catch {
+        return [];
+      }
+    })())
+  );
+  const isInitialOrdersLoadRef = useRef(true);
+
+  const checkAndNotifyNewOrders = (incomingOrders: Order[]) => {
+    if (isInitialOrdersLoadRef.current) {
+      incomingOrders.forEach((o) => knownOrderIdsRef.current.add(o.id));
+      isInitialOrdersLoadRef.current = false;
+      return;
+    }
+
+    let hasNewOrder = false;
+    incomingOrders.forEach((o) => {
+      if (!knownOrderIdsRef.current.has(o.id)) {
+        knownOrderIdsRef.current.add(o.id);
+        hasNewOrder = true;
+      }
+    });
+
+    if (hasNewOrder) {
+      playNewOrderChimeSound();
+    }
   };
 
   const [userProfiles, setUserProfiles] = useState<UserProfile[]>(() => {
@@ -564,6 +612,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedOrders = [newOrder, ...orders];
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+    knownOrderIdsRef.current.add(newOrder.id);
+    playNewOrderChimeSound();
 
     fetch('/api/orders', {
       method: 'POST',
@@ -868,6 +918,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (event.data?.type === 'SYNC_UPDATE') {
         if (Array.isArray(event.data.orders)) {
           setOrders(event.data.orders);
+          checkAndNotifyNewOrders(event.data.orders);
         }
         if (Array.isArray(event.data.products)) {
           setProducts(event.data.products);
@@ -959,6 +1010,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (Array.isArray(data) && data.length > 0) {
+            checkAndNotifyNewOrders(data);
             setOrders((prev) => {
               if (data.length !== prev.length || JSON.stringify(data) !== JSON.stringify(prev)) {
                 localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(data));
@@ -968,7 +1020,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             });
           }
         })
-        .catch(() => {});
+        .catch(() => {})
+        .finally(() => {
+          isInitialOrdersLoadRef.current = false;
+        });
     };
 
     // Carga inicial inmediata
@@ -1237,6 +1292,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedOrders = [...orders, newOrder];
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+    knownOrderIdsRef.current.add(newOrder.id);
+    playNewOrderChimeSound();
 
     // Notificación en tiempo real (0ms) a todas las pestañas de administración y clientes
     try {
@@ -1608,6 +1665,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedOrders = [...orders, newOrder];
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+    knownOrderIdsRef.current.add(newOrder.id);
+    playNewOrderChimeSound();
 
     try {
       syncChannel?.postMessage({
@@ -1677,6 +1736,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSoundBubbleEnabled,
         soundButtonsEnabled,
         setSoundButtonsEnabled,
+        soundNewOrderEnabled,
+        setSoundNewOrderEnabled,
         currentUser,
         loginUser,
         loginWithPin,
