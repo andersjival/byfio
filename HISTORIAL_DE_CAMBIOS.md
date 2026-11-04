@@ -17,7 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
-### Versión 2.8.0 - Corrección de Zona Horaria Local en Pedidos y Normalización UTC en Base de Datos
+### Versión 2.8.0 - Modo Dual de Inventario (Stock Real vs Disponibilidad Rápida) y Zona Horaria Local en Pedidos
+- [x] **Selector de Modo en Módulo de Inventario ([`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Incorporados dos botones de acción directa: *"Desactivar stock de inventario"* y *"Activar disponibilidad de producto"*, permitiendo alternar al instante entre **Modo Stock Numérico Real** y **Modo Disponibilidad Rápida**.
+  - Al activar el modo disponibilidad, la columna de *Stock* (junto con alertas y reposición) se oculta automáticamente y es sustituida por la columna interactiva **Disponibilidad**.
+- [x] **Control de Disponibilidad y Sincronización en Tiempo Real ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx), [`ProductsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/ProductsSection.tsx)):**
+  - Cada fila cuenta con un botón switch táctil para alternar entre *"Disponible"* y *"No disponible"*.
+  - Si un producto se marca como *"Disponible"*, aparece automáticamente activo en la Tienda Online, en el Catálogo y listo para ser añadido al Carrito.
+  - Si se marca como *"No disponible"*, se oculta por completo de la Tienda y del Catálogo, impidiendo compras involuntarias.
 - [x] **Persistencia de Fecha de Creación del Usuario ([`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
   - Añadida la columna `created_at` en la sentencia `INSERT OR REPLACE INTO orders` para guardar fielmente la marca de tiempo enviada por el navegador del cliente en lugar de delegar en el `datetime('now')` de SQLite.
 - [x] **Normalización de Marcas de Tiempo UTC en Servidor y Frontend ([`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`formatters.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/formatters.ts)):**
