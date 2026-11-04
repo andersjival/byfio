@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.2.0 - Filtros Rápidos de Inventario (Existencias en Cero, No Disponibles y Combinado) y Enlace Directo a Pedidos
+- [x] **Filtros Rápidos en Módulo de Inventario ([`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Incorporados 4 botones de filtrado instantáneo con contadores dinámicos en tiempo real:
+    - *Todos*: Muestra la totalidad de los artículos inventariados.
+    - *Existencias en Cero*: Filtra inmediatamente todos los artículos con `stock <= 0`.
+    - *No Disponibles*: Filtra los artículos desactivados (`isAvailable === false` o desmarcados de tienda/catálogo).
+    - *En Cero o No Disponibles*: Filtro combinado para visualizar en una sola vista todo lo que requiere reposición o activación.
+- [x] **Integración con Pedidos a Proveedor ([`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx), [`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - Añadido botón de acceso directo *"Realizar Pedido a Proveedor"* en la barra de filtros del inventario.
+  - Actualizado [`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx) para incluir automáticamente tanto los productos con stock en cero como los desactivados por falta de existencias.
+
 ### Versión 3.1.0 - Coordinación Estricta de Disponibilidad y Desaparición Inmediata de Productos en Tienda, Catálogo y Carrito
 - [x] **Coordinación Inmediata de Desactivación ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts)):**
   - Al marcar un producto como *"No disponible"* en el módulo de inventario, se sincronizan atómicamente `isAvailable: false`, `showInStore: false` y `showInCatalog: false`.

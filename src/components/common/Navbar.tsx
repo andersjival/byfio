@@ -3,7 +3,8 @@ import { useApp } from '../../context/AppContext';
 import { BrandLogo } from './BrandLogo';
 import { TikTokIcon } from './TikTokIcon';
 import { AppRoute } from '../../types';
-import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid, LogOut, ShieldCheck, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid, LogOut, ShieldCheck, Sun, Moon, Heart } from 'lucide-react';
+import { metricsTracker } from '../../services/metricsTracker';
 
 interface NavbarProps {
   currentRoute: AppRoute;
@@ -24,6 +25,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { cart, setIsCartOpen, colorTheme, setColorTheme, currentUser, logoutUser } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [likePopped, setLikePopped] = useState(false);
+
+  const handlePageLike = () => {
+    metricsTracker.recordLike(currentRoute);
+    setLikePopped(true);
+    setTimeout(() => setLikePopped(false), 900);
+  };
 
   const totalCartCount = cart.reduce((acc, it) => acc + it.quantity, 0);
 
@@ -200,6 +208,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
+              {/* Botón Interactivo de Me Gusta a la Web / Sección */}
+              <button
+                type="button"
+                onClick={handlePageLike}
+                className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-pink-50/90 hover:bg-pink-100 text-pink-600 hover:text-pink-700 border border-pink-200/80 shadow-xs transition-all active:scale-95 shrink-0 font-bubble font-bold text-xs cursor-pointer group"
+                title="¡Dar Me Gusta a esta página de by.fio! ❤️"
+                aria-label="Dar Me Gusta a esta página"
+              >
+                <Heart className={`w-3.5 h-3.5 fill-pink-500 text-pink-500 transition-transform ${likePopped ? 'scale-150 animate-bounce' : 'group-hover:scale-125'}`} />
+                <span className="hidden sm:inline">{likePopped ? '¡+1 Like!' : 'Me Gusta'}</span>
+              </button>
+
               {/* Sesión de Usuario o Botón Iniciar Sesión 3D */}
               {currentUser ? (
                 <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white/90 border border-purple-200/80 rounded-2xl shadow-xs shrink-0">
@@ -307,6 +327,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-indigo-400/20" />
                 </button>
               </div>
+
+              {/* Botón Interactivo de Me Gusta a la Web / Sección */}
+              <button
+                type="button"
+                onClick={handlePageLike}
+                className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-pink-50/90 hover:bg-pink-100 text-pink-600 hover:text-pink-700 border border-pink-200/80 shadow-xs transition-all active:scale-95 shrink-0 font-bubble font-bold text-xs cursor-pointer group"
+                title="¡Dar Me Gusta a esta página de by.fio! ❤️"
+                aria-label="Dar Me Gusta a esta página"
+              >
+                <Heart className={`w-3.5 h-3.5 fill-pink-500 text-pink-500 transition-transform ${likePopped ? 'scale-150 animate-bounce' : 'group-hover:scale-125'}`} />
+                <span className="hidden sm:inline">{likePopped ? '¡+1 Like!' : 'Me Gusta'}</span>
+              </button>
 
               {/* Botón Diseño & Letra */}
               <button

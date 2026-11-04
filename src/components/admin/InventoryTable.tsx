@@ -179,6 +179,100 @@ export const InventoryTable: React.FC = () => {
         </div>
       </div>
 
+      {/* Botones de Filtro Rápido por Existencias en Cero y Disponibilidad para Pedidos */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-fio-50/70 rounded-2xl border border-fio-200 mb-4">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-bold text-gray-500 uppercase mr-1 flex items-center gap-1">
+            <Filter className="w-3.5 h-3.5 text-fio-800" />
+            <span>Filtro de Estado:</span>
+          </span>
+
+          {/* Botón: Todos */}
+          <button
+            type="button"
+            onClick={() => setStatusFilter('all')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all ${
+              statusFilter === 'all'
+                ? 'bg-fio-800 text-white shadow-sm'
+                : 'bg-white text-gray-700 hover:bg-fio-100 border border-fio-200/80'
+            }`}
+          >
+            Todos ({products.length})
+          </button>
+
+          {/* Botón: Existencias en Cero */}
+          <button
+            type="button"
+            onClick={() => setStatusFilter('zero_stock')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all ${
+              statusFilter === 'zero_stock'
+                ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-300'
+                : 'bg-white text-red-600 hover:bg-red-50 border border-red-200'
+            }`}
+            title="Muestra únicamente los productos con existencias en cero (0)"
+          >
+            <AlertOctagon className="w-3.5 h-3.5" />
+            <span>Existencias en Cero</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              statusFilter === 'zero_stock' ? 'bg-red-700 text-white' : 'bg-red-100 text-red-700'
+            }`}>
+              {zeroStockCount}
+            </span>
+          </button>
+
+          {/* Botón: No Disponibles */}
+          <button
+            type="button"
+            onClick={() => setStatusFilter('unavailable')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all ${
+              statusFilter === 'unavailable'
+                ? 'bg-rose-600 text-white shadow-sm ring-2 ring-rose-300'
+                : 'bg-white text-rose-700 hover:bg-rose-50 border border-rose-200'
+            }`}
+            title="Muestra los productos desactivados o marcados como No Disponibles"
+          >
+            <EyeOff className="w-3.5 h-3.5" />
+            <span>No Disponibles</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              statusFilter === 'unavailable' ? 'bg-rose-700 text-white' : 'bg-rose-100 text-rose-700'
+            }`}>
+              {unavailableCount}
+            </span>
+          </button>
+
+          {/* Botón: En Cero o No Disponibles (Combinado para realizar pedido) */}
+          <button
+            type="button"
+            onClick={() => setStatusFilter('zero_or_unavailable')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all ${
+              statusFilter === 'zero_or_unavailable'
+                ? 'bg-amber-600 text-white shadow-sm ring-2 ring-amber-300'
+                : 'bg-white text-amber-800 hover:bg-amber-50 border border-amber-200'
+            }`}
+            title="Muestra todos los productos que están no disponibles y los que están en cero"
+          >
+            <PackageX className="w-3.5 h-3.5" />
+            <span>En Cero o No Disponibles</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              statusFilter === 'zero_or_unavailable' ? 'bg-amber-700 text-white' : 'bg-amber-100 text-amber-800'
+            }`}>
+              {zeroOrUnavailableCount}
+            </span>
+          </button>
+        </div>
+
+        {/* Botón Realizar Pedido a Proveedor */}
+        <button
+          type="button"
+          onClick={() => setIsSupplierModalOpen(true)}
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-fio-800 border border-purple-300 font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 shrink-0"
+          title="Generar orden de compra y reposición para enviar al proveedor por WhatsApp"
+        >
+          <Truck className="w-3.5 h-3.5 text-fio-pink" />
+          <span>Realizar Pedido a Proveedor</span>
+        </button>
+      </div>
+
       {/* Selector de Categorías & Buscador */}
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-5">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -417,6 +511,36 @@ export const InventoryTable: React.FC = () => {
                 </tr>
               );
             })}
+
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={inventoryMode === 'stock' ? 8 : 7} className="py-12 text-center text-gray-500">
+                  <div className="max-w-xs mx-auto space-y-2">
+                    <p className="font-bubble font-bold text-sm text-gray-700">
+                      No hay productos con los filtros seleccionados
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {statusFilter === 'zero_stock'
+                        ? '¡Excelente! No tienes productos con existencias en cero.'
+                        : statusFilter === 'unavailable'
+                        ? 'Todos tus productos están activos y disponibles.'
+                        : 'Prueba cambiando de categoría o limpiando los filtros.'}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStatusFilter('all');
+                        setSelectedCategory('Todas');
+                        setSearchQuery('');
+                      }}
+                      className="mt-2 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-fio-100 hover:bg-fio-200 text-fio-800 text-xs font-bubble font-bold transition-all shadow-2xs"
+                    >
+                      <span>Ver todos los productos</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

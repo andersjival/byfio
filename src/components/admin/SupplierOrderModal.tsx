@@ -9,9 +9,9 @@ export const SupplierOrderModal: React.FC = () => {
   if (!isSupplierModalOpen) return null;
 
   const criticalItems = products
-    .filter((p) => p.stock <= p.minStock)
+    .filter((p) => p.stock <= p.minStock || p.stock <= 0 || p.isAvailable === false || p.showInStore === false)
     .map((p) => {
-      const orderQty = Math.max(0, p.maxStock - p.stock);
+      const orderQty = Math.max(1, p.maxStock - p.stock);
       const estCost = orderQty * p.costPrice;
       return { ...p, orderQty, estCost };
     });
