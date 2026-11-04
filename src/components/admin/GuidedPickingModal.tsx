@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   X, CheckCircle, AlertTriangle, MapPin, Heart, Scan, QrCode,
-  ClipboardList, Printer, FileCheck, Check, LogOut, FileText
+  ClipboardList, Printer, FileCheck, Check, LogOut, FileText, Package
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -372,14 +372,33 @@ export const GuidedPickingModal: React.FC = () => {
               </div>
 
               <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold mb-2 shadow-xs">
+                  <Package className="w-3.5 h-3.5 text-amber-700" />
+                  <span>Estado del Pedido: En Empaque 📦</span>
+                </div>
                 <h3 className="font-bubble font-bold text-lg sm:text-2xl text-fio-900 leading-snug">
                   ¡Alisto del Pedido {currentOrder.orderNumber} Finalizado!
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mt-1">
                   {missingCount === 0
-                    ? `Se alistaron exitosamente los ${pickedCount} producto(s).`
-                    : `Se alistaron ${pickedCount} producto(s) y se reportaron ${missingCount} con faltante.`}
+                    ? `Se alistaron exitosamente los ${pickedCount} producto(s). El pedido pasó a la sección de Empaque.`
+                    : `Se alistaron ${pickedCount} producto(s) y se reportaron ${missingCount} con faltante. El pedido pasó a Empaque.`}
                 </p>
+              </div>
+
+              {/* Botón Destacado Opcional: Generar Factura de una Vez */}
+              <div className="max-w-md mx-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInvoiceOrder(currentOrder);
+                    setActivePickingOrder(null);
+                  }}
+                  className="w-full py-2.5 sm:py-3 px-4 bg-fio-800 hover:bg-fio-900 active:scale-[0.98] text-white rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-clayBtn transition-all cursor-pointer"
+                >
+                  <Printer className="w-4 h-4 text-fio-yellow" />
+                  <span>Generar Factura de una Vez</span>
+                </button>
               </div>
 
               {/* Pregunta: Continuar con el siguiente pedido */}
@@ -444,21 +463,6 @@ export const GuidedPickingModal: React.FC = () => {
                     <span>Salir a Pedidos</span>
                   </button>
                 </div>
-              </div>
-
-              {/* Opción Secundaria: Ver Factura del Pedido Finalizado */}
-              <div className="pt-2 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setInvoiceOrder(currentOrder);
-                    setActivePickingOrder(null);
-                  }}
-                  className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-bold underline cursor-pointer py-1"
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>Ver / Imprimir Factura de este Pedido ({currentOrder.orderNumber})</span>
-                </button>
               </div>
             </div>
           )}

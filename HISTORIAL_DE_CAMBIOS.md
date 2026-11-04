@@ -27,6 +27,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 - [x] **Ocultación en Navegación Móvil ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - El botón *"📋 Propuesta del Sistema"* en el menú móvil ahora solo se muestra si el usuario autenticado tiene rol de `admin` o es `isMasterAdmin`.
 
+### Versión 4.9.3 - Transición a Estado "En Empaque", Filtro Dedicado y Facturación Directa u Opcional
+- [x] **Transición Oficial a Estado "En Empaque" ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - Al completar la verificación de todos los artículos de un pedido, este pasa formalmente al estado `packed` con la etiqueta distintiva *"📦 En Empaque"*.
+  - En la ventana de alisto se indica claramente *"Estado del Pedido: En Empaque 📦"* para confirmar que el pedido ha avanzado de etapa.
+- [x] **Pestaña de Filtro Rápido "En Empaque" en la Cola de Administración ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - Creada la pestaña dedicada *"📦 En Empaque"* junto a *"Todos"*, *"Pendientes de Alisto"* y *"Entregados"*.
+  - Los administradores pueden filtrar con un solo clic todos los pedidos que ya están alistados y listos en empaque, con su respectivo contador en tiempo real.
+- [x] **Facturación Directa u Opcional ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - En la ventana al finalizar el alisto se ofrece el botón prominente *"Generar Factura de una Vez"*, permitiendo emitir e imprimir el comprobante oficial de inmediato si se desea.
+  - Alternativamente, el operador puede simplemente pulsar *"Continuar con Siguiente Pedido"* o *"Salir a Pedidos"*, dejando la orden en empaque para que el administrador genere la factura posteriormente desde la cola mediante el botón *"Generar / Ver Factura"*.
+
 ### Versión 4.9.2 - Flujo Guiado Post-Alisto: "¿Continuar con el Siguiente Pedido?"
 - [x] **Modal de Decisión y Botones de Aceptar, Continuar y Salir ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - **Botón "Aceptar y Continuar" visible durante el alisto:** En el alisto manual el botón principal ahora indica explícitamente *"Aceptar y Continuar"* para validar el producto actual y avanzar al siguiente.

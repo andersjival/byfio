@@ -2,20 +2,23 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan } from 'lucide-react';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer } from 'lucide-react';
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
   const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled } = useApp();
-  const [filterMode, setFilterMode] = React.useState<'pending' | 'all' | 'completed'>('all');
+  const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packed' | 'delivered'>('all');
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
-  const completedOrders = orders.filter((o) => o.orderStatus === 'packed' || o.orderStatus === 'delivered');
+  const packedOrders = orders.filter((o) => o.orderStatus === 'packed');
+  const deliveredOrders = orders.filter((o) => o.orderStatus === 'delivered');
 
   const displayedOrders = filterMode === 'pending'
     ? pendingOrders
-    : filterMode === 'completed'
-    ? completedOrders
+    : filterMode === 'packed'
+    ? packedOrders
+    : filterMode === 'delivered'
+    ? deliveredOrders
     : orders;
 
   const getStatusBadge = (status: OrderStatus) => {
@@ -25,9 +28,19 @@ export const OrdersQueue: React.FC = () => {
       case 'picking':
         return <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 animate-pulse">En Alisto QR Activo</span>;
       case 'packed':
-        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Empacado / Facturado</span>;
+        return (
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shadow-xs">
+            <Package className="w-3.5 h-3.5 text-amber-700" />
+            <span>En Empaque</span>
+          </span>
+        );
       case 'delivered':
-        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Entregado</span>;
+        return (
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300 flex items-center gap-1 shadow-xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+            <span>Entregado</span>
+          </span>
+        );
     }
   };
 
@@ -101,6 +114,7 @@ export const OrdersQueue: React.FC = () => {
         >
           Todos ({orders.length})
         </button>
+
         <button
           type="button"
           onClick={() => setFilterMode('pending')}
@@ -119,22 +133,43 @@ export const OrdersQueue: React.FC = () => {
             {pendingOrders.length}
           </span>
         </button>
+
         <button
           type="button"
-          onClick={() => setFilterMode('completed')}
+          onClick={() => setFilterMode('packed')}
           className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-            filterMode === 'completed'
-              ? 'bg-emerald-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-emerald-700'
+            filterMode === 'packed'
+              ? 'bg-amber-500 text-white shadow-xs'
+              : 'text-slate-700 hover:text-amber-800'
           }`}
         >
-          <span>Empacados / Listos</span>
+          <Package className="w-3.5 h-3.5" />
+          <span>En Empaque</span>
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-              filterMode === 'completed' ? 'bg-white text-emerald-700' : 'bg-emerald-100 text-emerald-700'
+              filterMode === 'packed' ? 'bg-white text-amber-800' : 'bg-amber-100 text-amber-900'
             }`}
           >
-            {completedOrders.length}
+            {packedOrders.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setFilterMode('delivered')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+            filterMode === 'delivered'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 hover:text-blue-700'
+          }`}
+        >
+          <span>Entregados</span>
+          <span
+            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+              filterMode === 'delivered' ? 'bg-white text-blue-700' : 'bg-blue-100 text-blue-800'
+            }`}
+          >
+            {deliveredOrders.length}
           </span>
         </button>
       </div>
@@ -244,21 +279,26 @@ export const OrdersQueue: React.FC = () => {
                       </button>
                     </>
                   ) : (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                       <button
+                        type="button"
                         onClick={() => setInvoiceOrder(order)}
-                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-fio-100 text-fio-800 hover:bg-fio-200 font-bubble text-xs font-bold transition-all"
+                        className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs font-bold transition-all shadow-clayBtn cursor-pointer active:scale-95"
+                        title="Generar o imprimir comprobante y factura oficial"
                       >
-                        <FileCheck className="w-4 h-4 text-fio-600" />
-                        <span>Ver Factura Oficial</span>
+                        <Printer className="w-4 h-4 text-fio-yellow" />
+                        <span>Generar / Ver Factura</span>
                       </button>
 
                       {order.orderStatus === 'packed' && (
                         <button
+                          type="button"
                           onClick={() => updateOrderStatus(order.id, 'delivered')}
-                          className="px-4 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bubble text-xs font-bold transition-all"
+                          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                          title="Marcar como entregado al cliente"
                         >
-                          Entregar
+                          <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+                          <span>Marcar Entregado</span>
                         </button>
                       )}
                     </div>
