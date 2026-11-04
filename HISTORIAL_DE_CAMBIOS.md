@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.8.2 - Rediseño Armónico, Espacioso y Segmentado de Filtros de Métricas
+- [x] **Arquitectura Espaciosa y Separación Funcional ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Erradicado el amontonamiento de botones en el encabezado de la Gráfica del Ecosistema. Se estructuró una barra de control dedicada de ancho completo (`p-3 rounded-2xl bg-slate-50 border border-slate-200/80`) que distribuye holgadamente los controles con `justify-between`.
+  - Grupo "Mostrar Secciones:" alineado a la izquierda y grupo "Ver Métrica:" a la derecha con iconos y etiquetas explicativas.
+- [x] **Control Segmentado Moderno (Cero Recargamiento Visual) ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Eliminados los bordes toscos individuales en botones inactivos; ahora presentan un acabado suave y minimalista con padding generoso (`px-3.5 py-1.5`).
+  - Botón activo destacado con púrpura corporativo (`#6B21A8`), sombra sutil y texto blanco nítido para un contraste y armonía visual impecables.
+
 ### Versión 3.8.0 - Corrección de Desbordamiento Horizontal de Botones y Contraste Absoluto en Métricas
 - [x] **Solución a Desbordamiento de Botones en Gráfica del Ecosistema ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
   - Corregido el problema donde el botón `🛍️ Tienda` se salía de la pantalla en pantallas medianas y de laptop; ahora los contenedores de filtros cuentan con `flex-wrap`, breakpoint `xl:flex-row`, y las tarjetas integran `overflow-hidden`.

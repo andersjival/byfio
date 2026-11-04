@@ -1274,132 +1274,114 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
 
       {/* 1. GRÁFICA DEL ECOSISTEMA TOTAL: TODAS LAS SECCIONES (PÚBLICAS & ADMIN) */}
       <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 space-y-5 overflow-hidden">
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-100 dark:border-purple-900/30 pb-4">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-fio-pink font-bubble font-bold text-xs mb-1">
-              <BarChart3 className="w-3.5 h-3.5" />
-              <span>Ecosistema Total de Navegación</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-              Gráfica Completa del Ecosistema ({ecosystemChartItems.length} Secciones)
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Visualiza en una sola gráfica comparativa todas las opciones de la página que las personas navegaron: Vistas, Me Gusta, Clics a Cursos y Alumnos Suscritos.
-            </p>
+        {/* Encabezado Principal de la Gráfica */}
+        <div className="border-b border-slate-100 dark:border-purple-900/30 pb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-fio-pink font-bubble font-bold text-xs mb-1.5">
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>Ecosistema Total de Navegación</span>
           </div>
+          <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+            Gráfica Completa del Ecosistema ({ecosystemChartItems.length} Secciones)
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Visualiza en una sola gráfica comparativa todas las opciones de la página que las personas navegaron: Vistas, Me Gusta, Clics a Cursos y Alumnos Suscritos.
+          </p>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 max-w-full">
-            {/* Selector de Visualización: Dual | Solo Me Gusta | Solo Vistas */}
-            <div className="flex flex-wrap items-center gap-1 p-1 rounded-2xl bg-slate-200/90 dark:bg-[#252038] border border-slate-300 dark:border-purple-900/50">
-              <button
-                type="button"
-                onClick={() => setEcosystemMetricView('both')}
-                style={ecosystemMetricView === 'both' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
-                  ecosystemMetricView === 'both'
-                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
-                    : 'bg-white dark:bg-[#1E1B2E] text-slate-800 dark:text-slate-200 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
-                }`}
-                title="Ver barras combinadas de Vistas y Me Gusta"
-              >
-                <span
-                  style={ecosystemMetricView === 'both' ? { color: '#ffffff' } : undefined}
-                  className={ecosystemMetricView === 'both' ? 'text-white font-black drop-shadow-sm' : ''}
-                >
-                  📊 Dual (Vistas + Likes)
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setEcosystemMetricView('likes')}
-                style={ecosystemMetricView === 'likes' ? { backgroundColor: '#be185d', color: '#ffffff' } : undefined}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  ecosystemMetricView === 'likes'
-                    ? 'bg-rose-700 text-white font-black shadow-md ring-2 ring-pink-400/80 border border-pink-400 scale-[1.02]'
-                    : 'bg-white dark:bg-[#1E1B2E] text-slate-800 dark:text-slate-200 hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
-                }`}
-                title="Levantar únicamente la gráfica de Me Gusta"
-              >
-                <Heart className={`w-3.5 h-3.5 ${ecosystemMetricView === 'likes' ? 'fill-white text-white drop-shadow-sm' : 'fill-pink-500 text-pink-500'}`} />
-                <span
-                  style={ecosystemMetricView === 'likes' ? { color: '#ffffff' } : undefined}
-                  className={ecosystemMetricView === 'likes' ? 'text-white font-black drop-shadow-sm' : ''}
-                >
-                  Solo Me Gusta
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setEcosystemMetricView('views')}
-                style={ecosystemMetricView === 'views' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
-                  ecosystemMetricView === 'views'
-                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
-                    : 'bg-white dark:bg-[#1E1B2E] text-slate-800 dark:text-slate-200 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
-                }`}
-                title="Ver únicamente la gráfica de Vistas"
-              >
-                <span
-                  style={ecosystemMetricView === 'views' ? { color: '#ffffff' } : undefined}
-                  className={ecosystemMetricView === 'views' ? 'text-white font-black drop-shadow-sm' : ''}
-                >
-                  👁️ Solo Vistas
-                </span>
-              </button>
-            </div>
-
-            {/* Selector de Pestañas: Todas | Tienda & Clientes | Panel Admin */}
-            <div className="flex flex-wrap items-center gap-1 p-1 rounded-2xl bg-slate-200/90 dark:bg-[#1E1B2E] border border-slate-300 dark:border-purple-900/50">
+        {/* Barra de Filtros y Modos: Amplia, Espaciosa y Perfectamente Organizada */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-[#252038]/50 border border-slate-200/80 dark:border-purple-900/40">
+          {/* Grupo 1: Categorías a mostrar */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-bubble font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 shrink-0">
+              <Layers className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+              <span>Mostrar:</span>
+            </span>
+            <div className="inline-flex items-center p-1 rounded-xl bg-slate-200/80 dark:bg-[#1E1B2E] border border-slate-300/70 dark:border-purple-900/50 gap-1">
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('all')}
-                style={ecosystemFilter === 'all' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                style={ecosystemFilter === 'all' ? { backgroundColor: '#6B21A8', color: '#ffffff' } : undefined}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'all'
-                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
-                    : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                    ? 'bg-purple-800 text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-950/40'
                 }`}
               >
-                <span
-                  style={ecosystemFilter === 'all' ? { color: '#ffffff' } : undefined}
-                  className={ecosystemFilter === 'all' ? 'text-white font-black drop-shadow-sm' : ''}
-                >
-                  🌐 Todas ({allRankedSections.length})
-                </span>
+                🌐 Todas ({allRankedSections.length})
               </button>
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('store')}
-                style={ecosystemFilter === 'store' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                style={ecosystemFilter === 'store' ? { backgroundColor: '#6B21A8', color: '#ffffff' } : undefined}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'store'
-                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
-                    : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                    ? 'bg-purple-800 text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-950/40'
                 }`}
               >
-                <span
-                  style={ecosystemFilter === 'store' ? { color: '#ffffff' } : undefined}
-                  className={ecosystemFilter === 'store' ? 'text-white font-black drop-shadow-sm' : ''}
-                >
-                  🛍️ Tienda ({storeCount})
-                </span>
+                🛍️ Tienda ({storeCount})
               </button>
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('admin')}
-                style={ecosystemFilter === 'admin' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                style={ecosystemFilter === 'admin' ? { backgroundColor: '#6B21A8', color: '#ffffff' } : undefined}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'admin'
-                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
-                    : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                    ? 'bg-purple-800 text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-950/40'
                 }`}
               >
-                <span
-                  style={ecosystemFilter === 'admin' ? { color: '#ffffff' } : undefined}
-                  className={ecosystemFilter === 'admin' ? 'text-white font-black drop-shadow-sm' : ''}
-                >
-                  🛡️ Admin ({adminCount})
-                </span>
+                🛡️ Admin ({adminCount})
+              </button>
+            </div>
+          </div>
+
+          {/* Grupo 2: Métrica Visualizada */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-bubble font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 shrink-0">
+              <Eye className="w-3.5 h-3.5 text-pink-600 dark:text-pink-400" />
+              <span>Métrica:</span>
+            </span>
+            <div className="inline-flex items-center p-1 rounded-xl bg-slate-200/80 dark:bg-[#1E1B2E] border border-slate-300/70 dark:border-purple-900/50 gap-1">
+              <button
+                type="button"
+                onClick={() => setEcosystemMetricView('both')}
+                style={ecosystemMetricView === 'both' ? { backgroundColor: '#6B21A8', color: '#ffffff' } : undefined}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  ecosystemMetricView === 'both'
+                    ? 'bg-purple-800 text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-950/40'
+                }`}
+                title="Ver barras combinadas de Vistas y Me Gusta"
+              >
+                📊 Dual (Vistas + Likes)
+              </button>
+              <button
+                type="button"
+                onClick={() => setEcosystemMetricView('likes')}
+                style={ecosystemMetricView === 'likes' ? { backgroundColor: '#BE185D', color: '#ffffff' } : undefined}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  ecosystemMetricView === 'likes'
+                    ? 'bg-pink-700 text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-pink-600 dark:hover:text-white hover:bg-white/60 dark:hover:bg-pink-950/40'
+                }`}
+                title="Levantar únicamente la gráfica de Me Gusta"
+              >
+                <Heart className={`w-3.5 h-3.5 ${ecosystemMetricView === 'likes' ? 'fill-white text-white' : 'fill-pink-500 text-pink-500'}`} />
+                <span>Solo Me Gusta</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setEcosystemMetricView('views')}
+                style={ecosystemMetricView === 'views' ? { backgroundColor: '#6B21A8', color: '#ffffff' } : undefined}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  ecosystemMetricView === 'views'
+                    ? 'bg-purple-800 text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-950/40'
+                }`}
+                title="Ver únicamente la gráfica de Vistas"
+              >
+                👁️ Solo Vistas
               </button>
             </div>
           </div>
@@ -2318,57 +2300,42 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
           </div>
 
           {/* Filtro Rápido de Categorías: Todas las Partes vs Tienda vs Admin */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-slate-200/90 dark:bg-[#1E1B2E] border border-slate-300 dark:border-purple-900/50">
+          <div className="inline-flex items-center p-1 rounded-xl bg-slate-200/80 dark:bg-[#1E1B2E] border border-slate-300/70 dark:border-purple-900/50 gap-1 shrink-0">
             <button
               type="button"
               onClick={() => setSectionFilterCategory('all')}
-              style={sectionFilterCategory === 'all' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+              style={sectionFilterCategory === 'all' ? { backgroundColor: '#6B21A8', color: '#ffffff' } : undefined}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'all'
-                  ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
-                  : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                  ? 'bg-purple-800 text-white shadow-xs'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-950/40'
               }`}
             >
-              <span
-                style={sectionFilterCategory === 'all' ? { color: '#ffffff' } : undefined}
-                className={sectionFilterCategory === 'all' ? 'text-white font-black drop-shadow-sm' : ''}
-              >
-                🌐 Todas ({allRankedSections.length})
-              </span>
+              🌐 Todas ({allRankedSections.length})
             </button>
             <button
               type="button"
               onClick={() => setSectionFilterCategory('store')}
-              style={sectionFilterCategory === 'store' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+              style={sectionFilterCategory === 'store' ? { backgroundColor: '#6B21A8', color: '#ffffff' } : undefined}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'store'
-                  ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
-                  : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                  ? 'bg-purple-800 text-white shadow-xs'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-950/40'
               }`}
             >
-              <span
-                style={sectionFilterCategory === 'store' ? { color: '#ffffff' } : undefined}
-                className={sectionFilterCategory === 'store' ? 'text-white font-black drop-shadow-sm' : ''}
-              >
-                🛍️ Tienda & Clientes ({storeCount})
-              </span>
+              🛍️ Tienda & Clientes ({storeCount})
             </button>
             <button
               type="button"
               onClick={() => setSectionFilterCategory('admin')}
-              style={sectionFilterCategory === 'admin' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+              style={sectionFilterCategory === 'admin' ? { backgroundColor: '#6B21A8', color: '#ffffff' } : undefined}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'admin'
-                  ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
-                  : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                  ? 'bg-purple-800 text-white shadow-xs'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-white hover:bg-white/60 dark:hover:bg-purple-950/40'
               }`}
             >
-              <span
-                style={sectionFilterCategory === 'admin' ? { color: '#ffffff' } : undefined}
-                className={sectionFilterCategory === 'admin' ? 'text-white font-black drop-shadow-sm' : ''}
-              >
-                🛡️ Panel Admin ({adminCount})
-              </span>
+              🛡️ Panel Admin ({adminCount})
             </button>
           </div>
         </div>
