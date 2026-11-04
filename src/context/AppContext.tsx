@@ -7,6 +7,7 @@ import {
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { playAudioBeep } from '../utils/formatters';
+import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 
 export const DEFAULT_USER_PROFILES: UserProfile[] = [
@@ -313,8 +314,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isLogoutTransitionOpen, setIsLogoutTransitionOpen] = useState(false);
 
-  // Web Intro Video Overlay state: Auto-plays on app load (initial visit)
-  const [isIntroOpen, setIsIntroOpen] = useState(true);
+  // Web Intro Video Overlay state: Solo carga y se reproduce en la portada / home
+  const [isIntroOpen, setIsIntroOpen] = useState<boolean>(() => isHomeLocation());
 
   const playWebIntro = () => {
     setIsIntroOpen(true);

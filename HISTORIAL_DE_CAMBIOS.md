@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.6.0 - Restricción Exclusiva del Video Intro a la Página Principal (Home)
+- [x] **Carga y Renderizado Exclusivo en Portada ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - El video intro ahora está condicionado estrictamente a `{currentRoute === 'home' && isIntroOpen && <WebIntroOverlay ... />}`.
+  - En todas las demás páginas (`/tienda`, `/catalogo`, `/talleres`, `/precios`, `/propuesta`, `/metricas`, `/admin`, subrutas de talleres, login) el componente no se monta en el DOM, por lo que el video nunca sale ni se muestra.
+- [x] **Eliminación del Preload Global de Video ([`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html)):**
+  - Removida la directiva `<link rel="preload" as="video">` del encabezado HTML para impedir que navegadores descarguen el archivo multimedia al acceder directamente a páginas internas o compartidas en redes sociales.
+- [x] **Detección Quirúrgica de Ruta Inicial y Sincronización ([`routeHelpers.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Implementada función modular `isHomeLocation()` para inicializar `isIntroOpen` en `false` si el usuario ingresa directamente a cualquier URL secundaria.
+  - Configurada auto-cancelación de la intro en `navigate()` y en el oyente de navegación del historial (`popstate`).
+
 ### Versión 2.5.0 - Nuevo Video Intro "INTRO BYFIO WEB (1)", Streaming FastStart y Optimización Extrema de Velocidad (68% Menor Carga Inicial)
 - [x] **Actualización y Optimización de Video Intro ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
   - Procesado el video oficial `INTRO BYFIO WEB (1).mp4` con FFmpeg aplicando `-movflags +faststart` para mover los metadatos al inicio del archivo, permitiendo reproducción inmediata por streaming sin esperar la descarga completa.
