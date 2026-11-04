@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.9.1 - Formato de Documento Formal para Requisición y Lista de Pedidos a Proveedor
+- [x] **Generación de Formato Documento Oficial de Requisición ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - Transformada la salida impresa de una captura de pantalla del modal web a un documento formal y elegante de Requisición y Orden de Reposición (`ORDEN DE COMPRA & REPOSICIÓN DE INVENTARIO`) optimizado para papel Carta/A4 y exportación a PDF.
+  - Encabezado corporativo institucional by.fio con gradiente púrpura oficial, datos de contacto (Tibás, San José, WhatsApp +506 6400-4640), número de requisición consecutivo oficial (`OC-AAAAMMDD-N`) y fecha de emisión.
+  - Tabla nítida de alta definición (`.print-table`) con bordes y líneas sólidas visibles (`border-slate-400`), desglosando exactamente las cantidades personalizadas digitadas por el usuario en la web (`orderQty`), código SKU, descripción del artículo, stock actual, costo unitario y subtotales calculados.
+  - Sección de resumen financiero de inversión estimada, términos oficiales de entrega y recuadros de firma autorizada (Dirección by.fio y Conformidad de recepción del proveedor).
+- [x] **Selector Dual de Modo en Pantalla (Editor vs Vista Previa de Documento) ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - Implementado conmutador de pestañas segmentado: `✏️ Modificar Cantidades` para interactuar con botones de incremento/decremento e inputs, y `📄 Vista Documento Formal` para previsualizar el documento idéntico a cómo se imprimirá.
+  - Enlace dinámico con `@media print`: al imprimir o guardar en PDF, se ocultan automáticamente todos los controles web y se renderiza exclusivamente el documento formal limpio.
+
 ### Versión 3.9.0 - Clarificación y Sincronización de Contadores de Pedidos (Pendientes vs Totales)
 - [x] **Distinción Clara de Métricas en Cola de Pedidos ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
   - Unificados los indicadores visuales: el encabezado ahora muestra tanto el badge destacado en rosa de pedidos pendientes de alisto (`{pendingOrders.length} pendientes`) como el badge neutro de pedidos históricos (`{orders.length} totales`).
