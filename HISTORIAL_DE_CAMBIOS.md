@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.6.0 - Alto Contraste en Filtros/Destinos de Métricas y Limpieza Visual
+- [x] **Contraste y Legibilidad en Botones Activos ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx), [`tailwind.config.js`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/tailwind.config.js)):**
+  - Solucionado el problema de contraste en los 7 botones de destino ("Sección a Abrir con este Enlace") al aplicar gradiente púrpura intenso (`from-purple-700 via-purple-800 to-indigo-900`), texto blanco en negrita (`drop-shadow-xs`), borde luminoso y anillo exterior (`ring-2 ring-purple-400/50`).
+  - Corregida la visibilidad de los botones de filtro de categorías (`🌐 Todas`, `🛍️ Tienda & Clientes`, `🛡️ Panel Admin`) en *"¿Qué Secciones Gustaron Más?"* y en la Gráfica del Ecosistema, garantizando que el texto activo sea 100% legible tanto en modo claro como oscuro.
+  - Registrado el token de color `fio.purple` y `fio-purple` en `tailwind.config.js` para blindar la coherencia de estilos.
+- [x] **Limpieza de Etiquetas en Gráficas de Métricas ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Removida la leyenda "(Sin Administración)" en el título y subtítulo de la sección de tráfico de clientes ("Navegación de Clientes en la Web").
+
 ### Versión 3.5.0 - Edición Manual de Cantidades en Pedido a Proveedor y Ajuste Personalizado
 - [x] **Cantidades Modificables por Ítem ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
   - Implementado control numérico interactivo por producto en la columna *"Cantidad a Pedir"*: permite escribir el número exacto deseado mediante input manual o ajustarlo con botones de incremento/decremento `[-]` y `[+]`.

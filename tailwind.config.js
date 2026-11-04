@@ -20,7 +20,9 @@ export default {
           pink: '#EC4899',
           blue: '#9BE4FF', // Exact cyan heart
           yellow: '#FFF07C', // Exact yellow star
+          purple: '#7C3AED',
         },
+        'fio-purple': '#7C3AED',
       },
       fontFamily: {
         serif: ['"Cormorant Garamond"', 'Playfair Display', 'Georgia', 'serif'],

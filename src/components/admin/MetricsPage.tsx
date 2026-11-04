@@ -1309,7 +1309,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                 onClick={() => setEcosystemMetricView('views')}
                 className={`px-2.5 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemMetricView === 'views'
-                    ? 'bg-fio-purple text-white shadow-xs'
+                    ? 'bg-gradient-to-r from-purple-700 to-indigo-800 text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-purple-600'
                 }`}
                 title="Ver únicamente la gráfica de Vistas"
@@ -1325,33 +1325,39 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                 onClick={() => setEcosystemFilter('all')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'all'
-                    ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
-                    : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                    : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
               >
-                🌐 Todas ({allRankedSections.length})
+                <span className={ecosystemFilter === 'all' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                  🌐 Todas ({allRankedSections.length})
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('store')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'store'
-                    ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
-                    : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                    : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
               >
-                🛍️ Tienda ({storeCount})
+                <span className={ecosystemFilter === 'store' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                  🛍️ Tienda ({storeCount})
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('admin')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'admin'
-                    ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
-                    : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                    : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
               >
-                🛡️ Admin ({adminCount})
+                <span className={ecosystemFilter === 'admin' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                  🛡️ Admin ({adminCount})
+                </span>
               </button>
             </div>
           </div>
@@ -1578,7 +1584,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
         </div>
       </div>
 
-      {/* 2. GRÁFICA EXCLUSIVA DE LA WEB PÚBLICA (SIN PANEL ADMIN) */}
+      {/* 2. GRÁFICA EXCLUSIVA DE LA WEB PÚBLICA */}
       <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-purple-900/30 pb-4">
           <div>
@@ -1587,10 +1593,10 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               <span>Web Pública de Clientes Exclusiva</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-              Navegación de Clientes en la Web (Sin Administración)
+              Navegación de Clientes en la Web
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Comparativa dedicada 100% al comportamiento de los compradores: cuántos ingresaron a Portada, Tienda, Catálogo, Cursos, Clics a Cursos, Precios y Portal.
+              Comparativa dedicada al comportamiento de los compradores: cuántos ingresaron a Portada, Tienda, Catálogo, Cursos, Clics a Cursos, Precios y Portal.
             </p>
           </div>
 
@@ -2032,7 +2038,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
             </label>
 
             {/* Fila de Botones Rápidos (Incluyendo botón destacado: "Todas las Secciones") */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-2.5">
               {DESTINATION_OPTIONS.map((opt) => {
                 const IconComponent = opt.icon;
                 const isSelected = targetSectionId === opt.id;
@@ -2042,16 +2048,20 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                     key={opt.id}
                     type="button"
                     onClick={() => setTargetSectionId(opt.id)}
-                    className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 cursor-pointer ${
+                    className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-2.5 cursor-pointer ${
                       isSelected
-                        ? 'bg-fio-purple text-white border-fio-purple shadow-md scale-102 font-bubble font-bold'
-                        : 'bg-white dark:bg-[#1E1B2E] text-slate-700 dark:text-slate-200 border-slate-200 dark:border-purple-900/40 hover:border-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/30'
+                        ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white border-purple-400 shadow-lg ring-2 ring-purple-400/50 scale-[1.02] font-bubble font-bold'
+                        : 'bg-white dark:bg-[#1E1B2E] text-slate-800 dark:text-slate-100 border-slate-200 dark:border-purple-900/40 hover:border-purple-400 hover:bg-purple-50/70 dark:hover:bg-purple-900/30 shadow-xs'
                     }`}
                   >
-                    <IconComponent className={`w-4 h-4 shrink-0 ${isSelected ? 'text-fio-yellow' : 'text-fio-purple'}`} />
-                    <div className="min-w-0">
-                      <div className="text-xs truncate">{opt.name}</div>
-                      <div className={`text-[10px] ${isSelected ? 'text-purple-200' : 'text-slate-400'}`}>
+                    <div className={`p-1.5 rounded-xl shrink-0 ${isSelected ? 'bg-white/20 text-amber-300' : 'bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300'}`}>
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className={`text-xs font-bubble font-bold ${isSelected ? 'text-white drop-shadow-xs' : 'text-slate-900 dark:text-white'}`}>
+                        {opt.name}
+                      </div>
+                      <div className={`text-[10px] font-sans font-medium mt-0.5 ${isSelected ? 'text-purple-200 font-semibold' : 'text-slate-500 dark:text-slate-400'}`}>
                         {opt.badge}
                       </div>
                     </div>
@@ -2155,8 +2165,8 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                         }}
                         className={`px-3 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer ${
                           isFilterActive
-                            ? 'bg-fio-purple text-white shadow-sm'
-                            : 'bg-white dark:bg-[#1E1B2E] text-fio-purple hover:bg-purple-100 dark:hover:bg-purple-900/50 border border-purple-200 dark:border-purple-800'
+                            ? 'bg-gradient-to-r from-purple-700 to-indigo-800 text-white font-bold shadow-md ring-2 ring-purple-400/50'
+                            : 'bg-white dark:bg-[#1E1B2E] text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 border border-purple-200 dark:border-purple-800'
                         }`}
                       >
                         <BarChart3 className="w-3.5 h-3.5" />
@@ -2268,33 +2278,39 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               onClick={() => setSectionFilterCategory('all')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'all'
-                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
-                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                  ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                  : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
-              🌐 Todas ({allRankedSections.length})
+              <span className={sectionFilterCategory === 'all' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                🌐 Todas ({allRankedSections.length})
+              </span>
             </button>
             <button
               type="button"
               onClick={() => setSectionFilterCategory('store')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'store'
-                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
-                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                  ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                  : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
-              🛍️ Tienda & Clientes ({storeCount})
+              <span className={sectionFilterCategory === 'store' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                🛍️ Tienda & Clientes ({storeCount})
+              </span>
             </button>
             <button
               type="button"
               onClick={() => setSectionFilterCategory('admin')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'admin'
-                  ? 'bg-fio-purple text-white shadow-sm ring-1 ring-purple-300'
-                  : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white hover:text-fio-purple hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
+                  ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                  : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
-              🛡️ Panel Admin ({adminCount})
+              <span className={sectionFilterCategory === 'admin' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                🛡️ Panel Admin ({adminCount})
+              </span>
             </button>
           </div>
         </div>
