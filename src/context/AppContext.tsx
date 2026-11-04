@@ -1101,7 +1101,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           .catch(() => {});
       });
 
-    // Temporizador inteligente: 4s únicamente si la pestaña está activa y visible
+    // Temporizador inteligente: 8s únicamente si la pestaña está activa y visible
     let pollingTimer: ReturnType<typeof setInterval> | null = null;
 
     const startPolling = () => {
@@ -1110,7 +1110,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (!document.hidden) {
             fetchLatestData();
           }
-        }, 4000);
+        }, 8000);
       }
     };
 

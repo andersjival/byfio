@@ -49,17 +49,16 @@ export const onRequestGet = async (context: { env: Env }) => {
       return new Response(JSON.stringify({ error: 'DB binding not available' }), { status: 500 });
     }
 
-    await context.env.DB.prepare(
-      'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
-    ).run().catch(() => {});
-
     const { results } = await context.env.DB.prepare(
       'SELECT * FROM products ORDER BY created_at DESC'
     ).all();
 
     const products = (results as ProductDbRow[]).map(mapRowToProduct);
     return new Response(JSON.stringify(products), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
     });
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });

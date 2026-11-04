@@ -59,12 +59,12 @@ export const onRequestGet = async (context: { env: Env }) => {
       return new Response(JSON.stringify({ error: 'DB binding not available' }), { status: 500 });
     }
 
-    // Asegurar que el pedido histórico inicial #FIO-1001 esté siempre presente en D1
-    const existing1001 = await context.env.DB.prepare(
-      "SELECT id FROM orders WHERE id = 'ord-1001' OR order_number = '#FIO-1001' LIMIT 1"
-    ).first();
+    let { results } = await context.env.DB.prepare(
+      'SELECT * FROM orders ORDER BY created_at ASC'
+    ).all();
 
-    if (!existing1001) {
+    // Solo si la base de datos de pedidos está completamente vacía, sembrar la orden fundacional #FIO-1001
+    if (!results || results.length === 0) {
       try {
         await context.env.DB.prepare(
           `INSERT OR IGNORE INTO orders (
@@ -126,16 +126,20 @@ export const onRequestGet = async (context: { env: Env }) => {
           'Empacar con tarjeta de cumpleaños para Sofi.',
           '2026-10-28T09:15:00.000Z'
         ).run();
+
+        const refetched = await context.env.DB.prepare(
+          'SELECT * FROM orders ORDER BY created_at ASC'
+        ).all();
+        results = refetched.results;
       } catch {}
     }
 
-    const { results } = await context.env.DB.prepare(
-      'SELECT * FROM orders ORDER BY created_at ASC'
-    ).all();
-
     const orders = (results as OrderDbRow[]).map(mapRowToOrder);
     return new Response(JSON.stringify(orders), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
     });
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });

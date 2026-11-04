@@ -18,6 +18,25 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   public static getDerivedStateFromError(error: Error): State {
+    const msg = error?.message || '';
+    const isChunkError =
+      msg.includes('dynamically imported module') ||
+      msg.includes('Failed to fetch dynamically') ||
+      msg.includes('Importing a module script failed') ||
+      msg.includes('Loading chunk') ||
+      msg.includes('error loading dynamically imported module');
+
+    // Auto-recarga instantánea si el navegador tiene en caché una versión anterior del código
+    if (isChunkError && typeof window !== 'undefined') {
+      const lastReload = sessionStorage.getItem('byfio_chunk_reload_lock');
+      const now = Date.now();
+      if (!lastReload || now - Number(lastReload) > 10000) {
+        sessionStorage.setItem('byfio_chunk_reload_lock', String(now));
+        window.location.reload();
+        return { hasError: false };
+      }
+    }
+
     return { hasError: true, error };
   }
 
