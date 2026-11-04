@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.11.0 - Restricción Confidencial de Propuesta Integral, Ficha Técnica y Métricas Exclusivas para Admin y Superadmin
+- [x] **Blindaje de Rutas Confidenciales ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Protegidas con compuerta de autenticación estricta las rutas `/propuesta`, `/metricas` y `/superadmin`.
+  - Si un colaborador o perfil de usuario con PIN ingresa a estas rutas, el sistema bloquea el contenido y despliega la tarjeta de *"Acceso Restringido: Este panel es confidencial y solo está autorizado para el admin y superadmin"*.
+- [x] **Ocultación Total en el Menú y Cabecera de Administración ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Ocultados los botones *"Superadmin"* y *"Propuesta"* de la cabecera de administración para perfiles de usuario estándar.
+  - Eliminadas las tarjetas de acceso *"Propuesta Integral & Ficha Técnica"* y *"Métricas de Visitas & Rastreo"* del menú principal del Hub cuando un colaborador inicia sesión con su PIN.
+- [x] **Ocultación en Navegación Móvil ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - El botón *"📋 Propuesta del Sistema"* en el menú móvil ahora solo se muestra si el usuario autenticado tiene rol de `admin` o es `isMasterAdmin`.
+
 ### Versión 4.9.2 - Flujo Guiado Post-Alisto: "¿Continuar con el Siguiente Pedido?"
 - [x] **Modal de Decisión al Finalizar Pedido ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
   - Al completar el alisto del último artículo de un pedido, la ventana ya no se cierra bruscamente.

@@ -27,8 +27,11 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
     setIsSinpeModalOpen,
     sinpeTransactions,
     isModuleEnabled,
+    currentUser,
   } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
+
+  const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
 
   const handleOpenDesign = onOpenDesignModal || (() => setInternalDesignModalOpen(true));
 
@@ -51,33 +54,37 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
 
         {/* Acciones Rápidas & Botón Discreto de Personalización Visual */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Botón de Acceso Superadmin */}
-          <button
-            type="button"
-            onClick={() => {
-              if (onNavigate) onNavigate('superadmin');
-              else window.location.href = '/superadmin';
-            }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bubble font-bold border border-slate-700 shadow-xs transition-all active:scale-95 cursor-pointer"
-            title="Abrir panel maestro de Superadmin (Activar/Desactivar Módulos)"
-          >
-            <Shield className="w-3.5 h-3.5 text-pink-400" />
-            <span>Superadmin</span>
-          </button>
+          {/* Botón de Acceso Superadmin (Solo Admin y Superadmin) */}
+          {isAdminOrSuperadmin && (
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigate) onNavigate('superadmin');
+                else window.location.href = '/superadmin';
+              }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bubble font-bold border border-slate-700 shadow-xs transition-all active:scale-95 cursor-pointer"
+              title="Abrir panel maestro de Superadmin (Activar/Desactivar Módulos)"
+            >
+              <Shield className="w-3.5 h-3.5 text-pink-400" />
+              <span>Superadmin</span>
+            </button>
+          )}
 
-          {/* Botón de Propuesta Oficial para el Dueño */}
-          <button
-            type="button"
-            onClick={() => {
-              if (onNavigate) onNavigate('propuesta');
-              else window.location.href = '/propuesta';
-            }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
-            title="Ver propuesta integral y ficha de funcionalidades"
-          >
-            <FileText className="w-3.5 h-3.5 text-fio-yellow" />
-            <span>Propuesta</span>
-          </button>
+          {/* Botón de Propuesta Oficial para el Dueño (Solo Admin y Superadmin) */}
+          {isAdminOrSuperadmin && (
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigate) onNavigate('propuesta');
+                else window.location.href = '/propuesta';
+              }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+              title="Ver propuesta integral y ficha de funcionalidades"
+            >
+              <FileText className="w-3.5 h-3.5 text-fio-yellow" />
+              <span>Propuesta</span>
+            </button>
+          )}
 
           {/* Botón Discreto de Diseño & Tipografía */}
           <button
