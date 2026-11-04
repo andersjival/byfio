@@ -4,7 +4,7 @@ import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
 import {
   Package, AlertTriangle, ShoppingCart, RefreshCw,
-  FileText, Palette, DollarSign
+  FileText, Palette, DollarSign, Landmark
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -15,7 +15,16 @@ interface AdminHeaderProps {
 }
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onNavigate }) => {
-  const { products, orders, setIsSupplierModalOpen, resetToDefaults, colorTheme, typographyTheme } = useApp();
+  const {
+    products,
+    orders,
+    setIsSupplierModalOpen,
+    resetToDefaults,
+    colorTheme,
+    typographyTheme,
+    setIsSinpeModalOpen,
+    sinpeTransactions
+  } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
 
   const handleOpenDesign = onOpenDesignModal || (() => setInternalDesignModalOpen(true));
@@ -65,6 +74,22 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
             <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
               {colorTheme === 'vibrant' ? 'Morado' : colorTheme === 'dark' ? 'Oscuro' : 'Zen'}
             </span>
+          </button>
+
+          {/* Botón Verificador SINPE BCR */}
+          <button
+            type="button"
+            onClick={() => setIsSinpeModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+            title="Verificación de Pagos SINPE Móvil Banco BCR"
+          >
+            <Landmark className="w-3.5 h-3.5 text-purple-700" />
+            <span>SINPE BCR</span>
+            {sinpeTransactions.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-purple-800 text-white text-[10px] font-bold">
+                {sinpeTransactions.length}
+              </span>
+            )}
           </button>
 
           {/* Lista de Compra */}

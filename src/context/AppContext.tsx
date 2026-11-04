@@ -2,9 +2,10 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
-  UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem
+  UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
+  SinpeTransaction, SinpeSettings
 } from '../types';
-import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS } from '../utils/seedData';
+import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { playAudioBeep } from '../utils/formatters';
 import { playNewOrderChimeSound } from '../utils/soundEffects';
@@ -244,6 +245,18 @@ interface AppContextType {
     total: number;
   }) => Order;
   resetToDefaults: () => void;
+  sinpeTransactions: SinpeTransaction[];
+  sinpeSettings: SinpeSettings;
+  registerSinpeTransaction: (data: Omit<SinpeTransaction, 'id' | 'createdAt'>) => {
+    success: boolean;
+    message: string;
+    transaction?: SinpeTransaction;
+    duplicate?: boolean;
+  };
+  deleteSinpeTransaction: (id: string) => void;
+  updateSinpeSettings: (settings: Partial<SinpeSettings>) => void;
+  isSinpeModalOpen: boolean;
+  setIsSinpeModalOpen: (open: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -266,6 +279,8 @@ const STORAGE_KEYS = {
   CUSTOMERS: 'byfio_customers_v1',
   CUSTOMER_FIELDS: 'byfio_customer_fields_v1',
   INVENTORY_MODE: 'byfio_inventory_mode_v1',
+  SINPE_TRANSACTIONS: 'byfio_sinpe_transactions_v1',
+  SINPE_SETTINGS: 'byfio_sinpe_settings_v1',
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -353,6 +368,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isLogoutTransitionOpen, setIsLogoutTransitionOpen] = useState(false);
+
+  // Estados para Redirección y Verificación de Pagos SINPE Móvil Banco BCR
+  const [sinpeTransactions, setSinpeTransactions] = useState<SinpeTransaction[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.SINPE_TRANSACTIONS);
+    return saved ? JSON.parse(saved) : INITIAL_SINPE_TRANSACTIONS;
+  });
+
+  const [sinpeSettings, setSinpeSettings] = useState<SinpeSettings>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.SINPE_SETTINGS);
+    return saved ? JSON.parse(saved) : INITIAL_SINPE_SETTINGS;
+  });
+
+  const [isSinpeModalOpen, setIsSinpeModalOpen] = useState(false);
 
   // Web Intro Video Overlay state: Solo carga y se reproduce en la portada / home
   const [isIntroOpen, setIsIntroOpen] = useState<boolean>(() => isHomeLocation());
@@ -960,6 +988,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(event.data.workshops)) {
           setWorkshops(event.data.workshops);
         }
+        if (Array.isArray(event.data.sinpeTransactions)) {
+          setSinpeTransactions(event.data.sinpeTransactions);
+        }
       }
     };
     syncChannel.addEventListener('message', handleSync);
@@ -1061,6 +1092,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .finally(() => {
           isInitialOrdersLoadRef.current = false;
         });
+
+      // 3. Sincronizar transacciones verificadas SINPE BCR en tiempo real
+      fetch('/api/sinpe-transactions')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setSinpeTransactions((prev) => {
+              const map = new Map<string, SinpeTransaction>();
+              prev.forEach((t) => map.set(t.referenceNumber, t));
+              data.forEach((t: SinpeTransaction) => map.set(t.referenceNumber, t));
+              const merged = Array.from(map.values()).sort(
+                (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+              );
+              localStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(merged));
+              return merged;
+            });
+          }
+        })
+        .catch(() => {});
     };
 
     // Carga inicial inmediata
@@ -1743,18 +1793,102 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return newOrder;
   };
 
+  const registerSinpeTransaction = (data: Omit<SinpeTransaction, 'id' | 'createdAt'>) => {
+    const cleanRef = data.referenceNumber.trim();
+    const alreadyExists = sinpeTransactions.some(
+      (tx) => tx.referenceNumber.toLowerCase() === cleanRef.toLowerCase()
+    );
+
+    if (alreadyExists) {
+      return {
+        success: false,
+        duplicate: true,
+        message: `El número de referencia ${cleanRef} ya fue acreditado previamente en el sistema.`,
+      };
+    }
+
+    const txId = `sinpe-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+    const newTx: SinpeTransaction = {
+      ...data,
+      id: txId,
+      referenceNumber: cleanRef,
+      status: 'verified',
+      createdAt: new Date().toISOString(),
+    };
+
+    const nextTxs = [newTx, ...sinpeTransactions];
+    setSinpeTransactions(nextTxs);
+    localStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(nextTxs));
+
+    // Si es para un taller, descontar 1 cupo disponible
+    if (newTx.category === 'workshop' && newTx.workshopId) {
+      setWorkshops((prev) => {
+        const updated = prev.map((w) =>
+          w.id === newTx.workshopId ? { ...w, spotsAvailable: Math.max(0, w.spotsAvailable - 1) } : w
+        );
+        localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(updated));
+        return updated;
+      });
+    }
+
+    // Sincronizar en D1
+    fetch('/api/sinpe-transactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newTx),
+    }).catch(() => {});
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        sinpeTransactions: nextTxs,
+      });
+    } catch {}
+
+    return {
+      success: true,
+      message: `¡Pago de ₡${newTx.amount.toLocaleString('es-CR')} acreditado en caja! Ref: ${newTx.referenceNumber}`,
+      transaction: newTx,
+    };
+  };
+
+  const deleteSinpeTransaction = (id: string) => {
+    const nextTxs = sinpeTransactions.filter((tx) => tx.id !== id);
+    setSinpeTransactions(nextTxs);
+    localStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(nextTxs));
+    fetch(`/api/sinpe-transactions?id=${encodeURIComponent(id)}`, { method: 'DELETE' }).catch(() => {});
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        sinpeTransactions: nextTxs,
+      });
+    } catch {}
+  };
+
+  const updateSinpeSettings = (updates: Partial<SinpeSettings>) => {
+    setSinpeSettings((prev) => {
+      const next = { ...prev, ...updates };
+      localStorage.setItem(STORAGE_KEYS.SINPE_SETTINGS, JSON.stringify(next));
+      return next;
+    });
+  };
+
   const resetToDefaults = () => {
     setProducts(INITIAL_PRODUCTS);
     setOrders(INITIAL_ORDERS);
     setWorkshops(INITIAL_WORKSHOPS);
     setCustomers(INITIAL_CUSTOMERS);
     setCustomerFieldDefs(DEFAULT_CUSTOMER_FIELDS);
+    setSinpeTransactions(INITIAL_SINPE_TRANSACTIONS);
+    setSinpeSettings(INITIAL_SINPE_SETTINGS);
     localStorage.removeItem(STORAGE_KEYS.PRODUCTS);
     localStorage.removeItem(STORAGE_KEYS.ORDERS);
     localStorage.removeItem(STORAGE_KEYS.CART);
     localStorage.removeItem(STORAGE_KEYS.WORKSHOPS);
     localStorage.removeItem(STORAGE_KEYS.CUSTOMERS);
     localStorage.removeItem(STORAGE_KEYS.CUSTOMER_FIELDS);
+    localStorage.removeItem(STORAGE_KEYS.SINPE_TRANSACTIONS);
+    localStorage.removeItem(STORAGE_KEYS.SINPE_SETTINGS);
   };
 
   return (
@@ -1848,6 +1982,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteWorkshop,
         bookWorkshopDirect,
         resetToDefaults,
+        sinpeTransactions,
+        sinpeSettings,
+        registerSinpeTransaction,
+        deleteSinpeTransaction,
+        updateSinpeSettings,
+        isSinpeModalOpen,
+        setIsSinpeModalOpen,
       }}
     >
       {children}

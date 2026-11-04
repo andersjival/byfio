@@ -17,6 +17,24 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.0.0 - Sistema de Redirección y Verificación de Pagos SINPE Móvil Banco BCR & División de Ingresos en Caja
+- [x] **Motor de Extracción y Validación SINPE Móvil BCR ([`bcrSinpeParser.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/bcrSinpeParser.ts)):**
+  - Detección de remitente oficial `mensajero@bancobcr.com` y asunto `"SINPE MÓVIL: Notificación de transacción realizada"`.
+  - Extracción y normalización de: Número de Referencia (estrictamente único), Teléfono de origen, Nombre del cliente, Entidad bancaria origen, Monto (₡), Motivo y Fecha/Hora.
+  - Bloqueo estricto anti-duplicados: ninguna transacción puede registrarse dos veces con la misma referencia bancaria.
+- [x] **Vinculación de Correo y Redirección ([`SinpeBcrVerificationModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpeBcrVerificationModal.tsx)):**
+  - Formulario de vinculación para que el administrador configure su correo de recepción de notificaciones BCR.
+  - Endpoints de procesamiento en nube: `/api/sinpe-webhook` y persistencia en Cloudflare D1 en `/api/sinpe-transactions`.
+  - Herramienta visual de extracción y pegado rápido con carga de ejemplos demostrativos (Tienda y Talleres).
+- [x] **Aumento Automático de Caja & División Contable ([`CashRegisterReports.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx), [`DailyClosingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx)):**
+  - Cada transacción SINPE verificada incrementa automáticamente el saldo en caja.
+  - División contable en tiempo real: 🛍️ Ventas Tienda & Catálogo vs 🎨 Talleres Creativos, tanto en pantalla como en el Acta de Cierre Diario oficial.
+  - Tabla en vivo de comprobantes SINPE BCR verificados con estado y N° de referencia.
+- [x] **Auditoría Dinámica de Talleres Pagados ([`WorkshopEnrollmentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/WorkshopEnrollmentsSection.tsx)):**
+  - Incorporado botón destacado "📊 Talleres Pagados & Confirmados" con selector dinámico por curso.
+  - Presentación del estado exacto solicitado: *"Del taller de X cupos se han vendido Y y ya están confirmados (Z disponibles)"*.
+  - Desglose de ingresos acreditados en caja por taller e integración de alumnos confirmados vía SINPE BCR.
+
 ### Versión 3.9.5 - Optimización Integral de Rendimiento: Caché Inmutable Edge, Carga Asíncrona de Fuentes y Aceleración Gráfica (0ms)
 - [x] **Caché Inmutable en Cloudflare Pages ([`public/_headers`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/_headers)):**
   - Creada política de cabeceras HTTP de alto rendimiento: assets con hash inmutable (`max-age=31536000`), recursos multimedia cacheados por 30 días con revalidación en segundo plano (`stale-while-revalidate`), y APIs dinámicas en vivo (`no-cache`).

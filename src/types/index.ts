@@ -231,3 +231,28 @@ export interface MetricsState {
   lastVisitTimestamp?: string;
 }
 
+export interface SinpeTransaction {
+  id: string; // ID interno único
+  referenceNumber: string; // N° de comprobante / referencia bancaria BCR (Estrictamente ÚNICA)
+  originPhone: string; // Teléfono de origen (ej: 8888-8888)
+  originName: string; // Nombre del cliente origen
+  originBank: string; // Entidad bancaria origen (Banco Nacional, BAC, BCR, etc.)
+  amount: number; // Monto en Colones (₡)
+  description: string; // Motivo o concepto
+  transactionDate: string; // Fecha y hora de la transacción
+  category: 'store' | 'workshop'; // 'store' (Tienda & Catálogo) | 'workshop' (Talleres Creativos)
+  workshopId?: string; // ID del taller si es para un curso
+  workshopTitle?: string; // Nombre del taller
+  orderId?: string; // ID de orden asociada si aplica
+  status: 'verified'; // Estado de verificación (Verificado ✅)
+  rawEmail?: string; // Texto original del correo BCR
+  createdAt: string; // Fecha y hora de registro en el sistema
+}
+
+export interface SinpeSettings {
+  forwardingEmail: string; // Correo del administrador para recibir o reenviar comprobantes
+  isLinked: boolean; // Estado de vinculación activa
+  webhookUrl: string; // URL pública para recepción de webhooks de correo
+  autoVerify: boolean; // Auto-verificación de referencias activada
+}
+

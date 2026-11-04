@@ -38,6 +38,7 @@ import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
 import { AdminPricingModal } from './components/admin/AdminPricingModal';
+import { SinpeBcrVerificationModal } from './components/admin/SinpeBcrVerificationModal';
 
 // Code-splitting diferido únicamente para páginas secundarias independientes
 const MetricsPage = React.lazy(() => import('./components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
@@ -66,6 +67,8 @@ export const App: React.FC = () => {
     isNewProductModalOpen,
     isNewWorkshopModalOpen,
     isPricingModalOpen,
+    isSinpeModalOpen,
+    setIsSinpeModalOpen,
   } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
@@ -404,6 +407,7 @@ export const App: React.FC = () => {
         {isDailyClosingOpen && <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />}
         {isDesignModalOpen && <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />}
         {isPricingModalOpen && <AdminPricingModal />}
+        {isSinpeModalOpen && <SinpeBcrVerificationModal isOpen={isSinpeModalOpen} onClose={() => setIsSinpeModalOpen(false)} />}
       </React.Suspense>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Workshop, Product, Order } from '../types';
+import { Workshop, Product, Order, SinpeTransaction, SinpeSettings } from '../types';
 
 export const INITIAL_WORKSHOPS: Workshop[] = [
   {
@@ -391,3 +391,57 @@ export const INITIAL_ORDERS: Order[] = [
     createdAt: '2026-10-28T13:00:00.000Z',
   },
 ];
+
+export const INITIAL_SINPE_TRANSACTIONS: SinpeTransaction[] = [
+  {
+    id: 'sinpe-bcr-001',
+    referenceNumber: 'BCR-20261104-58210',
+    originPhone: '8845-2190',
+    originName: 'VALERIA MÉNDEZ BRENES',
+    originBank: 'BANCO DE COSTA RICA',
+    amount: 18500,
+    description: 'Agenda Personalizada 2027 Dra Valeria',
+    transactionDate: '2026-11-04 10:15:30',
+    category: 'store',
+    status: 'verified',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'sinpe-bcr-002',
+    referenceNumber: 'BCR-20261104-92431',
+    originPhone: '8888-2190',
+    originName: 'SOFÍA SOLANO BRENES',
+    originBank: 'BANCO NACIONAL DE COSTA RICA',
+    amount: 35000,
+    description: 'Taller de Encuadernación Artesanal Cupo Sofía',
+    transactionDate: '2026-11-04 11:40:12',
+    category: 'workshop',
+    workshopId: 'ws-1',
+    workshopTitle: 'Taller de Encuadernación Artesanal',
+    status: 'verified',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'sinpe-bcr-003',
+    referenceNumber: 'BCR-20261104-14892',
+    originPhone: '7023-8811',
+    originName: 'KIMBERLY MORA CORDERO',
+    originBank: 'BAC CREDOMATIC',
+    amount: 38000,
+    description: 'Inscripción Taller Agendas 2027',
+    transactionDate: '2026-11-04 13:20:05',
+    category: 'workshop',
+    workshopId: 'ws-2',
+    workshopTitle: 'Taller de Agendas Personalizadas 2027',
+    status: 'verified',
+    createdAt: new Date().toISOString(),
+  },
+];
+
+export const INITIAL_SINPE_SETTINGS: SinpeSettings = {
+  forwardingEmail: 'mensajero@bancobcr.com',
+  isLinked: true,
+  webhookUrl: 'https://byfiocr.pages.dev/api/sinpe-webhook',
+  autoVerify: true,
+};
+

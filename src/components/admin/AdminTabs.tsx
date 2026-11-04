@@ -10,7 +10,7 @@ interface AdminTabsProps {
 }
 
 export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab }) => {
-  const { orders, products, userProfiles, hasPermission } = useApp();
+  const { orders, products, userProfiles, hasPermission, sinpeTransactions } = useApp();
 
   const pendingCount = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking').length;
   const criticalCount = products.filter((p) => p.stock <= p.minStock).length;
@@ -97,6 +97,14 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
           >
             <DollarSign className="w-4 h-4 text-emerald-400 shrink-0" />
             <span className="truncate">Caja &amp; Reportes</span>
+            {sinpeTransactions.length > 0 && (
+              <span
+                className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-purple-700 text-white ml-0.5 shrink-0"
+                title={`${sinpeTransactions.length} pagos SINPE BCR verificados`}
+              >
+                {sinpeTransactions.length}
+              </span>
+            )}
           </button>
         )}
 

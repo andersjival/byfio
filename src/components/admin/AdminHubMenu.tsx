@@ -15,7 +15,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate }) => {
-  const { orders, products, workshops, userProfiles, hasPermission } = useApp();
+  const { orders, products, workshops, userProfiles, hasPermission, sinpeTransactions } = useApp();
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
   const copyCatalogLink = () => {
@@ -66,8 +66,8 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'reports' as AdminTabType,
       title: 'Caja & Reportería',
-      badge: 'Cierre diario',
-      badgeClass: 'bg-amber-50 text-amber-800',
+      badge: sinpeTransactions.length > 0 ? `${sinpeTransactions.length} SINPE BCR` : 'Cierre diario',
+      badgeClass: sinpeTransactions.length > 0 ? 'bg-purple-100 text-purple-900 font-bold' : 'bg-amber-50 text-amber-800',
       icon: Landmark,
       gradient: 'from-[#34D399] to-[#047857]',
     },
