@@ -22,6 +22,17 @@ interface OrderDbRow {
   created_at: string;
 }
 
+const normalizeIsoDate = (val: string | undefined): string => {
+  if (!val) return new Date().toISOString();
+  // Si la fecha guardada en SQLite viene como "YYYY-MM-DD HH:MM:SS" (sin 'Z' ni offset),
+  // SQLite datetime('now') la guardó en UTC; agregarle la 'Z' para que el navegador del usuario
+  // la convierta exactamente a su hora local real (ej: 15:29 UTC -> 09:29 AM).
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(val)) {
+    return val.replace(' ', 'T') + 'Z';
+  }
+  return val;
+};
+
 const mapRowToOrder = (r: OrderDbRow) => ({
   id: r.id,
   orderNumber: r.order_number,
@@ -38,8 +49,8 @@ const mapRowToOrder = (r: OrderDbRow) => ({
   shippingFee: r.shipping_fee,
   total: r.total,
   notes: r.notes,
-  packedAt: r.packed_at,
-  createdAt: r.created_at,
+  packedAt: r.packed_at ? normalizeIsoDate(r.packed_at) : undefined,
+  createdAt: normalizeIsoDate(r.created_at),
 });
 
 export const onRequestGet = async (context: { env: Env }) => {
@@ -70,8 +81,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         `INSERT OR REPLACE INTO orders (
           id, order_number, customer_name, customer_phone, customer_email,
           delivery_method, shipping_address, payment_method, payment_status,
-          order_status, items_json, subtotal, shipping_fee, total, notes, packed_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          order_status, items_json, subtotal, shipping_fee, total, notes, packed_at, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         order.id,
         order.orderNumber,
@@ -88,7 +99,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         order.shippingFee,
         order.total,
         order.notes || null,
-        order.packedAt || null
+        order.packedAt || null,
+        order.createdAt || new Date().toISOString()
       ).run();
     }
 

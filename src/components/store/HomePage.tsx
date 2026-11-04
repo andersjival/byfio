@@ -13,10 +13,15 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
-  const { workshops, products, addToCart, cart } = useApp();
+  const { workshops, products, addToCart, cart, inventoryMode } = useApp();
 
   const featuredWorkshops = workshops.slice(0, 3);
-  const featuredProducts = products.filter((p) => p.showInStore !== false).slice(0, 4);
+  const featuredProducts = products.filter((p) => {
+    const isAvailable = p.isAvailable !== false;
+    return inventoryMode === 'availability'
+      ? isAvailable
+      : (p.showInStore !== false && isAvailable);
+  }).slice(0, 4);
 
   return (
     <div className="space-y-10 sm:space-y-14 animate-fadeIn">

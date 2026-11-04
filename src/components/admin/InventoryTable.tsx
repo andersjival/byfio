@@ -1,12 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
-import { QrCode, AlertOctagon, Plus, Minus, Search, MapPin, PlusCircle, Trash2, Pencil } from 'lucide-react';
+import {
+  QrCode, AlertOctagon, Plus, Minus, Search, MapPin,
+  PlusCircle, Trash2, Pencil, Boxes, Sparkles, ToggleLeft,
+  ToggleRight, CheckCircle2, Check, EyeOff
+} from 'lucide-react';
 
 export const InventoryTable: React.FC = () => {
   const {
     products,
     updateProductStock,
+    inventoryMode,
+    setInventoryMode,
+    toggleProductAvailability,
     setQrModalProduct,
     setIsNewProductModalOpen,
     deleteProduct,
@@ -61,6 +68,85 @@ export const InventoryTable: React.FC = () => {
         </div>
       </div>
 
+      {/* Control Switch / Selector de Modo de Inventario */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-4 bg-gradient-to-r from-purple-50/80 via-fio-50/90 to-pink-50/70 rounded-2xl border border-fio-200 mb-5 shadow-2xs">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-xs transition-colors ${
+            inventoryMode === 'stock' ? 'bg-fio-800 text-white' : 'bg-emerald-600 text-white'
+          }`}>
+            {inventoryMode === 'stock' ? <Boxes className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bubble font-bold text-sm text-fio-900">Modo de Operación:</span>
+              <span className={`text-[11px] font-bubble font-bold px-2.5 py-0.5 rounded-full border ${
+                inventoryMode === 'stock'
+                  ? 'bg-purple-100 text-fio-800 border-purple-200'
+                  : 'bg-emerald-100 text-emerald-800 border-emerald-300'
+              }`}>
+                {inventoryMode === 'stock' ? '📦 Inventario Real con Stock Numérico' : '✨ Inventario por Disponibilidad Rápida'}
+              </span>
+            </div>
+            <p className="text-[11px] text-gray-500 mt-0.5">
+              {inventoryMode === 'stock'
+                ? 'Control exacto con columna de stock y alertas. La columna de stock está visible.'
+                : 'Control simplificado: la columna de stock se oculta y puedes activar o desactivar cada producto para Tienda, Catálogo y Carrito.'}
+            </p>
+          </div>
+        </div>
+
+        {/* Botones de Control de Modo */}
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          {/* Botón 1: Stock de Inventario */}
+          <button
+            type="button"
+            onClick={() => setInventoryMode(inventoryMode === 'stock' ? 'availability' : 'stock')}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 ${
+              inventoryMode === 'stock'
+                ? 'bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300'
+                : 'bg-fio-800 hover:bg-fio-900 text-white shadow-sm'
+            }`}
+            title={inventoryMode === 'stock' ? 'Desactiva la columna de stock y activa el modo de disponibilidad' : 'Vuelve a mostrar la columna de stock numérico'}
+          >
+            {inventoryMode === 'stock' ? (
+              <>
+                <ToggleLeft className="w-4 h-4 text-rose-500" />
+                <span>Desactivar stock de inventario</span>
+              </>
+            ) : (
+              <>
+                <Boxes className="w-4 h-4 text-fio-yellow" />
+                <span>Activar stock de inventario</span>
+              </>
+            )}
+          </button>
+
+          {/* Botón 2: Disponibilidad de Producto */}
+          <button
+            type="button"
+            onClick={() => setInventoryMode(inventoryMode === 'availability' ? 'stock' : 'availability')}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 ${
+              inventoryMode === 'availability'
+                ? 'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300'
+                : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+            }`}
+            title={inventoryMode === 'availability' ? 'Desactiva el modo disponibilidad y regresa a stock real' : 'Activa la columna de disponibilidad y oculta el stock'}
+          >
+            {inventoryMode === 'availability' ? (
+              <>
+                <ToggleRight className="w-4 h-4 text-emerald-600" />
+                <span>Desactivar disponibilidad de producto</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-white" />
+                <span>Activar disponibilidad de producto</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
       {/* Selector de Categorías & Buscador */}
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-5">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -104,9 +190,18 @@ export const InventoryTable: React.FC = () => {
               <th className="pb-3 px-2">Categoría</th>
               <th className="pb-3 px-2">Ubicación</th>
               <th className="pb-3 px-2">Precio</th>
-              <th className="pb-3 px-2 text-center">Stock</th>
-              <th className="pb-3 px-2 text-center">Alerta Mín/Máx</th>
-              <th className="pb-3 px-2 text-center">A Reponer</th>
+              {inventoryMode === 'stock' ? (
+                <>
+                  <th className="pb-3 px-2 text-center">Stock</th>
+                  <th className="pb-3 px-2 text-center">Alerta Mín/Máx</th>
+                  <th className="pb-3 px-2 text-center">A Reponer</th>
+                </>
+              ) : (
+                <>
+                  <th className="pb-3 px-2 text-center">Disponibilidad</th>
+                  <th className="pb-3 px-2 text-center">Estado en Tienda / Catálogo</th>
+                </>
+              )}
               <th className="pb-3 px-2 text-right">Acciones</th>
             </tr>
           </thead>
@@ -114,6 +209,7 @@ export const InventoryTable: React.FC = () => {
             {filtered.map((prod) => {
               const isCritical = prod.stock <= prod.minStock;
               const suggestedOrder = Math.max(0, prod.maxStock - prod.stock);
+              const isAvailable = prod.isAvailable !== false;
 
               return (
                 <tr key={prod.id} className="hover:bg-fio-50/40 transition-colors">
@@ -148,15 +244,23 @@ export const InventoryTable: React.FC = () => {
                         {prod.category}
                       </span>
                       <div className="flex items-center gap-1 text-[9px] font-bold">
-                        {prod.showInStore !== false && (
-                          <span className="px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 border border-purple-200" title="Visible en Tienda">
-                            Tienda
+                        {inventoryMode === 'availability' && !isAvailable ? (
+                          <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200">
+                            Desactivado
                           </span>
-                        )}
-                        {prod.showInCatalog !== false && (
-                          <span className="px-1.5 py-0.2 rounded bg-pink-50 text-pink-700 border border-pink-200" title="Visible en Catálogo">
-                            Catálogo
-                          </span>
+                        ) : (
+                          <>
+                            {prod.showInStore !== false && (
+                              <span className="px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 border border-purple-200" title="Visible en Tienda">
+                                Tienda
+                              </span>
+                            )}
+                            {prod.showInCatalog !== false && (
+                              <span className="px-1.5 py-0.2 rounded bg-pink-50 text-pink-700 border border-pink-200" title="Visible en Catálogo">
+                                Catálogo
+                              </span>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
@@ -171,38 +275,80 @@ export const InventoryTable: React.FC = () => {
 
                   <td className="py-3 px-2 font-bubble font-bold text-gray-800">{formatCRC(prod.price)}</td>
 
-                  <td className="py-3 px-2 text-center">
-                    <div className="inline-flex items-center gap-1.5 bg-fio-100/60 px-2 py-1 rounded-xl border border-fio-200">
-                      <button onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))} className="p-0.5 text-gray-500 hover:text-red-600">
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className={`font-bubble font-bold text-sm w-6 ${isCritical ? 'text-red-600' : 'text-gray-900'}`}>
-                        {prod.stock}
-                      </span>
-                      <button onClick={() => updateProductStock(prod.id, prod.stock + 1)} className="p-0.5 text-gray-500 hover:text-emerald-600">
-                        <Plus className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </td>
+                  {inventoryMode === 'stock' ? (
+                    <>
+                      <td className="py-3 px-2 text-center">
+                        <div className="inline-flex items-center gap-1.5 bg-fio-100/60 px-2 py-1 rounded-xl border border-fio-200">
+                          <button onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))} className="p-0.5 text-gray-500 hover:text-red-600">
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className={`font-bubble font-bold text-sm w-6 ${isCritical ? 'text-red-600' : 'text-gray-900'}`}>
+                            {prod.stock}
+                          </span>
+                          <button onClick={() => updateProductStock(prod.id, prod.stock + 1)} className="p-0.5 text-gray-500 hover:text-emerald-600">
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </td>
 
-                  <td className="py-3 px-2 text-center">
-                    {isCritical ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-100 text-red-700 font-bold text-[10px] animate-pulse">
-                        <AlertOctagon className="w-3 h-3" />
-                        <span>¡Reabastecer! (≤{prod.minStock})</span>
-                      </span>
-                    ) : (
-                      <span className="text-gray-500 text-[11px]">{prod.minStock} / {prod.maxStock}</span>
-                    )}
-                  </td>
+                      <td className="py-3 px-2 text-center">
+                        {isCritical ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-100 text-red-700 font-bold text-[10px] animate-pulse">
+                            <AlertOctagon className="w-3 h-3" />
+                            <span>¡Reabastecer! (≤{prod.minStock})</span>
+                          </span>
+                        ) : (
+                          <span className="text-gray-500 text-[11px]">{prod.minStock} / {prod.maxStock}</span>
+                        )}
+                      </td>
 
-                  <td className="py-3 px-2 text-center font-bold text-fio-800">
-                    {suggestedOrder > 0 ? (
-                      <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-lg">+{suggestedOrder}</span>
-                    ) : (
-                      <span className="text-gray-400">0</span>
-                    )}
-                  </td>
+                      <td className="py-3 px-2 text-center font-bold text-fio-800">
+                        {suggestedOrder > 0 ? (
+                          <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-lg">+{suggestedOrder}</span>
+                        ) : (
+                          <span className="text-gray-400">0</span>
+                        )}
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      {/* Columna Disponibilidad */}
+                      <td className="py-3 px-2 text-center">
+                        <button
+                          type="button"
+                          onClick={() => toggleProductAvailability(prod.id)}
+                          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bubble font-bold text-xs transition-all shadow-sm active:scale-95 border ${
+                            isAvailable
+                              ? 'bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-200'
+                              : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-300'
+                          }`}
+                          title={`Clic para cambiar a ${isAvailable ? 'No disponible' : 'Disponible'}`}
+                        >
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full ${
+                              isAvailable ? 'bg-white animate-pulse' : 'bg-rose-500'
+                            }`}
+                          />
+                          <span>{isAvailable ? 'Disponible' : 'No disponible'}</span>
+                        </button>
+                      </td>
+
+                      {/* Columna Estado en Tienda / Catálogo */}
+                      <td className="py-3 px-2 text-center">
+                        {isAvailable ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                            <Check className="w-3 h-3 stroke-[2.5]" />
+                            <span>En Tienda, Catálogo y Carrito</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-200 font-bold text-[10px]">
+                            <EyeOff className="w-3 h-3" />
+                            <span>Oculto (no aparece)</span>
+                          </span>
+                        )}
+                      </td>
+                    </>
+                  )}
 
                   <td className="py-3 px-2 text-right">
                     <div className="inline-flex items-center gap-1.5">

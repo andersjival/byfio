@@ -23,7 +23,7 @@ interface StorePageProps {
 }
 
 export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
-  const { products, addToCart, cart, setIsCartOpen, setIsNewProductModalOpen, setEditingProduct } = useApp();
+  const { products, addToCart, cart, setIsCartOpen, setIsNewProductModalOpen, setEditingProduct, inventoryMode } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<'Todas' | ProductCategory>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyCustomizable, setOnlyCustomizable] = useState(false);
@@ -36,13 +36,17 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   const handleQtyChange = (id: string, delta: number, maxStock: number) => {
     setQuantities((prev) => {
       const current = prev[id] || 1;
-      const next = Math.max(1, Math.min(maxStock, current + delta));
+      const maxLimit = inventoryMode === 'availability' ? 99 : Math.max(1, maxStock);
+      const next = Math.max(1, Math.min(maxLimit, current + delta));
       return { ...prev, [id]: next };
     });
   };
 
   const filteredProducts = products.filter((p) => {
-    const isVisibleInStore = p.showInStore !== false;
+    const isAvailable = p.isAvailable !== false;
+    const isVisibleInStore = inventoryMode === 'availability'
+      ? isAvailable
+      : (p.showInStore !== false && isAvailable);
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -208,8 +212,8 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7">
           {filteredProducts.map((p) => {
-            const isOutOfStock = p.stock <= 0;
-            const isLowStock = p.stock > 0 && p.stock <= p.minStock;
+            const isOutOfStock = inventoryMode === 'availability' ? false : p.stock <= 0;
+            const isLowStock = inventoryMode === 'availability' ? false : (p.stock > 0 && p.stock <= p.minStock);
             const isAdded = addedAnimationId === p.id;
             const cartItem = cart.find((it) => it.id === p.id);
             const isInCart = !!cartItem;
@@ -242,8 +246,13 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                     </span>
                   )}
 
-                  {/* Pastilla de Stock */}
-                  {isOutOfStock ? (
+                  {/* Pastilla de Stock o Disponibilidad */}
+                  {inventoryMode === 'availability' ? (
+                    <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-bold shadow-neuBtn flex items-center gap-1">
+                      <Check className="w-3 h-3 stroke-[2.5]" />
+                      <span>Disponible</span>
+                    </span>
+                  ) : isOutOfStock ? (
                     <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold shadow-neuBtn">
                       Agotado
                     </span>
@@ -343,7 +352,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                               <button
                                 type="button"
                                 onClick={() => handleQtyChange(p.id, 1, p.stock)}
-                                disabled={currentQty >= p.stock}
+                                disabled={inventoryMode === 'availability' ? false : currentQty >= p.stock}
                                 className="w-7 h-7 neu-btn-circle text-slate-700 hover:text-fio-800 disabled:opacity-35 disabled:cursor-not-allowed shadow-neuBtn transition-all active:scale-95"
                                 title="Aumentar cantidad"
                               >

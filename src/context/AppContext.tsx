@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
-  ViewMode, Product, Workshop, Order, CartItem, OrderStatus,
+  ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem
 } from '../types';
@@ -142,6 +142,9 @@ interface AppContextType {
   startPicking: (orderId: string) => void;
   markItemPicked: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
   updateOrderStatus: (orderId: string, newStatus: OrderStatus) => void;
+  inventoryMode: InventoryMode;
+  setInventoryMode: (mode: InventoryMode) => void;
+  toggleProductAvailability: (productId: string) => void;
   updateProductStock: (productId: string, stock: number, minStock?: number, maxStock?: number) => void;
   addProduct: (productData: Omit<Product, 'id'>) => Product;
   updateProduct: (productId: string, updatedData: Partial<Product>) => void;
@@ -242,12 +245,23 @@ const STORAGE_KEYS = {
   USER_PROFILES: 'byfio_user_profiles_v1',
   CUSTOMERS: 'byfio_customers_v1',
   CUSTOMER_FIELDS: 'byfio_customer_fields_v1',
+  INVENTORY_MODE: 'byfio_inventory_mode_v1',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem(STORAGE_KEYS.VIEW_MODE) as ViewMode) || 'store';
   });
+
+  const [inventoryMode, setInventoryModeState] = useState<InventoryMode>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.INVENTORY_MODE);
+    return saved === 'availability' || saved === 'stock' ? (saved as InventoryMode) : 'stock';
+  });
+
+  const setInventoryMode = (mode: InventoryMode) => {
+    setInventoryModeState(mode);
+    localStorage.setItem(STORAGE_KEYS.INVENTORY_MODE, mode);
+  };
 
   const [products, setProducts] = useState<Product[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
@@ -1170,6 +1184,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }).catch(() => {});
   };
 
+  const toggleProductAvailability = (productId: string) => {
+    setProducts((prev) =>
+      prev.map((p) => {
+        if (p.id === productId) {
+          const nextState = p.isAvailable === false ? true : false;
+          return { ...p, isAvailable: nextState };
+        }
+        return p;
+      })
+    );
+  };
+
   const addProduct = (productData: Omit<Product, 'id'>): Product => {
     const newProduct: Product = {
       ...productData,
@@ -1360,6 +1386,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         startPicking,
         markItemPicked,
         updateOrderStatus,
+        inventoryMode,
+        setInventoryMode,
+        toggleProductAvailability,
         updateProductStock,
         addProduct,
         updateProduct,

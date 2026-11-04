@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.8.0 - Corrección de Zona Horaria Local en Pedidos y Normalización UTC en Base de Datos
+- [x] **Persistencia de Fecha de Creación del Usuario ([`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
+  - Añadida la columna `created_at` en la sentencia `INSERT OR REPLACE INTO orders` para guardar fielmente la marca de tiempo enviada por el navegador del cliente en lugar de delegar en el `datetime('now')` de SQLite.
+- [x] **Normalización de Marcas de Tiempo UTC en Servidor y Frontend ([`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`formatters.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/formatters.ts)):**
+  - Creada función `normalizeIsoDate` que detecta cadenas de SQLite en formato `"YYYY-MM-DD HH:MM:SS"` y les anexa `'Z'` para que el navegador interprete correctamente el huso UTC y lo traduzca a la hora real del usuario.
+  - Actualizado [`formatShortDate`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/formatters.ts#L9) con normalización y formato `hour12: true`, corrigiendo la visualización de pedidos de 03:29 PM a 09:29 AM (hora de Costa Rica).
+
+
 ### Versión 2.7.0 - Incorporación de Gráficas Analíticas (Comparativa de Barras y Circular de Distribución) en /metricas
 - [x] **Gráfica Comparativa de Barras Interactiva ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
   - Incorporado histograma interactivo con selector de dos vistas: *Por Enlaces / Campañas* (comparando Clics directos, Vistas acumuladas y Agregados al carrito) y *Por Secciones del Sitio* (comparando Vistas de página e Interacciones / Me Gusta).

@@ -14,17 +14,21 @@ const CATEGORIES: ('Todas' | ProductCategory)[] = [
 ];
 
 export const ProductsSection: React.FC = () => {
-  const { products, addToCart, cart } = useApp();
+  const { products, addToCart, cart, inventoryMode } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<'Todas' | ProductCategory>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
 
   const filteredProducts = products.filter((p) => {
+    const isAvailable = p.isAvailable !== false;
+    const isVisible = inventoryMode === 'availability'
+      ? isAvailable
+      : (p.showInStore !== false && isAvailable);
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return isVisible && matchesCategory && matchesSearch;
   });
 
   const handleCustomTextChange = (prodId: string, val: string) => {
@@ -97,15 +101,15 @@ export const ProductsSection: React.FC = () => {
       {/* Grid de Productos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredProducts.map((p) => {
-          const isOutOfStock = p.stock <= 0;
-          const isLowStock = p.stock > 0 && p.stock <= p.minStock;
+          const isOutOfStock = inventoryMode === 'availability' ? false : p.stock <= 0;
+          const isLowStock = inventoryMode === 'availability' ? false : (p.stock > 0 && p.stock <= p.minStock);
 
           return (
             <div
               key={p.id}
               className="flex flex-col bg-[#F1F2F6] rounded-3xl overflow-hidden border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300 group"
             >
-              {/* Imagen y Estado de Stock */}
+              {/* Imagen y Estado de Stock o Disponibilidad */}
               <div className="relative h-44 bg-fio-100 overflow-hidden">
                 <img
                   src={p.image}
@@ -116,7 +120,12 @@ export const ProductsSection: React.FC = () => {
                   {p.category}
                 </span>
 
-                {isOutOfStock ? (
+                {inventoryMode === 'availability' ? (
+                  <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-bold shadow-sm flex items-center gap-1">
+                    <Check className="w-3 h-3 stroke-[2.5]" />
+                    <span>Disponible</span>
+                  </span>
+                ) : isOutOfStock ? (
                   <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold shadow-sm">
                     Agotado
                   </span>

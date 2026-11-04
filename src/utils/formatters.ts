@@ -8,12 +8,22 @@ export const formatCRC = (amount: number): string => {
 
 export const formatShortDate = (isoString: string): string => {
   try {
-    const d = new Date(isoString);
+    if (!isoString) return '';
+    let clean = String(isoString).trim();
+    // Si viene como "YYYY-MM-DD HH:MM:SS" (formato por defecto de SQLite sin Z),
+    // se trata como UTC para que se convierta exactamente a la hora local del usuario.
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(clean)) {
+      clean = clean.replace(' ', 'T') + 'Z';
+    }
+    const d = new Date(clean);
+    if (isNaN(d.getTime())) return isoString;
+
     return d.toLocaleDateString('es-CR', {
       day: '2-digit',
       month: 'short',
       hour: '2-digit',
       minute: '2-digit',
+      hour12: true,
     });
   } catch {
     return isoString;

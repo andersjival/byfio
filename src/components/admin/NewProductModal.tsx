@@ -45,6 +45,7 @@ export const NewProductModal: React.FC = () => {
   const [customizationPlaceholder, setCustomizationPlaceholder] = useState('');
   const [showInStore, setShowInStore] = useState(true);
   const [showInCatalog, setShowInCatalog] = useState(true);
+  const [isAvailable, setIsAvailable] = useState(true);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
   // Sincronizar formulario según modo edición o creación
@@ -66,6 +67,7 @@ export const NewProductModal: React.FC = () => {
       setCustomizationPlaceholder(editingProduct.customizationPlaceholder || '');
       setShowInStore(editingProduct.showInStore !== false);
       setShowInCatalog(editingProduct.showInCatalog !== false);
+      setIsAvailable(editingProduct.isAvailable !== false);
       setIsCreatingNewCat(false);
       setCustomCategory('');
     } else {
@@ -85,6 +87,7 @@ export const NewProductModal: React.FC = () => {
       setCustomizationPlaceholder('');
       setShowInStore(true); // Marcado por default
       setShowInCatalog(true); // Marcado por default
+      setIsAvailable(true); // Disponible por default
       setIsCreatingNewCat(false);
       setCustomCategory('');
     }
@@ -135,6 +138,7 @@ export const NewProductModal: React.FC = () => {
         customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
         showInStore,
         showInCatalog,
+        isAvailable,
       });
 
       setSuccessToast('¡Artículo actualizado y guardado correctamente!');
@@ -157,6 +161,7 @@ export const NewProductModal: React.FC = () => {
         customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
         showInStore,
         showInCatalog,
+        isAvailable,
       });
 
       setSuccessToast('¡Artículo creado y agregado al inventario!');
@@ -524,6 +529,35 @@ export const NewProductModal: React.FC = () => {
                   </div>
                   <span className="text-[10px] text-slate-500 block mt-0.5">
                     Visible en la sección oficial /catalogo
+                  </span>
+                </div>
+              </label>
+
+              {/* Opción 3: Disponibilidad de Producto */}
+              <label
+                htmlFor="isAvailableProduct"
+                className={`flex items-start gap-2.5 p-3 rounded-xl border transition-all cursor-pointer sm:col-span-2 ${
+                  isAvailable
+                    ? 'bg-emerald-50/80 border-emerald-300 shadow-sm text-emerald-950'
+                    : 'bg-rose-50/80 border-rose-200 text-rose-800'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  id="isAvailableProduct"
+                  checked={isAvailable}
+                  onChange={(e) => setIsAvailable(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-400 cursor-pointer"
+                />
+                <div className="text-xs">
+                  <div className="flex items-center gap-1 font-bold">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{isAvailable ? 'Producto Disponible (Activo)' : 'Producto No Disponible (Desactivado)'}</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 block mt-0.5">
+                    {isAvailable
+                      ? 'Aparece activo en la tienda, catálogo y puede ser agregado al carrito'
+                      : 'Oculto automáticamente de la tienda y del catálogo'}
                   </span>
                 </div>
               </label>

@@ -31,6 +31,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
     cart,
     setEditingProduct,
     setIsNewProductModalOpen,
+    inventoryMode,
   } = useApp();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
@@ -43,8 +44,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
 
   // Categorías dinámicas basadas en productos visibles en el catálogo
   const catalogProducts = useMemo(() => {
-    return products.filter((p) => p.showInCatalog !== false);
-  }, [products]);
+    return products.filter((p) => {
+      const isAvailable = p.isAvailable !== false;
+      return inventoryMode === 'availability'
+        ? isAvailable
+        : (p.showInCatalog !== false && isAvailable);
+    });
+  }, [products, inventoryMode]);
 
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -59,7 +65,8 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
   const handleQtyChange = (id: string, delta: number, maxStock: number) => {
     setQuantities((prev) => {
       const current = prev[id] || 1;
-      const next = Math.max(1, Math.min(Math.max(1, maxStock), current + delta));
+      const maxLimit = inventoryMode === 'availability' ? 99 : Math.max(1, maxStock);
+      const next = Math.max(1, Math.min(maxLimit, current + delta));
       return { ...prev, [id]: next };
     });
   };
@@ -445,7 +452,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       <button
                         type="button"
                         onClick={() => handleQtyChange(product.id, 1, product.stock)}
-                        disabled={currentQty >= product.stock}
+                        disabled={inventoryMode === 'availability' ? false : currentQty >= product.stock}
                         className="w-6 h-6 rounded-lg flex items-center justify-center text-slate-600 hover:bg-[#F1F2F6] hover:shadow-neuBtn disabled:opacity-30 transition-all active:scale-95"
                         title="Sumar"
                       >

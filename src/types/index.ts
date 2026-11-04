@@ -1,5 +1,7 @@
 export type ViewMode = 'store' | 'admin';
 
+export type InventoryMode = 'stock' | 'availability';
+
 export type AppRoute = 'home' | 'store' | 'catalogo' | 'workshops' | 'workshop-detail' | 'precios' | 'admin' | 'login' | 'metricas' | 'propuesta';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
@@ -65,6 +67,7 @@ export interface Product {
   description: string;
   showInStore?: boolean; // Visible en la Tienda Online (por default true)
   showInCatalog?: boolean; // Visible en el Catálogo Online (por default true)
+  isAvailable?: boolean; // Activo/Disponible para venta en modo disponibilidad (default true)
 }
 
 export interface Workshop {
