@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 2.7.0 - Incorporación de Gráficas Analíticas (Comparativa de Barras y Circular de Distribución) en /metricas
+- [x] **Gráfica Comparativa de Barras Interactiva ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Incorporado histograma interactivo con selector de dos vistas: *Por Enlaces / Campañas* (comparando Clics directos, Vistas acumuladas y Agregados al carrito) y *Por Secciones del Sitio* (comparando Vistas de página e Interacciones / Me Gusta).
+  - Escala vertical dinámica con tooltips flotantes en hover que detallan las cifras exactas y etiquetas truncadas elegantes.
+- [x] **Gráfica Circular / Dona Proporcional SVG ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Implementada dona SVG ultra liviana (0 dependencias externas) con selector de dos modos: *Dispositivos* (proporción exacta de Celulares vs Computadoras) y *Canales / Enlaces* (cuota porcentual aportada por cada campaña).
+  - Centro dinámico interactivo con cálculo automático de porcentajes y total de visitas, acompañado de leyenda descriptiva con hover bidireccional.
+
 ### Versión 2.6.0 - Restricción Exclusiva del Video Intro a la Página Principal (Home)
 - [x] **Carga y Renderizado Exclusivo en Portada ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
   - El video intro ahora está condicionado estrictamente a `{currentRoute === 'home' && isIntroOpen && <WebIntroOverlay ... />}`.

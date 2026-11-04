@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Lock, Unlock, Monitor, Smartphone, Link2, Plus, Copy, Check,
-  Trash2, RotateCcw, Heart, TrendingUp, BarChart3, Clock,
+  Trash2, RotateCcw, Heart, TrendingUp, BarChart3, ChartPie, Clock,
   ArrowRight, ShieldCheck, Share2, ExternalLink, RefreshCw,
   ShoppingBag, BookOpen, Star, Award, Tag, GraduationCap, Home,
   Info, AlertCircle, Globe, Filter, Eye, CheckCircle2,
@@ -264,6 +264,12 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
   const [targetSectionId, setTargetSectionId] = useState<string>('all');
   const [customSlug, setCustomSlug] = useState('');
   const [createdFeedback, setCreatedFeedback] = useState<string | null>(null);
+
+  // Estados interactivos para las gráficas de métricas
+  const [barChartMode, setBarChartMode] = useState<'links' | 'sections'>('links');
+  const [pieChartMode, setPieChartMode] = useState<'devices' | 'links'>('devices');
+  const [hoveredPieIndex, setHoveredPieIndex] = useState<number | null>(null);
+  const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null);
 
   // Cargar métricas actualizadas
   const refreshMetrics = () => {
@@ -545,6 +551,143 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
   }, [allRankedSections, sectionFilterCategory]);
 
   const maxSectionScore = Math.max(...allRankedSections.map((s) => s.score), 1);
+
+  // Cálculo de datos para Gráfica 1: Barras Comparativas
+  const barChartData = useMemo(() => {
+    if (barChartMode === 'links') {
+      const topLinks = [...metrics.trackedLinks]
+        .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
+        .slice(0, 5);
+
+      const maxVal = Math.max(
+        ...topLinks.map((l) => Math.max(l.clicks || 0, l.pageViews || 0, l.cartAdditions || 0)),
+        10
+      );
+
+      return {
+        mode: 'links' as const,
+        items: topLinks.map((l) => ({
+          id: l.id,
+          name: l.name,
+          slug: l.slug,
+          val1: l.clicks || 0,
+          val2: l.pageViews || l.clicks || 0,
+          val3: l.cartAdditions || 0,
+          tooltip: `${l.clicks || 0}c / ${l.pageViews || l.clicks || 0}v / ${l.cartAdditions || 0}🛒`,
+        })),
+        maxVal,
+      };
+    } else {
+      const topSections = allRankedSections.slice(0, 5);
+      const maxVal = Math.max(
+        ...topSections.map((s) => Math.max(s.views || 0, (s.likes || 0) * 3)),
+        10
+      );
+
+      return {
+        mode: 'sections' as const,
+        items: topSections.map((s) => ({
+          id: s.id,
+          name: s.label,
+          slug: s.id,
+          val1: s.views || 0,
+          val2: s.likes || 0,
+          val3: 0,
+          tooltip: `${s.views || 0}v / ${s.likes || 0}❤️`,
+        })),
+        maxVal,
+      };
+    }
+  }, [barChartMode, metrics.trackedLinks, allRankedSections]);
+
+  // Cálculo de datos para Gráfica 2: Circular / Dona (Donut Chart SVG)
+  const pieChartData = useMemo(() => {
+    const radius = 54;
+    const circumference = 2 * Math.PI * radius; // ~339.292
+
+    if (pieChartMode === 'devices') {
+      const total = (currentDisplayMetrics.pcCount + currentDisplayMetrics.mobileCount) || 1;
+      const rawSlices = [
+        {
+          id: 'mobile',
+          label: 'Celulares',
+          value: currentDisplayMetrics.mobileCount,
+          percent: currentDisplayMetrics.mobilePercentage,
+          color: '#EC4899', // Rosa By.Fio
+          badgeBg: 'bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300',
+        },
+        {
+          id: 'pc',
+          label: 'Computadoras (PC)',
+          value: currentDisplayMetrics.pcCount,
+          percent: currentDisplayMetrics.pcPercentage,
+          color: '#3B82F6', // Azul Índigo
+          badgeBg: 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300',
+        },
+      ];
+
+      let offset = 0;
+      const slices = rawSlices.map((s) => {
+        const fraction = total > 0 ? s.value / total : 0;
+        const length = fraction * circumference;
+        const dasharray = `${length} ${Math.max(0, circumference - length)}`;
+        const dashoffset = -offset;
+        offset += length;
+        return { ...s, fraction, dasharray, dashoffset };
+      });
+
+      return { total, slices, radius, circumference };
+    } else {
+      const links = [...metrics.trackedLinks].sort((a, b) => (b.clicks || 0) - (a.clicks || 0));
+      const total = links.reduce((acc, l) => acc + (l.clicks || 0), 0) || 1;
+
+      const colors = ['#8B5CF6', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#64748B'];
+      const badges = [
+        'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300',
+        'bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300',
+        'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300',
+        'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+        'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300',
+        'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+      ];
+
+      const topLinks = links.slice(0, 4);
+      const otherLinks = links.slice(4);
+      const otherClicks = otherLinks.reduce((acc, l) => acc + (l.clicks || 0), 0);
+
+      const rawSlices = topLinks.map((l, idx) => ({
+        id: l.id,
+        label: l.name,
+        value: l.clicks || 0,
+        percent: Math.round(((l.clicks || 0) / total) * 100),
+        color: colors[idx % colors.length],
+        badgeBg: badges[idx % badges.length],
+      }));
+
+      if (otherClicks > 0) {
+        rawSlices.push({
+          id: 'others',
+          label: 'Otros Enlaces',
+          value: otherClicks,
+          percent: Math.round((otherClicks / total) * 100),
+          color: colors[5],
+          badgeBg: badges[5],
+        });
+      }
+
+      let offset = 0;
+      const slices = rawSlices.map((s) => {
+        const fraction = total > 0 ? s.value / total : 0;
+        const length = fraction * circumference;
+        const dasharray = `${length} ${Math.max(0, circumference - length)}`;
+        const dashoffset = -offset;
+        offset += length;
+        return { ...s, fraction, dasharray, dashoffset };
+      });
+
+      return { total, slices, radius, circumference };
+    }
+  }, [pieChartMode, currentDisplayMetrics, metrics.trackedLinks]);
 
   // Conteo de secciones por categoría
   const storeCount = allRankedSections.filter((s) => s.category === 'store').length;
@@ -913,45 +1056,328 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
         </div>
       </div>
 
-      {/* COMPARADOR VISUAL DE DISPOSITIVOS (PC VS CELULAR) */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h3 className="text-base sm:text-lg font-bubble font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Monitor className="w-4 h-4 text-blue-500" />
-              <span>
-                Dispositivos {currentDisplayMetrics.isLinkSpecific ? `de este Enlace (${activeLink?.name})` : '(PC vs Celulares)'}
-              </span>
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Proporción de visitas desde computadoras de escritorio frente a teléfonos móviles.
-            </p>
+      {/* SECCIÓN DE GRÁFICAS ANALÍTICAS: COMPARATIVA Y CIRCULAR */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+        {/* GRÁFICA 1: BARRAS COMPARATIVAS (7 cols) */}
+        <div className="lg:col-span-7 p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 flex flex-col justify-between space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-fio-purple dark:text-fio-pink font-bubble font-bold text-xs mb-1">
+                <BarChart3 className="w-3.5 h-3.5" />
+                <span>Gráfica Comparativa</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-bubble font-bold text-slate-900 dark:text-white">
+                {barChartData.mode === 'links' ? 'Rendimiento por Enlace' : 'Rendimiento por Sección'}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {barChartData.mode === 'links'
+                  ? 'Comparativa directa de clics, vistas y agregados al carrito.'
+                  : 'Comparativa de visitas e interacciones en las secciones más populares.'}
+              </p>
+            </div>
+
+            {/* Selector de Modo de la Gráfica de Barras */}
+            <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-[#252038] rounded-2xl border border-slate-200 dark:border-purple-900/50 self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setBarChartMode('links')}
+                className={`px-3 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer ${
+                  barChartMode === 'links'
+                    ? 'bg-fio-purple text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-purple-600'
+                }`}
+              >
+                Por Enlaces
+              </button>
+              <button
+                type="button"
+                onClick={() => setBarChartMode('sections')}
+                className={`px-3 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer ${
+                  barChartMode === 'sections'
+                    ? 'bg-fio-purple text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-purple-600'
+                }`}
+              >
+                Por Secciones
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 text-xs font-bubble font-bold">
-            <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400">
-              <span className="w-3 h-3 rounded-full bg-blue-500" />
-              <span>PC: {currentDisplayMetrics.pcPercentage}% ({currentDisplayMetrics.pcCount})</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-pink-600 dark:text-pink-400">
-              <span className="w-3 h-3 rounded-full bg-pink-500" />
-              <span>Celular: {currentDisplayMetrics.mobilePercentage}% ({currentDisplayMetrics.mobileCount})</span>
-            </div>
+          {/* Leyenda de Colores de la Gráfica de Barras */}
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-bubble font-bold border-b border-slate-100 dark:border-purple-900/30 pb-2">
+            {barChartData.mode === 'links' ? (
+              <>
+                <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-300">
+                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-fio-purple to-purple-500" />
+                  <span>Clics Directos</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300">
+                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-blue-600 to-indigo-400" />
+                  <span>Vistas Acumuladas</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300">
+                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-amber-500 to-yellow-400" />
+                  <span>Al Carrito</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-300">
+                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-fio-purple to-purple-500" />
+                  <span>Vistas de Sección</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-pink-700 dark:text-pink-300">
+                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-t from-pink-500 to-rose-400" />
+                  <span>Me Gusta (Likes)</span>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Contenedor de Barras Verticales con escala */}
+          <div className="h-56 sm:h-64 flex items-end justify-between gap-2 sm:gap-4 pt-6 pb-2 px-1 sm:px-3 bg-slate-50/70 dark:bg-[#252038]/50 rounded-2xl border border-slate-100 dark:border-purple-900/30 relative">
+            {barChartData.items.map((item, idx) => {
+              const isHovered = hoveredBarIndex === idx;
+
+              if (barChartData.mode === 'links') {
+                const h1 = Math.max(6, Math.round(((item.val1 || 0) / barChartData.maxVal) * 100));
+                const h2 = Math.max(6, Math.round(((item.val2 || 0) / barChartData.maxVal) * 100));
+                const h3 = Math.max(6, Math.round(((item.val3 || 0) / barChartData.maxVal) * 100));
+
+                return (
+                  <div
+                    key={item.id}
+                    onMouseEnter={() => setHoveredBarIndex(idx)}
+                    onMouseLeave={() => setHoveredBarIndex(null)}
+                    className="flex-1 flex flex-col items-center h-full justify-end group cursor-pointer"
+                  >
+                    {/* Tooltip emergente al pasar el cursor */}
+                    <div
+                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md mb-1 transition-all ${
+                        isHovered ? 'opacity-100 scale-100 -translate-y-1' : 'opacity-0 scale-90 pointer-events-none'
+                      }`}
+                    >
+                      {item.tooltip}
+                    </div>
+
+                    {/* Grupo de 3 barras */}
+                    <div className="w-full flex items-end justify-center gap-1 sm:gap-1.5 h-full max-h-[175px]">
+                      {/* Barra Clics */}
+                      <div
+                        style={{ height: `${h1}%` }}
+                        className="w-2.5 sm:w-4 rounded-t-lg bg-gradient-to-t from-fio-purple to-purple-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
+                        title={`Clics: ${item.val1}`}
+                      />
+                      {/* Barra Vistas */}
+                      <div
+                        style={{ height: `${h2}%` }}
+                        className="w-2.5 sm:w-4 rounded-t-lg bg-gradient-to-t from-blue-600 to-indigo-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
+                        title={`Vistas: ${item.val2}`}
+                      />
+                      {/* Barra Carrito */}
+                      <div
+                        style={{ height: `${h3}%` }}
+                        className="w-2.5 sm:w-4 rounded-t-lg bg-gradient-to-t from-amber-500 to-yellow-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
+                        title={`Al Carrito: ${item.val3 || 0}`}
+                      />
+                    </div>
+
+                    {/* Etiqueta del Enlace */}
+                    <span className="text-[10px] sm:text-[11px] font-bubble font-bold text-slate-700 dark:text-slate-300 truncate max-w-[65px] sm:max-w-[90px] mt-2 text-center group-hover:text-fio-purple">
+                      {item.name}
+                    </span>
+                  </div>
+                );
+              } else {
+                const h1 = Math.max(6, Math.round(((item.val1 || 0) / barChartData.maxVal) * 100));
+                const h2 = Math.max(6, Math.round((((item.val2 || 0) * 3) / barChartData.maxVal) * 100));
+
+                return (
+                  <div
+                    key={item.id}
+                    onMouseEnter={() => setHoveredBarIndex(idx)}
+                    onMouseLeave={() => setHoveredBarIndex(null)}
+                    className="flex-1 flex flex-col items-center h-full justify-end group cursor-pointer"
+                  >
+                    {/* Tooltip emergente al pasar el cursor */}
+                    <div
+                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md mb-1 transition-all ${
+                        isHovered ? 'opacity-100 scale-100 -translate-y-1' : 'opacity-0 scale-90 pointer-events-none'
+                      }`}
+                    >
+                      {item.tooltip}
+                    </div>
+
+                    {/* Grupo de 2 barras */}
+                    <div className="w-full flex items-end justify-center gap-1.5 sm:gap-2 h-full max-h-[175px]">
+                      {/* Barra Vistas */}
+                      <div
+                        style={{ height: `${h1}%` }}
+                        className="w-3.5 sm:w-5 rounded-t-lg bg-gradient-to-t from-fio-purple to-purple-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
+                        title={`Vistas: ${item.val1}`}
+                      />
+                      {/* Barra Likes */}
+                      <div
+                        style={{ height: `${h2}%` }}
+                        className="w-3.5 sm:w-5 rounded-t-lg bg-gradient-to-t from-pink-500 to-rose-400 transition-all duration-500 ease-out group-hover:brightness-110 shadow-xs"
+                        title={`Me Gusta: ${item.val2}`}
+                      />
+                    </div>
+
+                    {/* Etiqueta de la Sección */}
+                    <span className="text-[10px] sm:text-[11px] font-bubble font-bold text-slate-700 dark:text-slate-300 truncate max-w-[65px] sm:max-w-[90px] mt-2 text-center group-hover:text-fio-pink">
+                      {item.name}
+                    </span>
+                  </div>
+                );
+              }
+            })}
           </div>
         </div>
 
-        {/* Barra de Porcentajes Dual */}
-        <div className="h-4 sm:h-5 w-full bg-slate-100 dark:bg-[#2A2440] rounded-full overflow-hidden flex p-0.5 border border-slate-200 dark:border-purple-900/50">
-          <div
-            style={{ width: `${currentDisplayMetrics.pcPercentage}%` }}
-            className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-l-full transition-all duration-700 ease-out"
-            title={`Computadoras: ${currentDisplayMetrics.pcPercentage}%`}
-          />
-          <div
-            style={{ width: `${currentDisplayMetrics.mobilePercentage}%` }}
-            className="h-full bg-gradient-to-r from-pink-500 to-rose-500 rounded-r-full transition-all duration-700 ease-out"
-            title={`Celulares: ${currentDisplayMetrics.mobilePercentage}%`}
-          />
+        {/* GRÁFICA 2: CIRCULAR / DONA (5 cols) */}
+        <div className="lg:col-span-5 p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-lg shadow-purple-950/5 flex flex-col justify-between space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-950/80 text-fio-pink dark:text-pink-300 font-bubble font-bold text-xs mb-1">
+                <ChartPie className="w-3.5 h-3.5" />
+                <span>Gráfica Circular</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-bubble font-bold text-slate-900 dark:text-white">
+                {pieChartMode === 'devices' ? 'Distribución por Dispositivo' : 'Distribución por Canales'}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {pieChartMode === 'devices'
+                  ? 'Porcentaje exacto de tráfico en Celulares vs Computadoras.'
+                  : 'Cuota porcentual del tráfico generado por cada enlace.'}
+              </p>
+            </div>
+
+            {/* Selector de Modo de la Gráfica Circular */}
+            <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-[#252038] rounded-2xl border border-slate-200 dark:border-purple-900/50 self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setPieChartMode('devices')}
+                className={`px-3 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer ${
+                  pieChartMode === 'devices'
+                    ? 'bg-fio-pink text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-pink-600'
+                }`}
+              >
+                Dispositivos
+              </button>
+              <button
+                type="button"
+                onClick={() => setPieChartMode('links')}
+                className={`px-3 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer ${
+                  pieChartMode === 'links'
+                    ? 'bg-fio-pink text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-pink-600'
+                }`}
+              >
+                Canales
+              </button>
+            </div>
+          </div>
+
+          {/* Dona SVG Interactiva */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 py-2">
+            <div className="relative w-40 h-40 sm:w-44 sm:h-44 shrink-0 flex items-center justify-center">
+              <svg viewBox="0 0 160 160" className="w-full h-full transform -rotate-90">
+                {/* Círculo base de fondo */}
+                <circle
+                  cx="80"
+                  cy="80"
+                  r={pieChartData.radius}
+                  fill="transparent"
+                  stroke="currentColor"
+                  strokeWidth="20"
+                  className="text-slate-100 dark:text-purple-950/40"
+                />
+
+                {/* Segmentos de la dona */}
+                {pieChartData.slices.map((slice, idx) => {
+                  const isHovered = hoveredPieIndex === idx;
+
+                  return (
+                    <circle
+                      key={slice.id}
+                      cx="80"
+                      cy="80"
+                      r={pieChartData.radius}
+                      fill="transparent"
+                      stroke={slice.color}
+                      strokeWidth={isHovered ? "24" : "20"}
+                      strokeDasharray={slice.dasharray}
+                      strokeDashoffset={slice.dashoffset}
+                      strokeLinecap="butt"
+                      className="transition-all duration-300 cursor-pointer"
+                      onMouseEnter={() => setHoveredPieIndex(idx)}
+                      onMouseLeave={() => setHoveredPieIndex(null)}
+                    />
+                  );
+                })}
+              </svg>
+
+              {/* Centro de la dona */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4">
+                <span className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white leading-tight">
+                  {hoveredPieIndex !== null && pieChartData.slices[hoveredPieIndex]
+                    ? pieChartData.slices[hoveredPieIndex].value.toLocaleString()
+                    : pieChartData.total.toLocaleString()}
+                </span>
+                <span className="text-[10px] sm:text-[11px] font-sans font-medium text-slate-500 dark:text-slate-400 truncate max-w-[85px]">
+                  {hoveredPieIndex !== null && pieChartData.slices[hoveredPieIndex]
+                    ? pieChartData.slices[hoveredPieIndex].label
+                    : (pieChartMode === 'devices' ? 'Total Visitas' : 'Total Clics')}
+                </span>
+                <span className="text-[10px] font-mono font-bold text-fio-purple dark:text-fio-pink">
+                  {hoveredPieIndex !== null && pieChartData.slices[hoveredPieIndex]
+                    ? `${pieChartData.slices[hoveredPieIndex].percent}%`
+                    : '100%'}
+                </span>
+              </div>
+            </div>
+
+            {/* Lista y Leyenda de Segmentos */}
+            <div className="w-full sm:w-auto flex-1 space-y-2">
+              {pieChartData.slices.map((slice, idx) => {
+                const isHovered = hoveredPieIndex === idx;
+
+                return (
+                  <div
+                    key={slice.id}
+                    onMouseEnter={() => setHoveredPieIndex(idx)}
+                    onMouseLeave={() => setHoveredPieIndex(null)}
+                    className={`flex items-center justify-between gap-3 p-2 rounded-xl transition-all cursor-pointer ${
+                      isHovered
+                        ? 'bg-purple-50 dark:bg-purple-950/70 scale-102 ring-1 ring-purple-300 dark:ring-purple-700'
+                        : 'hover:bg-slate-50 dark:hover:bg-[#252038]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span
+                        style={{ backgroundColor: slice.color }}
+                        className="w-3 h-3 rounded-full shrink-0 shadow-xs"
+                      />
+                      <span className="text-xs font-bubble font-bold text-slate-800 dark:text-slate-200 truncate">
+                        {slice.label}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`px-2 py-0.5 rounded-md font-mono font-bold text-xs ${slice.badgeBg}`}>
+                        {slice.percent}%
+                      </span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                        ({slice.value.toLocaleString()})
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
