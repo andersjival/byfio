@@ -17,6 +17,20 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.5.0 - Validación Estricta de Uso Único de Comprobantes SINPE Móvil y Alerta de Referencia Reutilizada
+- [x] **Regla Estricta de Validación de Uso Único ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Implementada función universal `validateSinpeReference(ref)` que verifica si un número de comprobante o referencia ya fue acreditado o utilizado con anterioridad en cualquier orden, taller o facturación rápida.
+  - Al detectar un intento de revalidación, genera inmediatamente el mensaje mandatorio: `"Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia."`.
+- [x] **Protección en Módulo Independiente SINPE BCR ([`SinpePaymentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx)):**
+  - Añadido el "Validador Rápido de Referencia SINPE (Garantía de Uso Único)" para comprobación instantánea de referencias antes de procesarlas.
+  - Al extraer un correo BCR con una referencia ya registrada, se bloquea el botón "Acreditar a Caja Ahora" y se despliega una tarjeta de alerta roja destacada con los detalles del uso previo (fecha, cliente, monto y destino).
+- [x] **Blindaje en Checkout y Facturación Rápida ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx), [`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx)):**
+  - Validación en tiempo real del comprobante SINPE.
+  - Si el comprobante ya fue utilizado, bloquea la confirmación del pedido/factura y exige al usuario digitar correctamente el número de referencia.
+  - Al completar la transacción, el comprobante queda registrado e inmutable para impedir reusos futuros en tienda o talleres.
+- [x] **Blindaje Backend y Webhook Cloudflare ([`sinpe-transactions.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/sinpe-transactions.ts), [`sinpe-webhook.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/sinpe-webhook.ts)):**
+  - Endpoints HTTP devuelven código de estado 409 Conflict con el mensaje exacto exigido si se recibe un número de referencia preexistente.
+
 ### Versión 4.4.0 - Pestañas de Pago SINPE vs Transferencia y Validación de Comprobante para Habilitar Confirmación
 - [x] **Pestañas Duales de Pago ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx)):**
   - Creadas dos pestañas superiores para alternar entre `SINPE Móvil` y `Transferencia Bancaria`.
