@@ -22,9 +22,8 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
   - Corregido el problema donde el botón `🛍️ Tienda` se salía de la pantalla en pantallas medianas y de laptop; ahora los contenedores de filtros cuentan con `flex-wrap`, breakpoint `xl:flex-row`, y las tarjetas integran `overflow-hidden`.
   - El contenedor principal de la página de analítica ahora cuenta con `max-w-full overflow-x-hidden` para blindar la pantalla contra desbordamientos horizontales.
 - [x] **Legibilidad y Contraste Absoluto en Botones Activos ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
-  - Botones `📊 Dual (Vistas + Likes)` y `👁️ Solo Vistas` actualizados con gradiente púrpura/índigo sólido (`from-purple-700 via-purple-800 to-indigo-900`), texto blanco en negrita con sombra y aro exterior `ring-2 ring-purple-400/60`.
-  - Botón `❤️ Solo Me Gusta` actualizado con gradiente `from-pink-600 via-pink-700 to-rose-700` y texto blanco de máximo contraste.
-  - Botones inactivos con fondo blanco o pizarra oscura y texto oscuro de alto contraste (`text-slate-800 dark:text-slate-200`) para garantizar 100% de legibilidad en modo claro y oscuro.
+  - Aplicados estilos inline garantizados (`backgroundColor: '#581c87'`, `color: '#ffffff'`) y clases Tailwind de alto contraste (`bg-purple-900 text-white font-black drop-shadow-sm`) en los botones de filtro de secciones (`🌐 Todas`, `🛍️ Tienda & Clientes`, `🛡️ Panel Admin`), selectores de vista (`Dual`, `Likes`, `Vistas`), destinos de enlaces y selector global.
+  - Blindada la visualización contra purgas de CSS o retrasos de caché, asegurando que las letras blancas sobre fondo púrpura profundo sean 100% nítidas y legibles en cualquier navegador y modo (claro/oscuro).
 
 ### Versión 3.7.0 - Sonido de Notificación de Nuevos Pedidos y Conmutador de Control para Administrador
 - [x] **Alerta Sonora Agradable y Melodiosa de Nuevos Pedidos ([`soundEffects.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts)):**

@@ -1062,14 +1062,18 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
           <button
             onClick={() => setSelectedLinkFilter('all')}
+            style={selectedLinkFilter === 'all' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
             className={`px-3.5 py-2 rounded-2xl text-xs font-bubble font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
               selectedLinkFilter === 'all'
-                ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white shadow-md scale-102 ring-2 ring-purple-400/60 border border-purple-400/80'
+                ? 'bg-purple-900 text-white shadow-md scale-102 ring-2 ring-purple-400/80 border border-purple-400'
                 : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white border-2 border-slate-300 dark:border-purple-800 hover:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/40 shadow-xs'
             }`}
           >
             <Globe className="w-3.5 h-3.5 shrink-0" />
-            <span className={selectedLinkFilter === 'all' ? 'font-bold text-white drop-shadow-xs' : 'font-bold text-slate-900 dark:text-white'}>
+            <span
+              style={selectedLinkFilter === 'all' ? { color: '#ffffff' } : undefined}
+              className={selectedLinkFilter === 'all' ? 'font-bold text-white font-black drop-shadow-sm' : 'font-bold text-slate-900 dark:text-white'}
+            >
               🌐 Todo el Sitio Web (Global)
             </span>
             <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -1088,14 +1092,18 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               <button
                 key={link.id}
                 onClick={() => setSelectedLinkFilter(link.id)}
+                style={isSelected ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
                 className={`px-3 py-2 rounded-2xl text-xs font-bubble font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
                   isSelected
-                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white shadow-md scale-102 ring-2 ring-purple-400/60 border border-purple-400/80'
+                    ? 'bg-purple-900 text-white shadow-md scale-102 ring-2 ring-purple-400/80 border border-purple-400'
                     : 'bg-white dark:bg-[#252038] text-slate-900 dark:text-white border-2 border-slate-300 dark:border-purple-800 hover:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/40 shadow-xs'
                 }`}
               >
                 <Link2 className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-pink-300' : 'text-fio-pink'}`} />
-                <span className={isSelected ? 'truncate max-w-[140px] font-bold text-white drop-shadow-xs' : 'truncate max-w-[140px] font-bold text-slate-900 dark:text-white'}>
+                <span
+                  style={isSelected ? { color: '#ffffff' } : undefined}
+                  className={isSelected ? 'truncate max-w-[140px] font-bold text-white font-black drop-shadow-sm' : 'truncate max-w-[140px] font-bold text-slate-900 dark:text-white'}
+                >
                   {link.name}
                 </span>
                 <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${
@@ -1286,43 +1294,55 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               <button
                 type="button"
                 onClick={() => setEcosystemMetricView('both')}
+                style={ecosystemMetricView === 'both' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemMetricView === 'both'
-                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-black shadow-md ring-2 ring-purple-400/60 border border-purple-400/80 scale-[1.02]'
+                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
                     : 'bg-white dark:bg-[#1E1B2E] text-slate-800 dark:text-slate-200 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
                 title="Ver barras combinadas de Vistas y Me Gusta"
               >
-                <span className={ecosystemMetricView === 'both' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                <span
+                  style={ecosystemMetricView === 'both' ? { color: '#ffffff' } : undefined}
+                  className={ecosystemMetricView === 'both' ? 'text-white font-black drop-shadow-sm' : ''}
+                >
                   📊 Dual (Vistas + Likes)
                 </span>
               </button>
               <button
                 type="button"
                 onClick={() => setEcosystemMetricView('likes')}
+                style={ecosystemMetricView === 'likes' ? { backgroundColor: '#be185d', color: '#ffffff' } : undefined}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   ecosystemMetricView === 'likes'
-                    ? 'bg-gradient-to-r from-pink-600 via-pink-700 to-rose-700 text-white font-black shadow-md ring-2 ring-pink-400/60 border border-pink-400/80 scale-[1.02]'
+                    ? 'bg-rose-700 text-white font-black shadow-md ring-2 ring-pink-400/80 border border-pink-400 scale-[1.02]'
                     : 'bg-white dark:bg-[#1E1B2E] text-slate-800 dark:text-slate-200 hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
                 title="Levantar únicamente la gráfica de Me Gusta"
               >
-                <Heart className={`w-3.5 h-3.5 ${ecosystemMetricView === 'likes' ? 'fill-white text-white drop-shadow-xs' : 'fill-pink-500 text-pink-500'}`} />
-                <span className={ecosystemMetricView === 'likes' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                <Heart className={`w-3.5 h-3.5 ${ecosystemMetricView === 'likes' ? 'fill-white text-white drop-shadow-sm' : 'fill-pink-500 text-pink-500'}`} />
+                <span
+                  style={ecosystemMetricView === 'likes' ? { color: '#ffffff' } : undefined}
+                  className={ecosystemMetricView === 'likes' ? 'text-white font-black drop-shadow-sm' : ''}
+                >
                   Solo Me Gusta
                 </span>
               </button>
               <button
                 type="button"
                 onClick={() => setEcosystemMetricView('views')}
+                style={ecosystemMetricView === 'views' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemMetricView === 'views'
-                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-black shadow-md ring-2 ring-purple-400/60 border border-purple-400/80 scale-[1.02]'
+                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
                     : 'bg-white dark:bg-[#1E1B2E] text-slate-800 dark:text-slate-200 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
                 title="Ver únicamente la gráfica de Vistas"
               >
-                <span className={ecosystemMetricView === 'views' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                <span
+                  style={ecosystemMetricView === 'views' ? { color: '#ffffff' } : undefined}
+                  className={ecosystemMetricView === 'views' ? 'text-white font-black drop-shadow-sm' : ''}
+                >
                   👁️ Solo Vistas
                 </span>
               </button>
@@ -1333,39 +1353,51 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('all')}
+                style={ecosystemFilter === 'all' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'all'
-                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80 scale-[1.02]'
+                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
                     : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
               >
-                <span className={ecosystemFilter === 'all' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                <span
+                  style={ecosystemFilter === 'all' ? { color: '#ffffff' } : undefined}
+                  className={ecosystemFilter === 'all' ? 'text-white font-black drop-shadow-sm' : ''}
+                >
                   🌐 Todas ({allRankedSections.length})
                 </span>
               </button>
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('store')}
+                style={ecosystemFilter === 'store' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'store'
-                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80 scale-[1.02]'
+                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
                     : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
               >
-                <span className={ecosystemFilter === 'store' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                <span
+                  style={ecosystemFilter === 'store' ? { color: '#ffffff' } : undefined}
+                  className={ecosystemFilter === 'store' ? 'text-white font-black drop-shadow-sm' : ''}
+                >
                   🛍️ Tienda ({storeCount})
                 </span>
               </button>
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('admin')}
+                style={ecosystemFilter === 'admin' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                   ecosystemFilter === 'admin'
-                    ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80 scale-[1.02]'
+                    ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
                     : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
                 }`}
               >
-                <span className={ecosystemFilter === 'admin' ? 'text-white font-bold drop-shadow-xs' : ''}>
+                <span
+                  style={ecosystemFilter === 'admin' ? { color: '#ffffff' } : undefined}
+                  className={ecosystemFilter === 'admin' ? 'text-white font-black drop-shadow-sm' : ''}
+                >
                   🛡️ Admin ({adminCount})
                 </span>
               </button>
@@ -2058,9 +2090,10 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                     key={opt.id}
                     type="button"
                     onClick={() => setTargetSectionId(opt.id)}
+                    style={isSelected ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
                     className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-2.5 cursor-pointer ${
                       isSelected
-                        ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white border-purple-400 shadow-lg ring-2 ring-purple-400/50 scale-[1.02] font-bubble font-bold'
+                        ? 'bg-purple-900 text-white border-purple-400 shadow-lg ring-2 ring-purple-400/80 scale-[1.02] font-bubble font-bold'
                         : 'bg-white dark:bg-[#1E1B2E] text-slate-800 dark:text-slate-100 border-slate-200 dark:border-purple-900/40 hover:border-purple-400 hover:bg-purple-50/70 dark:hover:bg-purple-900/30 shadow-xs'
                     }`}
                   >
@@ -2068,7 +2101,10 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
                       <IconComponent className="w-4 h-4" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className={`text-xs font-bubble font-bold ${isSelected ? 'text-white drop-shadow-xs' : 'text-slate-900 dark:text-white'}`}>
+                      <div
+                        style={isSelected ? { color: '#ffffff' } : undefined}
+                        className={`text-xs font-bubble font-bold ${isSelected ? 'text-white font-black drop-shadow-sm' : 'text-slate-900 dark:text-white'}`}
+                      >
                         {opt.name}
                       </div>
                       <div className={`text-[10px] font-sans font-medium mt-0.5 ${isSelected ? 'text-purple-200 font-semibold' : 'text-slate-500 dark:text-slate-400'}`}>
@@ -2286,39 +2322,51 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
             <button
               type="button"
               onClick={() => setSectionFilterCategory('all')}
+              style={sectionFilterCategory === 'all' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'all'
-                  ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                  ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
                   : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
-              <span className={sectionFilterCategory === 'all' ? 'text-white font-bold drop-shadow-xs' : ''}>
+              <span
+                style={sectionFilterCategory === 'all' ? { color: '#ffffff' } : undefined}
+                className={sectionFilterCategory === 'all' ? 'text-white font-black drop-shadow-sm' : ''}
+              >
                 🌐 Todas ({allRankedSections.length})
               </span>
             </button>
             <button
               type="button"
               onClick={() => setSectionFilterCategory('store')}
+              style={sectionFilterCategory === 'store' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'store'
-                  ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                  ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
                   : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
-              <span className={sectionFilterCategory === 'store' ? 'text-white font-bold drop-shadow-xs' : ''}>
+              <span
+                style={sectionFilterCategory === 'store' ? { color: '#ffffff' } : undefined}
+                className={sectionFilterCategory === 'store' ? 'text-white font-black drop-shadow-sm' : ''}
+              >
                 🛍️ Tienda & Clientes ({storeCount})
               </span>
             </button>
             <button
               type="button"
               onClick={() => setSectionFilterCategory('admin')}
+              style={sectionFilterCategory === 'admin' ? { backgroundColor: '#581c87', color: '#ffffff' } : undefined}
               className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                 sectionFilterCategory === 'admin'
-                  ? 'bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-900 text-white font-bold shadow-md ring-2 ring-purple-400/60 border border-purple-400/80'
+                  ? 'bg-purple-900 text-white font-black shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
                   : 'bg-white dark:bg-[#252038] text-slate-800 dark:text-slate-100 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 shadow-xs border border-slate-300/80 dark:border-purple-800/60'
               }`}
             >
-              <span className={sectionFilterCategory === 'admin' ? 'text-white font-bold drop-shadow-xs' : ''}>
+              <span
+                style={sectionFilterCategory === 'admin' ? { color: '#ffffff' } : undefined}
+                className={sectionFilterCategory === 'admin' ? 'text-white font-black drop-shadow-sm' : ''}
+              >
                 🛡️ Panel Admin ({adminCount})
               </span>
             </button>
