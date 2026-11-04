@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { X, CheckCircle, Truck, Store, ArrowRight, MessageCircle, Printer } from 'lucide-react';
+import { X, CheckCircle, Truck, Store, ArrowRight, MessageCircle, Printer, AlertTriangle, Hash, Lock, CheckCircle2 } from 'lucide-react';
 import { PaymentAccountsCard } from '../common/PaymentAccountsCard';
+import { playBubblePopSound } from '../../utils/soundEffects';
 import confetti from 'canvas-confetti';
 
 interface CheckoutModalProps {
@@ -12,12 +13,24 @@ interface CheckoutModalProps {
 }
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
-  const { cart, createOrder, setViewMode, setInvoiceOrder } = useApp();
+  const {
+    cart,
+    createOrder,
+    setViewMode,
+    setInvoiceOrder,
+    validateSinpeReference,
+    registerSinpeTransaction,
+  } = useApp();
 
   const [deliveryMethod, setDeliveryMethod] = useState<'envio' | 'retiro'>('envio');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
+  const [paymentTab, setPaymentTab] = useState<'sinpe' | 'transferencia'>('sinpe');
+  const [sinpeReference, setSinpeReference] = useState('');
+  const [isPaymentValidated, setIsPaymentValidated] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [refValidationError, setRefValidationError] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
@@ -27,18 +40,75 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   const shippingFee = deliveryMethod === 'envio' ? 2500 : 0;
   const total = subtotal + shippingFee;
 
+  const handleSinpeRefChange = (val: string) => {
+    setSinpeReference(val);
+    setRefValidationError(null);
+    if (isPaymentValidated) {
+      setIsPaymentValidated(false);
+    }
+  };
+
+  const handleValidatePayment = () => {
+    const clean = sinpeReference.trim();
+    if (!clean || clean.length < 4) {
+      setRefValidationError('Digita un número de comprobante o referencia válido (mínimo 4 dígitos/caracteres).');
+      setIsPaymentValidated(false);
+      return;
+    }
+
+    const check = validateSinpeReference(clean);
+    if (check.isUsed) {
+      setRefValidationError('⚠️ Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.');
+      setIsPaymentValidated(false);
+      return;
+    }
+
+    setRefValidationError(null);
+    setIsValidating(true);
+
+    setTimeout(() => {
+      setIsValidating(false);
+      setIsPaymentValidated(true);
+      playBubblePopSound(0.35);
+    }, 350);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName || !customerPhone) return;
+
+    if (!isPaymentValidated) {
+      setRefValidationError('Por favor digita tu número de comprobante y haz clic en "Validar Pago" para habilitar la confirmación.');
+      return;
+    }
+
+    const cleanRef = sinpeReference.trim();
+    const orderNotesCombined = cleanRef
+      ? `Comprobante ${paymentTab === 'sinpe' ? 'SINPE Móvil' : 'Transferencia BCR'}: #${cleanRef}${notes ? ` | ${notes}` : ''}`
+      : notes;
 
     const order = createOrder({
       customerName,
       customerPhone,
       deliveryMethod,
       shippingAddress: deliveryMethod === 'envio' ? shippingAddress : 'Retiro en Taller (200 sur del parque de Tibás)',
-      paymentMethod: 'sinpe',
-      notes,
+      paymentMethod: paymentTab,
+      notes: orderNotesCombined,
     });
+
+    if (cleanRef) {
+      registerSinpeTransaction({
+        referenceNumber: cleanRef,
+        originPhone: customerPhone.trim(),
+        originName: customerName.trim(),
+        originBank: paymentTab === 'sinpe' ? 'SINPE Móvil Cliente' : 'Transferencia BCR Cliente',
+        amount: total,
+        description: `Pedido de tienda #${order.orderNumber}`,
+        transactionDate: new Date().toLocaleString('es-CR'),
+        category: 'store',
+        status: 'verified',
+      });
+    }
 
     confetti({
       particleCount: 80,
@@ -293,22 +363,62 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
               />
             </div>
 
-            {/* Cuadro de Cuentas para SINPE Móvil y Pagos */}
-            <PaymentAccountsCard amount={total} compact />
+            {/* Cuadro de Cuentas para SINPE Móvil y Transferencia Bancaria con Validación Integrada */}
+            <PaymentAccountsCard
+              amount={total}
+              compact
+              activeTab={paymentTab}
+              onTabChange={(tab) => setPaymentTab(tab)}
+              showValidation={true}
+              referenceNumber={sinpeReference}
+              onReferenceChange={handleSinpeRefChange}
+              isPaymentValidated={isPaymentValidated}
+              onValidatePayment={handleValidatePayment}
+              isValidating={isValidating}
+              validationError={refValidationError}
+            />
 
-            {/* Resumen Totales */}
-            <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
+            {/* Resumen Totales y Botón de Confirmación */}
+            <div className="pt-2 border-t border-gray-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] text-gray-500">Total a Pagar ({cart.length} ítems)</p>
                 <p className="text-xl font-bubble font-bold text-fio-900">{formatCRC(total)}</p>
               </div>
-              <button
-                type="submit"
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-semibold text-xs shadow-clayBtn transition-all active:scale-95"
-              >
-                <span>Confirmar Pedido</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+
+              <div className="flex flex-col items-stretch sm:items-end gap-1">
+                <button
+                  type="submit"
+                  disabled={!isPaymentValidated}
+                  className={`flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-bubble font-bold text-xs transition-all ${
+                    isPaymentValidated
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-clayBtn active:scale-95 cursor-pointer ring-2 ring-emerald-400'
+                      : 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed shadow-none'
+                  }`}
+                  title={
+                    isPaymentValidated
+                      ? 'Confirmar pedido oficialmente'
+                      : 'Digita el comprobante y presiona "Validar Pago" para habilitar este botón'
+                  }
+                >
+                  {isPaymentValidated ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+                      <span>Confirmar Pedido</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Confirmar Pedido (Valida el pago)</span>
+                    </>
+                  )}
+                </button>
+                {!isPaymentValidated && (
+                  <span className="text-[10px] text-slate-400 text-center sm:text-right">
+                    Digita el comprobante y dale a validar pago para activar
+                  </span>
+                )}
+              </div>
             </div>
           </form>
         )}

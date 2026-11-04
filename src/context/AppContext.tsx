@@ -261,6 +261,12 @@ interface AppContextType {
     transaction?: SinpeTransaction;
     duplicate?: boolean;
   };
+  validateSinpeReference: (ref: string) => {
+    isValid: boolean;
+    isUsed: boolean;
+    message: string;
+    transaction?: SinpeTransaction;
+  };
   deleteSinpeTransaction: (id: string) => void;
   updateSinpeSettings: (settings: Partial<SinpeSettings>) => void;
   isSinpeModalOpen: boolean;
@@ -1983,14 +1989,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const registerSinpeTransaction = (data: Omit<SinpeTransaction, 'id' | 'createdAt'>) => {
     const cleanRef = data.referenceNumber.trim();
     const alreadyExists = sinpeTransactions.some(
-      (tx) => tx.referenceNumber.toLowerCase() === cleanRef.toLowerCase()
+      (tx) => tx.referenceNumber.trim().toLowerCase() === cleanRef.toLowerCase()
     );
 
     if (alreadyExists) {
       return {
         success: false,
         duplicate: true,
-        message: `El número de referencia ${cleanRef} ya fue acreditado previamente en el sistema.`,
+        message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
       };
     }
 
@@ -2050,6 +2056,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         sinpeTransactions: nextTxs,
       });
     } catch {}
+  };
+
+  const validateSinpeReference = (ref: string) => {
+    const clean = ref.trim().toLowerCase();
+    if (!clean) {
+      return { isValid: false, isUsed: false, message: 'Digite el número de referencia de la transferencia.' };
+    }
+    const existing = sinpeTransactions.find(
+      (tx) => tx.referenceNumber.trim().toLowerCase() === clean
+    );
+    if (existing) {
+      return {
+        isValid: false,
+        isUsed: true,
+        message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
+        transaction: existing,
+      };
+    }
+    return {
+      isValid: true,
+      isUsed: false,
+      message: 'Comprobante válido y disponible para registrar.',
+    };
   };
 
   const updateSinpeSettings = (updates: Partial<SinpeSettings>) => {
@@ -2180,6 +2209,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         sinpeTransactions,
         sinpeSettings,
         registerSinpeTransaction,
+        validateSinpeReference,
         deleteSinpeTransaction,
         updateSinpeSettings,
         isSinpeModalOpen,

@@ -122,7 +122,7 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
     if (existing) {
       return new Response(
         JSON.stringify({
-          error: `El número de referencia ${referenceNumber} ya fue procesado y acreditado previamente.`,
+          error: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
           duplicate: true,
           existingId: existing.id,
         }),

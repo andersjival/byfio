@@ -6,7 +6,8 @@ import {
   Search, FileText, Printer, MessageCircle, CheckCircle2, Clock,
   Plus, Trash2, User, UserPlus, Phone, Mail, MapPin, Tag,
   ShoppingBag, Star, X, Edit3, Settings, Check, CreditCard,
-  DollarSign, ArrowRight, UserCheck, Package, Store, Truck
+  DollarSign, ArrowRight, UserCheck, Package, Store, Truck,
+  AlertTriangle, Hash
 } from 'lucide-react';
 
 interface DirectItem {
@@ -35,6 +36,8 @@ export const QuickBillingSection: React.FC = () => {
     createDirectInvoiceOrder,
     setInvoiceOrder,
     updateOrderStatus,
+    validateSinpeReference,
+    registerSinpeTransaction,
   } = useApp();
 
   // Sub-vistas del módulo
@@ -59,11 +62,28 @@ export const QuickBillingSection: React.FC = () => {
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('retiro');
   const [shippingAddress, setShippingAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('sinpe');
+  const [sinpeRefNumber, setSinpeRefNumber] = useState('');
+  const [sinpeRefError, setSinpeRefError] = useState<string | null>(null);
   const [orderNotes, setOrderNotes] = useState('');
   const [customFieldValues, setCustomFieldValues] = useState<{ [fieldId: string]: string }>({});
   const [saveCustomerInDirectory, setSaveCustomerInDirectory] = useState(true);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
+
+  const handleSinpeRefChange = (val: string) => {
+    setSinpeRefNumber(val);
+    const clean = val.trim();
+    if (clean) {
+      const check = validateSinpeReference(clean);
+      if (check.isUsed) {
+        setSinpeRefError('Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.');
+      } else {
+        setSinpeRefError(null);
+      }
+    } else {
+      setSinpeRefError(null);
+    }
+  };
 
   // ==========================================
   // ESTADO: BUSCAR PEDIDO EXISTENTE
@@ -219,6 +239,15 @@ export const QuickBillingSection: React.FC = () => {
       return;
     }
 
+    // Validación estricta de uso único si se ingresa referencia SINPE Móvil
+    if (paymentMethod === 'sinpe' && sinpeRefNumber.trim()) {
+      const check = validateSinpeReference(sinpeRefNumber.trim());
+      if (check.isUsed) {
+        setCreateError('Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.');
+        return;
+      }
+    }
+
     // Si se marcó guardar cliente y no estaba ya seleccionado
     if (saveCustomerInDirectory) {
       if (selectedCustomer) {
@@ -278,6 +307,23 @@ export const QuickBillingSection: React.FC = () => {
       shippingFee,
       total,
     });
+
+    // Si se especificó referencia SINPE válida, registrarla para evitar su reuso
+    if (paymentMethod === 'sinpe' && sinpeRefNumber.trim()) {
+      registerSinpeTransaction({
+        referenceNumber: sinpeRefNumber.trim(),
+        originPhone: cleanPhone,
+        originName: cleanName,
+        originBank: 'SINPE Móvil / Factura Rápida',
+        amount: total,
+        description: `Factura Rápida #${newOrder.orderNumber}`,
+        transactionDate: new Date().toLocaleString('es-CR'),
+        category: 'store',
+        status: 'verified',
+      });
+      setSinpeRefNumber('');
+      setSinpeRefError(null);
+    }
 
     // Resetear formulario para siguiente factura
     setInvoiceItems([]);
@@ -924,6 +970,36 @@ export const QuickBillingSection: React.FC = () => {
                   <option value="transferencia">Transferencia Bancaria</option>
                 </select>
               </div>
+
+              {/* Campo de Referencia SINPE Móvil con Validación de Uso Único */}
+              {paymentMethod === 'sinpe' && (
+                <div className="sm:col-span-2 p-3.5 rounded-2xl bg-purple-50/70 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800/50 space-y-2 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bubble font-bold text-purple-950 dark:text-purple-200 flex items-center gap-1.5">
+                      <Hash className="w-3.5 h-3.5 text-purple-700 dark:text-purple-400" />
+                      <span>N° Referencia SINPE Móvil (Comprobante):</span>
+                    </label>
+                    <span className="text-[10px] text-purple-700 dark:text-purple-300 font-sans font-medium">Uso único estricto</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={sinpeRefNumber}
+                    onChange={(e) => handleSinpeRefChange(e.target.value)}
+                    placeholder="Digita el comprobante o referencia (ej: 20261104-987654)..."
+                    className={`w-full px-3 py-2 rounded-xl bg-white dark:bg-[#2A2444] border text-xs font-mono text-slate-900 dark:text-white focus:outline-none transition-all ${
+                      sinpeRefError
+                        ? 'border-red-500 ring-2 ring-red-400'
+                        : 'border-purple-200 dark:border-purple-800/60 focus:ring-1 focus:ring-purple-400'
+                    }`}
+                  />
+                  {sinpeRefError && (
+                    <div className="p-2.5 rounded-xl bg-red-100 dark:bg-red-900/40 border border-red-300 dark:border-red-800 text-red-900 dark:text-red-200 text-xs font-medium flex items-center gap-2 animate-fadeIn">
+                      <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
+                      <p className="flex-1 text-[11px] font-bubble font-bold">{sinpeRefError}</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Dirección de Envío (si aplica) */}

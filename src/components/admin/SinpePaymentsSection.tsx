@@ -6,7 +6,7 @@ import {
   CheckCircle2, AlertTriangle, Mail, ShieldCheck,
   Sparkles, Copy, Check, Trash2, ArrowRight, DollarSign,
   GraduationCap, ShoppingBag, Landmark, Phone, Calendar, Hash,
-  RefreshCw, Send, CheckCircle, ExternalLink
+  RefreshCw, Send, CheckCircle, ExternalLink, Search, ShieldAlert
 } from 'lucide-react';
 
 export const SinpePaymentsSection: React.FC = () => {
@@ -14,6 +14,7 @@ export const SinpePaymentsSection: React.FC = () => {
     sinpeTransactions,
     sinpeSettings,
     registerSinpeTransaction,
+    validateSinpeReference,
     deleteSinpeTransaction,
     updateSinpeSettings,
     workshops,
@@ -24,6 +25,15 @@ export const SinpePaymentsSection: React.FC = () => {
   const [copiedWebhook, setCopiedWebhook] = useState(false);
   const [savedSettingsSuccess, setSavedSettingsSuccess] = useState(false);
 
+  // Estado del validador rápido de comprobante manual
+  const [manualRefInput, setManualRefInput] = useState('');
+  const [manualValidationResult, setManualValidationResult] = useState<{
+    tested: boolean;
+    isUsed: boolean;
+    message: string;
+    transaction?: (typeof sinpeTransactions)[0];
+  } | null>(null);
+
   // Estado del correo configurado
   const [tempEmail, setTempEmail] = useState(sinpeSettings.forwardingEmail || 'fiorellajaravargas@gmail.com');
 
@@ -32,6 +42,26 @@ export const SinpePaymentsSection: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<'store' | 'workshop'>('store');
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string>('');
   const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const handleVerifyManualRef = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const cleanRef = manualRefInput.trim();
+    if (!cleanRef) {
+      setManualValidationResult({
+        tested: true,
+        isUsed: false,
+        message: 'Por favor digite el número de referencia de la transferencia.',
+      });
+      return;
+    }
+    const check = validateSinpeReference(cleanRef);
+    setManualValidationResult({
+      tested: true,
+      isUsed: check.isUsed,
+      message: check.message,
+      transaction: check.transaction,
+    });
+  };
 
   const handleProcessEmail = () => {
     setActionFeedback(null);
@@ -55,6 +85,17 @@ export const SinpePaymentsSection: React.FC = () => {
         type: 'error',
         text: 'El texto no cumple con todos los campos obligatorios de un comprobante SINPE MÓVIL del BCR.',
       });
+      return;
+    }
+
+    if (result.referenceNumber) {
+      const refCheck = validateSinpeReference(result.referenceNumber);
+      if (refCheck.isUsed) {
+        setActionFeedback({
+          type: 'error',
+          text: '⚠️ Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
+        });
+      }
     }
   };
 
@@ -72,6 +113,16 @@ export const SinpePaymentsSection: React.FC = () => {
       } else if (workshops.length > 0) {
         setSelectedWorkshopId(workshops[0].id);
       }
+
+      if (result.isValidBcrEmail && result.referenceNumber) {
+        const refCheck = validateSinpeReference(result.referenceNumber);
+        if (refCheck.isUsed) {
+          setActionFeedback({
+            type: 'error',
+            text: '⚠️ Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
+          });
+        }
+      }
     }
   };
 
@@ -82,15 +133,12 @@ export const SinpePaymentsSection: React.FC = () => {
       return;
     }
 
-    // Verificar si el número de referencia ya fue registrado
-    const isDuplicate = sinpeTransactions.some(
-      (tx) => tx.referenceNumber.trim().toLowerCase() === parsedData.referenceNumber.trim().toLowerCase()
-    );
-
-    if (isDuplicate) {
+    // Regla estricta: los comprobantes solo se pueden validar una única vez
+    const refValidation = validateSinpeReference(parsedData.referenceNumber);
+    if (refValidation.isUsed) {
       setActionFeedback({
         type: 'error',
-        text: `La transacción con referencia #${parsedData.referenceNumber} ya fue registrada y acreditada anteriormente.`,
+        text: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
       });
       return;
     }
@@ -159,6 +207,12 @@ export const SinpePaymentsSection: React.FC = () => {
   const totalSinpeVerified = sinpeTransactions.reduce((acc, tx) => acc + tx.amount, 0);
   const totalStoreSinpe = sinpeTransactions.filter((tx) => tx.category === 'store').reduce((acc, tx) => acc + tx.amount, 0);
   const totalWorkshopSinpe = sinpeTransactions.filter((tx) => tx.category === 'workshop').reduce((acc, tx) => acc + tx.amount, 0);
+
+  // Validación del comprobante extraído en tiempo real
+  const parsedRefValidation = parsedData?.referenceNumber
+    ? validateSinpeReference(parsedData.referenceNumber)
+    : null;
+  const isParsedRefAlreadyUsed = parsedRefValidation?.isUsed ?? false;
 
   return (
     <div className="space-y-5 animate-fadeIn">
@@ -308,6 +362,88 @@ export const SinpePaymentsSection: React.FC = () => {
       {/* CONTENIDO DE LA PESTAÑA: EXTRAER & ACREDITAR CORREO */}
       {activeTab === 'extract' && (
         <div className="space-y-5">
+          {/* Validador Rápido de Referencia SINPE - Garantía de Uso Único */}
+          <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-purple-50/90 via-white to-indigo-50/90 border border-purple-200 shadow-sm space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-purple-700 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <ShieldAlert className="w-5 h-5 text-amber-300" />
+                </div>
+                <div>
+                  <h4 className="font-bubble font-bold text-xs sm:text-sm text-purple-950">
+                    Validador Rápido de Referencia SINPE (Garantía de Uso Único)
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-sans">
+                    Comprueba al instante si un comprobante ya fue utilizado para evitar duplicados y fraudes.
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] font-bubble font-bold uppercase tracking-wider bg-purple-100 text-purple-900 px-2.5 py-1 rounded-full self-start sm:self-auto border border-purple-200">
+                1 Sola Validación Permitida
+              </span>
+            </div>
+
+            <form onSubmit={handleVerifyManualRef} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <div className="relative flex-1">
+                <Hash className="w-4 h-4 text-purple-600 absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  value={manualRefInput}
+                  onChange={(e) => {
+                    setManualRefInput(e.target.value);
+                    if (manualValidationResult) setManualValidationResult(null);
+                  }}
+                  placeholder="Digita el número de comprobante o referencia (ej: 20261104-987654)..."
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-purple-200 font-mono text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-inner"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-xl bg-purple-800 hover:bg-purple-900 text-white text-xs font-bubble font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shrink-0"
+              >
+                <Search className="w-3.5 h-3.5 text-amber-300" />
+                <span>Comprobar Referencia</span>
+              </button>
+            </form>
+
+            {manualValidationResult && manualValidationResult.tested && (
+              <div
+                className={`p-3.5 rounded-2xl text-xs transition-all animate-fadeIn ${
+                  manualValidationResult.isUsed
+                    ? 'bg-red-50 border-2 border-red-500 text-red-950 shadow-sm'
+                    : 'bg-emerald-50 border border-emerald-400 text-emerald-950 shadow-sm'
+                }`}
+              >
+                {manualValidationResult.isUsed ? (
+                  <div className="flex items-start gap-2.5">
+                    <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="font-bubble font-bold text-xs sm:text-sm text-red-700">
+                        ⚠️ Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.
+                      </p>
+                      {manualValidationResult.transaction && (
+                        <div className="text-[11px] text-red-900 bg-red-100/70 p-2.5 rounded-xl border border-red-200 mt-1 font-sans">
+                          <span className="font-bold">Detalle del registro previo:</span> Comprobante acreditado el{' '}
+                          <span className="font-semibold">{manualValidationResult.transaction.transactionDate}</span> a nombre de{' '}
+                          <span className="font-bold">{manualValidationResult.transaction.originName}</span> por{' '}
+                          <span className="font-bold">{formatCRC(manualValidationResult.transaction.amount)}</span> para{' '}
+                          <span className="font-semibold">{manualValidationResult.transaction.category === 'store' ? 'Ventas Tienda' : 'Taller Creativo'}</span>.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <p className="font-bubble font-bold text-xs text-emerald-800">
+                      ✓ Comprobante libre y disponible. Esta referencia nunca ha sido utilizada en el sistema.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="p-5 sm:p-6 rounded-3xl bg-white shadow-neu border border-white/80 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div>
@@ -370,7 +506,7 @@ export const SinpePaymentsSection: React.FC = () => {
             <div className="p-5 sm:p-6 rounded-3xl bg-white shadow-neu border-2 border-purple-300 space-y-4 animate-fadeIn">
               <div className="flex items-center justify-between border-b border-purple-100 pb-3 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
-                  <span className={`w-3 h-3 rounded-full ${parsedData.isValidBcrEmail ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                  <span className={`w-3 h-3 rounded-full ${parsedData.isValidBcrEmail && !isParsedRefAlreadyUsed ? 'bg-emerald-500' : 'bg-red-500'}`} />
                   <h4 className="font-bubble font-bold text-sm sm:text-base text-purple-950">
                     Datos Abstraídos del Correo BCR
                   </h4>
@@ -380,12 +516,39 @@ export const SinpePaymentsSection: React.FC = () => {
                     Ref: #{parsedData.referenceNumber || 'NO DETECTADA'}
                   </span>
                   <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
-                    parsedData.isValidBcrEmail ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
+                    isParsedRefAlreadyUsed
+                      ? 'bg-red-100 text-red-800 border border-red-300'
+                      : parsedData.isValidBcrEmail
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-red-100 text-red-800'
                   }`}>
-                    {parsedData.isValidBcrEmail ? '✓ Verificación Exitosa' : '⚠️ Inválido o Incompleto'}
+                    {isParsedRefAlreadyUsed
+                      ? '⚠️ Ya Utilizado'
+                      : parsedData.isValidBcrEmail
+                      ? '✓ Verificación Exitosa'
+                      : '⚠️ Inválido o Incompleto'}
                   </span>
                 </div>
               </div>
+
+              {/* Alerta de Referencia Duplicada / Pago Ya Utilizado */}
+              {isParsedRefAlreadyUsed && (
+                <div className="p-4 rounded-2xl bg-red-50 border-2 border-red-500 text-red-950 flex items-start gap-3 shadow-md animate-fadeIn">
+                  <AlertTriangle className="w-6 h-6 text-red-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <h5 className="font-bubble font-bold text-sm text-red-700">
+                      ⚠️ Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.
+                    </h5>
+                    <p className="text-xs text-red-900 font-sans">
+                      El comprobante SINPE con referencia <span className="font-mono font-bold">#{parsedData.referenceNumber}</span> ya fue acreditado el{' '}
+                      <span className="font-semibold">{parsedRefValidation?.transaction?.transactionDate}</span> por{' '}
+                      <span className="font-bold">{formatCRC(parsedRefValidation?.transaction?.amount || 0)}</span> para{' '}
+                      <span className="font-semibold">{parsedRefValidation?.transaction?.category === 'store' ? 'Ventas Tienda' : 'Taller Creativo'}</span>.
+                      Los comprobantes solo pueden ser validados una única vez en el sistema.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Grid con las casillas requeridas */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -520,15 +683,19 @@ export const SinpePaymentsSection: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleCreditTransaction}
-                  disabled={!parsedData.isValidBcrEmail}
+                  disabled={!parsedData.isValidBcrEmail || isParsedRefAlreadyUsed}
                   className={`px-6 py-3 rounded-2xl font-bubble font-bold text-xs sm:text-sm shadow-lg flex items-center gap-2 transition-all active:scale-95 ${
-                    parsedData.isValidBcrEmail
+                    parsedData.isValidBcrEmail && !isParsedRefAlreadyUsed
                       ? 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white cursor-pointer'
-                      : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                      : 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300'
                   }`}
                 >
                   <CheckCircle className="w-4 h-4 text-emerald-200" />
-                  <span>Acreditar a Caja Ahora (+{formatCRC(parsedData.amount)})</span>
+                  <span>
+                    {isParsedRefAlreadyUsed
+                      ? 'Comprobante Ya Utilizado (Acreditación Bloqueada)'
+                      : `Acreditar a Caja Ahora (+${formatCRC(parsedData.amount)})`}
+                  </span>
                 </button>
               </div>
             </div>

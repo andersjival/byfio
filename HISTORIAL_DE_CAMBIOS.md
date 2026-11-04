@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.4.0 - Pestañas de Pago SINPE vs Transferencia y Validación de Comprobante para Habilitar Confirmación
+- [x] **Pestañas Duales de Pago ([`PaymentAccountsCard.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/PaymentAccountsCard.tsx)):**
+  - Creadas dos pestañas superiores para alternar entre `SINPE Móvil` y `Transferencia Bancaria`.
+  - Pestaña `SINPE Móvil`: muestra únicamente el número oficial de SINPE Móvil (6400-4640) y oculta la cuenta de ahorros y cuenta IBAN.
+  - Pestaña `Transferencia Bancaria`: despliega los datos del Banco de Costa Rica (Cuenta de Ahorros `00126752891` y Cuenta IBAN `CR09015202001267528911`) con sus respectivos botones de copiar al portapapeles.
+- [x] **Campo de Comprobante / Referencia y Validación de Pago ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - Incorporado el campo "Digite el número de comprobante/referencia" junto al botón "Validar Pago".
+  - Al presionar "Validar Pago", el sistema verifica el comprobante (asegurando formato y comprobando que no haya sido utilizado previamente), mostrando la confirmación visual en verde: `✓ Pago verificado con éxito`.
+- [x] **Bloqueo Inteligente de Confirmación de Pedido ([`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - El botón "Confirmar Pedido" permanece inactivo (`disabled`) con aviso explicativo hasta que el pago haya sido validado.
+  - Una vez validado el pago, el botón se activa inmediatamente en verde esmeralda con feedback auditivo para permitir el registro oficial del pedido.
+
 ### Versión 4.3.0 - Doble Modalidad de Despacho (Release List con Código vs Release List Manual) y Erradicación Total de Errores de Chunk
 - [x] **Doble Botón de Alisto en Cola de Pedidos ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
   - Implementados los dos botones independientes y claramente identificados para cada pedido pendiente:

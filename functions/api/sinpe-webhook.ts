@@ -89,7 +89,7 @@ export const onRequestPost = async (context: { env: Env; request: Request }) => 
     if (existing) {
       return new Response(
         JSON.stringify({
-          error: `Referencia ${referenceNumber} ya registrada.`,
+          error: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
           duplicate: true,
         }),
         { status: 409, headers: { 'Content-Type': 'application/json' } }
