@@ -28,11 +28,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
   - El botón *"📋 Propuesta del Sistema"* en el menú móvil ahora solo se muestra si el usuario autenticado tiene rol de `admin` o es `isMasterAdmin`.
 
 ### Versión 4.9.2 - Flujo Guiado Post-Alisto: "¿Continuar con el Siguiente Pedido?"
-- [x] **Modal de Decisión al Finalizar Pedido ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
-  - Al completar el alisto del último artículo de un pedido, la ventana ya no se cierra bruscamente.
-  - Presenta una tarjeta interactiva con la pregunta: "¿Continuar con el siguiente pedido?" junto con una previsualización clara del siguiente pedido pendiente en cola FIFO (`#Orden`, nombre de cliente y total de artículos).
-  - **Botón "Aceptar / Continuar":** Carga y muestra automáticamente el siguiente pedido pendiente para continuar el alisto sin salir de la vista operativa.
-  - **Botón "Salir":** Cierra la ventana y regresa al operador a la cola general de pedidos de clientes (`OrdersQueue`).
+- [x] **Modal de Decisión y Botones de Aceptar, Continuar y Salir ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - **Botón "Aceptar y Continuar" visible durante el alisto:** En el alisto manual el botón principal ahora indica explícitamente *"Aceptar y Continuar"* para validar el producto actual y avanzar al siguiente.
+  - **Botón "Salir a la Cola de Pedidos" permanente:** Visible en la parte inferior tanto en alisto manual como en alisto con código, permitiendo salir a la lista de pedidos en cualquier momento sin depender únicamente de la 'X' superior.
+  - **Sincronización Reactiva Inmediata:** Corrección de la sincronización de estado en `AppContext.tsx` (`markItemPicked`, `markItemMissing`) ejecutando `setActivePickingOrder` fuera del updater de `setOrders` y leyendo `currentOrder` directamente desde `orders` en `GuidedPickingModal.tsx`.
+  - **Tarjeta "¿Continuar con el siguiente pedido?":** Se despliega al finalizar todos los artículos del pedido actual, mostrando los botones *"Aceptar / Continuar"* (para abrir el siguiente pedido en cola FIFO) y *"Salir a Pedidos"*, garantizando su disponibilidad incluso si la cola no tiene más pedidos pendientes.
   - **Acceso a Factura:** Incluye acceso directo opcional "Ver / Imprimir Factura de este Pedido" para quienes necesiten imprimir de inmediato.
   - Si no quedan pedidos pendientes en cola, felicita al operador y habilita el botón directo para salir a la lista de pedidos.
 

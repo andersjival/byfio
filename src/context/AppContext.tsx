@@ -1625,6 +1625,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const markItemPicked = (orderId: string, itemSku: string) => {
     let completed = false;
     let found = false;
+    let updatedActiveOrder: Order | null = null;
 
     setOrders((prev) =>
       prev.map((order) => {
@@ -1652,9 +1653,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           packedAt: allPicked ? new Date().toISOString() : order.packedAt,
         };
 
-        if (activePickingOrder?.id === orderId) {
-          setActivePickingOrder(updatedOrder);
-        }
+        updatedActiveOrder = updatedOrder;
 
         // Sync with D1 Database
         fetch('/api/orders', {
@@ -1672,6 +1671,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       })
     );
 
+    if (updatedActiveOrder) {
+      setActivePickingOrder(updatedActiveOrder);
+    }
+
     if (!found) {
       playAudioBeep('error');
       return { isComplete: false, error: `El código QR "${itemSku}" no coincide con el producto requerido en este paso.` };
@@ -1687,6 +1690,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const unmarkItemPicked = (orderId: string, itemSku: string) => {
+    let updatedActiveOrder: Order | null = null;
     setOrders((prev) =>
       prev.map((order) => {
         if (order.id !== orderId) return order;
@@ -1698,9 +1702,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           items: updatedItems,
           orderStatus: 'picking',
         };
-        if (activePickingOrder?.id === orderId) {
-          setActivePickingOrder(updatedOrder);
-        }
+        updatedActiveOrder = updatedOrder;
         fetch('/api/orders', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -1713,6 +1715,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return updatedOrder;
       })
     );
+    if (updatedActiveOrder) {
+      setActivePickingOrder(updatedActiveOrder);
+    }
   };
 
   const markAllItemsPicked = (orderId: string) => {
@@ -1756,6 +1761,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const markItemMissing = (orderId: string, itemSku: string) => {
     let completed = false;
     let found = false;
+    let updatedActiveOrder: Order | null = null;
 
     setOrders((prev) =>
       prev.map((order) => {
@@ -1806,9 +1812,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           packedAt: allProcessed ? new Date().toISOString() : order.packedAt,
         };
 
-        if (activePickingOrder?.id === orderId) {
-          setActivePickingOrder(updatedOrder);
-        }
+        updatedActiveOrder = updatedOrder;
 
         // Sync with D1 Database
         fetch('/api/orders', {
@@ -1825,6 +1829,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return updatedOrder;
       })
     );
+
+    if (updatedActiveOrder) {
+      setActivePickingOrder(updatedActiveOrder);
+    }
 
     if (!found) {
       playAudioBeep('error');

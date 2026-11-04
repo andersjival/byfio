@@ -25,7 +25,9 @@ export const GuidedPickingModal: React.FC = () => {
 
   if (!activePickingOrder) return null;
 
-  const items = activePickingOrder.items;
+  // Sincronización reactiva directa con el estado general de orders
+  const currentOrder = orders.find((o) => o.id === activePickingOrder.id) || activePickingOrder;
+  const items = currentOrder.items;
   // Buscar el primer producto que aún no ha sido alistado ni marcado como faltante
   const currentItemIndex = items.findIndex((it) => !it.isPicked && !it.isMissing);
   const currentItem = currentItemIndex !== -1 ? items[currentItemIndex] : null;
@@ -34,9 +36,12 @@ export const GuidedPickingModal: React.FC = () => {
   const handledCount = pickedCount + missingCount;
   const totalCount = items.length;
 
+  // El pedido está completado si todos los artículos fueron procesados o si su estado ya es 'packed'
+  const isCompleted = !currentItem || (totalCount > 0 && handledCount === totalCount) || currentOrder.orderStatus === 'packed';
+
   // Siguiente pedido en cola FIFO (pendiente o en alisto que no sea el actual)
   const nextPendingOrder = orders.find(
-    (o) => o.id !== activePickingOrder.id && (o.orderStatus === 'pending' || o.orderStatus === 'picking')
+    (o) => o.id !== currentOrder.id && (o.orderStatus === 'pending' || o.orderStatus === 'picking')
   );
 
   const triggerCompletion = () => {
@@ -50,7 +55,7 @@ export const GuidedPickingModal: React.FC = () => {
 
   const handleProcessScan = (scannedSku: string) => {
     setScanFeedback(null);
-    const result = markItemPicked(activePickingOrder.id, scannedSku.trim());
+    const result = markItemPicked(currentOrder.id, scannedSku.trim());
 
     if (result.error) {
       setScanFeedback({ type: 'error', message: result.error });
@@ -67,7 +72,7 @@ export const GuidedPickingModal: React.FC = () => {
 
   const handleMarkItemPickedManual = (itemSku: string) => {
     setScanFeedback(null);
-    const result = markItemPicked(activePickingOrder.id, itemSku);
+    const result = markItemPicked(currentOrder.id, itemSku);
 
     if (result.error) {
       setScanFeedback({ type: 'error', message: result.error });
@@ -83,7 +88,7 @@ export const GuidedPickingModal: React.FC = () => {
 
   const handleMarkItemMissingManual = (itemSku: string) => {
     setScanFeedback(null);
-    const result = markItemMissing(activePickingOrder.id, itemSku);
+    const result = markItemMissing(currentOrder.id, itemSku);
 
     if (result.error) {
       setScanFeedback({ type: 'error', message: result.error });
@@ -123,7 +128,7 @@ export const GuidedPickingModal: React.FC = () => {
                 Alisto {pickingMode === 'barcode' ? 'con Código' : 'Manual'}
               </span>
               <h2 className="font-bubble font-bold text-xs sm:text-base truncate">
-                Pedido {activePickingOrder.orderNumber} — {activePickingOrder.customerName}
+                Pedido {currentOrder.orderNumber} — {currentOrder.customerName}
               </h2>
             </div>
           </div>
@@ -141,7 +146,7 @@ export const GuidedPickingModal: React.FC = () => {
         {/* Barra de Progreso Superior Compacta */}
         <div className="bg-fio-100 px-3.5 py-1.5 sm:px-5 sm:py-2 flex items-center justify-between text-[11px] sm:text-xs font-bold text-fio-900 border-b border-fio-200 shrink-0">
           <span>
-            {currentItem ? `Producto ${currentItemIndex + 1} de ${totalCount}` : `Total de artículos: ${totalCount}`}
+            {!isCompleted && currentItem ? `Producto ${currentItemIndex + 1} de ${totalCount}` : `Total de artículos: ${totalCount}`}
           </span>
           <span className="text-fio-pink font-bubble">
             {pickedCount} Alistados{missingCount > 0 ? ` • ${missingCount} Faltante(s)` : ''} de {totalCount} ({totalCount > 0 ? Math.round((handledCount / totalCount) * 100) : 0}%)
@@ -150,7 +155,7 @@ export const GuidedPickingModal: React.FC = () => {
 
         {/* CUERPO GUIADO PRODUCTO POR PRODUCTO (Optimizado para Celular sin Scroll) */}
         <div className="p-3 sm:p-5 overflow-y-auto flex-1">
-          {currentItem ? (
+          {!isCompleted && currentItem ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 items-center">
               {/* Imagen y Ubicación en Estante */}
               <div className="flex flex-row md:flex-col items-center gap-3 md:gap-2">
@@ -279,7 +284,7 @@ export const GuidedPickingModal: React.FC = () => {
                         onClick={() => handleMarkItemMissingManual(currentItem.sku)}
                         className="text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer"
                       >
-                        Reportar Faltante en Bodega
+                        Reportar Faltante
                       </button>
                       <button
                         type="button"
@@ -289,23 +294,32 @@ export const GuidedPickingModal: React.FC = () => {
                         Cambiar a Alisto Manual
                       </button>
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setActivePickingOrder(null)}
+                      className="w-full py-1.5 px-3 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bubble font-bold flex items-center justify-center gap-1.5 cursor-pointer border border-slate-300 transition-all"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Salir a la Cola de Pedidos</span>
+                    </button>
                   </div>
                 ) : (
-                  /* Modo 2: Alisto Manual (Botón de Listo y Botón de Faltante) */
+                  /* Modo 2: Alisto Manual (Botón de Aceptar/Continuar, Faltante y Salir) */
                   <div className="p-2.5 sm:p-3.5 bg-purple-50/70 rounded-2xl border-2 border-purple-200 space-y-2 sm:space-y-2.5">
                     <p className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1">
                       <ClipboardList className="w-3.5 h-3.5 text-fio-pink" />
-                      <span>Acción de Alisto Manual en Estante:</span>
+                      <span>Acción de Alisto en Estante:</span>
                     </p>
 
-                    {/* Botón Principal: LISTO */}
+                    {/* Botón Principal: ACEPTAR Y CONTINUAR */}
                     <button
                       type="button"
                       onClick={() => handleMarkItemPickedManual(currentItem.sku)}
                       className="w-full py-2.5 sm:py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl sm:rounded-2xl font-bubble font-bold text-xs sm:text-base flex items-center justify-center gap-2 shadow-clayBtn transition-all cursor-pointer"
                     >
-                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200" />
-                      <span>Listo (Alistado) — {currentItem.quantity} ud(s)</span>
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200" />
+                      <span>Aceptar y Continuar ({currentItem.quantity} ud)</span>
                     </button>
 
                     {/* Botón de Faltante / Sin Existencias */}
@@ -317,6 +331,16 @@ export const GuidedPickingModal: React.FC = () => {
                     >
                       <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                       <span>Sin Existencias / Reportar Faltante</span>
+                    </button>
+
+                    {/* Botón de Salir a la Cola de Pedidos */}
+                    <button
+                      type="button"
+                      onClick={() => setActivePickingOrder(null)}
+                      className="w-full py-2 sm:py-2.5 px-4 bg-white hover:bg-slate-100 active:scale-[0.98] border border-slate-300 text-slate-700 rounded-xl sm:rounded-2xl font-bubble font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Salir a la Cola de Pedidos</span>
                     </button>
 
                     <div className="pt-1.5 flex items-center justify-between border-t border-purple-200/80 text-[11px] font-bold">
@@ -349,7 +373,7 @@ export const GuidedPickingModal: React.FC = () => {
 
               <div>
                 <h3 className="font-bubble font-bold text-lg sm:text-2xl text-fio-900 leading-snug">
-                  ¡Alisto del Pedido {activePickingOrder.orderNumber} Finalizado!
+                  ¡Alisto del Pedido {currentOrder.orderNumber} Finalizado!
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mt-1">
                   {missingCount === 0
@@ -359,16 +383,16 @@ export const GuidedPickingModal: React.FC = () => {
               </div>
 
               {/* Pregunta: Continuar con el siguiente pedido */}
-              {nextPendingOrder ? (
-                <div className="bg-purple-50/80 border-2 border-purple-200 rounded-2xl p-3.5 sm:p-5 max-w-md mx-auto text-left shadow-sm space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-purple-600 animate-ping" />
-                    <h4 className="font-bubble font-bold text-sm sm:text-base text-purple-950">
-                      ¿Continuar con el siguiente pedido?
-                    </h4>
-                  </div>
+              <div className="bg-purple-50/80 border-2 border-purple-200 rounded-2xl p-3.5 sm:p-5 max-w-md mx-auto text-left shadow-sm space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-purple-600 animate-ping" />
+                  <h4 className="font-bubble font-bold text-sm sm:text-base text-purple-950">
+                    ¿Continuar con el siguiente pedido?
+                  </h4>
+                </div>
 
-                  {/* Previsualización del Siguiente Pedido */}
+                {/* Previsualización del Siguiente Pedido o Estado de Cola */}
+                {nextPendingOrder ? (
                   <div className="bg-white rounded-xl p-2.5 sm:p-3 border border-purple-200 flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-[10px] text-purple-700 font-bold uppercase tracking-wider">Siguiente en Cola FIFO</p>
@@ -383,59 +407,57 @@ export const GuidedPickingModal: React.FC = () => {
                       En Espera
                     </span>
                   </div>
-
-                  {/* Botones de Acción: Aceptar / Continuar o Salir */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => startPicking(nextPendingOrder.id, pickingMode)}
-                      className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-clayBtn transition-all cursor-pointer"
-                    >
-                      <Check className="w-4 h-4" />
-                      <span>Aceptar / Continuar</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setActivePickingOrder(null)}
-                      className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-700 border border-slate-300 rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                    >
-                      <LogOut className="w-4 h-4 text-slate-500" />
-                      <span>Salir a Pedidos</span>
-                    </button>
+                ) : (
+                  <div className="bg-white rounded-xl p-2.5 sm:p-3 border border-purple-200 text-center">
+                    <p className="font-bubble font-bold text-xs text-slate-800">
+                      🎉 ¡Todos los pedidos pendientes han sido alistados!
+                    </p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      No hay más pedidos pendientes en cola en este momento.
+                    </p>
                   </div>
-                </div>
-              ) : (
-                <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 max-w-md mx-auto text-center shadow-sm space-y-2">
-                  <p className="font-bubble font-bold text-sm text-emerald-950">
-                    🎉 ¡Excelente trabajo!
-                  </p>
-                  <p className="text-xs text-emerald-800">
-                    No hay más pedidos pendientes en la cola por el momento.
-                  </p>
+                )}
+
+                {/* Botones de Acción: Aceptar / Continuar o Salir */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (nextPendingOrder) {
+                        startPicking(nextPendingOrder.id, pickingMode);
+                      } else {
+                        setActivePickingOrder(null);
+                      }
+                    }}
+                    className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-clayBtn transition-all cursor-pointer"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>{nextPendingOrder ? 'Aceptar / Continuar' : 'Aceptar'}</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => setActivePickingOrder(null)}
-                    className="mt-2 w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-clayBtn transition-all cursor-pointer"
+                    className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-700 border border-slate-300 rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span>Salir a la Cola de Pedidos</span>
+                    <LogOut className="w-4 h-4 text-slate-500" />
+                    <span>Salir a Pedidos</span>
                   </button>
                 </div>
-              )}
+              </div>
 
               {/* Opción Secundaria: Ver Factura del Pedido Finalizado */}
               <div className="pt-2 flex justify-center">
                 <button
                   type="button"
                   onClick={() => {
-                    setInvoiceOrder(activePickingOrder);
+                    setInvoiceOrder(currentOrder);
                     setActivePickingOrder(null);
                   }}
                   className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-bold underline cursor-pointer py-1"
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span>Ver / Imprimir Factura de este Pedido ({activePickingOrder.orderNumber})</span>
+                  <span>Ver / Imprimir Factura de este Pedido ({currentOrder.orderNumber})</span>
                 </button>
               </div>
             </div>
