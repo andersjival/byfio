@@ -20,15 +20,14 @@ export const ProductsSection: React.FC = () => {
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
 
   const filteredProducts = products.filter((p) => {
-    const isAvailable = p.isAvailable !== false;
-    const isVisible = inventoryMode === 'availability'
-      ? isAvailable
-      : (p.showInStore !== false && isAvailable);
+    // Si el producto no está disponible o está desactivado, desaparece de la tienda
+    if (p.isAvailable === false || p.showInStore === false) return false;
+
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    return isVisible && matchesCategory && matchesSearch;
+    return matchesCategory && matchesSearch;
   });
 
   const handleCustomTextChange = (prodId: string, val: string) => {

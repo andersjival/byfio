@@ -45,12 +45,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
   // Categorías dinámicas basadas en productos visibles en el catálogo
   const catalogProducts = useMemo(() => {
     return products.filter((p) => {
-      const isAvailable = p.isAvailable !== false;
-      return inventoryMode === 'availability'
-        ? isAvailable
-        : (p.showInCatalog !== false && isAvailable);
+      // Apenas el administrador desactiva un producto o lo pone como no disponible, desaparece del catálogo
+      if (p.isAvailable === false || p.showInCatalog === false) return false;
+      return true;
     });
-  }, [products, inventoryMode]);
+  }, [products]);
 
   const categories = useMemo(() => {
     const set = new Set<string>();

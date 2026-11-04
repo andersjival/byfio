@@ -19,12 +19,12 @@ import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { LoginModal } from './components/common/LoginModal';
-import type { AdminTabType } from './components/admin/AdminTabs';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { AdminHeader } from './components/admin/AdminHeader';
+import { AdminTabs, type AdminTabType } from './components/admin/AdminTabs';
+import { AdminHubMenu } from './components/admin/AdminHubMenu';
 
-// Code-splitting diferido para máxima velocidad de carga de la tienda y portada
-const AdminHeader = React.lazy(() => import('./components/admin/AdminHeader').then((m) => ({ default: m.AdminHeader })));
-const AdminTabs = React.lazy(() => import('./components/admin/AdminTabs').then((m) => ({ default: m.AdminTabs })));
-const AdminHubMenu = React.lazy(() => import('./components/admin/AdminHubMenu').then((m) => ({ default: m.AdminHubMenu })));
+// Code-splitting diferido para módulos secundarios y modales bajo demanda
 const MetricsPage = React.lazy(() => import('./components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
 const PropuestaPage = React.lazy(() => import('./components/propuesta/PropuestaPage').then((m) => ({ default: m.PropuestaPage })));
 const OrdersQueue = React.lazy(() => import('./components/admin/OrdersQueue').then((m) => ({ default: m.OrdersQueue })));
@@ -59,6 +59,13 @@ export const App: React.FC = () => {
     hasPermission,
     isLogoutTransitionOpen,
     closeLogoutTransition,
+    activePickingOrder,
+    isSupplierModalOpen,
+    qrModalProduct,
+    invoiceOrder,
+    isNewProductModalOpen,
+    isNewWorkshopModalOpen,
+    isPricingModalOpen,
   } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
@@ -215,120 +222,124 @@ export const App: React.FC = () => {
 
         {currentRoute === 'home' ? (
           <main className="w-full pb-10">
-            <HomePage onNavigate={navigate} />
+            <ErrorBoundary fallbackTitle="Error al cargar la portada">
+              <HomePage onNavigate={navigate} />
+            </ErrorBoundary>
           </main>
         ) : (
           <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8">
-            {currentRoute === 'login' && (
-              <LoginModal
-                isOpen={true}
-                onClose={() => navigate('home')}
-                isStandalonePage={true}
-                onSuccess={(user) => {
-                  if (user.role === 'admin' || user.role === 'staff') {
-                    navigate('admin');
-                  } else {
-                    navigate('home');
-                  }
-                }}
-              />
-            )}
+            <ErrorBoundary fallbackTitle="Inconveniente al cargar la sección">
+              {currentRoute === 'login' && (
+                <LoginModal
+                  isOpen={true}
+                  onClose={() => navigate('home')}
+                  isStandalonePage={true}
+                  onSuccess={(user) => {
+                    if (user.role === 'admin' || user.role === 'staff') {
+                      navigate('admin');
+                    } else {
+                      navigate('home');
+                    }
+                  }}
+                />
+              )}
 
-            {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
+              {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
 
-            {currentRoute === 'catalogo' && <CatalogPage onNavigate={navigate} />}
+              {currentRoute === 'catalogo' && <CatalogPage onNavigate={navigate} />}
 
-            {currentRoute === 'workshops' && <WorkshopsPage onNavigate={navigate} />}
+              {currentRoute === 'workshops' && <WorkshopsPage onNavigate={navigate} />}
 
-            {currentRoute === 'precios' && <PricingStickersSection onNavigate={navigate} />}
+              {currentRoute === 'precios' && <PricingStickersSection onNavigate={navigate} />}
 
-            {currentRoute === 'workshop-detail' && (
-              <WorkshopDetailPage
-                workshopId={selectedWorkshopId}
-                onNavigate={navigate}
-              />
-            )}
+              {currentRoute === 'workshop-detail' && (
+                <WorkshopDetailPage
+                  workshopId={selectedWorkshopId}
+                  onNavigate={navigate}
+                />
+              )}
 
-            {currentRoute === 'metricas' && (
-              <React.Suspense fallback={<div className="py-20 text-center font-bubble text-purple-600 animate-pulse">Cargando métricas en tiempo real...</div>}>
-                <MetricsPage onNavigate={navigate} />
-              </React.Suspense>
-            )}
+              {currentRoute === 'metricas' && (
+                <React.Suspense fallback={<div className="py-20 text-center font-bubble text-purple-600 animate-pulse">Cargando métricas en tiempo real...</div>}>
+                  <MetricsPage onNavigate={navigate} />
+                </React.Suspense>
+              )}
 
-            {currentRoute === 'propuesta' && (
-              <React.Suspense fallback={<div className="py-20 text-center font-bubble text-purple-600 animate-pulse">Cargando propuesta...</div>}>
-                <PropuestaPage onNavigate={navigate} />
-              </React.Suspense>
-            )}
+              {currentRoute === 'propuesta' && (
+                <React.Suspense fallback={<div className="py-20 text-center font-bubble text-purple-600 animate-pulse">Cargando propuesta...</div>}>
+                  <PropuestaPage onNavigate={navigate} />
+                </React.Suspense>
+              )}
 
-            {currentRoute === 'admin' && (
-              !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
-                /* Puerta de Entrada Segura a Administración con URL Protegida (oculta durante la cortina de logout) */
-                !isLogoutTransitionOpen ? (
-                  <div className="py-6 sm:py-10 max-w-[395px] mx-auto space-y-4 animate-fadeIn">
-                    <div className="text-center space-y-2 mb-2">
-                      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs shadow-neuBtn">
-                        <Shield className="w-3.5 h-3.5" />
-                        <span>Acceso Seguro a Administración</span>
+              {currentRoute === 'admin' && (
+                !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
+                  /* Puerta de Entrada Segura a Administración con URL Protegida (oculta durante la cortina de logout) */
+                  !isLogoutTransitionOpen ? (
+                    <div className="py-6 sm:py-10 max-w-[395px] mx-auto space-y-4 animate-fadeIn">
+                      <div className="text-center space-y-2 mb-2">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs shadow-neuBtn">
+                          <Shield className="w-3.5 h-3.5" />
+                          <span>Acceso Seguro a Administración</span>
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl font-bubble font-bold text-slate-900">
+                          Inicia Sesión para Continuar
+                        </h2>
+                        <p className="text-xs text-slate-500 font-sans max-w-sm mx-auto">
+                          Esta área está protegida. Ingresa tus credenciales maestras de administradora o tu código PIN de 4 dígitos.
+                        </p>
                       </div>
-                      <h2 className="text-2xl sm:text-3xl font-bubble font-bold text-slate-900">
-                        Inicia Sesión para Continuar
-                      </h2>
-                      <p className="text-xs text-slate-500 font-sans max-w-sm mx-auto">
-                        Esta área está protegida. Ingresa tus credenciales maestras de administradora o tu código PIN de 4 dígitos.
-                      </p>
+
+                      <LoginModal
+                        isOpen={true}
+                        onClose={() => navigate('home')}
+                        isStandalonePage={true}
+                        onSuccess={(user) => {
+                          if (user.role === 'admin' || user.role === 'staff') {
+                            navigate('admin');
+                          } else {
+                            navigate('home');
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : null
+                ) : (
+                  <div className="space-y-3 sm:space-y-4">
+                    {/* Barra de Árbol de Navegación Compacta */}
+                    <div className="flex items-center justify-between gap-2.5 pb-0.5">
+                      <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
                     </div>
 
-                    <LoginModal
-                      isOpen={true}
-                      onClose={() => navigate('home')}
-                      isStandalonePage={true}
-                      onSuccess={(user) => {
-                        if (user.role === 'admin' || user.role === 'staff') {
-                          navigate('admin');
-                        } else {
-                          navigate('home');
-                        }
-                      }}
-                    />
-                  </div>
-                ) : null
-              ) : (
-                <div className="space-y-3 sm:space-y-4">
-                  {/* Barra de Árbol de Navegación Compacta */}
-                  <div className="flex items-center justify-between gap-2.5 pb-0.5">
-                    <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
-                  </div>
+                    {/* Si está en el Menú Principal (Hub) - Renderizado Instantáneo 0ms */}
+                    {adminTab === 'hub' ? (
+                      <>
+                        <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} onNavigate={navigate} />
+                        <AdminHubMenu onSelectTab={handleSelectAdminTab} onNavigate={navigate} />
+                      </>
+                    ) : (
+                      /* Si está dentro de una sección específica */
+                      <>
+                        <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
 
-                  {/* Si está en el Menú Principal (Hub) */}
-                  {adminTab === 'hub' ? (
-                    <React.Suspense fallback={<div className="py-12 text-center font-bubble text-purple-600 animate-pulse">Cargando administración...</div>}>
-                      <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} />
-                      <AdminHubMenu onSelectTab={handleSelectAdminTab} />
-                    </React.Suspense>
-                  ) : (
-                    /* Si está dentro de una sección específica */
-                    <>
-                      <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
-
-                      <React.Suspense fallback={<div className="py-12 text-center font-bubble text-purple-600 animate-pulse">Cargando panel...</div>}>
-                        {adminTab === 'orders' && <OrdersQueue />}
-                        {adminTab === 'billing' && <QuickBillingSection />}
-                        {adminTab === 'inventory' && <InventoryTable />}
-                        {adminTab === 'reports' && (
-                          <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
-                        )}
-                        {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
-                        {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
-                        {adminTab === 'users' && <UserProfilesSection />}
-                      </React.Suspense>
-                    </>
-                  )}
-                </div>
-              )
-            )}
-        </main>
-      )}
+                        <React.Suspense fallback={<div className="py-12 text-center font-bubble text-purple-600 animate-pulse">Cargando panel...</div>}>
+                          {adminTab === 'orders' && <OrdersQueue />}
+                          {adminTab === 'billing' && <QuickBillingSection />}
+                          {adminTab === 'inventory' && <InventoryTable />}
+                          {adminTab === 'reports' && (
+                            <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} />
+                          )}
+                          {adminTab === 'workshops' && <WorkshopEnrollmentsSection />}
+                          {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
+                          {adminTab === 'users' && <UserProfilesSection />}
+                        </React.Suspense>
+                      </>
+                    )}
+                  </div>
+                )
+              )}
+            </ErrorBoundary>
+          </main>
+        )}
       </div>
 
       {/* Footer Global: Badge animado de GeoSoft visible en todo momento excepto en la sección admin */}
@@ -358,7 +369,7 @@ export const App: React.FC = () => {
         onClose={() => {
           setIsLoginModalOpen(false);
           closeLogoutTransition();
-          if (currentRoute === 'admin') {
+          if (currentRoute === 'admin' && !currentUser) {
             navigate('home');
           }
         }}
@@ -382,17 +393,17 @@ export const App: React.FC = () => {
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
       <StudioScheduleModal isOpen={isScheduleModalOpen} onClose={() => setIsScheduleModalOpen(false)} />
-      {/* Modales Administrativos Diferidos (cargados bajo demanda) */}
+      {/* Modales Administrativos Diferidos (cargados estrictamente bajo demanda para no ralentizar la web) */}
       <React.Suspense fallback={null}>
-        <GuidedPickingModal />
-        <SupplierOrderModal />
-        <QrLabelModal />
-        <InvoiceModal />
-        <NewProductModal />
-        <NewWorkshopModal />
-        <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
-        <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />
-        <AdminPricingModal />
+        {activePickingOrder && <GuidedPickingModal />}
+        {isSupplierModalOpen && <SupplierOrderModal />}
+        {qrModalProduct && <QrLabelModal />}
+        {invoiceOrder && <InvoiceModal />}
+        {isNewProductModalOpen && <NewProductModal />}
+        {isNewWorkshopModalOpen && <NewWorkshopModal />}
+        {isDailyClosingOpen && <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />}
+        {isDesignModalOpen && <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />}
+        {isPricingModalOpen && <AdminPricingModal />}
       </React.Suspense>
     </div>
   );

@@ -17,6 +17,31 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 3.1.0 - Coordinación Estricta de Disponibilidad y Desaparición Inmediata de Productos en Tienda, Catálogo y Carrito
+- [x] **Coordinación Inmediata de Desactivación ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts)):**
+  - Al marcar un producto como *"No disponible"* en el módulo de inventario, se sincronizan atómicamente `isAvailable: false`, `showInStore: false` y `showInCatalog: false`.
+  - Se persiste de inmediato en la base de datos Cloudflare D1 mediante `PUT /api/products` con columna `is_available` añadida dinámicamente.
+- [x] **Desaparición Automática en Tienda, Catálogo y Home ([`StorePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [`CatalogPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx), [`HomePage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx), [`ProductsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/ProductsSection.tsx)):**
+  - Ajustados todos los filtros de visualización pública con la regla estricta: `if (p.isAvailable === false || p.showInStore === false) return false` (y `showInCatalog === false` para el catálogo).
+  - Apenas el administrador desactiva el producto, desaparece al instante de la vista del cliente sin requerir recargar la página.
+- [x] **Protección contra Compras por Error en Carrito ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Al desactivar un producto, se remueve automáticamente de cualquier carrito activo (`cart.filter`).
+  - El método `addToCart` bloquea cualquier intento de añadir artículos con `isAvailable === false`.
+
+### Versión 3.0.0 - Optimización Crítica de Velocidad de Carga, Erradicación de Pantallas en Blanco y Acceso Inmediato (0ms) a Administración
+- [x] **Erradicación de Pantallas en Blanco al Iniciar Sesión en Administrador ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS%20/BYFIO/src/context/AppContext.tsx), [`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx), [`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Eliminada la cascada artificial de temporizadores de 6 segundos (`triggerLoginCinematic` y `loginIntroStage`) que ocultaba toda la interfaz (`opacity-0`, `pointer-events-none`) y dejaba la pantalla totalmente en blanco.
+  - Corregido el bug donde `onClose` invocaba `navigate('home')` tras 2 segundos de haber iniciado sesión con éxito, devolviendo al usuario a la portada.
+  - El acceso a administración tras ingresar las credenciales o el PIN de 4 dígitos ahora es 100% instantáneo (0 milisegundos).
+- [x] **Carga Inmediata del Panel de Control ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Importación directa de la cabecera, pestañas y menú del panel administrativo (`AdminHeader`, `AdminTabs`, `AdminHubMenu`) eliminando saltos de Suspense y demoras de red.
+  - Enrutamiento SPA directo en enlaces internos (`/propuesta`, `/metricas`) sin recargas completas de navegador ni descargas redundantes de HTML.
+- [x] **Aislamiento Estricto Bajo Demanda de Modales Administrativos ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Condicionados los 9 modales administrativos diferidos (`GuidedPickingModal`, `SupplierOrderModal`, `QrLabelModal`, `InvoiceModal`, `NewProductModal`, `NewWorkshopModal`, etc.) a sus banderas de activación correspondientes.
+  - Esto erradica la descarga simultánea de 9 módulos JavaScript pesados en cada carga en frío de la página web, acelerando drásticamente el inicio en móviles y conexiones lentas.
+- [x] **Blindaje Anticaídas con ErrorBoundary ([`ErrorBoundary.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ErrorBoundary.tsx)):**
+  - Implementado componente `ErrorBoundary` global que intercepta cualquier excepción de red o carga dinámica, ofreciendo opciones automáticas de recarga y navegación sin permitir pantallas blancas.
+
 ### Versión 2.9.0 - Suite Integral de Gráficas Analíticas (Ecosistema Total, Web Pública de Clientes y Distribución por Uso) en /metricas
 - [x] **Gráfica 1: Ecosistema Completo de Todas las Secciones ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
   - Implementada gráfica comparativa integral con selector interactivo de tres vistas: `[ 🌐 Todas ]`, `[ 🛍️ Tienda & Clientes ]` y `[ 🛡️ Panel Admin ]`.

@@ -62,14 +62,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       });
     } catch {}
 
-    // Enrutamos de inmediato para que la vista quede preparada bajo la cortina
+    // Enrutar al usuario de inmediato sin demoras ni pantallas en blanco
     if (onSuccess) {
       onSuccess(user);
     }
 
-    triggerLoginCinematic(user, () => {
+    // Si es modal flotante, cerrar de inmediato. Si es página embebida (/admin o /login), onSuccess gestiona la ruta
+    if (!isStandalonePage) {
       onClose();
-    });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {

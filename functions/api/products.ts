@@ -18,6 +18,7 @@ interface ProductDbRow {
   customization_placeholder?: string;
   unit: string;
   description: string;
+  is_available?: number;
   created_at: string;
 }
 
@@ -37,6 +38,9 @@ const mapRowToProduct = (r: ProductDbRow) => ({
   customizationPlaceholder: r.customization_placeholder,
   unit: r.unit,
   description: r.description,
+  isAvailable: r.is_available !== undefined ? Boolean(r.is_available) : true,
+  showInStore: r.is_available !== undefined ? Boolean(r.is_available) : true,
+  showInCatalog: r.is_available !== undefined ? Boolean(r.is_available) : true,
 });
 
 export const onRequestGet = async (context: { env: Env }) => {
@@ -44,6 +48,10 @@ export const onRequestGet = async (context: { env: Env }) => {
     if (!context.env.DB) {
       return new Response(JSON.stringify({ error: 'DB binding not available' }), { status: 500 });
     }
+
+    await context.env.DB.prepare(
+      'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
+    ).run().catch(() => {});
 
     const { results } = await context.env.DB.prepare(
       'SELECT * FROM products ORDER BY created_at DESC'
@@ -100,17 +108,29 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
 export const onRequestPut = async (context: { request: Request; env: Env }) => {
   try {
-    const { id, stock, minStock, maxStock } = await context.request.json() as any;
+    const { id, stock, minStock, maxStock, isAvailable } = await context.request.json() as any;
 
     if (context.env.DB && id) {
-      if (minStock !== undefined && maxStock !== undefined) {
+      await context.env.DB.prepare(
+        'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
+      ).run().catch(() => {});
+
+      if (isAvailable !== undefined) {
         await context.env.DB.prepare(
-          'UPDATE products SET stock = ?, min_stock = ?, max_stock = ? WHERE id = ?'
-        ).bind(stock, minStock, maxStock, id).run();
-      } else {
-        await context.env.DB.prepare(
-          'UPDATE products SET stock = ? WHERE id = ?'
-        ).bind(stock, id).run();
+          'UPDATE products SET is_available = ? WHERE id = ?'
+        ).bind(isAvailable ? 1 : 0, id).run();
+      }
+
+      if (stock !== undefined) {
+        if (minStock !== undefined && maxStock !== undefined) {
+          await context.env.DB.prepare(
+            'UPDATE products SET stock = ?, min_stock = ?, max_stock = ? WHERE id = ?'
+          ).bind(stock, minStock, maxStock, id).run();
+        } else {
+          await context.env.DB.prepare(
+            'UPDATE products SET stock = ? WHERE id = ?'
+          ).bind(stock, id).run();
+        }
       }
     }
 

@@ -7,12 +7,15 @@ import {
   BarChart3, Lock
 } from 'lucide-react';
 
+import { AppRoute } from '../../types';
+
 interface AdminHubMenuProps {
   onSelectTab: (tab: AdminTabType) => void;
+  onNavigate?: (route: AppRoute) => void;
 }
 
-export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
-  const { orders, products, workshops, userProfiles, hasPermission, loginIntroStage } = useApp();
+export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate }) => {
+  const { orders, products, workshops, userProfiles, hasPermission } = useApp();
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
   const copyCatalogLink = () => {
@@ -96,28 +99,10 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
 
   const menuItems = allMenuItems.filter((item) => hasPermission(item.id));
 
-  let menuAnimationClass = '';
-  if (loginIntroStage > 0) {
-    if (loginIntroStage < 5) {
-      menuAnimationClass = 'opacity-0 translate-x-24 pointer-events-none';
-    } else if (loginIntroStage >= 5) {
-      menuAnimationClass = 'menu-slide-right';
-    }
-  }
-
-  let catalogAnimationClass = '';
-  if (loginIntroStage > 0) {
-    if (loginIntroStage < 6) {
-      catalogAnimationClass = 'opacity-0 translate-y-16 pointer-events-none';
-    } else if (loginIntroStage >= 6) {
-      catalogAnimationClass = 'catalog-slide-up';
-    }
-  }
-
   return (
     <div className="space-y-4">
-      {/* Sección Menú Principal de Administración (Aparece de derecha a izquierda) */}
-      <div className={`space-y-4 ${menuAnimationClass}`}>
+      {/* Sección Menú Principal de Administración */}
+      <div className="space-y-4">
         {/* Título Compacto de una Sola Línea */}
         <div className="flex items-center justify-between gap-2 px-1">
           <div className="flex items-center gap-2">
@@ -173,7 +158,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
       </div>
 
       {/* Sección Catálogo Comercial Online (Aparece de abajo hacia arriba) */}
-      <div className={catalogAnimationClass}>
+      <div className="pt-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
         <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/70 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
@@ -252,13 +237,17 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
             </div>
           </div>
 
-          <a
-            href="/propuesta"
+          <button
+            type="button"
+            onClick={() => {
+              if (onNavigate) onNavigate('propuesta');
+              else window.location.href = '/propuesta';
+            }}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-fio-pink to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bubble font-bold shadow-md active:scale-95 transition-all shrink-0 cursor-pointer"
           >
             <span>Ver Propuesta Completa</span>
             <ExternalLink className="w-3.5 h-3.5" />
-          </a>
+          </button>
         </div>
 
         {/* Tarjeta de Acceso Rápido a Métricas & Rastreo de Enlaces */}
@@ -282,13 +271,17 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab }) => {
             </div>
           </div>
 
-          <a
-            href="/metricas"
+          <button
+            type="button"
+            onClick={() => {
+              if (onNavigate) onNavigate('metricas');
+              else window.location.href = '/metricas';
+            }}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white text-purple-950 hover:bg-purple-50 text-xs font-bubble font-bold shadow-md active:scale-95 transition-all shrink-0 cursor-pointer"
           >
             <BarChart3 className="w-3.5 h-3.5 text-fio-purple" />
             <span>Abrir Panel de Métricas</span>
-          </a>
+          </button>
         </div>
       </div>
     </div>

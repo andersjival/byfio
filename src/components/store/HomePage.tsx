@@ -17,10 +17,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   const featuredWorkshops = workshops.slice(0, 3);
   const featuredProducts = products.filter((p) => {
-    const isAvailable = p.isAvailable !== false;
-    return inventoryMode === 'availability'
-      ? isAvailable
-      : (p.showInStore !== false && isAvailable);
+    // Si el producto no está disponible o no se debe mostrar en tienda, se oculta
+    if (p.isAvailable === false || p.showInStore === false) return false;
+    return true;
   }).slice(0, 4);
 
   return (

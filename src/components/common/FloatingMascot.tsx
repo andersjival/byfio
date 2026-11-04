@@ -259,6 +259,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
           <div className="rounded-2xl overflow-hidden bg-fio-100 dark:bg-purple-950 mb-3 shadow-inner max-h-40 flex items-center justify-center">
             <video
               src="/assets/vid-estrellita.mp4"
+              preload="metadata"
               autoPlay
               loop
               muted
@@ -378,6 +379,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
         <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center relative shadow-xl border-0">
           <video
             src="/assets/vid-estrellita.mp4"
+            preload="metadata"
             autoPlay
             loop
             muted

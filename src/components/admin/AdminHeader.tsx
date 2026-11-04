@@ -7,12 +7,15 @@ import {
   FileText, Palette, DollarSign
 } from 'lucide-react';
 
+import { AppRoute } from '../../types';
+
 interface AdminHeaderProps {
   onOpenDesignModal?: () => void;
+  onNavigate?: (route: AppRoute) => void;
 }
 
-export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal }) => {
-  const { products, orders, setIsSupplierModalOpen, resetToDefaults, colorTheme, typographyTheme, loginIntroStage } = useApp();
+export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onNavigate }) => {
+  const { products, orders, setIsSupplierModalOpen, resetToDefaults, colorTheme, typographyTheme } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
 
   const handleOpenDesign = onOpenDesignModal || (() => setInternalDesignModalOpen(true));
@@ -21,17 +24,8 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal }) =
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
   const totalInventoryValue = products.reduce((acc, p) => acc + p.stock * p.costPrice, 0);
 
-  let headerAnimationClass = '';
-  if (loginIntroStage > 0) {
-    if (loginIntroStage < 4) {
-      headerAnimationClass = 'opacity-0 -translate-x-24 pointer-events-none';
-    } else if (loginIntroStage >= 4) {
-      headerAnimationClass = 'panel-slide-left';
-    }
-  }
-
   return (
-    <div className={`space-y-4 ${headerAnimationClass}`}>
+    <div className="space-y-4">
       {/* Barra de Título y Acciones Globales Compacta */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -46,14 +40,18 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal }) =
         {/* Acciones Rápidas & Botón Discreto de Personalización Visual */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Botón de Propuesta Oficial para el Dueño */}
-          <a
-            href="/propuesta"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs transition-all active:scale-95"
+          <button
+            type="button"
+            onClick={() => {
+              if (onNavigate) onNavigate('propuesta');
+              else window.location.href = '/propuesta';
+            }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
             title="Ver propuesta integral y ficha de funcionalidades"
           >
             <FileText className="w-3.5 h-3.5 text-fio-yellow" />
             <span>Propuesta</span>
-          </a>
+          </button>
 
           {/* Botón Discreto de Diseño & Tipografía */}
           <button

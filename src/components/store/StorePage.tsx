@@ -43,17 +43,16 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   };
 
   const filteredProducts = products.filter((p) => {
-    const isAvailable = p.isAvailable !== false;
-    const isVisibleInStore = inventoryMode === 'availability'
-      ? isAvailable
-      : (p.showInStore !== false && isAvailable);
+    // Apenas el administrador desactiva un producto o lo pone como no disponible, desaparece de la tienda
+    if (p.isAvailable === false || p.showInStore === false) return false;
+
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCustom = !onlyCustomizable || p.isCustomizable;
-    return isVisibleInStore && matchesCategory && matchesSearch && matchesCustom;
+    return matchesCategory && matchesSearch && matchesCustom;
   });
 
   const handleCustomTextChange = (prodId: string, val: string) => {

@@ -244,8 +244,8 @@ export const InventoryTable: React.FC = () => {
                         {prod.category}
                       </span>
                       <div className="flex items-center gap-1 text-[9px] font-bold">
-                        {inventoryMode === 'availability' && !isAvailable ? (
-                          <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200">
+                        {!isAvailable ? (
+                          <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200 font-semibold" title="Oculto de tienda y catálogo">
                             Desactivado
                           </span>
                         ) : (

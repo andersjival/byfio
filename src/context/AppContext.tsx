@@ -799,39 +799,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [loginIntroStage, setLoginIntroStage] = useState(0);
 
   const triggerLoginCinematic = (_user: AuthUser, onComplete: () => void) => {
-    // 1. El login se mueve hacia arriba y se esconde
-    setLoginIntroStage(1);
-
-    // 1 segundo después: 2. El difuminado de atrás se quita suavemente
-    setTimeout(() => {
-      setLoginIntroStage(2);
-    }, 1000);
-
-    // 1 segundo después (2s total): 3. La barra de menú superior sale de arriba hacia abajo suavemente
-    setTimeout(() => {
-      setLoginIntroStage(3);
-      onComplete();
-    }, 2000);
-
-    // 1 segundo después (3s total): 4. Aparece la sección panel de control de izquierda hacia derecha
-    setTimeout(() => {
-      setLoginIntroStage(4);
-    }, 3000);
-
-    // 1 segundo después (4s total): 5. Aparece la sección menú principal de administración de derecha a izquierda
-    setTimeout(() => {
-      setLoginIntroStage(5);
-    }, 4000);
-
-    // 1 segundo después (5s total): 6. Aparece la sección de catálogo comercial online de abajo hacia arriba suavemente
-    setTimeout(() => {
-      setLoginIntroStage(6);
-    }, 5000);
-
-    // 1 segundo después (6s total): Culminación completa de la coreografía
-    setTimeout(() => {
-      setLoginIntroStage(0);
-    }, 6000);
+    // Transición inmediata a máxima velocidad: sin pausas de 6 segundos ni ocultamiento de componentes
+    setLoginIntroStage(0);
+    onComplete();
   };
 
   const updatePricingData = (newData: PricingSectionData) => {
@@ -869,7 +839,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          setProducts(data);
+          setProducts((prev) => {
+            const prevMap = new Map(prev.map((p) => [p.id, p]));
+            return data.map((cloudProd: Product) => {
+              const local = prevMap.get(cloudProd.id);
+              // Priorizar estado de disponibilidad
+              const isAvail = cloudProd.isAvailable !== undefined 
+                ? cloudProd.isAvailable 
+                : (local?.isAvailable !== undefined ? local.isAvailable : true);
+              const inStore = cloudProd.showInStore !== undefined
+                ? cloudProd.showInStore
+                : (local?.showInStore !== undefined ? local.showInStore : isAvail);
+              const inCat = cloudProd.showInCatalog !== undefined
+                ? cloudProd.showInCatalog
+                : (local?.showInCatalog !== undefined ? local.showInCatalog : isAvail);
+
+              return {
+                ...cloudProd,
+                isAvailable: isAvail,
+                showInStore: inStore,
+                showInCatalog: inCat,
+              };
+            });
+          });
         }
       })
       .catch(() => {});
@@ -939,6 +931,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [workshops]);
 
   const addToCart = (item: Omit<CartItem, 'cartId'>) => {
+    // Si el producto está desactivado o marcado como no disponible, bloquear la adición al carrito
+    if (item.type === 'product') {
+      const prod = products.find((p) => p.id === item.id);
+      if (prod && (prod.isAvailable === false || prod.showInStore === false || prod.showInCatalog === false)) {
+        return;
+      }
+    }
+
     const cartId = `${item.id}-${item.customText || 'standard'}-${Date.now()}`;
     setCart((prev) => {
       const existing = prev.find(
@@ -1185,15 +1185,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const toggleProductAvailability = (productId: string) => {
-    setProducts((prev) =>
-      prev.map((p) => {
+    let nextAvailable = false;
+    setProducts((prev) => {
+      const updated = prev.map((p) => {
         if (p.id === productId) {
-          const nextState = p.isAvailable === false ? true : false;
-          return { ...p, isAvailable: nextState };
+          nextAvailable = p.isAvailable === false ? true : false;
+          return {
+            ...p,
+            isAvailable: nextAvailable,
+            showInStore: nextAvailable,
+            showInCatalog: nextAvailable,
+          };
         }
         return p;
-      })
-    );
+      });
+
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Si se desactiva el producto, eliminarlo de inmediato del carrito para que nadie lo compre por error
+    setCart((prevCart) => prevCart.filter((it) => it.type !== 'product' || it.id !== productId || nextAvailable));
+
+    // Sincronizar estado en la base de datos en la nube D1
+    fetch('/api/products', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: productId, isAvailable: nextAvailable }),
+    }).catch(() => {});
   };
 
   const addProduct = (productData: Omit<Product, 'id'>): Product => {
