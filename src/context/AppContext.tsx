@@ -3,7 +3,7 @@ import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
-  SinpeTransaction, SinpeSettings
+  SinpeTransaction, SinpeSettings, InventoryMissingReport
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -159,6 +159,10 @@ interface AppContextType {
   }) => Order;
   startPicking: (orderId: string) => void;
   markItemPicked: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
+  markItemMissing: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
+  missingInventoryReports: InventoryMissingReport[];
+  resolveMissingReport: (reportId: string) => void;
+  deleteMissingReport: (reportId: string) => void;
   updateOrderStatus: (orderId: string, newStatus: OrderStatus) => void;
   inventoryMode: InventoryMode;
   setInventoryMode: (mode: InventoryMode) => void;
@@ -281,6 +285,7 @@ const STORAGE_KEYS = {
   INVENTORY_MODE: 'byfio_inventory_mode_v1',
   SINPE_TRANSACTIONS: 'byfio_sinpe_transactions_v1',
   SINPE_SETTINGS: 'byfio_sinpe_settings_v1',
+  MISSING_INVENTORY: 'byfio_missing_inventory_v1',
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -381,6 +386,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isSinpeModalOpen, setIsSinpeModalOpen] = useState(false);
+
+  // Reportes de Faltantes de Inventario detectados durante el Alisto Manual
+  const [missingInventoryReports, setMissingInventoryReports] = useState<InventoryMissingReport[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.MISSING_INVENTORY);
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // Web Intro Video Overlay state: Solo carga y se reproduce en la portada / home
   const [isIntroOpen, setIsIntroOpen] = useState<boolean>(() => isHomeLocation());
@@ -1439,7 +1450,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           };
         }
 
-        const allPicked = updatedItems.every((it) => it.isPicked);
+        const allPicked = updatedItems.every((it) => it.isPicked || it.isMissing);
         if (allPicked) completed = true;
 
         const updatedOrder: Order = {
@@ -1481,6 +1492,109 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     return { isComplete: completed };
+  };
+
+  const markItemMissing = (orderId: string, itemSku: string) => {
+    let completed = false;
+    let found = false;
+
+    setOrders((prev) =>
+      prev.map((order) => {
+        if (order.id !== orderId) return order;
+
+        const updatedItems = [...order.items];
+        const unhandledIdx = updatedItems.findIndex((it) => it.sku === itemSku && !it.isPicked && !it.isMissing);
+
+        if (unhandledIdx !== -1) {
+          found = true;
+          const missingItem = updatedItems[unhandledIdx];
+          updatedItems[unhandledIdx] = {
+            ...missingItem,
+            isMissing: true,
+            isPicked: false,
+            missingAt: new Date().toISOString(),
+          };
+
+          // Registrar en faltantes de inventario
+          const newReport: InventoryMissingReport = {
+            id: `missing_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+            orderId: order.id,
+            orderNumber: order.orderNumber,
+            customerName: order.customerName,
+            sku: missingItem.sku,
+            name: missingItem.name,
+            quantity: missingItem.quantity,
+            shelfLocation: missingItem.shelfLocation,
+            image: missingItem.image,
+            reportedAt: new Date().toISOString(),
+            resolved: false,
+          };
+
+          setMissingInventoryReports((mPrev) => {
+            const nextReports = [newReport, ...mPrev];
+            localStorage.setItem(STORAGE_KEYS.MISSING_INVENTORY, JSON.stringify(nextReports));
+            return nextReports;
+          });
+        }
+
+        const allProcessed = updatedItems.every((it) => it.isPicked || it.isMissing);
+        if (allProcessed) completed = true;
+
+        const updatedOrder: Order = {
+          ...order,
+          items: updatedItems,
+          orderStatus: allProcessed ? 'packed' : 'picking',
+          packedAt: allProcessed ? new Date().toISOString() : order.packedAt,
+        };
+
+        if (activePickingOrder?.id === orderId) {
+          setActivePickingOrder(updatedOrder);
+        }
+
+        // Sync with D1 Database
+        fetch('/api/orders', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: orderId,
+            orderStatus: updatedOrder.orderStatus,
+            packedAt: updatedOrder.packedAt,
+            items: updatedItems,
+          }),
+        }).catch(() => {});
+
+        return updatedOrder;
+      })
+    );
+
+    if (!found) {
+      playAudioBeep('error');
+      return { isComplete: false, error: `No se encontró el producto "${itemSku}" pendiente en este pedido.` };
+    }
+
+    if (completed) {
+      playAudioBeep('finish');
+    } else {
+      playAudioBeep('success');
+    }
+
+    return { isComplete: completed };
+  };
+
+  const resolveMissingReport = (reportId: string) => {
+    setMissingInventoryReports((prev) => {
+      const next = prev.map((rep) => (rep.id === reportId ? { ...rep, resolved: true, resolvedAt: new Date().toISOString() } : rep));
+      localStorage.setItem(STORAGE_KEYS.MISSING_INVENTORY, JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const deleteMissingReport = (reportId: string) => {
+    setMissingInventoryReports((prev) => {
+      const next = prev.filter((rep) => rep.id !== reportId);
+      localStorage.setItem(STORAGE_KEYS.MISSING_INVENTORY, JSON.stringify(next));
+      return next;
+    });
   };
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
@@ -1969,6 +2083,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createOrder,
         startPicking,
         markItemPicked,
+        markItemMissing,
+        missingInventoryReports,
+        resolveMissingReport,
+        deleteMissingReport,
         updateOrderStatus,
         inventoryMode,
         setInventoryMode,

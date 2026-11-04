@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.1.0 - Corrección Integral de Botones de Filtro en Métricas: Cero Desbordamiento, Contraste Absoluto y Distribución Espaciosa
+- [x] **Distribución Espaciosa en Dos Filas Independientes ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Reorganizada la barra de control en 2 filas limpias y holgadas: Fila 1 (`Métrica: Dual, Solo Me Gusta, Solo Vistas`) y Fila 2 (`Mostrar: Todas, Tienda, Admin`).
+  - Eliminado el apiñamiento y el desbordamiento horizontal (`salido de la web`): los botones cuentan con envoltura responsiva (`flex-wrap`) y espacio generoso sin cortes en ninguna resolución ni con sidebar desplegado.
+- [x] **Contraste y Legibilidad Blindada en Botones Activos e Inactivos ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Botones activos protegidos con fondo púrpura sólido (`#581C87`) y texto blanco puro con sombra (`#FFFFFF`), o rosa intenso (`#BE185D`) para `Solo Me Gusta`.
+  - Botones inactivos convertidos en tarjetas píldora con fondo blanco nítido (`#FFFFFF`), texto oscuro de alto contraste (`#1E293B`) y sutil borde delimitador, eliminando el fondo transparente descolorido.
+- [x] **Unificación de Etiquetas y Limpieza Visual en "¿Qué Secciones Gustaron Más?" ([`MetricsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/MetricsPage.tsx)):**
+  - Simplificados los títulos a `🛍️ Tienda` y `🛡️ Admin` para erradicar sobrecargas de texto y garantizar simetría estética idéntica al diseño de referencia.
+
 ### Versión 4.0.0 - Sistema de Redirección y Verificación de Pagos SINPE Móvil Banco BCR & División de Ingresos en Caja
 - [x] **Motor de Extracción y Validación SINPE Móvil BCR ([`bcrSinpeParser.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/bcrSinpeParser.ts)):**
   - Detección de remitente oficial `mensajero@bancobcr.com` y asunto `"SINPE MÓVIL: Notificación de transacción realizada"`.

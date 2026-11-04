@@ -98,6 +98,23 @@ export interface OrderItem {
   isPicked?: boolean;
   pickedAt?: string;
   image?: string;
+  isMissing?: boolean; // Marcado como faltante durante el alisto
+  missingAt?: string;  // Fecha en que se reportó faltante
+}
+
+export interface InventoryMissingReport {
+  id: string;
+  orderId: string;
+  orderNumber: string;
+  customerName: string;
+  sku: string;
+  name: string;
+  quantity: number;
+  shelfLocation?: string;
+  image?: string;
+  reportedAt: string;
+  resolved: boolean;
+  resolvedAt?: string;
 }
 
 export type OrderStatus =
