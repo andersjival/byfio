@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.2 - Módulo Completo de Pedidos a Proveedor con Borradores e Historial
+- [x] **Módulo Dedicado de Pedidos a Proveedor ([`SuppliersOrdersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SuppliersOrdersSection.tsx)):**
+  - Implementado el módulo administrativo *"Pedidos a Proveedores & Requisiciones"* con métricas en tiempo real, búsqueda por número, proveedor y SKU, y filtros por pestañas (*"Todos"*, *"Por Pedir (Borradores)"*, *"Pedidos Realizados"* y *"Recibidos"*).
+  - Pestaña *"Por Pedir (Borradores)"*: permite guardar pedidos en preparación para pedirlos formalmente después al proveedor.
+  - Pestaña *"Pedidos Realizados (Historial)"*: registra el historial de compras ya solicitadas a los proveedores con fecha y montos.
+  - Acciones completas por orden: marcar como pedido al proveedor, marcar como recibido en taller, enviar o reenviar por WhatsApp con mensaje desglosado, e imprimir ficha formal.
+- [x] **Integración con Requisición y Base de Datos D1 ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx), [`supplier-orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/supplier-orders.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - En la modal de requisición de stock bajo se añadieron los botones directos *"Guardar Por Pedir"* y *"Guardar Pedido Realizado"*.
+  - Persistencia remota en Cloudflare D1 vía `/api/supplier-orders` y en `localStorage`.
+- [x] **Navegación y Permisos de Usuario ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Añadida la pestaña superior *"Proveedores"* con contador en vivo de órdenes activas.
+  - Tarjeta de acceso directo en el Menú Principal (Hub) y asignación de permisos por perfil de usuario.
+
 ### Versión 4.14.1 - Restauración Oficial y Blindaje del Perfil de MARÍA en D1
 - [x] **Restauración del Perfil de MARÍA ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`user-profiles.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/user-profiles.ts)):**
   - Se restauró formalmente a **MARÍA** (PIN inicial `1234`, rol `staff` con permisos completos de ventas, facturación, mostrador y pedidos) como perfil permanente del sistema.
