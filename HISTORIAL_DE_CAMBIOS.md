@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.9 - Corrección de Errores TypeScript y Código Limpio (v4.14.6 + v4.14.7)
+- [x] **Corrección de errores TS en `products.ts`:** `TS2367` resuelto — comparación `r.is_available === true` (number vs boolean) corregida a `Number(r.is_available) === 1`.
+- [x] **`UserProfilesSection.tsx`:** Inicialización completa de los 10 permisos en `handleOpenCreate`, `handleOpenEdit` y `handleToggleAllPermissions` incluyendo `agenda` y `suppliers`. Conteo de permisos otorgados corregido con null-safe `perms[mod.key]`.
+- [x] **`AppContext.tsx` — `hasPermission`:** Eliminados todos los `as any`; ahora usa `Record<string, boolean | undefined>` para acceso seguro por índice string.
+- [x] **`AppContext.tsx` — `loginWithPin`:** Reescrito para priorizar PINs de perfil antes que PINs maestros (`7777`, `0777`, `9999`). PINs `1234` y `2026` ya no colisionan con perfiles María y Mostrador.
+- [x] **`formatters.ts`:** `formatCRC` y `getWhatsAppLink` protegidos contra valores `null`/`undefined`.
+- [x] **`tsconfig.json`:** Incluye `functions/` para que TS audite también las Cloudflare Functions.
+- [x] **`SuppliersOrdersSection.tsx` / `SupplierOrderModal.tsx`:** Guardado en Agenda integrado con detección de duplicados.
+
 ### Versión 4.14.7 - Rediseño Ejecutivo y Profesional de la Agenda WMS
 - [x] **Rediseño Neumórfico Ejecutivo ([`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
   - Transformada la interfaz a estándar B2B neumórfico con paleta institucional, superficies suaves (`shadow-neuCard`), campos inset (`shadow-neuInset`) y tipografía corporativa equilibrada.
