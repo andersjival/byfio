@@ -219,6 +219,16 @@ export const App: React.FC = () => {
     }
   }, [currentRoute, adminTab]);
 
+  // Auto-seleccionar Cola de Pedidos si el colaborador ingresa con perfil exclusivo de Alisto
+  useEffect(() => {
+    if (currentUser?.role === 'staff' && currentRoute === 'admin') {
+      const isAlistoOnly = currentUser.permissions?.orders && !currentUser.permissions?.billing && !currentUser.permissions?.inventory;
+      if (isAlistoOnly && adminTab === 'hub') {
+        setAdminTab('orders');
+      }
+    }
+  }, [currentUser, currentRoute, adminTab]);
+
   return (
     <div className="relative min-h-screen flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800 overflow-x-hidden w-full max-w-full">
       {/* Fondo Decorativo Sereno Estilo Cerámico / Zen */}
@@ -252,7 +262,8 @@ export const App: React.FC = () => {
                     if (user.email === 'superadmin@byfio.com') {
                       navigate('superadmin');
                     } else if (user.role === 'admin' || user.role === 'staff') {
-                      navigate('admin');
+                      const isAlistoOnly = user.role === 'staff' && user.permissions?.orders && !user.permissions?.billing && !user.permissions?.inventory;
+                      navigate('admin', isAlistoOnly ? 'orders' : undefined);
                     } else {
                       navigate('home');
                     }
@@ -349,7 +360,8 @@ export const App: React.FC = () => {
                           if (user.email === 'superadmin@byfio.com') {
                             navigate('superadmin');
                           } else if (user.role === 'admin' || user.role === 'staff') {
-                            navigate('admin');
+                            const isAlistoOnly = user.role === 'staff' && user.permissions?.orders && !user.permissions?.billing && !user.permissions?.inventory;
+                            navigate('admin', isAlistoOnly ? 'orders' : undefined);
                           } else {
                             navigate('home');
                           }

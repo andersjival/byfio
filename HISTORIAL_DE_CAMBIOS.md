@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.12.4 - Escala +50% en Alisto de Pedidos y Perfil de Alisto para Dispositivos Móviles
+- [x] **Optimización Ergonómica de Alisto en Celular (+50%) ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Incrementadas en un 50% las dimensiones de imagen de producto (`w-36 h-36`), badge de estante (`text-xs` destacado), código SKU, título del artículo (`text-xl font-black`) y contador de cantidad a alistar (`text-base font-black` con fondo contrastado) en vista móvil.
+  - Botón táctil principal *"Aceptar y Continuar"* ampliado a `py-4 text-base font-black min-h-[52px]` con icono agrandado para facilitar el picking con una sola mano.
+  - Botones secundarios de faltante, salida y validación de código ampliados a escala táctil para celular.
+- [x] **Botones de Cola de Pedidos en Celular ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - Los botones de *"Alisto con Código"* y *"Alisto Manual"* cuentan con altura mínima ergonómica `min-h-[48px]`, tipografía aumentada (`text-sm font-black`) e iconos de 20px en vista móvil.
+- [x] **Tarjeta de Perfil de Alisto en Celular ([`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx)):**
+  - La tarjeta del colaborador de Alisto (`ALISTO DE PEDIDOS`) en celulares se muestra un 50% más grande con padding ampliado (`p-6`), título `text-xl font-black`, PIN en `text-2xl font-black`, badge distintivo `📦 Alisto Móvil (+50%)` y botones táctiles agrandados.
+- [x] **Navegación Directa a Alisto para Colaboradores ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Al ingresar con el PIN del perfil de alisto (PIN 1001), el sistema redirige automáticamente y de inmediato a la Cola de Pedidos / Alisto sin escalas intermedias.
+
 ### Versión 4.12.3 - Toggles de Stock de Inventario y Disponibilidad de Producto en Superadmin
 - [x] **Funcionalidades de Inventario en Superadmin ([`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
   - Incorporadas las funcionalidades granulares `"Desactivar / Activar Stock de Inventario"` (`inventory_stock_mode`) y `"Activar / Desactivar Disponibilidad de Producto"` (`product_availability_mode`) dentro del módulo `Inventario & Etiquetas QR`.
