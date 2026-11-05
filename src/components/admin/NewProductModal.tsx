@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCategory } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import {
   X, PlusCircle, Hash, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
-  Store, BookOpen
+  Store, BookOpen, ChevronDown, Plus, RotateCcw
 } from 'lucide-react';
 import { ImageUploadField } from '../common/ImageUploadField';
 
@@ -17,8 +17,29 @@ const DEFAULT_CATEGORIES = [
   'Kits e Insumos',
 ];
 
+const DEFAULT_SHELF_LOCATIONS = [
+  'Estante A-1 (Nivel 1)',
+  'Estante A-1 (Nivel 2)',
+  'Estante A-2 (Nivel 1)',
+  'Estante A-2 (Nivel 2)',
+  'Estante B-1 (Nivel 1)',
+  'Estante B-1 (Nivel 2)',
+  'Estante B-1 (Nivel 3)',
+  'Estante B-2 (Nivel 1)',
+  'Estante B-2 (Nivel 2)',
+  'Gaveta C-1 (Mostrador)',
+  'Gaveta C-2 (Mostrador)',
+  'Estante D-1 (Insumos)',
+  'Estante D-2 (Papeles)',
+  'Bodega Central - Pallet 1',
+  'Bodega Central - Pallet 2',
+];
+
+const CUSTOM_LOCATIONS_STORAGE_KEY = 'byfio_custom_shelf_locations_v1';
+
 export const NewProductModal: React.FC = () => {
   const {
+    products,
     isNewProductModalOpen,
     setIsNewProductModalOpen,
     addProduct,
@@ -32,7 +53,9 @@ export const NewProductModal: React.FC = () => {
   const [category, setCategory] = useState<string>(DEFAULT_CATEGORIES[0]);
   const [customCategory, setCustomCategory] = useState('');
   const [isCreatingNewCat, setIsCreatingNewCat] = useState(false);
-  const [shelfLocation, setShelfLocation] = useState('Estante A-1');
+  const [shelfLocation, setShelfLocation] = useState(DEFAULT_SHELF_LOCATIONS[0]);
+  const [customLocation, setCustomLocation] = useState('');
+  const [isCreatingNewLocation, setIsCreatingNewLocation] = useState(false);
   const [price, setPrice] = useState('12000');
   const [costPrice, setCostPrice] = useState('4500');
   const [stock, setStock] = useState('10');
@@ -48,13 +71,44 @@ export const NewProductModal: React.FC = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
+  // Ubicaciones disponibles combinadas (por defecto + productos existentes + guardadas en localStorage)
+  const availableLocations = useMemo(() => {
+    const locSet = new Set<string>(DEFAULT_SHELF_LOCATIONS);
+    if (Array.isArray(products)) {
+      products.forEach((p) => {
+        if (p.shelfLocation && typeof p.shelfLocation === 'string' && p.shelfLocation.trim()) {
+          locSet.add(p.shelfLocation.trim());
+        }
+      });
+    }
+    try {
+      const saved = localStorage.getItem(CUSTOM_LOCATIONS_STORAGE_KEY);
+      if (saved) {
+        const parsed: string[] = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((l) => {
+            if (l && typeof l === 'string' && l.trim()) locSet.add(l.trim());
+          });
+        }
+      }
+    } catch {}
+    if (shelfLocation && shelfLocation.trim()) {
+      locSet.add(shelfLocation.trim());
+    }
+    return Array.from(locSet)
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base', numeric: true }));
+  }, [products, shelfLocation]);
+
   // Sincronizar formulario según modo edición o creación
   useEffect(() => {
     if (editingProduct) {
       setName(editingProduct.name);
       setSku(editingProduct.sku);
       setCategory(editingProduct.category);
-      setShelfLocation(editingProduct.shelfLocation);
+      setShelfLocation(editingProduct.shelfLocation || DEFAULT_SHELF_LOCATIONS[0]);
+      setIsCreatingNewLocation(false);
+      setCustomLocation('');
       setPrice(String(editingProduct.price));
       setCostPrice(String(editingProduct.costPrice));
       setStock(String(editingProduct.stock));
@@ -74,7 +128,9 @@ export const NewProductModal: React.FC = () => {
       setName('');
       setSku('');
       setCategory(DEFAULT_CATEGORIES[0]);
-      setShelfLocation('Estante A-1');
+      setShelfLocation(DEFAULT_SHELF_LOCATIONS[0]);
+      setIsCreatingNewLocation(false);
+      setCustomLocation('');
       setPrice('12000');
       setCostPrice('4500');
       setStock('10');
@@ -113,6 +169,24 @@ export const NewProductModal: React.FC = () => {
       isCreatingNewCat && customCategory.trim() ? customCategory.trim() : category
     ) as ProductCategory;
 
+    const finalShelfLocation = (
+      isCreatingNewLocation && customLocation.trim()
+        ? customLocation.trim()
+        : shelfLocation.trim() || DEFAULT_SHELF_LOCATIONS[0]
+    );
+
+    // Guardar en la lista persistente de ubicaciones personalizadas
+    if (isCreatingNewLocation && customLocation.trim()) {
+      try {
+        const saved = localStorage.getItem(CUSTOM_LOCATIONS_STORAGE_KEY);
+        const list: string[] = saved ? JSON.parse(saved) : [];
+        if (!list.includes(customLocation.trim())) {
+          list.push(customLocation.trim());
+          localStorage.setItem(CUSTOM_LOCATIONS_STORAGE_KEY, JSON.stringify(list));
+        }
+      } catch {}
+    }
+
     const finalImage =
       image.trim() ||
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80';
@@ -125,7 +199,7 @@ export const NewProductModal: React.FC = () => {
         name: name.trim(),
         sku: sku.trim().toUpperCase(),
         category: finalCategory,
-        shelfLocation: shelfLocation.trim(),
+        shelfLocation: finalShelfLocation,
         price: Number(price) || 0,
         costPrice: Number(costPrice) || 0,
         stock: Number(stock) || 0,
@@ -148,7 +222,7 @@ export const NewProductModal: React.FC = () => {
         name: name.trim(),
         sku: sku.trim().toUpperCase(),
         category: finalCategory,
-        shelfLocation: shelfLocation.trim(),
+        shelfLocation: finalShelfLocation,
         price: Number(price) || 0,
         costPrice: Number(costPrice) || 0,
         stock: Number(stock) || 0,
@@ -310,18 +384,80 @@ export const NewProductModal: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Ubicación en Estantería (WMS) *</label>
-                  <div className="relative">
-                    <input
-                      required
-                      type="text"
-                      placeholder="Ej: Estante A-2 (Nivel 3)"
-                      value={shelfLocation}
-                      onChange={(e) => setShelfLocation(e.target.value)}
-                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-fio-200 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900"
-                    />
-                    <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5" />
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-bold text-gray-700">Ubicación en Estante (WMS) *</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCreatingNewLocation(!isCreatingNewLocation);
+                        if (!isCreatingNewLocation) setCustomLocation('');
+                      }}
+                      className="text-[11px] font-bubble font-bold text-fio-pink hover:text-fio-800 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      {isCreatingNewLocation ? (
+                        <>
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Elegir existente</span>
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-3 h-3" />
+                          <span>+ Nueva ubicación</span>
+                        </>
+                      )}
+                    </button>
                   </div>
+
+                  {!isCreatingNewLocation ? (
+                    <div className="relative">
+                      <select
+                        value={shelfLocation}
+                        onChange={(e) => {
+                          if (e.target.value === '__new__') {
+                            setIsCreatingNewLocation(true);
+                            setCustomLocation('');
+                          } else {
+                            setShelfLocation(e.target.value);
+                          }
+                        }}
+                        className="w-full pl-8 pr-8 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-purple-900 focus:ring-2 focus:ring-fio-400 focus:outline-none appearance-none cursor-pointer"
+                      >
+                        {availableLocations.map((loc) => (
+                          <option key={loc} value={loc}>
+                            📍 {loc}
+                          </option>
+                        ))}
+                        <option value="__new__" className="text-fio-pink font-bold">
+                          ✨ + Crear nueva ubicación...
+                        </option>
+                      </select>
+                      <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5 pointer-events-none" />
+                      <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-2.5 pointer-events-none" />
+                    </div>
+                  ) : (
+                    <div className="flex gap-1.5">
+                      <div className="relative flex-1">
+                        <input
+                          required={isCreatingNewLocation}
+                          type="text"
+                          placeholder="Ej: Estante E-3 (Nivel 1) o Cajón #4"
+                          value={customLocation}
+                          onChange={(e) => setCustomLocation(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900 placeholder:text-gray-400"
+                          autoFocus
+                        />
+                        <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsCreatingNewLocation(false)}
+                        className="px-2.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        title="Volver a lista de ubicaciones existentes"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

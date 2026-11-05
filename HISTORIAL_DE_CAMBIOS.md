@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.3 - Selector y Creador Dinámico de Ubicaciones en Estante (WMS)
+- [x] **Selector y Creación Dinámica de Ubicaciones ([`NewProductModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx)):**
+  - Implementado selector desplegable de ubicaciones en estante que unifica las estanterías por defecto, las ubicaciones utilizadas por los productos existentes y las ubicaciones personalizadas guardadas.
+  - Incorporada opción `✨ + Crear nueva ubicación...` dentro del dropdown y botón superior `+ Nueva ubicación` para alternar fluidamente al campo de creación con autofocus y botón cancelar.
+  - Persistencia automática de nuevas ubicaciones creadas en memoria persistente (`byfio_custom_shelf_locations_v1`) para reutilizarlas en futuros productos.
+
 ### Versión 4.14.2 - Módulo Completo de Pedidos a Proveedor con Borradores e Historial
 - [x] **Módulo Dedicado de Pedidos a Proveedor ([`SuppliersOrdersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SuppliersOrdersSection.tsx)):**
   - Implementado el módulo administrativo *"Pedidos a Proveedores & Requisiciones"* con métricas en tiempo real, búsqueda por número, proveedor y SKU, y filtros por pestañas (*"Todos"*, *"Por Pedir (Borradores)"*, *"Pedidos Realizados"* y *"Recibidos"*).
