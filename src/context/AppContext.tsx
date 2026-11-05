@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
-  TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
+  TypographyTheme, ColorTheme, StarAlertDuration, PricingSectionData, AuthUser,
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
   SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus,
@@ -274,6 +274,8 @@ interface AppContextType {
   setSoundButtonsEnabled: (enabled: boolean) => void;
   soundNewOrderEnabled: boolean;
   setSoundNewOrderEnabled: (enabled: boolean) => void;
+  starAlertDuration: StarAlertDuration;
+  setStarAlertDuration: (duration: StarAlertDuration) => void;
   currentUser: AuthUser | null;
   loginUser: (email: string, pass: string) => { success: boolean; error?: string; user?: AuthUser };
   loginWithPin: (pin: string, targetProfileName?: string) => { success: boolean; error?: string; user?: AuthUser };
@@ -386,6 +388,7 @@ const STORAGE_KEYS = {
   SOUND_BUBBLE: 'byfio_sound_bubble_v1',
   SOUND_BUTTONS: 'byfio_sound_buttons_v1',
   SOUND_NEW_ORDER: 'byfio_sound_new_order_v1',
+  STAR_ALERT_DURATION: 'byfio_star_alert_duration_v1',
   AUTH_USER: 'byfio_auth_user_v1',
   REGISTERED_USERS: 'byfio_registered_users_v1',
   USER_PROFILES: 'byfio_user_profiles_v1',
@@ -571,6 +574,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setSoundNewOrderEnabled = (enabled: boolean) => {
     setSoundNewOrderEnabledState(enabled);
     localStorage.setItem(STORAGE_KEYS.SOUND_NEW_ORDER, String(enabled));
+  };
+
+  // Configuración de duración de la alerta estrellita (manual por defecto, o 5, 10, 15, 20 segundos)
+  const [starAlertDuration, setStarAlertDurationState] = useState<StarAlertDuration>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.STAR_ALERT_DURATION);
+    if (saved === '5' || saved === '10' || saved === '15' || saved === '20') {
+      return Number(saved) as 5 | 10 | 15 | 20;
+    }
+    return 'manual';
+  });
+
+  const setStarAlertDuration = (duration: StarAlertDuration) => {
+    setStarAlertDurationState(duration);
+    localStorage.setItem(STORAGE_KEYS.STAR_ALERT_DURATION, String(duration));
   };
 
   // Rastreo de pedidos conocidos para emitir campanilla únicamente ante nuevos pedidos reales
@@ -3060,6 +3077,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSoundButtonsEnabled,
         soundNewOrderEnabled,
         setSoundNewOrderEnabled,
+        starAlertDuration,
+        setStarAlertDuration,
         currentUser,
         loginUser,
         loginWithPin,

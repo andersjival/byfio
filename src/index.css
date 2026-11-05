@@ -1797,36 +1797,42 @@ html.dark .geosoft-copyright-pill:hover {
 /* =========================================================================
    ANIMACIONES DE ALERTA DE NUEVO PEDIDO CON ESTRELLITA
    ========================================================================= */
+@keyframes starAlertSlideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-90px) scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(8px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-star-alert-in-top {
+  animation: starAlertSlideInFromTop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @keyframes starAlertSlideDown {
   0% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-  20% {
-    transform: translateY(-10px) scale(1.02);
+  25% {
+    transform: translateY(-8px) scale(1.01);
   }
   100% {
     opacity: 0;
-    transform: translateY(260px) scale(0.6);
+    transform: translateY(220px) scale(0.75);
   }
 }
 
 .animate-star-alert-down {
-  animation: starAlertSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: starAlertSlideDown 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   pointer-events: none;
-}
-
-@keyframes starAlertProgress {
-  0% {
-    width: 100%;
-  }
-  100% {
-    width: 0%;
-  }
-}
-
-.animate-star-alert-progress {
-  animation: starAlertProgress 6.5s linear forwards;
 }
 
 /* =========================================================================

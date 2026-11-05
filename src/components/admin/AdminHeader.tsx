@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
 import {
   Package, AlertTriangle, ShoppingCart, RefreshCw,
-  FileText, Palette, DollarSign, Landmark, Shield, Truck
+  FileText, Palette, DollarSign, Landmark, Shield, Truck, Settings
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -87,15 +87,15 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
             </button>
           )}
 
-          {/* Botón Discreto de Diseño & Tipografía */}
+          {/* Botón de Configuración del Sistema & Personalización */}
           <button
             type="button"
             onClick={handleOpenDesign}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-fio-50 text-fio-800 text-xs font-semibold border border-fio-200/80 shadow-xs transition-all active:scale-95"
-            title="Ajustar paleta de colores y tipografía del sitio"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-fio-50 text-fio-800 text-xs font-semibold border border-fio-200/80 shadow-xs transition-all active:scale-95 cursor-pointer"
+            title="Configuración de la web: alerta estrellita, paleta de colores, tipografía y sonidos"
           >
-            <Palette className="w-3.5 h-3.5 text-fio-pink" />
-            <span>Diseño &amp; Letra</span>
+            <Settings className="w-3.5 h-3.5 text-fio-pink" />
+            <span>Configuración</span>
             <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
               {colorTheme === 'vibrant' ? 'Morado' : colorTheme === 'dark' ? 'Oscuro' : 'Zen'}
             </span>

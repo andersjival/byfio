@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { TypographyTheme } from '../../types';
-import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell } from 'lucide-react';
+import { TypographyTheme, StarAlertDuration } from '../../types';
+import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound, playNewOrderChimeSound } from '../../utils/soundEffects';
 
 interface AdminDesignSettingsModalProps {
@@ -21,6 +21,9 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
     setSoundButtonsEnabled,
     soundNewOrderEnabled,
     setSoundNewOrderEnabled,
+    starAlertDuration,
+    setStarAlertDuration,
+    showNewOrderAlert,
   } = useApp();
 
   if (!isOpen) return null;
@@ -56,14 +59,14 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-purple-100 text-fio-700 flex items-center justify-center">
-              <Palette className="w-4 h-4 text-fio-pink" />
+              <Settings className="w-4 h-4 text-fio-pink" />
             </div>
             <div>
               <h2 className="font-bubble font-bold text-base text-fio-900">
-                Personalización Visual y Sonido
+                Configuración del Sistema &amp; Personalización
               </h2>
               <p className="text-[11px] text-slate-500">
-                Elige paleta de color, tipografía y activa o desactiva los efectos de sonido.
+                Configura la alerta estrellita, paleta de color, tipografía y efectos de sonido.
               </p>
             </div>
           </div>
@@ -353,6 +356,92 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
                 />
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* 4. Duración y Cierre de la Alerta Estrellita */}
+        <div className="space-y-3 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+              <span>Notificación de la Estrellita (Nuevos Pedidos)</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => showNewOrderAlert({ orderNumber: '#FIO-DEMO' })}
+              className="inline-flex items-center gap-1 text-[10.5px] font-bubble font-bold text-fio-pink hover:text-pink-700 bg-pink-50 hover:bg-pink-100 px-2.5 py-1 rounded-full border border-pink-200 transition-all active:scale-95 cursor-pointer shadow-2xs"
+              title="Probar cómo se ve la estrellita con la configuración actual"
+            >
+              <Play className="w-3 h-3 fill-current text-fio-pink" />
+              <span>Probar Estrellita</span>
+            </button>
+          </div>
+
+          <p className="text-[11px] text-slate-500 leading-snug">
+            Configura el tiempo que permanece la estrellita en pantalla o déjala en cierre manual:
+          </p>
+
+          {/* Opciones: Cierre manual (por defecto), 5s, 10s, 15s, 20s */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {/* Opción Manual (Por defecto) */}
+            <button
+              type="button"
+              onClick={() => setStarAlertDuration('manual')}
+              className={`p-3 rounded-2xl border text-left transition-all sm:col-span-2 flex items-start justify-between gap-3 ${
+                starAlertDuration === 'manual'
+                  ? 'bg-fio-50/80 border-fio-500 ring-2 ring-fio-400/30'
+                  : 'bg-white border-slate-200 hover:border-fio-300'
+              }`}
+            >
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-900">
+                    Cierre manual por el usuario
+                  </span>
+                  <span className="text-[9.5px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-full">
+                    Por defecto
+                  </span>
+                </div>
+                <p className="text-[10.5px] text-slate-500 leading-tight mt-1">
+                  No se cierra temporalmente. El admin la cierra manual; suma segundos y llena la barrita de color hasta el minuto, pasando al siguiente minuto continuamente hasta que se cierre.
+                </p>
+              </div>
+              {starAlertDuration === 'manual' ? (
+                <CheckCircle2 className="w-4 h-4 text-fio-600 shrink-0 mt-0.5" />
+              ) : (
+                <div className="w-4 h-4 rounded-full border border-slate-300 shrink-0 mt-0.5" />
+              )}
+            </button>
+
+            {/* Opciones Temporizadas: 5s, 10s, 15s, 20s */}
+            {([5, 10, 15, 20] as const).map((secs) => {
+              const isSelected = starAlertDuration === secs;
+              return (
+                <button
+                  key={secs}
+                  type="button"
+                  onClick={() => setStarAlertDuration(secs)}
+                  className={`p-2.5 rounded-2xl border text-left transition-all flex items-center justify-between gap-2.5 ${
+                    isSelected
+                      ? 'bg-fio-50/80 border-fio-500 ring-2 ring-fio-400/30'
+                      : 'bg-white border-slate-200 hover:border-fio-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Clock className={`w-3.5 h-3.5 ${isSelected ? 'text-fio-pink' : 'text-slate-400'}`} />
+                    <div>
+                      <span className="text-xs font-bold text-slate-900">{secs} segundos</span>
+                      <p className="text-[9.5px] text-slate-400">Auto-cierre tras {secs}s</p>
+                    </div>
+                  </div>
+                  {isSelected ? (
+                    <CheckCircle2 className="w-4 h-4 text-fio-600 shrink-0" />
+                  ) : (
+                    <div className="w-4 h-4 rounded-full border border-slate-300 shrink-0" />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
