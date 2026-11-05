@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.12.1 - Eliminación de Barra de Breadcrumbs del Panel de Administración
+- [x] **Eliminación Quirúrgica de Breadcrumbs en Panel Admin ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Removida la sección de navegación tipo píldora (`TreeNavigation`) que mostraba `[ ★ by.fio / caja & reportes ]` en la cabecera del panel administrativo.
+  - Limpiadas las referencias locales de navegación de migas de pan y dependencias no utilizadas en la vista de administración.
+
 ### Versión 4.12.0 - Desactivación Reactiva en Tiempo Real (0ms) de Módulos y Funcionalidades
 - [x] **Ejecución Reactiva en Tiempo Real 0ms ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`superadmin-modules.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/superadmin-modules.ts)):**
   - Al desmarcar cualquier casilla de módulo o funcionalidad hija en `/panel/superadmin`, el cambio se propaga de inmediato (0ms) en la sesión local, a través de `BroadcastChannel`, evento `storage` entre pestañas y respaldo en la nube con Cloudflare D1.

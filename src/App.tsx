@@ -4,7 +4,6 @@ import { AppRoute } from './types';
 import { BackgroundDecor } from './components/common/BackgroundDecor';
 import { Navbar } from './components/common/Navbar';
 import { TikTokIcon } from './components/common/TikTokIcon';
-import { TreeNavigation } from './components/common/TreeNavigation';
 import { FloatingMascot } from './components/common/FloatingMascot';
 import { HomePage } from './components/store/HomePage';
 import { StorePage } from './components/store/StorePage';
@@ -220,32 +219,6 @@ export const App: React.FC = () => {
     }
   }, [currentRoute, adminTab]);
 
-  const adminBreadcrumbs = [
-    { label: 'by.fio', route: 'home' as AppRoute },
-    ...(adminTab === 'hub'
-      ? [{ label: 'administración' }]
-      : [
-          {
-            label:
-              adminTab === 'orders'
-                ? 'cola de pedidos'
-                : adminTab === 'billing'
-                ? 'facturación rápida'
-                : adminTab === 'inventory'
-                ? 'inventario & qr'
-                : adminTab === 'reports'
-                ? 'caja & reportes'
-                : adminTab === 'sinpe'
-                ? 'pagos sinpe bcr'
-                : adminTab === 'pricing'
-                ? 'precios & stickers'
-                : adminTab === 'users'
-                ? 'perfiles de usuarios'
-                : 'talleres & inscripciones',
-          },
-        ]),
-  ];
-
   return (
     <div className="relative min-h-screen flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800 overflow-x-hidden w-full max-w-full">
       {/* Fondo Decorativo Sereno Estilo Cerámico / Zen */}
@@ -386,11 +359,6 @@ export const App: React.FC = () => {
                   ) : null
                 ) : (
                   <div className="space-y-3 sm:space-y-4">
-                    {/* Barra de Árbol de Navegación Compacta */}
-                    <div className="flex items-center justify-between gap-2.5 pb-0.5">
-                      <TreeNavigation nodes={adminBreadcrumbs} onNavigate={navigate} />
-                    </div>
-
                     {/* Si está en el Menú Principal (Hub) - Renderizado Instantáneo 0ms */}
                     {adminTab === 'hub' ? (
                       <>
