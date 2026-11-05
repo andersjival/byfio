@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.11.1 - Corrección Universal de Autenticación de Superadmin en Modal y Portal
+- [x] **Compatibilidad Universal de Credenciales Superadmin ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
+  - Habilitado el reconocimiento de la cuenta de Superadmin (`superadmin@byfio.com` / `superadmin` con clave `SuperAdmin2026!`) en el método global de login (`loginUser`), permitiendo ingresar tanto desde el modal general de acceso como desde el portal `/superadmin`.
+  - Agregada tolerancia a mayúsculas/minúsculas y espacios accidentales en usuario y contraseña (`SuperAdmin2026!`, `superadmin2026!`, `superadmin`).
+- [x] **Desbloqueo de la Vista del Portal Superadmin ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`SuperadminLogin.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminLogin.tsx)):**
+  - Removido el bloqueo prematuro de ruta que impedía cargar el formulario de login del Superadmin cuando el usuario no estaba previamente autenticado.
+  - Añadida tarjeta con visualización clara de credenciales oficiales y botón de autocompletado en un clic dentro de `SuperadminLogin.tsx` y chip directo en `LoginModal.tsx`.
+
 ### Versión 4.11.0 - Restricción Confidencial de Propuesta Integral, Ficha Técnica y Métricas Exclusivas para Admin y Superadmin
 - [x] **Blindaje de Rutas Confidenciales ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
   - Protegidas con compuerta de autenticación estricta las rutas `/propuesta`, `/metricas` y `/superadmin`.

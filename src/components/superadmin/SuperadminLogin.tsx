@@ -16,7 +16,7 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
-    const res = onLogin(username, password);
+    const res = onLogin(username.trim(), password.trim());
     if (!res.success) {
       setErrorMsg(res.error || 'Credenciales de Superadmin incorrectas.');
     }
@@ -36,7 +36,7 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
         <div className="absolute -bottom-20 -left-20 w-44 h-44 bg-pink-600/20 rounded-full blur-3xl pointer-events-none" />
 
         {/* Encabezado */}
-        <div className="text-center relative z-10 mb-6">
+        <div className="text-center relative z-10 mb-5">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 text-white shadow-lg shadow-purple-500/30 mb-3">
             <Shield className="w-8 h-8" />
           </div>
@@ -48,6 +48,27 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
           </h2>
           <p className="text-xs text-purple-200/70 mt-1">
             Gestión y activación de módulos independientes de la plataforma
+          </p>
+        </div>
+
+        {/* Tarjeta de Credenciales Oficiales de Fácil Acceso */}
+        <div className="mb-4 p-3 rounded-2xl bg-purple-950/70 border border-purple-500/40 text-xs text-purple-200 space-y-1 relative z-10">
+          <div className="flex items-center justify-between text-[11px] font-bold text-pink-300">
+            <span>Credenciales Oficiales:</span>
+            <button
+              type="button"
+              onClick={handleFillDemo}
+              className="text-fio-yellow hover:text-white underline cursor-pointer inline-flex items-center gap-1"
+            >
+              <Sparkles className="w-3 h-3 text-fio-yellow" />
+              <span>Clic para autocompletar</span>
+            </button>
+          </div>
+          <p className="font-mono text-[11px] text-white select-all">
+            <span className="text-purple-300 font-sans">Usuario:</span> superadmin@byfio.com <span className="text-purple-400 font-sans">(o superadmin)</span>
+          </p>
+          <p className="font-mono text-[11px] text-white select-all">
+            <span className="text-purple-300 font-sans">Contraseña:</span> SuperAdmin2026!
           </p>
         </div>
 

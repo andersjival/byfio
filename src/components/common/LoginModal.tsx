@@ -234,6 +234,25 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   <span>PIN</span>
                 </button>
               </div>
+
+              {/* Acceso Rápido Superadmin */}
+              <div className="flex items-center justify-center pt-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginMethod('email');
+                    setMode('login');
+                    setEmail('superadmin@byfio.com');
+                    setPassword('SuperAdmin2026!');
+                    setErrorMessage(null);
+                  }}
+                  className="text-[11px] text-fio-purple hover:text-pink-600 font-bold hover:underline cursor-pointer inline-flex items-center gap-1 bg-purple-50 hover:bg-pink-50 px-2.5 py-1 rounded-full border border-purple-200/80 transition-colors"
+                  title="Cargar credenciales oficiales de Superadmin"
+                >
+                  <Shield className="w-3 h-3 text-pink-500" />
+                  <span>¿Ingresar como Superadmin? Clic aquí</span>
+                </button>
+              </div>
             </div>
           )}
           {/* Mensaje de Sesión Activa con Botón Directo al Admin */}

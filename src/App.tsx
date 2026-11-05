@@ -70,6 +70,7 @@ export const App: React.FC = () => {
     isSinpeModalOpen,
     setIsSinpeModalOpen,
     isModuleEnabled,
+    isSuperAdminAuthenticated,
   } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
@@ -82,7 +83,7 @@ export const App: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
 
-  const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
+  const isAdminOrSuperadmin = isSuperAdminAuthenticated || (!!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin));
 
   const navigate = (newRoute: AppRoute, targetTab?: AdminTabType, workshopId?: string) => {
     // El video intro solo debe existir en la página principal (home)
@@ -334,28 +335,7 @@ export const App: React.FC = () => {
                 )
               )}
 
-              {currentRoute === 'superadmin' && (
-                isAdminOrSuperadmin ? (
-                  <SuperadminSection onNavigate={navigate} />
-                ) : (
-                  <div className="py-12 max-w-md mx-auto text-center space-y-4 animate-fadeIn">
-                    <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 mx-auto flex items-center justify-center shadow-inner">
-                      <Shield className="w-7 h-7" />
-                    </div>
-                    <h3 className="font-bubble font-bold text-xl text-slate-800">Acceso Restringido</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed font-sans">
-                      El panel maestro de Superadmin solo está autorizado para el administrador central.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => navigate('home')}
-                      className="px-5 py-2.5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-md cursor-pointer transition-all active:scale-95"
-                    >
-                      Regresar al Inicio
-                    </button>
-                  </div>
-                )
-              )}
+              {currentRoute === 'superadmin' && <SuperadminSection onNavigate={navigate} />}
 
               {currentRoute === 'admin' && (
                 !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
