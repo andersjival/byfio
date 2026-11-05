@@ -773,25 +773,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // -------------------------------------------------------------
   // ESTADO Y MÉTODOS DE SUPERADMINISTRADOR (GESTIÓN MODULAR GLOBAL)
   // -------------------------------------------------------------
+  const mergeSuperadminModules = (loaded: any[]): SuperadminModuleConfig[] => {
+    if (!Array.isArray(loaded) || loaded.length === 0) return INITIAL_SUPERADMIN_MODULES;
+    return INITIAL_SUPERADMIN_MODULES.map((initialMod) => {
+      const found = loaded.find((p) => p.id === initialMod.id);
+      if (!found) return initialMod;
+      return {
+        ...initialMod,
+        enabled: typeof found.enabled === 'boolean' ? found.enabled : initialMod.enabled,
+        features: initialMod.features.map((feat) => {
+          const foundFeat = found.features?.find((f: any) => f.id === feat.id);
+          return foundFeat && typeof foundFeat.enabled === 'boolean'
+            ? { ...feat, enabled: foundFeat.enabled }
+            : feat;
+        }),
+      };
+    });
+  };
+
   const [superadminModules, setSuperadminModules] = useState<SuperadminModuleConfig[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SUPERADMIN_MODULES);
       if (saved) {
         const parsed: SuperadminModuleConfig[] = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return INITIAL_SUPERADMIN_MODULES.map((initialMod) => {
-            const found = parsed.find((p) => p.id === initialMod.id);
-            if (!found) return initialMod;
-            return {
-              ...initialMod,
-              enabled: found.enabled,
-              features: initialMod.features.map((feat) => {
-                const foundFeat = found.features?.find((f) => f.id === feat.id);
-                return foundFeat ? { ...feat, enabled: foundFeat.enabled } : feat;
-              }),
-            };
-          });
-        }
+        return mergeSuperadminModules(parsed);
       }
     } catch {}
     return INITIAL_SUPERADMIN_MODULES;
@@ -1299,7 +1304,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setSinpeTransactions(event.data.sinpeTransactions);
         }
         if (Array.isArray(event.data.superadminModules)) {
-          setSuperadminModules(event.data.superadminModules);
+          setSuperadminModules(mergeSuperadminModules(event.data.superadminModules));
         }
       }
     };
@@ -1309,7 +1314,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         try {
           const parsed = JSON.parse(e.newValue);
           if (Array.isArray(parsed)) {
-            setSuperadminModules(parsed);
+            setSuperadminModules(mergeSuperadminModules(parsed));
           }
         } catch {}
       }
@@ -1317,7 +1322,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const handleLocalUpdate = (e: any) => {
       if (Array.isArray(e.detail)) {
-        setSuperadminModules(e.detail);
+        setSuperadminModules(mergeSuperadminModules(e.detail));
       }
     };
 
@@ -1445,17 +1450,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         })
         .catch(() => {});
 
-      // 4. Sincronizar estado global de módulos del Superadmin en la nube
+      // 4. Sincronizar estado global de módulos del Superadmin en la nube con fusión defensiva
       fetch('/api/superadmin-modules')
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (Array.isArray(data?.modules) && data.modules.length > 0) {
+            const merged = mergeSuperadminModules(data.modules);
             setSuperadminModules((prev) => {
-              if (JSON.stringify(prev) !== JSON.stringify(data.modules)) {
+              if (JSON.stringify(prev) !== JSON.stringify(merged)) {
                 try {
-                  localStorage.setItem(STORAGE_KEYS.SUPERADMIN_MODULES, JSON.stringify(data.modules));
+                  localStorage.setItem(STORAGE_KEYS.SUPERADMIN_MODULES, JSON.stringify(merged));
                 } catch {}
-                return data.modules;
+                return merged;
               }
               return prev;
             });

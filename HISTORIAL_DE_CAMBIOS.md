@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.12.5 - Sincronización en la Nube D1 y Fusión Inmutable de Funcionalidades de Superadmin
+- [x] **Fusión Defensiva Cloud & Local ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Implementada la función `mergeSuperadminModules` en la carga de la API `/api/superadmin-modules`, en eventos de `BroadcastChannel` y eventos `storage`.
+  - Evita que snapshots antiguos en Cloudflare D1 sobreescriban o eliminen funcionalidades nuevas como `"Desactivar / Activar Stock de Inventario"` o `"Activar / Desactivar Disponibilidad de Producto"`.
+- [x] **Actualización Inmediata de Base de Datos Cloudflare D1:**
+  - Base de datos en producción actualizada directamente con los 12 módulos y todas las funcionalidades hijas sincronizadas.
+
 ### Versión 4.12.4 - Escala +50% en Alisto de Pedidos y Perfil de Alisto para Dispositivos Móviles
 - [x] **Optimización Ergonómica de Alisto en Celular (+50%) ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
   - Incrementadas en un 50% las dimensiones de imagen de producto (`w-36 h-36`), badge de estante (`text-xs` destacado), código SKU, título del artículo (`text-xl font-black`) y contador de cantidad a alistar (`text-base font-black` con fondo contrastado) en vista móvil.
