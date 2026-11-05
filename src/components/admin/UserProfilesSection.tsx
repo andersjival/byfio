@@ -26,6 +26,7 @@ export const UserProfilesSection: React.FC = () => {
     workshops: false,
     pricing: false,
     users: false,
+    customers: false,
   });
 
   const [revealedPins, setRevealedPins] = useState<{ [id: string]: boolean }>({});
@@ -60,6 +61,7 @@ export const UserProfilesSection: React.FC = () => {
       workshops: false,
       pricing: false,
       users: false,
+      customers: false,
     });
     setFormError(null);
     setIsModalOpen(true);
@@ -85,6 +87,7 @@ export const UserProfilesSection: React.FC = () => {
       workshops: grantAll,
       pricing: grantAll,
       users: grantAll,
+      customers: grantAll,
     });
   };
 
@@ -166,6 +169,7 @@ export const UserProfilesSection: React.FC = () => {
     { key: 'workshops', label: 'Talleres & Alumnos', desc: 'Inscripciones, cupos y lista de participantes', icon: GraduationCap },
     { key: 'pricing', label: 'Precios & Stickers', desc: 'Lista oficial y editor de tarifas de stickers', icon: Tag },
     { key: 'users', label: 'Gestión de Perfiles', desc: 'Crear, editar o revocar accesos a otros usuarios', icon: Users },
+    { key: 'customers', label: 'Directorio de Clientes', desc: 'Registro de clientes y fichas para pedidos', icon: UserCheck },
   ];
 
   const allChecked = Object.values(permissions).every((v) => v);

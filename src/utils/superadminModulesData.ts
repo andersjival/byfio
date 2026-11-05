@@ -79,6 +79,34 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
     ],
   },
   {
+    id: 'customers',
+    name: 'Directorio de Clientes & Contactos',
+    category: 'Ventas & Caja',
+    description: 'Registro de clientes frecuentes, cédulas, teléfonos, direcciones de entrega y notas para futuros pedidos.',
+    iconName: 'Users',
+    enabled: true,
+    features: [
+      {
+        id: 'customers_create',
+        name: 'Registro y Creación de Nuevos Clientes',
+        description: 'Formulario con nombre, teléfono, correo, cédula, dirección y notas especiales.',
+        enabled: true,
+      },
+      {
+        id: 'customers_search',
+        name: 'Búsqueda Rápida de Clientes',
+        description: 'Filtrado en tiempo real por nombre, teléfono, cédula o correo para agilizar pedidos.',
+        enabled: true,
+      },
+      {
+        id: 'customers_quick_order',
+        name: 'Crear Pedido / Factura en 1 Clic',
+        description: 'Botón de acción rápida para iniciar un pedido o factura cargando los datos del cliente guardado.',
+        enabled: true,
+      },
+    ],
+  },
+  {
     id: 'inventory',
     name: 'Inventario & Etiquetas QR',
     category: 'Operaciones & WMS',

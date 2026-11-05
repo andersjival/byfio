@@ -1,8 +1,8 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Package, FileText, QrCode, DollarSign, GraduationCap, Tag, Users, Landmark } from 'lucide-react';
+import { Package, FileText, QrCode, DollarSign, GraduationCap, Tag, Users, Landmark, UserCheck } from 'lucide-react';
 
-export type AdminTabType = 'hub' | 'orders' | 'billing' | 'inventory' | 'reports' | 'sinpe' | 'workshops' | 'pricing' | 'users';
+export type AdminTabType = 'hub' | 'orders' | 'billing' | 'inventory' | 'reports' | 'sinpe' | 'workshops' | 'pricing' | 'users' | 'customers';
 
 interface AdminTabsProps {
   activeTab: AdminTabType;
@@ -10,7 +10,7 @@ interface AdminTabsProps {
 }
 
 export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab }) => {
-  const { orders, products, userProfiles, hasPermission, sinpeTransactions } = useApp();
+  const { orders, products, userProfiles, customers, hasPermission, sinpeTransactions } = useApp();
 
   const pendingCount = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking').length;
   const criticalCount = products.filter((p) => p.stock <= p.minStock).length;
@@ -18,7 +18,7 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
 
   return (
     <div className="p-1.5 sm:p-2 rounded-3xl bg-[#ECEEF2] shadow-neuInset border border-white/60 mb-4">
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-1.5 sm:gap-2">
         {/* Tab 1: Pedidos & Alisto */}
         {hasPermission('orders') && (
           <button
@@ -184,6 +184,28 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
             {activeProfilesCount > 0 && (
               <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-purple-500 text-white ml-0.5 shrink-0">
                 {activeProfilesCount}
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Tab 8: Directorio de Clientes */}
+        {hasPermission('customers') && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('customers')}
+            className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2.5 rounded-2xl text-xs sm:text-sm font-bubble font-bold transition-all text-center select-none active:scale-95 ${
+              activeTab === 'customers'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01]'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-emerald-600 hover:bg-emerald-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+            }`}
+            title="Directorio de Clientes Guardados para Pedidos"
+          >
+            <UserCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+            <span className="truncate">Clientes</span>
+            {customers.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-600 text-white ml-0.5 shrink-0">
+                {customers.length}
               </span>
             )}
           </button>

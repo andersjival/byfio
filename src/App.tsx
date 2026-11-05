@@ -28,6 +28,8 @@ import { InventoryTable } from './components/admin/InventoryTable';
 import { CashRegisterReports } from './components/admin/CashRegisterReports';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
 import { UserProfilesSection } from './components/admin/UserProfilesSection';
+import { CustomersSection } from './components/admin/CustomersSection';
+import { Customer } from './types';
 import { GuidedPickingModal } from './components/admin/GuidedPickingModal';
 import { SupplierOrderModal } from './components/admin/SupplierOrderModal';
 import { QrLabelModal } from './components/admin/QrLabelModal';
@@ -82,6 +84,7 @@ export const App: React.FC = () => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
+  const [billingTargetCustomer, setBillingTargetCustomer] = useState<Customer | null>(null);
 
   const isAdminOrSuperadmin = isSuperAdminAuthenticated || (!!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin));
 
@@ -383,7 +386,12 @@ export const App: React.FC = () => {
                         <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
 
                         {adminTab === 'orders' && <OrdersQueue />}
-                        {adminTab === 'billing' && <QuickBillingSection />}
+                        {adminTab === 'billing' && (
+                          <QuickBillingSection
+                            initialCustomer={billingTargetCustomer}
+                            onClearInitialCustomer={() => setBillingTargetCustomer(null)}
+                          />
+                        )}
                         {adminTab === 'inventory' && <InventoryTable />}
                         {adminTab === 'reports' && (
                           <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />
@@ -392,6 +400,14 @@ export const App: React.FC = () => {
                         {adminTab === 'workshops' && <WorkshopEnrollmentsSection onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />}
                         {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
                         {adminTab === 'users' && <UserProfilesSection />}
+                        {adminTab === 'customers' && (
+                          <CustomersSection
+                            onSelectCustomerForBilling={(cust) => {
+                              setBillingTargetCustomer(cust);
+                              handleSelectAdminTab('billing');
+                            }}
+                          />
+                        )}
                       </>
                     )}
                   </div>

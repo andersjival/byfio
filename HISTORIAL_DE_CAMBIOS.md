@@ -17,6 +17,20 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.0 - Módulo Independiente de Directorio de Clientes & Contactos
+- [x] **Módulo Dedicado de Clientes en Panel Admin ([`CustomersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx)):**
+  - Creado el módulo independiente *"Directorio de Clientes"* en el panel de administración para registrar y consultar clientes frecuentes.
+  - Formulario completo con Nombre, Cédula / Identificación, Teléfono / WhatsApp, Correo, Dirección de entrega y Notas de pedido.
+  - Búsqueda reactiva instantánea por cualquier dato y enlace directo a WhatsApp en un solo clic.
+  - Botón de acción rápida *"Facturar / Crear Pedido"* para abrir la facturación POS con todos los datos del cliente cargados automáticamente.
+- [x] **Navegación e Integración de Pestañas ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Añadida la pestaña superior *"Clientes"* con contador en vivo de clientes registrados.
+  - Tarjeta de acceso directo en el Menú Principal (Hub) con gradiente y conteo.
+  - Conexión fluida con [`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx) para facturar de inmediato.
+- [x] **Control Granular en Superadmin ([`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts), [`routeHelpers.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts)):**
+  - Módulo `customers` registrado en la matriz de Superadmin con toggles de creación, búsqueda y pedidos rápidos.
+  - Soporte de sub-ruta `/admin/clientes` con protección de permisos de rol.
+
 ### Versión 4.12.5 - Sincronización en la Nube D1 y Fusión Inmutable de Funcionalidades de Superadmin
 - [x] **Fusión Defensiva Cloud & Local ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Implementada la función `mergeSuperadminModules` en la carga de la API `/api/superadmin-modules`, en eventos de `BroadcastChannel` y eventos `storage`.

@@ -110,6 +110,15 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'users' };
   }
   if (
+    path.includes('/admin/clientes') ||
+    path.includes('/administracion/clientes') ||
+    hash.includes('admin/clientes') ||
+    seccionParam === 'clientes' ||
+    seccionParam === 'customers'
+  ) {
+    return { route: 'admin', adminTab: 'customers' };
+  }
+  if (
     path.startsWith('/admin') ||
     path.startsWith('/administracion') ||
     hash.includes('admin') ||

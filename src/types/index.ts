@@ -197,6 +197,7 @@ export interface UserPermissions {
   workshops: boolean;  // Talleres & Alumnos
   pricing: boolean;    // Precios & Stickers
   users: boolean;      // Gestión de Perfiles
+  customers?: boolean; // Directorio de Clientes
 }
 
 export interface UserProfile {

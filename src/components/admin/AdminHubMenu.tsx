@@ -4,7 +4,7 @@ import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
-  BarChart3, Lock
+  BarChart3, Lock, UserCheck
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -15,7 +15,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate }) => {
-  const { orders, products, workshops, userProfiles, hasPermission, sinpeTransactions, isModuleEnabled, currentUser } = useApp();
+  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, currentUser } = useApp();
   const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
@@ -103,6 +103,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       badgeClass: 'bg-purple-100 text-purple-900',
       icon: Users,
       gradient: 'from-[#8B5CF6] to-[#6D28D9]',
+    },
+    {
+      id: 'customers' as AdminTabType,
+      title: 'Directorio de Clientes',
+      badge: `${customers.length} registrados`,
+      badgeClass: 'bg-emerald-100 text-emerald-900',
+      icon: UserCheck,
+      gradient: 'from-[#10B981] to-[#047857]',
     },
   ];
 

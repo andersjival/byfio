@@ -8,6 +8,28 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+const sanitizeProfilesData = (profiles: any) => {
+  if (!profiles) return [];
+  const str = JSON.stringify(profiles)
+    .replace(/ATENCI[\uFFFD]N/g, 'ATENCIÓN')
+    .replace(/Atenci[\uFFFD]n/g, 'Atención')
+    .replace(/atenci[\uFFFD]n/g, 'atención')
+    .replace(/Tib[\uFFFD]s/g, 'Tibás')
+    .replace(/tib[\uFFFD]s/g, 'tibás')
+    .replace(/cat[\uFFFD]logo/g, 'catálogo')
+    .replace(/Cat[\uFFFD]logo/g, 'Catálogo')
+    .replace(/[\uFFFD]rdenes/g, 'órdenes')
+    .replace(/[\uFFFD]rden/g, 'orden')
+    .replace(/ci[\uFFFD]n/g, 'ción')
+    .replace(/CI[\uFFFD]N/g, 'CIÓN')
+    .replace(/[\uFFFD]/g, '');
+  try {
+    return JSON.parse(str);
+  } catch {
+    return profiles;
+  }
+};
+
 export const onRequestOptions = async () => {
   return new Response(null, {
     status: 204,
@@ -34,7 +56,8 @@ export const onRequestGet = async (context: { env: Env }) => {
     if (row && row.data) {
       const parsed = JSON.parse(row.data);
       if (Array.isArray(parsed)) {
-        return new Response(JSON.stringify({ profiles: parsed }), {
+        const clean = sanitizeProfilesData(parsed);
+        return new Response(JSON.stringify({ profiles: clean }), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         });
       }
@@ -63,6 +86,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       );
     }
 
+    const cleanProfiles = sanitizeProfilesData(profiles);
+
     if (context.env.DB) {
       await context.env.DB.prepare(
         'CREATE TABLE IF NOT EXISTS site_metrics (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at TEXT NOT NULL)'
@@ -70,7 +95,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
       await context.env.DB.prepare(
         "INSERT OR REPLACE INTO site_metrics (id, data, updated_at) VALUES ('app_user_profiles', ?, ?)"
-      ).bind(JSON.stringify(profiles), new Date().toISOString()).run();
+      ).bind(JSON.stringify(cleanProfiles), new Date().toISOString()).run();
     }
 
     return new Response(

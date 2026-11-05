@@ -22,7 +22,15 @@ interface DirectItem {
   maxStock: number;
 }
 
-export const QuickBillingSection: React.FC = () => {
+interface QuickBillingSectionProps {
+  initialCustomer?: Customer | null;
+  onClearInitialCustomer?: () => void;
+}
+
+export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
+  initialCustomer,
+  onClearInitialCustomer,
+}) => {
   const {
     products,
     orders,
@@ -202,6 +210,15 @@ export const QuickBillingSection: React.FC = () => {
     setCustomerSearch('');
     setCreateError(null);
   };
+
+  // Cargar cliente automáticamente si viene derivado desde el módulo de Clientes
+  React.useEffect(() => {
+    if (initialCustomer) {
+      handleSelectCustomer(initialCustomer);
+      setActiveTab('create');
+      onClearInitialCustomer?.();
+    }
+  }, [initialCustomer]);
 
   const handleClearSelectedCustomer = () => {
     setSelectedCustomer(null);
