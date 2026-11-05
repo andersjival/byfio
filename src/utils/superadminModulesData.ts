@@ -25,15 +25,15 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
         enabled: true,
       },
       {
-        id: 'manual_picking',
-        name: 'Modo Alisto Manual (Paso a Paso)',
-        description: 'Pantalla con foto grande del producto, cantidad solicitada y botón siguiente.',
+        id: 'code_picking',
+        name: 'Alisto con Código',
+        description: 'Alisto guiado paso a paso con lector láser o código QR y confirmación auditiva.',
         enabled: true,
       },
       {
-        id: 'code_picking',
-        name: 'Alisto con Código QR / Barras',
-        description: 'Escaneo directo de etiquetas de producto con confirmación auditiva instantánea.',
+        id: 'manual_picking',
+        name: 'Alisto Manual',
+        description: 'Alisto guiado producto por producto con botones táctiles de acción Listo y Faltante.',
         enabled: true,
       },
       {

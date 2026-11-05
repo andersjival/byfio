@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.12.2 - Toggles Granulares de Alisto con Código y Alisto Manual en Superadmin & Auto-Recuperación de Chunks
+- [x] **Funcionalidades de Alisto en Superadmin ([`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
+  - Renombradas y expuestas con exactitud las funcionalidades `"Alisto con Código"` y `"Alisto Manual"` en el módulo `Cola de Pedidos & Alisto WMS`.
+  - Conexión reactiva en vivo en la Cola de Pedidos ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)) y en el modal de alisto guiado ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)) mediante `isFeatureEnabled`.
+- [x] **Auto-Recuperación Transparente tras Despliegues ([`ErrorBoundary.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ErrorBoundary.tsx), [`main.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx)):**
+  - Eliminado el bloqueo de recarga al detectar assets desactualizados tras un despliegue en producción; se aplica bypass de caché inmediato con timestamp para actualizar los scripts transparentemente sin interrupciones.
+
 ### Versión 4.12.1 - Eliminación de Barra de Breadcrumbs del Panel de Administración
 - [x] **Eliminación Quirúrgica de Breadcrumbs en Panel Admin ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
   - Removida la sección de navegación tipo píldora (`TreeNavigation`) que mostraba `[ ★ by.fio / caja & reportes ]` en la cabecera del panel administrativo.

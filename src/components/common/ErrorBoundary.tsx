@@ -26,13 +26,13 @@ export class ErrorBoundary extends Component<Props, State> {
       msg.includes('Loading chunk') ||
       msg.includes('error loading dynamically imported module');
 
-    // Auto-recarga instantánea si el navegador tiene en caché una versión anterior del código
+    // Auto-recarga instantánea con bypass de caché si el navegador tiene una versión anterior
     if (isChunkError && typeof window !== 'undefined') {
       const lastReload = sessionStorage.getItem('byfio_chunk_reload_lock');
       const now = Date.now();
       if (!lastReload || now - Number(lastReload) > 10000) {
         sessionStorage.setItem('byfio_chunk_reload_lock', String(now));
-        window.location.reload();
+        window.location.href = window.location.origin + window.location.pathname + '?r=' + now + window.location.hash;
         return { hasError: false };
       }
     }
@@ -48,8 +48,9 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.props.onReset) {
       this.props.onReset();
     }
+    sessionStorage.removeItem('byfio_chunk_reload_lock');
     this.setState({ hasError: false, error: undefined });
-    window.location.reload();
+    window.location.href = window.location.origin + window.location.pathname + '?r=' + Date.now() + window.location.hash;
   };
 
   private handleGoHome = () => {

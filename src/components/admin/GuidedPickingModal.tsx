@@ -289,13 +289,15 @@ export const GuidedPickingModal: React.FC = () => {
                           Reportar Faltante
                         </button>
                       ) : <span />}
-                      <button
-                        type="button"
-                        onClick={() => setPickingMode('manual')}
-                        className="text-fio-pink hover:text-purple-700 font-bold underline cursor-pointer"
-                      >
-                        Cambiar a Alisto Manual
-                      </button>
+                      {isFeatureEnabled('orders', 'manual_picking') && (
+                        <button
+                          type="button"
+                          onClick={() => setPickingMode('manual')}
+                          className="text-fio-pink hover:text-purple-700 font-bold underline cursor-pointer"
+                        >
+                          Cambiar a Alisto Manual
+                        </button>
+                      )}
                     </div>
 
                     <button
@@ -357,13 +359,15 @@ export const GuidedPickingModal: React.FC = () => {
                         <Printer className="w-3 h-3 text-slate-600" />
                         <span>{showSummaryList ? 'Ocultar Resumen' : 'Ver Resumen / Imprimir'}</span>
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => setPickingMode('barcode')}
-                        className="text-fio-pink hover:text-purple-700 cursor-pointer underline"
-                      >
-                        Cambiar a Alisto con Código
-                      </button>
+                      {isFeatureEnabled('orders', 'code_picking') && (
+                        <button
+                          type="button"
+                          onClick={() => setPickingMode('barcode')}
+                          className="text-fio-pink hover:text-purple-700 cursor-pointer underline"
+                        >
+                          Cambiar a Alisto con Código
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}

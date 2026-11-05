@@ -12,7 +12,7 @@ if (typeof window !== 'undefined') {
     const now = Date.now();
     if (!lastReload || now - Number(lastReload) > 10000) {
       sessionStorage.setItem('byfio_chunk_reload_lock', String(now));
-      window.location.reload();
+      window.location.href = window.location.origin + window.location.pathname + '?r=' + now + window.location.hash;
     }
   });
 }
