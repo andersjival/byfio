@@ -48,7 +48,7 @@ export const OrdersQueue: React.FC = () => {
         return (
           <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300 flex items-center gap-1 shadow-xs">
             <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-            <span>Entregado</span>
+            <span>Terminado</span>
           </span>
         );
     }
@@ -208,7 +208,7 @@ export const OrdersQueue: React.FC = () => {
               : 'text-slate-600 hover:text-blue-700'
           }`}
         >
-          <span>Entregados</span>
+          <span>Terminados</span>
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
               filterMode === 'delivered' ? 'bg-white text-blue-700' : 'bg-blue-100 text-blue-800'
@@ -356,10 +356,10 @@ export const OrdersQueue: React.FC = () => {
                           type="button"
                           onClick={() => updateOrderStatus(order.id, 'delivered')}
                           className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
-                          title="Marcar como entregado al cliente"
+                          title="Marcar pedido como terminado"
                         >
                           <CheckCircle2 className="w-4 h-4 text-emerald-200" />
-                          <span>Marcar Entregado</span>
+                          <span>Marcar Terminado</span>
                         </button>
                       )}
                     </div>
