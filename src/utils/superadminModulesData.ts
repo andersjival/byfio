@@ -1,4 +1,4 @@
-import { SuperadminModuleConfig } from '../types';
+import { SuperadminModuleConfig } from '../types/index';
 
 export const SUPERADMIN_CREDENTIALS = {
   username: 'superadmin@byfio.com',
@@ -122,13 +122,13 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
       },
       {
         id: 'inventory_stock_mode',
-        name: 'Desactivar / Activar Stock de Inventario',
+        name: 'Desactivar stock de inventario',
         description: 'Permite alternar el control exacto con columna de existencias numéricas y alertas de stock.',
         enabled: true,
       },
       {
         id: 'product_availability_mode',
-        name: 'Activar / Desactivar Disponibilidad de Producto',
+        name: 'Activar disponibilidad de producto',
         description: 'Permite alternar el modo de disponibilidad rápida para activar o pausar productos en tienda.',
         enabled: true,
       },

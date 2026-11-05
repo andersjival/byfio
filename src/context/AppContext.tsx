@@ -778,6 +778,74 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     saveAgendaItems(updated);
   };
 
+  // -------------------------------------------------------------
+  // ESTADO Y MÉTODOS DE PEDIDOS A PROVEEDOR
+  // -------------------------------------------------------------
+  const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.SUPPLIER_ORDERS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return deepSanitize(parsed);
+        }
+      }
+    } catch {}
+    return deepSanitize(DEFAULT_SUPPLIER_ORDERS);
+  });
+
+  const saveSupplierOrders = (ordersList: SupplierOrder[]) => {
+    const sanitized = deepSanitize(ordersList);
+    setSupplierOrders(sanitized);
+    try {
+      localStorage.setItem(STORAGE_KEYS.SUPPLIER_ORDERS, JSON.stringify(sanitized));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', supplierOrders: sanitized });
+    } catch {}
+    try {
+      fetch('/api/supplier-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orders: sanitized }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const addSupplierOrder = (orderData: Omit<SupplierOrder, 'id' | 'createdAt'>): SupplierOrder => {
+    const newOrder: SupplierOrder = {
+      ...orderData,
+      id: `supp-ord-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      createdAt: new Date().toISOString(),
+    };
+    saveSupplierOrders([newOrder, ...supplierOrders]);
+    return newOrder;
+  };
+
+  const updateSupplierOrder = (id: string, updates: Partial<SupplierOrder>) => {
+    const updated = supplierOrders.map((ord) => (ord.id === id ? { ...ord, ...updates } : ord));
+    saveSupplierOrders(updated);
+  };
+
+  const deleteSupplierOrder = (id: string) => {
+    const updated = supplierOrders.filter((ord) => ord.id !== id);
+    saveSupplierOrders(updated);
+  };
+
+  const updateSupplierOrderStatus = (id: string, newStatus: SupplierOrderStatus) => {
+    const now = new Date().toISOString();
+    const updated = supplierOrders.map((ord) => {
+      if (ord.id === id) {
+        return {
+          ...ord,
+          status: newStatus,
+          orderedAt: newStatus === 'ordered' ? (ord.orderedAt || now) : ord.orderedAt,
+          receivedAt: newStatus === 'received' ? (ord.receivedAt || now) : (newStatus === 'draft' ? undefined : ord.receivedAt),
+        };
+      }
+      return ord;
+    });
+    saveSupplierOrders(updated);
+  };
+
   const createDirectInvoiceOrder = (orderData: {
     orderTitle?: string;
     customerName: string;
@@ -1442,6 +1510,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
         if (Array.isArray(event.data.agendaItems)) {
           setAgendaItems(deepSanitize(event.data.agendaItems));
+        }
+        if (Array.isArray(event.data.supplierOrders)) {
+          setSupplierOrders(deepSanitize(event.data.supplierOrders));
         }
       }
     };

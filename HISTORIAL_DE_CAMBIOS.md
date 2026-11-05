@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.0 - Control Maestro de Stock y Disponibilidad en Superadmin
+- [x] **Tarjeta de Control Directo en Superadmin ([`SuperadminSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):**
+  - Incorporada tarjeta de control directo interactiva en la consola del Superadmin con los dos botones exactos: *"Desactivar stock de inventario"* y *"Activar disponibilidad de producto"*, permitiendo alternar al instante entre Modo Stock Numérico Real y Disponibilidad Rápida con sincronización en tiempo real.
+- [x] **Nombres Literales y Persistencia en Base de Datos D1 ([`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts), [`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Renombradas las sub-funcionalidades internas del módulo Inventario a *"Desactivar stock de inventario"* (`inventory_stock_mode`) y *"Activar disponibilidad de producto"* (`product_availability_mode`).
+  - Habilitados ambos toggles en Cloudflare D1 (`byfiocr-db`) y vinculados en [`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx) con fallback defensivo (`!== false`) para garantizar su visualización inmediata en cualquier dispositivo.
+
 ### Versión 4.13.9 - Sincronización Automática Continua y Bypass de Caché para Perfiles
 - [x] **Fusión Forzosa y Polling Continuo ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`users.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/users.ts), [`user-profiles.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/user-profiles.ts)):**
   - Implementado mapa de fusión defensiva en el estado inicial de `userProfiles` para inyectar automáticamente el perfil de Administración aunque el navegador mantenga caché de 2 perfiles.
