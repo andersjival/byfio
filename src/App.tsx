@@ -101,7 +101,7 @@ export const App: React.FC = () => {
     setSelectedWorkshopId(wsId);
 
     let targetPath = '/';
-    if (newRoute === 'superadmin') targetPath = '/superadmin';
+    if (newRoute === 'superadmin') targetPath = '/panel/superadmin';
     else if (newRoute === 'propuesta') targetPath = '/propuesta';
     else if (newRoute === 'metricas') targetPath = '/metricas';
     else if (newRoute === 'login') targetPath = '/login';
@@ -265,7 +265,9 @@ export const App: React.FC = () => {
                   onClose={() => navigate('home')}
                   isStandalonePage={true}
                   onSuccess={(user) => {
-                    if (user.role === 'admin' || user.role === 'staff') {
+                    if (user.email === 'superadmin@byfio.com') {
+                      navigate('superadmin');
+                    } else if (user.role === 'admin' || user.role === 'staff') {
                       navigate('admin');
                     } else {
                       navigate('home');
@@ -360,7 +362,9 @@ export const App: React.FC = () => {
                         onClose={() => navigate('home')}
                         isStandalonePage={true}
                         onSuccess={(user) => {
-                          if (user.role === 'admin' || user.role === 'staff') {
+                          if (user.email === 'superadmin@byfio.com') {
+                            navigate('superadmin');
+                          } else if (user.role === 'admin' || user.role === 'staff') {
                             navigate('admin');
                           } else {
                             navigate('home');
@@ -441,7 +445,9 @@ export const App: React.FC = () => {
         onSuccess={(user) => {
           setIsLoginModalOpen(false);
           closeLogoutTransition();
-          if (user.role === 'admin' || user.role === 'staff') {
+          if (user.email === 'superadmin@byfio.com') {
+            navigate('superadmin');
+          } else if (user.role === 'admin' || user.role === 'staff') {
             navigate('admin');
           } else {
             navigate('home');

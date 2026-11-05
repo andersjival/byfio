@@ -31,7 +31,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     loginIntroStage,
     triggerLoginCinematic,
   } = useApp();
-  const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>('pin');
+  const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>('email');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -133,8 +133,43 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       setIsLoading(false);
 
       if (mode === 'login') {
-        const cleanEmail = email.trim();
-        const cleanPass = password.trim();
+        const cleanEmail = email.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
+        const cleanPass = password.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
+
+        // Detección directa e infalible de Superadmin
+        const isSuperadminUser =
+          cleanEmail.toLowerCase() === 'superadmin@byfio.com' ||
+          cleanEmail.toLowerCase() === 'superadmin@byfiocr.com' ||
+          cleanEmail.toLowerCase() === 'superadmin' ||
+          cleanEmail.toLowerCase().includes('superadmin');
+        const isSuperadminPass =
+          cleanPass === 'SuperAdmin2026!' ||
+          cleanPass.toLowerCase() === 'superadmin2026!' ||
+          cleanPass === 'SuperAdmin2026' ||
+          cleanPass.toLowerCase() === 'superadmin2026' ||
+          cleanPass.toLowerCase() === 'superadmin';
+
+        if (isSuperadminUser && isSuperadminPass) {
+          loginSuperAdmin('superadmin@byfio.com', 'SuperAdmin2026!');
+          const superAdminUser: AuthUser = {
+            email: 'superadmin@byfio.com',
+            name: 'SUPERADMIN MAESTRO',
+            role: 'admin',
+            isMasterAdmin: true,
+            permissions: {
+              orders: true,
+              billing: true,
+              inventory: true,
+              reports: true,
+              workshops: true,
+              pricing: true,
+              users: true,
+            },
+          };
+          handleLoginSuccess(superAdminUser);
+          return;
+        }
+
         let result = loginUser(cleanEmail, cleanPass);
         
         // Respaldo de seguridad directo para Superadmin si el usuario escribe cualquier variante
@@ -265,21 +300,33 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               </div>
 
               {/* Acceso Rápido Superadmin */}
-              <div className="flex items-center justify-center pt-1.5">
+              <div className="flex flex-col items-center gap-1.5 pt-1.5">
                 <button
                   type="button"
                   onClick={() => {
-                    setLoginMethod('email');
-                    setMode('login');
-                    setEmail('superadmin@byfio.com');
-                    setPassword('SuperAdmin2026!');
-                    setErrorMessage(null);
+                    loginSuperAdmin('superadmin@byfio.com', 'SuperAdmin2026!');
+                    const superAdminUser: AuthUser = {
+                      email: 'superadmin@byfio.com',
+                      name: 'SUPERADMIN MAESTRO',
+                      role: 'admin',
+                      isMasterAdmin: true,
+                      permissions: {
+                        orders: true,
+                        billing: true,
+                        inventory: true,
+                        reports: true,
+                        workshops: true,
+                        pricing: true,
+                        users: true,
+                      },
+                    };
+                    handleLoginSuccess(superAdminUser);
                   }}
-                  className="text-[11px] text-fio-purple hover:text-pink-600 font-bold hover:underline cursor-pointer inline-flex items-center gap-1 bg-purple-50 hover:bg-pink-50 px-2.5 py-1 rounded-full border border-purple-200/80 transition-colors"
-                  title="Cargar credenciales oficiales de Superadmin"
+                  className="w-full py-2 rounded-xl bg-gradient-to-r from-purple-700 via-pink-600 to-purple-800 hover:opacity-95 text-white font-bubble font-bold text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-98 transition-all cursor-pointer"
+                  title="Acceso directo de 1 clic al panel maestro de Superadmin"
                 >
-                  <Shield className="w-3 h-3 text-pink-500" />
-                  <span>¿Ingresar como Superadmin? Clic aquí</span>
+                  <Shield className="w-3.5 h-3.5 text-fio-yellow" />
+                  <span>⚡ Entrar como Superadmin (1 Clic directo)</span>
                 </button>
               </div>
             </div>
@@ -373,12 +420,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     placeholder="Escribe o toca tu perfil"
                     value={profileNameInput}
                     onChange={(e) => {
-                      setProfileNameInput(e.target.value.toUpperCase());
+                      setProfileNameInput(e.target.value);
                       if (errorMessage) setErrorMessage(null);
                     }}
                     required
                     autoComplete="off"
-                    className="tracking-wider uppercase font-bubble font-bold text-xs sm:text-sm"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    className="tracking-wider font-bubble font-bold text-xs sm:text-sm"
                   />
                 </div>
               </div>
@@ -450,7 +500,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   <User className="w-4 h-4 text-white" />
                 </div>
                 <input
-                  type="text"
+                  type="email"
                   placeholder={mode === 'login' ? 'Correo (ej. fio@byfiocr.com)' : 'Correo electrónico'}
                   value={email}
                   onChange={(e) => {
@@ -458,7 +508,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     if (errorMessage) setErrorMessage(null);
                   }}
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   autoComplete="username"
+                  className="normal-case lowercase"
                 />
               </div>
 
@@ -475,6 +529,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     if (errorMessage) setErrorMessage(null);
                   }}
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 />
                 <button

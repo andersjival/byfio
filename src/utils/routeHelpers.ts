@@ -25,6 +25,19 @@ export const parseRouteFromLocation = (): RouteInfo => {
     ''
   ).toLowerCase();
 
+  // 0. Superadmin Portal Maestro Exclusivo (/panel/superadmin o /superadmin)
+  if (
+    path.includes('/panel/superadmin') ||
+    path.includes('/superadmin') ||
+    path.includes('/admin/superadmin') ||
+    hash.includes('panel/superadmin') ||
+    hash.includes('superadmin') ||
+    seccionParam === 'superadmin' ||
+    seccionParam === 'panel-superadmin'
+  ) {
+    return { route: 'superadmin', adminTab: 'hub' };
+  }
+
   // Admin sub-rutas independientes (por pathname, hash o query param)
   if (
     path.includes('/admin/pedidos') ||

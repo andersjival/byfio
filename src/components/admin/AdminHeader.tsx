@@ -60,7 +60,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
               type="button"
               onClick={() => {
                 if (onNavigate) onNavigate('superadmin');
-                else window.location.href = '/superadmin';
+                else window.location.href = '/panel/superadmin';
               }}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bubble font-bold border border-slate-700 shadow-xs transition-all active:scale-95 cursor-pointer"
               title="Abrir panel maestro de Superadmin (Activar/Desactivar Módulos)"

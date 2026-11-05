@@ -52,7 +52,7 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
         </div>
 
         {/* Tarjeta de Credenciales Oficiales de Fácil Acceso */}
-        <div className="mb-4 p-3 rounded-2xl bg-purple-950/70 border border-purple-500/40 text-xs text-purple-200 space-y-1 relative z-10">
+        <div className="mb-3 p-3 rounded-2xl bg-purple-950/70 border border-purple-500/40 text-xs text-purple-200 space-y-1 relative z-10">
           <div className="flex items-center justify-between text-[11px] font-bold text-pink-300">
             <span>Credenciales Oficiales:</span>
             <button
@@ -61,7 +61,7 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
               className="text-fio-yellow hover:text-white underline cursor-pointer inline-flex items-center gap-1"
             >
               <Sparkles className="w-3 h-3 text-fio-yellow" />
-              <span>Clic para autocompletar</span>
+              <span>Autocompletar</span>
             </button>
           </div>
           <p className="font-mono text-[11px] text-white select-all">
@@ -71,6 +71,19 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
             <span className="text-purple-300 font-sans">Contraseña:</span> SuperAdmin2026!
           </p>
         </div>
+
+        {/* Botón Acceso Rápido Directo en 1 Clic */}
+        <button
+          type="button"
+          onClick={() => {
+            const res = onLogin('superadmin@byfio.com', 'SuperAdmin2026!');
+            if (!res.success) setErrorMsg(res.error || 'Credenciales incorrectas');
+          }}
+          className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-bubble font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30 active:scale-98 transition-all mb-4 cursor-pointer relative z-10"
+        >
+          <Sparkles className="w-4 h-4 text-fio-yellow" />
+          <span>⚡ Entrar como Superadmin (1 Clic directo)</span>
+        </button>
 
         {/* Alerta de Error */}
         {errorMsg && (
@@ -92,9 +105,12 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
               <input
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="superadmin@byfio.com o superadmin"
-                className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-purple-950/50 border border-purple-500/40 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 text-white placeholder-purple-400/50 text-xs sm:text-sm outline-none transition-all"
+                className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-purple-950/50 border border-purple-500/40 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 text-white placeholder-purple-400/50 text-xs sm:text-sm outline-none transition-all normal-case lowercase"
                 required
               />
             </div>
@@ -112,6 +128,9 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 placeholder="••••••••••••"
                 className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-purple-950/50 border border-purple-500/40 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 text-white placeholder-purple-400/50 text-xs sm:text-sm outline-none transition-all"
                 required

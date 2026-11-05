@@ -1059,9 +1059,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const loginUser = (emailInput: string, passwordInput: string) => {
-    const cleanEmail = emailInput.trim();
+    const cleanEmail = emailInput.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
     const cleanEmailLower = cleanEmail.toLowerCase();
-    const cleanPass = passwordInput.trim();
+    const cleanPass = passwordInput.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
     const fullPermissions: UserPermissions = {
       orders: true,

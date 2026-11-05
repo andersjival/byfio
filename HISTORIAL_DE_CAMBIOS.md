@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.11.3 - Ruta Exclusiva /panel/superadmin, Acceso Directo en 1 Clic y Erradicación de Mayúsculas Forzadas
+- [x] **Ruta Exclusiva de Superadmin `/panel/superadmin` ([`routeHelpers.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Asignada la URL exclusiva `/panel/superadmin` al panel maestro de Superadministrador para independizarlo por completo del `/admin` regular del sitio.
+  - Priorizada la detección de `/panel/superadmin` en el enrutador antes de cualquier verificación de `/admin`, evitando colisiones o sobreescritura de URL.
+  - Actualizados todos los callbacks de inicio de sesión (`onSuccess`) en `App.tsx` para que las credenciales de Superadmin redirijan automáticamente a `/panel/superadmin`.
+- [x] **Erradicación de Mayúsculas Forzadas en Login ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
+  - Cambiada la pestaña por defecto a `Correo` para evitar confusión con el campo de perfil en mayúsculas del PIN.
+  - Eliminado el formateo obligatorio `.toUpperCase()` y clase CSS `uppercase` de los campos de entrada, agregando `autoCapitalize="none" autoCorrect="off" spellCheck={false}`.
+- [x] **Acceso Directo e Infalible en 1 Clic ([`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx), [`SuperadminLogin.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminLogin.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Añadido botón interactivo `⚡ Entrar como Superadmin (1 Clic directo)` tanto en el modal general como en la pantalla de inicio de sesión de Superadmin.
+  - Detección inmediata e infalible de credenciales de Superadmin (`superadmin@byfio.com` / `SuperAdmin2026!`) antes del flujo estándar con limpieza de caracteres invisibles.
+
 ### Versión 4.11.1 - Corrección Universal de Autenticación de Superadmin en Modal y Portal
 - [x] **Compatibilidad Universal de Credenciales Superadmin ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
   - Habilitado el reconocimiento de la cuenta de Superadmin (`superadmin@byfio.com` / `superadmin` con clave `SuperAdmin2026!`) en el método global de login (`loginUser`), permitiendo ingresar tanto desde el modal general de acceso como desde el portal `/superadmin`.
