@@ -114,21 +114,21 @@ export const GuidedPickingModal: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-start sm:items-center justify-center pt-1.5 sm:pt-4 px-2 sm:px-4 pb-2 sm:pb-5">
       <div className="relative w-full max-w-3xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border-2 sm:border-4 border-fio-300 overflow-hidden flex flex-col max-h-[96vh] sm:max-h-[90vh]">
-        {/* Header de Alisto Compacto (Sin iconos de selección en la parte superior) */}
-        <div className="px-3.5 py-2.5 sm:px-5 sm:py-3.5 bg-gradient-to-r from-fio-800 to-fio-900 text-white flex items-center justify-between gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <span className="p-1.5 sm:p-2 bg-white/10 rounded-xl sm:rounded-2xl shrink-0">
+        {/* Header de Alisto Compacto */}
+        <div className="px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-fio-800 to-fio-900 text-white flex items-center justify-between gap-2 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <span className="p-2 sm:p-2 bg-white/10 rounded-xl sm:rounded-2xl shrink-0">
               {pickingMode === 'barcode' ? (
-                <QrCode className="w-4 h-4 sm:w-5 sm:h-5 text-fio-yellow animate-pulse" />
+                <QrCode className="w-5 h-5 sm:w-5 sm:h-5 text-fio-yellow animate-pulse" />
               ) : (
-                <ClipboardList className="w-4 h-4 sm:w-5 sm:h-5 text-fio-pink animate-pulse" />
+                <ClipboardList className="w-5 h-5 sm:w-5 sm:h-5 text-fio-pink animate-pulse" />
               )}
             </span>
             <div className="min-w-0">
-              <span className="text-[9px] sm:text-[10px] text-fio-300 uppercase tracking-widest font-bold block truncate">
+              <span className="text-xs sm:text-[10px] text-fio-300 uppercase tracking-widest font-bold block truncate">
                 Alisto {pickingMode === 'barcode' ? 'con Código' : 'Manual'}
               </span>
-              <h2 className="font-bubble font-bold text-xs sm:text-base truncate">
+              <h2 className="font-bubble font-bold text-base sm:text-base truncate">
                 Pedido {currentOrder.orderNumber} — {currentOrder.customerName}
               </h2>
             </div>
@@ -137,30 +137,30 @@ export const GuidedPickingModal: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePickingOrder(null)}
-            className="text-white/70 hover:text-white p-1 rounded-full hover:bg-white/10 cursor-pointer shrink-0"
+            className="text-white/80 hover:text-white p-2 sm:p-1 rounded-full hover:bg-white/10 cursor-pointer shrink-0"
             title="Cerrar ventana"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6 sm:w-5 sm:h-5" />
           </button>
         </div>
 
-        {/* Barra de Progreso Superior Compacta */}
-        <div className="bg-fio-100 px-3.5 py-1.5 sm:px-5 sm:py-2 flex items-center justify-between text-[11px] sm:text-xs font-bold text-fio-900 border-b border-fio-200 shrink-0">
+        {/* Barra de Progreso Superior */}
+        <div className="bg-fio-100 px-4 py-2.5 sm:px-5 sm:py-2 flex items-center justify-between text-xs sm:text-xs font-bold text-fio-900 border-b border-fio-200 shrink-0">
           <span>
             {!isCompleted && currentItem ? `Producto ${currentItemIndex + 1} de ${totalCount}` : `Total de artículos: ${totalCount}`}
           </span>
-          <span className="text-fio-pink font-bubble">
+          <span className="text-fio-pink font-bubble text-sm sm:text-xs font-bold">
             {pickedCount} Alistados{missingCount > 0 ? ` • ${missingCount} Faltante(s)` : ''} de {totalCount} ({totalCount > 0 ? Math.round((handledCount / totalCount) * 100) : 0}%)
           </span>
         </div>
 
-        {/* CUERPO GUIADO PRODUCTO POR PRODUCTO (Optimizado para Celular sin Scroll) */}
-        <div className="p-3 sm:p-5 overflow-y-auto flex-1">
+        {/* CUERPO GUIADO PRODUCTO POR PRODUCTO (Optimizado para Celular con escala 50% mayor) */}
+        <div className="p-4 sm:p-5 overflow-y-auto flex-1">
           {!isCompleted && currentItem ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-center">
               {/* Imagen y Ubicación en Estante */}
-              <div className="flex flex-row md:flex-col items-center gap-3 md:gap-2">
-                <div className="relative w-28 h-28 sm:w-full sm:h-52 rounded-2xl sm:rounded-3xl overflow-hidden bg-fio-50 border-2 border-fio-200 shadow-sm shrink-0">
+              <div className="flex flex-row md:flex-col items-center gap-4 md:gap-2">
+                <div className="relative w-36 h-36 sm:w-full sm:h-52 rounded-2xl sm:rounded-3xl overflow-hidden bg-fio-50 border-2 sm:border-2 border-fio-200 shadow-md shrink-0">
                   <img
                     src={currentItem.image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c'}
                     alt={currentItem.name}
@@ -173,31 +173,31 @@ export const GuidedPickingModal: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-start md:items-center text-left md:text-center min-w-0 flex-1">
-                  {/* Badge de Estante en Celular */}
-                  <div className="sm:hidden inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-fio-900 text-white font-bold text-[11px] mb-1 shadow-xs">
-                    <MapPin className="w-3 h-3 text-fio-yellow" />
+                  {/* Badge de Estante en Celular (50% más grande) */}
+                  <div className="sm:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-fio-900 text-white font-black text-xs mb-2 shadow-sm">
+                    <MapPin className="w-4 h-4 text-fio-yellow shrink-0" />
                     <span className="truncate">{currentItem.shelfLocation || 'Bodega Central'}</span>
                   </div>
 
-                  <span className="font-mono font-bold text-[11px] sm:text-xs bg-fio-100 text-fio-800 px-2.5 py-0.5 rounded-lg">
+                  <span className="font-mono font-extrabold text-xs sm:text-xs bg-fio-100 text-fio-800 px-3 py-1 rounded-xl shadow-2xs">
                     SKU: {currentItem.sku}
                   </span>
                 </div>
               </div>
 
               {/* Información y Acciones */}
-              <div className="space-y-2 sm:space-y-3.5">
+              <div className="space-y-3 sm:space-y-3.5">
                 <div>
                   <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xl bg-purple-100 text-purple-900 font-bold text-xs mb-1">
                     <MapPin className="w-3.5 h-3.5 text-purple-700" />
                     <span>Estante: {currentItem.shelfLocation || 'Bodega Central'}</span>
                   </div>
-                  <h3 className="font-bubble font-bold text-base sm:text-2xl text-fio-900 leading-tight">
+                  <h3 className="font-bubble font-black text-xl sm:text-2xl text-fio-900 leading-tight">
                     {currentItem.name}
                   </h3>
-                  <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:py-1 rounded-xl bg-purple-50 border border-purple-200 text-xs font-bold text-purple-900">
+                  <div className="mt-2 sm:mt-1.5 inline-flex items-center gap-2 px-3.5 py-2 sm:py-1 rounded-2xl bg-purple-100/90 border border-purple-300 text-xs sm:text-xs font-bold text-purple-950 shadow-xs">
                     <span>Cantidad a Alistar:</span>
-                    <span className="text-sm sm:text-base text-fio-pink font-extrabold">{currentItem.quantity} unidad(es)</span>
+                    <span className="text-base sm:text-base text-fio-pink font-black px-2 py-0.5 bg-white rounded-lg shadow-2xs">{currentItem.quantity} unidad(es)</span>
                   </div>
                 </div>
 
@@ -250,11 +250,11 @@ export const GuidedPickingModal: React.FC = () => {
                         placeholder="Escanear con lector láser o escribir SKU..."
                         value={manualInput}
                         onChange={(e) => setManualInput(e.target.value)}
-                        className="flex-1 px-3 py-1.5 sm:py-2 bg-white rounded-xl border border-fio-300 text-xs font-mono focus:ring-2 focus:ring-fio-400 focus:outline-none"
+                        className="flex-1 px-3.5 py-3 sm:py-2 bg-white rounded-xl border border-fio-300 text-sm sm:text-xs font-mono focus:ring-2 focus:ring-fio-400 focus:outline-none"
                       />
                       <button
                         type="submit"
-                        className="px-3.5 py-1.5 sm:py-2 bg-fio-800 text-white rounded-xl text-xs font-bold hover:bg-fio-900 cursor-pointer"
+                        className="px-5 py-3 sm:py-2 bg-fio-800 text-white rounded-xl text-sm sm:text-xs font-bold hover:bg-fio-900 cursor-pointer"
                       >
                         Validar
                       </button>
@@ -264,22 +264,22 @@ export const GuidedPickingModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleSimulateScanCurrent}
-                        className="flex-1 py-1.5 sm:py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                        className="flex-1 py-3.5 sm:py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm sm:text-xs font-bold flex items-center justify-center gap-2 shadow-sm active:scale-95 cursor-pointer"
                       >
-                        <Scan className="w-3.5 h-3.5" />
+                        <Scan className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                         <span>Validar ({currentItem.sku})</span>
                       </button>
                       <button
                         type="button"
                         onClick={handleSimulateWrongScan}
                         title="Probar alerta de error al escanear QR incorrecto"
-                        className="py-1.5 sm:py-2 px-3 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-xs font-bold cursor-pointer"
+                        className="py-3.5 sm:py-2 px-3 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-sm sm:text-xs font-bold cursor-pointer"
                       >
                         Probar Error
                       </button>
                     </div>
 
-                    <div className="pt-1 flex items-center justify-between border-t border-fio-200/60 text-[11px] sm:text-xs">
+                    <div className="pt-1 flex items-center justify-between border-t border-fio-200/60 text-xs sm:text-xs">
                       {isFeatureEnabled('orders', 'missing_reporting') ? (
                         <button
                           type="button"
@@ -303,54 +303,54 @@ export const GuidedPickingModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActivePickingOrder(null)}
-                      className="w-full py-1.5 px-3 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bubble font-bold flex items-center justify-center gap-1.5 cursor-pointer border border-slate-300 transition-all"
+                      className="w-full py-3 sm:py-1.5 px-3 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs sm:text-xs font-bubble font-bold flex items-center justify-center gap-2 cursor-pointer border border-slate-300 transition-all min-h-[44px]"
                     >
-                      <LogOut className="w-3.5 h-3.5 text-slate-500" />
+                      <LogOut className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-500" />
                       <span>Salir a la Cola de Pedidos</span>
                     </button>
                   </div>
                 ) : (
                   /* Modo 2: Alisto Manual (Botón de Aceptar/Continuar, Faltante y Salir) */
-                  <div className="p-2.5 sm:p-3.5 bg-purple-50/70 rounded-2xl border-2 border-purple-200 space-y-2 sm:space-y-2.5">
-                    <p className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1">
-                      <ClipboardList className="w-3.5 h-3.5 text-fio-pink" />
+                  <div className="p-3.5 sm:p-3.5 bg-purple-50/70 rounded-2xl border-2 border-purple-200 space-y-2.5 sm:space-y-2.5">
+                    <p className="text-xs sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <ClipboardList className="w-4 h-4 text-fio-pink" />
                       <span>Acción de Alisto en Estante:</span>
                     </p>
 
-                    {/* Botón Principal: ACEPTAR Y CONTINUAR */}
+                    {/* Botón Principal: ACEPTAR Y CONTINUAR (50% más grande en celular) */}
                     <button
                       type="button"
                       onClick={() => handleMarkItemPickedManual(currentItem.sku)}
-                      className="w-full py-2.5 sm:py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl sm:rounded-2xl font-bubble font-bold text-xs sm:text-base flex items-center justify-center gap-2 shadow-clayBtn transition-all cursor-pointer"
+                      className="w-full py-4 sm:py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-base flex items-center justify-center gap-2.5 shadow-clayBtn transition-all cursor-pointer min-h-[52px]"
                     >
-                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200" />
+                      <Check className="w-6 h-6 sm:w-5 sm:h-5 text-emerald-200" />
                       <span>Aceptar y Continuar ({currentItem.quantity} ud)</span>
                     </button>
 
-                    {/* Botón de Faltante / Sin Existencias */}
+                    {/* Botón de Faltante / Sin Existencias (50% más grande en celular) */}
                     {isFeatureEnabled('orders', 'missing_reporting') && (
                       <button
                         type="button"
                         onClick={() => handleMarkItemMissingManual(currentItem.sku)}
-                        className="w-full py-2 sm:py-2.5 px-4 bg-amber-50 hover:bg-amber-100 active:scale-[0.98] border-2 border-amber-300 hover:border-amber-400 text-amber-900 rounded-xl sm:rounded-2xl font-bubble font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                        className="w-full py-3 sm:py-2.5 px-4 bg-amber-50 hover:bg-amber-100 active:scale-[0.98] border-2 border-amber-300 hover:border-amber-400 text-amber-900 rounded-xl sm:rounded-2xl font-bubble font-bold text-xs sm:text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs min-h-[44px]"
                         title="Reportar que este producto no tiene existencias o falta en el estante"
                       >
-                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                        <AlertTriangle className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-amber-600" />
                         <span>Sin Existencias / Reportar Faltante</span>
                       </button>
                     )}
 
-                    {/* Botón de Salir a la Cola de Pedidos */}
+                    {/* Botón de Salir a la Cola de Pedidos (50% más grande en celular) */}
                     <button
                       type="button"
                       onClick={() => setActivePickingOrder(null)}
-                      className="w-full py-2 sm:py-2.5 px-4 bg-white hover:bg-slate-100 active:scale-[0.98] border border-slate-300 text-slate-700 rounded-xl sm:rounded-2xl font-bubble font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                      className="w-full py-3 sm:py-2.5 px-4 bg-white hover:bg-slate-100 active:scale-[0.98] border border-slate-300 text-slate-700 rounded-xl sm:rounded-2xl font-bubble font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs min-h-[44px]"
                     >
-                      <LogOut className="w-3.5 h-3.5 text-slate-500" />
+                      <LogOut className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-500" />
                       <span>Salir a la Cola de Pedidos</span>
                     </button>
 
-                    <div className="pt-1.5 flex items-center justify-between border-t border-purple-200/80 text-[11px] font-bold">
+                    <div className="pt-2 flex items-center justify-between border-t border-purple-200/80 text-xs sm:text-[11px] font-bold">
                       <button
                         type="button"
                         onClick={() => setShowSummaryList(!showSummaryList)}

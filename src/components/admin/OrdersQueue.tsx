@@ -262,10 +262,10 @@ export const OrdersQueue: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => startPicking(order.id, 'barcode')}
-                          className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer"
+                          className="flex items-center justify-center gap-2 px-4 py-3.5 sm:px-3.5 sm:py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-black text-sm sm:text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer min-h-[48px]"
                           title="Alisto guiado con escáner QR o código de barras"
                         >
-                          <QrCode className="w-4 h-4 text-fio-yellow" />
+                          <QrCode className="w-5 h-5 sm:w-4 sm:h-4 text-fio-yellow shrink-0" />
                           <span>Alisto con Código</span>
                         </button>
                       )}
@@ -274,10 +274,10 @@ export const OrdersQueue: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => startPicking(order.id, 'manual')}
-                          className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white hover:bg-purple-50/80 text-fio-800 border-2 border-purple-300 hover:border-purple-500 font-bubble font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
+                          className="flex items-center justify-center gap-2 px-4 py-3.5 sm:px-3.5 sm:py-2.5 rounded-2xl bg-white hover:bg-purple-50/80 text-fio-800 border-2 border-purple-300 hover:border-purple-500 font-bubble font-black text-sm sm:text-xs shadow-xs transition-all active:scale-95 cursor-pointer min-h-[48px]"
                           title="Alisto manual paso a paso producto por producto con reporte de faltante"
                         >
-                          <ClipboardList className="w-4 h-4 text-fio-pink" />
+                          <ClipboardList className="w-5 h-5 sm:w-4 sm:h-4 text-fio-pink shrink-0" />
                           <span>Alisto Manual</span>
                         </button>
                       )}

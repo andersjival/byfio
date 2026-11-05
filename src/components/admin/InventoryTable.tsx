@@ -25,6 +25,17 @@ export const InventoryTable: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable'>('all');
 
+  const isStockModeEnabled = isFeatureEnabled('inventory', 'inventory_stock_mode');
+  const isAvailabilityModeEnabled = isFeatureEnabled('inventory', 'product_availability_mode');
+
+  React.useEffect(() => {
+    if (!isStockModeEnabled && isAvailabilityModeEnabled && inventoryMode === 'stock') {
+      setInventoryMode('availability');
+    } else if (!isAvailabilityModeEnabled && isStockModeEnabled && inventoryMode === 'availability') {
+      setInventoryMode('stock');
+    }
+  }, [isStockModeEnabled, isAvailabilityModeEnabled, inventoryMode, setInventoryMode]);
+
   const zeroStockCount = useMemo(() => products.filter((p) => p.stock <= 0).length, [products]);
   const unavailableCount = useMemo(
     () => products.filter((p) => p.isAvailable === false || p.showInStore === false || p.showInCatalog === false).length,
@@ -133,52 +144,56 @@ export const InventoryTable: React.FC = () => {
         {/* Botones de Control de Modo */}
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {/* Botón 1: Stock de Inventario */}
-          <button
-            type="button"
-            onClick={() => setInventoryMode(inventoryMode === 'stock' ? 'availability' : 'stock')}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 ${
-              inventoryMode === 'stock'
-                ? 'bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300'
-                : 'bg-fio-800 hover:bg-fio-900 text-white shadow-sm'
-            }`}
-            title={inventoryMode === 'stock' ? 'Desactiva la columna de stock y activa el modo de disponibilidad' : 'Vuelve a mostrar la columna de stock numérico'}
-          >
-            {inventoryMode === 'stock' ? (
-              <>
-                <ToggleLeft className="w-4 h-4 text-rose-500" />
-                <span>Desactivar stock de inventario</span>
-              </>
-            ) : (
-              <>
-                <Boxes className="w-4 h-4 text-fio-yellow" />
-                <span>Activar stock de inventario</span>
-              </>
-            )}
-          </button>
+          {isStockModeEnabled && (
+            <button
+              type="button"
+              onClick={() => setInventoryMode(inventoryMode === 'stock' ? 'availability' : 'stock')}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 ${
+                inventoryMode === 'stock'
+                  ? 'bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300'
+                  : 'bg-fio-800 hover:bg-fio-900 text-white shadow-sm'
+              }`}
+              title={inventoryMode === 'stock' ? 'Desactiva la columna de stock y activa el modo de disponibilidad' : 'Vuelve a mostrar la columna de stock numérico'}
+            >
+              {inventoryMode === 'stock' ? (
+                <>
+                  <ToggleLeft className="w-4 h-4 text-rose-500" />
+                  <span>Desactivar stock de inventario</span>
+                </>
+              ) : (
+                <>
+                  <Boxes className="w-4 h-4 text-fio-yellow" />
+                  <span>Activar stock de inventario</span>
+                </>
+              )}
+            </button>
+          )}
 
           {/* Botón 2: Disponibilidad de Producto */}
-          <button
-            type="button"
-            onClick={() => setInventoryMode(inventoryMode === 'availability' ? 'stock' : 'availability')}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 ${
-              inventoryMode === 'availability'
-                ? 'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300'
-                : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
-            }`}
-            title={inventoryMode === 'availability' ? 'Desactiva el modo disponibilidad y regresa a stock real' : 'Activa la columna de disponibilidad y oculta el stock'}
-          >
-            {inventoryMode === 'availability' ? (
-              <>
-                <ToggleRight className="w-4 h-4 text-emerald-600" />
-                <span>Desactivar disponibilidad de producto</span>
-              </>
-            ) : (
-              <>
-                <CheckCircle2 className="w-4 h-4 text-white" />
-                <span>Activar disponibilidad de producto</span>
-              </>
-            )}
-          </button>
+          {isAvailabilityModeEnabled && (
+            <button
+              type="button"
+              onClick={() => setInventoryMode(inventoryMode === 'availability' ? 'stock' : 'availability')}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 ${
+                inventoryMode === 'availability'
+                  ? 'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300'
+                  : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+              }`}
+              title={inventoryMode === 'availability' ? 'Desactiva el modo disponibilidad y regresa a stock real' : 'Activa la columna de disponibilidad y oculta el stock'}
+            >
+              {inventoryMode === 'availability' ? (
+                <>
+                  <ToggleRight className="w-4 h-4 text-emerald-600" />
+                  <span>Desactivar disponibilidad de producto</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                  <span>Activar disponibilidad de producto</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 

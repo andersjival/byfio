@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.12.3 - Toggles de Stock de Inventario y Disponibilidad de Producto en Superadmin
+- [x] **Funcionalidades de Inventario en Superadmin ([`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
+  - Incorporadas las funcionalidades granulares `"Desactivar / Activar Stock de Inventario"` (`inventory_stock_mode`) y `"Activar / Desactivar Disponibilidad de Producto"` (`product_availability_mode`) dentro del módulo `Inventario & Etiquetas QR`.
+  - Conexión reactiva en vivo en [`InventoryTable.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx) para condicionar la visibilidad de los botones de alternancia y ajustar automáticamente el modo activo según los permisos de Superadmin.
+
 ### Versión 4.12.2 - Toggles Granulares de Alisto con Código y Alisto Manual en Superadmin & Auto-Recuperación de Chunks
 - [x] **Funcionalidades de Alisto en Superadmin ([`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
   - Renombradas y expuestas con exactitud las funcionalidades `"Alisto con Código"` y `"Alisto Manual"` en el módulo `Cola de Pedidos & Alisto WMS`.
