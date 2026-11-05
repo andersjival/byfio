@@ -181,6 +181,34 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
     ],
   },
   {
+    id: 'suppliers',
+    name: 'Pedidos a Proveedores & Requisiciones',
+    category: 'Operaciones & WMS',
+    description: 'Gestión completa de órdenes de compra, borradores por pedir e historial de pedidos realizados a proveedores.',
+    iconName: 'Truck',
+    enabled: true,
+    features: [
+      {
+        id: 'supplier_drafts',
+        name: 'Borradores & Órdenes por Pedir',
+        description: 'Guardado previo de pedidos de insumos y productos para pedirlos posteriormente.',
+        enabled: true,
+      },
+      {
+        id: 'supplier_history',
+        name: 'Historial de Pedidos Realizados',
+        description: 'Registro cronológico de órdenes ya solicitadas a proveedores con fecha y montos.',
+        enabled: true,
+      },
+      {
+        id: 'supplier_receive',
+        name: 'Recepción y Entrada al Taller',
+        description: 'Control de pedidos recibidos y confirmación de ingreso al taller.',
+        enabled: true,
+      },
+    ],
+  },
+  {
     id: 'missing_inventory',
     name: 'Faltantes de Inventario',
     category: 'Operaciones & WMS',

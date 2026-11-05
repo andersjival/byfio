@@ -1,8 +1,9 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Package, FileText, QrCode, DollarSign, GraduationCap, Tag, Users, Landmark, UserCheck, Calendar } from 'lucide-react';
+import { SupplierOrder } from '../../types';
+import { Package, FileText, QrCode, DollarSign, GraduationCap, Tag, Users, Landmark, UserCheck, Calendar, Truck } from 'lucide-react';
 
-export type AdminTabType = 'hub' | 'orders' | 'billing' | 'inventory' | 'reports' | 'sinpe' | 'workshops' | 'pricing' | 'users' | 'customers' | 'agenda';
+export type AdminTabType = 'hub' | 'orders' | 'billing' | 'inventory' | 'reports' | 'sinpe' | 'workshops' | 'pricing' | 'users' | 'customers' | 'agenda' | 'suppliers';
 
 interface AdminTabsProps {
   activeTab: AdminTabType;
@@ -10,7 +11,7 @@ interface AdminTabsProps {
 }
 
 export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab }) => {
-  const { orders, products, userProfiles, customers, hasPermission, sinpeTransactions, agendaItems } = useApp();
+  const { orders, products, userProfiles, customers, hasPermission, sinpeTransactions, agendaItems, supplierOrders } = useApp();
 
   const pendingCount = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking').length;
   const criticalCount = products.filter((p) => p.stock <= p.minStock).length;
@@ -228,6 +229,28 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
             {agendaItems.filter((i) => i.status === 'pending').length > 0 && (
               <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-fio-yellow text-fio-900 ml-0.5 shrink-0">
                 {agendaItems.filter((i) => i.status === 'pending').length}
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Tab 10: Pedidos a Proveedor */}
+        {hasPermission('suppliers') && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('suppliers')}
+            className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2.5 rounded-2xl text-xs sm:text-sm font-bubble font-bold transition-all text-center select-none active:scale-95 ${
+              activeTab === 'suppliers'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01]'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-amber-600 hover:bg-amber-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+            }`}
+            title="Pedidos a Proveedores, Borradores e Historial"
+          >
+            <Truck className="w-4 h-4 text-amber-500 shrink-0" />
+            <span className="truncate">Proveedores</span>
+            {supplierOrders.filter((o: SupplierOrder) => o.status === 'draft' || o.status === 'ordered').length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-white ml-0.5 shrink-0">
+                {supplierOrders.filter((o: SupplierOrder) => o.status === 'draft' || o.status === 'ordered').length}
               </span>
             )}
           </button>

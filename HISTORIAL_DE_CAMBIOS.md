@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.1 - Restauración Oficial y Blindaje del Perfil de MARÍA en D1
+- [x] **Restauración del Perfil de MARÍA ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`user-profiles.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/user-profiles.ts)):**
+  - Se restauró formalmente a **MARÍA** (PIN inicial `1234`, rol `staff` con permisos completos de ventas, facturación, mostrador y pedidos) como perfil permanente del sistema.
+  - Sincronizado en la base de datos Cloudflare D1 (`app_user_profiles`) para que aparezca en todos los dispositivos y nunca más dependa de la memoria volátil del navegador.
+- [x] **Módulo de Pedidos a Proveedor & Requisiciones de Inventario ([`SuppliersOrdersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SuppliersOrdersSection.tsx), [`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - Finalizada la integración del módulo de gestión de órdenes de reposición y compras a proveedores vinculadas con el inventario y agenda.
+
+
 ### Versión 4.14.0 - Control Maestro de Stock y Disponibilidad en Superadmin
 - [x] **Tarjeta de Control Directo en Superadmin ([`SuperadminSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):**
   - Incorporada tarjeta de control directo interactiva en la consola del Superadmin con los dos botones exactos: *"Desactivar stock de inventario"* y *"Activar disponibilidad de producto"*, permitiendo alternar al instante entre Modo Stock Numérico Real y Disponibilidad Rápida con sincronización en tiempo real.

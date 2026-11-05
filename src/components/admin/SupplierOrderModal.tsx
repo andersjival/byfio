@@ -3,17 +3,18 @@ import { useApp } from '../../context/AppContext';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
 import {
   X, Printer, MessageCircle, AlertTriangle, CheckCircle,
-  Plus, Minus, Trash2, RefreshCw, FileText, Edit3, Eye, Calendar
+  Plus, Minus, Trash2, RefreshCw, FileText, Edit3, Eye, Calendar, Truck
 } from 'lucide-react';
 
 export const SupplierOrderModal: React.FC = () => {
-  const { isSupplierModalOpen, setIsSupplierModalOpen, products, addAgendaItem } = useApp();
+  const { isSupplierModalOpen, setIsSupplierModalOpen, products, addAgendaItem, addSupplierOrder } = useApp();
   const [customQuantities, setCustomQuantities] = useState<Record<string, number>>({});
   const [excludedIds, setExcludedIds] = useState<Set<string>>(new Set());
   const [additionalProductIds, setAdditionalProductIds] = useState<string[]>([]);
   const [selectedAddId, setSelectedAddId] = useState<string>('');
   const [viewMode, setViewMode] = useState<'editor' | 'document'>('editor');
   const [savedInAgenda, setSavedInAgenda] = useState(false);
+  const [savedInSupplierOrders, setSavedInSupplierOrders] = useState<'draft' | 'ordered' | false>(false);
 
   // Activar clase de control en body para impresión de documento formal de hoja completa
   useEffect(() => {
@@ -149,6 +150,36 @@ export const SupplierOrderModal: React.FC = () => {
 
     setSavedInAgenda(true);
     setTimeout(() => setSavedInAgenda(false), 3500);
+  };
+
+  const handleSaveToSupplierOrders = (status: 'draft' | 'ordered') => {
+    if (orderItems.length === 0) return;
+
+    addSupplierOrder({
+      orderNumber: orderDocNumber,
+      supplierName: 'Proveedor de Insumos & Papelería',
+      supplierPhone: '64004640',
+      status,
+      items: orderItems.map((it) => ({
+        productId: it.id,
+        sku: it.sku,
+        name: it.name,
+        category: it.category,
+        currentStock: it.stock,
+        minStock: it.minStock,
+        orderQty: it.orderQty,
+        cost: it.costPrice || 0,
+        subtotal: it.estCost || 0,
+        shelfLocation: it.shelfLocation,
+      })),
+      totalUnits: totalReplenishUnits,
+      totalCost: totalReplenishCost,
+      notes: status === 'draft' ? 'Guardado para pedir después al proveedor.' : 'Pedido registrado como ya realizado al proveedor.',
+      orderedAt: status === 'ordered' ? new Date().toISOString() : undefined,
+    });
+
+    setSavedInSupplierOrders(status);
+    setTimeout(() => setSavedInSupplierOrders(false), 3500);
   };
 
   return (
@@ -641,31 +672,77 @@ export const SupplierOrderModal: React.FC = () => {
               <button
                 type="button"
                 onClick={handlePrint}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-purple-800 hover:bg-purple-900 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
               >
-                <Printer className="w-4 h-4 text-purple-200" />
-                <span>Imprimir / Guardar Documento PDF</span>
+                <Printer className="w-4 h-4 text-slate-200" />
+                <span>Imprimir / PDF</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSaveToSupplierOrders('draft')}
+                className={`flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer ${
+                  savedInSupplierOrders === 'draft'
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-amber-500 hover:bg-amber-600 text-white'
+                }`}
+                title="Guardar este pedido como borrador para pedir después"
+              >
+                {savedInSupplierOrders === 'draft' ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 text-emerald-200" />
+                    <span>¡Guardado Por Pedir!</span>
+                  </>
+                ) : (
+                  <>
+                    <Truck className="w-4 h-4 text-amber-100" />
+                    <span>Guardar Por Pedir</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSaveToSupplierOrders('ordered')}
+                className={`flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer ${
+                  savedInSupplierOrders === 'ordered'
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-800 hover:to-indigo-800 text-white'
+                }`}
+                title="Guardar como pedido ya realizado al proveedor"
+              >
+                {savedInSupplierOrders === 'ordered' ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 text-emerald-200" />
+                    <span>¡Guardado en Historial!</span>
+                  </>
+                ) : (
+                  <>
+                    <Truck className="w-4 h-4 text-fio-yellow" />
+                    <span>Guardar Pedido Realizado</span>
+                  </>
+                )}
               </button>
 
               <button
                 type="button"
                 onClick={handleSaveToAgenda}
-                className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer ${
+                className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer ${
                   savedInAgenda
                     ? 'bg-emerald-600 text-white'
-                    : 'bg-gradient-to-r from-purple-700 to-pink-600 hover:from-purple-800 hover:to-pink-700 text-white'
+                    : 'bg-gradient-to-r from-fio-pink to-purple-600 hover:opacity-90 text-white'
                 }`}
                 title="Guardar esta orden de compra en la Agenda del Taller"
               >
                 {savedInAgenda ? (
                   <>
                     <CheckCircle className="w-4 h-4 text-emerald-200" />
-                    <span>¡Guardado en Agenda!</span>
+                    <span>¡En Agenda!</span>
                   </>
                 ) : (
                   <>
                     <Calendar className="w-4 h-4 text-fio-yellow" />
-                    <span>Guardar en Agenda</span>
+                    <span>En Agenda</span>
                   </>
                 )}
               </button>

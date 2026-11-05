@@ -41,6 +41,7 @@ import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettings
 import { AdminPricingModal } from './components/admin/AdminPricingModal';
 import { SinpePaymentsSection } from './components/admin/SinpePaymentsSection';
 import { AgendaSection } from './components/admin/AgendaSection';
+import { SuppliersOrdersSection } from './components/admin/SuppliersOrdersSection';
 
 import { MetricsPage } from './components/admin/MetricsPage';
 import { PropuestaPage } from './components/propuesta/PropuestaPage';
@@ -410,6 +411,7 @@ export const App: React.FC = () => {
                           />
                         )}
                         {adminTab === 'agenda' && <AgendaSection />}
+                        {adminTab === 'suppliers' && <SuppliersOrdersSection />}
                       </>
                     )}
                   </div>

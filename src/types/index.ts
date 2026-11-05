@@ -200,6 +200,7 @@ export interface UserPermissions {
   users: boolean;      // Gestión de Perfiles
   customers?: boolean; // Directorio de Clientes
   agenda?: boolean;    // Agenda & Organizador de Tareas
+  suppliers?: boolean; // Pedidos a Proveedor & Requisiciones
 }
 
 export type AgendaCategory = 'taller' | 'entrega' | 'produccion' | 'proveedor' | 'recordatorio';
@@ -328,5 +329,36 @@ export interface SuperadminModuleConfig {
   iconName: string;
   enabled: boolean;
   features: SuperadminSubFeature[];
+}
+
+export type SupplierOrderStatus = 'draft' | 'ordered' | 'received';
+
+export interface SupplierOrderItem {
+  productId?: string;
+  sku: string;
+  name: string;
+  category: string;
+  currentStock: number;
+  minStock: number;
+  orderQty: number;
+  cost: number;
+  subtotal: number;
+  shelfLocation?: string;
+}
+
+export interface SupplierOrder {
+  id: string;
+  orderNumber: string;
+  supplierName: string;
+  supplierPhone?: string;
+  supplierEmail?: string;
+  status: SupplierOrderStatus;
+  items: SupplierOrderItem[];
+  totalUnits: number;
+  totalCost: number;
+  notes?: string;
+  createdAt: string;
+  orderedAt?: string;
+  receivedAt?: string;
 }
 

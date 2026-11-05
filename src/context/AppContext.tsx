@@ -4,7 +4,8 @@ import {
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
-  SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus
+  SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus,
+  SupplierOrder, SupplierOrderStatus
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -54,6 +55,26 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
       workshops: true,
       pricing: true,
       users: true,
+      customers: true,
+      agenda: true,
+    },
+  },
+  {
+    id: 'prof-maria',
+    name: 'MARÍA',
+    pin: '1234',
+    role: 'staff',
+    isActive: true,
+    createdAt: '2026-10-30T00:00:00.000Z',
+    note: 'Colaboradora de ventas, mostrador, facturación y pedidos',
+    permissions: {
+      orders: true,
+      billing: true,
+      inventory: true,
+      reports: true,
+      workshops: true,
+      pricing: true,
+      users: false,
       customers: true,
       agenda: true,
     },
@@ -331,6 +352,11 @@ interface AppContextType {
   updateAgendaItem: (id: string, updates: Partial<AgendaItem>) => void;
   deleteAgendaItem: (id: string) => void;
   toggleAgendaItemStatus: (id: string) => void;
+  supplierOrders: SupplierOrder[];
+  addSupplierOrder: (order: Omit<SupplierOrder, 'id' | 'createdAt'>) => SupplierOrder;
+  updateSupplierOrder: (id: string, updates: Partial<SupplierOrder>) => void;
+  deleteSupplierOrder: (id: string) => void;
+  updateSupplierOrderStatus: (id: string, newStatus: SupplierOrderStatus) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -358,6 +384,7 @@ const STORAGE_KEYS = {
   MISSING_INVENTORY: 'byfio_missing_inventory_v1',
   SUPERADMIN_MODULES: SUPERADMIN_STORAGE_KEY,
   AGENDA_ITEMS: AGENDA_STORAGE_KEY,
+  SUPPLIER_ORDERS: 'byfio_supplier_orders_v1',
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -781,6 +808,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // -------------------------------------------------------------
   // ESTADO Y MÉTODOS DE PEDIDOS A PROVEEDOR
   // -------------------------------------------------------------
+  const DEFAULT_SUPPLIER_ORDERS: SupplierOrder[] = [];
   const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SUPPLIER_ORDERS);
@@ -1221,6 +1249,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       workshops: true,
       pricing: true,
       users: true,
+      customers: true,
+      agenda: true,
+      suppliers: true,
     };
 
     // PIN Maestro de Fio (7777 o 0777) o PIN Superadmin (2026, 9999, 1234)
@@ -1292,6 +1323,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       workshops: true,
       pricing: true,
       users: true,
+      customers: true,
+      agenda: true,
+      suppliers: true,
     };
 
     // 0. Cuenta Superadmin Global (superadmin@byfio.com / SuperAdmin2026!)
@@ -1688,6 +1722,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
                 try {
                   localStorage.setItem(STORAGE_KEYS.AGENDA_ITEMS, JSON.stringify(sanitized));
+                } catch {}
+                return sanitized;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+
+      // 5b. Sincronizar pedidos a proveedor en la nube
+      fetch('/api/supplier-orders')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data?.orders) && data.orders.length > 0) {
+            setSupplierOrders((prev) => {
+              const sanitized = deepSanitize(data.orders);
+              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.SUPPLIER_ORDERS, JSON.stringify(sanitized));
                 } catch {}
                 return sanitized;
               }
@@ -2981,6 +3034,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateAgendaItem,
         deleteAgendaItem,
         toggleAgendaItemStatus,
+        supplierOrders,
+        addSupplierOrder,
+        updateSupplierOrder,
+        deleteSupplierOrder,
+        updateSupplierOrderStatus,
       }}
     >
       {children}

@@ -4,10 +4,10 @@ import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
-  BarChart3, Lock, UserCheck, Calendar
+  BarChart3, Lock, UserCheck, Calendar, Truck
 } from 'lucide-react';
 
-import { AppRoute } from '../../types';
+import { AppRoute, SupplierOrder } from '../../types';
 
 interface AdminHubMenuProps {
   onSelectTab: (tab: AdminTabType) => void;
@@ -15,7 +15,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate }) => {
-  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, currentUser, agendaItems } = useApp();
+  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, currentUser, agendaItems, supplierOrders } = useApp();
   const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
@@ -119,6 +119,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       badgeClass: 'bg-purple-100 text-purple-900 font-bold',
       icon: Calendar,
       gradient: 'from-[#D946EF] to-[#8B5CF6]',
+    },
+    {
+      id: 'suppliers' as AdminTabType,
+      title: 'Pedidos a Proveedor',
+      badge: `${supplierOrders.filter((o: SupplierOrder) => o.status === 'draft').length} por pedir • ${supplierOrders.filter((o: SupplierOrder) => o.status === 'ordered').length} realizados`,
+      badgeClass: 'bg-amber-100 text-amber-900 font-bold',
+      icon: Truck,
+      gradient: 'from-[#F59E0B] to-[#B45309]',
     },
   ];
 
