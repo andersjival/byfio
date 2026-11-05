@@ -17,6 +17,10 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.8 - Limpieza Visual en Cabecera del Panel de Control
+- [x] **Eliminación de Texto Técnico ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Removido el rótulo superior `"Sistema WMS / ERP Ligero"` de la cabecera del panel de administración para un encabezado más limpio, directo y enfocado en la marca By.Fio.
+
 ### Versión 4.13.7 - Incorporación y Protección del Perfil de Administrador Maestro en Base de Datos D1
 - [x] **Restablecimiento del 3er Perfil de Usuario ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx)):**
   - Se vinculó explícitamente el perfil `prof-admin` (*ADMINISTRACIÓN (FIO)*, PIN `7777`, rol `admin`) en `DEFAULT_USER_PROFILES`, en la persistencia local y en Cloudflare D1.
