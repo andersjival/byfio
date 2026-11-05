@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.15.6 - Renombramiento de Estados a "Terminados" en Cola de Pedidos
+- [x] **Actualización de Etiquetas y Acciones en Cola de Pedidos ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - Botón de filtro de pedidos cambiado de *"Entregados"* a *"Terminados"*.
+  - Botón de acción operativa cambiado de *"Marcar Entregado"* a *"Marcar Terminado"*.
+  - Distintivo visual de estado actualizado a *"Terminado"* para máxima claridad operativa en el flujo de pedidos.
+
 ### Versión 4.15.5 - Entrada Suave de Arriba Hacia Abajo, Contador de Minutos y Configuración de Duración de la Estrellita
 - [x] **Animación de Entrada de Arriba Hacia Abajo ([`index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css), [`NewOrderStarAlert.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/NewOrderStarAlert.tsx)):**
   - Implementada animación fluida con física suave (`@keyframes starAlertSlideInFromTop` con `cubic-bezier(0.16, 1, 0.3, 1)`) que desplaza la alerta desde la parte superior hacia el centro con desenfoque de fondo.
