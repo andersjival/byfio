@@ -13,7 +13,7 @@ interface CashRegisterReportsProps {
 }
 
 export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpenDailyClosing, onNavigateToSinpe }) => {
-  const { orders, products, sinpeTransactions, setIsSinpeModalOpen, workshops } = useApp();
+  const { orders, products, sinpeTransactions, setIsSinpeModalOpen, workshops, isFeatureEnabled } = useApp();
   const [timeRange, setTimeRange] = useState<'today' | 'week'>('today');
 
   const todayStr = new Date().toISOString().slice(0, 10);
@@ -139,13 +139,15 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
             )}
           </button>
 
-          <button
-            onClick={onOpenDailyClosing}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95"
-          >
-            <FileSpreadsheet className="w-4 h-4 text-fio-yellow" />
-            <span>Cierre de Caja Oficial</span>
-          </button>
+          {isFeatureEnabled('reports', 'daily_closing') && (
+            <button
+              onClick={onOpenDailyClosing}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-fio-yellow" />
+              <span>Cierre de Caja Oficial</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -165,32 +167,36 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
         </div>
 
         {/* DIVISIÓN 1: TIENDA & CATÁLOGO */}
-        <div className="bg-gradient-to-tr from-blue-50 to-blue-100/40 p-4 rounded-3xl border border-blue-200 shadow-claySm">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-blue-900 uppercase">🛍️ Tienda &amp; Catálogo</span>
-            <ShoppingBag className="w-4 h-4 text-blue-600" />
+        {isFeatureEnabled('reports', 'category_breakdown') && (
+          <div className="bg-gradient-to-tr from-blue-50 to-blue-100/40 p-4 rounded-3xl border border-blue-200 shadow-claySm">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-blue-900 uppercase">🛍️ Tienda &amp; Catálogo</span>
+              <ShoppingBag className="w-4 h-4 text-blue-600" />
+            </div>
+            <h3 className="text-2xl font-bubble font-bold text-blue-900 mt-1">
+              {formatCRC(totalStoreSales)}
+            </h3>
+            <p className="text-[11px] text-blue-700 mt-0.5">
+              {storeOrders.length} pedidos + {filteredSinpe.filter((t) => t.category === 'store').length} SINPE BCR
+            </p>
           </div>
-          <h3 className="text-2xl font-bubble font-bold text-blue-900 mt-1">
-            {formatCRC(totalStoreSales)}
-          </h3>
-          <p className="text-[11px] text-blue-700 mt-0.5">
-            {storeOrders.length} pedidos + {filteredSinpe.filter((t) => t.category === 'store').length} SINPE BCR
-          </p>
-        </div>
+        )}
 
         {/* DIVISIÓN 2: TALLERES CREATIVOS */}
-        <div className="bg-gradient-to-tr from-pink-50 to-pink-100/40 p-4 rounded-3xl border border-pink-200 shadow-claySm">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-pink-900 uppercase">🎨 Talleres Creativos</span>
-            <GraduationCap className="w-4 h-4 text-pink-600" />
+        {isFeatureEnabled('reports', 'category_breakdown') && (
+          <div className="bg-gradient-to-tr from-pink-50 to-pink-100/40 p-4 rounded-3xl border border-pink-200 shadow-claySm">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-pink-900 uppercase">🎨 Talleres Creativos</span>
+              <GraduationCap className="w-4 h-4 text-pink-600" />
+            </div>
+            <h3 className="text-2xl font-bubble font-bold text-pink-900 mt-1">
+              {formatCRC(totalWorkshopSales)}
+            </h3>
+            <p className="text-[11px] text-pink-700 mt-0.5">
+              {workshopOrders.length} inscripciones + {filteredSinpe.filter((t) => t.category === 'workshop').length} SINPE BCR
+            </p>
           </div>
-          <h3 className="text-2xl font-bubble font-bold text-pink-900 mt-1">
-            {formatCRC(totalWorkshopSales)}
-          </h3>
-          <p className="text-[11px] text-pink-700 mt-0.5">
-            {workshopOrders.length} inscripciones + {filteredSinpe.filter((t) => t.category === 'workshop').length} SINPE BCR
-          </p>
-        </div>
+        )}
 
         {/* GANANCIA ESTIMADA */}
         <div className="bg-gradient-to-tr from-emerald-50 to-emerald-100/40 p-4 rounded-3xl border border-emerald-200 shadow-claySm">

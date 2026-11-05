@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 export const UserProfilesSection: React.FC = () => {
-  const { userProfiles, addUserProfile, updateUserProfile, deleteUserProfile, toggleUserProfileStatus } = useApp();
+  const { userProfiles, addUserProfile, updateUserProfile, deleteUserProfile, toggleUserProfileStatus, isFeatureEnabled } = useApp();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
@@ -201,14 +201,16 @@ export const UserProfilesSection: React.FC = () => {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleOpenCreate}
-          className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtnHover active:scale-95 transition-all shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Crear Nuevo Perfil</span>
-        </button>
+        {isFeatureEnabled('users', 'user_profiles_crud') && (
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtnHover active:scale-95 transition-all shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Crear Nuevo Perfil</span>
+          </button>
+        )}
       </div>
 
       {/* Tarjeta Informativa: Acceso con PIN de 4 Dígitos */}
@@ -359,26 +361,28 @@ export const UserProfilesSection: React.FC = () => {
                   {prof.isActive ? 'Pausar Perfil' : 'Activar Perfil'}
                 </button>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleOpenEdit(prof)}
-                    className="neu-btn bg-[#F1F2F6] dark:bg-[#332D52] px-3 py-1.5 rounded-xl text-xs font-bubble font-bold text-slate-700 dark:text-slate-200 hover:text-fio-pink border border-white/80 dark:border-white/15 shadow-neuBtn hover:shadow-neuBtnHover flex items-center gap-1 active:scale-95"
-                    title="Editar perfil y permisos"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                    <span>Editar</span>
-                  </button>
+                {isFeatureEnabled('users', 'user_profiles_crud') && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEdit(prof)}
+                      className="neu-btn bg-[#F1F2F6] dark:bg-[#332D52] px-3 py-1.5 rounded-xl text-xs font-bubble font-bold text-slate-700 dark:text-slate-200 hover:text-fio-pink border border-white/80 dark:border-white/15 shadow-neuBtn hover:shadow-neuBtnHover flex items-center gap-1 active:scale-95"
+                      title="Editar perfil y permisos"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Editar</span>
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(prof)}
-                    className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors"
-                    title="Eliminar perfil"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(prof)}
+                      className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors"
+                      title="Eliminar perfil"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           );

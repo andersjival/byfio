@@ -6,7 +6,7 @@ import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
-  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled } = useApp();
+  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled } = useApp();
   const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packed' | 'delivered'>('all');
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
@@ -258,25 +258,29 @@ export const OrdersQueue: React.FC = () => {
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
                   {!isFinished ? (
                     <>
-                      <button
-                        type="button"
-                        onClick={() => startPicking(order.id, 'barcode')}
-                        className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer"
-                        title="Alisto guiado con escáner QR o código de barras"
-                      >
-                        <QrCode className="w-4 h-4 text-fio-yellow" />
-                        <span>Alisto con Código</span>
-                      </button>
+                      {isFeatureEnabled('orders', 'code_picking') && (
+                        <button
+                          type="button"
+                          onClick={() => startPicking(order.id, 'barcode')}
+                          className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer"
+                          title="Alisto guiado con escáner QR o código de barras"
+                        >
+                          <QrCode className="w-4 h-4 text-fio-yellow" />
+                          <span>Alisto con Código</span>
+                        </button>
+                      )}
 
-                      <button
-                        type="button"
-                        onClick={() => startPicking(order.id, 'manual')}
-                        className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white hover:bg-purple-50/80 text-fio-800 border-2 border-purple-300 hover:border-purple-500 font-bubble font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
-                        title="Alisto manual paso a paso producto por producto con reporte de faltante"
-                      >
-                        <ClipboardList className="w-4 h-4 text-fio-pink" />
-                        <span>Alisto Manual</span>
-                      </button>
+                      {isFeatureEnabled('orders', 'manual_picking') && (
+                        <button
+                          type="button"
+                          onClick={() => startPicking(order.id, 'manual')}
+                          className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white hover:bg-purple-50/80 text-fio-800 border-2 border-purple-300 hover:border-purple-500 font-bubble font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
+                          title="Alisto manual paso a paso producto por producto con reporte de faltante"
+                        >
+                          <ClipboardList className="w-4 h-4 text-fio-pink" />
+                          <span>Alisto Manual</span>
+                        </button>
+                      )}
                     </>
                   ) : (
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">

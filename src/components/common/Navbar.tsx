@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectAdminHub,
   isAdminHub = false,
 }) => {
-  const { cart, setIsCartOpen, colorTheme, setColorTheme, currentUser, logoutUser, isModuleEnabled } = useApp();
+  const { cart, setIsCartOpen, colorTheme, setColorTheme, currentUser, logoutUser, isModuleEnabled, isFeatureEnabled } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [likePopped, setLikePopped] = useState(false);
 
@@ -278,20 +278,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
 
               {/* Botón Carrito de Compras Neumórfico */}
-              <button
-                type="button"
-                onClick={() => setIsCartOpen(true)}
-                aria-label="Abrir Carrito"
-                className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0 cursor-pointer"
-              >
-                <ShoppingBag className="w-4 h-4 text-white" />
-                <span className="hidden sm:inline">Carrito</span>
-                {totalCartCount > 0 && (
-                  <span className="flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4.5 sm:h-5 px-1 bg-fio-pink text-white rounded-full text-[9px] sm:text-[10px] font-bold ring-1.5 sm:ring-2 ring-white">
-                    {totalCartCount}
-                  </span>
-                )}
-              </button>
+              {isModuleEnabled('store') && isFeatureEnabled('store', 'interactive_cart') && (
+                <button
+                  type="button"
+                  onClick={() => setIsCartOpen(true)}
+                  aria-label="Abrir Carrito"
+                  className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0 cursor-pointer"
+                >
+                  <ShoppingBag className="w-4 h-4 text-white" />
+                  <span className="hidden sm:inline">Carrito</span>
+                  {totalCartCount > 0 && (
+                    <span className="flex items-center justify-center min-w-[18px] sm:min-w-[20px] h-4.5 sm:h-5 px-1 bg-fio-pink text-white rounded-full text-[9px] sm:text-[10px] font-bold ring-1.5 sm:ring-2 ring-white">
+                      {totalCartCount}
+                    </span>
+                  )}
+                </button>
+              )}
 
               {/* Botón Hamburguesa Mobile */}
               <button

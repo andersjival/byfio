@@ -70,6 +70,7 @@ export const App: React.FC = () => {
     isSinpeModalOpen,
     setIsSinpeModalOpen,
     isModuleEnabled,
+    isFeatureEnabled,
     isSuperAdminAuthenticated,
   } = useApp();
   const initial = parseRouteFromLocation();
@@ -142,10 +143,20 @@ export const App: React.FC = () => {
     navigate('admin', tab);
   };
 
-  // Protección: Si el módulo activo fue desactivado por Superadmin, volver al Hub de inmediato
+  // Protección: Si el módulo activo fue desactivado por Superadmin, volver al Hub o a Home de inmediato
   useEffect(() => {
     if (currentRoute === 'admin' && adminTab !== 'hub' && !isModuleEnabled(adminTab)) {
       setAdminTab('hub');
+    } else if ((currentRoute === 'workshops' || currentRoute === 'workshop-detail') && !isModuleEnabled('workshops')) {
+      navigate('home');
+    } else if (currentRoute === 'store' && !isModuleEnabled('store')) {
+      navigate('home');
+    } else if (currentRoute === 'catalogo' && !isModuleEnabled('catalogo')) {
+      navigate('home');
+    } else if (currentRoute === 'precios' && !isModuleEnabled('pricing')) {
+      navigate('home');
+    } else if (currentRoute === 'metricas' && !isModuleEnabled('metricas')) {
+      navigate('admin');
     }
   }, [currentRoute, adminTab, isModuleEnabled]);
 
@@ -276,22 +287,22 @@ export const App: React.FC = () => {
                 />
               )}
 
-              {currentRoute === 'store' && <StorePage onNavigate={navigate} />}
+              {currentRoute === 'store' && isModuleEnabled('store') && <StorePage onNavigate={navigate} />}
 
-              {currentRoute === 'catalogo' && <CatalogPage onNavigate={navigate} />}
+              {currentRoute === 'catalogo' && isModuleEnabled('catalogo') && <CatalogPage onNavigate={navigate} />}
 
-              {currentRoute === 'workshops' && <WorkshopsPage onNavigate={navigate} />}
+              {currentRoute === 'workshops' && isModuleEnabled('workshops') && <WorkshopsPage onNavigate={navigate} />}
 
-              {currentRoute === 'precios' && <PricingStickersSection onNavigate={navigate} />}
+              {currentRoute === 'precios' && isModuleEnabled('pricing') && <PricingStickersSection onNavigate={navigate} />}
 
-              {currentRoute === 'workshop-detail' && (
+              {currentRoute === 'workshop-detail' && isModuleEnabled('workshops') && (
                 <WorkshopDetailPage
                   workshopId={selectedWorkshopId}
                   onNavigate={navigate}
                 />
               )}
 
-              {currentRoute === 'metricas' && (
+              {currentRoute === 'metricas' && isModuleEnabled('metricas') && (
                 isAdminOrSuperadmin ? (
                   <MetricsPage onNavigate={navigate} />
                 ) : (
@@ -460,19 +471,23 @@ export const App: React.FC = () => {
         <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />
       )}
       <FloatingMascot currentRoute={currentRoute} />
-      <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
+      {isModuleEnabled('store') && isFeatureEnabled('store', 'interactive_cart') && (
+        <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
+      )}
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
       <StudioScheduleModal isOpen={isScheduleModalOpen} onClose={() => setIsScheduleModalOpen(false)} />
       {/* Modales Administrativos Diferidos (cargados estrictamente bajo demanda para no ralentizar la web) */}
       <React.Suspense fallback={null}>
         {activePickingOrder && <GuidedPickingModal />}
-        {isSupplierModalOpen && <SupplierOrderModal />}
-        {qrModalProduct && <QrLabelModal />}
+        {isSupplierModalOpen && isFeatureEnabled('inventory', 'supplier_list') && <SupplierOrderModal />}
+        {qrModalProduct && isFeatureEnabled('inventory', 'qr_labels') && <QrLabelModal />}
         {invoiceOrder && <InvoiceModal />}
         {isNewProductModalOpen && <NewProductModal />}
         {isNewWorkshopModalOpen && <NewWorkshopModal />}
-        {isDailyClosingOpen && <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />}
+        {isDailyClosingOpen && isFeatureEnabled('reports', 'daily_closing') && (
+          <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
+        )}
         {isDesignModalOpen && <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />}
         {isPricingModalOpen && <AdminPricingModal />}
       </React.Suspense>

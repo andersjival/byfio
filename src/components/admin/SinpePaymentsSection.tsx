@@ -18,6 +18,7 @@ export const SinpePaymentsSection: React.FC = () => {
     deleteSinpeTransaction,
     updateSinpeSettings,
     workshops,
+    isFeatureEnabled,
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'extract' | 'settings' | 'history'>('extract');
@@ -309,22 +310,24 @@ export const SinpePaymentsSection: React.FC = () => {
           <span>Extraer &amp; Acreditar Correo BCR</span>
         </button>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('settings')}
-          style={activeTab === 'settings' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
-          className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-            activeTab === 'settings'
-              ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 scale-[1.01]'
-              : 'bg-white text-slate-800 hover:text-purple-700 hover:bg-purple-50 shadow-xs border border-slate-300/80'
-          }`}
-        >
-          <Mail className={`w-3.5 h-3.5 ${activeTab === 'settings' ? 'text-blue-300' : 'text-blue-600'}`} />
-          <span>Vinculación de Redirección Automática</span>
-          {sinpeSettings.isLinked && (
-            <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block ml-0.5" />
-          )}
-        </button>
+        {isFeatureEnabled('sinpe', 'email_redirect') && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('settings')}
+            style={activeTab === 'settings' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+            className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              activeTab === 'settings'
+                ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 scale-[1.01]'
+                : 'bg-white text-slate-800 hover:text-purple-700 hover:bg-purple-50 shadow-xs border border-slate-300/80'
+            }`}
+          >
+            <Mail className={`w-3.5 h-3.5 ${activeTab === 'settings' ? 'text-blue-300' : 'text-blue-600'}`} />
+            <span>Vinculación de Redirección Automática</span>
+            {sinpeSettings.isLinked && (
+              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block ml-0.5" />
+            )}
+          </button>
+        )}
 
         <button
           type="button"

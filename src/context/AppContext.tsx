@@ -813,6 +813,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         type: 'SYNC_UPDATE',
         superadminModules: newModules,
       });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('byfio_superadmin_modules_updated', { detail: newModules })
+        );
+      }
+    } catch {}
+
+    // Sincronización en la nube D1 para que se propague a todos los dispositivos en vivo
+    try {
+      fetch('/api/superadmin-modules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ modules: newModules }),
+      }).catch(() => {});
     } catch {}
   };
 
@@ -1289,9 +1303,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       }
     };
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEYS.SUPERADMIN_MODULES && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) {
+            setSuperadminModules(parsed);
+          }
+        } catch {}
+      }
+    };
+
+    const handleLocalUpdate = (e: any) => {
+      if (Array.isArray(e.detail)) {
+        setSuperadminModules(e.detail);
+      }
+    };
+
     syncChannel.addEventListener('message', handleSync);
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('byfio_superadmin_modules_updated', handleLocalUpdate);
+
     return () => {
       syncChannel.removeEventListener('message', handleSync);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('byfio_superadmin_modules_updated', handleLocalUpdate);
     };
   }, []);
 
@@ -1403,6 +1440,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               );
               localStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(merged));
               return merged;
+            });
+          }
+        })
+        .catch(() => {});
+
+      // 4. Sincronizar estado global de módulos del Superadmin en la nube
+      fetch('/api/superadmin-modules')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data?.modules) && data.modules.length > 0) {
+            setSuperadminModules((prev) => {
+              if (JSON.stringify(prev) !== JSON.stringify(data.modules)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.SUPERADMIN_MODULES, JSON.stringify(data.modules));
+                } catch {}
+                return data.modules;
+              }
+              return prev;
             });
           }
         })
@@ -2416,32 +2471,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
     }
 
-    // 4. Si ya fue utilizado por una orden previa
-    if (foundTx.orderId) {
-      return {
-        status: 'already_used',
-        message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
-        transaction: foundTx,
-        requiredTotal,
-      };
-    }
+    // 4. Si ya fue utilizado por una orden previa (solo si single_use_validation está habilitado)
+    if (isFeatureEnabled('sinpe', 'single_use_validation')) {
+      if (foundTx.orderId) {
+        return {
+          status: 'already_used',
+          message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
+          transaction: foundTx,
+          requiredTotal,
+        };
+      }
 
-    const alreadyUsedInOrders = orders.some(
-      (o) => o.notes && o.notes.toLowerCase().includes(cleanRef)
-    );
-    if (alreadyUsedInOrders) {
-      return {
-        status: 'already_used',
-        message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
-        transaction: foundTx,
-        requiredTotal,
-      };
+      const alreadyUsedInOrders = orders.some(
+        (o) => o.notes && o.notes.toLowerCase().includes(cleanRef)
+      );
+      if (alreadyUsedInOrders) {
+        return {
+          status: 'already_used',
+          message: 'Este pago ya fue utilizado, digite correctamente el número de referencia de la transferencia.',
+          transaction: foundTx,
+          requiredTotal,
+        };
+      }
     }
 
     const voucherAmount = foundTx.amount;
 
-    // 5. Comparación de montos:
-    if (voucherAmount === requiredTotal) {
+    // 5. Comparación de montos (si amount_crosscheck está deshabilitado, se aprueba de inmediato):
+    if (!isFeatureEnabled('sinpe', 'amount_crosscheck') || voucherAmount === requiredTotal) {
       return {
         status: 'valid_exact',
         message: `Pago verificado con éxito, comprobante número #${foundTx.referenceNumber} y monto confirmado de ₡${voucherAmount.toLocaleString('es-CR')}.`,

@@ -20,6 +20,7 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
     setEditingWorkshop,
     sinpeTransactions,
     setIsSinpeModalOpen,
+    isFeatureEnabled,
   } = useApp();
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -136,22 +137,24 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Botón Solicitado: Cantidad de Talleres Pagados */}
-          <button
-            type="button"
-            onClick={() => setShowPaidSummary((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-bubble font-bold text-xs border shadow-sm transition-all active:scale-95 ${
-              showPaidSummary
-                ? 'bg-purple-900 text-white border-purple-950'
-                : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 border-pink-400'
-            }`}
-            title="Ver desglose detallado de cupos vendidos y confirmados por taller"
-          >
-            <ShieldCheck className="w-4 h-4 text-amber-300" />
-            <span>Talleres Pagados &amp; Confirmados</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white text-purple-950 ml-0.5">
-              {totalGlobalSold} cupos
-            </span>
-          </button>
+          {isFeatureEnabled('workshops', 'paid_slots_counter') && (
+            <button
+              type="button"
+              onClick={() => setShowPaidSummary((prev) => !prev)}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-bubble font-bold text-xs border shadow-sm transition-all active:scale-95 ${
+                showPaidSummary
+                  ? 'bg-purple-900 text-white border-purple-950'
+                  : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 border-pink-400'
+              }`}
+              title="Ver desglose detallado de cupos vendidos y confirmados por taller"
+            >
+              <ShieldCheck className="w-4 h-4 text-amber-300" />
+              <span>Talleres Pagados &amp; Confirmados</span>
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white text-purple-950 ml-0.5">
+                {totalGlobalSold} cupos
+              </span>
+            </button>
+          )}
 
           <button
             type="button"
@@ -169,21 +172,23 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
             )}
           </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setEditingWorkshop(null);
-              setIsNewWorkshopModalOpen(true);
-            }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all"
-          >
-            <Plus className="w-4 h-4" /> Crear Taller
-          </button>
+          {isFeatureEnabled('workshops', 'workshop_crud') && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingWorkshop(null);
+                setIsNewWorkshopModalOpen(true);
+              }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all"
+            >
+              <Plus className="w-4 h-4" /> Crear Taller
+            </button>
+          )}
         </div>
       </div>
 
       {/* PANEL AUDITORÍA DE CUPOS PAGADOS Y CONFIRMADOS (REQUERIMIENTO DEL USUARIO) */}
-      {showPaidSummary && activeAuditWs && (
+      {showPaidSummary && isFeatureEnabled('workshops', 'paid_slots_counter') && activeAuditWs && (
         <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-fio-900 text-white p-5 sm:p-6 rounded-3xl shadow-clay border-2 border-purple-300/40 space-y-4 animate-fadeIn">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/20 pb-3">
             <div className="flex items-center gap-2.5">

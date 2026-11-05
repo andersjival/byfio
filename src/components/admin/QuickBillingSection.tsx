@@ -38,6 +38,7 @@ export const QuickBillingSection: React.FC = () => {
     updateOrderStatus,
     validateSinpeReference,
     registerSinpeTransaction,
+    isFeatureEnabled,
   } = useApp();
 
   // Sub-vistas del módulo
@@ -456,31 +457,35 @@ export const QuickBillingSection: React.FC = () => {
 
         {/* Botones de Navegación entre Sub-vistas */}
         <div className="flex items-center p-1 rounded-2xl bg-[#ECEEF2] dark:bg-[#1C1830] shadow-neuInset border border-white/60 dark:border-white/10 self-start md:self-auto shrink-0 flex-wrap gap-1">
-          <button
-            type="button"
-            onClick={() => setActiveTab('create')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
-              activeTab === 'create'
-                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-102'
-                : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple hover:bg-white/60 dark:hover:bg-white/5'
-            }`}
-          >
-            <Plus className="w-4 h-4 text-fio-yellow shrink-0" />
-            <span>Crear Factura Directa</span>
-          </button>
+          {isFeatureEnabled('billing', 'counter_orders') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('create')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
+                activeTab === 'create'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover scale-102'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple hover:bg-white/60 dark:hover:bg-white/5'
+              }`}
+            >
+              <Plus className="w-4 h-4 text-fio-yellow shrink-0" />
+              <span>Crear Factura Directa</span>
+            </button>
+          )}
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('search')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
-              activeTab === 'search'
-                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-102'
-                : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple hover:bg-white/60 dark:hover:bg-white/5'
-            }`}
-          >
-            <Search className="w-3.5 h-3.5 shrink-0" />
-            <span>Facturar Pedido Existente</span>
-          </button>
+          {isFeatureEnabled('billing', 'billing_search') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('search')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
+                activeTab === 'search'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover scale-102'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple hover:bg-white/60 dark:hover:bg-white/5'
+              }`}
+            >
+              <Search className="w-3.5 h-3.5 shrink-0" />
+              <span>Facturar Pedido Existente</span>
+            </button>
+          )}
 
           <button
             type="button"

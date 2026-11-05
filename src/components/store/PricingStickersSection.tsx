@@ -16,7 +16,7 @@ export const PricingStickersSection: React.FC<PricingStickersSectionProps> = ({
   onNavigate,
   showHowToOrderOnly = false,
 }) => {
-  const { pricingData, viewMode, setIsPricingModalOpen } = useApp();
+  const { pricingData, viewMode, setIsPricingModalOpen, isFeatureEnabled } = useApp();
 
   const handleWhatsAppOrder = (catTitle: string, qty: number, price: number, giftText?: string) => {
     let text = `¡Hola Fio! 💜✨ Me gustaría hacer un pedido de *${catTitle}*:\n\n`;
@@ -52,7 +52,7 @@ export const PricingStickersSection: React.FC<PricingStickersSectionProps> = ({
             </div>
 
             {/* Botón de Edición Rápida si es Admin */}
-            {viewMode === 'admin' && (
+            {viewMode === 'admin' && isFeatureEnabled('pricing', 'pricing_editor') && (
               <button
                 type="button"
                 onClick={() => setIsPricingModalOpen(true)}

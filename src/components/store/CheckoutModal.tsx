@@ -24,6 +24,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     verifySinpePaymentForCheckout,
     markSinpeTransactionUsed,
     simulateBcrEmailNotification,
+    isFeatureEnabled,
   } = useApp();
 
   const [deliveryMethod, setDeliveryMethod] = useState<'envio' | 'retiro'>('envio');
@@ -106,17 +107,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     if (res.status === 'invalid_incomplete') {
       setRefValidationError(res.message);
       setIsPaymentValidated(false);
-      setPartialPayment({
-        requiredTotal: total,
-        missingAmount: res.missingAmount || (total - (res.voucherAmount || 0)),
-        firstVoucher: {
-          ref: res.transaction?.referenceNumber || clean,
-          amount: res.voucherAmount || 0,
-          originName: res.transaction?.originName,
-        },
-        isComplete: false,
-      });
-      setSecondSinpeReference('');
+      if (isFeatureEnabled('sinpe', 'missing_voucher_window')) {
+        setPartialPayment({
+          requiredTotal: total,
+          missingAmount: res.missingAmount || (total - (res.voucherAmount || 0)),
+          firstVoucher: {
+            ref: res.transaction?.referenceNumber || clean,
+            amount: res.voucherAmount || 0,
+            originName: res.transaction?.originName,
+          },
+          isComplete: false,
+        });
+        setSecondSinpeReference('');
+      } else {
+        setPartialPayment(null);
+      }
       playAudioBeep('error');
       return;
     }

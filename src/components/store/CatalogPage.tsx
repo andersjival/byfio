@@ -32,6 +32,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
     setEditingProduct,
     setIsNewProductModalOpen,
     inventoryMode,
+    isFeatureEnabled,
   } = useApp();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
@@ -497,14 +498,16 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                     </button>
 
                     {/* Botón Directo WhatsApp (Neumórfico) */}
-                    <button
-                      type="button"
-                      onClick={() => handleDirectWhatsAppOrder(product)}
-                      className="p-2 rounded-xl neu-btn text-emerald-700 shrink-0 transition-all active:scale-95"
-                      title="Pedir este producto por WhatsApp"
-                    >
-                      <MessageCircle className="w-4 h-4 text-emerald-600" />
-                    </button>
+                    {isFeatureEnabled('catalogo', 'whatsapp_orders') && (
+                      <button
+                        type="button"
+                        onClick={() => handleDirectWhatsAppOrder(product)}
+                        className="p-2 rounded-xl neu-btn text-emerald-700 shrink-0 transition-all active:scale-95"
+                        title="Pedir este producto por WhatsApp"
+                      >
+                        <MessageCircle className="w-4 h-4 text-emerald-600" />
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -624,18 +627,20 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                   </span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleDirectWhatsAppOrder(detailProduct);
-                    setDetailProduct(null);
-                  }}
-                  className="py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 font-bubble font-bold text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-95 cursor-pointer shrink-0"
-                  title="Pedir por WhatsApp"
-                >
-                  <MessageCircle className="w-4 h-4 text-emerald-600" />
-                  <span className="hidden sm:inline">WhatsApp</span>
-                </button>
+                {isFeatureEnabled('catalogo', 'whatsapp_orders') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleDirectWhatsAppOrder(detailProduct);
+                      setDetailProduct(null);
+                    }}
+                    className="py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 font-bubble font-bold text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-95 cursor-pointer shrink-0"
+                    title="Pedir por WhatsApp"
+                  >
+                    <MessageCircle className="w-4 h-4 text-emerald-600" />
+                    <span className="hidden sm:inline">WhatsApp</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>

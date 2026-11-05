@@ -17,6 +17,7 @@ export const GuidedPickingModal: React.FC = () => {
     markItemPicked,
     markItemMissing,
     setInvoiceOrder,
+    isFeatureEnabled,
   } = useApp();
 
   const [manualInput, setManualInput] = useState('');
@@ -279,13 +280,15 @@ export const GuidedPickingModal: React.FC = () => {
                     </div>
 
                     <div className="pt-1 flex items-center justify-between border-t border-fio-200/60 text-[11px] sm:text-xs">
-                      <button
-                        type="button"
-                        onClick={() => handleMarkItemMissingManual(currentItem.sku)}
-                        className="text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer"
-                      >
-                        Reportar Faltante
-                      </button>
+                      {isFeatureEnabled('orders', 'missing_reporting') ? (
+                        <button
+                          type="button"
+                          onClick={() => handleMarkItemMissingManual(currentItem.sku)}
+                          className="text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer"
+                        >
+                          Reportar Faltante
+                        </button>
+                      ) : <span />}
                       <button
                         type="button"
                         onClick={() => setPickingMode('manual')}
@@ -323,15 +326,17 @@ export const GuidedPickingModal: React.FC = () => {
                     </button>
 
                     {/* Botón de Faltante / Sin Existencias */}
-                    <button
-                      type="button"
-                      onClick={() => handleMarkItemMissingManual(currentItem.sku)}
-                      className="w-full py-2 sm:py-2.5 px-4 bg-amber-50 hover:bg-amber-100 active:scale-[0.98] border-2 border-amber-300 hover:border-amber-400 text-amber-900 rounded-xl sm:rounded-2xl font-bubble font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
-                      title="Reportar que este producto no tiene existencias o falta en el estante"
-                    >
-                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                      <span>Sin Existencias / Reportar Faltante</span>
-                    </button>
+                    {isFeatureEnabled('orders', 'missing_reporting') && (
+                      <button
+                        type="button"
+                        onClick={() => handleMarkItemMissingManual(currentItem.sku)}
+                        className="w-full py-2 sm:py-2.5 px-4 bg-amber-50 hover:bg-amber-100 active:scale-[0.98] border-2 border-amber-300 hover:border-amber-400 text-amber-900 rounded-xl sm:rounded-2xl font-bubble font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                        title="Reportar que este producto no tiene existencias o falta en el estante"
+                      >
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Sin Existencias / Reportar Faltante</span>
+                      </button>
+                    )}
 
                     {/* Botón de Salir a la Cola de Pedidos */}
                     <button

@@ -30,6 +30,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     userProfiles,
     loginIntroStage,
     triggerLoginCinematic,
+    isFeatureEnabled,
   } = useApp();
   const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>('email');
   const [name, setName] = useState('');
@@ -282,21 +283,23 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   <span>Correo</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLoginMethod('pin');
-                    setErrorMessage(null);
-                  }}
-                  className={`flex-1 py-1.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
-                    loginMethod === 'pin'
-                      ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <KeyRound className="w-3.5 h-3.5" />
-                  <span>PIN</span>
-                </button>
+                {isFeatureEnabled('users', 'pin_authentication') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLoginMethod('pin');
+                      setErrorMessage(null);
+                    }}
+                    className={`flex-1 py-1.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
+                      loginMethod === 'pin'
+                        ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <KeyRound className="w-3.5 h-3.5" />
+                    <span>PIN</span>
+                  </button>
+                )}
               </div>
 
               {/* Acceso Rápido Superadmin */}

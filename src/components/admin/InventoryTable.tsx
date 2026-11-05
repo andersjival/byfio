@@ -19,6 +19,7 @@ export const InventoryTable: React.FC = () => {
     setIsSupplierModalOpen,
     deleteProduct,
     setEditingProduct,
+    isFeatureEnabled,
   } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
@@ -86,18 +87,20 @@ export const InventoryTable: React.FC = () => {
         </div>
 
         {/* BOTÓN PROMINENTE AGREGAR PRODUCTO NUEVO */}
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => {
-              setEditingProduct(null);
-              setIsNewProductModalOpen(true);
-            }}
-            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayPink transition-all active:scale-95 animate-pulse-subtle"
-          >
-            <PlusCircle className="w-5 h-5" />
-            <span>+ Agregar Producto al Inventario</span>
-          </button>
-        </div>
+        {isFeatureEnabled('inventory', 'product_crud') && (
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => {
+                setEditingProduct(null);
+                setIsNewProductModalOpen(true);
+              }}
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayPink transition-all active:scale-95 animate-pulse-subtle"
+            >
+              <PlusCircle className="w-5 h-5" />
+              <span>+ Agregar Producto al Inventario</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Control Switch / Selector de Modo de Inventario */}
@@ -262,15 +265,17 @@ export const InventoryTable: React.FC = () => {
         </div>
 
         {/* Botón Realizar Pedido a Proveedor */}
-        <button
-          type="button"
-          onClick={() => setIsSupplierModalOpen(true)}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-fio-800 border border-purple-300 font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 shrink-0"
-          title="Generar orden de compra y reposición para enviar al proveedor por WhatsApp"
-        >
-          <Truck className="w-3.5 h-3.5 text-fio-pink" />
-          <span>Realizar Pedido a Proveedor</span>
-        </button>
+        {isFeatureEnabled('inventory', 'supplier_list') && (
+          <button
+            type="button"
+            onClick={() => setIsSupplierModalOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-fio-800 border border-purple-300 font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 shrink-0"
+            title="Generar orden de compra y reposición para enviar al proveedor por WhatsApp"
+          >
+            <Truck className="w-3.5 h-3.5 text-fio-pink" />
+            <span>Realizar Pedido a Proveedor</span>
+          </button>
+        )}
       </div>
 
       {/* Selector de Categorías & Buscador */}
@@ -522,7 +527,7 @@ export const InventoryTable: React.FC = () => {
 
                   <td className="py-3 px-2 text-right">
                     <div className="inline-flex items-center gap-1.5">
-                      {isZeroStock && (
+                      {isZeroStock && isFeatureEnabled('inventory', 'supplier_list') && (
                         <button
                           type="button"
                           onClick={() => setIsSupplierModalOpen(true)}
@@ -533,34 +538,40 @@ export const InventoryTable: React.FC = () => {
                           <span>Pedir</span>
                         </button>
                       )}
-                      <button
-                        onClick={() => {
-                          setEditingProduct(prod);
-                          setIsNewProductModalOpen(true);
-                        }}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-800 border border-purple-200 font-bubble text-xs shadow-2xs active:scale-95 transition-all"
-                        title="Modificar o editar artículo por completo"
-                      >
-                        <Pencil className="w-3.5 h-3.5 text-fio-pink" />
-                        <span>Editar</span>
-                      </button>
-                      <button
-                        onClick={() => setQrModalProduct(prod)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs shadow-sm active:scale-95 transition-all"
-                        title="Generar etiqueta QR"
-                      >
-                        <QrCode className="w-3.5 h-3.5 text-fio-yellow" />
-                        <span>QR</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (window.confirm(`¿Eliminar ${prod.name} del inventario?`)) deleteProduct(prod.id);
-                        }}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-                        title="Eliminar producto"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      {isFeatureEnabled('inventory', 'product_crud') && (
+                        <button
+                          onClick={() => {
+                            setEditingProduct(prod);
+                            setIsNewProductModalOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-800 border border-purple-200 font-bubble text-xs shadow-2xs active:scale-95 transition-all"
+                          title="Modificar o editar artículo por completo"
+                        >
+                          <Pencil className="w-3.5 h-3.5 text-fio-pink" />
+                          <span>Editar</span>
+                        </button>
+                      )}
+                      {isFeatureEnabled('inventory', 'qr_labels') && (
+                        <button
+                          onClick={() => setQrModalProduct(prod)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs shadow-sm active:scale-95 transition-all"
+                          title="Generar etiqueta QR"
+                        >
+                          <QrCode className="w-3.5 h-3.5 text-fio-yellow" />
+                          <span>QR</span>
+                        </button>
+                      )}
+                      {isFeatureEnabled('inventory', 'product_crud') && (
+                        <button
+                          onClick={() => {
+                            if (window.confirm(`¿Eliminar ${prod.name} del inventario?`)) deleteProduct(prod.id);
+                          }}
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                          title="Eliminar producto"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
