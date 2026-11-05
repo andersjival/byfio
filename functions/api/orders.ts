@@ -33,25 +33,63 @@ const normalizeIsoDate = (val: string | undefined): string => {
   return val;
 };
 
-const mapRowToOrder = (r: OrderDbRow) => ({
-  id: r.id,
-  orderNumber: r.order_number,
-  customerName: r.customer_name,
-  customerPhone: r.customer_phone,
-  customerEmail: r.customer_email,
-  deliveryMethod: r.delivery_method,
-  shippingAddress: r.shipping_address,
-  paymentMethod: r.payment_method,
-  paymentStatus: r.payment_status,
-  orderStatus: r.order_status,
-  items: JSON.parse(r.items_json || '[]'),
-  subtotal: r.subtotal,
-  shippingFee: r.shipping_fee,
-  total: r.total,
-  notes: r.notes,
-  packedAt: r.packed_at ? normalizeIsoDate(r.packed_at) : undefined,
-  createdAt: normalizeIsoDate(r.created_at),
-});
+const healString = (val: string | undefined | null): string => {
+  if (!val) return '';
+  return val
+    .replace(/Sof[\uFFFD]a/g, 'Sofía')
+    .replace(/Jos[\uFFFD]/g, 'José')
+    .replace(/jos[\uFFFD]/g, 'josé')
+    .replace(/port[\uFFFD]n/g, 'portón')
+    .replace(/cumplea[\uFFFD]os/g, 'cumpleaños')
+    .replace(/cumplea[\uFFFD]o/g, 'cumpleaño')
+    .replace(/ci[\uFFFD]n/g, 'ción')
+    .replace(/CI[\uFFFD]N/g, 'CIÓN')
+    .replace(/si[\uFFFD]n/g, 'sión')
+    .replace(/SI[\uFFFD]N/g, 'SIÓN')
+    .replace(/m[\uFFFD]s/g, 'más')
+    .replace(/d[\uFFFD]a/g, 'día')
+    .replace(/a[\uFFFD]o/g, 'año')
+    .replace(/a[\uFFFD]os/g, 'años')
+    .replace(/dise[\uFFFD]o/g, 'diseño')
+    .replace(/[\uFFFD]/g, '');
+};
+
+const mapRowToOrder = (r: OrderDbRow) => {
+  let items = [];
+  try {
+    const rawItems = JSON.parse(r.items_json || '[]');
+    items = Array.isArray(rawItems)
+      ? rawItems.map((it: any) => ({
+          ...it,
+          name: healString(it.name),
+          customText: it.customText ? healString(it.customText) : it.customText,
+          shelfLocation: it.shelfLocation ? healString(it.shelfLocation) : it.shelfLocation,
+        }))
+      : [];
+  } catch {
+    items = [];
+  }
+
+  return {
+    id: r.id,
+    orderNumber: r.order_number,
+    customerName: healString(r.customer_name),
+    customerPhone: r.customer_phone,
+    customerEmail: r.customer_email,
+    deliveryMethod: r.delivery_method,
+    shippingAddress: r.shipping_address ? healString(r.shipping_address) : undefined,
+    paymentMethod: r.payment_method,
+    paymentStatus: r.payment_status,
+    orderStatus: r.order_status,
+    items,
+    subtotal: r.subtotal,
+    shippingFee: r.shipping_fee,
+    total: r.total,
+    notes: r.notes ? healString(r.notes) : undefined,
+    packedAt: r.packed_at ? normalizeIsoDate(r.packed_at) : undefined,
+    createdAt: normalizeIsoDate(r.created_at),
+  };
+};
 
 export const onRequestGet = async (context: { env: Env }) => {
   try {

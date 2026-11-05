@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.9.4 - Erradicación Universal de Caracteres Corruptos y Saneamiento UTF-8
+- [x] **Corrección de Codificación en Base de Datos Cloudflare D1 ([`users.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/users.ts), [`user-profiles.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/user-profiles.ts), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
+  - Identificada y erradicada la presencia de caracteres de reemplazo corruptos (`` / `\uFFFD`) almacenados en los registros remotos de D1 (`app_user_profiles` y pedidos históricos).
+  - Los endpoints de API ahora incorporan saneamiento automático (`healString` / `sanitizeProfilesData`) en lectura y escritura para garantizar acentos, eñes y caracteres en español perfectos.
+- [x] **Motor de Saneamiento Profundo en Frontend ([`sanitizeText.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/sanitizeText.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Creada la utilidad `deepSanitize` que detecta y repara automáticamente patrones mal codificados (ej. `"ATENCIN"` -> `"ATENCIÓN"`, `"Tibs"` -> `"Tibás"`, `"catlogo"` -> `"catálogo"`, `"rdenes"` -> `"órdenes"`, `"cumpleaos"` -> `"cumpleaños"`).
+  - Auto-reparación de la caché local (`localStorage`): Al arrancar la aplicación, si el navegador del cliente contiene datos locales previamente dañados, los sanea en memoria y sobreescribe el almacenamiento con la versión íntegra.
+
 ### Versión 4.13.0 - Módulo Independiente de Directorio de Clientes & Contactos
 - [x] **Módulo Dedicado de Clientes en Panel Admin ([`CustomersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx)):**
   - Creado el módulo independiente *"Directorio de Clientes"* en el panel de administración para registrar y consultar clientes frecuentes.

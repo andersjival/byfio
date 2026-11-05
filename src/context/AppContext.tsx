@@ -18,6 +18,7 @@ import { playAudioBeep } from '../utils/formatters';
 import { playNewOrderChimeSound } from '../utils/soundEffects';
 import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
+import { deepSanitize } from '../utils/sanitizeText';
 
 // Generador de número de orden secuencial garantizado libre de colisiones
 export const getNextOrderNumber = (ordersList: Order[]): string => {
@@ -351,22 +352,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [products, setProducts] = useState<Product[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
-    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    const initial = saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    const sanitized = deepSanitize(initial);
+    if (saved && JSON.stringify(sanitized) !== JSON.stringify(initial)) {
+      try { localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(sanitized)); } catch {}
+    }
+    return sanitized;
   });
 
   const [workshops, setWorkshops] = useState<Workshop[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.WORKSHOPS);
-    return saved ? JSON.parse(saved) : INITIAL_WORKSHOPS;
+    const initial = saved ? JSON.parse(saved) : INITIAL_WORKSHOPS;
+    const sanitized = deepSanitize(initial);
+    if (saved && JSON.stringify(sanitized) !== JSON.stringify(initial)) {
+      try { localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(sanitized)); } catch {}
+    }
+    return sanitized;
   });
 
   const [orders, setOrders] = useState<Order[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
-    return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+    const initial = saved ? JSON.parse(saved) : INITIAL_ORDERS;
+    const sanitized = deepSanitize(initial);
+    if (saved && JSON.stringify(sanitized) !== JSON.stringify(initial)) {
+      try { localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(sanitized)); } catch {}
+    }
+    return sanitized;
   });
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.CART);
-    return saved ? JSON.parse(saved) : [];
+    return saved ? deepSanitize(JSON.parse(saved)) : [];
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -515,10 +531,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const saved = localStorage.getItem(STORAGE_KEYS.USER_PROFILES);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const sanitized = deepSanitize(parsed);
+          if (JSON.stringify(sanitized) !== JSON.stringify(parsed)) {
+            try { localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(sanitized)); } catch {}
+          }
+          return sanitized;
+        }
       }
     } catch {}
-    return DEFAULT_USER_PROFILES;
+    return deepSanitize(DEFAULT_USER_PROFILES);
   });
 
   const syncProfilesToCloud = (profiles: UserProfile[]) => {
@@ -584,10 +606,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const saved = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const sanitized = deepSanitize(parsed);
+          if (JSON.stringify(sanitized) !== JSON.stringify(parsed)) {
+            try { localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(sanitized)); } catch {}
+          }
+          return sanitized;
+        }
       }
     } catch {}
-    return INITIAL_CUSTOMERS;
+    return deepSanitize(INITIAL_CUSTOMERS);
   });
 
   const [customerFieldDefs, setCustomerFieldDefs] = useState<CustomerFieldDef[]>(() => {
@@ -595,10 +623,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const saved = localStorage.getItem(STORAGE_KEYS.CUSTOMER_FIELDS);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const sanitized = deepSanitize(parsed);
+          if (JSON.stringify(sanitized) !== JSON.stringify(parsed)) {
+            try { localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(sanitized)); } catch {}
+          }
+          return sanitized;
+        }
       }
     } catch {}
-    return DEFAULT_CUSTOMER_FIELDS;
+    return deepSanitize(DEFAULT_CUSTOMER_FIELDS);
   });
 
   const addCustomer = (customerData: Omit<Customer, 'id' | 'createdAt'>): Customer => {
@@ -1410,12 +1444,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (Array.isArray(data) && data.length > 0) {
-            checkAndNotifyNewOrders(data);
+            const cleanData: Order[] = deepSanitize(data);
+            checkAndNotifyNewOrders(cleanData);
             setOrders((prev) => {
               const map = new Map<string, Order>();
-              prev.forEach((o) => map.set(o.id, o));
-              data.forEach((o: Order) => map.set(o.id, o));
-              const merged = Array.from(map.values()).sort(
+              prev.forEach((o) => map.set(o.id, deepSanitize(o)));
+              cleanData.forEach((o: Order) => map.set(o.id, deepSanitize(o)));
+              const merged = deepSanitize(Array.from(map.values())).sort(
                 (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
               );
               if (merged.length !== prev.length || JSON.stringify(merged) !== JSON.stringify(prev)) {
@@ -1476,13 +1511,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Carga inicial de perfiles de usuario
     const handleLoadedProfiles = (data: any) => {
       if (data && Array.isArray(data.profiles) && data.profiles.length > 0) {
-        const cloudProfiles: UserProfile[] = data.profiles;
+        const cloudProfiles: UserProfile[] = deepSanitize(data.profiles);
         setUserProfiles((prev) => {
           const map = new Map<string, UserProfile>();
-          DEFAULT_USER_PROFILES.forEach((p) => map.set(p.id, p));
-          prev.forEach((p) => map.set(p.id, p));
-          cloudProfiles.forEach((p) => map.set(p.id, p));
-          const merged = Array.from(map.values());
+          DEFAULT_USER_PROFILES.forEach((p) => map.set(p.id, deepSanitize(p)));
+          prev.forEach((p) => map.set(p.id, deepSanitize(p)));
+          cloudProfiles.forEach((p) => map.set(p.id, deepSanitize(p)));
+          const merged = deepSanitize(Array.from(map.values()));
           localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged));
           return merged;
         });
