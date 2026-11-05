@@ -2,11 +2,11 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer } from 'lucide-react';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star } from 'lucide-react';
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
-  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled } = useApp();
+  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled, showNewOrderAlert } = useApp();
   const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packing' | 'packed' | 'delivered'>('all');
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
@@ -102,6 +102,21 @@ export const OrdersQueue: React.FC = () => {
               <BellOff className="w-4 h-4 text-slate-400" />
             )}
             <span>{soundNewOrderEnabled ? 'Sonido: Activado' : 'Sonido: Silenciado'}</span>
+          </button>
+
+          {/* Botón Probar Notificación de la Estrellita */}
+          <button
+            type="button"
+            onClick={() => {
+              showNewOrderAlert({
+                orderNumber: pendingOrders[0]?.orderNumber || '#FIO-DEMO',
+              });
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-pink-200 bg-pink-50 text-fio-pink hover:bg-pink-100 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs"
+            title="Probar notificación animada de la estrellita"
+          >
+            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+            <span>Probar Estrellita</span>
           </button>
 
           <div className="flex items-center gap-2 bg-purple-50 text-purple-900 px-3 py-1.5 rounded-2xl border border-purple-200 text-xs font-semibold">

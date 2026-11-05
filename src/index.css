@@ -1795,6 +1795,41 @@ html.dark .geosoft-copyright-pill:hover {
 }
 
 /* =========================================================================
+   ANIMACIONES DE ALERTA DE NUEVO PEDIDO CON ESTRELLITA
+   ========================================================================= */
+@keyframes starAlertSlideDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  20% {
+    transform: translateY(-10px) scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(260px) scale(0.6);
+  }
+}
+
+.animate-star-alert-down {
+  animation: starAlertSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes starAlertProgress {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
+
+.animate-star-alert-progress {
+  animation: starAlertProgress 6.5s linear forwards;
+}
+
+/* =========================================================================
    REGLAS DE ADAPTACIÓN RESPONSIVA Y ERGONOMÍA MÓVIL (iOS / Android)
    ========================================================================= */
 @media (max-width: 640px) {

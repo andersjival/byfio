@@ -17,6 +17,7 @@ import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
 import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
+import { NewOrderStarAlert } from './components/common/NewOrderStarAlert';
 import { LoginModal } from './components/common/LoginModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { AdminHeader } from './components/admin/AdminHeader';
@@ -385,7 +386,17 @@ export const App: React.FC = () => {
                     ) : (
                       /* Si está dentro de una sección específica */
                       <>
-                        <AdminTabs activeTab={adminTab} setActiveTab={handleSelectAdminTab} />
+                        <div className="flex items-center justify-between gap-3 mb-4">
+                          <button
+                            type="button"
+                            onClick={() => handleSelectAdminTab('hub')}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white hover:bg-pink-50 text-fio-900 hover:text-fio-pink border border-slate-200/90 shadow-2xs font-bubble font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer"
+                            title="Volver al Menú Principal de Administración"
+                          >
+                            <ArrowLeft className="w-4 h-4 text-fio-pink" />
+                            <span>← Volver al Menú Principal</span>
+                          </button>
+                        </div>
 
                         {adminTab === 'orders' && <OrdersQueue />}
                         {adminTab === 'billing' && (
@@ -466,6 +477,7 @@ export const App: React.FC = () => {
         }}
       />
       <CartSuccessToast />
+      <NewOrderStarAlert />
       {/* El video intro solo debe cargar y mostrarse en la página principal (home) */}
       {currentRoute === 'home' && isIntroOpen && (
         <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />

@@ -180,6 +180,12 @@ export interface CartToastInfo {
   price?: number;
 }
 
+export interface NewOrderAlertInfo {
+  orderNumber?: string;
+  customerName?: string;
+  total?: number;
+}
+
 interface AppContextType {
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
@@ -192,6 +198,9 @@ interface AppContextType {
   cartToast: CartToastInfo | null;
   showCartSuccessToast: (info: CartToastInfo) => void;
   closeCartToast: () => void;
+  newOrderAlert: NewOrderAlertInfo | null;
+  showNewOrderAlert: (info?: NewOrderAlertInfo) => void;
+  closeNewOrderAlert: () => void;
   activePickingOrder: Order | null;
   setActivePickingOrder: (order: Order | null) => void;
   invoiceOrder: Order | null;
@@ -468,6 +477,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCartToast(null);
   };
 
+  const [newOrderAlert, setNewOrderAlert] = useState<NewOrderAlertInfo | null>(null);
+
+  const showNewOrderAlert = (info?: NewOrderAlertInfo) => {
+    setNewOrderAlert(info || {});
+  };
+
+  const closeNewOrderAlert = () => {
+    setNewOrderAlert(null);
+  };
+
   const [activePickingOrder, setActivePickingOrder] = useState<Order | null>(null);
   const [pickingMode, setPickingMode] = useState<'barcode' | 'manual'>('barcode');
   const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
@@ -575,16 +594,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
 
-    let hasNewOrder = false;
-    incomingOrders.forEach((o) => {
-      if (!knownOrderIdsRef.current.has(o.id)) {
-        knownOrderIdsRef.current.add(o.id);
-        hasNewOrder = true;
-      }
-    });
-
-    if (hasNewOrder) {
+    const newOrders = incomingOrders.filter((o) => !knownOrderIdsRef.current.has(o.id));
+    if (newOrders.length > 0) {
+      newOrders.forEach((o) => knownOrderIdsRef.current.add(o.id));
       playNewOrderChimeSound();
+      showNewOrderAlert({
+        orderNumber: newOrders[0].orderNumber,
+        customerName: newOrders[0].customerName,
+        total: newOrders[0].total,
+      });
     }
   };
 
@@ -952,6 +970,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     playNewOrderChimeSound();
+    showNewOrderAlert({
+      orderNumber: newOrder.orderNumber,
+      customerName: newOrder.customerName,
+      total: newOrder.total,
+    });
 
     fetch('/api/orders', {
       method: 'POST',
@@ -2085,6 +2108,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     playNewOrderChimeSound();
+    showNewOrderAlert({
+      orderNumber: newOrder.orderNumber,
+      customerName: newOrder.customerName,
+      total: newOrder.total,
+    });
 
     // Notificación en tiempo real (0ms) a todas las pestañas de administración y clientes
     try {
@@ -2672,6 +2700,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     playNewOrderChimeSound();
+    showNewOrderAlert({
+      orderNumber: newOrder.orderNumber,
+      customerName: newOrder.customerName,
+      total: newOrder.total,
+    });
 
     try {
       syncChannel?.postMessage({
@@ -3053,6 +3086,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cartToast,
         showCartSuccessToast,
         closeCartToast,
+        newOrderAlert,
+        showNewOrderAlert,
+        closeNewOrderAlert,
         addToCart,
         removeFromCart,
         updateCartQuantity,
