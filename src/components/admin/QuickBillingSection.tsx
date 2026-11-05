@@ -1463,123 +1463,125 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
           MODAL: AGREGAR O EDITAR CLIENTE EN EL DIRECTORIO
           ======================================================== */}
       {isCustomerModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 animate-fadeIn">
-          <div className="w-full max-w-lg bg-white dark:bg-[#1E1932] rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-white/10 space-y-4 my-auto">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 animate-fadeIn">
+          <div className="w-full max-w-lg bg-white dark:bg-[#1E1932] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-white/10 flex flex-col max-h-[92vh] sm:max-h-[90vh] overflow-hidden">
+            <div className="px-5 py-3.5 sm:py-4 flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 shrink-0">
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5 text-fio-purple" />
-                <h3 className="font-bubble font-bold text-lg text-slate-900 dark:text-white">
+                <h3 className="font-bubble font-bold text-base sm:text-lg text-slate-900 dark:text-white">
                   {editingCustomerId ? 'Editar Ficha de Cliente' : 'Registrar Nuevo Cliente'}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCustomerModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveCustomerModal} className="space-y-3">
-              <div>
-                <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Nombre Completo: <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. Sofía Brenes Mora"
-                  value={custModalName}
-                  onChange={(e) => setCustModalName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <form onSubmit={handleSaveCustomerModal} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-4 sm:p-5 space-y-3 overflow-y-auto flex-1">
                 <div>
                   <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                    Teléfono / WhatsApp: <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="Ej. 8823-9911"
-                    value={custModalPhone}
-                    onChange={(e) => setCustModalPhone(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                    Correo Electrónico:
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="cliente@correo.com"
-                    value={custModalEmail}
-                    onChange={(e) => setCustModalEmail(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Dirección de Envío:
-                </label>
-                <input
-                  type="text"
-                  placeholder="Provincia, cantón y señas exactas..."
-                  value={custModalAddress}
-                  onChange={(e) => setCustModalAddress(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
-                />
-              </div>
-
-              {/* Campos Dinámicos de la Ficha */}
-              {customerFieldDefs.map((def) => (
-                <div key={def.id}>
-                  <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                    {def.label}:
+                    Nombre Completo: <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
-                    placeholder={`Ingresa ${def.label.toLowerCase()}...`}
-                    value={custModalFields[def.id] || ''}
-                    onChange={(e) =>
-                      setCustModalFields({ ...custModalFields, [def.id]: e.target.value })
-                    }
+                    required
+                    placeholder="Ej. Sofía Brenes Mora"
+                    value={custModalName}
+                    onChange={(e) => setCustModalName(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
                   />
                 </div>
-              ))}
 
-              <div>
-                <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                  Notas Internas del Cliente:
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Preferencias de productos, pedidos habituales..."
-                  value={custModalNotes}
-                  onChange={(e) => setCustModalNotes(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                      Teléfono / WhatsApp: <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="Ej. 8823-9911"
+                      value={custModalPhone}
+                      onChange={(e) => setCustModalPhone(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                      Correo Electrónico:
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="cliente@correo.com"
+                      value={custModalEmail}
+                      onChange={(e) => setCustModalEmail(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Dirección de Envío:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Provincia, cantón y señas exactas..."
+                    value={custModalAddress}
+                    onChange={(e) => setCustModalAddress(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
+                  />
+                </div>
+
+                {/* Campos Dinámicos de la Ficha */}
+                {customerFieldDefs.map((def) => (
+                  <div key={def.id}>
+                    <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                      {def.label}:
+                    </label>
+                    <input
+                      type="text"
+                      placeholder={`Ingresa ${def.label.toLowerCase()}...`}
+                      value={custModalFields[def.id] || ''}
+                      onChange={(e) =>
+                        setCustModalFields({ ...custModalFields, [def.id]: e.target.value })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
+                    />
+                  </div>
+                ))}
+
+                <div>
+                  <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Notas Internas del Cliente:
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Preferencias de productos, pedidos habituales..."
+                    value={custModalNotes}
+                    onChange={(e) => setCustModalNotes(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#2A2444] border border-slate-200 dark:border-white/15 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400 resize-none"
+                  />
+                </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200 dark:border-white/10">
+              <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-white/5 border-t border-slate-200 dark:border-white/10 flex items-center justify-end gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsCustomerModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 dark:text-slate-300 text-xs font-bold"
+                  className="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 dark:text-slate-300 text-xs font-bold cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white font-bubble font-bold text-xs shadow-xs"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white font-bubble font-bold text-xs shadow-xs cursor-pointer hover:opacity-95 transition-all"
                 >
                   Guardar Ficha
                 </button>

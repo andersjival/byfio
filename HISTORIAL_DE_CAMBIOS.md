@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.3 - Optimización Responsiva del Modal Registrar Nuevo Cliente
+- [x] **Ajuste de Visualización sin Cortes de Pantalla ([`CustomersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx), [`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx)):**
+  - Se corrigió el problema de corte vertical en la ventana modal *"Registrar Nuevo Cliente"* en pantallas pequeñas, móviles y laptops.
+  - Implementada estructura de flex-column con altura máxima adaptable (`max-h-[92vh] sm:max-h-[90vh]`), cabecera fija (`shrink-0`), zona de campos con scroll interno independiente (`overflow-y-auto flex-1`) y barra inferior de botones fija (`shrink-0`).
+  - Los botones de *"Guardar Cliente"* y *"Cancelar"* ahora permanecen siempre visibles y accesibles en pantalla.
+
+### Versión 4.13.2 - Integración de Requisición de Inventario con Guardado en Agenda
+- [x] **Guardar Órdenes de Compra en Agenda ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - En la modal *"Orden de Compra & Requisición de Inventario"*, se reemplazó el enlace de *"Enviar Orden por WhatsApp a Proveedor"* por el botón interactivo *"Guardar en Agenda"*.
+  - Al pulsar, genera automáticamente una actividad de alta prioridad en la Agenda en la categoría `proveedor`, con fecha, hora, desglose de artículos y costo estimado, mostrando confirmación táctil `¡Guardado en Agenda!`.
+
 ### Versión 4.13.1 - Módulo de Agenda & Organizador de Tareas en Admin y Superadmin
 - [x] **Módulo Dedicado de Agenda en Admin ([`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
   - Implementado el módulo completo *"Agenda & Organizador de Tareas"* para planificación del taller, entregas de pedidos, compras de insumos, producción y recordatorios.

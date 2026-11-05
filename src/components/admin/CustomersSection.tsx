@@ -364,10 +364,10 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
 
       {/* Modal de Registro / Edición de Cliente */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border-2 border-fio-200 overflow-hidden">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4 animate-fadeIn">
+          <div className="relative w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border-2 border-fio-200 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]">
             {/* Header Modal */}
-            <div className="px-5 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-between">
+            <div className="px-5 py-3.5 sm:py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center">
                   <UserPlus className="w-4 h-4 text-white" />
@@ -384,119 +384,121 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Formulario */}
-            <form onSubmit={handleSaveCustomer} className="p-5 space-y-4">
-              {formError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bubble font-bold flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>{formError}</span>
-                </div>
-              )}
+            {/* Formulario con scroll independiente y footer fijo */}
+            <form onSubmit={handleSaveCustomer} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-4 sm:p-5 space-y-3 sm:space-y-3.5 overflow-y-auto flex-1">
+                {formError && (
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bubble font-bold flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                    <span>{formError}</span>
+                  </div>
+                )}
 
-              {/* Nombre Completo */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Nombre Completo <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Ej: Mariela Chaves Quesada"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                />
-              </div>
-
-              {/* Teléfono y Cédula */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Nombre Completo */}
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Teléfono / WhatsApp <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Ej: 8899-7711"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Cédula / Identificación
+                    Nombre Completo <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
-                    value={cedula}
-                    onChange={(e) => setCedula(e.target.value)}
-                    placeholder="Ej: 1-1244-0899"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Ej: Mariela Chaves Quesada"
+                    className="w-full px-3.5 py-2 sm:py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  />
+                </div>
+
+                {/* Teléfono y Cédula */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Teléfono / WhatsApp <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Ej: 8899-7711"
+                      className="w-full px-3.5 py-2 sm:py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Cédula / Identificación
+                    </label>
+                    <input
+                      type="text"
+                      value={cedula}
+                      onChange={(e) => setCedula(e.target.value)}
+                      placeholder="Ej: 1-1244-0899"
+                      className="w-full px-3.5 py-2 sm:py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    />
+                  </div>
+                </div>
+
+                {/* Correo Electrónico */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Correo Electrónico (opcional)
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="ejemplo@correo.com"
+                    className="w-full px-3.5 py-2 sm:py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  />
+                </div>
+
+                {/* Dirección de Entrega */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Dirección de Entrega / Envío (opcional)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Provincia, cantón, distrito y señas exactas..."
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
+                  />
+                </div>
+
+                {/* Notas del Cliente */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Notas / Observaciones de Pedidos (opcional)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Preferencias de productos, detalles de entrega, etc..."
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
                   />
                 </div>
               </div>
 
-              {/* Correo Electrónico */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Correo Electrónico (opcional)
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ejemplo@correo.com"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                />
-              </div>
-
-              {/* Dirección de Entrega */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Dirección de Entrega / Envío (opcional)
-                </label>
-                <textarea
-                  rows={2}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Provincia, cantón, distrito y señas exactas..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
-                />
-              </div>
-
-              {/* Notas del Cliente */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Notas / Observaciones de Pedidos (opcional)
-                </label>
-                <textarea
-                  rows={2}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Preferencias de productos, detalles de entrega, etc..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
-                />
-              </div>
-
-              {/* Botones del Modal */}
-              <div className="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-200">
+              {/* Botones del Modal Fijos en Footer */}
+              <div className="p-3.5 sm:p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-600 font-bubble font-bold text-xs hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 text-slate-600 font-bubble font-bold text-xs hover:bg-slate-100 transition-colors cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bubble font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bubble font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <Check className="w-4 h-4 text-emerald-200" />
                   <span>{editingCustomer ? 'Guardar Cambios' : 'Guardar Cliente'}</span>

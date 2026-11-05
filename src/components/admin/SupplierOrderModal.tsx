@@ -3,16 +3,17 @@ import { useApp } from '../../context/AppContext';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
 import {
   X, Printer, MessageCircle, AlertTriangle, CheckCircle,
-  Plus, Minus, Trash2, RefreshCw, FileText, Edit3, Eye
+  Plus, Minus, Trash2, RefreshCw, FileText, Edit3, Eye, Calendar
 } from 'lucide-react';
 
 export const SupplierOrderModal: React.FC = () => {
-  const { isSupplierModalOpen, setIsSupplierModalOpen, products } = useApp();
+  const { isSupplierModalOpen, setIsSupplierModalOpen, products, addAgendaItem } = useApp();
   const [customQuantities, setCustomQuantities] = useState<Record<string, number>>({});
   const [excludedIds, setExcludedIds] = useState<Set<string>>(new Set());
   const [additionalProductIds, setAdditionalProductIds] = useState<string[]>([]);
   const [selectedAddId, setSelectedAddId] = useState<string>('');
   const [viewMode, setViewMode] = useState<'editor' | 'document'>('editor');
+  const [savedInAgenda, setSavedInAgenda] = useState(false);
 
   // Activar clase de control en body para impresión de documento formal de hoja completa
   useEffect(() => {
@@ -125,6 +126,29 @@ export const SupplierOrderModal: React.FC = () => {
     setTimeout(() => {
       window.print();
     }, 50);
+  };
+
+  const handleSaveToAgenda = () => {
+    if (orderItems.length === 0) return;
+
+    const itemsSummary = orderItems
+      .map((it) => `${it.name} (${it.orderQty} uds, SKU: ${it.sku})`)
+      .slice(0, 4)
+      .join(' • ');
+    const moreCount = orderItems.length > 4 ? ` y ${orderItems.length - 4} más` : '';
+
+    addAgendaItem({
+      title: `Pedido a Proveedor (${orderDocNumber}): Reposición de ${totalReplenishUnits} artículos`,
+      date: new Date().toISOString().split('T')[0],
+      time: '10:00 AM',
+      category: 'proveedor',
+      priority: 'alta',
+      status: 'pending',
+      notes: `Requisición de ${orderItems.length} productos: ${itemsSummary}${moreCount}. Costo estimado: ${formatCRC(totalReplenishCost)}.`,
+    });
+
+    setSavedInAgenda(true);
+    setTimeout(() => setSavedInAgenda(false), 3500);
   };
 
   return (
@@ -613,15 +637,28 @@ export const SupplierOrderModal: React.FC = () => {
                 <span>Imprimir / Guardar Documento PDF</span>
               </button>
 
-              <a
-                href={getWhatsAppLink('64004640', generateWhatsAppMessage())}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95"
+              <button
+                type="button"
+                onClick={handleSaveToAgenda}
+                className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer ${
+                  savedInAgenda
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-gradient-to-r from-purple-700 to-pink-600 hover:from-purple-800 hover:to-pink-700 text-white'
+                }`}
+                title="Guardar esta orden de compra en la Agenda del Taller"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span>Enviar Orden por WhatsApp a Proveedor</span>
-              </a>
+                {savedInAgenda ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 text-emerald-200" />
+                    <span>¡Guardado en Agenda!</span>
+                  </>
+                ) : (
+                  <>
+                    <Calendar className="w-4 h-4 text-fio-yellow" />
+                    <span>Guardar en Agenda</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         )}
