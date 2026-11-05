@@ -4,7 +4,7 @@ import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
 import {
   Package, AlertTriangle, ShoppingCart, RefreshCw,
-  FileText, Palette, DollarSign, Landmark, Shield
+  FileText, Palette, DollarSign, Landmark, Shield, Truck
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -29,6 +29,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
     isModuleEnabled,
     currentUser,
     logoutUser,
+    supplierOrders,
   } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
 
@@ -116,17 +117,18 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
             </button>
           )}
 
-          {/* Lista de Compra */}
+          {/* Módulo Pedidos a Proveedor */}
           <button
             type="button"
-            onClick={() => setIsSupplierModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-semibold text-xs shadow-clayBtn transition-all active:scale-95"
+            onClick={() => onSelectTab ? onSelectTab('suppliers') : setIsSupplierModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bubble font-semibold text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer"
+            title="Ir al Módulo de Pedidos a Proveedor (Borradores e Historial)"
           >
-            <FileText className="w-3.5 h-3.5 text-fio-yellow" />
-            <span>Lista Proveedor</span>
-            {criticalProducts.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-fio-pink text-white text-[10px] font-bold">
-                {criticalProducts.length}
+            <Truck className="w-3.5 h-3.5 text-amber-200" />
+            <span>Pedidos Proveedor</span>
+            {supplierOrders?.filter((o: any) => o.status === 'draft' || o.status === 'ordered').length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-amber-950 text-amber-100 text-[10px] font-bold">
+                {supplierOrders.filter((o: any) => o.status === 'draft' || o.status === 'ordered').length}
               </span>
             )}
           </button>

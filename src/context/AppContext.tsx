@@ -57,6 +57,7 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
       users: true,
       customers: true,
       agenda: true,
+      suppliers: true,
     },
   },
   {
@@ -77,6 +78,7 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
       users: false,
       customers: true,
       agenda: true,
+      suppliers: true,
     },
   },
   {
@@ -97,6 +99,7 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
       users: false,
       customers: false,
       agenda: true,
+      suppliers: true,
     },
   },
   {
@@ -117,6 +120,7 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
       users: false,
       customers: true,
       agenda: true,
+      suppliers: true,
     },
   },
 ];
@@ -592,7 +596,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(parsed) && parsed.length > 0) {
           const map = new Map<string, UserProfile>();
           DEFAULT_USER_PROFILES.forEach((p) => map.set(p.id, deepSanitize(p)));
-          parsed.forEach((p: UserProfile) => map.set(p.id, deepSanitize(p)));
+          parsed.forEach((p: UserProfile) => {
+            const sanitized = deepSanitize(p);
+            map.set(p.id, {
+              ...sanitized,
+              permissions: {
+                ...sanitized.permissions,
+                suppliers: sanitized.permissions?.suppliers !== false,
+              },
+            });
+          });
           const merged = deepSanitize(Array.from(map.values()));
           if (JSON.stringify(merged) !== JSON.stringify(parsed)) {
             try { localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged)); } catch {}
@@ -1217,7 +1230,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
-      return saved ? JSON.parse(saved) : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            ...parsed,
+            permissions: {
+              suppliers: true,
+              ...(parsed.permissions || {}),
+            },
+          };
+        }
+      }
+      return null;
     } catch {
       return null;
     }
@@ -1229,6 +1254,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!currentUser) return false;
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
     if (tab === 'hub') return true;
+    if (tab === 'suppliers') {
+      if (currentUser.role === 'staff' && currentUser.permissions) {
+        return (currentUser.permissions as any)['suppliers'] !== false;
+      }
+      return true;
+    }
     if (currentUser.role === 'staff' && currentUser.permissions) {
       return Boolean((currentUser.permissions as any)[tab]);
     }
@@ -1302,7 +1333,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: found.id,
       name: found.name.toUpperCase(),
       role: found.role,
-      permissions: found.permissions,
+      permissions: {
+        ...found.permissions,
+        suppliers: found.permissions?.suppliers !== false,
+      },
       isMasterAdmin: found.role === 'admin',
     };
     setCurrentUser(staffUser);

@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.4 - Visibilidad Inmediata y Acceso Rápido al Módulo Pedidos Proveedor
+- [x] **Acceso Directo desde la Barra Superior ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Actualizado el botón de cabecera con el rótulo claro *"Pedidos Proveedor"*, icono `Truck` y badge con el conteo de pedidos activos para entrar directamente a la sección desde cualquier pantalla.
+- [x] **Claridad en Pestañas ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx)):**
+  - Renombrada la pestaña administrativa de *"Proveedores"* a *"Pedidos Proveedor"* para que sea inmediatamente reconocible frente a otros módulos.
+- [x] **Blindaje Universal de Permisos de Sesión ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Ajustado `hasPermission` y la inicialización de sesiones guardadas en `localStorage` para asignar `suppliers: true` por defecto a todos los roles y perfiles existentes (Administración, María, Alisto, Mostrador), evitando que sesiones anteriores ocultaran el módulo.
+
 ### Versión 4.14.3 - Selector y Creador Dinámico de Ubicaciones en Estante (WMS)
 - [x] **Selector y Creación Dinámica de Ubicaciones ([`NewProductModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx)):**
   - Implementado selector desplegable de ubicaciones en estante que unifica las estanterías por defecto, las ubicaciones utilizadas por los productos existentes y las ubicaciones personalizadas guardadas.

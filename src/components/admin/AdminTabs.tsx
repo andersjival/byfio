@@ -247,7 +247,7 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
             title="Pedidos a Proveedores, Borradores e Historial"
           >
             <Truck className="w-4 h-4 text-amber-500 shrink-0" />
-            <span className="truncate">Proveedores</span>
+            <span className="truncate">Pedidos Proveedor</span>
             {supplierOrders.filter((o: SupplierOrder) => o.status === 'draft' || o.status === 'ordered').length > 0 && (
               <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-white ml-0.5 shrink-0">
                 {supplierOrders.filter((o: SupplierOrder) => o.status === 'draft' || o.status === 'ordered').length}
