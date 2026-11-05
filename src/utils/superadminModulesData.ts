@@ -153,6 +153,34 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
     ],
   },
   {
+    id: 'agenda',
+    name: 'Agenda & Organizador de Tareas',
+    category: 'Operaciones & WMS',
+    description: 'Calendario de actividades del taller, cronograma de entregas, lista de pendientes y recordatorios.',
+    iconName: 'Calendar',
+    enabled: true,
+    features: [
+      {
+        id: 'agenda_calendar',
+        name: 'Calendario y Cronograma de Actividades',
+        description: 'Planificación de entregas, pedidos especiales, sesiones de diseño y fechas límite.',
+        enabled: true,
+      },
+      {
+        id: 'agenda_tasks',
+        name: 'Lista de Tareas Rápidas (To-Do)',
+        description: 'Gestión de pendientes diarios con marcado de completado y estados de prioridad.',
+        enabled: true,
+      },
+      {
+        id: 'agenda_sync_workshops',
+        name: 'Sincronización Automática con Talleres',
+        description: 'Muestra automáticamente los talleres creativos programados en el calendario de la agenda.',
+        enabled: true,
+      },
+    ],
+  },
+  {
     id: 'missing_inventory',
     name: 'Faltantes de Inventario',
     category: 'Operaciones & WMS',

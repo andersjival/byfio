@@ -40,6 +40,7 @@ import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
 import { AdminPricingModal } from './components/admin/AdminPricingModal';
 import { SinpePaymentsSection } from './components/admin/SinpePaymentsSection';
+import { AgendaSection } from './components/admin/AgendaSection';
 
 import { MetricsPage } from './components/admin/MetricsPage';
 import { PropuestaPage } from './components/propuesta/PropuestaPage';
@@ -408,6 +409,7 @@ export const App: React.FC = () => {
                             }}
                           />
                         )}
+                        {adminTab === 'agenda' && <AgendaSection />}
                       </>
                     )}
                   </div>

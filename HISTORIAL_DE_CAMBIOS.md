@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.1 - Módulo de Agenda & Organizador de Tareas en Admin y Superadmin
+- [x] **Módulo Dedicado de Agenda en Admin ([`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
+  - Implementado el módulo completo *"Agenda & Organizador de Tareas"* para planificación del taller, entregas de pedidos, compras de insumos, producción y recordatorios.
+  - Gestión completa de tareas con fechas, horas, niveles de prioridad (alta, media, baja) y categorías visuales.
+  - Checkbox interactivo circular para completar tareas al instante con efectos visuales y filtros rápidos por fecha ("Hoy", "Esta Semana", "Pendientes", "Completadas").
+  - Sincronización automática con talleres creativos de By.Fio para ver cursos programados directamente en el calendario.
+- [x] **Integración Granular en Superadmin ([`superadminModulesData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
+  - Creado el módulo `"agenda"` (`Agenda & Organizador de Tareas`) en la categoría *Operaciones & WMS* con funcionalidades configurables: *"Calendario y Cronograma de Actividades"*, *"Lista de Tareas Rápidas (To-Do)"* y *"Sincronización Automática con Talleres"*.
+  - Sincronización remota y persistencia en Cloudflare D1 mediante el endpoint `/api/agenda`.
+- [x] **Pestañas y Accesos ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx)):**
+  - Añadido el tab *"Agenda"* con contador en vivo de tareas pendientes.
+  - Tarjeta de acceso directo en el Menú Principal (Hub) y asignación de permisos por perfil de usuario.
+
 ### Versión 4.9.4 - Erradicación Universal de Caracteres Corruptos y Saneamiento UTF-8
 - [x] **Corrección de Codificación en Base de Datos Cloudflare D1 ([`users.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/users.ts), [`user-profiles.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/user-profiles.ts), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
   - Identificada y erradicada la presencia de caracteres de reemplazo corruptos (`` / `\uFFFD`) almacenados en los registros remotos de D1 (`app_user_profiles` y pedidos históricos).

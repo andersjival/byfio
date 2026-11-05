@@ -4,7 +4,7 @@ import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
-  BarChart3, Lock, UserCheck
+  BarChart3, Lock, UserCheck, Calendar
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -15,7 +15,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate }) => {
-  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, currentUser } = useApp();
+  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, currentUser, agendaItems } = useApp();
   const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
@@ -111,6 +111,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       badgeClass: 'bg-emerald-100 text-emerald-900',
       icon: UserCheck,
       gradient: 'from-[#10B981] to-[#047857]',
+    },
+    {
+      id: 'agenda' as AdminTabType,
+      title: 'Agenda & Tareas',
+      badge: `${agendaItems.filter((i) => i.status === 'pending').length} pendientes`,
+      badgeClass: 'bg-purple-100 text-purple-900 font-bold',
+      icon: Calendar,
+      gradient: 'from-[#D946EF] to-[#8B5CF6]',
     },
   ];
 

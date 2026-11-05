@@ -4,7 +4,7 @@ import { UserProfile, UserPermissions } from '../../types';
 import {
   Users, Plus, KeyRound, Shield, Check, X, Edit3, Trash2,
   CheckCircle2, AlertCircle, Copy, Eye, EyeOff, Star,
-  QrCode, Receipt, Boxes, Landmark, GraduationCap, Tag, UserCheck
+  QrCode, Receipt, Boxes, Landmark, GraduationCap, Tag, UserCheck, Calendar
 } from 'lucide-react';
 
 export const UserProfilesSection: React.FC = () => {
@@ -170,6 +170,7 @@ export const UserProfilesSection: React.FC = () => {
     { key: 'pricing', label: 'Precios & Stickers', desc: 'Lista oficial y editor de tarifas de stickers', icon: Tag },
     { key: 'users', label: 'Gestión de Perfiles', desc: 'Crear, editar o revocar accesos a otros usuarios', icon: Users },
     { key: 'customers', label: 'Directorio de Clientes', desc: 'Registro de clientes y fichas para pedidos', icon: UserCheck },
+    { key: 'agenda', label: 'Agenda & Tareas', desc: 'Acceso al organizador del taller y calendario', icon: Calendar },
   ];
 
   const allChecked = Object.values(permissions).every((v) => v);

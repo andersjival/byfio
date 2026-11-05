@@ -4,10 +4,11 @@ import {
   TypographyTheme, ColorTheme, PricingSectionData, AuthUser,
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
-  SuperadminModuleConfig, SuperadminSubFeature
+  SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
+import { INITIAL_AGENDA_ITEMS, AGENDA_STORAGE_KEY } from '../utils/agendaData';
 import {
   SUPERADMIN_CREDENTIALS,
   SUPERADMIN_STORAGE_KEY,
@@ -301,6 +302,11 @@ interface AppContextType {
   setAllSuperadminModules: (enabled: boolean) => void;
   isModuleEnabled: (moduleIdOrAlias: string) => boolean;
   isFeatureEnabled: (moduleId: string, featureId: string) => boolean;
+  agendaItems: AgendaItem[];
+  addAgendaItem: (item: Omit<AgendaItem, 'id' | 'createdAt'>) => AgendaItem;
+  updateAgendaItem: (id: string, updates: Partial<AgendaItem>) => void;
+  deleteAgendaItem: (id: string) => void;
+  toggleAgendaItemStatus: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -327,6 +333,7 @@ const STORAGE_KEYS = {
   SINPE_SETTINGS: 'byfio_sinpe_settings_v1',
   MISSING_INVENTORY: 'byfio_missing_inventory_v1',
   SUPERADMIN_MODULES: SUPERADMIN_STORAGE_KEY,
+  AGENDA_ITEMS: AGENDA_STORAGE_KEY,
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -676,6 +683,72 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = customerFieldDefs.filter((f) => f.id !== id);
     setCustomerFieldDefs(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(updated));
+  };
+
+  // -------------------------------------------------------------
+  // ESTADO Y MÉTODOS DE AGENDA Y ORGANIZADOR DE TAREAS
+  // -------------------------------------------------------------
+  const [agendaItems, setAgendaItems] = useState<AgendaItem[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.AGENDA_ITEMS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return deepSanitize(parsed);
+        }
+      }
+    } catch {}
+    return deepSanitize(INITIAL_AGENDA_ITEMS);
+  });
+
+  const saveAgendaItems = (items: AgendaItem[]) => {
+    const sanitized = deepSanitize(items);
+    setAgendaItems(sanitized);
+    try {
+      localStorage.setItem(STORAGE_KEYS.AGENDA_ITEMS, JSON.stringify(sanitized));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', agendaItems: sanitized });
+    } catch {}
+    // Sincronización en la nube Cloudflare D1
+    try {
+      fetch('/api/agenda', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: sanitized }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const addAgendaItem = (itemData: Omit<AgendaItem, 'id' | 'createdAt'>): AgendaItem => {
+    const newItem: AgendaItem = {
+      ...itemData,
+      id: `agenda-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      createdAt: new Date().toISOString(),
+    };
+    saveAgendaItems([newItem, ...agendaItems]);
+    return newItem;
+  };
+
+  const updateAgendaItem = (id: string, updates: Partial<AgendaItem>) => {
+    const updated = agendaItems.map((item) => (item.id === id ? { ...item, ...updates } : item));
+    saveAgendaItems(updated);
+  };
+
+  const deleteAgendaItem = (id: string) => {
+    const updated = agendaItems.filter((item) => item.id !== id);
+    saveAgendaItems(updated);
+  };
+
+  const toggleAgendaItemStatus = (id: string) => {
+    const updated = agendaItems.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          status: (item.status === 'completed' ? 'pending' : 'completed') as AgendaStatus,
+        };
+      }
+      return item;
+    });
+    saveAgendaItems(updated);
   };
 
   const createDirectInvoiceOrder = (orderData: {
@@ -1340,6 +1413,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(event.data.superadminModules)) {
           setSuperadminModules(mergeSuperadminModules(event.data.superadminModules));
         }
+        if (Array.isArray(event.data.agendaItems)) {
+          setAgendaItems(deepSanitize(event.data.agendaItems));
+        }
       }
     };
 
@@ -1497,6 +1573,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   localStorage.setItem(STORAGE_KEYS.SUPERADMIN_MODULES, JSON.stringify(merged));
                 } catch {}
                 return merged;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+
+      // 5. Sincronizar agenda de actividades y tareas en la nube
+      fetch('/api/agenda')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data?.items) && data.items.length > 0) {
+            setAgendaItems((prev) => {
+              const sanitized = deepSanitize(data.items);
+              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.AGENDA_ITEMS, JSON.stringify(sanitized));
+                } catch {}
+                return sanitized;
               }
               return prev;
             });
@@ -2782,6 +2877,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setAllSuperadminModules,
         isModuleEnabled,
         isFeatureEnabled,
+        agendaItems,
+        addAgendaItem,
+        updateAgendaItem,
+        deleteAgendaItem,
+        toggleAgendaItemStatus,
       }}
     >
       {children}

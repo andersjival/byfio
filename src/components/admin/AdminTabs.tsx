@@ -1,8 +1,8 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Package, FileText, QrCode, DollarSign, GraduationCap, Tag, Users, Landmark, UserCheck } from 'lucide-react';
+import { Package, FileText, QrCode, DollarSign, GraduationCap, Tag, Users, Landmark, UserCheck, Calendar } from 'lucide-react';
 
-export type AdminTabType = 'hub' | 'orders' | 'billing' | 'inventory' | 'reports' | 'sinpe' | 'workshops' | 'pricing' | 'users' | 'customers';
+export type AdminTabType = 'hub' | 'orders' | 'billing' | 'inventory' | 'reports' | 'sinpe' | 'workshops' | 'pricing' | 'users' | 'customers' | 'agenda';
 
 interface AdminTabsProps {
   activeTab: AdminTabType;
@@ -10,7 +10,7 @@ interface AdminTabsProps {
 }
 
 export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab }) => {
-  const { orders, products, userProfiles, customers, hasPermission, sinpeTransactions } = useApp();
+  const { orders, products, userProfiles, customers, hasPermission, sinpeTransactions, agendaItems } = useApp();
 
   const pendingCount = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking').length;
   const criticalCount = products.filter((p) => p.stock <= p.minStock).length;
@@ -206,6 +206,28 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
             {customers.length > 0 && (
               <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-600 text-white ml-0.5 shrink-0">
                 {customers.length}
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Tab 9: Agenda & Tareas */}
+        {hasPermission('agenda') && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('agenda')}
+            className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2.5 rounded-2xl text-xs sm:text-sm font-bubble font-bold transition-all text-center select-none active:scale-95 ${
+              activeTab === 'agenda'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01]'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-purple-600 hover:bg-purple-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+            }`}
+            title="Agenda del Taller & Organizador de Tareas"
+          >
+            <Calendar className="w-4 h-4 text-purple-600 shrink-0" />
+            <span className="truncate">Agenda</span>
+            {agendaItems.filter((i) => i.status === 'pending').length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-fio-yellow text-fio-900 ml-0.5 shrink-0">
+                {agendaItems.filter((i) => i.status === 'pending').length}
               </span>
             )}
           </button>

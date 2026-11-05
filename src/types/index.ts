@@ -198,6 +198,24 @@ export interface UserPermissions {
   pricing: boolean;    // Precios & Stickers
   users: boolean;      // Gestión de Perfiles
   customers?: boolean; // Directorio de Clientes
+  agenda?: boolean;    // Agenda & Organizador de Tareas
+}
+
+export type AgendaCategory = 'taller' | 'entrega' | 'produccion' | 'proveedor' | 'recordatorio';
+export type AgendaPriority = 'alta' | 'media' | 'baja';
+export type AgendaStatus = 'pending' | 'completed';
+
+export interface AgendaItem {
+  id: string;
+  title: string;
+  date: string; // YYYY-MM-DD
+  time?: string; // Ej: "10:00 AM" o "14:30"
+  category: AgendaCategory;
+  priority: AgendaPriority;
+  status: AgendaStatus;
+  notes?: string;
+  isAutoWorkshop?: boolean;
+  createdAt: string;
 }
 
 export interface UserProfile {

@@ -1,0 +1,61 @@
+import { AgendaItem } from '../types';
+
+export const AGENDA_STORAGE_KEY = 'byfio_agenda_items_v1';
+
+export const INITIAL_AGENDA_ITEMS: AgendaItem[] = [
+  {
+    id: 'agenda-1',
+    title: 'Preparar kits e insumos para Taller de Agendas 2027',
+    date: new Date().toISOString().split('T')[0],
+    time: '09:00 AM',
+    category: 'taller',
+    priority: 'alta',
+    status: 'pending',
+    notes: 'Verificar cartón prensado, hojas punteadas y espirales metálicos.',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'agenda-2',
+    title: 'Despacho de pedidos de papelería en Correos de Costa Rica',
+    date: new Date().toISOString().split('T')[0],
+    time: '02:00 PM',
+    category: 'entrega',
+    priority: 'alta',
+    status: 'pending',
+    notes: 'Imprimir guías y verificar números de rastreo para los clientes.',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'agenda-3',
+    title: 'Producción de portadas laminadas y grabado en foil',
+    date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    time: '10:30 AM',
+    category: 'produccion',
+    priority: 'media',
+    status: 'pending',
+    notes: 'Lote de agendas personalizadas para maestras y profesionales.',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'agenda-4',
+    title: 'Revisión y pedido de reposición de viniles con proveedor',
+    date: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+    time: '11:00 AM',
+    category: 'proveedor',
+    priority: 'media',
+    status: 'pending',
+    notes: 'Consultar disponibilidad de vinil holográfico y cartulinas especiales.',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'agenda-5',
+    title: 'Arqueo de caja y conciliación de pagos SINPE BCR',
+    date: new Date().toISOString().split('T')[0],
+    time: '05:30 PM',
+    category: 'recordatorio',
+    priority: 'baja',
+    status: 'completed',
+    notes: 'Verificar que todos los comprobantes bancarios coincidan.',
+    createdAt: new Date().toISOString(),
+  },
+];
