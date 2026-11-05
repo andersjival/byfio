@@ -24,7 +24,7 @@ interface ProductDbRow {
 
 const mapRowToProduct = (r: ProductDbRow) => {
   const isAvail = r.is_available !== null && r.is_available !== undefined
-    ? (Number(r.is_available) === 1 || r.is_available === true)
+    ? Number(r.is_available) === 1
     : true;
 
   return {

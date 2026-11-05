@@ -17,12 +17,31 @@ export const SuppliersOrdersSection: React.FC = () => {
     updateSupplierOrderStatus,
     products,
     setIsSupplierModalOpen,
+    agendaItems,
+    addAgendaItem,
   } = useApp();
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'draft' | 'ordered' | 'received'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
   const [viewingOrder, setViewingOrder] = useState<SupplierOrder | null>(null);
+
+  const handleSaveToAgenda = (order: SupplierOrder) => {
+    const isAlreadyInAgenda = agendaItems?.some(
+      (item) => item.title.includes(order.orderNumber) || (item.notes && item.notes.includes(order.orderNumber))
+    );
+    if (isAlreadyInAgenda) return;
+
+    addAgendaItem({
+      title: `Pedido a Proveedor (${order.orderNumber}): ${order.supplierName}`,
+      date: new Date().toISOString().split('T')[0],
+      time: '10:00 AM',
+      category: 'proveedor',
+      priority: order.status === 'draft' ? 'alta' : 'media',
+      status: 'pending',
+      notes: `Requisición de ${order.items.length} productos (${order.totalUnits} uds) para ${order.supplierName}. Total: ${formatCRC(order.totalCost)}. Estado: ${order.status === 'draft' ? 'Por pedir' : 'Pedido realizado'}. Ref: ${order.orderNumber}`,
+    });
+  };
 
   // Modal para Crear Nuevo Pedido a Proveedor Directo
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -565,6 +584,29 @@ export const SuppliersOrdersSection: React.FC = () => {
                         <span>Enviar por WhatsApp</span>
                       </a>
                     )}
+
+                    {/* Botón Guardar en Agenda */}
+                    {agendaItems?.some((item) => item.title.includes(order.orderNumber) || (item.notes && item.notes.includes(order.orderNumber))) ? (
+                      <button
+                        type="button"
+                        disabled={true}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bubble font-bold cursor-not-allowed opacity-90 shadow-2xs"
+                        title="Este pedido ya fue guardado en la Agenda del Taller"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>Guardado en Agenda</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleSaveToAgenda(order)}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-bubble text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer"
+                        title="Guardar este pedido en la Agenda del Taller"
+                      >
+                        <Calendar className="w-4 h-4 text-purple-700" />
+                        <span>Guardar en Agenda</span>
+                      </button>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2 justify-end">
@@ -897,6 +939,28 @@ export const SuppliersOrdersSection: React.FC = () => {
             </div>
 
             <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2 shrink-0">
+              {agendaItems?.some((item) => item.title.includes(viewingOrder.orderNumber) || (item.notes && item.notes.includes(viewingOrder.orderNumber))) ? (
+                <button
+                  type="button"
+                  disabled={true}
+                  className="px-3.5 py-2 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 font-bubble text-xs font-bold cursor-not-allowed opacity-90 flex items-center gap-1.5"
+                  title="Este pedido ya fue guardado en la Agenda del Taller"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Guardado en Agenda</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleSaveToAgenda(viewingOrder)}
+                  className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                  title="Guardar este pedido en la Agenda del Taller"
+                >
+                  <Calendar className="w-4 h-4 text-purple-200" />
+                  <span>Guardar en Agenda</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={() => window.print()}

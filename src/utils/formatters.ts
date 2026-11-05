@@ -1,9 +1,10 @@
 export const formatCRC = (amount: number): string => {
+  const safe = Number(amount) || 0;
   return new Intl.NumberFormat('es-CR', {
     style: 'currency',
     currency: 'CRC',
     maximumFractionDigits: 0,
-  }).format(amount).replace('CRC', '₡');
+  }).format(safe).replace('CRC', '₡');
 };
 
 export const formatShortDate = (isoString: string): string => {
@@ -31,9 +32,9 @@ export const formatShortDate = (isoString: string): string => {
 };
 
 export const getWhatsAppLink = (phone: string, text: string): string => {
-  const cleanPhone = phone.replace(/\D/g, '');
+  const cleanPhone = phone ? String(phone).replace(/\D/g, '') : '';
   const prefix = cleanPhone.startsWith('506') ? cleanPhone : `506${cleanPhone}`;
-  return `https://wa.me/${prefix}?text=${encodeURIComponent(text)}`;
+  return `https://wa.me/${prefix}?text=${encodeURIComponent(text || '')}`;
 };
 
 /**

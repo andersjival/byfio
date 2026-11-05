@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 export const SupplierOrderModal: React.FC = () => {
-  const { isSupplierModalOpen, setIsSupplierModalOpen, products, addAgendaItem, addSupplierOrder } = useApp();
+  const { isSupplierModalOpen, setIsSupplierModalOpen, products, addAgendaItem, addSupplierOrder, agendaItems } = useApp();
   const [customQuantities, setCustomQuantities] = useState<Record<string, number>>({});
   const [excludedIds, setExcludedIds] = useState<Set<string>>(new Set());
   const [additionalProductIds, setAdditionalProductIds] = useState<string[]>([]);
@@ -114,6 +114,16 @@ export const SupplierOrderModal: React.FC = () => {
     return `OC-${todayStr}-${orderItems.length}`;
   }, [orderItems.length]);
 
+  const isAlreadyInAgenda = useMemo(() => {
+    if (savedInAgenda) return true;
+    if (!agendaItems || agendaItems.length === 0) return false;
+    return agendaItems.some(
+      (item) =>
+        item.title.includes(orderDocNumber) ||
+        (item.notes && item.notes.includes(orderDocNumber))
+    );
+  }, [savedInAgenda, agendaItems, orderDocNumber]);
+
   const currentDateFormatted = useMemo(() => {
     return new Date().toLocaleDateString('es-CR', {
       day: '2-digit',
@@ -130,7 +140,7 @@ export const SupplierOrderModal: React.FC = () => {
   };
 
   const handleSaveToAgenda = () => {
-    if (orderItems.length === 0) return;
+    if (orderItems.length === 0 || isAlreadyInAgenda) return;
 
     const itemsSummary = orderItems
       .map((it) => `${it.name} (${it.orderQty} uds, SKU: ${it.sku})`)
@@ -145,11 +155,10 @@ export const SupplierOrderModal: React.FC = () => {
       category: 'proveedor',
       priority: 'alta',
       status: 'pending',
-      notes: `Requisición de ${orderItems.length} productos: ${itemsSummary}${moreCount}. Costo estimado: ${formatCRC(totalReplenishCost)}.`,
+      notes: `Requisición de ${orderItems.length} productos: ${itemsSummary}${moreCount}. Costo estimado: ${formatCRC(totalReplenishCost)}. Ref: ${orderDocNumber}`,
     });
 
     setSavedInAgenda(true);
-    setTimeout(() => setSavedInAgenda(false), 3500);
   };
 
   const handleSaveToSupplierOrders = (status: 'draft' | 'ordered') => {
@@ -727,17 +736,22 @@ export const SupplierOrderModal: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSaveToAgenda}
-                className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer ${
-                  savedInAgenda
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-gradient-to-r from-fio-pink to-purple-600 hover:opacity-90 text-white'
+                disabled={isAlreadyInAgenda}
+                className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl font-bubble text-xs font-bold shadow-md transition-all ${
+                  isAlreadyInAgenda
+                    ? 'bg-emerald-700/90 text-white cursor-not-allowed opacity-90 shadow-none'
+                    : 'bg-gradient-to-r from-fio-pink to-purple-600 hover:opacity-90 text-white active:scale-95 cursor-pointer'
                 }`}
-                title="Guardar esta orden de compra en la Agenda del Taller"
+                title={
+                  isAlreadyInAgenda
+                    ? 'Este pedido ya fue guardado en la Agenda del Taller'
+                    : 'Guardar esta orden de compra en la Agenda del Taller'
+                }
               >
-                {savedInAgenda ? (
+                {isAlreadyInAgenda ? (
                   <>
                     <CheckCircle className="w-4 h-4 text-emerald-200" />
-                    <span>¡En Agenda!</span>
+                    <span>Guardado en Agenda</span>
                   </>
                 ) : (
                   <>

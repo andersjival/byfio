@@ -1285,15 +1285,68 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       suppliers: true,
     };
 
-    // PIN Maestro de Fio (7777 o 0777) o PIN Superadmin (2026, 9999, 1234)
-    if (
-      cleanPin === '7777' ||
-      cleanPin === '0777' ||
-      cleanPin === '2026' ||
-      cleanPin === '9999' ||
-      cleanPin === '1234' ||
-      (targetProfileName && targetProfileName.toUpperCase().includes('SUPER'))
-    ) {
+    // 1. Si se especificó un perfil concreto en la pantalla de selección
+    if (targetProfileName) {
+      if (targetProfileName.toUpperCase().includes('SUPER') && (cleanPin === '7777' || cleanPin === '9999' || cleanPin === '0777')) {
+        const superAdminUser: AuthUser = {
+          email: 'superadmin@byfio.com',
+          name: 'SUPERADMIN MAESTRO',
+          role: 'admin',
+          isMasterAdmin: true,
+          permissions: fullPermissions,
+        };
+        setCurrentUser(superAdminUser);
+        setIsSuperAdminAuthenticated(true);
+        try {
+          localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(superAdminUser));
+          localStorage.setItem(SUPERADMIN_AUTH_KEY, 'true');
+        } catch {}
+        return { success: true, user: superAdminUser };
+      }
+
+      const expected = userProfiles.find(
+        (p) => p.isActive && p.name.toUpperCase() === targetProfileName.trim().toUpperCase()
+      );
+      if (expected) {
+        if (expected.pin !== cleanPin && cleanPin !== '7777' && cleanPin !== '9999') {
+          return { success: false, error: 'Código PIN incorrecto para este perfil.' };
+        }
+        const userObj: AuthUser = {
+          id: expected.id,
+          name: expected.name.toUpperCase(),
+          role: expected.role,
+          permissions: {
+            ...expected.permissions,
+            suppliers: expected.permissions?.suppliers !== false,
+          },
+          isMasterAdmin: expected.role === 'admin',
+        };
+        setCurrentUser(userObj);
+        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(userObj));
+        return { success: true, user: userObj };
+      }
+    }
+
+    // 2. Si no se especificó perfil, buscar primero entre los perfiles creados por su PIN exacto
+    const matchedProfile = userProfiles.find((p) => p.isActive && p.pin === cleanPin);
+    if (matchedProfile) {
+      const userObj: AuthUser = {
+        id: matchedProfile.id,
+        name: matchedProfile.name.toUpperCase(),
+        role: matchedProfile.role,
+        permissions: {
+          ...matchedProfile.permissions,
+          suppliers: matchedProfile.permissions?.suppliers !== false,
+        },
+        isMasterAdmin: matchedProfile.role === 'admin',
+      };
+      setCurrentUser(userObj);
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(userObj));
+      return { success: true, user: userObj };
+    }
+
+    // 3. Códigos maestros globales de Superadmin (7777, 0777, 9999)
+    if (cleanPin === '7777' || cleanPin === '0777' || cleanPin === '9999') {
       const superAdminUser: AuthUser = {
         email: 'superadmin@byfio.com',
         name: 'SUPERADMIN MAESTRO',
@@ -1310,38 +1363,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true, user: superAdminUser };
     }
 
-    let found = userProfiles.find((p) => p.isActive && p.pin === cleanPin);
-
-    // Si se especificó nombre de perfil, validar que el PIN pertenezca a ese perfil
-    if (targetProfileName) {
-      const expected = userProfiles.find(
-        (p) => p.isActive && p.name.toUpperCase() === targetProfileName.trim().toUpperCase()
-      );
-      if (expected) {
-        if (expected.pin !== cleanPin) {
-          return { success: false, error: 'Código PIN incorrecto para este perfil.' };
-        }
-        found = expected;
-      }
-    }
-
-    if (!found) {
-      return { success: false, error: 'Código PIN incorrecto o no asignado a ningún perfil de usuario activo.' };
-    }
-
-    const staffUser: AuthUser = {
-      id: found.id,
-      name: found.name.toUpperCase(),
-      role: found.role,
-      permissions: {
-        ...found.permissions,
-        suppliers: found.permissions?.suppliers !== false,
-      },
-      isMasterAdmin: found.role === 'admin',
-    };
-    setCurrentUser(staffUser);
-    localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(staffUser));
-    return { success: true, user: staffUser };
+    return { success: false, error: 'Código PIN incorrecto o no asignado a ningún perfil de usuario activo.' };
   };
 
   const loginUser = (emailInput: string, passwordInput: string) => {

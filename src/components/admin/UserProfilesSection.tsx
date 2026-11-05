@@ -64,6 +64,8 @@ export const UserProfilesSection: React.FC = () => {
       pricing: false,
       users: false,
       customers: false,
+      agenda: false,
+      suppliers: false,
     });
     setFormError(null);
     setIsModalOpen(true);
@@ -75,7 +77,18 @@ export const UserProfilesSection: React.FC = () => {
     setPin(profile.pin);
     setNote(profile.note || '');
     setIsActive(profile.isActive);
-    setPermissions({ ...profile.permissions });
+    setPermissions({
+      orders: !!profile.permissions?.orders,
+      billing: !!profile.permissions?.billing,
+      inventory: !!profile.permissions?.inventory,
+      reports: !!profile.permissions?.reports,
+      workshops: !!profile.permissions?.workshops,
+      pricing: !!profile.permissions?.pricing,
+      users: !!profile.permissions?.users,
+      customers: !!profile.permissions?.customers,
+      agenda: profile.permissions?.agenda !== undefined ? !!profile.permissions.agenda : true,
+      suppliers: profile.permissions?.suppliers !== undefined ? !!profile.permissions.suppliers : true,
+    });
     setFormError(null);
     setIsModalOpen(true);
   };
@@ -90,6 +103,8 @@ export const UserProfilesSection: React.FC = () => {
       pricing: grantAll,
       users: grantAll,
       customers: grantAll,
+      agenda: grantAll,
+      suppliers: grantAll,
     });
   };
 
@@ -247,8 +262,9 @@ export const UserProfilesSection: React.FC = () => {
           const isRevealed = !!revealedPins[prof.id];
           const isCopied = copiedId === prof.id;
 
-          const grantedCount = Object.values(prof.permissions).filter(Boolean).length;
-          const totalCount = Object.keys(prof.permissions).length;
+          const perms = prof.permissions || {} as UserPermissions;
+          const grantedCount = Object.values(perms).filter(Boolean).length;
+          const totalCount = permissionModules.length;
           const isAlistoProfile = prof.id === 'prof-alisto' || prof.name.toUpperCase().includes('ALISTO');
 
           return (
@@ -355,7 +371,7 @@ export const UserProfilesSection: React.FC = () => {
 
                   <div className="flex flex-wrap gap-1.5">
                     {permissionModules.map((mod) => {
-                      const hasIt = prof.permissions[mod.key];
+                      const hasIt = !!perms[mod.key];
                       const Icon = mod.icon;
 
                       return (
@@ -554,7 +570,7 @@ export const UserProfilesSection: React.FC = () => {
 
                 <div className="space-y-2">
                   {permissionModules.map((mod) => {
-                    const isChecked = permissions[mod.key];
+                    const isChecked = !!permissions[mod.key];
                     const Icon = mod.icon;
 
                     return (
