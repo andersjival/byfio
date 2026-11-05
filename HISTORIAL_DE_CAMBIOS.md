@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.5 - Transición de Estado a Empaque y Nueva Pestaña de Filtro Empacados
+- [x] **Flujo Completo En Empaque → Empacado ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`index.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts)):**
+  - Los pedidos que finalizan alisto pasan a estado *"En Empaque"* (`packing`) mostrando la etiqueta de empaque y el botón de acción *"Marcar Empacado"*.
+  - Al pulsar *"Marcar Empacado"*, el pedido pasa a estado *"Empacado"* (`packed`), mostrando la etiqueta verde de empacado y habilitando el botón *"Marcar Entregado"*.
+- [x] **Nueva Pestaña de Filtro Rápido *"Empacados"* ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
+  - Se agregó la pestaña de filtro dedicada *"Empacados"* con conteo en tiempo real, permitiendo aislar y gestionar de forma independiente los pedidos que ya fueron empacados y esperan retiro o entrega.
+
 ### Versión 4.13.4 - Reubicación Ergonómica del Botón Cerrar en Requisición de Inventario
 - [x] **Reubicación Dual de Cierre ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
   - Se desacopló el botón de cierre de la barra de herramientas y se ancló fijamente en la esquina superior derecha (`absolute top-3.5 right-3.5`) con badge circular blanco y sombra sutil para acceso inmediato y ergonómico.

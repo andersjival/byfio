@@ -1934,8 +1934,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const updatedOrder: Order = {
           ...order,
           items: updatedItems,
-          orderStatus: allPicked ? 'packed' : 'picking',
-          packedAt: allPicked ? new Date().toISOString() : order.packedAt,
+          orderStatus: allPicked ? 'packing' : 'picking',
+          packedAt: allPicked ? (order.packedAt || new Date().toISOString()) : order.packedAt,
         };
 
         updatedActiveOrder = updatedOrder;
@@ -2020,7 +2020,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         completedOrder = {
           ...order,
           items: updatedItems,
-          orderStatus: 'packed',
+          orderStatus: 'packing',
           packedAt: now,
         };
         if (activePickingOrder?.id === orderId) {
@@ -2031,7 +2031,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id: orderId,
-            orderStatus: 'packed',
+            orderStatus: 'packing',
             packedAt: now,
             items: updatedItems,
           }),
@@ -2093,8 +2093,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const updatedOrder: Order = {
           ...order,
           items: updatedItems,
-          orderStatus: allProcessed ? 'packed' : 'picking',
-          packedAt: allProcessed ? new Date().toISOString() : order.packedAt,
+          orderStatus: allProcessed ? 'packing' : 'picking',
+          packedAt: allProcessed ? (order.packedAt || new Date().toISOString()) : order.packedAt,
         };
 
         updatedActiveOrder = updatedOrder;
@@ -2150,7 +2150,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
-    const packedAt = newStatus === 'packed' ? new Date().toISOString() : undefined;
+    const packedAt = (newStatus === 'packing' || newStatus === 'packed') ? new Date().toISOString() : undefined;
     let updatedOrders: Order[] = [];
     setOrders((prev) => {
       updatedOrders = prev.map((o) =>

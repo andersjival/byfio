@@ -7,14 +7,17 @@ import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
   const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled } = useApp();
-  const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packed' | 'delivered'>('all');
+  const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packing' | 'packed' | 'delivered'>('all');
 
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
+  const packingOrders = orders.filter((o) => o.orderStatus === 'packing');
   const packedOrders = orders.filter((o) => o.orderStatus === 'packed');
   const deliveredOrders = orders.filter((o) => o.orderStatus === 'delivered');
 
   const displayedOrders = filterMode === 'pending'
     ? pendingOrders
+    : filterMode === 'packing'
+    ? packingOrders
     : filterMode === 'packed'
     ? packedOrders
     : filterMode === 'delivered'
@@ -27,11 +30,18 @@ export const OrdersQueue: React.FC = () => {
         return <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Pendiente de Alisto</span>;
       case 'picking':
         return <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 animate-pulse">En Alisto QR Activo</span>;
-      case 'packed':
+      case 'packing':
         return (
           <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shadow-xs">
             <Package className="w-3.5 h-3.5 text-amber-700" />
             <span>En Empaque</span>
+          </span>
+        );
+      case 'packed':
+        return (
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1 shadow-xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+            <span>Empacado</span>
           </span>
         );
       case 'delivered':
@@ -136,9 +146,9 @@ export const OrdersQueue: React.FC = () => {
 
         <button
           type="button"
-          onClick={() => setFilterMode('packed')}
+          onClick={() => setFilterMode('packing')}
           className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-            filterMode === 'packed'
+            filterMode === 'packing'
               ? 'bg-amber-500 text-white shadow-xs'
               : 'text-slate-700 hover:text-amber-800'
           }`}
@@ -147,7 +157,27 @@ export const OrdersQueue: React.FC = () => {
           <span>En Empaque</span>
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-              filterMode === 'packed' ? 'bg-white text-amber-800' : 'bg-amber-100 text-amber-900'
+              filterMode === 'packing' ? 'bg-white text-amber-800' : 'bg-amber-100 text-amber-900'
+            }`}
+          >
+            {packingOrders.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setFilterMode('packed')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+            filterMode === 'packed'
+              ? 'bg-emerald-600 text-white shadow-xs'
+              : 'text-slate-700 hover:text-emerald-700'
+          }`}
+        >
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          <span>Empacados</span>
+          <span
+            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+              filterMode === 'packed' ? 'bg-white text-emerald-800' : 'bg-emerald-100 text-emerald-900'
             }`}
           >
             {packedOrders.length}
@@ -186,7 +216,7 @@ export const OrdersQueue: React.FC = () => {
           const totalItems = order.items.length;
           const pickedItems = order.items.filter((it) => it.isPicked).length;
           const progressPercent = Math.round((pickedItems / totalItems) * 100);
-          const isFinished = order.orderStatus === 'packed' || order.orderStatus === 'delivered';
+          const isFinished = order.orderStatus === 'packing' || order.orderStatus === 'packed' || order.orderStatus === 'delivered';
 
           return (
             <div
@@ -293,6 +323,18 @@ export const OrdersQueue: React.FC = () => {
                         <Printer className="w-4 h-4 text-fio-yellow" />
                         <span>Generar / Ver Factura</span>
                       </button>
+
+                      {order.orderStatus === 'packing' && (
+                        <button
+                          type="button"
+                          onClick={() => updateOrderStatus(order.id, 'packed')}
+                          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                          title="Marcar pedido como empacado"
+                        >
+                          <Package className="w-4 h-4 text-amber-200" />
+                          <span>Marcar Empacado</span>
+                        </button>
+                      )}
 
                       {order.orderStatus === 'packed' && (
                         <button

@@ -80,7 +80,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
   }, 0);
 
   const estimatedProfit = Math.max(0, totalCashIn - totalCost);
-  const completedOrders = filteredOrders.filter((o) => o.orderStatus === 'packed' || o.orderStatus === 'delivered');
+  const completedOrders = filteredOrders.filter((o) => o.orderStatus === 'packing' || o.orderStatus === 'packed' || o.orderStatus === 'delivered');
   const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
 
   return (

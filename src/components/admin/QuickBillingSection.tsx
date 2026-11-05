@@ -379,7 +379,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
   };
 
   const handleBillAndOpenExisting = (order: Order) => {
-    if (order.orderStatus === 'pending' || order.orderStatus === 'picking') {
+    if (order.orderStatus === 'pending' || order.orderStatus === 'picking' || order.orderStatus === 'packing') {
       updateOrderStatus(order.id, 'packed');
       setSelectedExistingOrder({ ...order, orderStatus: 'packed' });
     }

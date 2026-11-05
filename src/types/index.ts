@@ -131,7 +131,8 @@ export interface InventoryMissingReport {
 export type OrderStatus =
   | 'pending' // Pendiente de Alisto
   | 'picking' // En Alisto
-  | 'packed' // Empacado / Facturado
+  | 'packing' // En Empaque
+  | 'packed' // Empacado
   | 'delivered'; // Entregado
 
 export type PaymentMethod = 'sinpe' | 'transferencia' | 'tarjeta' | 'efectivo';
