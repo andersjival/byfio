@@ -8,6 +8,7 @@ export interface ConfirmDialogProps {
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: 'danger' | 'warning' | 'info';
+  isAlert?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -15,14 +16,18 @@ export interface ConfirmDialogProps {
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   open,
   message,
-  title = '¿Estás segura?',
-  confirmLabel = 'Confirmar',
+  title,
+  confirmLabel,
   cancelLabel = 'Cancelar',
   variant = 'danger',
+  isAlert = false,
   onConfirm,
   onCancel,
 }) => {
   if (!open) return null;
+
+  const defaultTitle = isAlert ? 'Notificación' : '¿Estás segura?';
+  const defaultConfirmLabel = isAlert ? 'Entendido' : 'Confirmar';
 
   const variantStyles = {
     danger: {
@@ -58,7 +63,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
               {variantStyles.icon}
             </div>
             <h3 className="font-bubble font-bold text-base text-slate-900 leading-tight">
-              {title}
+              {title || defaultTitle}
             </h3>
           </div>
           <button
@@ -79,19 +84,21 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
         {/* Footer */}
         <div className="px-5 pb-5 flex items-center justify-end gap-2.5">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 rounded-2xl border border-slate-300 text-slate-600 font-bubble font-bold text-xs hover:bg-slate-100 transition-colors cursor-pointer"
-          >
-            {cancelLabel}
-          </button>
+          {!isAlert && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 rounded-2xl border border-slate-300 text-slate-600 font-bubble font-bold text-xs hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              {cancelLabel}
+            </button>
+          )}
           <button
             type="button"
             onClick={onConfirm}
             className={`px-5 py-2 rounded-2xl font-bubble font-bold text-xs transition-all active:scale-95 cursor-pointer ${variantStyles.btn}`}
           >
-            {confirmLabel}
+            {confirmLabel || defaultConfirmLabel}
           </button>
         </div>
       </div>

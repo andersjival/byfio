@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.15.1 - Eliminación del Submenú de Pestañas y Reemplazo por Barra Limpia
+- [x] **Eliminación del Submenú Horizontal ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx)):**
+  - Eliminado por completo el contenedor neumórfico con la fila comprimida de 11 botones y badges (`Pedi...`, `Factura...`, `Inventa...`, etc.) que colapsaba y saturaba la pantalla.
+  - Reemplazado por una barra de navegación limpia y de una sola línea con botón directo *"← Volver al Menú Principal"* y breadcrumb indicador de sección actual.
+  - La navegación entre módulos se realiza de forma ordenada y espaciosa desde el Menú Principal (Hub), erradicando el desbordamiento en dispositivos móviles y de escritorio.
+
 ### Versión 4.15.0 - Sistema Global de Diálogos de Confirmación Profesionales
 - [x] **Reemplazo de alertas nativas por `ConfirmDialog` ([`ConfirmDialog.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/ui/ConfirmDialog.tsx), [`ConfirmContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/ConfirmContext.tsx), [`useConfirm.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/useConfirm.ts), [`main.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx)):**
   - Creado sistema reactivo con hook `useConfirm()` y modal de confirmación con variantes visuales (`danger`, `warning`, `info`) con estética corporativa By.Fio para sustituir el `window.confirm` nativo del navegador.
