@@ -563,9 +563,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const sanitized = deepSanitize(parsed);
-          const hasAdmin = sanitized.some((p: any) => p.id === 'prof-admin' || p.pin === '7777');
-          const merged = hasAdmin ? sanitized : [DEFAULT_USER_PROFILES[0], ...sanitized];
+          const map = new Map<string, UserProfile>();
+          DEFAULT_USER_PROFILES.forEach((p) => map.set(p.id, deepSanitize(p)));
+          parsed.forEach((p: UserProfile) => map.set(p.id, deepSanitize(p)));
+          const merged = deepSanitize(Array.from(map.values()));
           if (JSON.stringify(merged) !== JSON.stringify(parsed)) {
             try { localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged)); } catch {}
           }
@@ -1624,12 +1625,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           }
         })
         .catch(() => {});
+      // 6. Sincronizar perfiles de usuario en tiempo real con bypass de caché
+      const cacheBuster = `?_t=${Date.now()}`;
+      fetch(`/api/users${cacheBuster}`, { cache: 'no-store' })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.profiles?.length) {
+            handleLoadedProfiles(data);
+          } else {
+            fetch(`/api/user-profiles${cacheBuster}`, { cache: 'no-store' })
+              .then((res) => (res.ok ? res.json() : null))
+              .then((d) => d?.profiles?.length && handleLoadedProfiles(d))
+              .catch(() => {});
+          }
+        })
+        .catch(() => {});
     };
 
-    // Carga inicial inmediata
-    fetchLatestData();
-
-    // Carga inicial de perfiles de usuario
+    // Carga de perfiles de usuario garantizando los 3 perfiles maestros
     const handleLoadedProfiles = (data: any) => {
       if (data && Array.isArray(data.profiles) && data.profiles.length > 0) {
         const cloudProfiles: UserProfile[] = deepSanitize(data.profiles);
@@ -1639,30 +1652,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           prev.forEach((p) => map.set(p.id, deepSanitize(p)));
           cloudProfiles.forEach((p) => map.set(p.id, deepSanitize(p)));
           const merged = deepSanitize(Array.from(map.values()));
-          localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged));
-          return merged;
+          if (JSON.stringify(prev) !== JSON.stringify(merged)) {
+            try {
+              localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged));
+            } catch {}
+            return merged;
+          }
+          return prev;
         });
       }
     };
 
-    fetch('/api/users')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.profiles?.length) {
-          handleLoadedProfiles(data);
-        } else {
-          fetch('/api/user-profiles')
-            .then((res) => (res.ok ? res.json() : null))
-            .then(handleLoadedProfiles)
-            .catch(() => {});
-        }
-      })
-      .catch(() => {
-        fetch('/api/user-profiles')
-          .then((res) => (res.ok ? res.json() : null))
-          .then(handleLoadedProfiles)
-          .catch(() => {});
-      });
+    // Carga inicial inmediata
+    fetchLatestData();
 
     // Temporizador inteligente: 8s únicamente si la pestaña está activa y visible
     let pollingTimer: ReturnType<typeof setInterval> | null = null;

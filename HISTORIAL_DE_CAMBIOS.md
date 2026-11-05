@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.9 - Sincronización Automática Continua y Bypass de Caché para Perfiles
+- [x] **Fusión Forzosa y Polling Continuo ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`users.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/users.ts), [`user-profiles.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/user-profiles.ts)):**
+  - Implementado mapa de fusión defensiva en el estado inicial de `userProfiles` para inyectar automáticamente el perfil de Administración aunque el navegador mantenga caché de 2 perfiles.
+  - Integrada la sincronización de perfiles en `fetchLatestData` (con polling inteligente cada 8s y al enfocar la ventana) con parámetros de bypass de caché (`?_t=timestamp`, `cache: 'no-store'`) y cabeceras `Cache-Control: no-store` en los endpoints D1.
+
+
 ### Versión 4.13.8 - Limpieza Visual en Cabecera del Panel de Control
 - [x] **Eliminación de Texto Técnico ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
   - Removido el rótulo superior `"Sistema WMS / ERP Ligero"` de la cabecera del panel de administración para un encabezado más limpio, directo y enfocado en la marca By.Fio.
