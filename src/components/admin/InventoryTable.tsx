@@ -4,7 +4,7 @@ import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   QrCode, AlertOctagon, Plus, Minus, Search, MapPin,
-  PlusCircle, Trash2, Pencil, Boxes, Sparkles, ToggleLeft,
+  PlusCircle, Trash2, Pencil, Boxes, ToggleLeft,
   ToggleRight, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck
 } from 'lucide-react';
 
@@ -119,10 +119,8 @@ export const InventoryTable: React.FC = () => {
       {/* Control Switch / Selector de Modo de Inventario */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-4 bg-gradient-to-r from-purple-50/80 via-fio-50/90 to-pink-50/70 rounded-2xl border border-fio-200 mb-5 shadow-2xs">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-xs transition-colors ${
-            inventoryMode === 'stock' ? 'bg-fio-800 text-white' : 'bg-emerald-600 text-white'
-          }`}>
-            {inventoryMode === 'stock' ? <Boxes className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+          <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-xs transition-colors bg-fio-800 text-white">
+            <Boxes className="w-5 h-5 text-fio-yellow" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -132,7 +130,7 @@ export const InventoryTable: React.FC = () => {
                   ? 'bg-purple-100 text-fio-800 border-purple-200'
                   : 'bg-emerald-100 text-emerald-800 border-emerald-300'
               }`}>
-                {inventoryMode === 'stock' ? '📦 Inventario Real con Stock Numérico' : '✨ Inventario por Disponibilidad Rápida'}
+                {inventoryMode === 'stock' ? '📦 Inventario Real con Stock Numérico' : '📋 Inventario por Disponibilidad Rápida'}
               </span>
             </div>
             <p className="text-[11px] text-gray-500 mt-0.5">

@@ -5,7 +5,7 @@ import {
   ArrowRight, ShieldCheck, Share2, ExternalLink, RefreshCw,
   ShoppingBag, BookOpen, Star, Award, Tag, GraduationCap, Home,
   Info, AlertCircle, Globe, Filter, Eye, CheckCircle2,
-  Receipt, Boxes, Landmark, QrCode, Users, Layers, Shield, Sparkles
+  Receipt, Boxes, Landmark, QrCode, Users, Layers, Shield
 } from 'lucide-react';
 import { metricsTracker } from '../../services/metricsTracker';
 import { MetricsState, TrackedLink, AppRoute } from '../../types';

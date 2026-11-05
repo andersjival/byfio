@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import { parseBcrSinpeEmail, SAMPLE_BCR_SINPE_EMAILS } from '../../utils/bcrSinpeParser';
 import {
   CheckCircle2, AlertTriangle, Mail, ShieldCheck,
-  Sparkles, Copy, Check, Trash2, ArrowRight, DollarSign,
+  Copy, Check, Trash2, ArrowRight, DollarSign,
   GraduationCap, ShoppingBag, Landmark, Phone, Calendar, Hash,
   RefreshCw, Send, CheckCircle, ExternalLink, Search, ShieldAlert
 } from 'lucide-react';
@@ -308,7 +308,7 @@ export const SinpePaymentsSection: React.FC = () => {
               : 'bg-white text-slate-800 hover:text-purple-700 hover:bg-purple-50 shadow-xs border border-slate-300/80'
           }`}
         >
-          <Sparkles className={`w-3.5 h-3.5 ${activeTab === 'extract' ? 'text-amber-300' : 'text-purple-600'}`} />
+          <Mail className={`w-3.5 h-3.5 ${activeTab === 'extract' ? 'text-amber-300' : 'text-purple-600'}`} />
           <span>Extraer &amp; Acreditar Correo BCR</span>
         </button>
 
@@ -499,7 +499,7 @@ export const SinpePaymentsSection: React.FC = () => {
                   onClick={handleProcessEmail}
                   className="px-5 py-2.5 rounded-xl bg-purple-800 hover:bg-purple-900 text-white font-bubble font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  <Mail className="w-4 h-4 text-amber-300" />
                   <span>Procesar y Extraer Datos del Correo</span>
                 </button>
               </div>

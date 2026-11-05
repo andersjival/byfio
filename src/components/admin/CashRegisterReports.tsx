@@ -4,7 +4,7 @@ import { formatCRC } from '../../utils/formatters';
 import {
   DollarSign, TrendingUp, Calendar, CheckCircle2, AlertCircle,
   FileSpreadsheet, Landmark, ShoppingBag, GraduationCap,
-  Sparkles, ExternalLink, ShieldCheck, Mail
+  ExternalLink, ShieldCheck, Mail
 } from 'lucide-react';
 
 interface CashRegisterReportsProps {
@@ -266,7 +266,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
             onClick={onNavigateToSinpe || (() => setIsSinpeModalOpen(true))}
             className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 text-xs font-bubble font-bold transition-all active:scale-95 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-purple-700" />
+            <Landmark className="w-3.5 h-3.5 text-purple-700" />
             <span>Módulo de Pagos SINPE BCR →</span>
           </button>
         </div>

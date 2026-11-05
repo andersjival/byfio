@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Lock, User, Eye, EyeOff, Sparkles, ArrowLeft } from 'lucide-react';
+import { Shield, Lock, User, Eye, EyeOff, Key, ArrowLeft } from 'lucide-react';
 import { SUPERADMIN_CREDENTIALS } from '../../utils/superadminModulesData';
 
 interface SuperadminLoginProps {
@@ -60,7 +60,7 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
               onClick={handleFillDemo}
               className="text-fio-yellow hover:text-white underline cursor-pointer inline-flex items-center gap-1"
             >
-              <Sparkles className="w-3 h-3 text-fio-yellow" />
+              <Key className="w-3 h-3 text-fio-yellow" />
               <span>Autocompletar</span>
             </button>
           </div>
@@ -81,7 +81,7 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
           }}
           className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-bubble font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30 active:scale-98 transition-all mb-4 cursor-pointer relative z-10"
         >
-          <Sparkles className="w-4 h-4 text-fio-yellow" />
+          <Shield className="w-4 h-4 text-fio-yellow" />
           <span>⚡ Entrar como Superadmin (1 Clic directo)</span>
         </button>
 
@@ -152,7 +152,7 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
               onClick={handleFillDemo}
               className="inline-flex items-center gap-1 text-pink-300 hover:text-pink-200 underline underline-offset-2 transition-colors cursor-pointer"
             >
-              <Sparkles className="w-3 h-3 text-fio-yellow" />
+              <Key className="w-3 h-3 text-fio-yellow" />
               <span>Autocompletar credenciales oficiales</span>
             </button>
           </div>

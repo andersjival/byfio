@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import {
   GraduationCap, Users, ChevronDown, ChevronUp, Phone, Hash,
   Calendar, Plus, Link2, Trash2, CheckCircle2, ExternalLink, Pencil,
-  Landmark, ShieldCheck, Sparkles, DollarSign
+  Landmark, ShieldCheck, DollarSign
 } from 'lucide-react';
 
 interface WorkshopEnrollmentsSectionProps {
@@ -212,7 +212,7 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
               onClick={onNavigateToSinpe || (() => setIsSinpeModalOpen(true))}
               className="px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-purple-950 font-bubble text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 self-start sm:self-auto active:scale-95 cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Landmark className="w-3.5 h-3.5" />
               <span>Módulo Pagos SINPE BCR →</span>
             </button>
           </div>

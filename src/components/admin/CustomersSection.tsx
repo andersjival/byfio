@@ -5,7 +5,7 @@ import { Customer } from '../../types';
 import {
   Users, UserPlus, Search, Phone, Mail, MapPin, FileText, Edit2,
   Trash2, X, Check, ShoppingBag, MessageCircle, CreditCard,
-  Calendar, CheckCircle2, AlertCircle, Sparkles, Building2
+  Calendar, CheckCircle2, AlertCircle, Building2
 } from 'lucide-react';
 import { formatShortDate } from '../../utils/formatters';
 

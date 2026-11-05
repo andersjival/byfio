@@ -6,7 +6,7 @@ import {
   Calendar as CalendarIcon, CheckCircle2, Circle, Clock, Plus,
   Trash2, Edit3, Search, GraduationCap, Package, Scissors,
   Truck, Bell, X, CalendarDays, LayoutList, LayoutGrid,
-  ChevronDown, ChevronUp, Sparkles, AlertCircle, Check, ArrowRight
+  ChevronDown, ChevronUp, AlertCircle, Check, ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 

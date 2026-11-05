@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, Heart, Sparkles, ShoppingBag } from 'lucide-react';
+import { X, Heart, Star, ShoppingBag } from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
 export const NewOrderStarAlert: React.FC = () => {
@@ -92,7 +92,7 @@ export const NewOrderStarAlert: React.FC = () => {
 
         {/* Etiqueta superior */}
         <div className="mt-3.5 flex items-center justify-center gap-1.5 text-xs font-bubble font-bold text-fio-pink dark:text-pink-300">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+          <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
           <span>by.fio Notificaciones</span>
         </div>
 

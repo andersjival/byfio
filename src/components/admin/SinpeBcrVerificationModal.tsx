@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import { parseBcrSinpeEmail, SAMPLE_BCR_SINPE_EMAILS } from '../../utils/bcrSinpeParser';
 import {
   X, CheckCircle2, AlertTriangle, Mail, ShieldCheck,
-  Sparkles, Copy, Check, Trash2, ArrowRight, DollarSign,
+  Copy, Check, Trash2, ArrowRight, DollarSign,
   GraduationCap, ShoppingBag, Landmark, Phone, Calendar, Hash
 } from 'lucide-react';
 
@@ -202,7 +202,7 @@ export const SinpeBcrVerificationModal: React.FC<SinpeBcrVerificationModalProps>
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+            <Mail className="w-3.5 h-3.5 text-purple-600" />
             <span>Extraer &amp; Acreditar Correo</span>
           </button>
 
@@ -313,7 +313,7 @@ export const SinpeBcrVerificationModal: React.FC<SinpeBcrVerificationModalProps>
                     onClick={handleProcessEmail}
                     className="px-4 py-2 rounded-xl bg-purple-800 hover:bg-purple-900 text-white font-bubble font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-300" />
                     <span>⚡ Extraer Datos del Correo</span>
                   </button>
                 </div>

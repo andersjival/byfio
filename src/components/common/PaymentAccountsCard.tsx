@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Copy, Check, Smartphone, Building2, MessageCircle, ShieldCheck,
-  AlertTriangle, RefreshCw, Sparkles, Hash, ArrowRight
+  AlertTriangle, RefreshCw, Hash, ArrowRight
 } from 'lucide-react';
 import { formatCRC } from '../../utils/formatters';
 
