@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.7 - Rediseño Ejecutivo y Profesional de la Agenda WMS
+- [x] **Rediseño Neumórfico Ejecutivo ([`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
+  - Transformada la interfaz a estándar B2B neumórfico con paleta institucional, superficies suaves (`shadow-neuCard`), campos inset (`shadow-neuInset`) y tipografía corporativa equilibrada.
+  - Incorporadas 4 tarjetas KPI ejecutivas: Total de Actividades, Actividades Para Hoy con pulso de atención inmediata, Efectividad con porcentaje y barra de progreso animada, y Talleres Sincronizados.
+  - Implementado selector de vista dual: **Vista Lista Cronológica** (con agrupación inteligente en *Para Hoy & Prioritarias*, *Próximos Días*, *Fechas Posteriores* y acordeón de *Completadas*) y **Vista Cuadrícula de Tarjetas**.
+  - Rediseñada la modal de creación/edición con selector visual interactivo de 5 categorías con iconos, selector de prioridad en 3 niveles y atajos de fecha rápida.
+
 ### Versión 4.14.6 - Integración Completa del Módulo Pedidos a Proveedor en Panel Super Admin
 - [x] **Consola Maestra de Pedidos a Proveedor en Super Admin ([`SuperadminSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):**
   - Implementado selector de vistas superior para alternar instantáneamente entre el *"Gestor Maestro de Módulos"* y *"Pedidos a Proveedor"* dentro de la consola del Super Admin.

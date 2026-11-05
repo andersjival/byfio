@@ -1,56 +1,76 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { AgendaItem, AgendaCategory, AgendaPriority, AgendaStatus } from '../../types';
+import { AgendaItem, AgendaCategory, AgendaPriority } from '../../types';
 import {
   Calendar as CalendarIcon, CheckCircle2, Circle, Clock, Plus,
-  Trash2, Edit3, Filter, Search, Tag, Sparkles, AlertCircle,
-  GraduationCap, Package, Scissors, Truck, Bell, Check, X,
-  ChevronRight, CalendarDays, ListTodo
+  Trash2, Edit3, Search, GraduationCap, Package, Scissors,
+  Truck, Bell, X, CalendarDays, LayoutList, LayoutGrid,
+  ChevronDown, ChevronUp, Sparkles, AlertCircle, Check, ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-const CATEGORY_CONFIG: Record<AgendaCategory, { label: string; icon: any; color: string; bg: string; border: string }> = {
+const CATEGORY_CONFIG: Record<AgendaCategory, { label: string; icon: any; color: string; bg: string; border: string; dot: string }> = {
   taller: {
     label: 'Taller Creativo',
     icon: GraduationCap,
-    color: 'text-purple-700',
-    bg: 'bg-purple-50',
-    border: 'border-purple-200',
+    color: 'text-purple-700 dark:text-purple-300',
+    bg: 'bg-purple-50 dark:bg-purple-950/40',
+    border: 'border-purple-200 dark:border-purple-800',
+    dot: 'bg-purple-500',
   },
   entrega: {
     label: 'Entrega / Envío',
     icon: Package,
-    color: 'text-pink-700',
-    bg: 'bg-pink-50',
-    border: 'border-pink-200',
+    color: 'text-pink-700 dark:text-pink-300',
+    bg: 'bg-pink-50 dark:bg-pink-950/40',
+    border: 'border-pink-200 dark:border-pink-800',
+    dot: 'bg-pink-500',
   },
   produccion: {
     label: 'Producción & Ensamble',
     icon: Scissors,
-    color: 'text-sky-700',
-    bg: 'bg-sky-50',
-    border: 'border-sky-200',
+    color: 'text-sky-700 dark:text-sky-300',
+    bg: 'bg-sky-50 dark:bg-sky-950/40',
+    border: 'border-sky-200 dark:border-sky-800',
+    dot: 'bg-sky-500',
   },
   proveedor: {
     label: 'Proveedor & Insumos',
     icon: Truck,
-    color: 'text-amber-700',
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
+    color: 'text-amber-700 dark:text-amber-300',
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
+    border: 'border-amber-200 dark:border-amber-800',
+    dot: 'bg-amber-500',
   },
   recordatorio: {
     label: 'Recordatorio / Admin',
     icon: Bell,
-    color: 'text-slate-700',
-    bg: 'bg-slate-50',
-    border: 'border-slate-200',
+    color: 'text-slate-700 dark:text-slate-300',
+    bg: 'bg-slate-100 dark:bg-slate-800',
+    border: 'border-slate-200 dark:border-slate-700',
+    dot: 'bg-slate-500',
   },
 };
 
-const PRIORITY_CONFIG: Record<AgendaPriority, { label: string; badge: string }> = {
-  alta: { label: 'Alta Prioridad', badge: 'bg-rose-100 text-rose-800 border-rose-200' },
-  media: { label: 'Prioridad Normal', badge: 'bg-amber-100 text-amber-800 border-amber-200' },
-  baja: { label: 'Prioridad Baja', badge: 'bg-slate-100 text-slate-700 border-slate-200' },
+const PRIORITY_CONFIG: Record<AgendaPriority, { label: string; badge: string; dot: string }> = {
+  alta: { label: 'Alta Prioridad', badge: 'bg-rose-50 text-rose-700 border-rose-200', dot: 'bg-rose-500' },
+  media: { label: 'Prioridad Normal', badge: 'bg-amber-50 text-amber-700 border-amber-200', dot: 'bg-amber-400' },
+  baja: { label: 'Prioridad Baja', badge: 'bg-slate-100 text-slate-600 border-slate-200', dot: 'bg-slate-400' },
+};
+
+const formatDateReadable = (dateStr: string) => {
+  if (!dateStr) return '';
+  try {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('es-CR', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    });
+  } catch {
+    return dateStr;
+  }
 };
 
 export const AgendaSection: React.FC = () => {
@@ -67,8 +87,10 @@ export const AgendaSection: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'today' | 'pending' | 'completed'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<AgendaItem | null>(null);
+  const [showCompletedSection, setShowCompletedSection] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState<{
@@ -89,10 +111,8 @@ export const AgendaSection: React.FC = () => {
 
   const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
 
-  // Sincronización automática de talleres si la funcionalidad está activada en Superadmin
-  const showWorkshopSync = isFeatureEnabled('agenda', 'agenda_sync_workshops');
-  const showTasksFeature = isFeatureEnabled('agenda', 'agenda_tasks');
-  const showCalendarFeature = isFeatureEnabled('agenda', 'agenda_calendar');
+  // Superadmin features
+  const showWorkshopSync = isFeatureEnabled('agenda', 'agenda_sync_workshops') !== false;
 
   const openNewModal = () => {
     setEditingItem(null);
@@ -152,8 +172,8 @@ export const AgendaSection: React.FC = () => {
   const handleToggleStatus = (item: AgendaItem) => {
     if (item.status === 'pending') {
       confetti({
-        particleCount: 40,
-        spread: 60,
+        particleCount: 35,
+        spread: 55,
         origin: { y: 0.8 },
         colors: ['#A855F7', '#EC4899', '#10B981'],
       });
@@ -161,18 +181,15 @@ export const AgendaSection: React.FC = () => {
     toggleAgendaItemStatus(item.id);
   };
 
-  // Filtrado
+  // Filtrado de Actividades
   const filteredItems = useMemo(() => {
     return agendaItems.filter((item) => {
-      // Filtro de estado / fecha
       if (selectedFilter === 'today' && item.date !== todayStr) return false;
       if (selectedFilter === 'pending' && item.status !== 'pending') return false;
       if (selectedFilter === 'completed' && item.status !== 'completed') return false;
 
-      // Filtro de categoría
       if (selectedCategory !== 'all' && item.category !== selectedCategory) return false;
 
-      // Filtro de búsqueda
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchTitle = item.title.toLowerCase().includes(q);
@@ -184,104 +201,226 @@ export const AgendaSection: React.FC = () => {
     });
   }, [agendaItems, selectedFilter, selectedCategory, searchQuery, todayStr]);
 
-  // Contadores
+  // Contadores y Métricas
+  const totalItems = agendaItems.length;
   const pendingCount = agendaItems.filter((i) => i.status === 'pending').length;
   const todayPendingCount = agendaItems.filter((i) => i.status === 'pending' && i.date === todayStr).length;
   const completedCount = agendaItems.filter((i) => i.status === 'completed').length;
+  const completionRate = totalItems > 0 ? Math.round((completedCount / totalItems) * 100) : 0;
+
+  // Agrupamiento cronológico inteligente
+  const { todayAndOverdueItems, upcomingItems, futureItems, completedItems } = useMemo(() => {
+    const todayAndOverdue: AgendaItem[] = [];
+    const upcoming: AgendaItem[] = [];
+    const future: AgendaItem[] = [];
+    const completed: AgendaItem[] = [];
+
+    // Calcular fecha límite de los próximos 3 días
+    const [ty, tm, td] = todayStr.split('-').map(Number);
+    const in3Days = new Date(ty, tm - 1, td + 4).toISOString().split('T')[0];
+
+    filteredItems.forEach((item) => {
+      if (item.status === 'completed') {
+        completed.push(item);
+      } else if (item.date <= todayStr) {
+        todayAndOverdue.push(item);
+      } else if (item.date <= in3Days) {
+        upcoming.push(item);
+      } else {
+        future.push(item);
+      }
+    });
+
+    // Ordenar cronológicamente
+    const sorter = (a: AgendaItem, b: AgendaItem) => a.date.localeCompare(b.date);
+    todayAndOverdue.sort(sorter);
+    upcoming.sort(sorter);
+    future.sort(sorter);
+
+    return {
+      todayAndOverdueItems: todayAndOverdue,
+      upcomingItems: upcoming,
+      futureItems: future,
+      completedItems: completed,
+    };
+  }, [filteredItems, todayStr]);
 
   return (
-    <div className="space-y-4">
-      {/* Cabecera Principal de la Agenda */}
-      <div className="bg-gradient-to-r from-purple-900 via-fio-800 to-pink-800 rounded-3xl p-4 sm:p-6 text-white shadow-clayCard">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/20 shadow-inner">
-              <CalendarIcon className="w-6 h-6 text-fio-yellow" />
+    <div className="space-y-4 animate-fadeIn pb-8">
+      {/* 1. Encabezado Neumórfico Ejecutivo */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-700 via-indigo-600 to-pink-600 text-white flex items-center justify-center shadow-xs shrink-0">
+            <CalendarDays className="w-6 h-6 text-fio-yellow" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="font-bubble font-bold text-lg sm:text-xl text-slate-900 leading-tight">
+                Agenda &amp; Cronograma de Operaciones
+              </h2>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
+                WMS / Taller
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl sm:text-2xl font-bubble font-bold text-white leading-tight">
-                  Agenda &amp; Organizador de Tareas
-                </h2>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/40">
-                  Taller by.fio
-                </span>
-              </div>
-              <p className="text-xs text-purple-200 font-sans mt-0.5">
-                Planifica actividades del taller, entregas de pedidos, compras de insumos y fechas clave.
-              </p>
-            </div>
+            <p className="text-xs text-slate-500 font-sans mt-0.5">
+              Planificación ejecutiva de tareas diarias, entregas de pedidos, compras y talleres
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          {/* Selector de Vista: Lista vs Cuadrícula */}
+          <div className="flex items-center p-1 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset">
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-xl transition-all cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-white text-purple-700 shadow-neuBtn scale-[1.02]'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Vista Lista Cronológica"
+            >
+              <LayoutList className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-xl transition-all cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-white text-purple-700 shadow-neuBtn scale-[1.02]'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Vista Cuadrícula de Tarjetas"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
           </div>
 
           <button
             type="button"
             onClick={openNewModal}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-fio-yellow hover:bg-yellow-300 text-fio-900 font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95 cursor-pointer shrink-0"
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtnHover active:scale-95 transition-all cursor-pointer"
           >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>Nueva Actividad / Tarea</span>
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>Nueva Actividad</span>
           </button>
         </div>
+      </div>
 
-        {/* Tarjetas KPI de Estado Rápido */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 pt-4 border-t border-white/10">
-          <div className="bg-white/10 rounded-2xl p-2.5 backdrop-blur-xs border border-white/10">
-            <span className="text-[10px] text-purple-200 font-medium block">Pendientes Totales</span>
-            <span className="text-lg font-bubble font-bold text-white">{pendingCount}</span>
-          </div>
-
-          <div className="bg-white/10 rounded-2xl p-2.5 backdrop-blur-xs border border-white/10">
-            <span className="text-[10px] text-fio-yellow font-bold block">⏰ Para Hoy</span>
-            <span className="text-lg font-bubble font-bold text-fio-yellow">{todayPendingCount}</span>
-          </div>
-
-          <div className="bg-white/10 rounded-2xl p-2.5 backdrop-blur-xs border border-white/10">
-            <span className="text-[10px] text-emerald-300 font-medium block">✅ Completadas</span>
-            <span className="text-lg font-bubble font-bold text-emerald-300">{completedCount}</span>
-          </div>
-
-          <div className="bg-white/10 rounded-2xl p-2.5 backdrop-blur-xs border border-white/10">
-            <span className="text-[10px] text-pink-200 font-medium block">Talleres Sincronizados</span>
-            <span className="text-lg font-bubble font-bold text-pink-200">
-              {showWorkshopSync ? workshops.length : 'Off'}
+      {/* 2. Tarjetas KPI de Resumen Ejecutivo con Barra de Progreso */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* KPI 1: Total Actividades */}
+        <div className="p-4 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard flex items-center justify-between">
+          <div>
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              Total Actividades
             </span>
+            <div className="flex items-baseline gap-2 mt-0.5">
+              <span className="text-2xl font-bubble font-bold text-slate-900">{totalItems}</span>
+              <span className="text-[11px] text-slate-400 font-sans font-semibold">programadas</span>
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-2xl bg-white/80 border border-white shadow-neuBtn flex items-center justify-center text-purple-600 shrink-0">
+            <CalendarIcon className="w-5 h-5" />
+          </div>
+        </div>
+
+        {/* KPI 2: Para Hoy */}
+        <div className="p-4 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard flex items-center justify-between">
+          <div>
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1.5">
+              <span>Para Hoy</span>
+              {todayPendingCount > 0 && (
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              )}
+            </span>
+            <div className="flex items-baseline gap-2 mt-0.5">
+              <span className="text-2xl font-bubble font-bold text-rose-600">{todayPendingCount}</span>
+              <span className="text-[11px] text-rose-500/80 font-sans font-semibold">pendientes</span>
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-2xl bg-white/80 border border-white shadow-neuBtn flex items-center justify-center text-rose-500 shrink-0">
+            <Clock className="w-5 h-5" />
+          </div>
+        </div>
+
+        {/* KPI 3: Progreso General */}
+        <div className="p-4 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              Efectividad
+            </span>
+            <span className="text-[11px] font-bubble font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              {completionRate}%
+            </span>
+          </div>
+          <div className="space-y-1 mt-1">
+            <div className="flex justify-between text-xs">
+              <span className="font-bubble font-bold text-slate-900">{completedCount} completadas</span>
+              <span className="text-slate-400 text-[11px]">{pendingCount} pendientes</span>
+            </div>
+            <div className="w-full h-2 bg-[#ECEEF2] rounded-full overflow-hidden shadow-neuInset border border-white/60">
+              <div
+                className="h-full bg-gradient-to-r from-purple-500 to-emerald-500 rounded-full transition-all duration-500"
+                style={{ width: `${completionRate}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* KPI 4: Talleres Creativos */}
+        <div className="p-4 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard flex items-center justify-between">
+          <div>
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              Talleres Vinculados
+            </span>
+            <div className="flex items-baseline gap-2 mt-0.5">
+              <span className="text-2xl font-bubble font-bold text-purple-700">
+                {showWorkshopSync ? workshops.length : 'Off'}
+              </span>
+              <span className="text-[11px] text-purple-500 font-sans font-semibold">activos</span>
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-2xl bg-white/80 border border-white shadow-neuBtn flex items-center justify-center text-purple-600 shrink-0">
+            <GraduationCap className="w-5 h-5" />
           </div>
         </div>
       </div>
 
-      {/* Barra de Filtros y Búsqueda */}
-      <div className="p-3 bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-        {/* Pestañas de Filtro Rápido */}
+      {/* 3. Barra de Búsqueda y Filtros Neumórfica */}
+      <div className="p-3 sm:p-3.5 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard flex flex-col md:flex-row md:items-center justify-between gap-3">
+        {/* Pestañas de Estado */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           <button
             type="button"
             onClick={() => setSelectedFilter('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all whitespace-nowrap cursor-pointer ${
               selectedFilter === 'all'
-                ? 'bg-fio-800 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01]'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-purple-600 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
             }`}
           >
-            Todas ({agendaItems.length})
+            Todas ({totalItems})
           </button>
           <button
             type="button"
             onClick={() => setSelectedFilter('today')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all whitespace-nowrap cursor-pointer ${
               selectedFilter === 'today'
-                ? 'bg-fio-800 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01]'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-rose-600 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
             }`}
           >
-            Hoy ({agendaItems.filter((i) => i.date === todayStr).length})
+            ⏰ Hoy ({agendaItems.filter((i) => i.date === todayStr).length})
           </button>
           <button
             type="button"
             onClick={() => setSelectedFilter('pending')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all whitespace-nowrap cursor-pointer ${
               selectedFilter === 'pending'
-                ? 'bg-amber-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01]'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-amber-600 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
             }`}
           >
             Pendientes ({pendingCount})
@@ -289,202 +428,256 @@ export const AgendaSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setSelectedFilter('completed')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all whitespace-nowrap cursor-pointer ${
               selectedFilter === 'completed'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01]'
+                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-emerald-600 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
             }`}
           >
-            Completadas ({completedCount})
+            ✅ Completadas ({completedCount})
           </button>
         </div>
 
-        {/* Buscador y Filtro de Categoría */}
+        {/* Buscador & Selector de Categoría */}
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <div className="relative min-w-[180px] flex-1">
-            <span className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
+          <div className="relative min-w-[200px] flex-1">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
               <Search className="w-3.5 h-3.5" />
             </span>
             <input
               type="text"
-              placeholder="Buscar en la agenda..."
+              placeholder="Buscar por título o notas..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 focus:border-purple-400 focus:bg-white rounded-xl text-xs outline-none transition-all"
+              className="w-full pl-9 pr-3 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 text-xs font-sans text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-neuInset transition-all"
             />
           </div>
 
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none cursor-pointer"
+            className="px-3 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 text-xs font-bubble font-bold text-slate-700 shadow-neuInset focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer"
           >
             <option value="all">Todas las Categorías</option>
-            <option value="taller">🎨 Talleres</option>
-            <option value="entrega">📦 Entregas / Envíos</option>
-            <option value="produccion">✂️ Producción</option>
-            <option value="proveedor">🚚 Proveedores</option>
-            <option value="recordatorio">📌 Recordatorios</option>
+            <option value="taller">🎨 Talleres Creativos</option>
+            <option value="entrega">📦 Entregas & Envíos</option>
+            <option value="produccion">✂️ Producción & Ensamble</option>
+            <option value="proveedor">🚚 Proveedores & Insumos</option>
+            <option value="recordatorio">📌 Recordatorios Generales</option>
           </select>
         </div>
       </div>
 
-      {/* Grid Principal de Tarjetas de Agenda */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {/* Talleres Creativos Sincronizados de By.Fio (Si la opción está habilitada en Superadmin) */}
-        {showWorkshopSync && selectedCategory === 'all' && selectedFilter !== 'completed' && workshops.map((ws) => (
-          <div
-            key={`ws-sync-${ws.id}`}
-            className="bg-white rounded-2xl border-2 border-dashed border-purple-300 p-4 shadow-xs relative overflow-hidden"
-          >
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200 flex items-center gap-1">
-                <GraduationCap className="w-3 h-3 text-purple-600" />
-                <span>Taller Creativo Programado</span>
+      {/* 4. Talleres Creativos Sincronizados de By.Fio (Banner destacado si está activo) */}
+      {showWorkshopSync && selectedCategory === 'all' && selectedFilter !== 'completed' && workshops.length > 0 && (
+        <div className="p-4 rounded-3xl bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border border-purple-200/80 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs">
+                <GraduationCap className="w-4 h-4" />
               </span>
-              <span className="text-[11px] font-bubble font-bold text-slate-500">
-                {ws.schedule}
-              </span>
-            </div>
-
-            <h4 className="font-bubble font-bold text-sm text-slate-900 mb-1 leading-snug">
-              {ws.title}
-            </h4>
-            <p className="text-xs text-slate-500 line-clamp-2 mb-3">
-              {ws.subtitle || 'Taller práctico presencial en el estudio de By.Fio en Tibás.'}
-            </p>
-
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-purple-100 text-slate-600 font-sans">
-              <span className="flex items-center gap-1 font-semibold text-purple-700">
-                <CalendarDays className="w-3.5 h-3.5 text-pink-500" />
-                <span>{ws.date}</span>
-              </span>
-              <span className="text-[11px] bg-slate-100 px-2 py-0.5 rounded-lg text-slate-700 font-mono">
-                {ws.totalSpots - ws.spotsAvailable}/{ws.totalSpots} Cupos
-              </span>
-            </div>
-          </div>
-        ))}
-
-        {/* Actividades y Tareas de la Agenda */}
-        {filteredItems.map((item) => {
-          const cat = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.recordatorio;
-          const pri = PRIORITY_CONFIG[item.priority] || PRIORITY_CONFIG.media;
-          const CatIcon = cat.icon;
-          const isToday = item.date === todayStr;
-          const isDone = item.status === 'completed';
-
-          return (
-            <div
-              key={item.id}
-              className={`rounded-2xl border transition-all p-4 flex flex-col justify-between shadow-xs ${
-                isDone
-                  ? 'bg-slate-50/70 border-slate-200 opacity-75'
-                  : isToday
-                  ? 'bg-white border-pink-300 shadow-[0_4px_20px_rgba(236,72,153,0.06)]'
-                  : 'bg-white border-slate-200 hover:border-purple-300'
-              }`}
-            >
               <div>
-                {/* Cabecera de la Tarjeta */}
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border flex items-center gap-1 ${cat.bg} ${cat.color} ${cat.border}`}>
-                    <CatIcon className="w-3 h-3 shrink-0" />
-                    <span>{cat.label}</span>
-                  </span>
-
-                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${pri.badge}`}>
-                    {pri.label}
-                  </span>
-                </div>
-
-                {/* Título de la Tarea con Checkbox Rápido */}
-                <div className="flex items-start gap-2.5 my-2">
-                  <button
-                    type="button"
-                    onClick={() => handleToggleStatus(item)}
-                    className="mt-0.5 cursor-pointer text-slate-400 hover:text-emerald-600 transition-colors shrink-0"
-                    title={isDone ? 'Marcar como pendiente' : 'Marcar como completada'}
-                  >
-                    {isDone ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600 fill-emerald-100" />
-                    ) : (
-                      <Circle className="w-5 h-5 hover:text-purple-600" />
-                    )}
-                  </button>
-
-                  <div className="min-w-0">
-                    <h3 className={`font-bubble font-bold text-sm text-slate-800 leading-snug ${isDone ? 'line-through text-slate-400' : ''}`}>
-                      {item.title}
-                    </h3>
-
-                    {item.notes && (
-                      <p className="text-xs text-slate-500 font-sans mt-1 leading-relaxed line-clamp-3">
-                        {item.notes}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Pie de la Tarjeta: Fecha, Hora y Acciones */}
-              <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-100 text-xs text-slate-500">
-                <div className="flex items-center gap-2 text-[11px] font-mono">
-                  <span className={`flex items-center gap-1 font-semibold ${isToday ? 'text-pink-600 font-bold' : 'text-slate-600'}`}>
-                    <CalendarIcon className="w-3 h-3" />
-                    <span>{isToday ? 'Hoy' : item.date}</span>
-                  </span>
-                  {item.time && (
-                    <span className="flex items-center gap-1 text-slate-500">
-                      <Clock className="w-3 h-3" />
-                      <span>{item.time}</span>
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => openEditModal(item)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
-                    title="Editar actividad"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (confirm(`¿Eliminar la actividad "${item.title}" de la agenda?`)) {
-                        deleteAgendaItem(item.id);
-                      }
-                    }}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                    title="Eliminar actividad"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                <h3 className="font-bubble font-bold text-xs sm:text-sm text-purple-950">
+                  Talleres Creativos Programados en Tibás
+                </h3>
+                <p className="text-[11px] text-purple-700 font-sans">
+                  Sincronizados automáticamente desde el catálogo oficial de talleres
+                </p>
               </div>
             </div>
-          );
-        })}
-      </div>
+            <span className="text-[11px] font-bold text-purple-700 bg-white px-2.5 py-0.5 rounded-full border border-purple-200">
+              {workshops.length} Talleres
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {workshops.map((ws) => (
+              <div
+                key={`ws-${ws.id}`}
+                className="p-3 bg-white rounded-2xl border border-purple-200/70 shadow-xs flex flex-col justify-between space-y-2 hover:border-purple-300 transition-all"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-[11px] text-purple-600 font-bold mb-1">
+                    <span className="flex items-center gap-1 font-mono">
+                      <Clock className="w-3 h-3 text-pink-500" />
+                      <span>{ws.schedule}</span>
+                    </span>
+                    <span className="text-[10px] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200 font-mono text-purple-800">
+                      {ws.totalSpots - ws.spotsAvailable}/{ws.totalSpots} Cupos
+                    </span>
+                  </div>
+                  <h4 className="font-bubble font-bold text-xs text-slate-900 leading-snug line-clamp-1">
+                    {ws.title}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-sans line-clamp-1 mt-0.5">
+                    {ws.subtitle || 'Taller práctico presencial By.Fio.'}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] font-semibold text-purple-700 font-mono">
+                  <span>📍 {ws.date}</span>
+                  <span className="text-emerald-600 font-bold">₡{ws.price?.toLocaleString('es-CR')}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 5. Contenido Principal: Vista Lista vs Vista Cuadrícula */}
+      {viewMode === 'list' ? (
+        <div className="space-y-4">
+          {/* SECCIÓN 1: HOY & ACTIVIDADES URGENTES */}
+          {todayAndOverdueItems.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-bubble font-bold text-slate-800 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                  <span>Para Hoy &amp; Tareas Prioritarias</span>
+                  <span className="text-[11px] text-rose-600 bg-rose-50 px-2 py-0.2 rounded-full border border-rose-200 font-bold font-mono">
+                    {todayAndOverdueItems.length}
+                  </span>
+                </span>
+                <span className="text-[11px] text-slate-400 font-sans font-medium">Atención inmediata</span>
+              </div>
+
+              <div className="space-y-1.5">
+                {todayAndOverdueItems.map((item) => (
+                  <AgendaListItem
+                    key={item.id}
+                    item={item}
+                    todayStr={todayStr}
+                    onToggle={handleToggleStatus}
+                    onEdit={openEditModal}
+                    onDelete={deleteAgendaItem}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN 2: PRÓXIMOS DÍAS */}
+          {upcomingItems.length > 0 && (
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-bubble font-bold text-slate-800 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-purple-500" />
+                  <span>Próximos Días (Esta Semana)</span>
+                  <span className="text-[11px] text-purple-700 bg-purple-50 px-2 py-0.2 rounded-full border border-purple-200 font-bold font-mono">
+                    {upcomingItems.length}
+                  </span>
+                </span>
+                <span className="text-[11px] text-slate-400 font-sans font-medium">Planificado</span>
+              </div>
+
+              <div className="space-y-1.5">
+                {upcomingItems.map((item) => (
+                  <AgendaListItem
+                    key={item.id}
+                    item={item}
+                    todayStr={todayStr}
+                    onToggle={handleToggleStatus}
+                    onEdit={openEditModal}
+                    onDelete={deleteAgendaItem}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN 3: MÁS ADELANTE */}
+          {futureItems.length > 0 && (
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-bubble font-bold text-slate-700 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
+                  <span>Fechas Posteriores</span>
+                  <span className="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.2 rounded-full border border-slate-200 font-bold font-mono">
+                    {futureItems.length}
+                  </span>
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                {futureItems.map((item) => (
+                  <AgendaListItem
+                    key={item.id}
+                    item={item}
+                    todayStr={todayStr}
+                    onToggle={handleToggleStatus}
+                    onEdit={openEditModal}
+                    onDelete={deleteAgendaItem}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN 4: COMPLETADAS (ACORDEÓN ELEGANTE) */}
+          {completedItems.length > 0 && (
+            <div className="pt-3">
+              <button
+                type="button"
+                onClick={() => setShowCompletedSection(!showCompletedSection)}
+                className="w-full flex items-center justify-between p-3 rounded-2xl bg-[#ECEEF2] border border-white/70 shadow-neuInset text-xs font-bubble font-bold text-slate-600 hover:text-slate-900 transition-all cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Tareas Completadas ({completedItems.length})</span>
+                </div>
+                {showCompletedSection ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+
+              {showCompletedSection && (
+                <div className="space-y-1.5 mt-2 opacity-80">
+                  {completedItems.map((item) => (
+                    <AgendaListItem
+                      key={item.id}
+                      item={item}
+                      todayStr={todayStr}
+                      onToggle={handleToggleStatus}
+                      onEdit={openEditModal}
+                      onDelete={deleteAgendaItem}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* VISTA CUADRÍCULA / TARJETAS NEUMÓRFICAS */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {filteredItems.map((item) => (
+            <AgendaCardItem
+              key={item.id}
+              item={item}
+              todayStr={todayStr}
+              onToggle={handleToggleStatus}
+              onEdit={openEditModal}
+              onDelete={deleteAgendaItem}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Estado Vacío */}
       {filteredItems.length === 0 && (!showWorkshopSync || selectedFilter === 'completed') && (
-        <div className="p-8 text-center bg-white rounded-3xl border border-dashed border-slate-300 text-slate-400 space-y-3">
-          <CalendarIcon className="w-10 h-10 mx-auto text-slate-300" />
+        <div className="p-10 text-center rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard text-slate-400 space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-white/80 border border-white shadow-neuBtn flex items-center justify-center text-purple-400 mx-auto">
+            <CalendarIcon className="w-6 h-6" />
+          </div>
           <div>
-            <h4 className="font-bubble font-bold text-base text-slate-700">No hay actividades con este filtro</h4>
-            <p className="text-xs text-slate-400 mt-1">
-              Agrega una nueva actividad con el botón superior para empezar a organizar tu semana.
+            <h4 className="font-bubble font-bold text-base text-slate-800">
+              No hay actividades programadas con este filtro
+            </h4>
+            <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
+              Organiza la semana del taller agregando entregas de pedidos, compras de vinil o recordatorios de caja.
             </p>
           </div>
           <button
             type="button"
             onClick={openNewModal}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs font-bold shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs shadow-neuBtnHover cursor-pointer transition-all active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Agregar Primera Actividad</span>
@@ -492,30 +685,35 @@ export const AgendaSection: React.FC = () => {
         </div>
       )}
 
-      {/* Modal de Creación / Edición */}
+      {/* 6. Modal de Creación / Edición Neumórfica de Alta Fidelidad */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-purple-200 animate-fadeIn space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <span className="p-2 rounded-xl bg-purple-100 text-purple-700">
-                  <CalendarIcon className="w-4 h-4" />
-                </span>
-                <h3 className="font-bubble font-bold text-lg text-slate-900">
-                  {editingItem ? 'Editar Actividad' : 'Nueva Actividad de Agenda'}
-                </h3>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-[#F1F2F6] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-white/90 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs">
+                  <CalendarDays className="w-5 h-5 text-fio-yellow" />
+                </div>
+                <div>
+                  <h3 className="font-bubble font-bold text-base sm:text-lg text-slate-900 leading-tight">
+                    {editingItem ? 'Editar Actividad del Taller' : 'Nueva Actividad en Agenda'}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-sans">
+                    Planificación ejecutiva con sincronización en tiempo real
+                  </p>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-white/80 transition-all cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-3.5">
-              {/* Título */}
+            <form onSubmit={handleSave} className="space-y-4">
+              {/* Título de la Actividad */}
               <div>
                 <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
                   Título de la Actividad o Tarea *
@@ -523,25 +721,65 @@ export const AgendaSection: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="Ej: Despacho de libretas en Correos, Taller de encuadernación..."
+                  placeholder="Ej: Despacho de libretas en Correos, Comprar vinil holográfico..."
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-xs outline-none"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset text-xs font-bubble font-bold text-slate-900 placeholder:text-slate-400 placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  autoFocus
                 />
+              </div>
+
+              {/* Selector Visual de Categorías */}
+              <div>
+                <label className="block text-xs font-bubble font-bold text-slate-700 mb-1.5">
+                  Tipo de Actividad
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                  {(Object.keys(CATEGORY_CONFIG) as AgendaCategory[]).map((catKey) => {
+                    const cat = CATEGORY_CONFIG[catKey];
+                    const CatIcon = cat.icon;
+                    const isSelected = formData.category === catKey;
+
+                    return (
+                      <button
+                        key={catKey}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, category: catKey })}
+                        className={`p-2 rounded-xl text-left border flex items-center gap-2 transition-all cursor-pointer ${
+                          isSelected
+                            ? `${cat.bg} ${cat.border} ${cat.color} font-bold shadow-xs scale-[1.02] ring-1 ring-purple-400`
+                            : 'bg-white border-slate-200/80 text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        <CatIcon className="w-3.5 h-3.5 shrink-0" />
+                        <span className="text-[11px] font-bubble truncate">{cat.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Fecha y Hora */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                    Fecha *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bubble font-bold text-slate-700">
+                      Fecha Programada *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, date: todayStr })}
+                      className="text-[10px] text-purple-600 font-bold hover:underline"
+                    >
+                      Hoy
+                    </button>
+                  </div>
                   <input
                     type="date"
                     required
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-purple-500 text-xs outline-none font-mono"
+                    className="w-full px-3.5 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
                   />
                 </div>
 
@@ -551,76 +789,70 @@ export const AgendaSection: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    placeholder="Ej: 10:00 AM, 2:30 PM"
+                    placeholder="Ej: 10:00 AM, 3:30 PM"
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-purple-500 text-xs outline-none font-mono"
+                    className="w-full px-3.5 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset text-xs font-mono font-bold text-slate-800 placeholder:font-sans placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-purple-400"
                   />
                 </div>
               </div>
 
-              {/* Categoría y Prioridad */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                    Categoría
-                  </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value as AgendaCategory })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-purple-500 text-xs outline-none cursor-pointer"
-                  >
-                    <option value="taller">🎨 Taller Creativo</option>
-                    <option value="entrega">📦 Entrega / Envío</option>
-                    <option value="produccion">✂️ Producción & Ensamble</option>
-                    <option value="proveedor">🚚 Proveedor & Insumos</option>
-                    <option value="recordatorio">📌 Recordatorio / Admin</option>
-                  </select>
-                </div>
+              {/* Selector Visual de Prioridad */}
+              <div>
+                <label className="block text-xs font-bubble font-bold text-slate-700 mb-1.5">
+                  Nivel de Prioridad
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['alta', 'media', 'baja'] as AgendaPriority[]).map((priKey) => {
+                    const pri = PRIORITY_CONFIG[priKey];
+                    const isSelected = formData.priority === priKey;
 
-                <div>
-                  <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                    Prioridad
-                  </label>
-                  <select
-                    value={formData.priority}
-                    onChange={(e) => setFormData({ ...formData, priority: e.target.value as AgendaPriority })}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-purple-500 text-xs outline-none cursor-pointer"
-                  >
-                    <option value="alta">🔴 Alta Prioridad</option>
-                    <option value="media">🟡 Prioridad Normal</option>
-                    <option value="baja">⚪ Prioridad Baja</option>
-                  </select>
+                    return (
+                      <button
+                        key={priKey}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, priority: priKey })}
+                        className={`py-2 px-2.5 rounded-xl text-center border text-xs font-bubble font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                          isSelected
+                            ? `${pri.badge} shadow-xs ring-1 ring-purple-400 scale-[1.02]`
+                            : 'bg-white border-slate-200/80 text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        <span className={`w-2 h-2 rounded-full ${pri.dot}`} />
+                        <span>{pri.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Notas */}
+              {/* Notas y Detalles */}
               <div>
                 <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
                   Notas Adicionales (Opcional)
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Detalles de insumos, número de pedido o recordatorios específicos..."
+                  placeholder="Detalles sobre números de guía, personas de contacto o insumos requeridos..."
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-purple-500 text-xs outline-none resize-none font-sans"
+                  className="w-full px-3.5 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none font-sans"
                 />
               </div>
 
               {/* Botones de Acción */}
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200/80">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bubble font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-bubble font-semibold text-slate-600 hover:bg-white/80 cursor-pointer transition-all"
                 >
                   Cancelar
                 </button>
 
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-md cursor-pointer transition-all active:scale-95"
+                  className="px-6 py-2.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtnHover active:scale-95 transition-all cursor-pointer"
                 >
                   {editingItem ? 'Guardar Cambios' : 'Crear en Agenda'}
                 </button>
@@ -629,6 +861,250 @@ export const AgendaSection: React.FC = () => {
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
+// Subcomponente: Fila Ejecutiva de Lista (List View)
+interface AgendaListItemProps {
+  item: AgendaItem;
+  todayStr: string;
+  onToggle: (item: AgendaItem) => void;
+  onEdit: (item: AgendaItem) => void;
+  onDelete: (id: string) => void;
+}
+
+const AgendaListItem: React.FC<AgendaListItemProps> = ({
+  item,
+  todayStr,
+  onToggle,
+  onEdit,
+  onDelete,
+}) => {
+  const cat = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.recordatorio;
+  const pri = PRIORITY_CONFIG[item.priority] || PRIORITY_CONFIG.media;
+  const CatIcon = cat.icon;
+  const isDone = item.status === 'completed';
+  const isToday = item.date === todayStr;
+  const isOverdue = !isDone && item.date < todayStr;
+
+  return (
+    <div
+      className={`group p-3 sm:p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+        isDone
+          ? 'bg-slate-50/70 border-slate-200/70 opacity-65'
+          : isToday
+          ? 'bg-white border-pink-300 shadow-[0_2px_12px_rgba(236,72,153,0.08)] ring-1 ring-pink-100'
+          : isOverdue
+          ? 'bg-amber-50/40 border-amber-300 shadow-xs'
+          : 'bg-white border-slate-200/90 hover:border-purple-300 shadow-xs'
+      }`}
+    >
+      {/* Lado Izquierdo: Checkbox y Detalles */}
+      <div className="flex items-start gap-3 min-w-0 flex-1">
+        <button
+          type="button"
+          onClick={() => onToggle(item)}
+          className="mt-0.5 cursor-pointer text-slate-400 hover:text-emerald-600 transition-colors shrink-0"
+          title={isDone ? 'Marcar como pendiente' : 'Marcar como completada'}
+        >
+          {isDone ? (
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 fill-emerald-100" />
+          ) : (
+            <Circle className="w-5 h-5 hover:text-purple-600" />
+          )}
+        </button>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            {/* Badge de Categoría */}
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${cat.bg} ${cat.color} ${cat.border}`}>
+              <CatIcon className="w-3 h-3 shrink-0" />
+              <span>{cat.label}</span>
+            </span>
+
+            {/* Badge de Fecha */}
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.2 rounded-full text-[10px] font-mono font-bold border ${
+                isToday
+                  ? 'bg-rose-100 text-rose-800 border-rose-300'
+                  : isOverdue
+                  ? 'bg-amber-100 text-amber-800 border-amber-300'
+                  : 'bg-slate-100 text-slate-600 border-slate-200'
+              }`}
+            >
+              <CalendarIcon className="w-3 h-3" />
+              <span>{isToday ? 'Hoy' : isOverdue ? `Atrasada (${item.date})` : formatDateReadable(item.date)}</span>
+            </span>
+
+            {item.time && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-mono text-slate-500">
+                <Clock className="w-3 h-3" />
+                <span>{item.time}</span>
+              </span>
+            )}
+
+            {/* Indicador de Prioridad Alta */}
+            {item.priority === 'alta' && !isDone && (
+              <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-2 py-0.2 rounded-full border border-rose-200">
+                Urgente
+              </span>
+            )}
+          </div>
+
+          <h4 className={`font-bubble font-bold text-xs sm:text-sm leading-snug ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}`}>
+            {item.title}
+          </h4>
+
+          {item.notes && (
+            <p className="text-[11px] text-slate-500 font-sans mt-0.5 line-clamp-1 leading-relaxed">
+              {item.notes}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Lado Derecho: Acciones Rápidas */}
+      <div className="flex items-center gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
+        <button
+          type="button"
+          onClick={() => onEdit(item)}
+          className="p-1.5 rounded-xl text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-all cursor-pointer"
+          title="Editar actividad"
+        >
+          <Edit3 className="w-3.5 h-3.5" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (confirm(`¿Eliminar "${item.title}" de la agenda?`)) {
+              onDelete(item.id);
+            }
+          }}
+          className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
+          title="Eliminar actividad"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Subcomponente: Tarjeta Neumórfica (Grid View)
+interface AgendaCardItemProps {
+  item: AgendaItem;
+  todayStr: string;
+  onToggle: (item: AgendaItem) => void;
+  onEdit: (item: AgendaItem) => void;
+  onDelete: (id: string) => void;
+}
+
+const AgendaCardItem: React.FC<AgendaCardItemProps> = ({
+  item,
+  todayStr,
+  onToggle,
+  onEdit,
+  onDelete,
+}) => {
+  const cat = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.recordatorio;
+  const pri = PRIORITY_CONFIG[item.priority] || PRIORITY_CONFIG.media;
+  const CatIcon = cat.icon;
+  const isDone = item.status === 'completed';
+  const isToday = item.date === todayStr;
+
+  return (
+    <div
+      className={`rounded-3xl border transition-all p-4 flex flex-col justify-between shadow-neuCard ${
+        isDone
+          ? 'bg-slate-50/70 border-white/60 opacity-70'
+          : isToday
+          ? 'bg-[#F1F2F6] border-pink-300 ring-2 ring-pink-100 shadow-neuCardHover'
+          : 'bg-[#F1F2F6] border-white/90 hover:shadow-neuCardHover'
+      }`}
+    >
+      <div>
+        {/* Cabecera */}
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border flex items-center gap-1 ${cat.bg} ${cat.color} ${cat.border}`}>
+            <CatIcon className="w-3 h-3 shrink-0" />
+            <span>{cat.label}</span>
+          </span>
+
+          <span className={`px-2 py-0.2 rounded-full text-[9px] font-bold border ${pri.badge}`}>
+            {pri.label}
+          </span>
+        </div>
+
+        {/* Checkbox y Título */}
+        <div className="flex items-start gap-2.5 my-2">
+          <button
+            type="button"
+            onClick={() => onToggle(item)}
+            className="mt-0.5 cursor-pointer text-slate-400 hover:text-emerald-600 transition-colors shrink-0"
+            title={isDone ? 'Marcar como pendiente' : 'Marcar como completada'}
+          >
+            {isDone ? (
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 fill-emerald-100" />
+            ) : (
+              <Circle className="w-5 h-5 hover:text-purple-600" />
+            )}
+          </button>
+
+          <div className="min-w-0">
+            <h3 className={`font-bubble font-bold text-sm text-slate-900 leading-snug ${isDone ? 'line-through text-slate-400' : ''}`}>
+              {item.title}
+            </h3>
+
+            {item.notes && (
+              <p className="text-xs text-slate-500 font-sans mt-1 leading-relaxed line-clamp-3">
+                {item.notes}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Pie con Fecha y Botones */}
+      <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-200/70 text-xs text-slate-500">
+        <div className="flex items-center gap-2 text-[11px] font-mono">
+          <span className={`flex items-center gap-1 font-semibold ${isToday ? 'text-rose-600 font-bold' : 'text-slate-600'}`}>
+            <CalendarIcon className="w-3 h-3" />
+            <span>{isToday ? 'Hoy' : formatDateReadable(item.date)}</span>
+          </span>
+          {item.time && (
+            <span className="flex items-center gap-1 text-slate-500">
+              <Clock className="w-3 h-3" />
+              <span>{item.time}</span>
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => onEdit(item)}
+            className="p-1.5 rounded-xl text-slate-400 hover:text-purple-600 hover:bg-white transition-all cursor-pointer"
+            title="Editar actividad"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (confirm(`¿Eliminar "${item.title}" de la agenda?`)) {
+                onDelete(item.id);
+              }
+            }}
+            className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-white transition-all cursor-pointer"
+            title="Eliminar actividad"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
