@@ -1254,14 +1254,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!currentUser) return false;
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
     if (tab === 'hub') return true;
+    const perms = currentUser.permissions as Record<string, boolean | undefined> | undefined;
     if (tab === 'suppliers') {
-      if (currentUser.role === 'staff' && currentUser.permissions) {
-        return (currentUser.permissions as any)['suppliers'] !== false;
+      if (currentUser.role === 'staff' && perms) {
+        return perms['suppliers'] !== false;
       }
       return true;
     }
-    if (currentUser.role === 'staff' && currentUser.permissions) {
-      return Boolean((currentUser.permissions as any)[tab]);
+    if (currentUser.role === 'staff' && perms) {
+      return Boolean(perms[tab]);
     }
     return false;
   };
