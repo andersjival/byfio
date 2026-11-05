@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.15.0 - Sistema Global de Diálogos de Confirmación Profesionales
+- [x] **Reemplazo de alertas nativas por `ConfirmDialog` ([`ConfirmDialog.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/ui/ConfirmDialog.tsx), [`ConfirmContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/ConfirmContext.tsx), [`useConfirm.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/useConfirm.ts), [`main.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx)):**
+  - Creado sistema reactivo con hook `useConfirm()` y modal de confirmación con variantes visuales (`danger`, `warning`, `info`) con estética corporativa By.Fio para sustituir el `window.confirm` nativo del navegador.
+  - Integrado de forma fluida en las acciones críticas de eliminación y restablecimiento en [`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [`AdminPricingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminPricingModal.tsx) y [`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx).
+
 ### Versión 4.14.9 - Corrección de Errores TypeScript y Código Limpio (v4.14.6 + v4.14.7)
 - [x] **Corrección de errores TS en `products.ts`:** `TS2367` resuelto — comparación `r.is_available === true` (number vs boolean) corregida a `Number(r.is_available) === 1`.
 - [x] **`UserProfilesSection.tsx`:** Inicialización completa de los 10 permisos en `handleOpenCreate`, `handleOpenEdit` y `handleToggleAllPermissions` incluyendo `agenda` y `suppliers`. Conteo de permisos otorgados corregido con null-safe `perms[mod.key]`.

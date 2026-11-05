@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import { parseBcrSinpeEmail, SAMPLE_BCR_SINPE_EMAILS } from '../../utils/bcrSinpeParser';
 import {
@@ -25,6 +26,7 @@ export const SinpeBcrVerificationModal: React.FC<SinpeBcrVerificationModalProps>
     updateSinpeSettings,
     workshops,
   } = useApp();
+  const confirm = useConfirm();
 
   const [activeTab, setActiveTab] = useState<'extract' | 'settings' | 'history'>('extract');
   const [emailText, setEmailText] = useState('');
@@ -635,8 +637,8 @@ export const SinpeBcrVerificationModal: React.FC<SinpeBcrVerificationModalProps>
                           <td className="py-2.5 px-2 text-center">
                             <button
                               type="button"
-                              onClick={() => {
-                                if (confirm(`¿Eliminar la transacción ${tx.referenceNumber}?`)) {
+                              onClick={async () => {
+                                if (await confirm(`¿Eliminar la transacción ${tx.referenceNumber}?`, { title: 'Eliminar Transacción', confirmLabel: 'Eliminar' })) {
                                   deleteSinpeTransaction(tx.id);
                                 }
                               }}

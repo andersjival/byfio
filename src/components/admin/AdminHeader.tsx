@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
 import {
@@ -17,6 +18,7 @@ interface AdminHeaderProps {
 }
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onNavigate, onSelectTab }) => {
+  const confirm = useConfirm();
   const {
     products,
     orders,
@@ -136,8 +138,8 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
           {/* Reset Demo */}
           <button
             type="button"
-            onClick={() => {
-              if (window.confirm('¿Restablecer datos demo iniciales?')) resetToDefaults();
+            onClick={async () => {
+              if (await confirm('¿Restablecer datos demo iniciales?', { title: 'Restablecer Demo', variant: 'warning', confirmLabel: 'Sí, restablecer' })) resetToDefaults();
             }}
             title="Restablecer datos iniciales de demo"
             className="p-2 rounded-xl bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-700 border border-slate-200 shadow-xs"

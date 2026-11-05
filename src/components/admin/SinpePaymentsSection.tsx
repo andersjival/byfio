@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import { parseBcrSinpeEmail, SAMPLE_BCR_SINPE_EMAILS } from '../../utils/bcrSinpeParser';
 import {
@@ -20,6 +21,7 @@ export const SinpePaymentsSection: React.FC = () => {
     workshops,
     isFeatureEnabled,
   } = useApp();
+  const confirm = useConfirm();
 
   const [activeTab, setActiveTab] = useState<'extract' | 'settings' | 'history'>('extract');
   const [emailText, setEmailText] = useState('');
@@ -853,8 +855,8 @@ export const SinpePaymentsSection: React.FC = () => {
                       <td className="p-3 text-center">
                         <button
                           type="button"
-                          onClick={() => {
-                            if (window.confirm(`¿Estás segura de eliminar el comprobante #${tx.referenceNumber}? Esta acción reducirá la caja.`)) {
+                          onClick={async () => {
+                            if (await confirm(`¿Estás segura de eliminar el comprobante #${tx.referenceNumber}? Esta acción reducirá la caja.`, { title: 'Eliminar Comprobante', confirmLabel: 'Sí, eliminar', variant: 'danger' })) {
                               deleteSinpeTransaction(tx.id);
                             }
                           }}

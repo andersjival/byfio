@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { Customer } from '../../types';
 import {
   Users, UserPlus, Search, Phone, Mail, MapPin, FileText, Edit2,
@@ -13,6 +14,7 @@ interface CustomersSectionProps {
 }
 
 export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCustomerForBilling }) => {
+  const confirm = useConfirm();
   const {
     customers,
     addCustomer,
@@ -126,8 +128,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     setTimeout(() => setSuccessToast(null), 3500);
   };
 
-  const handleDeleteCustomer = (customer: Customer) => {
-    if (window.confirm(`¿Seguro que deseas eliminar a "${customer.name}" del directorio de clientes?`)) {
+  const handleDeleteCustomer = async (customer: Customer) => {
+    if (await confirm(`¿Seguro que deseas eliminar a "${customer.name}" del directorio de clientes?`, { title: 'Eliminar Cliente', confirmLabel: 'Eliminar' })) {
       deleteCustomer(customer.id);
       setSuccessToast(`Cliente "${customer.name}" eliminado del directorio.`);
       setTimeout(() => setSuccessToast(null), 3000);

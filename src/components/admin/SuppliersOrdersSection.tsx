@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { SupplierOrder, SupplierOrderItem, SupplierOrderStatus } from '../../types';
 import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatters';
 import {
@@ -20,6 +21,7 @@ export const SuppliersOrdersSection: React.FC = () => {
     agendaItems,
     addAgendaItem,
   } = useApp();
+  const confirm = useConfirm();
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'draft' | 'ordered' | 'received'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -633,8 +635,8 @@ export const SuppliersOrdersSection: React.FC = () => {
 
                     <button
                       type="button"
-                      onClick={() => {
-                        if (confirm(`¿Eliminar la orden ${order.orderNumber} permanentemente?`)) {
+                      onClick={async () => {
+                        if (await confirm(`¿Eliminar la orden ${order.orderNumber} permanentemente?`, { title: 'Eliminar Orden', confirmLabel: 'Eliminar' })) {
                           deleteSupplierOrder(order.id);
                         }
                       }}

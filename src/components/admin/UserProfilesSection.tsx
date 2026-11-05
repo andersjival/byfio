@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { UserProfile, UserPermissions } from '../../types';
 import {
   Users, Plus, KeyRound, Shield, Check, X, Edit3, Trash2,
@@ -9,6 +10,7 @@ import {
 
 export const UserProfilesSection: React.FC = () => {
   const { userProfiles, addUserProfile, updateUserProfile, deleteUserProfile, toggleUserProfileStatus, isFeatureEnabled } = useApp();
+  const confirm = useConfirm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null);

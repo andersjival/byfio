@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { AgendaItem, AgendaCategory, AgendaPriority } from '../../types';
 import {
   Calendar as CalendarIcon, CheckCircle2, Circle, Clock, Plus,
@@ -881,6 +882,7 @@ const AgendaListItem: React.FC<AgendaListItemProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const confirm = useConfirm();
   const cat = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.recordatorio;
   const pri = PRIORITY_CONFIG[item.priority] || PRIORITY_CONFIG.media;
   const CatIcon = cat.icon;
@@ -977,8 +979,8 @@ const AgendaListItem: React.FC<AgendaListItemProps> = ({
 
         <button
           type="button"
-          onClick={() => {
-            if (confirm(`¿Eliminar "${item.title}" de la agenda?`)) {
+          onClick={async () => {
+            if (await confirm(`¿Eliminar "${item.title}" de la agenda?`, { title: 'Eliminar Actividad', confirmLabel: 'Eliminar' })) {
               onDelete(item.id);
             }
           }}
@@ -1008,6 +1010,7 @@ const AgendaCardItem: React.FC<AgendaCardItemProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const confirm = useConfirm();
   const cat = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.recordatorio;
   const pri = PRIORITY_CONFIG[item.priority] || PRIORITY_CONFIG.media;
   const CatIcon = cat.icon;
@@ -1093,8 +1096,8 @@ const AgendaCardItem: React.FC<AgendaCardItemProps> = ({
 
           <button
             type="button"
-            onClick={() => {
-              if (confirm(`¿Eliminar "${item.title}" de la agenda?`)) {
+            onClick={async () => {
+              if (await confirm(`¿Eliminar "${item.title}" de la agenda?`, { title: 'Eliminar Actividad', confirmLabel: 'Eliminar' })) {
                 onDelete(item.id);
               }
             }}

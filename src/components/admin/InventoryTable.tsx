@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   QrCode, AlertOctagon, Plus, Minus, Search, MapPin,
@@ -21,6 +22,7 @@ export const InventoryTable: React.FC = () => {
     setEditingProduct,
     isFeatureEnabled,
   } = useApp();
+  const confirm = useConfirm();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable'>('all');
@@ -578,8 +580,8 @@ export const InventoryTable: React.FC = () => {
                       )}
                       {isFeatureEnabled('inventory', 'product_crud') && (
                         <button
-                          onClick={() => {
-                            if (window.confirm(`¿Eliminar ${prod.name} del inventario?`)) deleteProduct(prod.id);
+                          onClick={async () => {
+                            if (await confirm(`¿Eliminar ${prod.name} del inventario?`, { title: 'Eliminar Producto', confirmLabel: 'Eliminar' })) deleteProduct(prod.id);
                           }}
                           className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                           title="Eliminar producto"

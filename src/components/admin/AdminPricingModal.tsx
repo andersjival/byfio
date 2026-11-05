@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { PricingSectionData, StickerPriceCategory, StickerPriceTier, HowToOrderStep } from '../../types';
 import {
   X, Save, RotateCcw, Plus, Trash2, Tag, HelpCircle,
@@ -7,6 +8,7 @@ import {
 } from 'lucide-react';
 
 export const AdminPricingModal: React.FC = () => {
+  const confirm = useConfirm();
   const { isPricingModalOpen, setIsPricingModalOpen, pricingData, updatePricingData, resetPricingData } = useApp();
 
   const [formData, setFormData] = useState<PricingSectionData>(() => JSON.parse(JSON.stringify(pricingData)));
@@ -31,8 +33,8 @@ export const AdminPricingModal: React.FC = () => {
     }, 900);
   };
 
-  const handleReset = () => {
-    if (window.confirm('¿Deseas restablecer todos los precios y pasos a los valores de diseño originales?')) {
+  const handleReset = async () => {
+    if (await confirm('¿Deseas restablecer todos los precios y pasos a los valores de diseño originales?', { title: 'Restablecer Precios', variant: 'warning', confirmLabel: 'Sí, restablecer' })) {
       resetPricingData();
       setIsPricingModalOpen(false);
     }
@@ -61,8 +63,8 @@ export const AdminPricingModal: React.FC = () => {
     setFormData((prev) => ({ ...prev, categories: [...prev.categories, newCat] }));
   };
 
-  const handleDeleteCategory = (catIndex: number) => {
-    if (window.confirm('¿Seguro que deseas eliminar esta categoría de precios?')) {
+  const handleDeleteCategory = async (catIndex: number) => {
+    if (await confirm('¿Seguro que deseas eliminar esta categoría de precios?', { title: 'Eliminar Categoría', confirmLabel: 'Eliminar' })) {
       setFormData((prev) => ({
         ...prev,
         categories: prev.categories.filter((_, idx) => idx !== catIndex),
