@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.4 - Reubicación Ergonómica del Botón Cerrar en Requisición de Inventario
+- [x] **Reubicación Dual de Cierre ([`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - Se desacopló el botón de cierre de la barra de herramientas y se ancló fijamente en la esquina superior derecha (`absolute top-3.5 right-3.5`) con badge circular blanco y sombra sutil para acceso inmediato y ergonómico.
+  - Se incorporó un botón secundario adicional *"Cerrar"* en la barra de acciones inferior junto a *"Imprimir / PDF"* y *"Guardar en Agenda"*.
+
 ### Versión 4.13.3 - Optimización Responsiva del Modal Registrar Nuevo Cliente
 - [x] **Ajuste de Visualización sin Cortes de Pantalla ([`CustomersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx), [`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx)):**
   - Se corrigió el problema de corte vertical en la ventana modal *"Registrar Nuevo Cliente"* en pantallas pequeñas, móviles y laptops.

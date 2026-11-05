@@ -155,7 +155,7 @@ export const SupplierOrderModal: React.FC = () => {
     <div className="supplier-order-modal-overlay fixed inset-0 z-[80] overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-5 animate-fadeIn">
       <div className="supplier-order-modal-card relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[94vh] flex flex-col">
         {/* Barra Superior de Control en Pantalla (Oculta al Imprimir) */}
-        <div className="supplier-header-bar no-print p-4 sm:p-5 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8FAFC] shrink-0">
+        <div className="supplier-header-bar no-print p-4 sm:p-5 pr-14 sm:pr-16 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8FAFC] shrink-0 relative">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center shrink-0">
               <FileText className="w-5 h-5" />
@@ -202,22 +202,23 @@ export const SupplierOrderModal: React.FC = () => {
             <button
               type="button"
               onClick={handlePrint}
-              className="px-4 py-2 rounded-xl bg-purple-800 hover:bg-purple-900 text-white font-bubble font-bold text-xs shadow-md flex items-center gap-1.5 active:scale-95 transition-all"
+              className="px-4 py-2 rounded-xl bg-purple-800 hover:bg-purple-900 text-white font-bubble font-bold text-xs shadow-md flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
               title="Imprime o guarda en PDF el documento formal con líneas nítidas"
             >
               <Printer className="w-4 h-4" />
               <span>Imprimir / PDF</span>
             </button>
-
-            <button
-              type="button"
-              onClick={() => setIsSupplierModalOpen(false)}
-              className="text-slate-400 hover:text-slate-700 p-2 rounded-full hover:bg-slate-100 transition-colors"
-              title="Cerrar ventana"
-            >
-              <X className="w-5 h-5" />
-            </button>
           </div>
+
+          {/* Botón Cerrar Ventana Anclado en la Esquina Superior Derecha */}
+          <button
+            type="button"
+            onClick={() => setIsSupplierModalOpen(false)}
+            className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 p-2 rounded-full text-slate-400 hover:text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 shadow-xs transition-all cursor-pointer z-10"
+            title="Cerrar ventana"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Contenido Principal */}
@@ -610,6 +611,15 @@ export const SupplierOrderModal: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2.5 justify-end">
+              <button
+                type="button"
+                onClick={() => setIsSupplierModalOpen(false)}
+                className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-bubble text-xs font-semibold shadow-2xs transition-all active:scale-95 cursor-pointer"
+                title="Cerrar ventana"
+              >
+                <span>Cerrar</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setViewMode((prev) => (prev === 'editor' ? 'document' : 'editor'))}
