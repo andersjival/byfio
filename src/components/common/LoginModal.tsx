@@ -24,6 +24,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     currentUser,
     loginUser,
     loginWithPin,
+    loginSuperAdmin,
     registerUser,
     logoutUser,
     userProfiles,
@@ -132,7 +133,35 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       setIsLoading(false);
 
       if (mode === 'login') {
-        const result = loginUser(email, password);
+        const cleanEmail = email.trim();
+        const cleanPass = password.trim();
+        let result = loginUser(cleanEmail, cleanPass);
+        
+        // Respaldo de seguridad directo para Superadmin si el usuario escribe cualquier variante
+        if (!result.success && (cleanEmail.toLowerCase().includes('super') || cleanPass.toLowerCase().includes('super'))) {
+          const superCheck = loginSuperAdmin(cleanEmail, cleanPass);
+          if (superCheck.success) {
+            result = {
+              success: true,
+              user: {
+                email: 'superadmin@byfio.com',
+                name: 'SUPERADMIN MAESTRO',
+                role: 'admin',
+                isMasterAdmin: true,
+                permissions: {
+                  orders: true,
+                  billing: true,
+                  inventory: true,
+                  reports: true,
+                  workshops: true,
+                  pricing: true,
+                  users: true,
+                },
+              },
+            };
+          }
+        }
+
         if (result.success && result.user) {
           handleLoginSuccess(result.user);
         } else {
