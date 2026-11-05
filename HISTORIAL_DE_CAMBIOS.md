@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.6 - Integración Completa del Módulo Pedidos a Proveedor en Panel Super Admin
+- [x] **Consola Maestra de Pedidos a Proveedor en Super Admin ([`SuperadminSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):**
+  - Implementado selector de vistas superior para alternar instantáneamente entre el *"Gestor Maestro de Módulos"* y *"Pedidos a Proveedor"* dentro de la consola del Super Admin.
+  - Integrada la vista completa de [`SuppliersOrdersSection`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SuppliersOrdersSection.tsx) en el panel Super Admin con sincronización en tiempo real con Cloudflare D1.
+  - Añadido botón de acción rápida *"Pedidos Proveedor"* en la barra de cabecera con contador de órdenes activas y botón de retorno al gestor de módulos.
+  - Diseñada tarjeta interactiva de control directo *"Control de Pedidos a Proveedor & Requisiciones"* con métricas en vivo de órdenes por pedir e historial de compras realizadas.
+
 ### Versión 4.14.5 - Blindaje y Persistencia Inmutable de Disponibilidad de Productos
 - [x] **Solución a Reversión de Disponibilidad en Polling ([`products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts)):**
   - Corregido el mapeo `mapRowToProduct`: los valores `NULL` de SQLite en `is_available` ahora se resuelven a `true` (disponible por defecto) en lugar de evaluarse erróneamente a `false` por coerción booleana de `null`.
