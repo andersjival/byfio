@@ -10,6 +10,7 @@ import {
 import { metricsTracker } from '../../services/metricsTracker';
 import { MetricsState, TrackedLink, AppRoute } from '../../types';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 
 interface MetricsPageProps {
   onNavigate: (route: AppRoute, adminTab?: any) => void;
@@ -237,6 +238,7 @@ const SECTION_METADATA: Record<string, SectionMetadataItem> = {
 
 export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
   const { workshops } = useApp();
+  const confirm = useConfirm();
 
   // Estado de autenticación privada por código numérico (1985)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -411,8 +413,8 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
   };
 
   // Eliminar link
-  const handleDeleteLink = (id: string) => {
-    if (window.confirm('¿Deseas eliminar este enlace de rastreo?')) {
+  const handleDeleteLink = async (id: string) => {
+    if (await confirm('¿Deseas eliminar este enlace de rastreo?', { title: 'Eliminar Enlace', confirmLabel: 'Eliminar' })) {
       metricsTracker.deleteTrackedLink(id);
       if (selectedLinkFilter === id) {
         setSelectedLinkFilter('all');
@@ -422,8 +424,8 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
   };
 
   // Reiniciar estadísticas de un link
-  const handleResetLink = (id: string) => {
-    if (window.confirm('¿Reiniciar a 0 las estadísticas de este enlace?')) {
+  const handleResetLink = async (id: string) => {
+    if (await confirm('¿Reiniciar a 0 las estadísticas de este enlace?', { title: 'Reiniciar Estadísticas', variant: 'warning', confirmLabel: 'Sí, reiniciar' })) {
       metricsTracker.resetLinkStats(id);
       refreshMetrics();
     }

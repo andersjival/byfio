@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { useConfirm } from '../../context/ConfirmContext';
+import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { UserProfile, UserPermissions } from '../../types';
 import {
   Users, Plus, KeyRound, Shield, Check, X, Edit3, Trash2,
@@ -11,6 +11,7 @@ import {
 export const UserProfilesSection: React.FC = () => {
   const { userProfiles, addUserProfile, updateUserProfile, deleteUserProfile, toggleUserProfileStatus, isFeatureEnabled } = useApp();
   const confirm = useConfirm();
+  const showAlert = useAlert();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
@@ -172,12 +173,18 @@ export const UserProfilesSection: React.FC = () => {
     setTimeout(() => setSuccessToast(null), 3500);
   };
 
-  const handleDelete = (profile: UserProfile) => {
+  const handleDelete = async (profile: UserProfile) => {
     if (profile.id === 'prof-admin' || profile.role === 'admin' || profile.pin === '7777') {
-      alert('El perfil de Administrador Principal está protegido y no se puede eliminar.');
+      showAlert('El perfil de Administrador Principal está protegido y no se puede eliminar.', {
+        title: 'Acción no permitida',
+        variant: 'warning',
+      });
       return;
     }
-    if (window.confirm(`¿Estás seguro de eliminar el perfil "${profile.name}"? Los colaboradores que usen este PIN ya no podrán ingresar.`)) {
+    if (await confirm(`¿Estás seguro de eliminar el perfil "${profile.name}"? Los colaboradores que usen este PIN ya no podrán ingresar.`, {
+      title: 'Eliminar Perfil',
+      confirmLabel: 'Eliminar',
+    })) {
       deleteUserProfile(profile.id);
       setSuccessToast(`Perfil "${profile.name}" eliminado.`);
       setTimeout(() => setSuccessToast(null), 3000);

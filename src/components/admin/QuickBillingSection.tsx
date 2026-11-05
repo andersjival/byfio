@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { Order, Product, PaymentMethod, DeliveryMethod, Customer } from '../../types';
 import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatters';
 import {
@@ -48,6 +49,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
     registerSinpeTransaction,
     isFeatureEnabled,
   } = useApp();
+  const confirm = useConfirm();
+  const showAlert = useAlert();
 
   // Sub-vistas del módulo
   const [activeTab, setActiveTab] = useState<'create' | 'search' | 'customers'>('create');
@@ -374,7 +377,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
     if (found) {
       setSelectedExistingOrder(found);
     } else {
-      alert(`No se encontró ningún pedido con "${searchInput}". Verifica el número.`);
+      showAlert(`No se encontró ningún pedido con "${searchInput}". Verifica el número.`, { title: 'Pedido no encontrado', variant: 'warning' });
     }
   };
 
@@ -412,7 +415,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
   const handleSaveCustomerModal = (e: React.FormEvent) => {
     e.preventDefault();
     if (!custModalName.trim() || !custModalPhone.trim()) {
-      alert('Por favor completa al menos el nombre y teléfono del cliente.');
+      showAlert('Por favor completa al menos el nombre y teléfono del cliente.', { title: 'Datos Incompletos', variant: 'warning' });
       return;
     }
 
@@ -1282,8 +1285,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                   <span>{def.label}</span>
                   <button
                     type="button"
-                    onClick={() => {
-                      if (window.confirm(`¿Eliminar el campo "${def.label}" de la ficha de clientes?`)) {
+                    onClick={async () => {
+                      if (await confirm(`¿Eliminar el campo "${def.label}" de la ficha de clientes?`, { title: 'Eliminar Campo', confirmLabel: 'Eliminar' })) {
                         deleteCustomerFieldDef(def.id);
                       }
                     }}
@@ -1400,8 +1403,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                           </button>
                           <button
                             type="button"
-                            onClick={() => {
-                              if (window.confirm(`¿Eliminar a ${cust.name} del directorio?`)) {
+                            onClick={async () => {
+                              if (await confirm(`¿Eliminar a ${cust.name} del directorio?`, { title: 'Eliminar Cliente', confirmLabel: 'Eliminar' })) {
                                 deleteCustomer(cust.id);
                               }
                             }}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2, AlertCircle, LogOut, KeyRound, Shield } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
+import { useAlert } from '../../context/ConfirmContext';
 import { AuthUser } from '../../types';
 
 interface LoginModalProps {
@@ -20,6 +21,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   onSuccess,
   isLogoutCurtain = false,
 }) => {
+  const showAlert = useAlert();
   const {
     currentUser,
     loginUser,
@@ -584,7 +586,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   href="#recuperar"
                   onClick={(e) => {
                     e.preventDefault();
-                    alert('Por favor contactá a Fio al WhatsApp 6400-4640 para restablecer tu contraseña.');
+                    showAlert('Por favor contactá a Fio al WhatsApp 6400-4640 para restablecer tu contraseña.', {
+                      title: 'Recuperar Contraseña',
+                      variant: 'info',
+                      confirmLabel: 'Entendido',
+                    });
                   }}
                 >
                   ¿Olvidaste tu contraseña?

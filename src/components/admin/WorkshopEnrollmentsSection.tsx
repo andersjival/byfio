@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   GraduationCap, Users, ChevronDown, ChevronUp, Phone, Hash,
@@ -23,6 +24,7 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
     isFeatureEnabled,
   } = useApp();
 
+  const confirm = useConfirm();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
@@ -470,7 +472,10 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
 
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); if (confirm(`¿Eliminar "${ws.title}"?`)) deleteWorkshop(ws.id); }}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (await confirm(`¿Eliminar "${ws.title}"?`, { title: 'Eliminar Taller', confirmLabel: 'Eliminar' })) deleteWorkshop(ws.id);
+                    }}
                     className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-red-50 text-red-500 hover:bg-red-100 transition-all"
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Eliminar

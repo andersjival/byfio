@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { AppRoute } from '../../types';
 import { AdminTabType } from '../admin/AdminTabs';
 import { SuperadminLogin } from './SuperadminLogin';
@@ -16,6 +17,7 @@ interface SuperadminSectionProps {
 }
 
 export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate }) => {
+  const confirm = useConfirm();
   const {
     superadminModules,
     isSuperAdminAuthenticated,
@@ -140,8 +142,8 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
 
             <button
               type="button"
-              onClick={() => {
-                if (window.confirm('¿Restablecer configuración oficial de módulos por defecto?')) {
+              onClick={async () => {
+                if (await confirm('¿Restablecer configuración oficial de módulos por defecto?', { title: 'Restablecer Módulos', variant: 'warning', confirmLabel: 'Sí, restablecer' })) {
                   resetSuperadminModules();
                 }
               }}

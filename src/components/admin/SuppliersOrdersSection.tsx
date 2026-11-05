@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { useConfirm } from '../../context/ConfirmContext';
+import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { SupplierOrder, SupplierOrderItem, SupplierOrderStatus } from '../../types';
 import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatters';
 import {
@@ -22,6 +22,7 @@ export const SuppliersOrdersSection: React.FC = () => {
     addAgendaItem,
   } = useApp();
   const confirm = useConfirm();
+  const showAlert = useAlert();
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'draft' | 'ordered' | 'received'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -139,7 +140,7 @@ export const SuppliersOrdersSection: React.FC = () => {
   const handleSaveDirectOrder = (e: React.FormEvent) => {
     e.preventDefault();
     if (newOrderItems.length === 0) {
-      alert('Debes agregar al menos un producto a la orden de compra.');
+      showAlert('Debes agregar al menos un producto a la orden de compra.', { title: 'Orden Vacía', variant: 'warning' });
       return;
     }
 

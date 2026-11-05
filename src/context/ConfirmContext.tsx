@@ -1,18 +1,29 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 
-interface ConfirmOptions {
+export interface ConfirmOptions {
   title?: string;
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: 'danger' | 'warning' | 'info';
+  isAlert?: boolean;
 }
 
 type ConfirmFn = (message: string, options?: ConfirmOptions) => Promise<boolean>;
+type AlertFn = (message: string, options?: Omit<ConfirmOptions, 'cancelLabel' | 'isAlert'>) => Promise<void>;
 
-const ConfirmContext = createContext<ConfirmFn>(() => Promise.resolve(false));
+interface ConfirmContextValue {
+  confirm: ConfirmFn;
+  alert: AlertFn;
+}
 
-export const useConfirm = (): ConfirmFn => useContext(ConfirmContext);
+const ConfirmContext = createContext<ConfirmContextValue>({
+  confirm: () => Promise.resolve(false),
+  alert: () => Promise.resolve(),
+});
+
+export const useConfirm = (): ConfirmFn => useContext(ConfirmContext).confirm;
+export const useAlert = (): AlertFn => useContext(ConfirmContext).alert;
 
 export const ConfirmProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [open, setOpen] = useState(false);
@@ -29,6 +40,15 @@ export const ConfirmProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   }, []);
 
+  const alert: AlertFn = useCallback((msg, opts = {}) => {
+    return new Promise((resolve) => {
+      resolveRef.current = () => resolve();
+      setMessage(msg);
+      setOptions({ ...opts, isAlert: true, variant: opts.variant || 'info' });
+      setOpen(true);
+    });
+  }, []);
+
   const handleConfirm = () => {
     setOpen(false);
     resolveRef.current?.(true);
@@ -40,7 +60,7 @@ export const ConfirmProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   return (
-    <ConfirmContext.Provider value={confirm}>
+    <ConfirmContext.Provider value={{ confirm, alert }}>
       {children}
       <ConfirmDialog
         open={open}
@@ -49,6 +69,7 @@ export const ConfirmProvider: React.FC<{ children: React.ReactNode }> = ({ child
         confirmLabel={options.confirmLabel}
         cancelLabel={options.cancelLabel}
         variant={options.variant}
+        isAlert={options.isAlert}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />
