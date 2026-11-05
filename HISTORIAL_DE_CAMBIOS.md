@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.7 - Incorporación y Protección del Perfil de Administrador Maestro en Base de Datos D1
+- [x] **Restablecimiento del 3er Perfil de Usuario ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx)):**
+  - Se vinculó explícitamente el perfil `prof-admin` (*ADMINISTRACIÓN (FIO)*, PIN `7777`, rol `admin`) en `DEFAULT_USER_PROFILES`, en la persistencia local y en Cloudflare D1.
+  - El sistema ahora muestra con total exactitud los 3 perfiles oficiales: `ADMINISTRACIÓN (FIO)`, `ALISTO DE PEDIDOS` y `ATENCIÓN Y TALLERES`.
+- [x] **Blindaje del Perfil Maestro ([`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx)):**
+  - Distintivo visual dorado `👑 Administrador Total` y bloqueo contra eliminación accidental para asegurar que el acceso administrativo permanezca disponible.
+
+
 ### Versión 4.13.6 - Restauración y Visibilidad Omnipresente de Perfiles de Usuario
 - [x] **Visibilidad Omnipresente en Admin y Móvil ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Se renombró la pestaña administrativa a *"Perfiles de Usuario"* y se amplió la cuadrícula a `xl:grid-cols-10` para garantizar que las 10 pestañas quepan de manera simétrica sin ocultarse ni empujarse.

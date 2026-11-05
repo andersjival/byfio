@@ -39,6 +39,26 @@ export const getNextOrderNumber = (ordersList: Order[]): string => {
 
 export const DEFAULT_USER_PROFILES: UserProfile[] = [
   {
+    id: 'prof-admin',
+    name: 'ADMINISTRACIÓN (FIO)',
+    pin: '7777',
+    role: 'admin',
+    isActive: true,
+    createdAt: '2026-10-30T00:00:00.000Z',
+    note: 'Administración general, gerencia y control total del sistema',
+    permissions: {
+      orders: true,
+      billing: true,
+      inventory: true,
+      reports: true,
+      workshops: true,
+      pricing: true,
+      users: true,
+      customers: true,
+      agenda: true,
+    },
+  },
+  {
     id: 'prof-alisto',
     name: 'ALISTO DE PEDIDOS',
     pin: '1001',
@@ -54,6 +74,8 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
       workshops: false,
       pricing: false,
       users: false,
+      customers: false,
+      agenda: true,
     },
   },
   {
@@ -72,6 +94,8 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
       workshops: true,
       pricing: true,
       users: false,
+      customers: true,
+      agenda: true,
     },
   },
 ];
@@ -540,10 +564,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
           const sanitized = deepSanitize(parsed);
-          if (JSON.stringify(sanitized) !== JSON.stringify(parsed)) {
-            try { localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(sanitized)); } catch {}
+          const hasAdmin = sanitized.some((p: any) => p.id === 'prof-admin' || p.pin === '7777');
+          const merged = hasAdmin ? sanitized : [DEFAULT_USER_PROFILES[0], ...sanitized];
+          if (JSON.stringify(merged) !== JSON.stringify(parsed)) {
+            try { localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(merged)); } catch {}
           }
-          return sanitized;
+          return merged;
         }
       }
     } catch {}

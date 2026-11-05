@@ -45,9 +45,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
       {/* Barra de Título y Acciones Globales Compacta */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <span className="text-[10px] font-bold text-fio-pink uppercase tracking-wider block">
-            Sistema WMS / ERP Ligero
-          </span>
           <h1 className="text-xl sm:text-2xl font-bubble font-bold text-fio-900 leading-tight">
             Panel de Control &amp; Alisto QR
           </h1>

@@ -117,7 +117,7 @@ export const UserProfilesSection: React.FC = () => {
     const duplicatePin = userProfiles.find(
       (p) => p.pin === cleanPin && p.id !== editingProfileId
     );
-    if (duplicatePin || cleanPin === '7777') {
+    if (duplicatePin || (cleanPin === '7777' && editingProfileId !== 'prof-admin')) {
       setFormError(`El PIN ${cleanPin} ya está reservado o en uso por otro perfil. Ingresa uno diferente.`);
       return;
     }
@@ -154,6 +154,10 @@ export const UserProfilesSection: React.FC = () => {
   };
 
   const handleDelete = (profile: UserProfile) => {
+    if (profile.id === 'prof-admin' || profile.role === 'admin' || profile.pin === '7777') {
+      alert('El perfil de Administrador Principal está protegido y no se puede eliminar.');
+      return;
+    }
     if (window.confirm(`¿Estás seguro de eliminar el perfil "${profile.name}"? Los colaboradores que usen este PIN ya no podrán ingresar.`)) {
       deleteUserProfile(profile.id);
       setSuccessToast(`Perfil "${profile.name}" eliminado.`);
@@ -269,6 +273,11 @@ export const UserProfilesSection: React.FC = () => {
                       {isAlistoProfile && (
                         <span className="px-2.5 py-0.5 rounded-full text-xs sm:text-[10px] font-bubble font-bold bg-purple-100 text-fio-purple border border-purple-200 shadow-2xs">
                           📦 Alisto Móvil (+50%)
+                        </span>
+                      )}
+                      {prof.role === 'admin' && (
+                        <span className="px-2.5 py-0.5 rounded-full text-xs sm:text-[10px] font-bubble font-bold bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-2xs">
+                          👑 Administrador Total
                         </span>
                       )}
                     </div>
@@ -390,14 +399,16 @@ export const UserProfilesSection: React.FC = () => {
                       <span>Editar</span>
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(prof)}
-                      className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors"
-                      title="Eliminar perfil"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    {prof.role !== 'admin' && prof.pin !== '7777' && (
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(prof)}
+                        className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors"
+                        title="Eliminar perfil"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
