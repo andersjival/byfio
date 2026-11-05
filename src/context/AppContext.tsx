@@ -1641,15 +1641,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               let hasFieldChanges = false;
               const merged = data.map((cloudProd: Product) => {
                 const local = prevMap.get(cloudProd.id);
-                const isAvail = cloudProd.isAvailable !== undefined 
+                const isAvail = typeof cloudProd.isAvailable === 'boolean'
                   ? cloudProd.isAvailable 
-                  : (local?.isAvailable !== undefined ? local.isAvailable : true);
-                const inStore = cloudProd.showInStore !== undefined
+                  : (typeof local?.isAvailable === 'boolean' ? local.isAvailable : true);
+                const inStore = typeof cloudProd.showInStore === 'boolean'
                   ? cloudProd.showInStore
-                  : (local?.showInStore !== undefined ? local.showInStore : isAvail);
-                const inCat = cloudProd.showInCatalog !== undefined
+                  : isAvail;
+                const inCat = typeof cloudProd.showInCatalog === 'boolean'
                   ? cloudProd.showInCatalog
-                  : (local?.showInCatalog !== undefined ? local.showInCatalog : isAvail);
+                  : isAvail;
 
                 if (
                   !local ||
@@ -2415,17 +2415,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const toggleProductAvailability = (productId: string) => {
     let nextAvailable = false;
+    let targetProduct: Product | undefined;
     let updatedProducts: Product[] = [];
     setProducts((prev) => {
       updatedProducts = prev.map((p) => {
         if (p.id === productId) {
           nextAvailable = p.isAvailable === false ? true : false;
-          return {
+          targetProduct = {
             ...p,
             isAvailable: nextAvailable,
             showInStore: nextAvailable,
             showInCatalog: nextAvailable,
           };
+          return targetProduct;
         }
         return p;
       });
@@ -2437,11 +2439,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Si se desactiva el producto, eliminarlo de inmediato del carrito para que nadie lo compre por error
     setCart((prevCart) => prevCart.filter((it) => it.type !== 'product' || it.id !== productId || nextAvailable));
 
-    // Sincronizar estado en la base de datos en la nube D1
+    // Sincronizar estado en la base de datos en la nube D1 enviando también respaldo por si falta en D1
     fetch('/api/products', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: productId, isAvailable: nextAvailable }),
+      body: JSON.stringify({
+        id: productId,
+        isAvailable: nextAvailable,
+        name: targetProduct?.name,
+        sku: targetProduct?.sku,
+        category: targetProduct?.category,
+        shelfLocation: targetProduct?.shelfLocation,
+        price: targetProduct?.price,
+        costPrice: targetProduct?.costPrice,
+        stock: targetProduct?.stock,
+        minStock: targetProduct?.minStock,
+        maxStock: targetProduct?.maxStock,
+        image: targetProduct?.image,
+        description: targetProduct?.description,
+      }),
     }).catch(() => {});
 
     try {

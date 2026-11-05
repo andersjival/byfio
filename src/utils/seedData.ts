@@ -120,6 +120,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     customizationPlaceholder: 'Ej: Dra. Valeria Méndez / Diseño Botánico',
     unit: 'Unidad',
     description: 'Portada laminada con acabado glitter o mate, espiral dorada y elástico lila.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
   {
     id: 'prod-2',
@@ -137,6 +140,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     customizationPlaceholder: 'Ej: Bebé Mateo / Tema Safari Pastel',
     unit: 'Unidad',
     description: 'Tapas acolchadas ultra resistentes con bolsillos para carnet de vacunas y citas.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
   {
     id: 'prod-3',
@@ -154,6 +160,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     customizationPlaceholder: 'Ej: Nombre Sofía / Letra S en lila',
     unit: 'Unidad',
     description: 'Cerámica blanca premium AAA 11oz apta para microondas y lavaplatos.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
   {
     id: 'prod-4',
@@ -170,6 +179,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     isCustomizable: false,
     unit: 'Unidad',
     description: 'Bolsa 100% algodón crudo de alta resistencia con estampado lavable de alta definición.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
   {
     id: 'prod-5',
@@ -186,6 +198,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     isCustomizable: false,
     unit: 'Pack',
     description: 'Vinilo impermeable con corte troquelado y destellos arcoíris.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
   {
     id: 'prod-6',
@@ -202,6 +217,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     isCustomizable: false,
     unit: 'Kit Completo',
     description: 'Incluye plegadera de hueso, punzón de madera, 3 agujas curvas, 20m hilo encerado y cera de abeja.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
   {
     id: 'prod-7',
@@ -218,6 +236,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     isCustomizable: false,
     unit: 'Caja x36',
     description: 'Recubrimiento polímero especial parejo para colores vibrantes sin manchas.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
   {
     id: 'prod-8',
@@ -234,6 +255,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     isCustomizable: false,
     unit: 'Resma 100h',
     description: 'Textura fina tipo lino ideal para interiores de libretas de boda y agendas elegantes.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
   {
     id: 'prod-9',
@@ -250,6 +274,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     isCustomizable: false,
     unit: 'Unidad',
     description: '50 hojitas desprendibles en tono lila y menta con soporte imantado trasero.',
+    isAvailable: true,
+    showInStore: true,
+    showInCatalog: true,
   },
 ];
 

@@ -22,32 +22,47 @@ interface ProductDbRow {
   created_at: string;
 }
 
-const mapRowToProduct = (r: ProductDbRow) => ({
-  id: r.id,
-  sku: r.sku,
-  name: r.name,
-  category: r.category,
-  shelfLocation: r.shelf_location,
-  price: r.price,
-  costPrice: r.cost_price,
-  stock: r.stock,
-  minStock: r.min_stock,
-  maxStock: r.max_stock,
-  image: r.image,
-  isCustomizable: Boolean(r.is_customizable),
-  customizationPlaceholder: r.customization_placeholder,
-  unit: r.unit,
-  description: r.description,
-  isAvailable: r.is_available !== undefined ? Boolean(r.is_available) : true,
-  showInStore: r.is_available !== undefined ? Boolean(r.is_available) : true,
-  showInCatalog: r.is_available !== undefined ? Boolean(r.is_available) : true,
-});
+const mapRowToProduct = (r: ProductDbRow) => {
+  const isAvail = r.is_available !== null && r.is_available !== undefined
+    ? (Number(r.is_available) === 1 || r.is_available === true)
+    : true;
+
+  return {
+    id: r.id,
+    sku: r.sku,
+    name: r.name,
+    category: r.category,
+    shelfLocation: r.shelf_location,
+    price: r.price,
+    costPrice: r.cost_price,
+    stock: r.stock,
+    minStock: r.min_stock,
+    maxStock: r.max_stock,
+    image: r.image,
+    isCustomizable: Boolean(r.is_customizable),
+    customizationPlaceholder: r.customization_placeholder,
+    unit: r.unit,
+    description: r.description,
+    isAvailable: isAvail,
+    showInStore: isAvail,
+    showInCatalog: isAvail,
+  };
+};
 
 export const onRequestGet = async (context: { env: Env }) => {
   try {
     if (!context.env.DB) {
       return new Response(JSON.stringify({ error: 'DB binding not available' }), { status: 500 });
     }
+
+    // Auto-migración defensiva: asegurar columna is_available y reparar nulos a 1 (disponibles)
+    await context.env.DB.prepare(
+      'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
+    ).run().catch(() => {});
+
+    await context.env.DB.prepare(
+      'UPDATE products SET is_available = 1 WHERE is_available IS NULL'
+    ).run().catch(() => {});
 
     const { results } = await context.env.DB.prepare(
       'SELECT * FROM products ORDER BY created_at DESC'
@@ -137,7 +152,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
       const { id, stock, minStock, maxStock, isAvailable, name, sku, category, shelfLocation, price, costPrice, image, isCustomizable, customizationPlaceholder, unit, description } = body;
       if (id) {
         if (name !== undefined || price !== undefined || category !== undefined) {
-          await context.env.DB.prepare(
+          const res = await context.env.DB.prepare(
             `UPDATE products SET
               sku = COALESCE(?, sku),
               name = COALESCE(?, name),
@@ -153,7 +168,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
               customization_placeholder = COALESCE(?, customization_placeholder),
               unit = COALESCE(?, unit),
               description = COALESCE(?, description),
-              is_available = COALESCE(?, is_available)
+              is_available = COALESCE(?, is_available, 1)
             WHERE id = ?`
           ).bind(
             sku ?? null,
@@ -173,11 +188,47 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
             isAvailable !== undefined ? (isAvailable ? 1 : 0) : null,
             id
           ).run();
+
+          // Si el producto no existía en D1, insertarlo completo
+          if (res.meta && res.meta.changes === 0 && name) {
+            await context.env.DB.prepare(
+              `INSERT OR REPLACE INTO products (
+                id, sku, name, category, shelf_location, price, cost_price,
+                stock, min_stock, max_stock, image, is_customizable,
+                customization_placeholder, unit, description, is_available
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+            ).bind(
+              id, sku || 'SKU-NEW', name, category || 'General',
+              shelfLocation || 'Estante A-1', price || 0, costPrice || 0,
+              stock || 0, minStock || 0, maxStock || 0, image || '',
+              isCustomizable ? 1 : 0, customizationPlaceholder || null,
+              unit || 'Unidad', description || '',
+              isAvailable !== undefined ? (isAvailable ? 1 : 0) : 1
+            ).run().catch(() => {});
+          }
         } else {
           if (isAvailable !== undefined) {
-            await context.env.DB.prepare(
+            const res = await context.env.DB.prepare(
               'UPDATE products SET is_available = ? WHERE id = ?'
             ).bind(isAvailable ? 1 : 0, id).run();
+
+            // Si el producto no existía en D1 pero se recibieron datos de respaldo, crearlo
+            if (res.meta && res.meta.changes === 0 && body.name) {
+              await context.env.DB.prepare(
+                `INSERT OR REPLACE INTO products (
+                  id, sku, name, category, shelf_location, price, cost_price,
+                  stock, min_stock, max_stock, image, is_customizable,
+                  customization_placeholder, unit, description, is_available
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+              ).bind(
+                id, body.sku || 'SKU-DEF', body.name, body.category || 'General',
+                body.shelfLocation || 'Estante A-1', body.price || 0, body.costPrice || 0,
+                body.stock || 0, body.minStock || 0, body.maxStock || 0, body.image || '',
+                body.isCustomizable ? 1 : 0, body.customizationPlaceholder || null,
+                body.unit || 'Unidad', body.description || '',
+                isAvailable ? 1 : 0
+              ).run().catch(() => {});
+            }
           }
 
           if (stock !== undefined) {

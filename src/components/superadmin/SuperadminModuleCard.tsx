@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   QrCode, Receipt, Boxes, AlertTriangle, DollarSign, Landmark,
   GraduationCap, Tag, Users, BarChart3, BookOpen, ShoppingBag,
-  CheckCircle2, XCircle, ChevronDown, ChevronUp, Layers, Calendar
+  CheckCircle2, XCircle, ChevronDown, ChevronUp, Layers, Calendar, Truck
 } from 'lucide-react';
 import { SuperadminModuleConfig } from '../../types';
 
@@ -27,6 +27,7 @@ const getModuleIcon = (iconName: string) => {
     case 'BookOpen': return BookOpen;
     case 'ShoppingBag': return ShoppingBag;
     case 'Calendar': return Calendar;
+    case 'Truck': return Truck;
     default: return Layers;
   }
 };

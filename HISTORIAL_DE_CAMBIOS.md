@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.14.5 - Blindaje y Persistencia Inmutable de Disponibilidad de Productos
+- [x] **Solución a Reversión de Disponibilidad en Polling ([`products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts)):**
+  - Corregido el mapeo `mapRowToProduct`: los valores `NULL` de SQLite en `is_available` ahora se resuelven a `true` (disponible por defecto) en lugar de evaluarse erróneamente a `false` por coerción booleana de `null`.
+  - Agregada migración defensiva automática en `onRequestGet` (`UPDATE products SET is_available = 1 WHERE is_available IS NULL`) para blindar todos los registros existentes en la base de datos Cloudflare D1.
+  - Implementado upsert seguro en `onRequestPut` para garantizar que actualizaciones de disponibilidad persistan tanto si el registro ya existía como si debe crearse.
+- [x] **Sincronización Segura en Frontend ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`seedData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/seedData.ts)):**
+  - Actualizado `fetchLatestData` para verificar tipo estricto `boolean` al mezclar datos de la nube con el estado local, impidiendo que respuestas no inicializadas sobreescriban el estado disponible.
+  - Enriquecido el payload de `toggleProductAvailability` con datos de respaldo para sincronización atómica en D1 y añadidas banderas explícitas en `INITIAL_PRODUCTS`.
+
 ### Versión 4.14.4 - Visibilidad Inmediata y Acceso Rápido al Módulo Pedidos Proveedor
 - [x] **Acceso Directo desde la Barra Superior ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
   - Actualizado el botón de cabecera con el rótulo claro *"Pedidos Proveedor"*, icono `Truck` y badge con el conteo de pedidos activos para entrar directamente a la sección desde cualquier pantalla.
