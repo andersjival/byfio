@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.15.3 - Alerta Animada de la Estrellita en Nuevo Pedido con Salida Hacia Abajo
+- [x] **Notificación de Pedidos con la Estrellita Animada ([`NewOrderStarAlert.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/NewOrderStarAlert.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Implementado modal de alerta centrado en pantalla que se dispara automáticamente cada vez que ingresa un pedido nuevo (tienda online, reservas de talleres, facturación rápida o sincronización remota en segundo plano).
+  - Muestra la mascota oficial en video (`vid-estrellita.mp4`) con corazón animado, el mensaje exacto *"Hemos recibido un nuevo pedido"*, número de orden y barra de progreso.
+  - Permanece en el centro de la pantalla durante 6.5 segundos y desciende suavemente del centro hacia abajo (`animate-star-alert-down`), con botón `X` para descarte manual instantáneo.
+  - Incorporado botón *"Probar Estrellita"* en la cabecera de la cola de pedidos de administración para verificación directa.
+
 ### Versión 4.15.2 - Erradicación Total de Alertas y Confirmaciones Nativas del Navegador
 - [x] **Reemplazo 100% de Notificaciones Nativas por Diálogos Integrados By.Fio ([`ConfirmDialog.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/ui/ConfirmDialog.tsx), [`ConfirmContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/ConfirmContext.tsx)):**
   - Añadido soporte para avisos informativos (`useAlert()`) y confirmaciones asíncronas (`useConfirm()`) con diseño nativo By.Fio (fondo blur, botones temáticos, iconos y cero popups feos del navegador tipo `byfiocr.pages.dev dice`).
