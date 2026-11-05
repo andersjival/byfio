@@ -28,6 +28,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
     sinpeTransactions,
     isModuleEnabled,
     currentUser,
+    logoutUser,
   } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
 
@@ -146,6 +147,26 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
           </button>
         </div>
       </div>
+
+      {/* Banner Informativo si se encuentra en perfil Staff (como Alisto de Pedidos) */}
+      {currentUser?.role === 'staff' && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 sm:p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs font-bubble shadow-2xs">
+          <div className="flex items-center gap-2 text-amber-900">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
+            <span>
+              Sesión activa en perfil operativo <strong>{currentUser.name}</strong> (Staff). Los perfiles de usuarios se gestionan desde el acceso Administrador.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={logoutUser}
+            className="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[11px] shadow-2xs transition-all active:scale-95 cursor-pointer"
+            title="Cambiar a cuenta de Administrador o Superadmin"
+          >
+            Cambiar a Administrador &rarr;
+          </button>
+        </div>
+      )}
 
       {/* KPI Cards Compactas */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

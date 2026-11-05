@@ -18,7 +18,7 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
 
   return (
     <div className="p-1.5 sm:p-2 rounded-3xl bg-[#ECEEF2] shadow-neuInset border border-white/60 mb-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-10 gap-1.5 sm:gap-2">
         {/* Tab 1: Pedidos & Alisto */}
         {hasPermission('orders') && (
           <button
@@ -180,7 +180,7 @@ export const AdminTabs: React.FC<AdminTabsProps> = ({ activeTab, setActiveTab })
             title="Administración de Perfiles y Accesos"
           >
             <Users className="w-4 h-4 text-purple-500 shrink-0" />
-            <span className="truncate">Perfiles</span>
+            <span className="truncate">Perfiles de Usuario</span>
             {activeProfilesCount > 0 && (
               <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-purple-500 text-white ml-0.5 shrink-0">
                 {activeProfilesCount}

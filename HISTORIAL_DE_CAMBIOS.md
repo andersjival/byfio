@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.13.6 - Restauración y Visibilidad Omnipresente de Perfiles de Usuario
+- [x] **Visibilidad Omnipresente en Admin y Móvil ([`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Se renombró la pestaña administrativa a *"Perfiles de Usuario"* y se amplió la cuadrícula a `xl:grid-cols-10` para garantizar que las 10 pestañas quepan de manera simétrica sin ocultarse ni empujarse.
+  - Se eliminó la restricción `hidden sm:flex` del indicador de sesión en la barra de navegación; ahora el perfil activo (`ALISTO DE PEDIDOS`, `ATENCIÓN Y TALLERES`, `Admin`) es visible en celulares y escritorio en todo momento.
+- [x] **Aviso Claro y Selector de Perfiles Operativos ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`LoginModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
+  - Si un usuario ingresa con un PIN de colaborador operativo (Staff), se despliega un aviso intuitivo indicando que está en perfil operativo y un botón directo para cambiar a Administrador.
+  - En la ventana de inicio de sesión se incorporaron chips de acceso rápido con los perfiles existentes para entrar en 1 toque.
+  - La tarjeta de *"Perfiles de Usuarios"* se organizó en cuadrícula balanceada `lg:grid-cols-5` en el Menú Principal del Admin.
+
+
 ### Versión 4.13.5 - Transición de Estado a Empaque y Nueva Pestaña de Filtro Empacados
 - [x] **Flujo Completo En Empaque → Empacado ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`index.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts)):**
   - Los pedidos que finalizan alisto pasan a estado *"En Empaque"* (`packing`) mostrando la etiqueta de empaque y el botón de acción *"Marcar Empacado"*.

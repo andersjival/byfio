@@ -302,6 +302,38 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 )}
               </div>
 
+              {/* Acceso Rápido a Perfiles de Usuario con PIN */}
+              {isFeatureEnabled('users', 'pin_authentication') && userProfiles.filter((p) => p.isActive).length > 0 && (
+                <div className="pt-2 pb-1 text-center">
+                  <div className="text-[10px] font-bubble font-bold text-slate-500 mb-1">
+                    Perfiles de Usuario Disponibles:
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-1.5">
+                    {userProfiles
+                      .filter((p) => p.isActive)
+                      .map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            setLoginMethod('pin');
+                            setProfileNameInput(p.name);
+                            setErrorMessage(null);
+                          }}
+                          className={`px-2.5 py-1 rounded-xl text-[10px] font-bubble font-bold transition-all border cursor-pointer ${
+                            loginMethod === 'pin' && profileNameInput === p.name
+                              ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white border-transparent shadow-xs scale-105'
+                              : 'bg-white hover:bg-purple-50 text-purple-900 border-purple-200 shadow-2xs'
+                          }`}
+                          title={`Tocar para ingresar con perfil ${p.name}`}
+                        >
+                          👤 {p.name}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              )}
+
               {/* Acceso Rápido Superadmin */}
               <div className="flex flex-col items-center gap-1.5 pt-1.5">
                 <button

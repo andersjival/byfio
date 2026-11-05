@@ -379,11 +379,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>Menú Principal</span>
               </button>
 
-              {/* Indicador de Perfil de Usuario Activo en Admin */}
+              {/* Indicador de Perfil de Usuario Activo en Admin (Visible en Móvil y Escritorio) */}
               {currentUser && (
-                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-purple-50/90 border border-purple-200/80 text-xs font-bubble font-bold text-slate-700 shadow-2xs">
+                <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-purple-50/90 border border-purple-200/80 text-[11px] sm:text-xs font-bubble font-bold text-slate-700 shadow-2xs shrink-0">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  <span className="truncate max-w-[120px]">{currentUser.name}</span>
+                  <span className="truncate max-w-[80px] xs:max-w-[110px] sm:max-w-[140px]">{currentUser.name}</span>
                   <span className="px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
                     {currentUser.role === 'admin' ? 'Admin' : 'Staff'}
                   </span>
