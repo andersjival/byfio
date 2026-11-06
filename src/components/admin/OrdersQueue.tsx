@@ -9,10 +9,42 @@ export const OrdersQueue: React.FC = () => {
   const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled, showNewOrderAlert } = useApp();
   const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packing' | 'packed' | 'delivered'>('all');
 
-  const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
-  const packingOrders = orders.filter((o) => o.orderStatus === 'packing');
-  const packedOrders = orders.filter((o) => o.orderStatus === 'packed');
-  const deliveredOrders = orders.filter((o) => o.orderStatus === 'delivered');
+  // Ordenamiento cronológico descendente estricto (pedidos más recientes arriba, más antiguos abajo)
+  const sortedOrders = React.useMemo(() => {
+    return [...orders].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [orders]);
+
+  // Determina si un pedido ya finalizó el alisto (progreso 100% o estado packing/packed/delivered)
+  const isOrderFullyAlistado = (order: Order) => {
+    return (
+      order.orderStatus === 'packing' ||
+      order.orderStatus === 'packed' ||
+      order.orderStatus === 'delivered' ||
+      (Array.isArray(order.items) &&
+        order.items.length > 0 &&
+        order.items.every((it) => it.isPicked || it.isMissing))
+    );
+  };
+
+  // 1. Pendientes de Alisto: SOLO los que NO se han alistado (progreso < 100%)
+  const pendingOrders = sortedOrders.filter(
+    (o) => (o.orderStatus === 'pending' || o.orderStatus === 'picking') && !isOrderFullyAlistado(o)
+  );
+
+  // 2. En Empaque: pedidos cuyo alisto ya está al 100% o que tienen estado de empaque
+  const packingOrders = sortedOrders.filter(
+    (o) =>
+      o.orderStatus === 'packing' ||
+      ((o.orderStatus === 'pending' || o.orderStatus === 'picking') && isOrderFullyAlistado(o))
+  );
+
+  // 3. Empacados
+  const packedOrders = sortedOrders.filter((o) => o.orderStatus === 'packed');
+
+  // 4. Terminados
+  const deliveredOrders = sortedOrders.filter((o) => o.orderStatus === 'delivered');
 
   const displayedOrders = filterMode === 'pending'
     ? pendingOrders
@@ -22,7 +54,7 @@ export const OrdersQueue: React.FC = () => {
     ? packedOrders
     : filterMode === 'delivered'
     ? deliveredOrders
-    : orders;
+    : sortedOrders;
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
@@ -60,7 +92,7 @@ export const OrdersQueue: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-fio-100 pb-3">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="font-bubble font-bold text-xl text-fio-900">Cola de Pedidos de Clientes (FIFO)</h2>
+            <h2 className="font-bubble font-bold text-xl text-fio-900">Cola de Pedidos de Clientes</h2>
             <span
               className="text-xs font-bold text-fio-pink bg-pink-50 border border-pink-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5"
               title="Pedidos pendientes de alisto o en alisto QR activo"
@@ -76,7 +108,7 @@ export const OrdersQueue: React.FC = () => {
             </span>
           </div>
           <p className="text-xs text-gray-500 mt-0.5">
-            Alisto secuencial cronológico por orden de llegada para empaque y despacho.
+            Los pedidos nuevos ingresan automáticamente en la parte superior y se actualizan en orden en tiempo real.
           </p>
         </div>
 
@@ -247,15 +279,18 @@ export const OrdersQueue: React.FC = () => {
         ) : (
           displayedOrders.map((order: Order) => {
           const totalItems = order.items.length;
-          const pickedItems = order.items.filter((it) => it.isPicked).length;
-          const progressPercent = Math.round((pickedItems / totalItems) * 100);
-          const isFinished = order.orderStatus === 'packing' || order.orderStatus === 'packed' || order.orderStatus === 'delivered';
+          const pickedItems = order.items.filter((it) => it.isPicked || it.isMissing).length;
+          const progressPercent = totalItems > 0 ? Math.round((pickedItems / totalItems) * 100) : 0;
+          const isFinished = isOrderFullyAlistado(order);
+          const effectiveStatus: OrderStatus = isFinished && (order.orderStatus === 'pending' || order.orderStatus === 'picking')
+            ? 'packing'
+            : order.orderStatus;
 
           return (
             <div
               key={order.id}
               className={`p-4 sm:p-5 rounded-2xl border transition-all ${
-                order.orderStatus === 'picking'
+                !isFinished && order.orderStatus === 'picking'
                   ? 'border-fio-500 bg-fio-50/70 shadow-md ring-2 ring-fio-400'
                   : 'border-fio-200 hover:border-fio-300 bg-white shadow-sm'
               }`}
@@ -267,7 +302,7 @@ export const OrdersQueue: React.FC = () => {
                     <span className="font-mono font-bold text-sm text-fio-900 bg-fio-100 px-2.5 py-1 rounded-xl">
                       {order.orderNumber}
                     </span>
-                    {getStatusBadge(order.orderStatus)}
+                    {getStatusBadge(effectiveStatus)}
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-xs">
                       <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                       <span>Pagado por {order.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia'} (Verificado)</span>
@@ -357,7 +392,7 @@ export const OrdersQueue: React.FC = () => {
                         <span>Generar / Ver Factura</span>
                       </button>
 
-                      {order.orderStatus === 'packing' && (
+                      {effectiveStatus === 'packing' && (
                         <button
                           type="button"
                           onClick={() => updateOrderStatus(order.id, 'packed')}
@@ -369,7 +404,7 @@ export const OrdersQueue: React.FC = () => {
                         </button>
                       )}
 
-                      {order.orderStatus === 'packed' && (
+                      {effectiveStatus === 'packed' && (
                         <button
                           type="button"
                           onClick={() => updateOrderStatus(order.id, 'delivered')}

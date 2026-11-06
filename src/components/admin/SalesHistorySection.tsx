@@ -114,7 +114,7 @@ export const SalesHistorySection: React.FC = () => {
       }
 
       return true;
-    });
+    }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [orders, filterType, daySubFilter, customDay, weekSubFilter, monthSubFilter, customMonth, paymentFilter, orderStatusFilter, searchQuery]);
 
   // Cálculos de métricas del período

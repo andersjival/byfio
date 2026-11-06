@@ -98,7 +98,7 @@ export const onRequestGet = async (context: { env: Env }) => {
     }
 
     let { results } = await context.env.DB.prepare(
-      'SELECT * FROM orders ORDER BY created_at ASC'
+      'SELECT * FROM orders ORDER BY created_at DESC'
     ).all();
 
     // Solo si la base de datos de pedidos está completamente vacía, sembrar la orden fundacional #FIO-1001
@@ -120,7 +120,7 @@ export const onRequestGet = async (context: { env: Env }) => {
           'Curridabat, San José, de la Pops 200m Sur, Casa 14A con portón blanco.',
           'sinpe',
           'paid',
-          'pending',
+          'delivered',
           JSON.stringify([
             {
               id: 'item-101',
@@ -166,7 +166,7 @@ export const onRequestGet = async (context: { env: Env }) => {
         ).run();
 
         const refetched = await context.env.DB.prepare(
-          'SELECT * FROM orders ORDER BY created_at ASC'
+          'SELECT * FROM orders ORDER BY created_at DESC'
         ).all();
         results = refetched.results;
       } catch {}
@@ -277,14 +277,24 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
     const { id, orderStatus, packedAt, items } = await context.request.json() as any;
 
     if (context.env.DB && id) {
-      await context.env.DB.prepare(
-        'UPDATE orders SET order_status = ?, packed_at = ?, items_json = ? WHERE id = ?'
-      ).bind(
-        orderStatus,
-        packedAt || null,
-        JSON.stringify(items || []),
-        id
-      ).run();
+      if (items !== undefined && Array.isArray(items) && items.length > 0) {
+        await context.env.DB.prepare(
+          'UPDATE orders SET order_status = ?, packed_at = ?, items_json = ? WHERE id = ?'
+        ).bind(
+          orderStatus,
+          packedAt || null,
+          JSON.stringify(items),
+          id
+        ).run();
+      } else {
+        await context.env.DB.prepare(
+          'UPDATE orders SET order_status = ?, packed_at = ? WHERE id = ?'
+        ).bind(
+          orderStatus,
+          packedAt || null,
+          id
+        ).run();
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), {

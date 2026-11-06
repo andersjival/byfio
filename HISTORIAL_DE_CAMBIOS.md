@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.9 - Ordenamiento Cronológico Descendente Estricto de Pedidos y Sincronización en Tiempo Real
+- [x] **Corrección de Ordenamiento Cronológico Invertido ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`SalesHistorySection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SalesHistorySection.tsx)):**
+  - Se corrigió el ordenamiento ascendente (`ORDER BY created_at ASC` y `a.createdAt - b.createdAt`) que mantenía el pedido de Sofía Solano Brenes (#FIO-1001, del 28 de octubre) clavado de forma permanente en la primera posición de la lista.
+  - Se estableció el orden cronológico descendente estricto (`ORDER BY created_at DESC` y `b.createdAt - a.createdAt`) tanto en la API Cloudflare D1 como en la memoria reactiva de la aplicación.
+  - Los pedidos más recientes aparecen automáticamente arriba en tiempo real, mientras que las órdenes pasadas se desplazan hacia abajo naturalmente.
+  - Sincronización íntegra de `items_json` en peticiones PUT para no corromper ni vaciar los ítems de los pedidos al actualizar su estado operativo.
+
+
 ### Versión 4.16.8 - Flujo Oficial de Reserva de Talleres sin Redirección Involuntaria, Checkout SINPE Móvil y Acciones Post-Reserva
 - [x] **Erradicación de Redirección Automática a WhatsApp ([`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx)):**
   - Eliminada la apertura forzada de WhatsApp (`window.open(waUrl)`) al confirmar la inscripción de un taller.

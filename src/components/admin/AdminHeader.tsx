@@ -35,7 +35,11 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
 
   const handleOpenDesign = onOpenDesignModal || (() => setInternalDesignModalOpen(true));
 
-  const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
+  const pendingOrders = orders.filter(
+    (o) =>
+      (o.orderStatus === 'pending' || o.orderStatus === 'picking') &&
+      !(Array.isArray(o.items) && o.items.length > 0 && o.items.every((it) => it.isPicked || it.isMissing))
+  );
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
   const totalInventoryValue = products.reduce((acc, p) => acc + p.stock * p.costPrice, 0);
 

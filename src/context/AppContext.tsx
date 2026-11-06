@@ -455,10 +455,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
     const initial = saved ? JSON.parse(saved) : INITIAL_ORDERS;
     const sanitized = deepSanitize(initial);
-    if (saved && JSON.stringify(sanitized) !== JSON.stringify(initial)) {
-      try { localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(sanitized)); } catch {}
+    const sorted = Array.isArray(sanitized)
+      ? [...sanitized].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+      : [];
+    if (saved && JSON.stringify(sorted) !== JSON.stringify(initial)) {
+      try { localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(sorted)); } catch {}
     }
-    return sanitized;
+    return sorted;
   });
 
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -1051,7 +1056,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customFields: orderData.customFields,
     };
 
-    const updatedOrders = [newOrder, ...orders];
+    const updatedOrders = [newOrder, ...orders.filter((o) => o.id !== newOrder.id)].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
@@ -1712,7 +1719,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             prev.forEach((o) => map.set(o.id, o));
             event.data.orders.forEach((o: Order) => map.set(o.id, o));
             return Array.from(map.values()).sort(
-              (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
           });
           checkAndNotifyNewOrders(event.data.orders);
@@ -1852,7 +1859,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               prev.forEach((o) => map.set(o.id, deepSanitize(o)));
               cleanData.forEach((o: Order) => map.set(o.id, deepSanitize(o)));
               const merged = deepSanitize(Array.from(map.values())).sort(
-                (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
               );
               if (merged.length !== prev.length || JSON.stringify(merged) !== JSON.stringify(prev)) {
                 localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(merged));
@@ -2235,7 +2242,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return updatedWorkshops;
     });
 
-    const updatedOrders = [...orders, newOrder];
+    const updatedOrders = [newOrder, ...orders.filter((o) => o.id !== newOrder.id)].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
@@ -2541,10 +2550,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return updatedOrders;
     });
 
+    const targetOrder = orders.find((o) => o.id === orderId);
+
     fetch('/api/orders', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: orderId, orderStatus: newStatus, packedAt }),
+      body: JSON.stringify({
+        id: orderId,
+        orderStatus: newStatus,
+        packedAt,
+        items: targetOrder?.items,
+      }),
     }).catch(() => {});
 
     try {
@@ -2833,7 +2849,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return updatedWorkshops;
     });
 
-    const updatedOrders = [...orders, newOrder];
+    const updatedOrders = [newOrder, ...orders.filter((o) => o.id !== newOrder.id)].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);

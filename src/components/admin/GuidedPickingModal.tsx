@@ -40,9 +40,12 @@ export const GuidedPickingModal: React.FC = () => {
   // El pedido está completado si todos los artículos fueron procesados o si su estado ya es empaque/empacado/entregado
   const isCompleted = !currentItem || (totalCount > 0 && handledCount === totalCount) || currentOrder.orderStatus === 'packing' || currentOrder.orderStatus === 'packed' || currentOrder.orderStatus === 'delivered';
 
-  // Siguiente pedido en cola FIFO (pendiente o en alisto que no sea el actual)
+  // Siguiente pedido en cola FIFO (pendiente o en alisto con productos pendientes de alistar)
   const nextPendingOrder = orders.find(
-    (o) => o.id !== currentOrder.id && (o.orderStatus === 'pending' || o.orderStatus === 'picking')
+    (o) =>
+      o.id !== currentOrder.id &&
+      (o.orderStatus === 'pending' || o.orderStatus === 'picking') &&
+      !(Array.isArray(o.items) && o.items.length > 0 && o.items.every((it) => it.isPicked || it.isMissing))
   );
 
   const triggerCompletion = () => {

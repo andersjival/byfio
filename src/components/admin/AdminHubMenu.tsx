@@ -35,7 +35,11 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
 
-  const pendingOrders = orders.filter((o) => o.orderStatus === 'pending' || o.orderStatus === 'picking');
+  const pendingOrders = orders.filter(
+    (o) =>
+      (o.orderStatus === 'pending' || o.orderStatus === 'picking') &&
+      !(Array.isArray(o.items) && o.items.length > 0 && o.items.every((it) => it.isPicked || it.isMissing))
+  );
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
   const activeProfiles = userProfiles.filter((p) => p.isActive);
 

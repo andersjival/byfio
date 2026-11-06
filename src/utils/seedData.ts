@@ -291,7 +291,7 @@ export const INITIAL_ORDERS: Order[] = [
     shippingAddress: 'Curridabat, San José, de la Pops 200m Sur, Casa 14A con portón blanco.',
     paymentMethod: 'sinpe',
     paymentStatus: 'paid',
-    orderStatus: 'pending',
+    orderStatus: 'delivered',
     items: [
       {
         id: 'item-101',
@@ -344,7 +344,7 @@ export const INITIAL_ORDERS: Order[] = [
     deliveryMethod: 'retiro',
     paymentMethod: 'sinpe',
     paymentStatus: 'paid',
-    orderStatus: 'pending',
+    orderStatus: 'delivered',
     items: [
       {
         id: 'item-201',
