@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.14 - Nueva Vista de Agenda Calendario Semanal y Diaria con Bloqueo de Espacios y Sincronización
+- [x] **Cuadrícula de Calendario Semanal y Diaria ([`CalendarAgendaView.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarAgendaView.tsx), [`CalendarTopBar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarTopBar.tsx), [`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
+  - Implementación de la vista de agenda tipo cuadrícula inspirada en la referencia: cabecera con toggle `[ Vista Diaria | Semanal ]`, selector de intervalo (60 min, 30 min, 15 min), navegador semanal `< 2 nov - 8 nov >` con indicador `Hoy`, y filtro de equipo (`Todo el Equipo (2)`, `Fiorella`, `Taller & Envíos`).
+  - Cabeceras de días (Lunes a Domingo) con insignias de fecha, tag de almuerzo `🍴 12:30 PM`, resaltado activo en el día de hoy con recuadro azul/morado, y domingo marcado con insignia `Cerrado 8` y `0 citas`.
+  - Franja horaria de 8:00 AM a 8:00 PM con renderizado de tarjetas de receso de almuerzo rayadas en ámbar (`🍴 RECESO DE ALMUERZO 12:30 PM - 1:30 PM`), botón de ajustes, y tarjetas de citas/actividades con paleta By.Fio.
+  - Al hacer clic en cualquier franja horaria vacía, se abre el modal para agendar con la fecha y hora seleccionada precompletadas.
+- [x] **Gestor de Bloqueo de Espacios y Modal ([`BlockSpaceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/BlockSpaceModal.tsx), [`agendaCalendarTypes.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/agendaCalendarTypes.ts)):**
+  - Botón superior `🔒 Bloquear Espacio` para registrar o editar recesos de almuerzo, mantenimientos, reuniones o cierres locales, con soporte para repetición diaria o fecha específica, alcance de personal y persistencia en `localStorage`.
+- [x] **Sincronización con Google Calendar & Apple Calendar ([`CalendarSyncModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarSyncModal.tsx)):**
+  - Botón `🍎 G Sincronizar Calendario` que despliega modal interactivo con generación y descarga de archivo `.ics` (iCalendar) para importar todas las actividades, enlace de suscripción webcal y botón de sincronización forzada.
+
 ### Versión 4.16.13 - Erradicación de Agendas Duplicadas, Purga en D1 y Blindaje Reactivo Universal
 - [x] **Purga de Duplicados en Base de Datos Cloudflare D1 ([`agenda.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/agenda.ts)):**
   - Limpieza y purga inmediata ejecutada en producción sobre la tabla `site_metrics` (`app_agenda_items`), eliminando 7 entradas redundantes generadas por clics consecutivos y dejando únicamente los 5 registros legítimos únicos.

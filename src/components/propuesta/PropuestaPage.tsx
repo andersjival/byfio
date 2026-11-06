@@ -1046,6 +1046,27 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
           </div>
         </div>
 
+        {/* BANNER FINAL DE ACEPTACIÓN DE PROPUESTA */}
+        <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-500/20 via-purple-500/20 to-pink-500/20 border-2 border-emerald-400/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="space-y-1">
+            <h3 className="text-lg font-bubble font-bold text-white flex items-center justify-center sm:justify-start gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <span>¿Lista para formalizar la alianza Partner By.Fio?</span>
+            </h3>
+            <p className="text-xs text-purple-200 font-sans">
+              Mensualidad fija de ₡40.000/mes garantizada 12 meses, cero pagos por adelantado y libertad total.
+            </p>
+          </div>
+
+          <button
+            onClick={() => handleOpenAcceptModal('footer-bottom')}
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 hover:from-emerald-500 hover:to-teal-600 text-slate-950 font-bubble font-bold text-sm shadow-xl shadow-emerald-500/30 active:scale-95 transition-all cursor-pointer ring-2 ring-emerald-300 shrink-0"
+          >
+            <CheckCircle2 className="w-4 h-4 text-slate-950" />
+            <span>Aceptar Propuesta</span>
+          </button>
+        </div>
+
         {/* PIE DE FICHA / BOTÓN FINAL */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
@@ -1067,6 +1088,180 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
           </button>
         </div>
       </section>
+
+      {/* MODAL DE ACEPTACIÓN DE PROPUESTA (CON CONFIRMACIÓN Y ENVÍO EXCLUSIVO A SUPERADMIN) */}
+      {isAcceptModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
+          <div
+            className="w-full max-w-lg bg-white dark:bg-[#1E1B2E] rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-200 dark:border-purple-800 space-y-5 animate-scaleUp relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Botón Cerrar */}
+            <button
+              onClick={() => setIsAcceptModalOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-purple-900/50 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-all cursor-pointer"
+              title="Cerrar ventana"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {!acceptedSuccess ? (
+              <>
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bubble font-bold text-xs">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Aceptación Oficial de Propuesta Partner</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+                    Confirmar Acuerdo de Plataforma
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 font-sans">
+                    Estás a un solo clic de activar tu plataforma digital y consolidar nuestra alianza estratégica.
+                  </p>
+                </div>
+
+                {/* Resumen de Condiciones */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/40 dark:to-pink-950/20 border border-purple-200 dark:border-purple-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bubble font-bold text-slate-800 dark:text-white">
+                      Plan Partner By.Fio (11 Módulos + 3 Regalías)
+                    </span>
+                    <span className="text-sm font-bubble font-bold text-fio-purple dark:text-fio-pink">
+                      ₡40.000 / mes
+                    </span>
+                  </div>
+                  <ul className="text-[11px] text-slate-600 dark:text-slate-300 font-sans space-y-0.5">
+                    <li>✓ Tarifa fija garantizada por 12 meses</li>
+                    <li>✓ Cero inversión inicial y cero cobros de instalación</li>
+                    <li>✓ Hosting, dominio y soporte técnico 100% bonificados</li>
+                    <li>✓ Libertad total sin contratos forzosos</li>
+                  </ul>
+                </div>
+
+                {/* Mensaje de Clic Solicitado por el Usuario */}
+                <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-900 dark:text-amber-200 font-sans space-y-1">
+                  <p className="font-bold flex items-center gap-1 text-amber-800 dark:text-amber-300">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Paso de Confirmación:
+                  </p>
+                  <p className="leading-relaxed">
+                    Haz clic en el botón <strong>"Aceptar Propuesta"</strong> para formalizar tu acuerdo. Inmediatamente después de tu clic, se enviará la notificación exclusiva al panel de Superadmin para iniciar la implementación de tu plataforma.
+                  </p>
+                </div>
+
+                {/* Formulario de Contacto / Notas */}
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                      Nombre de Contacto / Marca
+                    </label>
+                    <input
+                      type="text"
+                      value={clientName}
+                      onChange={(e) => setClientName(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-purple-900/50 text-xs font-sans text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fio-purple"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                      Teléfono WhatsApp
+                    </label>
+                    <input
+                      type="text"
+                      value={clientPhone}
+                      onChange={(e) => setClientPhone(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-purple-900/50 text-xs font-sans text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fio-purple"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                      Nota o Comentario Opcional
+                    </label>
+                    <textarea
+                      value={clientNotes}
+                      onChange={(e) => setClientNotes(e.target.value)}
+                      rows={2}
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-purple-900/50 text-xs font-sans text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-fio-purple"
+                    />
+                  </div>
+                </div>
+
+                {/* Botones de Acción */}
+                <div className="pt-2 flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsAcceptModalOpen(false)}
+                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bubble font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-purple-900/40 cursor-pointer"
+                  >
+                    Volver a Leer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmAccept}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bubble font-bold text-xs sm:text-sm shadow-md active:scale-95 transition-all cursor-pointer ring-2 ring-emerald-400/40"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <span>Aceptar Propuesta</span>
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* ESTADO DE ÉXITO TRAS HACER CLIC EN ACEPTAR PROPUESTA */
+              <div className="text-center py-2 space-y-4">
+                <div className="w-16 h-16 rounded-3xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center shadow-lg animate-bounce">
+                  <CheckCircle2 className="w-10 h-10" />
+                </div>
+
+                <div className="space-y-1.5">
+                  <h3 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+                    ¡Propuesta Aceptada con Éxito! 🎉
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-sans leading-relaxed max-w-md mx-auto">
+                    Tu aceptación ha sido registrada formalmente. La notificación ya fue enviada exclusivamente a la consola de Superadmin.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 text-left text-xs text-slate-700 dark:text-slate-300 space-y-1.5">
+                  <p className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                    Notificación Entregada a Superadmin
+                  </p>
+                  <p className="font-mono text-[11px] text-slate-600 dark:text-slate-400">
+                    • Plan: Partner By.Fio (₡40.000 / mes)
+                  </p>
+                  <p className="font-mono text-[11px] text-slate-600 dark:text-slate-400">
+                    • Contacto: {clientName} ({clientPhone})
+                  </p>
+                  <p className="font-mono text-[11px] text-slate-600 dark:text-slate-400">
+                    • Fecha: {new Date().toLocaleString('es-CR')}
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                  <a
+                    href={`https://wa.me/50664004640?text=Hola%20Fio,%20he%20confirmado%20la%20aceptación%20de%20la%20propuesta%20Partner%20By.Fio%20(₡40.000/mes).`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs shadow-md cursor-pointer"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Abrir WhatsApp con Fio</span>
+                  </a>
+
+                  <button
+                    onClick={() => setIsAcceptModalOpen(false)}
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bubble font-bold text-xs shadow-md cursor-pointer"
+                  >
+                    Entendido / Cerrar
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

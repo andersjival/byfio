@@ -9,7 +9,8 @@ import { SuppliersOrdersSection } from '../admin/SuppliersOrdersSection';
 import {
   Shield, CheckCheck, RotateCcw, ExternalLink, LogOut, Search,
   SlidersHorizontal, CheckCircle2, AlertCircle, Layers,
-  ToggleLeft, ToggleRight, Boxes, Truck, ArrowLeft
+  ToggleLeft, ToggleRight, Boxes, Truck, ArrowLeft, Bell,
+  MessageCircle, Trash2, Calendar, Phone, CheckCircle, Sparkles, Eye, Award
 } from 'lucide-react';
 
 interface SuperadminSectionProps {
@@ -30,9 +31,14 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
     inventoryMode,
     setInventoryMode,
     supplierOrders,
+    proposalAcceptances,
+    updateProposalAcceptanceStatus,
+    deleteProposalAcceptance,
+    markProposalAcceptanceAsRead,
   } = useApp();
 
-  const [activeSuperadminTab, setActiveSuperadminTab] = useState<'modules' | 'suppliers'>('modules');
+  const [activeSuperadminTab, setActiveSuperadminTab] = useState<'modules' | 'suppliers' | 'proposals'>('modules');
+  const [proposalStatusFilter, setProposalStatusFilter] = useState<'all' | 'pending' | 'contacted' | 'active'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -167,7 +173,7 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
         </div>
 
         {/* Tarjetas de Resumen KPI */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-5 pt-4 border-t border-purple-800/40">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mt-5 pt-4 border-t border-purple-800/40">
           <div className="bg-purple-950/50 rounded-xl p-2.5 border border-purple-500/20">
             <span className="text-[10px] text-purple-300 font-medium block">Módulos Activos</span>
             <span className="text-lg font-bubble font-bold text-white">
@@ -190,6 +196,13 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
           </div>
 
           <div className="bg-purple-950/50 rounded-xl p-2.5 border border-purple-500/20">
+            <span className="text-[10px] text-purple-300 font-medium block">Propuestas Aceptadas</span>
+            <span className="text-lg font-bubble font-bold text-amber-300">
+              {proposalAcceptances.length} <span className="text-xs text-purple-400">({proposalAcceptances.filter(a => a.status === 'pending').length} pend.)</span>
+            </span>
+          </div>
+
+          <div className="bg-purple-950/50 rounded-xl p-2.5 border border-purple-500/20">
             <span className="text-[10px] text-purple-300 font-medium block">Modo de Control</span>
             <span className="text-xs font-bubble font-bold text-emerald-300 truncate block mt-1">
               Tiempo Real (Live)
@@ -197,6 +210,90 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
           </div>
         </div>
       </div>
+
+      {/* BANNER DE NOTIFICACIÓN EXCLUSIVA DE PROPUESTAS ACEPTADAS (SOLO SUPERADMIN) */}
+      {proposalAcceptances.filter((a) => a.status === 'pending' || !a.readBySuperadmin).length > 0 && (
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/20 via-pink-500/15 to-purple-600/20 border-2 border-amber-400/60 shadow-xl shadow-amber-900/10 space-y-3 animate-fadeIn">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-amber-300/30">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-xl bg-amber-500 text-amber-950 flex items-center justify-center font-bold text-sm animate-bounce">
+                <Bell className="w-4 h-4" />
+              </span>
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-bubble font-bold">
+                  <span>Exclusivo Superadmin</span>
+                </div>
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-white">
+                  ¡Nueva Propuesta Partner Aceptada! ({proposalAcceptances.filter((a) => a.status === 'pending').length} pendiente{proposalAcceptances.filter((a) => a.status === 'pending').length > 1 ? 's' : ''})
+                </h3>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setActiveSuperadminTab('proposals')}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bubble font-bold transition-all shadow-sm cursor-pointer"
+            >
+              <span>Ver en Pestaña Propuestas</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            {proposalAcceptances
+              .filter((a) => a.status === 'pending' || !a.readBySuperadmin)
+              .slice(0, 2)
+              .map((acc) => (
+                <div
+                  key={acc.id}
+                  className="p-3.5 rounded-2xl bg-black/40 border border-amber-400/40 text-xs text-purple-100 space-y-2"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="font-bubble font-bold text-white text-sm block">
+                        {acc.clientName}
+                      </span>
+                      <span className="text-[11px] text-amber-300 font-mono">
+                        Tel: {acc.clientPhone}
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/30 text-amber-300 border border-amber-400/40">
+                      {acc.status === 'pending' ? 'Pendiente' : acc.status}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-purple-200/90 font-sans italic bg-white/5 p-2 rounded-xl">
+                    "{acc.notes}"
+                  </p>
+
+                  <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[11px]">
+                    <span className="text-pink-300 font-bold">
+                      {acc.planName} • ₡{acc.monthlyFee.toLocaleString()}/mes
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`https://wa.me/506${acc.clientPhone.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(acc.clientName)},%20he%20recibido%20tu%20aceptación%20de%20la%20propuesta%20Partner%20By.Fio.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] transition-all cursor-pointer"
+                      >
+                        <MessageCircle className="w-3 h-3" />
+                        <span>WhatsApp</span>
+                      </a>
+                      <button
+                        onClick={() => updateProposalAcceptanceStatus(acc.id, 'contacted')}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] transition-all cursor-pointer"
+                      >
+                        <CheckCircle className="w-3 h-3 text-emerald-400" />
+                        <span>Atender</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
 
       {/* Selector de Vistas de la Consola Superadmin */}
       <div className="flex items-center gap-2 p-1.5 bg-purple-950/40 rounded-2xl border border-purple-800/40 w-fit">
@@ -232,6 +329,22 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
               {supplierOrders.filter((o: any) => o.status === 'draft').length} por pedir • {supplierOrders.filter((o: any) => o.status === 'ordered').length} realizados
             </span>
           )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSuperadminTab('proposals')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bubble text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            activeSuperadminTab === 'proposals'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-xs'
+              : 'text-emerald-200 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Award className="w-4 h-4 text-emerald-300" />
+          <span>Propuestas Aceptadas</span>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-200 font-bold font-mono">
+            {proposalAcceptances.length}
+          </span>
         </button>
       </div>
 

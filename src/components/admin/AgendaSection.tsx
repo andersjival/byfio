@@ -513,7 +513,19 @@ export const AgendaSection: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Barra de Búsqueda y Filtros Neumórfica */}
+      {/* 3. Contenido Principal según modo de vista */}
+      {viewMode === 'calendar' ? (
+        <CalendarAgendaView
+          agendaItems={agendaItems}
+          workshops={workshops}
+          onAddNewItem={(date, time) => openNewModal(date, time)}
+          onEditItem={openEditModal}
+          onToggleStatus={handleToggleStatus}
+          onDeleteItem={deleteAgendaItem}
+        />
+      ) : (
+        <>
+          {/* 3. Barra de Búsqueda y Filtros Neumórfica */}
       <div className="p-3 sm:p-3.5 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Pestañas de Estado */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
@@ -785,29 +797,31 @@ export const AgendaSection: React.FC = () => {
         </div>
       )}
 
-      {/* Estado Vacío */}
-      {filteredItems.length === 0 && (!showWorkshopSync || selectedFilter === 'completed') && (
-        <div className="p-10 text-center rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard text-slate-400 space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-white/80 border border-white shadow-neuBtn flex items-center justify-center text-purple-400 mx-auto">
-            <CalendarIcon className="w-6 h-6" />
-          </div>
-          <div>
-            <h4 className="font-bubble font-bold text-base text-slate-800">
-              No hay actividades programadas con este filtro
-            </h4>
-            <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-              Organiza la semana del taller agregando entregas de pedidos, compras de vinil o recordatorios de caja.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => openNewModal()}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs shadow-neuBtnHover cursor-pointer transition-all active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Agregar Primera Actividad</span>
-          </button>
-        </div>
+          {/* Estado Vacío */}
+          {filteredItems.length === 0 && (!showWorkshopSync || selectedFilter === 'completed') && (
+            <div className="p-10 text-center rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard text-slate-400 space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-white/80 border border-white shadow-neuBtn flex items-center justify-center text-purple-400 mx-auto">
+                <CalendarIcon className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-bubble font-bold text-base text-slate-800">
+                  No hay actividades programadas con este filtro
+                </h4>
+                <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
+                  Organiza la semana del taller agregando entregas de pedidos, compras de vinil o recordatorios de caja.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => openNewModal()}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs shadow-neuBtnHover cursor-pointer transition-all active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Agregar Primera Actividad</span>
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* 6. Modal de Creación / Edición Neumórfica de Alta Fidelidad */}
