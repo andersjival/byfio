@@ -7,8 +7,11 @@ import {
   Smartphone, Database, Layers, Sparkles, Gift,
   Calendar, Mail, Bell, Wrench, DollarSign,
   TrendingUp, Percent, MessageCircle, CheckCircle,
-  Truck, ArrowUpRight
+  Truck, ArrowUpRight, X, Handshake, Send
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { useApp } from '../../context/AppContext';
+import { playNewOrderChimeSound, playBubblePopSound } from '../../utils/soundEffects';
 import { AppRoute } from '../../types';
 
 interface PropuestaPageProps {
@@ -16,8 +19,39 @@ interface PropuestaPageProps {
 }
 
 export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
+  const { acceptProposal } = useApp();
   const [copiedSummary, setCopiedSummary] = useState(false);
   const [selectedPlanView, setSelectedPlanView] = useState<'all' | 'modules' | 'gifts' | 'savings'>('all');
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const [acceptedSuccess, setAcceptedSuccess] = useState(false);
+  const [clientName, setClientName] = useState('Fiorella Jara / By.Fio');
+  const [clientPhone, setClientPhone] = useState('6400-4640');
+  const [clientNotes, setClientNotes] = useState('¡Acepto la propuesta formalmente! Listos para arrancar con la implementación.');
+
+  const handleOpenAcceptModal = (source?: string) => {
+    setAcceptedSuccess(false);
+    setIsAcceptModalOpen(true);
+    playBubblePopSound();
+  };
+
+  const handleConfirmAccept = () => {
+    acceptProposal({
+      clientName,
+      clientPhone,
+      notes: clientNotes,
+      planName: 'Plan Partner By.Fio (11 Módulos Base + 3 Regalías)',
+      monthlyFee: 40000,
+    });
+    setAcceptedSuccess(true);
+    playNewOrderChimeSound();
+    try {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    } catch {}
+  };
 
   const fullProposalText = `Hola,
 
@@ -244,6 +278,14 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
 
           {/* BOTONES DE ACCIÓN RÁPIDA */}
           <div className="pt-2 flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => handleOpenAcceptModal('hero')}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 hover:from-emerald-500 hover:to-teal-600 text-slate-950 font-bubble font-bold text-xs sm:text-sm shadow-xl shadow-emerald-500/30 active:scale-95 transition-all cursor-pointer ring-2 ring-emerald-300"
+            >
+              <CheckCircle2 className="w-4 h-4 text-slate-950" />
+              <span>Aceptar Propuesta</span>
+            </button>
+
             <button
               onClick={handleCopySummary}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white text-purple-950 hover:bg-purple-50 font-bubble font-bold text-xs sm:text-sm shadow-lg active:scale-95 transition-all cursor-pointer"
@@ -595,6 +637,14 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
             <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bubble font-bold bg-emerald-400 text-emerald-950">
               ✓ Garantizada por 12 meses
             </span>
+
+            <button
+              onClick={() => handleOpenAcceptModal('partner-tier')}
+              className="mt-3 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-fio-yellow via-amber-300 to-yellow-400 hover:from-amber-400 hover:to-fio-yellow text-slate-950 font-bubble font-bold text-xs sm:text-sm shadow-lg active:scale-95 transition-all cursor-pointer ring-2 ring-yellow-200/50"
+            >
+              <CheckCircle2 className="w-4 h-4 text-slate-950" />
+              <span>Aceptar Propuesta</span>
+            </button>
           </div>
         </div>
 
@@ -676,6 +726,26 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
             </p>
           </div>
         </div>
+
+        {/* BOTÓN ACEPTAR PROPUESTA EN SECCIÓN AHORRO */}
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-purple-50 dark:from-emerald-950/30 dark:via-teal-950/20 dark:to-purple-950/20 border border-emerald-200 dark:border-emerald-800/40">
+          <div>
+            <h4 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
+              ¿Lista para empezar a ahorrar más de ₡110.000 colones al mes?
+            </h4>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans">
+              Activación inmediata con soporte continuo y sin pagos de desarrollo por adelantado.
+            </p>
+          </div>
+
+          <button
+            onClick={() => handleOpenAcceptModal('savings-summary')}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bubble font-bold text-xs sm:text-sm shadow-md active:scale-95 transition-all shrink-0 cursor-pointer"
+          >
+            <CheckCircle2 className="w-4 h-4 text-white" />
+            <span>Aceptar Propuesta</span>
+          </button>
+        </div>
       </section>
 
       {/* 7. ¿CÓMO ARRANCAMOS? (PASO A PASO) */}
@@ -753,19 +823,29 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
               Quedo atento para que confirmemos el acuerdo y arranquemos con todo.
             </p>
             <p className="text-xs text-slate-600 dark:text-slate-300 font-sans">
-              Contáctame directamente para activar tu membresía de Partner By.Fio hoy mismo.
+              Acepta la propuesta en línea o contáctame directamente por WhatsApp.
             </p>
           </div>
 
-          <a
-            href="https://wa.me/50664004640?text=Hola%20Fio,%20estoy%20listo%20para%20confirmar%20el%20acuerdo%20de%20la%20plataforma%20digital%20By.Fio%20con%20la%20tarifa%20Partner."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 active:scale-95 transition-all shrink-0 cursor-pointer"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>Confirmar Acuerdo por WhatsApp</span>
-          </a>
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 shrink-0">
+            <button
+              onClick={() => handleOpenAcceptModal('how-we-start')}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 active:scale-95 transition-all cursor-pointer ring-2 ring-emerald-400/40"
+            >
+              <CheckCircle2 className="w-4 h-4 text-white" />
+              <span>Aceptar Propuesta</span>
+            </button>
+
+            <a
+              href="https://wa.me/50664004640?text=Hola%20Fio,%20estoy%20listo%20para%20confirmar%20el%20acuerdo%20de%20la%20plataforma%20digital%20By.Fio%20con%20la%20tarifa%20Partner."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg shadow-purple-700/25 active:scale-95 transition-all cursor-pointer"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>WhatsApp Directo</span>
+            </a>
+          </div>
         </div>
       </section>
 

@@ -2118,6 +2118,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         })
         .catch(() => {});
 
+      // 5d. Sincronizar aceptaciones de propuesta en la nube (Exclusivo Superadmin)
+      fetch('/api/proposal-acceptances')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data?.acceptances) && data.acceptances.length > 0) {
+            setProposalAcceptances((prev) => {
+              const sanitized = deepSanitize(data.acceptances);
+              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.PROPOSAL_ACCEPTANCES, JSON.stringify(sanitized));
+                } catch {}
+                return sanitized;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+
       // 6. Sincronizar perfiles de usuario en tiempo real con bypass de caché
       const cacheBuster = `?_t=${Date.now()}`;
       fetch(`/api/users${cacheBuster}`, { cache: 'no-store' })
@@ -3472,6 +3491,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveDailyClosing,
         deleteDailyClosing,
         getDailyClosingByDate,
+        proposalAcceptances,
+        acceptProposal,
+        markProposalAcceptanceAsRead,
+        updateProposalAcceptanceStatus,
+        deleteProposalAcceptance,
       }}
     >
       {children}

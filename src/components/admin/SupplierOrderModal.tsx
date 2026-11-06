@@ -739,9 +739,9 @@ export const SupplierOrderModal: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSaveToAgenda}
-                disabled={isAlreadyInAgenda}
+                disabled={isAlreadyInAgenda || isSavingAgenda}
                 className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl font-bubble text-xs font-bold shadow-md transition-all ${
-                  isAlreadyInAgenda
+                  isAlreadyInAgenda || isSavingAgenda
                     ? 'bg-emerald-700/90 text-white cursor-not-allowed opacity-90 shadow-none'
                     : 'bg-gradient-to-r from-fio-pink to-purple-600 hover:opacity-90 text-white active:scale-95 cursor-pointer'
                 }`}

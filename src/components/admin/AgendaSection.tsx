@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { AgendaItem, AgendaCategory, AgendaPriority } from '../../types';
+import { CalendarAgendaView } from './agenda/CalendarAgendaView';
 import {
   Calendar as CalendarIcon, CheckCircle2, Circle, Clock, Plus,
   Trash2, Edit3, Search, GraduationCap, Package, Scissors,
@@ -134,10 +135,11 @@ export const AgendaSection: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'today' | 'pending' | 'completed'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'grid'>('calendar');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<AgendaItem | null>(null);
   const [showCompletedSection, setShowCompletedSection] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState<{
@@ -187,20 +189,23 @@ export const AgendaSection: React.FC = () => {
     });
   };
 
-  const openNewModal = () => {
+  const openNewModal = (initialDate?: string, initialTime?: string) => {
     setEditingItem(null);
+    const dateToUse = initialDate || new Date().toISOString().split('T')[0];
+    const timeToUse = initialTime || '10:00 AM';
     setFormData({
       title: '',
-      date: new Date().toISOString().split('T')[0],
-      time: '10:00 AM',
+      date: dateToUse,
+      time: timeToUse,
       category: 'recordatorio',
       priority: 'media',
       notes: '',
     });
+    const parsed = parseTimeString(timeToUse);
     setHasSpecificTime(true);
-    setSelectedHour('10');
-    setSelectedMinute('00');
-    setSelectedPeriod('AM');
+    setSelectedHour(parsed.hour);
+    setSelectedMinute(parsed.minute);
+    setSelectedPeriod(parsed.period);
     setEnableBellNotification(true);
     setIsModalOpen(true);
   };
@@ -226,49 +231,54 @@ export const AgendaSection: React.FC = () => {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim()) return;
+    if (!formData.title.trim() || isSubmitting) return;
+    setIsSubmitting(true);
 
-    const finalTime = hasSpecificTime ? `${selectedHour}:${selectedMinute} ${selectedPeriod}` : undefined;
+    try {
+      const finalTime = hasSpecificTime ? `${selectedHour}:${selectedMinute} ${selectedPeriod}` : undefined;
 
-    if (editingItem) {
-      updateAgendaItem(editingItem.id, {
-        title: formData.title.trim(),
-        date: formData.date,
-        time: finalTime,
-        category: formData.category,
-        priority: formData.priority,
-        notes: formData.notes.trim() || undefined,
-        notifyBell: enableBellNotification,
-      });
-    } else {
-      addAgendaItem({
-        title: formData.title.trim(),
-        date: formData.date,
-        time: finalTime,
-        category: formData.category,
-        priority: formData.priority,
-        status: 'pending',
-        notes: formData.notes.trim() || undefined,
-        notifyBell: enableBellNotification,
-      });
+      if (editingItem) {
+        updateAgendaItem(editingItem.id, {
+          title: formData.title.trim(),
+          date: formData.date,
+          time: finalTime,
+          category: formData.category,
+          priority: formData.priority,
+          notes: formData.notes.trim() || undefined,
+          notifyBell: enableBellNotification,
+        });
+      } else {
+        addAgendaItem({
+          title: formData.title.trim(),
+          date: formData.date,
+          time: finalTime,
+          category: formData.category,
+          priority: formData.priority,
+          status: 'pending',
+          notes: formData.notes.trim() || undefined,
+          notifyBell: enableBellNotification,
+        });
+      }
+
+      // Si la campanita está activa, reproducir sonido cristalino y disparar notificación push
+      if (enableBellNotification) {
+        playAgendaBellSound(0.4);
+        sendBrowserPushNotification(`🔔 Agenda By.Fio: ${formData.title.trim()}`, {
+          body: `${finalTime ? '⏰ ' + finalTime + ' · ' : ''}Fecha: ${formData.date} · Prioridad: ${formData.priority.toUpperCase()}`,
+          tag: `agenda-${Date.now()}`,
+        });
+        setActiveBellToast({
+          title: formData.title.trim(),
+          time: finalTime,
+          date: formData.date,
+        });
+      }
+
+      setIsModalOpen(false);
+      setEditingItem(null);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Si la campanita está activa, reproducir sonido cristalino y disparar notificación push
-    if (enableBellNotification) {
-      playAgendaBellSound(0.4);
-      sendBrowserPushNotification(`🔔 Agenda By.Fio: ${formData.title.trim()}`, {
-        body: `${finalTime ? '⏰ ' + finalTime + ' · ' : ''}Fecha: ${formData.date} · Prioridad: ${formData.priority.toUpperCase()}`,
-        tag: `agenda-${Date.now()}`,
-      });
-      setActiveBellToast({
-        title: formData.title.trim(),
-        time: finalTime,
-        date: formData.date,
-      });
-    }
-
-    setIsModalOpen(false);
-    setEditingItem(null);
   };
 
   const handleToggleStatus = (item: AgendaItem) => {
@@ -371,8 +381,21 @@ export const AgendaSection: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-          {/* Selector de Vista: Lista vs Cuadrícula */}
+          {/* Selector de Vista: Calendario vs Lista vs Cuadrícula */}
           <div className="flex items-center p-1 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset">
+            <button
+              type="button"
+              onClick={() => setViewMode('calendar')}
+              className={`px-3 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
+                viewMode === 'calendar'
+                  ? 'bg-white text-purple-700 shadow-neuBtn scale-[1.02]'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Vista Calendario Semanal / Diario"
+            >
+              <CalendarIcon className="w-3.5 h-3.5" />
+              <span>Calendario</span>
+            </button>
             <button
               type="button"
               onClick={() => setViewMode('list')}
@@ -401,7 +424,7 @@ export const AgendaSection: React.FC = () => {
 
           <button
             type="button"
-            onClick={openNewModal}
+            onClick={() => openNewModal()}
             className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtnHover active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
@@ -778,7 +801,7 @@ export const AgendaSection: React.FC = () => {
           </div>
           <button
             type="button"
-            onClick={openNewModal}
+            onClick={() => openNewModal()}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs shadow-neuBtnHover cursor-pointer transition-all active:scale-95"
           >
             <Plus className="w-4 h-4" />
@@ -1104,9 +1127,10 @@ export const AgendaSection: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtnHover active:scale-95 transition-all cursor-pointer"
+                  disabled={isSubmitting}
+                  className="px-6 py-2.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtnHover active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {editingItem ? 'Guardar Cambios' : 'Crear en Agenda'}
+                  {isSubmitting ? 'Guardando...' : editingItem ? 'Guardar Cambios' : 'Crear en Agenda'}
                 </button>
               </div>
             </form>
