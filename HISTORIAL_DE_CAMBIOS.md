@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.10 - Transición Automática de Pedidos 100% Alistados a Empaque y Saneamiento Reactivo
+- [x] **Transición Automática a Empaque y Exclusión de Pendientes de Alisto ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Implementado `sanitizeOrderList` para normalizar reactivamente pedidos con alisto al 100% (`isPicked` o `isMissing` en todos los ítems), promoviéndolos de `'pending'` / `'picking'` directamente a `'packing'`.
+  - Las órdenes de talleres o compras de cursos quedan inicializadas de inmediato en `'packing'` (empaque/gestión de acceso), sin quedar estancadas en pendientes de alisto.
+  - La cola de pendientes de alisto y los indicadores de cabecera excluyen rigurosamente pedidos cuyo progreso ya alcanzó el 100%, mostrándolos en la sección de empaque con su botón "Marcar Empacado".
+  - Sincronización bidireccional continua con Cloudflare D1 y `BroadcastChannel` manteniendo la integridad del flujo operativo.
+
 ### Versión 4.16.9 - Ordenamiento Cronológico Descendente Estricto de Pedidos y Sincronización en Tiempo Real
 - [x] **Corrección de Ordenamiento Cronológico Invertido ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`SalesHistorySection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SalesHistorySection.tsx)):**
   - Se corrigió el ordenamiento ascendente (`ORDER BY created_at ASC` y `a.createdAt - b.createdAt`) que mantenía el pedido de Sofía Solano Brenes (#FIO-1001, del 28 de octubre) clavado de forma permanente en la primera posición de la lista.

@@ -451,10 +451,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return sanitized;
   });
 
+  const sanitizeOrderList = (orderList: any[]): Order[] => {
+    return deepSanitize(orderList).map((o: Order) => {
+      const isAllAlistado =
+        Array.isArray(o.items) &&
+        o.items.length > 0 &&
+        o.items.every((it) => it.isPicked || it.isMissing);
+      if (isAllAlistado && (o.orderStatus === 'pending' || o.orderStatus === 'picking')) {
+        return { ...o, orderStatus: 'packing' as OrderStatus };
+      }
+      return o;
+    });
+  };
+
   const [orders, setOrders] = useState<Order[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
     const initial = saved ? JSON.parse(saved) : INITIAL_ORDERS;
-    const sanitized = deepSanitize(initial);
+    const sanitized = sanitizeOrderList(initial);
     const sorted = Array.isArray(sanitized)
       ? [...sanitized].sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -1714,15 +1727,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const handleSync = (event: MessageEvent) => {
       if (event.data?.type === 'SYNC_UPDATE') {
         if (Array.isArray(event.data.orders)) {
+          const cleanOrders = sanitizeOrderList(event.data.orders);
           setOrders((prev) => {
             const map = new Map<string, Order>();
             prev.forEach((o) => map.set(o.id, o));
-            event.data.orders.forEach((o: Order) => map.set(o.id, o));
+            cleanOrders.forEach((o: Order) => map.set(o.id, o));
             return Array.from(map.values()).sort(
               (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
           });
-          checkAndNotifyNewOrders(event.data.orders);
+          checkAndNotifyNewOrders(cleanOrders);
         }
         if (Array.isArray(event.data.products)) {
           setProducts(event.data.products);
@@ -1852,13 +1866,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (Array.isArray(data) && data.length > 0) {
-            const cleanData: Order[] = deepSanitize(data);
+            const cleanData: Order[] = sanitizeOrderList(data);
             checkAndNotifyNewOrders(cleanData);
             setOrders((prev) => {
               const map = new Map<string, Order>();
               prev.forEach((o) => map.set(o.id, deepSanitize(o)));
               cleanData.forEach((o: Order) => map.set(o.id, deepSanitize(o)));
-              const merged = deepSanitize(Array.from(map.values())).sort(
+              const merged = sanitizeOrderList(Array.from(map.values())).sort(
                 (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
               );
               if (merged.length !== prev.length || JSON.stringify(merged) !== JSON.stringify(prev)) {
@@ -2151,6 +2165,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       image: item.image,
     }));
 
+    const isAllInitiallyPicked = orderItems.length > 0 && orderItems.every((it) => it.isPicked);
+
     const newOrder: Order = {
       id: `ord-${Date.now()}`,
       orderNumber,
@@ -2161,7 +2177,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       shippingAddress: orderInfo.shippingAddress,
       paymentMethod: orderInfo.paymentMethod,
       paymentStatus: 'paid',
-      orderStatus: 'pending',
+      orderStatus: isAllInitiallyPicked ? 'packing' : 'pending',
       items: orderItems,
       subtotal,
       shippingFee,
@@ -2803,7 +2819,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       deliveryMethod: 'retiro',
       paymentMethod: 'sinpe',
       paymentStatus: 'pending',
-      orderStatus: 'pending',
+      orderStatus: 'packing',
       items: [
         {
           id: `ord-item-${Date.now()}-0`,

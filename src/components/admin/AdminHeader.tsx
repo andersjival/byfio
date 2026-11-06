@@ -146,7 +146,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
             <p className="text-[11px] font-semibold text-slate-500 truncate">Pedidos en Cola</p>
             <div className="flex items-baseline gap-1.5">
               <h3 className="text-lg font-bubble font-bold text-fio-900">{pendingOrders.length}</h3>
-              <span className="text-[9px] text-fio-pink font-bold">FIFO</span>
+              <span className="text-[9px] text-fio-pink font-bold">En vivo</span>
             </div>
           </div>
         </div>
