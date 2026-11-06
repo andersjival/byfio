@@ -308,19 +308,6 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                             )}
                           </div>
                         </div>
-
-                        {/* Etiqueta de Citas */}
-                        <div className="mt-1 flex items-center justify-between text-[10px]">
-                          {isSunday ? (
-                            <span className="text-slate-400 font-sans">0 citas</span>
-                          ) : dayAppointments.length > 0 ? (
-                            <span className="text-purple-600 font-bold font-mono">
-                              {dayAppointments.length} cita{dayAppointments.length > 1 ? 's' : ''}
-                            </span>
-                          ) : (
-                            <span className="text-slate-400 font-sans">0 citas</span>
-                          )}
-                        </div>
                       </th>
                     );
                   })}
