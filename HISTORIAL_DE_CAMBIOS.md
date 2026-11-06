@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.21 - Reubicación de Condiciones SINPE Móvil al Interior del Módulo
+- [x] **Limpieza de Cara Exterior de la Tarjeta ([`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
+  - Removido el bloque extenso de condiciones de la cara exterior de la tarjeta en la propuesta comercial.
+  - La tarjeta exterior conserva exclusivamente su información básica limpia, estética y concisa.
+- [x] **Ubicación Exclusiva al Interior del Módulo ([`SinpePaymentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx)):**
+  - Al ingresar al módulo mediante *"Ver Módulo Sinpe Móvil"*, se despliega en su interior la sección completa con las dos opciones:
+    1. **Opción 1 (0% Comisión):** Condición de instalación sujeta a recepción de correos de verificación en bandeja de Gmail.
+    2. **Opción 2 (Pasarela 1.5% Comisión):** Confirmación automática instantánea para negocios inscritos en el Régimen Simplificado.
+
 ### Versión 4.16.20 - Especificación de Condiciones de Instalación SINPE Móvil y Modalidad Alternativa con Pasarela al 1.5%
 - [x] **Condiciones de Instalación y Recepción Gmail ([`SinpePaymentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx), [`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
   - Renombrado y estandarizado oficial: *"Módulo de Pagos y Recepción SINPE Móvil"*.

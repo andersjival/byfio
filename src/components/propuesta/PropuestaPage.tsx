@@ -119,7 +119,7 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
       title: 'Módulo de Pagos y Recepción SINPE Móvil',
       price: '₡15.000 / mes',
       priceNumber: 15000,
-      description: 'Validación automatizada de comprobantes con detección de referencia única anti-reutilización. Condición de instalación: recepción de correos de verificación en bandeja de Gmail (0% comisión). O versión alternativa de pasarela de confirmación con 1.5% de comisión para negocios inscritos en Régimen Simplificado.',
+      description: 'Validación automatizada de comprobantes Banco BCR con detección de referencia única anti-reutilización y verificación exacta de monto pagado.',
       icon: Landmark,
       color: 'from-emerald-500 to-teal-600',
       tagColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300',
@@ -451,19 +451,6 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
                   <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
                     {mod.description}
                   </p>
-
-                  {mod.id === 'sinpe' && (
-                    <div className="mt-2.5 p-3 rounded-xl bg-purple-50/90 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 space-y-2 text-[11px] leading-relaxed">
-                      <div className="flex items-start gap-1.5 text-purple-950 dark:text-purple-200">
-                        <span className="font-bold text-emerald-700 dark:text-emerald-400 shrink-0">✓ Opción 1 (0% comisiones):</span>
-                        <span>Condición para instalar: recibir correos de verificación en bandeja de correos de Gmail.</span>
-                      </div>
-                      <div className="flex items-start gap-1.5 text-amber-950 dark:text-amber-200 pt-1.5 border-t border-purple-200/50 dark:border-purple-800/40">
-                        <span className="font-bold text-amber-700 dark:text-amber-400 shrink-0">⚡ Opción 2 (Pasarela 1.5%):</span>
-                        <span>Confirmación automática con pasarela de pago, siempre y cuando el negocio esté inscrito en el Régimen Simplificado.</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 <div className="pt-2 border-t border-slate-200/50 dark:border-purple-900/30">
