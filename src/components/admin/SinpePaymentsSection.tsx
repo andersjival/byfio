@@ -261,52 +261,91 @@ export const SinpePaymentsSection: React.FC = () => {
         </div>
 
         {/* Sección de Modalidades de Instalación y Condiciones del Módulo */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-3 border-t border-slate-100">
-          {/* Opción 1: Verificación Directa por Correo Gmail (Condición Obligatoria) */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50/40 to-white border border-purple-200 shadow-2xs space-y-2">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-purple-700 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Mail className="w-4 h-4 text-amber-300" />
-                </div>
-                <h4 className="font-bubble font-bold text-xs sm:text-sm text-purple-950">
-                  Opción 1: Verificación Directa por Gmail (0% Comisión)
-                </h4>
-              </div>
-              <span className="text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
-                0% Comisión
-              </span>
-            </div>
-            <p className="text-xs text-slate-600 font-sans leading-relaxed">
-              <strong>Condición para instalación:</strong> Este módulo está sujeto a instalación bajo el condicionamiento de que el usuario / comercio pueda recibir los correos de verificación y comprobante de SINPE Móvil directamente en una bandeja de correos de <strong>Gmail</strong>. Esta recepción en Gmail es la condición obligatoria para poder instalar y operar esta versión de verificación directa.
-            </p>
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-purple-900 bg-purple-100/70 px-2.5 py-1 rounded-xl border border-purple-200">
-              <CheckCircle2 className="w-3.5 h-3.5 text-purple-700 shrink-0" />
-              <span>Instalación estándar incluida • Detección anti-fraude y uso único</span>
-            </div>
+        <div className="space-y-3 pt-3 border-t border-slate-100">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-purple-700" />
+            <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-800">
+              Modalidades de Instalación y Alternativas Técnicas de SINPE Móvil
+            </h3>
           </div>
 
-          {/* Opción 2: Pasarela de Pago Automatizada de Confirmación (1.5% Comisión + Régimen Simplificado) */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50/80 via-orange-50/30 to-white border border-amber-300/80 shadow-2xs space-y-2">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <CreditCard className="w-4 h-4 text-amber-100" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
+            {/* Opción 1: Sistema 1 - Verificación Automática por Correo Gmail (0% Comisión) */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50/40 to-white border border-purple-200 shadow-2xs space-y-2 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-purple-700 text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Mail className="w-4 h-4 text-amber-300" />
+                    </div>
+                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-purple-950">
+                      Sistema 1: Automático Gmail
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
+                    0% Comisión
+                  </span>
                 </div>
-                <h4 className="font-bubble font-bold text-xs sm:text-sm text-amber-950">
-                  Opción 2: Pasarela de Confirmación SINPE (1.5% Comisión)
-                </h4>
+                <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                  <strong>Condición obligatoria:</strong> Requiere que el banco emita comprobantes a una bandeja <strong>Gmail</strong>. <em>Si el cliente no tiene sistema de confirmación de correo en su banco, NO se puede instalar este Sistema 1</em> y debe optarse por el Sistema Semiautomático o la pasarela.
+                </p>
               </div>
-              <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
-                1.5% Pasarela
-              </span>
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-purple-900 bg-purple-100/70 px-2.5 py-1 rounded-xl border border-purple-200">
+                <CheckCircle2 className="w-3.5 h-3.5 text-purple-700 shrink-0" />
+                <span>100% automático • Requiere reenvío Gmail</span>
+              </div>
             </div>
-            <p className="text-xs text-slate-600 font-sans leading-relaxed">
-              <strong>Versión con pasarela de pago:</strong> Se puede instalar también otra versión de SINPE Móvil en pagos mediante pasarela de pago de confirmación automática en tiempo real con una <strong>comisión de 1.5% por transacción</strong>. Esta versión se puede integrar en el sistema siempre y cuando la persona o negocio esté inscrita en la parte del <strong>Régimen Simplificado</strong>.
-            </p>
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-900 bg-amber-100/80 px-2.5 py-1 rounded-xl border border-amber-200">
-              <Building2 className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-              <span>Confirmación 100% desatendida • Requiere estar en Régimen Simplificado</span>
+
+            {/* Opción 2: Sistema Semiautomático - Verificación por Referencia y SMS (0% Comisión) */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-teal-50/80 via-emerald-50/30 to-white border border-teal-200 shadow-2xs space-y-2 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-teal-700 text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Phone className="w-4 h-4 text-emerald-200" />
+                    </div>
+                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-teal-950">
+                      Sistema 2: Semiautomático SMS
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full border border-teal-300">
+                    0% Comisión
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                  <strong>En caso de no tener confirmación por correo:</strong> El cliente ingresa el número de referencia en el producto. Al llegar al panel, el administrador lo verifica contra el <strong>SMS o notificación</strong> de su teléfono. Al corroborar la referencia, pulsa <strong>"Confirmar Pago"</strong> y se acredita en caja.
+                </p>
+              </div>
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-teal-900 bg-teal-100/70 px-2.5 py-1 rounded-xl border border-teal-200">
+                <CheckCircle2 className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+                <span>0% comisión • Validación contra SMS en panel</span>
+              </div>
+            </div>
+
+            {/* Opción 3: Sistema 3 - Pasarela de Confirmación Bancaria Directa (1.5% Comisión) */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50/80 via-orange-50/30 to-white border border-amber-300/80 shadow-2xs space-y-2 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <CreditCard className="w-4 h-4 text-amber-100" />
+                    </div>
+                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-amber-950">
+                      Sistema 3: Pasarela Bancaria
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+                    1.5% Pasarela
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                  <strong>Alternativa con pasarela de pago:</strong> En caso de que el cliente no pueda o no desee el sistema semiautomático, puede optar por la confirmación bancaria con <strong>1.5% de comisión</strong>. Requiere que el comercio esté formalmente inscrito en el <strong>Régimen Simplificado</strong>.
+                </p>
+              </div>
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-amber-900 bg-amber-100/80 px-2.5 py-1 rounded-xl border border-amber-200">
+                <Building2 className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                <span>Confirmación bancaria directa • Régimen Simplificado</span>
+              </div>
             </div>
           </div>
         </div>

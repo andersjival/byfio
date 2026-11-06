@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.23 - Sistema Semiautomático y Jerarquía de 3 Modalidades SINPE Móvil
+- [x] **Arquitectura de 3 Modalidades de SINPE Móvil ([SinpePaymentsSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx)):**
+  - **Sistema 1 (Automático por Gmail - 0% Comisión):** Especificado que si el cliente NO tiene sistema de confirmación de correo en su banco, NO se puede instalar este sistema.
+  - **Sistema 2 (Semiautomático por Referencia y SMS - 0% Comisión):** Solución cuando no se cuenta con confirmación de correo. El cliente ingresa el número de referencia en el producto; el administrador lo contrasta contra el SMS/notificación en su celular y pulsa "Confirmar Pago" para acreditarlo en caja.
+  - **Sistema 3 (Pasarela Bancaria Directa - 1.5% Comisión):** Opción automatizada para comercios en el Régimen Simplificado cuando no se utilice el sistema semiautomático.
+- [x] **Sincronización en Propuesta Comercial ([PropuestaPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
+  - Micro-nota de la ficha de SINPE Móvil y resumen de propuesta actualizados con la jerarquía de los 3 sistemas.
+
 ### Versión 4.16.22 - Micro-Nota en Ficha de SINPE Móvil
 - [x] **Micro-Nota Estilizada en la Ficha de Propuesta ([PropuestaPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
   - Añadida micro-nota al pie de la ficha del Módulo de SINPE Móvil: *"Este servicio está incluido siempre y cuando el sistema del cliente permita el reenvío de correos o en caso de poder usar el sistema bajo comisión con confirmación bancaria directa."*

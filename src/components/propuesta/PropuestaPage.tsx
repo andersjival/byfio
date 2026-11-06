@@ -65,7 +65,7 @@ Tu sitio funciona bajo un modelo de suscripción mensual personalizada (SaaS). L
 • Libertad total sin ataduras: Al ser por suscripción por uso, no estás amarrada a contratos forzosos. Si el día de mañana decides pausar o retirarte, puedes cancelar tu suscripción en cualquier momento sin penalidades ni compromisos.
 
 Lo que incluye tu plataforma (11 Módulos Base):
-1. Módulo de Pagos y Recepción SINPE Móvil: ₡15.000 / mes (Servicio incluido si el sistema del cliente permite el reenvío de correos o bajo comisión con confirmación bancaria directa)
+1. Módulo de Pagos y Recepción SINPE Móvil: ₡15.000 / mes (Sistema 1 por Gmail; si no tiene confirmación de correo, se instala Sistema Semiautomático por SMS en panel al 0% comisión o pasarela bancaria al 1.5% con Régimen Simplificado)
 2. Tienda Online: ₡15.000 / mes
 3. Catálogo de Productos: ₡10.000 / mes
 4. Cursos y Talleres: ₡15.000 / mes
@@ -120,7 +120,7 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
       price: '₡15.000 / mes',
       priceNumber: 15000,
       description: 'Validación automatizada de comprobantes Banco BCR con detección de referencia única anti-reutilización y verificación exacta de monto pagado.',
-      footnote: 'Este servicio está incluido siempre y cuando el sistema del cliente permita el reenvío de correos o en caso de poder usar el sistema bajo comisión con confirmación bancaria directa.',
+      footnote: 'Si el cliente no tiene confirmación de correo no se puede instalar el Sistema 1; se instala el Sistema Semiautomático (0% comisión, verificación contra SMS en panel para confirmar en caja) o el Sistema con pasarela bancaria directa (1.5% comisión, Régimen Simplificado).',
       icon: Landmark,
       color: 'from-emerald-500 to-teal-600',
       tagColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300',
