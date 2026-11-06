@@ -2,7 +2,6 @@ import React from 'react';
 import {
   ChevronLeft,
   ChevronRight,
-  Info,
   Calendar,
   Clock,
   Users,
@@ -29,7 +28,7 @@ interface CalendarTopBarProps {
   onTeamFilterChange: (filter: TeamFilterType) => void;
   appointmentsCount: number;
   onOpenBlockSpaceModal?: () => void;
-  onOpenSyncModal: () => void;
+  onOpenSyncModal?: () => void;
 }
 
 export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
@@ -152,7 +151,7 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
         </div>
       </div>
 
-      {/* Lado Derecho: Contador de Citas, Sincronizar Calendario */}
+      {/* Lado Derecho: Contador de Citas */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Contador de Citas */}
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs">
@@ -161,27 +160,7 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
             {appointmentsCount} citas programadas {viewType === 'weekly' ? 'esta semana' : 'este día'}
           </span>
         </div>
-
-        {/* Sincronizar Calendario con Apple y Google */}
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={onOpenSyncModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 hover:bg-white border border-slate-200/90 text-slate-800 font-bubble font-bold text-xs shadow-xs hover:border-purple-300 transition-all cursor-pointer"
-          >
-            <span className="text-xs">🍎</span>
-            <span className="text-xs font-bold text-blue-500 font-sans">G</span>
-            <span>Sincronizar Calendario</span>
-          </button>
-          <button
-            type="button"
-            onClick={onOpenSyncModal}
-            title="Detalles de sincronización automática con Google y Apple Calendar"
-            className="w-5 h-5 rounded-full bg-slate-200/80 hover:bg-slate-300 flex items-center justify-center text-slate-600 transition-all cursor-pointer"
-          >
-            <Info className="w-3 h-3" />
-          </button>
-        </div>
+
       </div>
     </div>
   );
