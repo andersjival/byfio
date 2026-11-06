@@ -560,14 +560,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => onAddNewItem(formatDateKey(currentDate), '10:00 AM')}
-                  className="px-4 py-2 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-xs flex items-center gap-1.5 shadow-neuBtnHover cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Nueva Cita Hoy</span>
-                </button>
+
               </div>
 
               {/* Grid Horario Detallado para Vista Diaria */}
