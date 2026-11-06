@@ -5,6 +5,7 @@ export interface RouteInfo {
   route: AppRoute;
   adminTab: AdminTabType;
   workshopId?: string | null;
+  openDesignModal?: boolean;
 }
 
 export const parseRouteFromLocation = (): RouteInfo => {
@@ -129,6 +130,34 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'sales' };
   }
   if (
+    path.includes('/admin/agenda') ||
+    path.includes('/administracion/agenda') ||
+    hash.includes('admin/agenda') ||
+    seccionParam === 'agenda'
+  ) {
+    return { route: 'admin', adminTab: 'agenda' };
+  }
+  if (
+    path.includes('/admin/proveedores') ||
+    path.includes('/administracion/proveedores') ||
+    hash.includes('admin/proveedores') ||
+    seccionParam === 'proveedores' ||
+    seccionParam === 'suppliers'
+  ) {
+    return { route: 'admin', adminTab: 'suppliers' };
+  }
+  if (
+    path.includes('/admin/configuracion') ||
+    path.includes('/admin/diseno') ||
+    hash.includes('admin/configuracion') ||
+    hash.includes('admin/diseno') ||
+    seccionParam === 'configuracion' ||
+    seccionParam === 'diseno' ||
+    seccionParam === 'design'
+  ) {
+    return { route: 'admin', adminTab: 'hub', openDesignModal: true };
+  }
+  if (
     path.startsWith('/admin') ||
     path.startsWith('/administracion') ||
     hash.includes('admin') ||
@@ -195,6 +224,23 @@ export const parseRouteFromLocation = (): RouteInfo => {
   ) {
     return { route: 'workshops', adminTab: 'hub' };
   }
+
+    // Persistencia de navegación: Si se recarga en la raíz o ruta base sin sub-rutas, recuperar la última pestaña visitada
+  try {
+    const savedRoute = sessionStorage.getItem('byfio_last_active_route') as AppRoute | null;
+    const savedTab = sessionStorage.getItem('byfio_last_admin_tab') as AdminTabType | null;
+    const savedWsId = sessionStorage.getItem('byfio_last_ws_id');
+    const savedModal = sessionStorage.getItem('byfio_design_modal_open') === 'true';
+
+    if (savedRoute && savedRoute !== 'home' && (path === '/' || path === '')) {
+      return {
+        route: savedRoute,
+        adminTab: savedTab || 'hub',
+        workshopId: savedWsId || null,
+        openDesignModal: savedModal,
+      };
+    }
+  } catch {}
 
   return { route: 'home', adminTab: 'hub' };
 };

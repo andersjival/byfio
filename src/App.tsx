@@ -85,12 +85,28 @@ export const App: React.FC = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
   const [dailyClosingDate, setDailyClosingDate] = useState<string | undefined>(undefined);
-  const [isDesignModalOpen, setIsDesignModalOpen] = useState(false);
+  const [isDesignModalOpen, setIsDesignModalOpen] = useState(Boolean(initial.openDesignModal));
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
   const [billingTargetCustomer, setBillingTargetCustomer] = useState<Customer | null>(null);
+
+  const handleOpenDesignModal = () => {
+    setIsDesignModalOpen(true);
+    try {
+      sessionStorage.setItem('byfio_design_modal_open', 'true');
+      window.history.pushState({ route: 'admin', adminTab: adminTab, openDesignModal: true }, '', appendRefToPath('/admin/configuracion'));
+    } catch {}
+  };
+
+  const handleCloseDesignModal = () => {
+    setIsDesignModalOpen(false);
+    try {
+      sessionStorage.removeItem('byfio_design_modal_open');
+    } catch {}
+    navigate('admin', adminTab);
+  };
 
   const isAdminOrSuperadmin = isSuperAdminAuthenticated || (!!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin));
 
@@ -128,6 +144,9 @@ export const App: React.FC = () => {
       else if (tab === 'workshops') targetPath = '/admin/talleres';
       else if (tab === 'pricing') targetPath = '/admin/precios';
       else if (tab === 'users') targetPath = '/admin/usuarios';
+      else if (tab === 'customers') targetPath = '/admin/clientes';
+      else if (tab === 'agenda') targetPath = '/admin/agenda';
+      else if (tab === 'suppliers') targetPath = '/admin/proveedores';
       else if (tab === 'sales') targetPath = '/admin/ventas';
       else targetPath = '/admin';
     }
@@ -136,6 +155,10 @@ export const App: React.FC = () => {
     targetPath = appendRefToPath(targetPath);
 
     try {
+      sessionStorage.setItem('byfio_last_active_route', newRoute);
+      if (tab) sessionStorage.setItem('byfio_last_admin_tab', tab);
+      if (wsId) sessionStorage.setItem('byfio_last_ws_id', wsId);
+      else sessionStorage.removeItem('byfio_last_ws_id');
       window.history.pushState({ route: newRoute, adminTab: tab, workshopId: wsId }, '', targetPath);
     } catch {
       window.location.hash = targetPath.replace('/', '#');
@@ -194,6 +217,7 @@ export const App: React.FC = () => {
       setCurrentRoute(parsed.route);
       setAdminTab(parsed.adminTab);
       setSelectedWorkshopId(parsed.workshopId || null);
+      setIsDesignModalOpen(Boolean(parsed.openDesignModal));
       setViewMode(parsed.route === 'admin' ? 'admin' : 'store');
     };
 
@@ -249,7 +273,7 @@ export const App: React.FC = () => {
           currentRoute={currentRoute}
           onNavigate={navigate}
           onOpenLogin={() => setIsLoginModalOpen(true)}
-          onOpenDesignModal={() => setIsDesignModalOpen(true)}
+          onOpenDesignModal={handleOpenDesignModal}
           onSelectAdminHub={() => handleSelectAdminTab('hub')}
           isAdminHub={adminTab === 'hub'}
         />
@@ -373,7 +397,7 @@ export const App: React.FC = () => {
                     {/* Si está en el Menú Principal (Hub) - Renderizado Instantáneo 0ms */}
                     {adminTab === 'hub' ? (
                       <>
-                        <AdminHeader onOpenDesignModal={() => setIsDesignModalOpen(true)} onNavigate={navigate} onSelectTab={handleSelectAdminTab} />
+                        <AdminHeader onOpenDesignModal={handleOpenDesignModal} onNavigate={navigate} onSelectTab={handleSelectAdminTab} />
                         <AdminHubMenu onSelectTab={handleSelectAdminTab} onNavigate={navigate} />
                       </>
                     ) : (
@@ -515,7 +539,7 @@ export const App: React.FC = () => {
             }}
           />
         )}
-        {isDesignModalOpen && <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />}
+        {isDesignModalOpen && <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={handleCloseDesignModal} />}
         {isPricingModalOpen && <AdminPricingModal />}
       </React.Suspense>
     </div>
