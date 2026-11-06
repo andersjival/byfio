@@ -468,7 +468,9 @@ export const App: React.FC = () => {
         }}
       />
       <CartSuccessToast />
-      <NewOrderStarAlert />
+      {Boolean(isSuperAdminAuthenticated || currentUser) && (
+        <NewOrderStarAlert />
+      )}
       {/* El video intro solo debe cargar y mostrarse en la página principal (home) */}
       {currentRoute === 'home' && isIntroOpen && (
         <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />

@@ -489,10 +489,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [newOrderAlert, setNewOrderAlert] = useState<NewOrderAlertInfo | null>(null);
 
-  const showNewOrderAlert = (info?: NewOrderAlertInfo) => {
-    setNewOrderAlert(info || {});
-  };
-
   const closeNewOrderAlert = () => {
     setNewOrderAlert(null);
   };
@@ -621,17 +617,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const newOrders = incomingOrders.filter((o) => !knownOrderIdsRef.current.has(o.id));
     if (newOrders.length > 0) {
       newOrders.forEach((o) => knownOrderIdsRef.current.add(o.id));
-      playNewOrderChimeSound();
       const firstNew = newOrders[0];
       const isWorkshop = firstNew.items?.some((it) => it.type === 'workshop') || firstNew.id?.startsWith('ord-ws-') || firstNew.orderNumber?.startsWith('#WS');
       const wsItem = firstNew.items?.find((it) => it.type === 'workshop');
-      showNewOrderAlert({
-        orderNumber: firstNew.orderNumber,
-        customerName: firstNew.customerName,
-        total: firstNew.total,
-        isWorkshop: Boolean(isWorkshop),
-        workshopTitle: wsItem?.name,
-      });
+
+      // Solo reproducir sonido de campana y desplegar alerta si hay un usuario logueado con permiso adecuado
+      if (canReceiveOrderNotifications(Boolean(isWorkshop))) {
+        playNewOrderChimeSound();
+        showNewOrderAlert({
+          orderNumber: firstNew.orderNumber,
+          customerName: firstNew.customerName,
+          total: firstNew.total,
+          isWorkshop: Boolean(isWorkshop),
+          workshopTitle: wsItem?.name,
+        });
+      }
     }
   };
 
@@ -1055,16 +1055,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
-    playNewOrderChimeSound();
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
-    showNewOrderAlert({
-      orderNumber: newOrder.orderNumber,
-      customerName: newOrder.customerName,
-      total: newOrder.total,
-      isWorkshop: Boolean(isWsOrder),
-      workshopTitle: wsItemInOrder?.name,
-    });
+    if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
+      playNewOrderChimeSound();
+      showNewOrderAlert({
+        orderNumber: newOrder.orderNumber,
+        customerName: newOrder.customerName,
+        total: newOrder.total,
+        isWorkshop: Boolean(isWsOrder),
+        workshopTitle: wsItemInOrder?.name,
+      });
+    }
 
     fetch('/api/orders', {
       method: 'POST',
@@ -1378,6 +1380,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return Boolean(perms[tab]);
     }
     return false;
+  };
+
+  const canReceiveOrderNotifications = (isWorkshop?: boolean) => {
+    if (isSuperAdminAuthenticated) return true;
+    if (!currentUser) return false;
+    if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
+    return hasPermission(isWorkshop ? 'workshops' : 'orders');
+  };
+
+  const showNewOrderAlert = (info?: NewOrderAlertInfo) => {
+    // Control estricto de visibilidad:
+    // NUNCA disparar la alerta ni mostrar la estrellita si no hay usuario logueado con permiso adecuado.
+    if (!canReceiveOrderNotifications(info?.isWorkshop)) {
+      return;
+    }
+    setNewOrderAlert(info || {});
   };
 
   const loginWithPin = (pinInput: string, targetProfileName?: string) => {
@@ -2221,16 +2239,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
-    playNewOrderChimeSound();
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
-    showNewOrderAlert({
-      orderNumber: newOrder.orderNumber,
-      customerName: newOrder.customerName,
-      total: newOrder.total,
-      isWorkshop: Boolean(isWsOrder),
-      workshopTitle: wsItemInOrder?.name,
-    });
+    if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
+      playNewOrderChimeSound();
+      showNewOrderAlert({
+        orderNumber: newOrder.orderNumber,
+        customerName: newOrder.customerName,
+        total: newOrder.total,
+        isWorkshop: Boolean(isWsOrder),
+        workshopTitle: wsItemInOrder?.name,
+      });
+    }
 
     // Notificación en tiempo real (0ms) a todas las pestañas de administración y clientes
     try {
@@ -2817,16 +2837,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setOrders(updatedOrders);
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
-    playNewOrderChimeSound();
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
-    showNewOrderAlert({
-      orderNumber: newOrder.orderNumber,
-      customerName: newOrder.customerName,
-      total: newOrder.total,
-      isWorkshop: Boolean(isWsOrder),
-      workshopTitle: wsItemInOrder?.name,
-    });
+    if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
+      playNewOrderChimeSound();
+      showNewOrderAlert({
+        orderNumber: newOrder.orderNumber,
+        customerName: newOrder.customerName,
+        total: newOrder.total,
+        isWorkshop: Boolean(isWsOrder),
+        workshopTitle: wsItemInOrder?.name,
+      });
+    }
 
     try {
       syncChannel?.postMessage({

@@ -4,7 +4,15 @@ import { X, Heart, Star, ShoppingBag, Clock, Check, GraduationCap } from 'lucide
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
 export const NewOrderStarAlert: React.FC = () => {
-  const { newOrderAlert, closeNewOrderAlert, starAlertDuration, orders } = useApp();
+  const {
+    newOrderAlert,
+    closeNewOrderAlert,
+    starAlertDuration,
+    orders,
+    currentUser,
+    isSuperAdminAuthenticated,
+    hasPermission,
+  } = useApp();
   const [isExiting, setIsExiting] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -26,8 +34,20 @@ export const NewOrderStarAlert: React.FC = () => {
     newOrderAlert?.workshopTitle ||
     matchedOrder?.items?.find((it) => it.type === 'workshop')?.name;
 
+  // Control estricto de visibilidad:
+  // NUNCA mostrar la notificación en la web pública si no hay usuario logueado.
+  // Solo visible para Administrador o Staff con permiso específico ('orders' o 'workshops').
+  const canViewAlert =
+    Boolean(isSuperAdminAuthenticated) ||
+    Boolean(
+      currentUser &&
+      (currentUser.role === 'admin' ||
+       currentUser.isMasterAdmin ||
+       hasPermission(isWorkshop ? 'workshops' : 'orders'))
+    );
+
   useEffect(() => {
-    if (newOrderAlert) {
+    if (newOrderAlert && canViewAlert) {
       setIsExiting(false);
       setElapsedSeconds(0);
       playBubblePopSound(0.35);
@@ -47,18 +67,18 @@ export const NewOrderStarAlert: React.FC = () => {
         }
       };
     }
-  }, [newOrderAlert]);
+  }, [newOrderAlert, canViewAlert]);
 
   // Si está configurado para auto-cierre con segundos fijos (5, 10, 15, 20s)
   useEffect(() => {
-    if (typeof starAlertDuration === 'number' && starAlertDuration > 0 && newOrderAlert) {
+    if (typeof starAlertDuration === 'number' && starAlertDuration > 0 && newOrderAlert && canViewAlert) {
       if (elapsedSeconds >= starAlertDuration && !isExiting) {
         handleDismiss();
       }
     }
-  }, [elapsedSeconds, starAlertDuration, newOrderAlert, isExiting]);
+  }, [elapsedSeconds, starAlertDuration, newOrderAlert, isExiting, canViewAlert]);
 
-  if (!newOrderAlert) return null;
+  if (!canViewAlert || !newOrderAlert) return null;
 
   const handleDismiss = () => {
     if (intervalRef.current) {
