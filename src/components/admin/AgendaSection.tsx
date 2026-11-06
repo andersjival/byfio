@@ -1,14 +1,60 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { AgendaItem, AgendaCategory, AgendaPriority } from '../../types';
 import {
   Calendar as CalendarIcon, CheckCircle2, Circle, Clock, Plus,
   Trash2, Edit3, Search, GraduationCap, Package, Scissors,
-  Truck, Bell, X, CalendarDays, LayoutList, LayoutGrid,
+  Truck, Bell, BellRing, Volume2, X, CalendarDays, LayoutList, LayoutGrid,
   ChevronDown, ChevronUp, AlertCircle, Check, ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { playAgendaBellSound, sendBrowserPushNotification } from '../../utils/soundEffects';
+
+const TIME_HOURS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+const TIME_MINUTES = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'];
+const TIME_PRESETS = [
+  { label: '09:00 AM', hour: '09', minute: '00', period: 'AM' as const },
+  { label: '10:00 AM', hour: '10', minute: '00', period: 'AM' as const },
+  { label: '02:00 PM', hour: '02', minute: '00', period: 'PM' as const },
+  { label: '04:00 PM', hour: '04', minute: '00', period: 'PM' as const },
+  { label: '06:00 PM', hour: '06', minute: '00', period: 'PM' as const },
+];
+
+const parseTimeString = (timeStr?: string) => {
+  if (!timeStr || !timeStr.trim()) {
+    return { hasTime: false, hour: '10', minute: '00', period: 'AM' as 'AM' | 'PM' };
+  }
+  const clean = timeStr.trim().toUpperCase();
+  const isPM = clean.includes('PM');
+  const isAM = clean.includes('AM');
+  const numbersOnly = clean.replace(/[^0-9:]/g, '');
+  const parts = numbersOnly.split(':');
+  let rawHour = parseInt(parts[0], 10);
+  let rawMinute = parts[1] ? parseInt(parts[1], 10) : 0;
+
+  if (isNaN(rawHour)) rawHour = 10;
+  if (isNaN(rawMinute)) rawMinute = 0;
+
+  let period: 'AM' | 'PM' = isPM ? 'PM' : isAM ? 'AM' : 'AM';
+  if (!isPM && !isAM && rawHour >= 12) {
+    period = 'PM';
+    if (rawHour > 12) rawHour -= 12;
+  } else if (rawHour > 12) {
+    rawHour -= 12;
+  }
+  if (rawHour === 0) rawHour = 12;
+
+  const roundedMin = Math.round(rawMinute / 5) * 5;
+  const clampedMin = roundedMin >= 60 ? 55 : roundedMin;
+
+  return {
+    hasTime: true,
+    hour: String(rawHour).padStart(2, '0'),
+    minute: String(clampedMin).padStart(2, '0'),
+    period,
+  };
+};
 
 const CATEGORY_CONFIG: Record<AgendaCategory, { label: string; icon: any; color: string; bg: string; border: string; dot: string }> = {
   taller: {
@@ -110,10 +156,36 @@ export const AgendaSection: React.FC = () => {
     notes: '',
   });
 
+  // Selector de Hora y Minutos + Notificación Push
+  const [selectedHour, setSelectedHour] = useState('10');
+  const [selectedMinute, setSelectedMinute] = useState('00');
+  const [selectedPeriod, setSelectedPeriod] = useState<'AM' | 'PM'>('AM');
+  const [hasSpecificTime, setHasSpecificTime] = useState(true);
+  const [enableBellNotification, setEnableBellNotification] = useState(true);
+  const [activeBellToast, setActiveBellToast] = useState<{ title: string; time?: string; date: string } | null>(null);
+
+  // Auto-cierre de notificación push flotante tras 6 segundos
+  useEffect(() => {
+    if (activeBellToast) {
+      const timer = setTimeout(() => {
+        setActiveBellToast(null);
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [activeBellToast]);
+
   const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
 
   // Superadmin features
   const showWorkshopSync = isFeatureEnabled('agenda', 'agenda_sync_workshops') !== false;
+
+  const handleTestBell = () => {
+    playAgendaBellSound(0.4);
+    sendBrowserPushNotification('🔔 Campanita By.Fio Activada', {
+      body: 'Notificación sonora y visual configurada con éxito en la agenda ✨',
+      tag: 'test-bell',
+    });
+  };
 
   const openNewModal = () => {
     setEditingItem(null);
@@ -125,6 +197,11 @@ export const AgendaSection: React.FC = () => {
       priority: 'media',
       notes: '',
     });
+    setHasSpecificTime(true);
+    setSelectedHour('10');
+    setSelectedMinute('00');
+    setSelectedPeriod('AM');
+    setEnableBellNotification(true);
     setIsModalOpen(true);
   };
 
@@ -138,6 +215,12 @@ export const AgendaSection: React.FC = () => {
       priority: item.priority,
       notes: item.notes || '',
     });
+    const parsed = parseTimeString(item.time);
+    setHasSpecificTime(parsed.hasTime);
+    setSelectedHour(parsed.hour);
+    setSelectedMinute(parsed.minute);
+    setSelectedPeriod(parsed.period);
+    setEnableBellNotification(item.notifyBell !== false);
     setIsModalOpen(true);
   };
 
@@ -145,24 +228,42 @@ export const AgendaSection: React.FC = () => {
     e.preventDefault();
     if (!formData.title.trim()) return;
 
+    const finalTime = hasSpecificTime ? `${selectedHour}:${selectedMinute} ${selectedPeriod}` : undefined;
+
     if (editingItem) {
       updateAgendaItem(editingItem.id, {
         title: formData.title.trim(),
         date: formData.date,
-        time: formData.time.trim() || undefined,
+        time: finalTime,
         category: formData.category,
         priority: formData.priority,
         notes: formData.notes.trim() || undefined,
+        notifyBell: enableBellNotification,
       });
     } else {
       addAgendaItem({
         title: formData.title.trim(),
         date: formData.date,
-        time: formData.time.trim() || undefined,
+        time: finalTime,
         category: formData.category,
         priority: formData.priority,
         status: 'pending',
         notes: formData.notes.trim() || undefined,
+        notifyBell: enableBellNotification,
+      });
+    }
+
+    // Si la campanita está activa, reproducir sonido cristalino y disparar notificación push
+    if (enableBellNotification) {
+      playAgendaBellSound(0.4);
+      sendBrowserPushNotification(`🔔 Agenda By.Fio: ${formData.title.trim()}`, {
+        body: `${finalTime ? '⏰ ' + finalTime + ' · ' : ''}Fecha: ${formData.date} · Prioridad: ${formData.priority.toUpperCase()}`,
+        tag: `agenda-${Date.now()}`,
+      });
+      setActiveBellToast({
+        title: formData.title.trim(),
+        time: finalTime,
+        date: formData.date,
       });
     }
 
@@ -760,41 +861,191 @@ export const AgendaSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Fecha y Hora */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-bubble font-bold text-slate-700">
-                      Fecha Programada *
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setFormData({ ...formData, date: todayStr })}
-                      className="text-[10px] text-purple-600 font-bold hover:underline"
-                    >
-                      Hoy
-                    </button>
-                  </div>
-                  <input
-                    type="date"
-                    required
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
+              {/* Fecha Programada */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bubble font-bold text-slate-700">
+                    Fecha Programada *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, date: todayStr })}
+                    className="text-[10px] text-purple-600 font-bold hover:underline cursor-pointer"
+                  >
+                    Establecer Hoy
+                  </button>
+                </div>
+                <input
+                  type="date"
+                  required
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
+              </div>
+
+              {/* Selector de Horario (Hora y Minutos) */}
+              <div className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/90 shadow-xs space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bubble font-bold text-slate-800 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Horario Programado</span>
+                  </span>
+                  <label className="inline-flex items-center gap-1.5 cursor-pointer text-[11px] font-bubble font-semibold text-slate-600">
+                    <input
+                      type="checkbox"
+                      checked={hasSpecificTime}
+                      onChange={(e) => setHasSpecificTime(e.target.checked)}
+                      className="w-3.5 h-3.5 accent-purple-600 rounded cursor-pointer"
+                    />
+                    <span>Con hora específica</span>
+                  </label>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                    Hora (Opcional)
+                {hasSpecificTime ? (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2">
+                      {/* Selector de Hora */}
+                      <div className="flex-1">
+                        <span className="block text-[10px] font-sans font-semibold text-slate-500 mb-1">Hora</span>
+                        <select
+                          value={selectedHour}
+                          onChange={(e) => setSelectedHour(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl bg-[#ECEEF2] border border-white shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer"
+                        >
+                          {TIME_HOURS.map((h) => (
+                            <option key={h} value={h}>{h}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <span className="text-base font-bold text-slate-400 mt-4">:</span>
+
+                      {/* Selector de Minutos */}
+                      <div className="flex-1">
+                        <span className="block text-[10px] font-sans font-semibold text-slate-500 mb-1">Minutos</span>
+                        <select
+                          value={selectedMinute}
+                          onChange={(e) => setSelectedMinute(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl bg-[#ECEEF2] border border-white shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-400 cursor-pointer"
+                        >
+                          {TIME_MINUTES.map((m) => (
+                            <option key={m} value={m}>{m} min</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Selector AM / PM */}
+                      <div className="shrink-0">
+                        <span className="block text-[10px] font-sans font-semibold text-slate-500 mb-1">Período</span>
+                        <div className="flex rounded-xl bg-[#ECEEF2] p-1 border border-white shadow-neuInset">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPeriod('AM')}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                              selectedPeriod === 'AM'
+                                ? 'bg-purple-600 text-white shadow-xs'
+                                : 'text-slate-600 hover:text-purple-600'
+                            }`}
+                          >
+                            AM
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPeriod('PM')}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                              selectedPeriod === 'PM'
+                                ? 'bg-purple-600 text-white shadow-xs'
+                                : 'text-slate-600 hover:text-purple-600'
+                            }`}
+                          >
+                            PM
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Accesos directos de horario habitual */}
+                    <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                      <span className="text-[10px] font-sans text-slate-400">Atajos:</span>
+                      {TIME_PRESETS.map((p) => {
+                        const isActive = selectedHour === p.hour && selectedMinute === p.minute && selectedPeriod === p.period;
+                        return (
+                          <button
+                            key={p.label}
+                            type="button"
+                            onClick={() => {
+                              setSelectedHour(p.hour);
+                              setSelectedMinute(p.minute);
+                              setSelectedPeriod(p.period);
+                            }}
+                            className={`px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold transition-all border cursor-pointer ${
+                              isActive
+                                ? 'bg-purple-100 text-purple-700 border-purple-300 shadow-xs'
+                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-purple-50 hover:text-purple-600'
+                            }`}
+                          >
+                            {p.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-500 font-sans flex items-center justify-between">
+                    <span>Sin hora específica (Todo el día)</span>
+                    <button
+                      type="button"
+                      onClick={() => setHasSpecificTime(true)}
+                      className="text-[11px] text-purple-600 font-bold hover:underline cursor-pointer"
+                    >
+                      Fijar hora
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Notificación Push Sonora con Campanita */}
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-50/80 via-pink-50/50 to-purple-50/80 border border-purple-200/80 shadow-xs flex items-center justify-between gap-3">
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+                    <BellRing className="w-4 h-4 text-fio-yellow" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-bubble font-bold text-xs text-slate-900">
+                        Campanita de Notificación Push
+                      </span>
+                      <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.2 rounded-full font-bold border border-purple-200">
+                        Sonora
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-sans leading-tight mt-0.5 truncate">
+                      Campana armónica y alerta emergente al registrar
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleTestBell}
+                    title="Probar sonido armónico de campana"
+                    className="px-2.5 py-1.5 rounded-xl bg-white border border-purple-200 text-purple-700 hover:bg-purple-100 font-bubble font-bold text-[11px] flex items-center gap-1 shadow-xs transition-all active:scale-95 cursor-pointer"
+                  >
+                    <Volume2 className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Probar 🔔</span>
+                  </button>
+
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={enableBellNotification}
+                      onChange={(e) => setEnableBellNotification(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: 10:00 AM, 3:30 PM"
-                    value={formData.time}
-                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset text-xs font-mono font-bold text-slate-800 placeholder:font-sans placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
                 </div>
               </div>
 
@@ -859,6 +1110,35 @@ export const AgendaSection: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 7. Notificación Push Flotante en Pantalla con Campanita */}
+      {activeBellToast && (
+        <div className="fixed top-24 right-4 sm:right-8 z-50 max-w-sm w-full bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-2xl border-2 border-purple-400 animate-in slide-in-from-top-4 duration-300 flex items-start gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 shadow-xs">
+            <BellRing className="w-5 h-5 text-purple-600 animate-bounce" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bubble font-bold text-purple-600 uppercase tracking-wider flex items-center gap-1">
+                <span>🔔 Notificación de Agenda</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setActiveBellToast(null)}
+                className="text-slate-400 hover:text-slate-600 p-0.5 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="font-bubble font-bold text-xs text-slate-800 dark:text-white line-clamp-1 mt-0.5">
+              {activeBellToast.title}
+            </p>
+            <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+              {activeBellToast.time ? `⏰ ${activeBellToast.time} · ` : ''}📅 {activeBellToast.date}
+            </p>
           </div>
         </div>
       )}
@@ -944,6 +1224,18 @@ const AgendaListItem: React.FC<AgendaListItemProps> = ({
                 <Clock className="w-3 h-3" />
                 <span>{item.time}</span>
               </span>
+            )}
+
+            {item.notifyBell && (
+              <button
+                type="button"
+                onClick={() => playAgendaBellSound(0.4)}
+                title="Campanita sonora activada - Clic para escuchar sonido"
+                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 hover:bg-purple-100 transition-all cursor-pointer"
+              >
+                <Bell className="w-3 h-3 text-purple-600 animate-pulse" />
+                <span>Campanita</span>
+              </button>
             )}
 
             {/* Indicador de Prioridad Alta */}
@@ -1081,6 +1373,16 @@ const AgendaCardItem: React.FC<AgendaCardItemProps> = ({
               <Clock className="w-3 h-3" />
               <span>{item.time}</span>
             </span>
+          )}
+          {item.notifyBell && (
+            <button
+              type="button"
+              onClick={() => playAgendaBellSound(0.4)}
+              title="Campanita sonora activada - Clic para escuchar sonido"
+              className="flex items-center gap-1 text-purple-600 hover:text-purple-800 transition-colors cursor-pointer"
+            >
+              <Bell className="w-3 h-3 animate-pulse" />
+            </button>
           )}
         </div>
 

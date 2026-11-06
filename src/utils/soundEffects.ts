@@ -144,6 +144,93 @@ export const playNewOrderChimeSound = (volume = 0.35) => {
 };
 
 /**
+ * Sonido armónico y resonante de campanita de agenda (Bell Ring / Chime)
+ * Simula el tintineo dorado de una campana de recepción o templo con doble armónico y decaimiento cristalino.
+ */
+export const playAgendaBellSound = (volume = 0.35) => {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+
+    // Doble golpe de campanita armónica tipo boutique ("Ding - Dong" cristalino)
+    const bellStrikes = [
+      {
+        time: 0.00,
+        partials: [
+          { freq: 1174.66, gain: 0.85, decay: 1.3 }, // D6 (fundamental)
+          { freq: 2349.32, gain: 0.35, decay: 0.85 }, // D7 (octava)
+          { freq: 3520.00, gain: 0.18, decay: 0.55 }, // A7 (quinta brillante)
+          { freq: 4698.64, gain: 0.09, decay: 0.35 }, // D8 (brillo metálico suave)
+        ],
+      },
+      {
+        time: 0.18,
+        partials: [
+          { freq: 1760.00, gain: 0.9, decay: 1.6 }, // A6 (armónico dulce)
+          { freq: 3520.00, gain: 0.28, decay: 0.95 }, // A7
+          { freq: 5274.04, gain: 0.12, decay: 0.45 }, // E8 (chispa de cristal)
+        ],
+      },
+    ];
+
+    bellStrikes.forEach((strike) => {
+      const strikeStart = now + strike.time;
+
+      strike.partials.forEach((part) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(part.freq, strikeStart);
+
+        // Ataque instantáneo de campana (2.5ms) y decaimiento exponencial natural
+        gain.gain.setValueAtTime(0.0001, strikeStart);
+        gain.gain.exponentialRampToValueAtTime(volume * part.gain, strikeStart + 0.0025);
+        gain.gain.exponentialRampToValueAtTime(0.0001, strikeStart + part.decay);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(strikeStart);
+        osc.stop(strikeStart + part.decay + 0.02);
+      });
+    });
+  } catch {
+    // Silencioso ante restricciones de autoplay
+  }
+};
+
+/**
+ * Disparador universal de Notificación Push del Navegador
+ */
+export const sendBrowserPushNotification = async (title: string, options?: NotificationOptions): Promise<boolean> => {
+  if (typeof window === 'undefined' || !('Notification' in window)) {
+    return false;
+  }
+
+  try {
+    let permission = Notification.permission;
+    if (permission === 'default') {
+      permission = await Notification.requestPermission();
+    }
+
+    if (permission === 'granted') {
+      new Notification(title, {
+        icon: '/assets/logo-byfio-lila-HD.png',
+        badge: '/assets/logo-byfio.svg',
+        ...options,
+      });
+      return true;
+    }
+  } catch (e) {
+    console.warn('Browser push notification error:', e);
+  }
+  return false;
+};
+
+/**
  * Listener global para reproducir sonido de gota de agua en todos los botones
  */
 export const initWaterDropButtonSounds = () => {

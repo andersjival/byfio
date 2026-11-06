@@ -220,6 +220,7 @@ export interface AgendaItem {
   status: AgendaStatus;
   notes?: string;
   isAutoWorkshop?: boolean;
+  notifyBell?: boolean; // Campanita de notificación push sonora activa
   createdAt: string;
 }
 

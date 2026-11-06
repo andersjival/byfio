@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.2 - Selector de Hora y Minutos en Nueva Actividad de Agenda y Campanita Push Sonora
+- [x] **Selector Interactivo de Hora y Minutos en Modal de Agenda ([`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
+  - Reemplazado el campo de texto libre por selectores dropdown dedicados para Horas (`01` a `12`) y Minutos (`00`, `05`, `10`, ... `55`).
+  - Toggle táctil de período `AM` / `PM` y casilla para elegir entre actividad con horario específico o de jornada completa.
+  - Atajos rápidos de horarios habituales de taller (`09:00 AM`, `10:00 AM`, `02:00 PM`, `04:00 PM`, `06:00 PM`).
+  - Algoritmo de parsing inteligente retrocompatible para cargar registros existentes sin pérdida de formato.
+- [x] **Campanita Sonora y Notificación Push ([`soundEffects.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts), [`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx), [`index.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts)):**
+  - Síntesis de sonido de campana armónica de dos golpes ("Ding-Dong" cristalino D6/A6) mediante Web Audio API puro, sin latencia ni dependencias externas.
+  - Función universal de notificación push con solicitud de permisos (`Notification.requestPermission`) e ícono oficial By.Fio.
+  - Interruptor en el modal para activar/desactivar la campanita y botón interactivo *"Probar 🔔"* con escucha previa en tiempo real.
+  - Banner push emergente animado en pantalla con campana repicando y auto-cierre a los 6 segundos.
+  - Distintivo visual de campanita activa en vistas de lista y cuadrícula con botón para reproducir el repique sonoro en cualquier momento.
+
 ### Versión 4.16.1 - Cierre de Caja Diario Persistente con Historial y Filtros por Día y Fecha
 - [x] **Cierre de Caja Diario y Persistencia Oficial ([`DailyClosingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`daily-closings.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/daily-closings.ts)):**
   - Implementada selección de fecha para realizar el cierre diario (*"Hoy"*, *"Ayer"* o fecha específica con selector interactivo).
