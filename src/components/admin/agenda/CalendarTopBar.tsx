@@ -6,12 +6,15 @@ import {
   Clock,
   Users,
   ChevronDown,
+  Palette,
 } from 'lucide-react';
 import {
   CalendarViewType,
   TimeIntervalType,
   TeamFilterType,
   TEAM_MEMBERS,
+  CalendarTheme,
+  CALENDAR_THEMES,
 } from './agendaCalendarTypes';
 
 interface CalendarTopBarProps {
@@ -27,6 +30,8 @@ interface CalendarTopBarProps {
   teamFilter: TeamFilterType;
   onTeamFilterChange: (filter: TeamFilterType) => void;
   appointmentsCount: number;
+  currentTheme?: CalendarTheme;
+  onSelectTheme?: (theme: CalendarTheme) => void;
   onOpenBlockSpaceModal?: () => void;
   onOpenSyncModal?: () => void;
 }
@@ -44,6 +49,8 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
   teamFilter,
   onTeamFilterChange,
   appointmentsCount,
+  currentTheme = 'celeste',
+  onSelectTheme,
   onOpenBlockSpaceModal,
   onOpenSyncModal,
 }) => {
@@ -151,8 +158,33 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
         </div>
       </div>
 
-      {/* Lado Derecho: Contador de Citas */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Lado Derecho: Paleta de Colores Pasteles y Contador de Citas */}
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        {/* Selector de Temas Pasteles */}
+        {onSelectTheme && (
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs" title="Personalizar color del calendario">
+            <Palette className="w-3.5 h-3.5 text-slate-400 mr-0.5" />
+            {(Object.keys(CALENDAR_THEMES) as CalendarTheme[]).map((thmKey) => {
+              const thm = CALENDAR_THEMES[thmKey];
+              const isSelected = currentTheme === thmKey;
+              return (
+                <button
+                  key={thmKey}
+                  type="button"
+                  onClick={() => onSelectTheme(thmKey)}
+                  title={`Tema ${thm.name}`}
+                  className={`w-5 h-5 rounded-full transition-all cursor-pointer ${
+                    isSelected
+                      ? 'scale-110 shadow-sm ring-2 ring-offset-1 ring-slate-700/80'
+                      : 'hover:scale-110 opacity-80 hover:opacity-100'
+                  }`}
+                  style={{ backgroundColor: thm.circleColor }}
+                />
+              );
+            })}
+          </div>
+        )}
+
         {/* Contador de Citas */}
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs">
           <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />

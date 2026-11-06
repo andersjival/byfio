@@ -6,6 +6,8 @@ import {
   BlockedSpace,
   TIME_SLOTS_60,
   TEAM_MEMBERS,
+  CalendarTheme,
+  CALENDAR_THEMES,
 } from './agendaCalendarTypes';
 import { CalendarTopBar } from './CalendarTopBar';
 import { BlockSpaceModal } from './BlockSpaceModal';
@@ -108,7 +110,25 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
   const [teamFilter, setTeamFilter] = useState<TeamFilterType>('all');
   const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
 
-  // Estado de Bloqueos de Espacio (Almuerzo y personalizados)
+  // Tema de Color Pastel del Calendario con Persistencia
+  const [calendarTheme, setCalendarTheme] = useState<CalendarTheme>(() => {
+    try {
+      const saved = localStorage.getItem('byfio_calendar_theme') as CalendarTheme;
+      if (saved && CALENDAR_THEMES[saved]) return saved;
+    } catch {}
+    return 'celeste';
+  });
+
+  const handleSelectTheme = (theme: CalendarTheme) => {
+    setCalendarTheme(theme);
+    try {
+      localStorage.setItem('byfio_calendar_theme', theme);
+    } catch {}
+  };
+
+  const themeConfig = CALENDAR_THEMES[calendarTheme] || CALENDAR_THEMES.celeste;
+
+    // Estado de Bloqueos de Espacio (Almuerzo y personalizados)
   const [blockedSpaces, setBlockedSpaces] = useState<BlockedSpace[]>(() => {
     try {
       const saved = localStorage.getItem(BLOCKED_STORAGE_KEY);
@@ -233,6 +253,8 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
         teamFilter={teamFilter}
         onTeamFilterChange={setTeamFilter}
         appointmentsCount={activePeriodAppointments.length}
+        currentTheme={calendarTheme}
+        onSelectTheme={handleSelectTheme}
         onOpenBlockSpaceModal={() => {
           setEditingBlockSpace(null);
           setIsBlockModalOpen(true);
@@ -241,7 +263,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
       />
 
       {/* 2. Cuadrícula del Calendario */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-neuCard overflow-hidden">
+      <div className="rounded-3xl border shadow-neuCard overflow-hidden transition-colors" style={{ backgroundColor: themeConfig.bgContainer, borderColor: themeConfig.borderTable }}>
         <div className="overflow-x-auto min-w-full">
           {viewType === 'weekly' ? (
             /* ============================================================ */
@@ -249,9 +271,9 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
             /* ============================================================ */
             <table className="w-full border-collapse min-w-[950px] table-fixed">
               <thead>
-                <tr className="border-b border-slate-200 bg-[#FAF9FC]">
+                <tr style={{ backgroundColor: themeConfig.bgHeader, borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
                   {/* Columna Hora */}
-                  <th className="w-20 sm:w-24 p-3 text-center text-xs font-bubble font-bold text-slate-500 border-r border-slate-200">
+                  <th className="w-20 sm:w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
                     Hora
                   </th>
 
@@ -270,13 +292,19 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     return (
                       <th
                         key={dayKey}
-                        className={`p-2.5 sm:p-3 text-left transition-all border-r border-slate-200 last:border-r-0 ${
+                        className={`p-2.5 sm:p-3 text-left transition-all ${
                           isToday
-                            ? 'bg-blue-50/70 border-b-2 border-b-blue-500 ring-2 ring-blue-400/40'
-                            : isSunday
-                            ? 'bg-slate-50/50'
-                            : 'bg-[#FAF9FC]'
+                            ? 'border-b-2 border-b-blue-500 ring-2 ring-blue-400/40'
+                            : ''
                         }`}
+                        style={{
+                          borderRight: idx === 6 ? 'none' : `1px solid ${themeConfig.borderDiv}`,
+                          backgroundColor: isToday
+                            ? 'rgba(59, 130, 246, 0.12)'
+                            : isSunday
+                            ? 'rgba(100, 116, 139, 0.05)'
+                            : themeConfig.bgHeader,
+                        }}
                       >
                         <div className="flex items-center justify-between gap-1">
                           {/* Nombre del Día y Mes */}
@@ -317,9 +345,9 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
               <tbody>
                 {timeRows.map((hourLabel) => {
                   return (
-                    <tr key={hourLabel} className="border-b border-slate-100 hover:bg-slate-50/30 transition-colors">
+                    <tr key={hourLabel} className="transition-colors hover:bg-black/[0.015]" style={{ borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
                       {/* Columna Hora */}
-                      <td className="p-3 text-center text-xs font-mono font-bold text-slate-500 border-r border-slate-200 align-top bg-slate-50/20">
+                      <td className="p-3 text-center text-xs font-mono font-bold text-slate-600 align-top" style={{ borderRight: `1px solid ${themeConfig.borderDiv}`, backgroundColor: themeConfig.bgHourCol }}>
                         {hourLabel}
                       </td>
 
@@ -349,9 +377,15 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                         return (
                           <td
                             key={`${dayKey}-${hourLabel}`}
-                            className={`p-1.5 sm:p-2 border-r border-slate-100 last:border-r-0 align-top relative group min-h-[64px] ${
-                              isToday ? 'bg-blue-50/15' : isSunday ? 'bg-slate-50/30' : ''
-                            }`}
+                            className="p-1.5 sm:p-2 align-top relative group min-h-[64px] transition-colors"
+                            style={{
+                              borderRight: dayIdx === 6 ? 'none' : `1px solid ${themeConfig.borderDiv}`,
+                              backgroundColor: isToday
+                                ? 'rgba(59, 130, 246, 0.06)'
+                                : isSunday
+                                ? 'rgba(100, 116, 139, 0.03)'
+                                : 'transparent',
+                            }}
                           >
                             <div className="space-y-1.5 min-h-[50px] flex flex-col justify-between">
                               {/* 1. Bloqueos Personalizados */}
@@ -492,16 +526,16 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
               {/* Grid Horario Detallado para Vista Diaria */}
               <table className="w-full border-collapse table-fixed">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-[#FAF9FC]">
-                    <th className="w-24 p-3 text-center text-xs font-bubble font-bold text-slate-500 border-r border-slate-200">
+                  <tr style={{ backgroundColor: themeConfig.bgHeader, borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
+                    <th className="w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
                       Hora
                     </th>
                     {teamFilter === 'all' ? (
                       <>
-                        <th className="p-3 text-left text-xs font-bubble font-bold text-purple-900 bg-purple-50/50 border-r border-slate-200">
+                        <th className="p-3 text-left text-xs font-bubble font-bold text-purple-900 bg-purple-50/40" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
                           Fiorella Brenes (Diseño &amp; Admin)
                         </th>
-                        <th className="p-3 text-left text-xs font-bubble font-bold text-sky-900 bg-sky-50/50">
+                        <th className="p-3 text-left text-xs font-bubble font-bold text-sky-900 bg-sky-50/40">
                           Taller Creativo &amp; Envíos
                         </th>
                       </>
@@ -522,15 +556,15 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     });
 
                     return (
-                      <tr key={`daily-${hourLabel}`} className="border-b border-slate-100 hover:bg-slate-50/30">
-                        <td className="p-3 text-center text-xs font-mono font-bold text-slate-500 border-r border-slate-200 align-top bg-slate-50/20">
+                      <tr key={`daily-${hourLabel}`} className="hover:bg-black/[0.015] transition-colors" style={{ borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
+                        <td className="p-3 text-center text-xs font-mono font-bold text-slate-600 align-top" style={{ borderRight: `1px solid ${themeConfig.borderDiv}`, backgroundColor: themeConfig.bgHourCol }}>
                           {hourLabel}
                         </td>
 
                         {teamFilter === 'all' ? (
                           <>
                             {/* Columna Fiorella */}
-                            <td className="p-2 border-r border-slate-100 align-top">
+                            <td className="p-2 align-top" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
                               <div className="space-y-1.5">
                                 {hourItems
                                   .filter((i) => i.category === 'recordatorio' || i.category === 'proveedor')
