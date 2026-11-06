@@ -826,32 +826,34 @@ export const AgendaSection: React.FC = () => {
 
       {/* 6. Modal de Creación / Edición Neumórfica de Alta Fidelidad */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
-          <div className="bg-[#F1F2F6] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-white/90 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-[#F1F2F6] rounded-3xl max-w-lg w-full max-h-[92vh] shadow-2xl border border-white/90 flex flex-col overflow-hidden my-auto animate-in zoom-in-95 duration-150">
+            {/* Header Fijo */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200/80 shrink-0 bg-[#F1F2F6]">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs">
-                  <CalendarDays className="w-5 h-5 text-fio-yellow" />
+                <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs">
+                  <CalendarDays className="w-4 h-4 text-fio-yellow" />
                 </div>
                 <div>
-                  <h3 className="font-bubble font-bold text-base sm:text-lg text-slate-900 leading-tight">
+                  <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 leading-tight">
                     {editingItem ? 'Editar Actividad del Taller' : 'Nueva Actividad en Agenda'}
                   </h3>
-                  <p className="text-[11px] text-slate-500 font-sans">
-                    Planificación ejecutiva con sincronización en tiempo real
+                  <p className="text-[10px] text-slate-500 font-sans">
+                    Planificación ejecutiva y sincronización en tiempo real
                   </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-white/80 transition-all cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-white/80 transition-all cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-4">
+            <form onSubmit={handleSave} className="flex flex-col min-h-0 flex-1 overflow-hidden">
+              <div className="overflow-y-auto px-5 py-3.5 space-y-3 flex-1 scrollbar-thin">
               {/* Título de la Actividad */}
               <div>
                 <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
@@ -1129,8 +1131,10 @@ export const AgendaSection: React.FC = () => {
                 />
               </div>
 
-              {/* Botones de Acción */}
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200/80">
+              </div>
+
+              {/* Botones de Acción Fijos al Pie */}
+              <div className="flex items-center justify-end gap-2.5 px-5 py-3 border-t border-slate-200/80 shrink-0 bg-[#F1F2F6]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}

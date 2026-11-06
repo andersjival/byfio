@@ -110,6 +110,27 @@ export const GuidedPickingModal: React.FC = () => {
     }
   };
 
+  const handleStartEditQuantity = (sku: string, currentQty: number) => {
+    setEditingItemSku(sku);
+    setTempQty(currentQty);
+    setIsEditingQty(true);
+  };
+
+  const handleConfirmEditQuantity = () => {
+    if (!editingItemSku) return;
+    const res = updateOrderItemQuantity(currentOrder.id, editingItemSku, tempQty);
+    if (res.error) {
+      setScanFeedback({ type: 'error', message: res.error });
+    } else {
+      setScanFeedback({
+        type: 'success',
+        message: `Cantidad modificada a ${tempQty} unidad(es) correctamente.`,
+      });
+    }
+    setIsEditingQty(false);
+    setEditingItemSku(null);
+  };
+
   const handleSimulateScanCurrent = () => {
     if (currentItem) handleProcessScan(currentItem.sku);
   };
@@ -202,10 +223,90 @@ export const GuidedPickingModal: React.FC = () => {
                   <h3 className="font-bubble font-black text-xl sm:text-2xl text-fio-900 leading-tight">
                     {currentItem.name}
                   </h3>
-                  <div className="mt-2 sm:mt-1.5 inline-flex items-center gap-2 px-3.5 py-2 sm:py-1 rounded-2xl bg-purple-100/90 border border-purple-300 text-xs sm:text-xs font-bold text-purple-950 shadow-xs">
-                    <span>Cantidad a Alistar:</span>
-                    <span className="text-base sm:text-base text-fio-pink font-black px-2 py-0.5 bg-white rounded-lg shadow-2xs">{currentItem.quantity} unidad(es)</span>
-                  </div>
+                  {isEditingQty && editingItemSku === currentItem.sku ? (
+                    <div className="mt-2.5 p-3 rounded-2xl bg-white border-2 border-fio-pink shadow-md space-y-2 animate-fadeIn">
+                      <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+                        <span className="flex items-center gap-1.5 text-purple-900 font-bubble">
+                          <Edit3 className="w-3.5 h-3.5 text-fio-pink" />
+                          Modificar Cantidad en Alisto
+                        </span>
+                        <span className="text-[11px] text-slate-400 font-mono">Original: {currentItem.quantity} ud</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-1 bg-purple-50 p-1 rounded-xl border border-purple-200">
+                          <button
+                            type="button"
+                            onClick={() => setTempQty((q) => Math.max(0, q - 1))}
+                            className="w-8 h-8 rounded-lg bg-white hover:bg-purple-100 text-slate-800 font-black text-base flex items-center justify-center cursor-pointer active:scale-95 transition-all shadow-2xs"
+                            title="Disminuir cantidad"
+                          >
+                            -
+                          </button>
+
+                          <input
+                            type="number"
+                            min="0"
+                            max="999"
+                            value={tempQty}
+                            onChange={(e) => setTempQty(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                            className="w-16 text-center font-bubble font-black text-lg text-fio-900 py-1 px-1 bg-transparent focus:outline-none"
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => setTempQty((q) => q + 1)}
+                            className="w-8 h-8 rounded-lg bg-white hover:bg-purple-100 text-slate-800 font-black text-base flex items-center justify-center cursor-pointer active:scale-95 transition-all shadow-2xs"
+                            title="Aumentar cantidad"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleConfirmEditQuantity}
+                          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+                        >
+                          <Check className="w-4 h-4 text-emerald-200" />
+                          <span>Aceptar ({tempQty} ud)</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsEditingQty(false);
+                            setEditingItemSku(null);
+                          }}
+                          className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bubble font-bold text-xs active:scale-95 transition-all cursor-pointer"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                      <p className="text-[11px] text-slate-500">
+                        Si encontraste menos productos en bodega, digita la cantidad real y pulsa <strong>Aceptar</strong>.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-2 sm:mt-1.5 flex items-center gap-2 flex-wrap">
+                      <div className="inline-flex items-center gap-2 px-3.5 py-2 sm:py-1 rounded-2xl bg-purple-100/90 border border-purple-300 text-xs sm:text-xs font-bold text-purple-950 shadow-xs">
+                        <span>Cantidad a Alistar:</span>
+                        <span className="text-base sm:text-base text-fio-pink font-black px-2 py-0.5 bg-white rounded-lg shadow-2xs">
+                          {currentItem.quantity} unidad(es)
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleStartEditQuantity(currentItem.sku, currentItem.quantity)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-xl bg-white hover:bg-purple-100 border border-purple-300 text-purple-900 font-bubble font-bold text-xs shadow-2xs transition-all active:scale-95 cursor-pointer"
+                        title="Modificar cantidad de unidades si encontraste menos en bodega"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-fio-pink" />
+                        <span>Modificar</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Personalización si aplica */}
@@ -538,6 +639,16 @@ export const GuidedPickingModal: React.FC = () => {
                       <span className="px-1.5 py-0.2 rounded bg-purple-100 text-purple-900 font-bubble font-bold text-[10px]">
                         x{it.quantity}
                       </span>
+                      {!it.isPicked && (
+                        <button
+                          type="button"
+                          onClick={() => handleStartEditQuantity(it.sku, it.quantity)}
+                          className="p-1 rounded-lg bg-white hover:bg-purple-100 text-slate-600 hover:text-fio-pink border border-slate-200 transition-all cursor-pointer shadow-2xs"
+                          title="Modificar cantidad de este producto"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                        </button>
+                      )}
                       <span
                         className={`px-2 py-0.5 rounded-lg text-[10px] font-bold font-bubble ${
                           it.isPicked
