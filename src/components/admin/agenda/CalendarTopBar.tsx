@@ -3,7 +3,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar,
-  Clock,
   Users,
   ChevronDown,
   Palette,
@@ -20,8 +19,8 @@ import {
 interface CalendarTopBarProps {
   viewType: CalendarViewType;
   onViewTypeChange: (view: CalendarViewType) => void;
-  interval: TimeIntervalType;
-  onIntervalChange: (interval: TimeIntervalType) => void;
+  interval?: TimeIntervalType;
+  onIntervalChange?: (interval: TimeIntervalType) => void;
   dateRangeLabel: string;
   onPrevDate: () => void;
   onNextDate: () => void;
@@ -56,7 +55,7 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
 }) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard">
-      {/* Lado Izquierdo: Vistas, Intervalo, Navegación de Fechas y Filtro */}
+      {/* Lado Izquierdo: Vistas, Navegación de Fechas y Filtro */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {/* Toggle Vista Diaria vs Semanal */}
         <div className="flex items-center p-1 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset">
@@ -84,23 +83,6 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
           </button>
         </div>
 
-        {/* Intervalo */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs">
-          <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-          <span className="text-xs text-slate-500 font-sans font-medium">Intervalo:</span>
-          <div className="relative">
-            <select
-              value={interval}
-              onChange={(e) => onIntervalChange(e.target.value as TimeIntervalType)}
-              className="appearance-none bg-transparent pr-4 text-xs font-bubble font-bold text-slate-800 focus:outline-none cursor-pointer"
-            >
-              <option value="60">60 min (1 h)</option>
-              <option value="30">30 min</option>
-              <option value="15">15 min</option>
-            </select>
-            <ChevronDown className="w-3 h-3 text-slate-400 pointer-events-none absolute right-0 top-1/2 -translate-y-1/2" />
-          </div>
-        </div>
 
         {/* Navegación de Fechas con Flechas */}
         <div className="flex items-center gap-1 px-1.5 py-1 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs">
