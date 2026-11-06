@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
 import {
   Package, AlertTriangle, ShoppingCart, RefreshCw,
-  FileText, Palette, DollarSign, Landmark, Shield, Truck, Settings
+  FileText, Palette, DollarSign, Shield, Settings
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -22,16 +22,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
   const {
     products,
     orders,
-    setIsSupplierModalOpen,
     resetToDefaults,
     colorTheme,
     typographyTheme,
-    setIsSinpeModalOpen,
-    sinpeTransactions,
     isModuleEnabled,
     currentUser,
     logoutUser,
-    supplierOrders,
   } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
 
@@ -99,40 +95,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onN
             <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
               {colorTheme === 'vibrant' ? 'Morado' : colorTheme === 'dark' ? 'Oscuro' : 'Zen'}
             </span>
-          </button>
-
-          {/* Botón Módulo SINPE BCR */}
-          {isModuleEnabled('sinpe') && (
-            <button
-              type="button"
-              onClick={() => onSelectTab ? onSelectTab('sinpe') : (onNavigate ? onNavigate('admin') : setIsSinpeModalOpen(true))}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
-              title="Ir al Módulo Independiente de Pagos SINPE Móvil Banco BCR"
-            >
-              <Landmark className="w-3.5 h-3.5 text-purple-700" />
-              <span>SINPE BCR</span>
-              {sinpeTransactions.length > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full bg-purple-800 text-white text-[10px] font-bold">
-                  {sinpeTransactions.length}
-                </span>
-              )}
-            </button>
-          )}
-
-          {/* Módulo Pedidos a Proveedor */}
-          <button
-            type="button"
-            onClick={() => onSelectTab ? onSelectTab('suppliers') : setIsSupplierModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bubble font-semibold text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer"
-            title="Ir al Módulo de Pedidos a Proveedor (Borradores e Historial)"
-          >
-            <Truck className="w-3.5 h-3.5 text-amber-200" />
-            <span>Pedidos Proveedor</span>
-            {supplierOrders?.filter((o: any) => o.status === 'draft' || o.status === 'ordered').length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-amber-950 text-amber-100 text-[10px] font-bold">
-                {supplierOrders.filter((o: any) => o.status === 'draft' || o.status === 'ordered').length}
-              </span>
-            )}
           </button>
 
           {/* Reset Demo */}

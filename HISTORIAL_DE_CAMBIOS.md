@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.15.7 - Eliminación de Botones Duplicados en Cabecera Admin (SINPE BCR y Pedidos Proveedor)
+- [x] **Depuración de la Barra Superior de Administración ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Eliminados los botones redundantes *"SINPE BCR"* y *"Pedidos Proveedor"* de la cabecera del panel de administración.
+  - La navegación hacia ambos módulos se mantiene de manera centralizada y espaciosa a través de sus tarjetas oficiales en el Menú Principal de Administración (Hub), evitando duplicidad visual.
+
 ### Versión 4.15.6 - Renombramiento de Estados a "Terminados" en Cola de Pedidos
 - [x] **Actualización de Etiquetas y Acciones en Cola de Pedidos ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx)):**
   - Botón de filtro de pedidos cambiado de *"Entregados"* a *"Terminados"*.
