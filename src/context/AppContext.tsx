@@ -5,7 +5,7 @@ import {
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
   SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus,
-  SupplierOrder, SupplierOrderStatus, DailyClosingRecord
+  SupplierOrder, SupplierOrderStatus, DailyClosingRecord, ProposalAcceptance
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -378,6 +378,17 @@ interface AppContextType {
   saveDailyClosing: (closingData: Omit<DailyClosingRecord, 'id' | 'closedAt'> & { id?: string; closedAt?: string }) => DailyClosingRecord;
   deleteDailyClosing: (id: string) => void;
   getDailyClosingByDate: (dateStr: string) => DailyClosingRecord | undefined;
+  proposalAcceptances: ProposalAcceptance[];
+  acceptProposal: (acceptanceData?: {
+    clientName?: string;
+    clientPhone?: string;
+    notes?: string;
+    planName?: string;
+    monthlyFee?: number;
+  }) => ProposalAcceptance;
+  markProposalAcceptanceAsRead: (id: string) => void;
+  updateProposalAcceptanceStatus: (id: string, status: 'pending' | 'contacted' | 'active') => void;
+  deleteProposalAcceptance: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -408,6 +419,7 @@ const STORAGE_KEYS = {
   AGENDA_ITEMS: AGENDA_STORAGE_KEY,
   SUPPLIER_ORDERS: 'byfio_supplier_orders_v1',
   DAILY_CLOSINGS: 'byfio_daily_closings_v1',
+  PROPOSAL_ACCEPTANCES: 'byfio_proposal_acceptances_v1',
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -1044,6 +1056,82 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const getDailyClosingByDate = (dateStr: string): DailyClosingRecord | undefined => {
     return dailyClosings.find((c) => c.closingDate === dateStr);
+  };
+
+  // ESTADO Y MÉTODOS DE ACEPTACIONES DE PROPUESTA (EXCLUSIVO SUPERADMIN)
+  const [proposalAcceptances, setProposalAcceptances] = useState<ProposalAcceptance[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.PROPOSAL_ACCEPTANCES);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return deepSanitize(parsed);
+      }
+    } catch {}
+    return [];
+  });
+
+  const saveProposalAcceptances = (list: ProposalAcceptance[]) => {
+    const sanitized = deepSanitize(list);
+    setProposalAcceptances(sanitized);
+    try {
+      localStorage.setItem(STORAGE_KEYS.PROPOSAL_ACCEPTANCES, JSON.stringify(sanitized));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', proposalAcceptances: sanitized });
+    } catch {}
+    try {
+      fetch('/api/proposal-acceptances', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acceptances: sanitized }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const acceptProposal = (acceptanceData?: {
+    clientName?: string;
+    clientPhone?: string;
+    notes?: string;
+    planName?: string;
+    monthlyFee?: number;
+  }): ProposalAcceptance => {
+    const newRecord: ProposalAcceptance = {
+      id: `prop-acc-${Date.now()}`,
+      clientName: acceptanceData?.clientName?.trim() || 'Fiorella Jara / By.Fio',
+      clientPhone: acceptanceData?.clientPhone?.trim() || '6400-4640',
+      notes: acceptanceData?.notes?.trim() || 'Aceptación formal de la propuesta Partner By.Fio.',
+      planName: acceptanceData?.planName || 'Plan Partner By.Fio (11 Módulos Base + 3 Regalías)',
+      monthlyFee: acceptanceData?.monthlyFee || 40000,
+      acceptedAt: new Date().toISOString(),
+      status: 'pending',
+      readBySuperadmin: false,
+    };
+
+    const nextList = [newRecord, ...proposalAcceptances];
+    saveProposalAcceptances(nextList);
+
+    try {
+      window.dispatchEvent(new CustomEvent('byfio_proposal_accepted', { detail: newRecord }));
+    } catch {}
+
+    return newRecord;
+  };
+
+  const markProposalAcceptanceAsRead = (id: string) => {
+    const updated = proposalAcceptances.map((item) =>
+      item.id === id ? { ...item, readBySuperadmin: true } : item
+    );
+    saveProposalAcceptances(updated);
+  };
+
+  const updateProposalAcceptanceStatus = (id: string, status: 'pending' | 'contacted' | 'active') => {
+    const updated = proposalAcceptances.map((item) =>
+      item.id === id ? { ...item, status, readBySuperadmin: true } : item
+    );
+    saveProposalAcceptances(updated);
+  };
+
+  const deleteProposalAcceptance = (id: string) => {
+    const updated = proposalAcceptances.filter((item) => item.id !== id);
+    saveProposalAcceptances(updated);
   };
 
   const createDirectInvoiceOrder = (orderData: {
@@ -1799,6 +1887,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(event.data.dailyClosings)) {
           setDailyClosings(deepSanitize(event.data.dailyClosings));
         }
+        if (Array.isArray(event.data.proposalAcceptances)) {
+          setProposalAcceptances(deepSanitize(event.data.proposalAcceptances));
+        }
       }
     };
 
@@ -1808,6 +1899,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           const parsed = JSON.parse(e.newValue);
           if (Array.isArray(parsed)) {
             setSuperadminModules(mergeSuperadminModules(parsed));
+          }
+        } catch {}
+      }
+      if (e.key === STORAGE_KEYS.PROPOSAL_ACCEPTANCES && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) {
+            setProposalAcceptances(deepSanitize(parsed));
           }
         } catch {}
       }

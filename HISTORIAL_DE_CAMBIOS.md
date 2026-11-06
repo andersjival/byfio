@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.12 - Desbloqueo y Robustez en Confirmación de Reserva de Talleres con Pago Verificado
+- [x] **Flujo de Confirmación de Reserva y Checkout de Talleres Inmediato ([`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Eliminado el bloqueo silencioso del botón "Confirmar Reserva con Pago Verificado": se implementó `noValidate` en el formulario y un despachador de eventos con control de excepciones `try/catch`.
+  - Alerta de validación reactiva renderizada directamente sobre el botón de confirmación con desplazamiento automático suave hacia los campos faltantes, evitando que el usuario sienta que el botón se queda congelado.
+  - Auto-completado inteligente del nombre del participante si el comprobante SINPE validado contiene el nombre de origen (`originName`).
+  - Asignación inmediata del estado de pago `'paid'` a la orden de taller en base de datos si el pago fue verificado por SINPE Móvil.
+  - Apertura inmediata del modal de éxito con detalles de la reserva, confetti, número de orden y los botones de acción ("Ir a la Tienda", "Ver Más Detalles" y enlace directo a WhatsApp del profesor con mensaje preformateado).
+- [x] **Reconfirmación de Interfaz Limpia en Admin ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx)):**
+  - Mantenimiento estricto de la remoción del antiguo submenú horizontal repetido (`AdminTabs` nulo) y de los botones duplicados `SINPE BCR` y `Pedidos Proveedor` de la cabecera superior.
+
 ### Versión 4.16.11 - Pedidos Terminados al Inicio con Destacado Temporal de Finalización
 - [x] **Ubicación Superior Automática para Pedidos Terminados ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
   - Implementado registro y persistencia de `deliveredAt` en base de datos Cloudflare D1 y memoria reactiva al marcar pedidos como terminados.
