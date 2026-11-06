@@ -2,7 +2,6 @@ import React from 'react';
 import {
   ChevronLeft,
   ChevronRight,
-  Lock,
   Info,
   Calendar,
   Clock,
@@ -29,7 +28,7 @@ interface CalendarTopBarProps {
   teamFilter: TeamFilterType;
   onTeamFilterChange: (filter: TeamFilterType) => void;
   appointmentsCount: number;
-  onOpenBlockSpaceModal: () => void;
+  onOpenBlockSpaceModal?: () => void;
   onOpenSyncModal: () => void;
 }
 
@@ -153,28 +152,8 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
         </div>
       </div>
 
-      {/* Lado Derecho: Bloquear Espacio, Contador de Citas, Sincronizar Calendario */}
+      {/* Lado Derecho: Contador de Citas, Sincronizar Calendario */}
       <div className="flex flex-wrap items-center gap-2">
-        {/* Botón Bloquear Espacio */}
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={onOpenBlockSpaceModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-[#1E1035] hover:bg-[#2A1747] text-white font-bubble font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
-          >
-            <Lock className="w-3.5 h-3.5 text-amber-300" />
-            <span>Bloquear Espacio</span>
-          </button>
-          <button
-            type="button"
-            onClick={onOpenBlockSpaceModal}
-            title="Información sobre bloqueo de recesos y horas no disponibles"
-            className="w-5 h-5 rounded-full bg-slate-200/80 hover:bg-slate-300 flex items-center justify-center text-slate-600 transition-all cursor-pointer"
-          >
-            <Info className="w-3 h-3" />
-          </button>
-        </div>
-
         {/* Contador de Citas */}
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs">
           <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
