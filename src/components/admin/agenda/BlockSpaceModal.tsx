@@ -19,7 +19,7 @@ export const BlockSpaceModal: React.FC<BlockSpaceModalProps> = ({
   initialSpace,
   selectedDate,
 }) => {
-  const [title, setTitle] = useState(initialSpace?.title || 'RECESO DE ALMUERZO');
+  const [title, setTitle] = useState(initialSpace?.title || 'ESPACIO BLOQUEADO');
   const [startTime, setStartTime] = useState(initialSpace?.startTime || '12:30 PM');
   const [endTime, setEndTime] = useState(initialSpace?.endTime || '01:30 PM');
   const [scope, setScope] = useState<'all' | 'fiorella' | 'taller'>(initialSpace?.scope || 'all');
@@ -65,7 +65,7 @@ export const BlockSpaceModal: React.FC<BlockSpaceModalProps> = ({
                 {initialSpace ? 'Ajustar Espacio Bloqueado' : 'Bloquear Espacio en Agenda'}
               </h3>
               <p className="text-[10px] text-slate-500 font-sans">
-                Reservar horarios no disponibles o recesos de descanso
+                Reservar horarios no disponibles o mantenimientos
               </p>
             </div>
           </div>
@@ -88,7 +88,7 @@ export const BlockSpaceModal: React.FC<BlockSpaceModalProps> = ({
             <input
               type="text"
               required
-              placeholder="Ej: RECESO DE ALMUERZO, REUNIÓN TALLER..."
+              placeholder="Ej: REUNIÓN DE EQUIPO, MANTENIMIENTO..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-3.5 py-2 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset text-xs font-bubble font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-400 uppercase"

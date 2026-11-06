@@ -4,7 +4,6 @@ import {
   TimeIntervalType,
   TeamFilterType,
   BlockedSpace,
-  DEFAULT_LUNCH_BREAK,
   TIME_SLOTS_60,
   TEAM_MEMBERS,
 } from './agendaCalendarTypes';
@@ -113,9 +112,12 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
   const [blockedSpaces, setBlockedSpaces] = useState<BlockedSpace[]>(() => {
     try {
       const saved = localStorage.getItem(BLOCKED_STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed.filter((b: BlockedSpace) => b.id !== 'lunch-default' && !b.title?.includes('ALMUERZO')) : [];
+      }
     } catch {}
-    return [DEFAULT_LUNCH_BREAK];
+    return [];
   });
 
   // Modales
@@ -215,11 +217,6 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
   // Horas a mostrar en el grid
   const timeRows = TIME_SLOTS_60;
 
-  // Busca el receso de almuerzo configurado
-  const lunchBreak = useMemo(() => {
-    return blockedSpaces.find((b) => b.id === 'lunch-default' || b.title.includes('ALMUERZO')) || DEFAULT_LUNCH_BREAK;
-  }, [blockedSpaces]);
-
   return (
     <div className="space-y-3 font-sans">
       {/* 1. Barra Superior Idéntica a la Imagen de Referencia */}
@@ -312,20 +309,16 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           </div>
                         </div>
 
-                        {/* Etiqueta de Receso o Citas */}
+                        {/* Etiqueta de Citas */}
                         <div className="mt-1 flex items-center justify-between text-[10px]">
                           {isSunday ? (
                             <span className="text-slate-400 font-sans">0 citas</span>
-                          ) : (
-                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 border border-amber-200/80 text-amber-800 font-mono font-semibold">
-                              <span>🍴</span>
-                              <span>{lunchBreak.startTime}</span>
-                            </div>
-                          )}
-                          {dayAppointments.length > 0 && !isSunday && (
+                          ) : dayAppointments.length > 0 ? (
                             <span className="text-purple-600 font-bold font-mono">
                               {dayAppointments.length} cita{dayAppointments.length > 1 ? 's' : ''}
                             </span>
+                          ) : (
+                            <span className="text-slate-400 font-sans">0 citas</span>
                           )}
                         </div>
                       </th>
@@ -336,8 +329,6 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
 
               <tbody>
                 {timeRows.map((hourLabel) => {
-                  const isMiddayLunchSlot = hourLabel === '12:00 PM' || hourLabel === '1:00 PM';
-
                   return (
                     <tr key={hourLabel} className="border-b border-slate-100 hover:bg-slate-50/30 transition-colors">
                       {/* Columna Hora */}
@@ -358,9 +349,6 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           return bucket === hourLabel;
                         });
 
-                        // Bloqueo de almuerzo en 12:00 PM y 1:00 PM
-                        const showLunchCard = isMiddayLunchSlot;
-
                         // Bloqueos personalizados para este día y hora
                         const customBlocks = blockedSpaces.filter((b) => {
                           if (b.id === 'lunch-default' || b.title.includes('ALMUERZO')) return false;
@@ -379,40 +367,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                             }`}
                           >
                             <div className="space-y-1.5 min-h-[50px] flex flex-col justify-between">
-                              {/* 1. Tarjeta Estilo Rayas Diagonales de Receso de Almuerzo */}
-                              {showLunchCard && (
-                                <div
-                                  style={{
-                                    backgroundImage:
-                                      'repeating-linear-gradient(45deg, rgba(254, 243, 199, 0.75), rgba(254, 243, 199, 0.75) 8px, rgba(254, 240, 138, 0.35) 8px, rgba(254, 240, 138, 0.35) 16px)',
-                                  }}
-                                  className="p-2 rounded-xl border border-amber-400/90 shadow-xs text-amber-900 flex flex-col justify-between transition-all hover:border-amber-500"
-                                >
-                                  <div className="flex items-center gap-1 text-[10px] font-bubble font-bold leading-tight uppercase">
-                                    <span className="text-amber-800">🍴</span>
-                                    <span className="truncate">
-                                      {lunchBreak.title} {lunchBreak.startTime} - {lunchBreak.endTime}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center justify-between text-[9px] mt-1 pt-1 border-t border-amber-300/60 font-sans text-amber-800">
-                                    <span>{lunchBreak.scopeLabel}</span>
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setEditingBlockSpace(lunchBreak);
-                                        setIsBlockModalOpen(true);
-                                      }}
-                                      className="flex items-center gap-0.5 hover:text-amber-950 font-bold hover:underline cursor-pointer"
-                                      title="Ajustar horario o alcance de receso"
-                                    >
-                                      <Settings className="w-2.5 h-2.5" />
-                                      <span>Ajustes</span>
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* 2. Bloqueos Personalizados */}
+                              {/* 1. Bloqueos Personalizados */}
                               {customBlocks.map((blk) => (
                                 <div
                                   key={blk.id}
@@ -492,7 +447,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                               })}
 
                               {/* 4. Botón Hover para Agendar en Celda Vacía */}
-                              {!showLunchCard && cellItems.length === 0 && (
+                              {cellItems.length === 0 && customBlocks.length === 0 && (
                                 <button
                                   type="button"
                                   onClick={() => onAddNewItem(dayKey, hourLabel)}
@@ -572,9 +527,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                 </thead>
 
                 <tbody>
-                  {timeRows.map((hourLabel) => {
-                    const isMiddayLunchSlot = hourLabel === '12:00 PM' || hourLabel === '1:00 PM';
-                    const dayKey = formatDateKey(currentDate);
+                  {timeRows.map((hourLabel) => {                    const dayKey = formatDateKey(currentDate);
 
                     const hourItems = agendaItems.filter((i) => {
                       if (i.date !== dayKey) return false;
@@ -591,97 +544,58 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           <>
                             {/* Columna Fiorella */}
                             <td className="p-2 border-r border-slate-100 align-top">
-                              {isMiddayLunchSlot ? (
-                                <div
-                                  style={{
-                                    backgroundImage:
-                                      'repeating-linear-gradient(45deg, rgba(254, 243, 199, 0.75), rgba(254, 243, 199, 0.75) 8px, rgba(254, 240, 138, 0.35) 8px, rgba(254, 240, 138, 0.35) 16px)',
-                                  }}
-                                  className="p-2.5 rounded-xl border border-amber-400 text-amber-900 text-xs font-bubble font-bold flex items-center justify-between"
-                                >
-                                  <span>🍴 {lunchBreak.title} {lunchBreak.startTime} - {lunchBreak.endTime}</span>
-                                  <span className="text-[10px] font-sans font-normal">{lunchBreak.scopeLabel}</span>
-                                </div>
-                              ) : (
-                                <div className="space-y-1.5">
-                                  {hourItems
-                                    .filter((i) => i.category === 'recordatorio' || i.category === 'proveedor')
-                                    .map((item) => (
-                                      <div
-                                        key={item.id}
-                                        onClick={() => onEditItem(item)}
-                                        className="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-xs cursor-pointer hover:shadow-sm"
-                                      >
-                                        <div className="font-bubble font-bold text-purple-900">{item.title}</div>
-                                        {item.notes && <div className="text-[11px] text-purple-700 font-sans mt-0.5">{item.notes}</div>}
-                                      </div>
-                                    ))}
-                                </div>
-                              )}
+                              <div className="space-y-1.5">
+                                {hourItems
+                                  .filter((i) => i.category === 'recordatorio' || i.category === 'proveedor')
+                                  .map((item) => (
+                                    <div
+                                      key={item.id}
+                                      onClick={() => onEditItem(item)}
+                                      className="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-xs cursor-pointer hover:shadow-sm"
+                                    >
+                                      <div className="font-bubble font-bold text-purple-900">{item.title}</div>
+                                      {item.notes && <div className="text-[11px] text-purple-700 font-sans mt-0.5">{item.notes}</div>}
+                                    </div>
+                                  ))}
+                              </div>
                             </td>
 
                             {/* Columna Taller & Envíos */}
                             <td className="p-2 align-top">
-                              {isMiddayLunchSlot ? (
-                                <div
-                                  style={{
-                                    backgroundImage:
-                                      'repeating-linear-gradient(45deg, rgba(254, 243, 199, 0.75), rgba(254, 243, 199, 0.75) 8px, rgba(254, 240, 138, 0.35) 8px, rgba(254, 240, 138, 0.35) 16px)',
-                                  }}
-                                  className="p-2.5 rounded-xl border border-amber-400 text-amber-900 text-xs font-bubble font-bold flex items-center justify-between"
-                                >
-                                  <span>🍴 {lunchBreak.title} {lunchBreak.startTime} - {lunchBreak.endTime}</span>
-                                  <span className="text-[10px] font-sans font-normal">{lunchBreak.scopeLabel}</span>
-                                </div>
-                              ) : (
-                                <div className="space-y-1.5">
-                                  {hourItems
-                                    .filter((i) => i.category === 'taller' || i.category === 'entrega' || i.category === 'produccion')
-                                    .map((item) => (
-                                      <div
-                                        key={item.id}
-                                        onClick={() => onEditItem(item)}
-                                        className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-xs cursor-pointer hover:shadow-sm"
-                                      >
-                                        <div className="font-bubble font-bold text-sky-900">{item.title}</div>
-                                        {item.notes && <div className="text-[11px] text-sky-700 font-sans mt-0.5">{item.notes}</div>}
-                                      </div>
-                                    ))}
-                                </div>
-                              )}
+                              <div className="space-y-1.5">
+                                {hourItems
+                                  .filter((i) => i.category === 'taller' || i.category === 'entrega' || i.category === 'produccion')
+                                  .map((item) => (
+                                    <div
+                                      key={item.id}
+                                      onClick={() => onEditItem(item)}
+                                      className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-xs cursor-pointer hover:shadow-sm"
+                                    >
+                                      <div className="font-bubble font-bold text-sky-900">{item.title}</div>
+                                      {item.notes && <div className="text-[11px] text-sky-700 font-sans mt-0.5">{item.notes}</div>}
+                                    </div>
+                                  ))}
+                              </div>
                             </td>
                           </>
                         ) : (
                           /* Columna Única Amplia */
                           <td className="p-2 align-top">
-                            {isMiddayLunchSlot ? (
-                              <div
-                                style={{
-                                  backgroundImage:
-                                    'repeating-linear-gradient(45deg, rgba(254, 243, 199, 0.75), rgba(254, 243, 199, 0.75) 8px, rgba(254, 240, 138, 0.35) 8px, rgba(254, 240, 138, 0.35) 16px)',
-                                }}
-                                className="p-3 rounded-xl border border-amber-400 text-amber-900 text-xs font-bubble font-bold flex items-center justify-between"
-                              >
-                                <span>🍴 {lunchBreak.title} {lunchBreak.startTime} - {lunchBreak.endTime}</span>
-                                <span className="text-[11px] font-sans font-normal">{lunchBreak.scopeLabel}</span>
-                              </div>
-                            ) : (
-                              <div className="space-y-1.5">
-                                {hourItems.map((item) => (
-                                  <div
-                                    key={item.id}
-                                    onClick={() => onEditItem(item)}
-                                    className="p-3 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between cursor-pointer hover:border-purple-300"
-                                  >
-                                    <div>
-                                      <div className="font-bubble font-bold text-xs sm:text-sm text-slate-900">{item.title}</div>
-                                      {item.notes && <p className="text-xs text-slate-500 font-sans mt-0.5">{item.notes}</p>}
-                                    </div>
-                                    <span className="text-xs font-mono text-purple-700 font-bold">{item.time}</span>
+                            <div className="space-y-1.5">
+                              {hourItems.map((item) => (
+                                <div
+                                  key={item.id}
+                                  onClick={() => onEditItem(item)}
+                                  className="p-3 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between cursor-pointer hover:border-purple-300"
+                                >
+                                  <div>
+                                    <div className="font-bubble font-bold text-xs sm:text-sm text-slate-900">{item.title}</div>
+                                    {item.notes && <p className="text-xs text-slate-500 font-sans mt-0.5">{item.notes}</p>}
                                   </div>
-                                ))}
-                              </div>
-                            )}
+                                  <span className="text-xs font-mono text-purple-700 font-bold">{item.time}</span>
+                                </div>
+                              ))}
+                            </div>
                           </td>
                         )}
                       </tr>
