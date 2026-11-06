@@ -10,21 +10,25 @@ interface WebIntroOverlayProps {
 
 export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFinish }) => {
   const [phase, setPhase] = useState<'gradient-start' | 'video-reveal' | 'video-playing' | 'fading-out'>('gradient-start');
-  const [isMuted, setIsMuted] = useState(false); // Empezar con audio activo
+  const [isMuted, setIsMuted] = useState(true); // Iniciar muted para reproducción garantizada sin bloqueos del navegador
   const [progress, setProgress] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [audioBlocked, setAudioBlocked] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const exitTimeoutRef = useRef<number | null>(null);
   const canPlayVideoRef = useRef(false);
+  const hasInteractedRef = useRef(false);
+  const isExitingRef = useRef(false);
 
-  // Desbloqueo universal de audio
+  // Desbloqueo universal de audio (invocado tras interacción genuina del usuario)
   const unlockAudio = () => {
+    hasInteractedRef.current = true;
+    setHasInteracted(true);
+    setIsMuted(false);
+    setAudioBlocked(false);
     if (videoRef.current) {
       videoRef.current.muted = false;
       videoRef.current.volume = 1.0;
-      setIsMuted(false);
-      setAudioBlocked(false);
       if (canPlayVideoRef.current) {
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
@@ -39,6 +43,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     if (!isOpen) {
       setPhase('gradient-start');
       canPlayVideoRef.current = false;
+      isExitingRef.current = false;
       if (videoRef.current) {
         videoRef.current.pause();
         videoRef.current.currentTime = 0;
@@ -50,6 +55,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     setProgress(0);
     setAudioBlocked(false);
     canPlayVideoRef.current = false;
+    isExitingRef.current = false;
 
     // Asegurar que el video no inicie antes de que transcurran los 2 segundos de las letras
     if (videoRef.current) {
@@ -60,17 +66,25 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     const startVideoPlayback = () => {
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
-        videoRef.current.muted = false;
-        videoRef.current.volume = 1.0;
+        if (hasInteractedRef.current) {
+          videoRef.current.muted = false;
+          videoRef.current.volume = 1.0;
+          setIsMuted(false);
+        } else {
+          videoRef.current.muted = true;
+          setIsMuted(true);
+        }
+
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
           playPromise
             .then(() => {
-              setIsMuted(false);
-              setAudioBlocked(false);
+              if (hasInteractedRef.current) {
+                setIsMuted(false);
+                setAudioBlocked(false);
+              }
             })
             .catch(() => {
-              // Si la directiva de seguridad del navegador requiere un primer toque en carga fría:
               if (videoRef.current) {
                 videoRef.current.muted = true;
                 setIsMuted(true);
@@ -89,16 +103,19 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       startVideoPlayback();
     }, 2000);
 
-    // 2. Transición fluida a reproducción activa
+    // 2. Transición fluida a reproducción activa (sin desmutear a la fuerza sin interacción para no congelar el video)
     const t2 = window.setTimeout(() => {
       setPhase('video-playing');
-      if (videoRef.current && videoRef.current.muted && !hasInteracted) {
-        unlockAudio();
-      }
     }, 2400);
 
-    // 3. Escuchador de desbloqueo táctil/clic global: cualquier toque en pantalla activa el sonido al instante
+    // 3. Fallback de máxima seguridad (2s letras + 10s video + 1.5s margen) para evitar que la intro quede pegada
+    const tSafety = window.setTimeout(() => {
+      handleStartExit();
+    }, 13500);
+
+    // 4. Escuchador de desbloqueo táctil/clic global: cualquier toque en pantalla activa el sonido al instante
     const handleGlobalGesture = () => {
+      hasInteractedRef.current = true;
       setHasInteracted(true);
       unlockAudio();
       gestureEvents.forEach((evt) => {
@@ -111,12 +128,10 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       window.addEventListener(evt, handleGlobalGesture, true);
     });
 
-    // NOTA: Se eliminó el temporizador artificial. El video es quien dicta el tiempo:
-    // Solo cuando el video termina de reproducirse (onEnded) entra a la web, salvo clic en Saltar Intro.
-
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
+      window.clearTimeout(tSafety);
       if (exitTimeoutRef.current) {
         window.clearTimeout(exitTimeoutRef.current);
       }
@@ -126,19 +141,20 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     };
   }, [isOpen]);
 
-  // Manejar el término del video (únicamente cuando termina el video o por clic en saltar intro)
+  // Manejar el término del video (únicamente cuando termina el video o por clic en saltar intro o timeout de seguridad)
   const handleStartExit = () => {
-    if (phase === 'fading-out') return;
+    if (isExitingRef.current) return;
+    isExitingRef.current = true;
     setPhase('fading-out');
 
     if (exitTimeoutRef.current) {
       window.clearTimeout(exitTimeoutRef.current);
     }
 
-    // Esperar a que la transición de opacidad (1100ms) se complete
+    // Esperar a que la transición de opacidad (1000ms) se complete
     exitTimeoutRef.current = window.setTimeout(() => {
       onFinish();
-    }, 1100);
+    }, 1000);
   };
 
   const handleTimeUpdate = () => {
@@ -151,6 +167,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
 
   const toggleSound = (e: React.MouseEvent) => {
     e.stopPropagation();
+    hasInteractedRef.current = true;
     setHasInteracted(true);
     if (videoRef.current) {
       const nextMuted = !videoRef.current.muted;
@@ -170,8 +187,11 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
 
   // Permitir activar sonido haciendo clic o tocando en cualquier parte de la pantalla
   const handleOverlayTouchOrClick = () => {
+    hasInteractedRef.current = true;
     setHasInteracted(true);
-    unlockAudio();
+    if (isMuted) {
+      unlockAudio();
+    }
   };
 
   // El video de intro SOLO debe salir en la página principal cuando carga

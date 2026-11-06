@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.5 - Corrección y Estabilidad Total de la Intro Web (Sin Bloqueos de Autoplay ni Congelamiento)
+- [x] **Arranque Fluido sin Bloqueo por Autoplay Policy ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Corrección del bloqueo crítico que congelaba la intro al entrar al video: se eliminó el intento forzado de desmutear en timer (`t2`) sin interacción previa, el cual causaba que el navegador pausara el video de inmediato.
+  - El video inicia de forma segura en modo silenciado (`muted=true`) garantizando arranque instantáneo en cualquier navegador móvil o de escritorio (Chrome, Safari, iOS, Edge).
+  - Desbloqueo universal de audio mediante gesto real del usuario (toque en pantalla, clic en el botón de sonido o cualquier pulsación), activando el audio sin interrupciones.
+  - Temporizador de máxima seguridad de 13.5 segundos (`tSafety`) y bandera atómica `isExitingRef` para asegurar que bajo ninguna circunstancia la intro quede pegada.
+
+
 ### Versión 4.16.4 - Notificación de Estrellita Adaptativa para Inscripciones a Talleres Creativos
 - [x] **Detección Automática y Mensaje Personalizado para Talleres ([`NewOrderStarAlert.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/NewOrderStarAlert.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Cuando la compra corresponde a un taller creativo, el título de la alerta de la estrellita cambia dinámicamente a: *"Hemos recibido una nueva inscripción al taller"*.
