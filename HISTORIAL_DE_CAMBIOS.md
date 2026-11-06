@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.17 - Modificación de Cantidad de Productos en Alisto de Pedidos
+- [x] **Ajuste de Unidades en Pantalla de Alisto ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
+  - Implementado botón *"Modificar"* junto a la cantidad del producto a alistar.
+  - Panel interactivo con contador `- / +`, entrada numérica directa, botón *"Aceptar"* y botón *"Cancelar"*.
+  - En caso de encontrar menos unidades en estante (ejemplo: pidieron 3 pero solo hay 2), quien alista cambia la cantidad a 2, presiona *"Aceptar"* y la orden se actualiza de inmediato.
+  - Recálculo automático instantáneo del subtotal y total del pedido.
+  - Persistencia reactiva en memoria, `localStorage` y base de datos Cloudflare D1.
+  - Los botones de confirmación y el resumen completo del pedido reflejan la nueva cantidad de forma sincronizada.
+
 ### Versión 4.16.16 - Blindaje Estricto de Alisto Obligatorio para Empaque, Empacados y Despacho
 - [x] **Regla Estricta de Alisto Obligatorio ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Ningún pedido puede pasar a *En Empaque* (`packing`), *Empacados* (`packed`) o *Terminado/Despachado* (`delivered`) si su alisto no está al 100% completado (`isPicked: true` o `isMissing: true` en todos sus productos).
