@@ -19,6 +19,7 @@ interface OrderDbRow {
   total: number;
   notes?: string;
   packed_at?: string;
+  delivered_at?: string;
   created_at: string;
 }
 
@@ -87,6 +88,7 @@ const mapRowToOrder = (r: OrderDbRow) => {
     total: r.total,
     notes: r.notes ? healString(r.notes) : undefined,
     packedAt: r.packed_at ? normalizeIsoDate(r.packed_at) : undefined,
+    deliveredAt: r.delivered_at ? normalizeIsoDate(r.delivered_at) : undefined,
     createdAt: normalizeIsoDate(r.created_at),
   };
 };
@@ -274,24 +276,26 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
 export const onRequestPut = async (context: { request: Request; env: Env }) => {
   try {
-    const { id, orderStatus, packedAt, items } = await context.request.json() as any;
+    const { id, orderStatus, packedAt, deliveredAt, items } = await context.request.json() as any;
 
     if (context.env.DB && id) {
       if (items !== undefined && Array.isArray(items) && items.length > 0) {
         await context.env.DB.prepare(
-          'UPDATE orders SET order_status = ?, packed_at = ?, items_json = ? WHERE id = ?'
+          'UPDATE orders SET order_status = ?, packed_at = COALESCE(?, packed_at), delivered_at = COALESCE(?, delivered_at), items_json = ? WHERE id = ?'
         ).bind(
           orderStatus,
           packedAt || null,
+          deliveredAt || null,
           JSON.stringify(items),
           id
         ).run();
       } else {
         await context.env.DB.prepare(
-          'UPDATE orders SET order_status = ?, packed_at = ? WHERE id = ?'
+          'UPDATE orders SET order_status = ?, packed_at = COALESCE(?, packed_at), delivered_at = COALESCE(?, delivered_at) WHERE id = ?'
         ).bind(
           orderStatus,
           packedAt || null,
+          deliveredAt || null,
           id
         ).run();
       }

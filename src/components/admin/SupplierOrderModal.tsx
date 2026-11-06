@@ -14,6 +14,7 @@ export const SupplierOrderModal: React.FC = () => {
   const [selectedAddId, setSelectedAddId] = useState<string>('');
   const [viewMode, setViewMode] = useState<'editor' | 'document'>('editor');
   const [savedInAgenda, setSavedInAgenda] = useState(false);
+  const [isSavingAgenda, setIsSavingAgenda] = useState(false);
   const [savedInSupplierOrders, setSavedInSupplierOrders] = useState<'draft' | 'ordered' | false>(false);
 
   // Activar clase de control en body para impresión de documento formal de hoja completa
@@ -140,7 +141,8 @@ export const SupplierOrderModal: React.FC = () => {
   };
 
   const handleSaveToAgenda = () => {
-    if (orderItems.length === 0 || isAlreadyInAgenda) return;
+    if (orderItems.length === 0 || isAlreadyInAgenda || isSavingAgenda) return;
+    setIsSavingAgenda(true);
 
     const itemsSummary = orderItems
       .map((it) => `${it.name} (${it.orderQty} uds, SKU: ${it.sku})`)
@@ -159,6 +161,7 @@ export const SupplierOrderModal: React.FC = () => {
     });
 
     setSavedInAgenda(true);
+    setTimeout(() => setIsSavingAgenda(false), 800);
   };
 
   const handleSaveToSupplierOrders = (status: 'draft' | 'ordered') => {

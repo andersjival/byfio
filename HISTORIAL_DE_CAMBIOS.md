@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.11 - Pedidos Terminados al Inicio con Destacado Temporal de Finalización
+- [x] **Ubicación Superior Automática para Pedidos Terminados ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
+  - Implementado registro y persistencia de `deliveredAt` en base de datos Cloudflare D1 y memoria reactiva al marcar pedidos como terminados.
+  - La sección de Terminados y la vista general ahora ordenan los pedidos por fecha de terminación/entrega (`deliveredAt`), garantizando que cualquier pedido recién finalizado caiga inmediatamente en el tope superior de la lista en vez de irse al fondo.
+- [x] **Efecto de Color Temporal Desvanecible:**
+  - Al terminar un pedido o ingresar a la pantalla para revisarlo, la tarjeta queda resaltada con un resplandor esmeralda brillante (`border-emerald-400`, sombra verde neón y badge *"¡Recién Terminado! ✨"*).
+  - El color se sostiene durante 5.5 segundos mientras la persona lo visualiza en pantalla y luego se desvanece suavemente con animación fluida de 1000ms al estilo de tarjeta terminada estándar, sin saltos bruscos.
+
+
 ### Versión 4.16.10 - Transición Automática de Pedidos 100% Alistados a Empaque y Saneamiento Reactivo
 - [x] **Transición Automática a Empaque y Exclusión de Pendientes de Alisto ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
   - Implementado `sanitizeOrderList` para normalizar reactivamente pedidos con alisto al 100% (`isPicked` o `isMissing` en todos los ítems), promoviéndolos de `'pending'` / `'picking'` directamente a `'packing'`.

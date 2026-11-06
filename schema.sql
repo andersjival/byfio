@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS orders (
   total REAL NOT NULL,
   notes TEXT,
   packed_at TEXT,
+  delivered_at TEXT,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -254,7 +254,7 @@ interface AppContextType {
   bookWorkshopDirect: (
     workshop: Workshop,
     quantity: number,
-    customerInfo: { name: string; phone: string; email?: string; notes?: string }
+    customerInfo: { name: string; phone: string; email?: string; notes?: string; paymentStatus?: 'pending' | 'paid' }
   ) => Order;
   isNewWorkshopModalOpen: boolean;
   setIsNewWorkshopModalOpen: (open: boolean) => void;
@@ -820,37 +820,74 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // -------------------------------------------------------------
   // ESTADO Y MÉTODOS DE AGENDA Y ORGANIZADOR DE TAREAS
   // -------------------------------------------------------------
+  const deduplicateAgendaItems = (items: AgendaItem[]): AgendaItem[] => {
+    if (!Array.isArray(items)) return [];
+    const seenIds = new Set<string>();
+    const seenContent = new Set<string>();
+    const result: AgendaItem[] = [];
+
+    for (const item of items) {
+      if (!item || !item.id) continue;
+      const title = (item.title || '').trim().toLowerCase();
+      const date = (item.date || '').trim();
+      const contentKey = `${title}:::${date}`;
+
+      if (seenIds.has(item.id)) continue;
+      if (title && seenContent.has(contentKey)) continue;
+
+      seenIds.add(item.id);
+      if (title) seenContent.add(contentKey);
+      result.push(item);
+    }
+    return result;
+  };
+
   const [agendaItems, setAgendaItems] = useState<AgendaItem[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.AGENDA_ITEMS);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return deepSanitize(parsed);
+          const deduplicated = deduplicateAgendaItems(deepSanitize(parsed));
+          if (saved && JSON.stringify(deduplicated) !== JSON.stringify(parsed)) {
+            try { localStorage.setItem(STORAGE_KEYS.AGENDA_ITEMS, JSON.stringify(deduplicated)); } catch {}
+          }
+          return deduplicated;
         }
       }
     } catch {}
-    return deepSanitize(INITIAL_AGENDA_ITEMS);
+    return deduplicateAgendaItems(deepSanitize(INITIAL_AGENDA_ITEMS));
   });
 
   const saveAgendaItems = (items: AgendaItem[]) => {
-    const sanitized = deepSanitize(items);
-    setAgendaItems(sanitized);
+    const deduplicated = deduplicateAgendaItems(deepSanitize(items));
+    setAgendaItems(deduplicated);
     try {
-      localStorage.setItem(STORAGE_KEYS.AGENDA_ITEMS, JSON.stringify(sanitized));
-      syncChannel?.postMessage({ type: 'SYNC_UPDATE', agendaItems: sanitized });
+      localStorage.setItem(STORAGE_KEYS.AGENDA_ITEMS, JSON.stringify(deduplicated));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', agendaItems: deduplicated });
     } catch {}
     // Sincronización en la nube Cloudflare D1
     try {
       fetch('/api/agenda', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: sanitized }),
+        body: JSON.stringify({ items: deduplicated }),
       }).catch(() => {});
     } catch {}
   };
 
   const addAgendaItem = (itemData: Omit<AgendaItem, 'id' | 'createdAt'>): AgendaItem => {
+    const titleNorm = itemData.title.trim().toLowerCase();
+    const dateNorm = (itemData.date || '').trim();
+
+    // Detección y bloqueo estricto de duplicados
+    const existing = agendaItems.find(
+      (it) => it.title.trim().toLowerCase() === titleNorm && (it.date || '').trim() === dateNorm
+    );
+    if (existing) {
+      return existing;
+    }
+
     const newItem: AgendaItem = {
       ...itemData,
       id: `agenda-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -1754,7 +1791,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setSuperadminModules(mergeSuperadminModules(event.data.superadminModules));
         }
         if (Array.isArray(event.data.agendaItems)) {
-          setAgendaItems(deepSanitize(event.data.agendaItems));
+          setAgendaItems(deduplicateAgendaItems(deepSanitize(event.data.agendaItems)));
         }
         if (Array.isArray(event.data.supplierOrders)) {
           setSupplierOrders(deepSanitize(event.data.supplierOrders));
@@ -1932,12 +1969,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .then((data) => {
           if (Array.isArray(data?.items) && data.items.length > 0) {
             setAgendaItems((prev) => {
-              const sanitized = deepSanitize(data.items);
-              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+              const deduplicated = deduplicateAgendaItems(deepSanitize(data.items));
+              if (JSON.stringify(prev) !== JSON.stringify(deduplicated)) {
                 try {
-                  localStorage.setItem(STORAGE_KEYS.AGENDA_ITEMS, JSON.stringify(sanitized));
+                  localStorage.setItem(STORAGE_KEYS.AGENDA_ITEMS, JSON.stringify(deduplicated));
                 } catch {}
-                return sanitized;
+                return deduplicated;
               }
               return prev;
             });
@@ -2550,7 +2587,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
-    const packedAt = (newStatus === 'packing' || newStatus === 'packed') ? new Date().toISOString() : undefined;
+    const nowIso = new Date().toISOString();
+    const packedAt = (newStatus === 'packing' || newStatus === 'packed') ? nowIso : undefined;
+    const deliveredAt = (newStatus === 'delivered') ? nowIso : undefined;
     let updatedOrders: Order[] = [];
     setOrders((prev) => {
       updatedOrders = prev.map((o) =>
@@ -2559,6 +2598,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               ...o,
               orderStatus: newStatus,
               packedAt: packedAt || o.packedAt,
+              deliveredAt: deliveredAt || o.deliveredAt,
             }
           : o
       );
@@ -2575,6 +2615,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         id: orderId,
         orderStatus: newStatus,
         packedAt,
+        deliveredAt,
         items: targetOrder?.items,
       }),
     }).catch(() => {});
@@ -2805,7 +2846,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const bookWorkshopDirect = (
     workshop: Workshop,
     quantity: number,
-    customerInfo: { name: string; phone: string; email?: string; notes?: string }
+    customerInfo: { name: string; phone: string; email?: string; notes?: string; paymentStatus?: 'pending' | 'paid' }
   ): Order => {
     const total = workshop.price * quantity;
     const orderNumber = getNextOrderNumber(orders);
@@ -2818,7 +2859,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customerEmail: customerInfo.email,
       deliveryMethod: 'retiro',
       paymentMethod: 'sinpe',
-      paymentStatus: 'pending',
+      paymentStatus: customerInfo.paymentStatus || 'pending',
       orderStatus: 'packing',
       items: [
         {

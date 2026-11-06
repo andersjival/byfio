@@ -21,6 +21,18 @@ export type ColorTheme = 'vibrant' | 'zen' | 'dark';
 
 export type StarAlertDuration = 'manual' | 5 | 10 | 15 | 20;
 
+export interface ProposalAcceptance {
+  id: string;
+  clientName: string;
+  clientPhone: string;
+  notes?: string;
+  planName: string;
+  monthlyFee: number;
+  acceptedAt: string; // ISO date
+  status: 'pending' | 'contacted' | 'active';
+  readBySuperadmin: boolean;
+}
+
 export interface StickerPriceTier {
   id: string;
   quantity: number;
@@ -174,6 +186,7 @@ export interface Order {
   total: number;
   createdAt: string;
   packedAt?: string;
+  deliveredAt?: string;
   notes?: string;
   customFields?: { [key: string]: string };
 }

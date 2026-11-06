@@ -9,6 +9,48 @@ export const OrdersQueue: React.FC = () => {
   const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled, showNewOrderAlert } = useApp();
   const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packing' | 'packed' | 'delivered'>('all');
 
+  // IDs de pedidos recién terminados que deben mostrar el colorcito temporal
+  const [recentlyFinishedIds, setRecentlyFinishedIds] = React.useState<Set<string>>(() => {
+    const initial = new Set<string>();
+    const now = Date.now();
+    try {
+      const seenRaw = sessionStorage.getItem('BYFIO_SEEN_FINISHED_IDS');
+      const seenSet = new Set<string>(seenRaw ? JSON.parse(seenRaw) : []);
+      orders.forEach((o) => {
+        if (o.orderStatus === 'delivered' && !seenSet.has(o.id)) {
+          const timestamp = new Date(o.deliveredAt || o.packedAt || o.createdAt).getTime();
+          // Si fue terminado hace menos de 10 minutos y no ha sido visto en esta sesión
+          if (now - timestamp < 10 * 60 * 1000) {
+            initial.add(o.id);
+          }
+        }
+      });
+    } catch {}
+    return initial;
+  });
+
+  // Temporizador para quitar el colorcito pasados unos segundos (5.5 segundos mientras la persona lo ve)
+  React.useEffect(() => {
+    if (recentlyFinishedIds.size === 0) return;
+
+    const timer = window.setTimeout(() => {
+      try {
+        const seenRaw = sessionStorage.getItem('BYFIO_SEEN_FINISHED_IDS');
+        const seenSet = new Set<string>(seenRaw ? JSON.parse(seenRaw) : []);
+        recentlyFinishedIds.forEach((id) => seenSet.add(id));
+        sessionStorage.setItem('BYFIO_SEEN_FINISHED_IDS', JSON.stringify(Array.from(seenSet)));
+      } catch {}
+      setRecentlyFinishedIds(new Set());
+    }, 5500);
+
+    return () => window.clearTimeout(timer);
+  }, [recentlyFinishedIds]);
+
+  const handleMarkDelivered = (orderId: string) => {
+    updateOrderStatus(orderId, 'delivered');
+    setRecentlyFinishedIds((prev) => new Set([...prev, orderId]));
+  };
+
   // Ordenamiento cronológico descendente estricto (pedidos más recientes arriba, más antiguos abajo)
   const sortedOrders = React.useMemo(() => {
     return [...orders].sort(
@@ -43,8 +85,25 @@ export const OrdersQueue: React.FC = () => {
   // 3. Empacados
   const packedOrders = sortedOrders.filter((o) => o.orderStatus === 'packed');
 
-  // 4. Terminados
-  const deliveredOrders = sortedOrders.filter((o) => o.orderStatus === 'delivered');
+  // 4. Terminados: Los pedidos recién terminados caen ARRIBA en la lista por fecha de entrega/finalización
+  const deliveredOrders = React.useMemo(() => {
+    return [...orders]
+      .filter((o) => o.orderStatus === 'delivered')
+      .sort((a, b) => {
+        const timeA = new Date(a.deliveredAt || a.packedAt || a.createdAt).getTime();
+        const timeB = new Date(b.deliveredAt || b.packedAt || b.createdAt).getTime();
+        return timeB - timeA;
+      });
+  }, [orders]);
+
+  // Lista general ordenada con los pedidos terminados o actualizados más recientes arriba
+  const allOrdersSorted = React.useMemo(() => {
+    return [...orders].sort((a, b) => {
+      const timeA = new Date(a.deliveredAt || a.packedAt || a.createdAt).getTime();
+      const timeB = new Date(b.deliveredAt || b.packedAt || b.createdAt).getTime();
+      return timeB - timeA;
+    });
+  }, [orders]);
 
   const displayedOrders = filterMode === 'pending'
     ? pendingOrders
@@ -54,7 +113,7 @@ export const OrdersQueue: React.FC = () => {
     ? packedOrders
     : filterMode === 'delivered'
     ? deliveredOrders
-    : sortedOrders;
+    : allOrdersSorted;
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
@@ -286,12 +345,18 @@ export const OrdersQueue: React.FC = () => {
             ? 'packing'
             : order.orderStatus;
 
+          const isNewlyFinished = recentlyFinishedIds.has(order.id);
+
           return (
             <div
               key={order.id}
-              className={`p-4 sm:p-5 rounded-2xl border transition-all ${
-                !isFinished && order.orderStatus === 'picking'
+              className={`p-4 sm:p-5 rounded-2xl border transition-all duration-1000 ${
+                isNewlyFinished
+                  ? 'border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50 shadow-[0_0_25px_rgba(16,185,129,0.35)] ring-4 ring-emerald-300/50 scale-[1.01]'
+                  : !isFinished && order.orderStatus === 'picking'
                   ? 'border-fio-500 bg-fio-50/70 shadow-md ring-2 ring-fio-400'
+                  : effectiveStatus === 'delivered'
+                  ? 'border-emerald-200 bg-emerald-50/25 hover:border-emerald-300 shadow-sm'
                   : 'border-fio-200 hover:border-fio-300 bg-white shadow-sm'
               }`}
             >
@@ -303,6 +368,12 @@ export const OrdersQueue: React.FC = () => {
                       {order.orderNumber}
                     </span>
                     {getStatusBadge(effectiveStatus)}
+                    {isNewlyFinished && (
+                      <span className="px-3 py-1 rounded-full text-xs font-bubble font-black bg-emerald-600 text-white shadow-md animate-pulse flex items-center gap-1.5 transition-all">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-200" />
+                        <span>¡Recién Terminado! ✨</span>
+                      </span>
+                    )}
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-xs">
                       <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                       <span>Pagado por {order.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia'} (Verificado)</span>
@@ -407,7 +478,7 @@ export const OrdersQueue: React.FC = () => {
                       {effectiveStatus === 'packed' && (
                         <button
                           type="button"
-                          onClick={() => updateOrderStatus(order.id, 'delivered')}
+                          onClick={() => handleMarkDelivered(order.id)}
                           className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
                           title="Marcar pedido como terminado"
                         >
