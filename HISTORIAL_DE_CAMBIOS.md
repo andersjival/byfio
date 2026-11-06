@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.8 - Flujo Oficial de Reserva de Talleres sin Redirección Involuntaria, Checkout SINPE Móvil y Acciones Post-Reserva
+- [x] **Erradicación de Redirección Automática a WhatsApp ([`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx)):**
+  - Eliminada la apertura forzada de WhatsApp (`window.open(waUrl)`) al confirmar la inscripción de un taller.
+  - La persona ahora permanece en la web y recibe de inmediato la confirmación visual de su cupo apartado.
+- [x] **Checkout Interactivo de Pago por SINPE Móvil:**
+  - Integrada la validación de comprobante bancario en tiempo real con notificaciones del BCR (`PaymentAccountsCard` con `verifySinpePaymentForCheckout`), soporte de verificación, faltante y simulación de prueba.
+- [x] **Mensaje de Éxito y Resumen Oficial:**
+  - Mensaje explícito: *"¡Ya tienes tu cupo para el taller [Título] el día [Fecha]!"* junto al número de pedido/reserva, cupos reservados y estado del pago.
+- [x] **Acciones Posteriores con los 3 Botones Solicitados:**
+  - **Botón 1:** *"Ir a la Tienda"* para continuar explorando productos y papelería.
+  - **Botón 2:** *"Ver Más Detalles"* para desplegar la lista de materiales, coffee break, técnicas y ubicación exacta en Tibás.
+  - **Botón 3:** *"¿Dudas o preguntas? Contactar al profesor"* con badge visible del número oficial (`WhatsApp: 6400-4640`), que abre el chat de WhatsApp únicamente cuando el usuario lo solicita por propia voluntad.
+
 ### Versión 4.16.7 - Blindaje de Seguridad en Notificación de Estrellita (Exclusiva para Administrador y Perfiles Autorizados)
 - [x] **Restricción Estricta de Notificación por Roles y Permisos ([`NewOrderStarAlert.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/NewOrderStarAlert.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
   - Erradicada la aparición de la alerta de la estrellita en la web pública para visitantes y clientes sin sesión activa.
