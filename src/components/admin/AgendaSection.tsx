@@ -57,6 +57,22 @@ const parseTimeString = (timeStr?: string) => {
   };
 };
 
+const computeDefaultEndTime = (hourStr: string, minuteStr: string, periodStr: 'AM' | 'PM', durationHours = 2) => {
+  let h = parseInt(hourStr, 10);
+  if (isNaN(h)) h = 10;
+  if (periodStr === 'PM' && h < 12) h += 12;
+  if (periodStr === 'AM' && h === 12) h = 0;
+
+  let endH24 = (h + durationHours) % 24;
+  const endPeriod: 'AM' | 'PM' = endH24 >= 12 ? 'PM' : 'AM';
+  let endH12 = endH24 === 0 ? 12 : endH24 > 12 ? endH24 - 12 : endH24;
+  return {
+    hour: String(endH12).padStart(2, '0'),
+    minute: minuteStr,
+    period: endPeriod,
+  };
+};
+
 const CATEGORY_CONFIG: Record<AgendaCategory, { label: string; icon: any; color: string; bg: string; border: string; dot: string }> = {
   taller: {
     label: 'Taller Creativo',
@@ -162,6 +178,9 @@ export const AgendaSection: React.FC = () => {
   const [selectedHour, setSelectedHour] = useState('10');
   const [selectedMinute, setSelectedMinute] = useState('00');
   const [selectedPeriod, setSelectedPeriod] = useState<'AM' | 'PM'>('AM');
+  const [selectedEndHour, setSelectedEndHour] = useState('12');
+  const [selectedEndMinute, setSelectedEndMinute] = useState('00');
+  const [selectedEndPeriod, setSelectedEndPeriod] = useState<'AM' | 'PM'>('PM');
   const [hasSpecificTime, setHasSpecificTime] = useState(true);
   const [enableBellNotification, setEnableBellNotification] = useState(true);
   const [activeBellToast, setActiveBellToast] = useState<{ title: string; time?: string; date: string } | null>(null);
@@ -206,6 +225,10 @@ export const AgendaSection: React.FC = () => {
     setSelectedHour(parsed.hour);
     setSelectedMinute(parsed.minute);
     setSelectedPeriod(parsed.period);
+    const defEnd = computeDefaultEndTime(parsed.hour, parsed.minute, parsed.period, 2);
+    setSelectedEndHour(defEnd.hour);
+    setSelectedEndMinute(defEnd.minute);
+    setSelectedEndPeriod(defEnd.period);
     setEnableBellNotification(true);
     setIsModalOpen(true);
   };
@@ -225,6 +248,17 @@ export const AgendaSection: React.FC = () => {
     setSelectedHour(parsed.hour);
     setSelectedMinute(parsed.minute);
     setSelectedPeriod(parsed.period);
+    if (item.endTime) {
+      const parsedEnd = parseTimeString(item.endTime);
+      setSelectedEndHour(parsedEnd.hour);
+      setSelectedEndMinute(parsedEnd.minute);
+      setSelectedEndPeriod(parsedEnd.period);
+    } else {
+      const defEnd = computeDefaultEndTime(parsed.hour, parsed.minute, parsed.period, 2);
+      setSelectedEndHour(defEnd.hour);
+      setSelectedEndMinute(defEnd.minute);
+      setSelectedEndPeriod(defEnd.period);
+    }
     setEnableBellNotification(item.notifyBell !== false);
     setIsModalOpen(true);
   };
@@ -236,12 +270,16 @@ export const AgendaSection: React.FC = () => {
 
     try {
       const finalTime = hasSpecificTime ? `${selectedHour}:${selectedMinute} ${selectedPeriod}` : undefined;
+      const finalEndTime = (hasSpecificTime && (formData.category === 'taller' || editingItem?.endTime))
+        ? `${selectedEndHour}:${selectedEndMinute} ${selectedEndPeriod}`
+        : undefined;
 
       if (editingItem) {
         updateAgendaItem(editingItem.id, {
           title: formData.title.trim(),
           date: formData.date,
           time: finalTime,
+          endTime: finalEndTime,
           category: formData.category,
           priority: formData.priority,
           notes: formData.notes.trim() || undefined,
@@ -252,6 +290,7 @@ export const AgendaSection: React.FC = () => {
           title: formData.title.trim(),
           date: formData.date,
           time: finalTime,
+          endTime: finalEndTime,
           category: formData.category,
           priority: formData.priority,
           status: 'pending',
@@ -885,7 +924,15 @@ export const AgendaSection: React.FC = () => {
                       <button
                         key={catKey}
                         type="button"
-                        onClick={() => setFormData({ ...formData, category: catKey })}
+                        onClick={() => {
+                          setFormData({ ...formData, category: catKey });
+                          if (catKey === 'taller') {
+                            const defEnd = computeDefaultEndTime(selectedHour, selectedMinute, selectedPeriod, 2);
+                            setSelectedEndHour(defEnd.hour);
+                            setSelectedEndMinute(defEnd.minute);
+                            setSelectedEndPeriod(defEnd.period);
+                          }
+                        }}
                         className={`p-2 rounded-xl text-left border flex items-center gap-2 transition-all cursor-pointer ${
                           isSelected
                             ? `${cat.bg} ${cat.border} ${cat.color} font-bold shadow-xs scale-[1.02] ring-1 ring-purple-400`
@@ -944,47 +991,171 @@ export const AgendaSection: React.FC = () => {
                     </div>
 
                     {hasSpecificTime ? (
-                      <div className="flex items-center gap-1">
-                        <select
-                          value={selectedHour}
-                          onChange={(e) => setSelectedHour(e.target.value)}
-                          className="flex-1 px-2 py-1.5 rounded-xl bg-[#ECEEF2] border border-white shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none cursor-pointer"
-                        >
-                          {TIME_HOURS.map((h) => (
-                            <option key={h} value={h}>{h}</option>
-                          ))}
-                        </select>
-                        <span className="font-bold text-slate-400">:</span>
-                        <select
-                          value={selectedMinute}
-                          onChange={(e) => setSelectedMinute(e.target.value)}
-                          className="flex-1 px-2 py-1.5 rounded-xl bg-[#ECEEF2] border border-white shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none cursor-pointer"
-                        >
-                          {TIME_MINUTES.map((m) => (
-                            <option key={m} value={m}>{m}</option>
-                          ))}
-                        </select>
-                        <div className="flex rounded-xl bg-[#ECEEF2] p-0.5 border border-white shadow-neuInset shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedPeriod('AM')}
-                            className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
-                              selectedPeriod === 'AM' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600'
-                            }`}
-                          >
-                            AM
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setSelectedPeriod('PM')}
-                            className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
-                              selectedPeriod === 'PM' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600'
-                            }`}
-                          >
-                            PM
-                          </button>
+                      formData.category === 'taller' ? (
+                        <div className="space-y-2">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2.5 rounded-2xl bg-purple-50/80 border border-purple-200 shadow-neuInset">
+                            {/* Hora Inicio */}
+                            <div>
+                              <span className="block text-[10px] font-bubble font-bold text-slate-700 mb-1 flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-purple-600" />
+                                <span>Inicio del Taller:</span>
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <select
+                                  value={selectedHour}
+                                  onChange={(e) => {
+                                    const newH = e.target.value;
+                                    setSelectedHour(newH);
+                                    const def = computeDefaultEndTime(newH, selectedMinute, selectedPeriod, 2);
+                                    setSelectedEndHour(def.hour);
+                                    setSelectedEndPeriod(def.period);
+                                  }}
+                                  className="flex-1 px-2 py-1.5 rounded-xl bg-white border border-purple-200 shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none cursor-pointer"
+                                >
+                                  {TIME_HOURS.map((h) => (
+                                    <option key={h} value={h}>{h}</option>
+                                  ))}
+                                </select>
+                                <span className="font-bold text-slate-400">:</span>
+                                <select
+                                  value={selectedMinute}
+                                  onChange={(e) => setSelectedMinute(e.target.value)}
+                                  className="flex-1 px-2 py-1.5 rounded-xl bg-white border border-purple-200 shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none cursor-pointer"
+                                >
+                                  {TIME_MINUTES.map((m) => (
+                                    <option key={m} value={m}>{m}</option>
+                                  ))}
+                                </select>
+                                <div className="flex rounded-xl bg-purple-100 p-0.5 border border-purple-200 shadow-neuInset shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedPeriod('AM');
+                                      const def = computeDefaultEndTime(selectedHour, selectedMinute, 'AM', 2);
+                                      setSelectedEndHour(def.hour);
+                                      setSelectedEndPeriod(def.period);
+                                    }}
+                                    className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                                      selectedPeriod === 'AM' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600'
+                                    }`}
+                                  >
+                                    AM
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedPeriod('PM');
+                                      const def = computeDefaultEndTime(selectedHour, selectedMinute, 'PM', 2);
+                                      setSelectedEndHour(def.hour);
+                                      setSelectedEndPeriod(def.period);
+                                    }}
+                                    className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                                      selectedPeriod === 'PM' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600'
+                                    }`}
+                                  >
+                                    PM
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Hora Fin */}
+                            <div>
+                              <span className="block text-[10px] font-bubble font-bold text-purple-900 mb-1 flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-purple-600" />
+                                <span>Fin del Taller (Termina):</span>
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <select
+                                  value={selectedEndHour}
+                                  onChange={(e) => setSelectedEndHour(e.target.value)}
+                                  className="flex-1 px-2 py-1.5 rounded-xl bg-white border border-purple-300 shadow-neuInset text-xs font-mono font-bold text-purple-900 focus:outline-none cursor-pointer"
+                                >
+                                  {TIME_HOURS.map((h) => (
+                                    <option key={h} value={h}>{h}</option>
+                                  ))}
+                                </select>
+                                <span className="font-bold text-purple-400">:</span>
+                                <select
+                                  value={selectedEndMinute}
+                                  onChange={(e) => setSelectedEndMinute(e.target.value)}
+                                  className="flex-1 px-2 py-1.5 rounded-xl bg-white border border-purple-300 shadow-neuInset text-xs font-mono font-bold text-purple-900 focus:outline-none cursor-pointer"
+                                >
+                                  {TIME_MINUTES.map((m) => (
+                                    <option key={m} value={m}>{m}</option>
+                                  ))}
+                                </select>
+                                <div className="flex rounded-xl bg-purple-100 p-0.5 border border-purple-300 shadow-neuInset shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedEndPeriod('AM')}
+                                    className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                                      selectedEndPeriod === 'AM' ? 'bg-purple-600 text-white shadow-xs' : 'text-purple-700'
+                                    }`}
+                                  >
+                                    AM
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedEndPeriod('PM')}
+                                    className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                                      selectedEndPeriod === 'PM' ? 'bg-purple-600 text-white shadow-xs' : 'text-purple-700'
+                                    }`}
+                                  >
+                                    PM
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-[10px] text-purple-700 font-sans font-medium flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse inline-block" />
+                            Bloqueará el espacio en la agenda desde las {selectedHour}:{selectedMinute} {selectedPeriod} hasta las {selectedEndHour}:{selectedEndMinute} {selectedEndPeriod}.
+                          </p>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <select
+                            value={selectedHour}
+                            onChange={(e) => setSelectedHour(e.target.value)}
+                            className="flex-1 px-2 py-1.5 rounded-xl bg-[#ECEEF2] border border-white shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none cursor-pointer"
+                          >
+                            {TIME_HOURS.map((h) => (
+                              <option key={h} value={h}>{h}</option>
+                            ))}
+                          </select>
+                          <span className="font-bold text-slate-400">:</span>
+                          <select
+                            value={selectedMinute}
+                            onChange={(e) => setSelectedMinute(e.target.value)}
+                            className="flex-1 px-2 py-1.5 rounded-xl bg-[#ECEEF2] border border-white shadow-neuInset text-xs font-mono font-bold text-slate-800 focus:outline-none cursor-pointer"
+                          >
+                            {TIME_MINUTES.map((m) => (
+                              <option key={m} value={m}>{m}</option>
+                            ))}
+                          </select>
+                          <div className="flex rounded-xl bg-[#ECEEF2] p-0.5 border border-white shadow-neuInset shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedPeriod('AM')}
+                              className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                                selectedPeriod === 'AM' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600'
+                              }`}
+                            >
+                              AM
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedPeriod('PM')}
+                              className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                                selectedPeriod === 'PM' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600'
+                              }`}
+                            >
+                              PM
+                            </button>
+                          </div>
+                        </div>
+                      )
                     ) : (
                       <div className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-500 font-sans">
                         Todo el día
@@ -1208,7 +1379,7 @@ const AgendaListItem: React.FC<AgendaListItemProps> = ({
             {item.time && (
               <span className="inline-flex items-center gap-1 text-[11px] font-mono text-slate-500">
                 <Clock className="w-3 h-3" />
-                <span>{item.time}</span>
+                <span>{item.endTime ? `${item.time} - ${item.endTime}` : item.time}</span>
               </span>
             )}
 
@@ -1357,7 +1528,7 @@ const AgendaCardItem: React.FC<AgendaCardItemProps> = ({
           {item.time && (
             <span className="flex items-center gap-1 text-slate-500">
               <Clock className="w-3 h-3" />
-              <span>{item.time}</span>
+              <span>{item.endTime ? `${item.time} - ${item.endTime}` : item.time}</span>
             </span>
           )}
           {item.notifyBell && (

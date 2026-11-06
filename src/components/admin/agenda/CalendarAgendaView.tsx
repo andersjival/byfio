@@ -64,6 +64,47 @@ function getHourBucket(timeStr?: string): string | null {
   return `${displayHour}:00 ${period}`;
 }
 
+function parseTimeToMinutes(timeStr?: string): number | null {
+  if (!timeStr || !timeStr.trim()) return null;
+  const clean = timeStr.trim().toUpperCase();
+  const isPM = clean.includes('PM');
+  const isAM = clean.includes('AM');
+  const numbers = clean.replace(/[^0-9:]/g, '').split(':');
+  let hour = parseInt(numbers[0], 10);
+  let min = numbers[1] ? parseInt(numbers[1], 10) : 0;
+  if (isNaN(hour)) return null;
+  if (isNaN(min)) min = 0;
+
+  if (isPM && hour < 12) hour += 12;
+  if (isAM && hour === 12) hour = 0;
+
+  return hour * 60 + min;
+}
+
+function isItemInSlot(item: { time?: string; endTime?: string }, slotLabel: string): { matches: boolean; isStart: boolean } {
+  if (!item.time || !item.time.trim()) {
+    return { matches: false, isStart: false };
+  }
+  const startBucket = getHourBucket(item.time);
+  const isStart = startBucket === slotLabel;
+
+  if (!item.endTime || !item.endTime.trim()) {
+    return { matches: isStart, isStart };
+  }
+
+  const startMin = parseTimeToMinutes(item.time);
+  const endMin = parseTimeToMinutes(item.endTime);
+  const slotStartMin = parseTimeToMinutes(slotLabel);
+
+  if (startMin === null || endMin === null || slotStartMin === null || endMin <= startMin) {
+    return { matches: isStart, isStart };
+  }
+
+  const slotEndMin = slotStartMin + 60;
+  const matches = slotStartMin < endMin && slotEndMin > startMin;
+  return { matches, isStart };
+}
+
 function formatDateKey(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -357,19 +398,17 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                         const isSunday = dayIdx === 6;
                         const isToday = dayKey === todayKey;
 
-                        // Filtrar citas en este día y hora
+                        // Filtrar citas en este día y hora (incluyendo rangos continuos como Talleres Creativos)
                         const cellItems = agendaItems.filter((item) => {
                           if (item.date !== dayKey) return false;
-                          const bucket = getHourBucket(item.time);
-                          return bucket === hourLabel;
+                          return isItemInSlot(item, hourLabel).matches;
                         });
 
                         // Bloqueos personalizados para este día y hora
                         const customBlocks = blockedSpaces.filter((b) => {
                           if (b.id === 'lunch-default' || b.title.includes('ALMUERZO')) return false;
                           if (b.isRecurringDaily || b.date === dayKey) {
-                            const bucket = getHourBucket(b.startTime);
-                            return bucket === hourLabel;
+                            return isItemInSlot({ time: b.startTime, endTime: b.endTime }, hourLabel).matches;
                           }
                           return false;
                         });
@@ -416,14 +455,18 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                 const cat = CATEGORY_COLORS[item.category] || CATEGORY_COLORS.recordatorio;
                                 const CatIcon = cat.icon;
                                 const isDone = item.status === 'completed';
+                                const slotCheck = isItemInSlot(item, hourLabel);
+                                const isContinuation = !slotCheck.isStart;
 
                                 return (
                                   <div
-                                    key={item.id}
+                                    key={`${item.id}-${hourLabel}`}
                                     onClick={() => onEditItem(item)}
                                     className={`p-2 rounded-xl border text-xs shadow-xs transition-all cursor-pointer group/item flex flex-col justify-between ${
                                       isDone
                                         ? 'bg-slate-100 border-slate-200 opacity-60'
+                                        : isContinuation
+                                        ? `${cat.bg} ${cat.border} opacity-95 border-dashed border-2 hover:shadow-md`
                                         : `${cat.bg} ${cat.border} hover:shadow-md hover:scale-[1.01]`
                                     }`}
                                   >
@@ -431,7 +474,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                       <div className="flex items-center gap-1 min-w-0">
                                         <CatIcon className={`w-3 h-3 shrink-0 ${cat.text}`} />
                                         <span className={`font-bubble font-bold text-[11px] truncate ${cat.text} ${isDone ? 'line-through' : ''}`}>
-                                          {item.title}
+                                          {item.title} {isContinuation && <span className="text-[9px] opacity-75 font-normal">(en curso)</span>}
                                         </span>
                                       </div>
 
@@ -456,7 +499,11 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                       <div className="flex items-center justify-between text-[10px] font-mono mt-1 text-slate-500">
                                         <span className="flex items-center gap-0.5">
                                           <Clock className="w-2.5 h-2.5" />
-                                          <span>{item.time}</span>
+                                          <span>
+                                            {item.endTime
+                                              ? (isContinuation ? `Hasta ${item.endTime}` : `${item.time} - ${item.endTime}`)
+                                              : item.time}
+                                          </span>
                                         </span>
                                         {item.priority === 'alta' && (
                                           <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
@@ -552,7 +599,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
 
                     const hourItems = agendaItems.filter((i) => {
                       if (i.date !== dayKey) return false;
-                      return getHourBucket(i.time) === hourLabel;
+                      return isItemInSlot(i, hourLabel).matches;
                     });
 
                     return (
@@ -613,7 +660,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                     <div className="font-bubble font-bold text-xs sm:text-sm text-slate-900">{item.title}</div>
                                     {item.notes && <p className="text-xs text-slate-500 font-sans mt-0.5">{item.notes}</p>}
                                   </div>
-                                  <span className="text-xs font-mono text-purple-700 font-bold">{item.time}</span>
+                                  <span className="text-xs font-mono text-purple-700 font-bold">{item.endTime ? `${item.time} - ${item.endTime}` : item.time}</span>
                                 </div>
                               ))}
                             </div>

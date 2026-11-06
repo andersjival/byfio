@@ -228,6 +228,7 @@ export interface AgendaItem {
   title: string;
   date: string; // YYYY-MM-DD
   time?: string; // Ej: "10:00 AM" o "14:30"
+  endTime?: string; // Ej: "12:00 PM" o "16:30" (rango para talleres / bloqueos)
   category: AgendaCategory;
   priority: AgendaPriority;
   status: AgendaStatus;
