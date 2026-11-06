@@ -17,6 +17,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.3 - Propuesta Integral y Modelo Partner By.Fio con 11 Módulos Base, Regalías y Desglose Financiero
+- [x] **Propuesta Comercial de Alianza Partner Oficial ([`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
+  - Incorporada la estructura formal completa de propuesta comercial y alianza estratégica adaptada al negocio de Fio (creadora de contenido, talleres creativos y papelería).
+  - Presentación del modelo SaaS (propiedad tecnológica vs alquiler adaptado sin inversión inicial, cero cobros sorpresas de renovación y libertad total sin contratos forzosos).
+  - Desglose detallado de los **11 Módulos Base** con sus valores comerciales regulares (Total: ₡130.000/mes) y botones de acceso directo a cada uno.
+  - Sección destacada de **Regalías 100% GRATIS (₡0)**: Módulo de Comprobantes por Correo (₡10.000/mes), Módulo de Agenda para citas y eventos, y Hosting + Dominio anual ($25 USD / ₡13.000/mes bonificado).
+  - Tarifa Exclusiva Partner de **₡40.000 colones / mes** garantizada por 12 meses (reducción desde más de ₡153.000/mes regular y ₡75.000/mes promo).
+  - Beneficio Adicional Opcional de App Multiusuario para Celular y PC a **₡5.000 adicionales / mes** (ahorro de ₡10.000 mensuales).
+  - Resumen de ahorro real (+₡110.000/mes directo y ajuste anual topado al 10%).
+  - Ruta de arranque en 3 pasos (Activación, Adaptación a tu medida, Pruebas y Carga en Vivo) y botón directo de confirmación vía WhatsApp.
+  - **Actualización Integral de la Lista Completa de Todo lo que Contiene:** Organización exhaustiva en 3 columnas de los 11 módulos base, las regalías bonificadas y el ecosistema integral de la plataforma.
+  - Botón de copiado integral que transfiere el texto exacto estructurado para WhatsApp / correo en un solo clic.
+- [x] **Acceso Directo y Desbloqueo Público ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Eliminada la restricción de PIN/Admin en `App.tsx` para que la propuesta sea visible inmediatamente por URL directa (`/propuesta`) sin mostrar *"Acceso Restringido"*.
+  - Incorporado el botón *"Propuesta"* directamente en la barra de navegación pública (PC y menú móvil).
+
 ### Versión 4.16.2 - Selector de Hora y Minutos en Nueva Actividad de Agenda y Campanita Push Sonora
 - [x] **Selector Interactivo de Hora y Minutos en Modal de Agenda ([`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
   - Reemplazado el campo de texto libre por selectores dropdown dedicados para Horas (`01` a `12`) y Minutos (`00`, `05`, `10`, ... `55`).

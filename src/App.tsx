@@ -319,26 +319,7 @@ export const App: React.FC = () => {
               )}
 
               {currentRoute === 'propuesta' && (
-                isAdminOrSuperadmin ? (
-                  <PropuestaPage onNavigate={navigate} />
-                ) : (
-                  <div className="py-12 max-w-md mx-auto text-center space-y-4 animate-fadeIn">
-                    <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 mx-auto flex items-center justify-center shadow-inner">
-                      <Shield className="w-7 h-7" />
-                    </div>
-                    <h3 className="font-bubble font-bold text-xl text-slate-800">Acceso Restringido</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed font-sans">
-                      La propuesta integral y ficha técnica oficial son confidenciales y solo están autorizadas para el admin y superadmin.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => navigate('home')}
-                      className="px-5 py-2.5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-md cursor-pointer transition-all active:scale-95"
-                    >
-                      Regresar al Inicio
-                    </button>
-                  </div>
-                )
+                <PropuestaPage onNavigate={navigate} />
               )}
 
               {currentRoute === 'superadmin' && <SuperadminSection onNavigate={navigate} />}

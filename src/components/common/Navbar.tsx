@@ -142,6 +142,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Precios
               </button>
             )}
+
+            <button
+              type="button"
+              onClick={() => handleNav('propuesta')}
+              className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                currentRoute === 'propuesta'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:border-pink-200/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+              }`}
+            >
+              Propuesta
+            </button>
           </nav>
         )}
 
@@ -474,19 +486,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {currentUser && (currentUser.role === 'admin' || currentUser.isMasterAdmin) && (
-            <button
-              type="button"
-              onClick={() => handleNav('propuesta')}
-              className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn ${
-                currentRoute === 'propuesta'
-                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn'
-              }`}
-            >
-              📋 Propuesta del Sistema
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => handleNav('propuesta')}
+            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn ${
+              currentRoute === 'propuesta'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                : 'bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn'
+            }`}
+          >
+            📋 Propuesta Partner
+          </button>
 
           {currentUser ? (
             <div className="p-3 rounded-2xl bg-white/80 border border-purple-200/80 shadow-xs space-y-2">

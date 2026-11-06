@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
-  Star, Award, BookOpen, Link2, CheckCircle2, ExternalLink,
-  Share2, Tag, Users, BarChart3, ShieldCheck, ShoppingBag,
-  Clock, Check, Copy, ArrowRight, Printer, Heart,
-  Smartphone, Monitor, Sliders, Volume2, Database,
-  ArrowUpRight, Palette, HelpCircle, Layers
+  Star, Award, BookOpen, CheckCircle2,
+  Tag, Users, BarChart3, ShieldCheck, ShoppingBag,
+  Check, Copy, ArrowRight, Printer, Heart,
+  Smartphone, Database, Layers, Sparkles, Gift,
+  Calendar, Mail, Bell, Wrench, DollarSign,
+  TrendingUp, Percent, MessageCircle, CheckCircle,
+  Truck, ArrowUpRight
 } from 'lucide-react';
 import { AppRoute } from '../../types';
 
@@ -15,28 +17,59 @@ interface PropuestaPageProps {
 
 export const PropuestaPage: React.FC<PropuestaPageProps> = ({ onNavigate }) => {
   const [copiedSummary, setCopiedSummary] = useState(false);
-  const [activeTabFilter, setActiveTabFilter] = useState<'all' | 'wms' | 'store' | 'academy' | 'finance' | 'admin' | 'metrics'>('all');
+  const [selectedPlanView, setSelectedPlanView] = useState<'all' | 'modules' | 'gifts' | 'savings'>('all');
+
+  const fullProposalText = `Hola,
+
+Te presento formalmente la propuesta para tu plataforma digital. Más que entregarte un sistema, mi objetivo es que trabajemos juntos a largo plazo como Partners estratégicos en el crecimiento de tu marca y en futuros proyectos.
+
+¿Cómo funciona nuestra modalidad? (Cero riesgos para ti)
+Tu sitio funciona bajo un modelo de suscripción mensual personalizada (SaaS). La tecnología e infraestructura son propiedad nuestra y tú únicamente pagas un alquiler mensual por el uso de la plataforma adaptada a tu negocio. Esto te da ventajas únicas:
+
+• Sin pagos por adelantado ni inversión inicial: No tienes que desembolsar miles de dólares por el desarrollo desde cero.
+• Cero cobros anuales sorpresas: Nosotros asumimos al 100% el costo y las renovaciones anuales de Hosting, Dominio, servidores y mantenimiento técnico.
+• Libertad total sin ataduras: Al ser por suscripción por uso, no estás amarrada a contratos forzosos. Si el día de mañana decides pausar o retirarte, puedes cancelar tu suscripción en cualquier momento sin penalidades ni compromisos.
+
+Lo que incluye tu plataforma (11 Módulos Base):
+1. Verificación de pagos SinpePay: ₡15.000 / mes
+2. Tienda Online: ₡15.000 / mes
+3. Catálogo de Productos: ₡10.000 / mes
+4. Cursos y Talleres: ₡15.000 / mes
+5. Perfiles de Usuario: ₡10.000 / mes
+6. Cola y Alisto de Pedidos: ₡15.000 / mes
+7. Proveedores y Compras: ₡10.000 / mes
+8. Directorio de Clientes: ₡10.000 / mes
+9. Caja y Reportería: ₡15.000 / mes
+10. Notificación de Pedidos: ₡5.000 / mes
+11. Web y Mantenimiento continuo: ₡10.000 / mes
+
+Valor comercial regular de los 11 módulos: ₡130.000 / mes.
+
+Regalías incluidas 100% GRATIS para ti (₡0):
+• Módulo de Comprobantes de Compra por Correo (Valorado en ₡10.000/mes).
+• Módulo de Agenda para citas y eventos.
+• Hosting, Dominio y Renovaciones Anuales (Ahorro directo de $25 USD / ₡13.000 al mes).
+
+Tu Tarifa Exclusiva como Partner:
+Por tu trayectoria como creadora de contenido y para consolidar nuestra alianza estratégica, redujimos el valor total del ecosistema (más de ₡153.000 mensuales) y la tarifa promocional de lanzamiento (₡75.000) a una mensualidad fija de Partner de solo ₡40.000 colones al mes, garantizada durante 12 meses.
+
+Beneficio Adicional Opcional — App Multiusuario (Celular y PC):
+• Precio regular: ₡15.000 / mes.
+• Precio especial para ti: Solo ₡5.000 adicionales al mes (ahorras ₡10.000 mensuales).
+
+Resumen de tu ahorro real:
+• Ahorro mensual directo: Te ahorras más de ₡110.000 colones cada mes entre el descuento de plataforma, las regalías, la App y el ahorro de hosting y dominio.
+• Beneficio en ajuste anual: Pasados los primeros 12 meses, nuestros planes tienen un ajuste regular del 20%. Como Partner, te reducimos ese ajuste a la mitad: se aplicará por única vez un incremento de solo el 10% sobre tu tarifa pactada.
+
+¿Cómo arrancamos?
+1. Activación: Con el pago del primer mes, iniciamos de inmediato la implementación sin cobros de instalación.
+2. Adaptación a tu medida: Nos reunimos para adaptar el sistema a tu flujo de trabajo real y optimizar los tiempos de tu operativa diaria.
+3. Pruebas y Carga en Vivo: Probamos juntos módulo por módulo y cargamos los datos reales de tu negocio para que todo quede listo y funcionando al 100%.
+
+Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
 
   const handleCopySummary = () => {
-    const text = `PROYECTO TECNOLÓGICO BY.FIO - RESUMEN DE FUNCIONALIDADES & BENEFICIOS
-
-BENEFICIOS ESTRATÉGICOS CLAVE:
-• Ahorro de tiempo en conversaciones largas por WhatsApp: Todo queda automatizado hacia el panel de pedidos online.
-• Orden riguroso de Pedidos: Cola cronológica FIFO y alisto guiado con validación QR para cero confusiones.
-• Orden y control de Inventario: Mínimos/máximos, alertas automáticas y cálculo sugerido para compras a proveedores.
-• Todo Organizado y Centralizado: Un único ecosistema que unifica tienda, catálogo, talleres, WMS, facturación y analítica.
-
-MÓDULOS DEL SISTEMA:
-1. Gestión de Pedidos y Alisto (Logística WMS): FIFO, Control de Estados, Alisto Guiado QR, Validación por Escaneo.
-2. Inventario Inteligente y Abastecimiento: Stock Actual, Mínimos/Máximos, Alertas Reabastecimiento, Cantidad Sugerida, Etiquetas QR.
-3. Tienda Online & Catálogo Digital: Mobile-First, Categorías Dinámicas, Personalización Interactiva, Checkout SINPE 6400-4640.
-4. Academia y Talleres Creativos: 5 Pilares Formativos, Cupos en Tiempo Real, Fichas de Contenido, Registro de Alumnos.
-5. Caja, Facturación y Reportería: Factura Rápida, Cierre Diario e Ingresos, Envío por WhatsApp.
-6. Administración, Precios y Usuarios: Editor de Precios, Perfiles de Usuarios y PINs, Mascota Interactiva Estrellita.
-7. Analítica y Métricas en Tiempo Real (/metricas): Enlaces Rastreados, Sincronización en la Nube, PC vs Celulares, Secciones Favoritas.
-8. Multimedia & Experiencia Sensorial: Video Intro Cinematográfico, Efectos de Sonido Gotas de Agua, Modo Claro/Oscuro, Alta Disponibilidad Cloud.`;
-
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(fullProposalText).then(() => {
       setCopiedSummary(true);
       setTimeout(() => setCopiedSummary(false), 2500);
     });
@@ -46,35 +79,177 @@ MÓDULOS DEL SISTEMA:
     window.print();
   };
 
+  const baseModules = [
+    {
+      id: 'sinpe',
+      title: 'Verificación de pagos SinpePay',
+      price: '₡15.000 / mes',
+      priceNumber: 15000,
+      description: 'Validación automatizada de comprobantes Banco BCR con detección de referencia única anti-reutilización y verificación exacta de monto pagado.',
+      icon: Landmark,
+      color: 'from-emerald-500 to-teal-600',
+      tagColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300',
+      actionLabel: 'Ver Módulo SinpePay',
+      onClick: () => onNavigate('admin', 'sinpe'),
+    },
+    {
+      id: 'store',
+      title: 'Tienda Online',
+      price: '₡15.000 / mes',
+      priceNumber: 15000,
+      description: 'Vitrina mobile-first de compra ágil pensada para el tráfico directo de TikTok (@by_fio) e Instagram (@by_fio10) con carrito interactivo.',
+      icon: ShoppingBag,
+      color: 'from-pink-500 to-rose-600',
+      tagColor: 'bg-pink-100 text-pink-800 dark:bg-pink-950/80 dark:text-pink-300',
+      actionLabel: 'Ver Tienda Online',
+      onClick: () => onNavigate('store'),
+    },
+    {
+      id: 'catalog',
+      title: 'Catálogo de Productos',
+      price: '₡10.000 / mes',
+      priceNumber: 10000,
+      description: 'Catálogo mayorista y minorista con filtros dinámicos para agendas personalizadas, libros de vacunas pediátricos, tazas, stickers y papelería.',
+      icon: BookOpen,
+      color: 'from-purple-500 to-indigo-600',
+      tagColor: 'bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300',
+      actionLabel: 'Ver Catálogo',
+      onClick: () => onNavigate('catalogo'),
+    },
+    {
+      id: 'workshops',
+      title: 'Cursos y Talleres',
+      price: '₡15.000 / mes',
+      priceNumber: 15000,
+      description: 'Cartelera educativa estructurada de los 5 pilares formativos con gestión de cupos en tiempo real, temarios y registro digital de alumnos.',
+      icon: GraduationCap,
+      color: 'from-amber-500 to-orange-600',
+      tagColor: 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300',
+      actionLabel: 'Ver Talleres',
+      onClick: () => onNavigate('workshops'),
+    },
+    {
+      id: 'users',
+      title: 'Perfiles de Usuario',
+      price: '₡10.000 / mes',
+      priceNumber: 10000,
+      description: 'Control de accesos rápidos y seguros mediante PINs individuales de 4 dígitos para Fio (Administradora) y colaboradores de taller/alisto.',
+      icon: Users,
+      color: 'from-indigo-500 to-purple-600',
+      tagColor: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300',
+      actionLabel: 'Ver Perfiles & PINs',
+      onClick: () => onNavigate('admin', 'users'),
+    },
+    {
+      id: 'orders',
+      title: 'Cola y Alisto de Pedidos',
+      price: '₡15.000 / mes',
+      priceNumber: 15000,
+      description: 'Logística WMS con flujo FIFO cronológico, alisto guiado artículo por artículo, indicación de estante exacto y escaneo QR de confirmación.',
+      icon: QrCode,
+      color: 'from-fio-purple to-purple-800',
+      tagColor: 'bg-purple-100 text-purple-900 dark:bg-purple-950/80 dark:text-fio-pink',
+      actionLabel: 'Abrir Cola WMS',
+      onClick: () => onNavigate('admin', 'orders'),
+    },
+    {
+      id: 'suppliers',
+      title: 'Proveedores y Compras',
+      price: '₡10.000 / mes',
+      priceNumber: 10000,
+      description: 'Control de órdenes de compra, borradores de insumos (viniles, espirales, tazas), historial de abastecimiento y cálculo de reposición automática.',
+      icon: Truck,
+      color: 'from-sky-500 to-blue-600',
+      tagColor: 'bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300',
+      actionLabel: 'Ver Compras & Proveedores',
+      onClick: () => onNavigate('admin', 'suppliers'),
+    },
+    {
+      id: 'customers',
+      title: 'Directorio de Clientes',
+      price: '₡10.000 / mes',
+      priceNumber: 10000,
+      description: 'Directorio central de clientes frecuentes, cédulas, números de teléfono, direcciones de envío y botón de pedido express en 1 clic.',
+      icon: Users,
+      color: 'from-teal-500 to-emerald-600',
+      tagColor: 'bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300',
+      actionLabel: 'Ver Clientes',
+      onClick: () => onNavigate('admin', 'customers'),
+    },
+    {
+      id: 'reports',
+      title: 'Caja y Reportería',
+      price: '₡15.000 / mes',
+      priceNumber: 15000,
+      description: 'Facturación POS en mostrador, arqueo de caja diario en tiempo real, desglose detallado SINPE vs Efectivo y actas de cierre contable.',
+      icon: Receipt,
+      color: 'from-emerald-600 to-green-700',
+      tagColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300',
+      actionLabel: 'Ver Caja & Cierre',
+      onClick: () => onNavigate('admin', 'reports'),
+    },
+    {
+      id: 'notifications',
+      title: 'Notificación de Pedidos',
+      price: '₡5.000 / mes',
+      priceNumber: 5000,
+      description: 'Alertas automáticas de compras, despachos en preparación y envío instantáneo de resúmenes formateados al chat de WhatsApp de Fio.',
+      icon: Bell,
+      color: 'from-pink-600 to-rose-700',
+      tagColor: 'bg-pink-100 text-pink-800 dark:bg-pink-950/80 dark:text-pink-300',
+      actionLabel: 'Ver Alertas de Pedidos',
+      onClick: () => onNavigate('admin', 'orders'),
+    },
+    {
+      id: 'maintenance',
+      title: 'Web y Mantenimiento continuo',
+      price: '₡10.000 / mes',
+      priceNumber: 10000,
+      description: 'Actualizaciones periódicas de plataforma, soporte técnico continuo, copias de respaldo y optimización de velocidad de carga.',
+      icon: Wrench,
+      color: 'from-slate-600 to-purple-900',
+      tagColor: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200',
+      actionLabel: 'Infraestructura Cloud',
+      onClick: () => onNavigate('admin'),
+    },
+  ];
+
   return (
     <div className="space-y-8 pb-16 animate-fadeIn">
-      {/* HEADER HERO DE LA PROPUESTA */}
+      {/* 1. HERO HEADER DE LA PROPUESTA */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2D1B4E] via-[#4A1E6D] to-[#1E1035] text-white p-6 sm:p-10 shadow-2xl border border-purple-800/40">
-        {/* Luces de Fondo y Decoración */}
+        {/* Luces y Esferas Ambientales */}
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-fio-pink/20 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-80 h-80 rounded-full bg-fio-purple/30 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 space-y-4 max-w-4xl">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bubble font-bold text-fio-yellow">
-            <Award className="w-4 h-4 text-fio-yellow" />
-            <span>Documento Oficial de Entrega & Propuesta Integral</span>
+            <Sparkles className="w-4 h-4 text-fio-yellow" />
+            <span>Alianza Estratégica & Comercial • Propuesta Digital By.Fio</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bubble font-bold tracking-wide text-white leading-tight">
-            Ecosistema Tecnológico <span className="text-transparent bg-clip-text bg-gradient-to-r from-fio-pink via-purple-300 to-fio-yellow">By.Fio</span>
+            Propuesta de Plataforma Digital & <span className="text-transparent bg-clip-text bg-gradient-to-r from-fio-pink via-purple-300 to-fio-yellow">Modelo Partner</span>
           </h1>
 
-          <p className="text-sm sm:text-base text-purple-100/90 font-sans leading-relaxed">
-            Plataforma digital completa que integra <strong className="text-white">Logística de Alisto WMS</strong>, <strong className="text-white">Tienda E-Commerce Mobile-First</strong>, <strong className="text-white">Academia de Talleres Creativos</strong>, <strong className="text-white">Facturación & POS</strong> y <strong className="text-white">Analítica en Tiempo Real</strong>.
-          </p>
+          {/* CARTA DE PRESENTACIÓN DIRECTA */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 space-y-2 text-purple-100 font-sans text-sm sm:text-base leading-relaxed">
+            <p className="font-bubble font-bold text-white text-base sm:text-lg">
+              Hola,
+            </p>
+            <p>
+              Te presento formalmente la propuesta para tu plataforma digital. Más que entregarte un sistema, mi objetivo es que trabajemos juntos a largo plazo como <strong>Partners estratégicos</strong> en el crecimiento de tu marca y en futuros proyectos.
+            </p>
+          </div>
 
+          {/* BOTONES DE ACCIÓN RÁPIDA */}
           <div className="pt-2 flex flex-wrap items-center gap-3">
             <button
               onClick={handleCopySummary}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white text-purple-950 hover:bg-purple-50 font-bubble font-bold text-xs sm:text-sm shadow-lg active:scale-95 transition-all cursor-pointer"
             >
               {copiedSummary ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-fio-purple" />}
-              <span>{copiedSummary ? '¡Resumen Copiado!' : 'Copiar Resumen'}</span>
+              <span>{copiedSummary ? '¡Propuesta Copiada!' : 'Copiar Propuesta Completa'}</span>
             </button>
 
             <button
@@ -95,928 +270,697 @@ MÓDULOS DEL SISTEMA:
           </div>
         </div>
 
-        {/* Cintas de Métricas Clave */}
+        {/* METRIC CHIPS CLAVE */}
         <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-6 border-t border-white/10 text-center">
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
-            <span className="block text-2xl sm:text-3xl font-bubble font-bold text-fio-yellow">6+2</span>
-            <span className="text-[11px] text-purple-200 font-sans">Módulos Centrales</span>
+          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+            <span className="block text-2xl sm:text-3xl font-bubble font-bold text-fio-yellow">₡40.000</span>
+            <span className="text-[11px] text-purple-200 font-sans">Mensualidad Partner Fija</span>
           </div>
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
-            <span className="block text-2xl sm:text-3xl font-bubble font-bold text-emerald-300">100%</span>
-            <span className="text-[11px] text-purple-200 font-sans">Mobile-First & Redes</span>
+          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+            <span className="block text-2xl sm:text-3xl font-bubble font-bold text-emerald-300">&gt; ₡110.000</span>
+            <span className="text-[11px] text-purple-200 font-sans">Ahorro Mensual Real</span>
           </div>
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
-            <span className="block text-2xl sm:text-3xl font-bubble font-bold text-pink-300">0 ms</span>
-            <span className="text-[11px] text-purple-200 font-sans">Tiempo Real Cross-Tab</span>
+          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+            <span className="block text-2xl sm:text-3xl font-bubble font-bold text-pink-300">11 + 3</span>
+            <span className="text-[11px] text-purple-200 font-sans">Módulos + Regalías ₡0</span>
           </div>
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
-            <span className="block text-2xl sm:text-3xl font-bubble font-bold text-sky-300">Cloud</span>
-            <span className="text-[11px] text-purple-200 font-sans">Infraestructura Segura</span>
+          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+            <span className="block text-2xl sm:text-3xl font-bubble font-bold text-sky-300">0 Riesgos</span>
+            <span className="text-[11px] text-purple-200 font-sans">SaaS sin Contratos Forzosos</span>
           </div>
         </div>
       </div>
 
-      {/* SECCIÓN ESTRATÉGICA: TRANSFORMACIÓN OPERATIVA & BENEFICIOS CLAVE */}
+      {/* 2. ¿CÓMO FUNCIONA NUESTRA MODALIDAD? (CERO RIESGOS PARA TI) */}
       <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bubble font-bold text-xs mb-1.5">
-              <Award className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Transformación Operativa del Negocio</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Modelo SaaS • Máxima Tranquilidad</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-              Beneficios Clave & Impacto en la Operación Diaria
+              ¿Cómo funciona nuestra modalidad? (Cero riesgos para ti)
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-sans mt-0.5">
-              Cómo la plataforma elimina los cuellos de botella más costosos y centraliza toda la gestión de By.Fio:
+          </div>
+
+          <span className="px-3 py-1.5 rounded-2xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-fio-purple dark:text-fio-pink text-xs font-bubble font-bold shrink-0">
+            Tecnología Propia en Alquiler Adaptado
+          </span>
+        </div>
+
+        <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed">
+          Tu sitio funciona bajo un modelo de suscripción mensual personalizada (SaaS). La tecnología e infraestructura son propiedad nuestra y tú únicamente pagas un alquiler mensual por el uso de la plataforma adaptada a tu negocio. Esto te da ventajas únicas:
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          {/* Ventaja 1 */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 dark:from-emerald-950/20 dark:via-[#1E1B2E] dark:to-teal-950/10 border-2 border-emerald-200/80 dark:border-emerald-800/40 space-y-2.5 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+              <DollarSign className="w-5 h-5" />
+            </div>
+            <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+              Sin pagos por adelantado ni inversión inicial
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              No tienes que desembolsar miles de dólares por el desarrollo desde cero. Inicias de forma inmediata sin descapitalizar tu taller creativo ni tu inventario.
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-fio-purple dark:text-fio-pink text-xs font-bubble font-bold shrink-0">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-            <span>100% Organizado & Centralizado</span>
+          {/* Ventaja 2 */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-sky-50/70 via-white to-indigo-50/40 dark:from-sky-950/20 dark:via-[#1E1B2E] dark:to-indigo-950/10 border-2 border-sky-200/80 dark:border-sky-800/40 space-y-2.5 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+              Cero cobros anuales sorpresas
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Nosotros asumimos al 100% el costo y las renovaciones anuales de Hosting, Dominio, servidores y mantenimiento técnico continuo. Cero cobros ocultos de fin de año.
+            </p>
+          </div>
+
+          {/* Ventaja 3 */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-50/70 via-white to-pink-50/40 dark:from-purple-950/20 dark:via-[#1E1B2E] dark:to-pink-950/10 border-2 border-purple-200/80 dark:border-purple-800/40 space-y-2.5 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-fio-purple text-white flex items-center justify-center font-bold text-lg shadow-sm">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+              Libertad total sin ataduras
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Al ser por suscripción por uso, no estás amarrada a contratos forzosos. Si el día de mañana decides pausar o retirarte, puedes cancelar tu suscripción en cualquier momento sin penalidades ni compromisos.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. LO QUE INCLUYE TU PLATAFORMA (11 MÓDULOS BASE) */}
+      <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-fio-purple dark:text-fio-pink font-bubble font-bold text-xs mb-1.5">
+              <Boxes className="w-3.5 h-3.5" />
+              <span>Ecosistema Integral Completo</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+              Lo que incluye tu plataforma (11 Módulos Base)
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-sans mt-0.5">
+              Cada módulo resuelve un área operativa clave de tu taller, catálogo y ventas online:
+            </p>
+          </div>
+
+          <div className="p-3 rounded-2xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-right">
+            <span className="block text-[10px] text-slate-500 dark:text-slate-400 font-sans uppercase font-bold">Valor Comercial Base</span>
+            <span className="text-base sm:text-lg font-bubble font-bold text-fio-purple dark:text-fio-pink">₡130.000 / mes</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Beneficio 1: Ahorro de tiempo en WhatsApp */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 dark:from-emerald-950/20 dark:via-[#1E1B2E] dark:to-teal-950/10 border-2 border-emerald-200/80 dark:border-emerald-800/40 space-y-2.5 shadow-xs">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                  💬
-                </span>
-                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                  Ahorro Radical de Tiempo en WhatsApp
-                </h3>
+        {/* LISTA Y TARJETAS DE LOS 11 MÓDULOS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {baseModules.map((mod, index) => {
+            const Icon = mod.icon;
+            return (
+              <div
+                key={mod.id}
+                className="p-5 rounded-2xl bg-slate-50/80 dark:bg-purple-950/20 border border-slate-200/80 dark:border-purple-900/40 hover:border-purple-300 dark:hover:border-purple-700/60 transition-all flex flex-col justify-between space-y-3 group"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-9 h-9 rounded-xl bg-gradient-to-tr ${mod.color} text-white flex items-center justify-center shadow-xs shrink-0`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <span className="text-[11px] font-bubble font-bold text-slate-500 dark:text-slate-400">
+                        Módulo {index + 1}
+                      </span>
+                    </div>
+
+                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bubble font-bold ${mod.tagColor} shrink-0`}>
+                      {mod.price}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-fio-purple dark:group-hover:text-fio-pink transition-colors">
+                    {mod.title}
+                  </h3>
+
+                  <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+                    {mod.description}
+                  </p>
+                </div>
+
+                <div className="pt-2 border-t border-slate-200/50 dark:border-purple-900/30">
+                  <button
+                    onClick={mod.onClick}
+                    className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-purple-900/30 hover:bg-purple-50 dark:hover:bg-purple-900/60 text-slate-700 dark:text-slate-200 hover:text-fio-purple text-xs font-bubble font-bold border border-slate-200 dark:border-purple-800 transition-all cursor-pointer"
+                  >
+                    <span>{mod.actionLabel}</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
-                Cero Chats Largos
-              </span>
+            );
+          })}
+        </div>
+
+        {/* CALLOUT VALOR TOTAL REGULAR */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 dark:from-purple-950/40 dark:via-pink-950/20 dark:to-amber-950/20 border border-purple-200 dark:border-purple-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-fio-purple text-white flex items-center justify-center font-bold">
+              <Receipt className="w-5 h-5" />
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-              <strong>Se acabaron las conversaciones largas y repetitivas de 15 a 20 minutos por cliente</strong> para enviar fotos sueltas, cotizar medidas, pedir el nombre de la personalización y solicitar comprobantes.
-            </p>
-            <div className="p-3 rounded-xl bg-white/80 dark:bg-purple-950/30 border border-emerald-100 dark:border-emerald-900/30 text-[11px] text-slate-700 dark:text-slate-200 font-sans space-y-1">
-              <p className="font-semibold text-emerald-700 dark:text-emerald-400">
-                ✓ Todo Queda 100% Automatizado:
-              </p>
-              <p>
-                El cliente navega la tienda o catálogo online, personaliza su artículo, adjunta su comprobante SINPE y el pedido ingresa estructurado y listo para alistar directamente en el <strong>Panel de Pedidos Online</strong>.
+            <div>
+              <h4 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
+                Valor comercial regular de los 11 módulos base:
+              </h4>
+              <p className="text-xs text-slate-600 dark:text-slate-300 font-sans">
+                Suma individual de licencias de software, WMS, e-commerce y facturación.
               </p>
             </div>
           </div>
 
-          {/* Beneficio 2: Orden y Control del Inventario */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-sky-50/70 via-white to-indigo-50/40 dark:from-sky-950/20 dark:via-[#1E1B2E] dark:to-indigo-950/10 border-2 border-sky-200/80 dark:border-sky-800/40 space-y-2.5 shadow-xs">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                  📦
-                </span>
-                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                  Beneficios en Orden de Inventario
-                </h3>
-              </div>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-200">
-                Cero Quiebres de Stock
-              </span>
+          <div className="text-xl sm:text-2xl font-bubble font-bold text-fio-purple dark:text-fio-pink">
+            ₡130.000 / mes
+          </div>
+        </div>
+      </section>
+
+      {/* 4. REGALÍAS INCLUIDAS 100% GRATIS PARA TI (₡0) */}
+      <section className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-purple-500/10 to-pink-500/10 dark:from-amber-950/30 dark:via-purple-950/40 dark:to-pink-950/20 border-2 border-amber-300 dark:border-amber-700/60 shadow-xl shadow-amber-900/5 space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-amber-200/60 dark:border-amber-800/40">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/90 text-amber-900 dark:text-amber-300 font-bubble font-bold text-xs mb-1.5">
+              <Gift className="w-3.5 h-3.5 text-amber-600" />
+              <span>100% Bonificado • Cero Costo</span>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-              Control total de existencias físicas en tiempo real. Sabrás con exactitud <strong>qué hay, qué falta y cuánto pedir</strong> a los proveedores antes de que se agote un producto crítico.
+            <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+              Regalías incluidas 100% GRATIS para ti (₡0)
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-sans mt-0.5">
+              Herramientas de alto valor incorporadas sin ningún costo adicional dentro de tu suscripción:
             </p>
-            <div className="p-3 rounded-xl bg-white/80 dark:bg-purple-950/30 border border-sky-100 dark:border-sky-900/30 text-[11px] text-slate-700 dark:text-slate-200 font-sans space-y-1">
-              <p className="font-semibold text-sky-700 dark:text-sky-400">
-                ✓ Alertas Automáticas & Ubicación QR:
-              </p>
-              <p>
-                Umbrales de Mínimos/Máximos, cálculo automático de reposición <em>(Máximo - Actual)</em> y etiquetas QR vinculadas a la ubicación exacta de cada estante en bodega.
-              </p>
-            </div>
           </div>
 
-          {/* Beneficio 3: Orden y Flujo de Pedidos */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-50/70 via-white to-pink-50/40 dark:from-purple-950/20 dark:via-[#1E1B2E] dark:to-pink-950/10 border-2 border-purple-200/80 dark:border-purple-800/40 space-y-2.5 shadow-xs">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-fio-purple text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                  ⚡
-                </span>
-                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                  Beneficios en Orden de Pedidos (WMS)
-                </h3>
+          <span className="px-3 py-1.5 rounded-2xl bg-amber-500 text-white text-xs font-bubble font-bold shadow-sm shrink-0">
+            ₡0 Adicionales
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Regalía 1: Módulo de Comprobantes de Compra por Correo */}
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#1E1B2E] border border-amber-200 dark:border-amber-800/40 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-pink-500 text-white flex items-center justify-center shadow-xs">
+                <Mail className="w-5 h-5" />
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-200">
-                Flujo FIFO & Cero Errores
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                GRATIS (₡0)
               </span>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-              Organización secuencial cronológica (el primero en entrar es el primero en alistarse), erradicando pedidos olvidados, extraviados o duplicados.
-            </p>
-            <div className="p-3 rounded-xl bg-white/80 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/30 text-[11px] text-slate-700 dark:text-slate-200 font-sans space-y-1">
-              <p className="font-semibold text-fio-purple dark:text-fio-pink">
-                ✓ Alisto Guiado Paso a Paso:
-              </p>
-              <p>
-                La pantalla guía al operario artículo por artículo indicando el estante exacto y valida por escáner QR que el producto empacado sea el correcto.
+            <div>
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                Módulo de Comprobantes de Compra por Correo
+              </h3>
+              <p className="text-xs font-bubble font-bold text-amber-700 dark:text-amber-400 mt-0.5">
+                Valorado en ₡10.000 / mes
               </p>
             </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Emisión y despacho automatizado de comprobantes digitales formales directamente a la bandeja de entrada de tus clientes al confirmar su pago.
+            </p>
+            <button
+              onClick={() => onNavigate('admin', 'billing')}
+              className="inline-flex items-center gap-1.5 text-xs font-bubble font-bold text-fio-purple dark:text-fio-pink hover:underline pt-1 cursor-pointer"
+            >
+              <span>Ver Facturación & Recibos</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          {/* Beneficio 4: Todo Organizado y Centralizado */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-50/70 via-white to-orange-50/40 dark:from-amber-950/20 dark:via-[#1E1B2E] dark:to-orange-950/10 border-2 border-amber-200/80 dark:border-amber-800/40 space-y-2.5 shadow-xs">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                  🎯
-                </span>
-                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                  Todo Organizado & Centralizado
-                </h3>
+          {/* Regalía 2: Módulo de Agenda para citas y eventos */}
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#1E1B2E] border border-amber-200 dark:border-amber-800/40 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-xs">
+                <Calendar className="w-5 h-5" />
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-900/60 dark:text-amber-200">
-                Ecosistema Unificado
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                GRATIS (₡0)
               </span>
             </div>
+            <div>
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                Módulo de Agenda para citas y eventos
+              </h3>
+              <p className="text-xs font-bubble font-bold text-purple-700 dark:text-purple-400 mt-0.5">
+                Organización Total del Taller
+              </p>
+            </div>
             <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-              <strong>Fin a las libretas de papel, capturas dispersas en chats y notas sueltas.</strong> Toda la información comercial, operativa y contable en una sola plataforma.
+              Cronograma de fechas de entrega de pedidos personalizados, calendario de talleres creativos, lista rápida de tareas y alertas visuales.
             </p>
-            <div className="p-3 rounded-xl bg-white/80 dark:bg-purple-950/30 border border-amber-100 dark:border-amber-900/30 text-[11px] text-slate-700 dark:text-slate-200 font-sans space-y-1">
-              <p className="font-semibold text-amber-800 dark:text-amber-400">
-                ✓ Control Absoluto desde Cualquier Lugar:
+            <button
+              onClick={() => onNavigate('admin', 'agenda')}
+              className="inline-flex items-center gap-1.5 text-xs font-bubble font-bold text-fio-purple dark:text-fio-pink hover:underline pt-1 cursor-pointer"
+            >
+              <span>Abrir Agenda de Taller</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Regalía 3: Hosting, Dominio y Renovaciones Anuales */}
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#1E1B2E] border border-amber-200 dark:border-amber-800/40 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-teal-600 text-white flex items-center justify-center shadow-xs">
+                <Database className="w-5 h-5" />
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                100% CUBIERTO
+              </span>
+            </div>
+            <div>
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                Hosting, Dominio y Renovaciones Anuales
+              </h3>
+              <p className="text-xs font-bubble font-bold text-sky-700 dark:text-sky-400 mt-0.5">
+                Ahorro directo de $25 USD / ₡13.000 al mes
               </p>
-              <p>
-                Tienda, catálogo mayorista, alisto WMS, academia de talleres, facturación POS, cierre diario y analítica integrados en un único panel accesible desde PC o móvil.
-              </p>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Servidores cloud de alta velocidad, base de datos en tiempo real, certificado SSL de seguridad y renovación anual de dominio asumida por nosotros.
+            </p>
+            <div className="text-xs font-bubble font-bold text-emerald-600 dark:text-emerald-400 pt-1">
+              ✓ Cero trámites técnicos para ti
             </div>
           </div>
         </div>
       </section>
 
-      {/* FILTROS RÁPIDOS POR CATEGORÍA */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-        {[
-          { id: 'all', label: 'Ver Todo el Ecosistema' },
-          { id: 'wms', label: '1. Pedidos & WMS' },
-          { id: 'store', label: '2. Inventario & Tienda' },
-          { id: 'academy', label: '3. Academia & Talleres' },
-          { id: 'finance', label: '4. Caja & Facturación' },
-          { id: 'admin', label: '5. Admin & Usuarios' },
-          { id: 'metrics', label: '6. Métricas & Analítica' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTabFilter(tab.id as any)}
-            className={`px-3.5 py-2 rounded-2xl text-xs font-bubble font-bold transition-all shrink-0 cursor-pointer ${
-              activeTabFilter === tab.id
-                ? 'bg-fio-purple text-white shadow-md scale-[1.02]'
-                : 'bg-white dark:bg-[#1E1B2E] text-slate-700 dark:text-slate-200 hover:bg-purple-50 dark:hover:bg-purple-900/40 border border-slate-200/80 dark:border-purple-900/50'
-            }`}
+      {/* 5. TU TARIFA EXCLUSIVA COMO PARTNER (EL CORAZÓN DE LA ALIANZA) */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E1035] via-[#3B1559] to-[#5C1D73] text-white p-6 sm:p-10 shadow-2xl border-2 border-fio-pink/40 space-y-6">
+        <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-fio-pink/30 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-12 -left-12 w-64 h-64 rounded-full bg-fio-yellow/20 blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-white/15">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-fio-yellow text-slate-950 font-bubble font-bold text-xs shadow-md">
+              <Award className="w-4 h-4 text-slate-950" />
+              <span>Alianza Estratégica para Creadoras de Contenido</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bubble font-bold text-white tracking-wide">
+              Tu Tarifa Exclusiva como Partner
+            </h2>
+            <p className="text-xs sm:text-sm text-purple-100 font-sans leading-relaxed">
+              Por tu trayectoria como creadora de contenido y para consolidar nuestra alianza estratégica, redujimos el valor total del ecosistema (más de ₡153.000 mensuales) y la tarifa promocional de lanzamiento (₡75.000) a una mensualidad fija de Partner de <strong>solo ₡40.000 colones al mes</strong>, garantizada durante 12 meses.
+            </p>
+          </div>
+
+          {/* CAJA DE PRECIO DESTACADA */}
+          <div className="p-6 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 text-center shrink-0 w-full md:w-auto min-w-[260px] shadow-2xl">
+            <span className="block text-xs font-sans text-purple-200 uppercase tracking-wider line-through opacity-80">
+              Valor Total: &gt; ₡153.000 / mes
+            </span>
+            <span className="block text-xs font-sans text-pink-300 uppercase tracking-wider line-through font-bold mt-0.5">
+              Promo Lanzamiento: ₡75.000 / mes
+            </span>
+            <div className="my-2.5">
+              <span className="text-3xl sm:text-4xl font-bubble font-bold text-fio-yellow">
+                ₡40.000
+              </span>
+              <span className="text-xs font-sans text-purple-100 block">
+                colones / mes
+              </span>
+            </div>
+            <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bubble font-bold bg-emerald-400 text-emerald-950">
+              ✓ Garantizada por 12 meses
+            </span>
+          </div>
+        </div>
+
+        {/* BENEFICIO ADICIONAL OPCIONAL: APP MULTIUSUARIO */}
+        <div className="relative z-10 p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Smartphone className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-2">
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-white">
+                  Beneficio Adicional Opcional — App Multiusuario (Celular y PC)
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-fio-yellow text-purple-950">
+                  Opcional
+                </span>
+              </div>
+              <p className="text-xs text-purple-100 font-sans mt-0.5">
+                Instalación multi-dispositivo para todo tu equipo de trabajo en simultáneo, sin límites de pantallas ni cierres de sesión.
+              </p>
+            </div>
+          </div>
+
+          <div className="text-left sm:text-right shrink-0">
+            <span className="block text-[11px] text-purple-200 line-through">
+              Precio regular: ₡15.000 / mes
+            </span>
+            <div className="text-sm sm:text-base font-bubble font-bold text-fio-yellow">
+              Solo ₡5.000 adicionales / mes
+            </div>
+            <span className="text-[10px] text-emerald-300 font-bold">
+              (Ahorras ₡10.000 mensuales)
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. RESUMEN DE TU AHORRO REAL */}
+      <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
+        <div className="pb-4 border-b border-slate-100 dark:border-purple-900/40">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bubble font-bold text-xs mb-1.5">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Transparencia Financiera</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+            Resumen de tu ahorro real
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Ahorro 1 */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-emerald-950/20 dark:via-[#1E1B2E] dark:to-teal-950/10 border-2 border-emerald-300 dark:border-emerald-800/50 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-sm">
+                💰
+              </span>
+              <h3 className="font-bubble font-bold text-base text-slate-900 dark:text-white">
+                Ahorro mensual directo
+              </h3>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed">
+              <strong>Te ahorras más de ₡110.000 colones cada mes</strong> entre el descuento de plataforma, las regalías bonificadas, la App multiusuario y el ahorro permanente de hosting y dominio anual.
+            </p>
+          </div>
+
+          {/* Ahorro 2 */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-purple-950/20 dark:via-[#1E1B2E] dark:to-pink-950/10 border-2 border-purple-300 dark:border-purple-800/50 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-xl bg-fio-purple text-white flex items-center justify-center font-bold text-sm">
+                📈
+              </span>
+              <h3 className="font-bubble font-bold text-base text-slate-900 dark:text-white">
+                Beneficio en ajuste anual
+              </h3>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed">
+              Pasados los primeros 12 meses, nuestros planes tienen un ajuste regular del 20%. <strong>Como Partner, te reducimos ese ajuste a la mitad:</strong> se aplicará por única vez un incremento de <strong>solo el 10%</strong> sobre tu tarifa pactada.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. ¿CÓMO ARRANCAMOS? (PASO A PASO) */}
+      <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/80 text-fio-purple dark:text-fio-pink font-bubble font-bold text-xs mb-1.5">
+              <CheckCircle className="w-3.5 h-3.5" />
+              <span>Ruta de Puesta en Marcha</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
+              ¿Cómo arrancamos?
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-sans mt-0.5">
+              Tres pasos simples y transparentes para tener tu plataforma operando al 100%:
+            </p>
+          </div>
+
+          <span className="px-3 py-1.5 rounded-2xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-bubble font-bold shrink-0">
+            Cero Costo de Instalación
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Paso 1 */}
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/80 dark:border-purple-900/40 space-y-2.5">
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-xl bg-fio-purple text-white flex items-center justify-center font-bubble font-bold text-sm shadow-xs">
+                1
+              </span>
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                Activación
+              </h3>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Con el pago del primer mes, iniciamos de inmediato la implementación sin cobros de instalación ni trámites engorrosos.
+            </p>
+          </div>
+
+          {/* Paso 2 */}
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/80 dark:border-purple-900/40 space-y-2.5">
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-xl bg-fio-pink text-white flex items-center justify-center font-bubble font-bold text-sm shadow-xs">
+                2
+              </span>
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                Adaptación a tu medida
+              </h3>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Nos reunimos para adaptar el sistema a tu flujo de trabajo real y optimizar los tiempos de tu operativa diaria en el taller.
+            </p>
+          </div>
+
+          {/* Paso 3 */}
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/80 dark:border-purple-900/40 space-y-2.5">
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bubble font-bold text-sm shadow-xs">
+                3
+              </span>
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                Pruebas y Carga en Vivo
+              </h3>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+              Probamos juntos módulo por módulo y cargamos los datos reales de tu negocio para que todo quede listo y funcionando al 100%.
+            </p>
+          </div>
+        </div>
+
+        {/* CIERRE & LLAMADO A LA ACCIÓN */}
+        <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50 to-white dark:from-purple-950/50 dark:via-pink-950/20 dark:to-[#1E1B2E] border border-purple-200 dark:border-purple-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="space-y-1">
+            <p className="font-bubble font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+              Quedo atento para que confirmemos el acuerdo y arranquemos con todo.
+            </p>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-sans">
+              Contáctame directamente para activar tu membresía de Partner By.Fio hoy mismo.
+            </p>
+          </div>
+
+          <a
+            href="https://wa.me/50664004640?text=Hola%20Fio,%20estoy%20listo%20para%20confirmar%20el%20acuerdo%20de%20la%20plataforma%20digital%20By.Fio%20con%20la%20tarifa%20Partner."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 active:scale-95 transition-all shrink-0 cursor-pointer"
           >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+            <MessageCircle className="w-4 h-4" />
+            <span>Confirmar Acuerdo por WhatsApp</span>
+          </a>
+        </div>
+      </section>
 
-      {/* BLOQUE DE MÓDULOS EN ORDEN RIGUROSO */}
-      <div className="space-y-6">
-        {/* 1. GESTIÓN DE PEDIDOS Y ALISTO (LOGÍSTICA WMS) */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'wms') && (
-          <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#A855F7] to-[#6B21A8] text-white flex items-center justify-center shadow-md">
-                  <QrCode className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-bold text-fio-purple uppercase tracking-wider">Módulo 1</span>
-                  <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-                    Gestión de Pedidos y Alisto (Logística WMS)
-                  </h2>
-                </div>
-              </div>
-
-              <button
-                onClick={() => onNavigate('admin', 'orders')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-fio-purple dark:text-fio-pink text-xs font-bubble font-bold border border-purple-200 dark:border-purple-800 transition-all cursor-pointer"
-              >
-                <span>Abrir Cola de Pedidos</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-purple-500" />
-                  <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                    Cola de Pedidos en Orden (FIFO)
-                  </h3>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Visualización secuencial y cronológica de los pedidos de los clientes (uno a uno) según van llegando, garantizando que el primer pedido recibido sea el primero en prepararse sin confusiones.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-purple-500" />
-                  <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                    Control de Estados en Tiempo Real
-                  </h3>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Seguimiento del ciclo de vida de cada orden paso a paso: <em>Pendiente de Alisto → En Alisto → Empacado / Facturado → Entregado</em>, con filtros por pestañas y búsqueda instantánea por número o cliente.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-purple-500" />
-                  <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                    Alisto Guiado Paso a Paso por Escáner QR
-                  </h3>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Interfaz optimizada que guía al operario o a Fio producto por producto, indicando el <strong>estante exacto de ubicación en bodega</strong> (ej. <em>Estante A-1, Nivel 2</em>) y la cantidad a recoger.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-purple-500" />
-                  <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                    Validación por Código QR
-                  </h3>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Escaneo mediante cámara o lector láser para confirmar que el artículo recogido coincida exactamente con el SKU del pedido, eliminando errores de despacho en papelería y agendas personalizadas.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 2. INVENTARIO INTELIGENTE Y ABASTECIMIENTO */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'store') && (
-          <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-sky-100 dark:border-sky-900/40 shadow-xl shadow-sky-900/5 space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#38BDF8] to-[#4338CA] text-white flex items-center justify-center shadow-md">
-                  <Boxes className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-bold text-sky-600 uppercase tracking-wider">Módulo 2</span>
-                  <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-                    Inventario Inteligente y Abastecimiento
-                  </h2>
-                </div>
-              </div>
-
-              <button
-                onClick={() => onNavigate('admin', 'inventory')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-100 text-sky-700 dark:text-sky-300 text-xs font-bubble font-bold border border-sky-200 dark:border-sky-800 transition-all cursor-pointer"
-              >
-                <span>Abrir Inventario & QR</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Control de Stock Actual
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Registro pormenorizado en tiempo real de unidades físicas disponibles por producto, costo unitario y precio de venta.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Definición de Mínimos y Máximos
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Configuración personalizada de umbrales para cada artículo (ej. mínimo 5 unidades para agendas, máximo 25 unidades).
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white text-rose-600 dark:text-rose-400">
-                  Alertas de Reabastecimiento Automáticas
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Insignias rojas luminosas en el panel que destacan de inmediato los productos que llegaron o cayeron por debajo del stock mínimo.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Cálculo de Cantidad Sugerida
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Fórmula automática <em>(Stock Máximo - Stock Actual)</em> que genera al instante la lista de reposición exacta para proveedores.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2 sm:col-span-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Generador de Etiquetas QR
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Creación automática e instantánea de códigos QR vinculados al SKU del producto con formato de impresión listo para impresoras térmicas o planchas de stickers.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 3. TIENDA ONLINE & CATÁLOGO DIGITAL */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'store') && (
-          <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-pink-100 dark:border-pink-900/40 shadow-xl shadow-pink-900/5 space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-600 text-white flex items-center justify-center shadow-md">
-                  <ShoppingBag className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-bold text-fio-pink uppercase tracking-wider">Módulo 3</span>
-                  <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-                    Tienda Online & Catálogo Digital
-                  </h2>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onNavigate('catalogo')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold border border-purple-200 cursor-pointer"
-                >
-                  <BookOpen className="w-3.5 h-3.5" />
-                  <span>Catálogo</span>
-                </button>
-                <button
-                  onClick={() => onNavigate('store')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white text-xs font-bubble font-bold shadow-md cursor-pointer"
-                >
-                  <span>Ver Tienda</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Vitrina Mobile-First para Redes Sociales
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Experiencia fluida pensada para el tráfico directo proveniente de los enlaces en bio de <strong>TikTok (@by_fio)</strong> e <strong>Instagram (@by_fio10)</strong>, con carga ultrarrápida en dispositivos móviles.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Categorías Dinámicas
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Filtros visuales táctiles para: Agendas Personalizadas, Libros de Vacunas Pediátricos, Artículos Sublimados (tazas, tote bags), Stickers en Vinil y Kits de Insumos para creadores.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Personalización Interactiva
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Casillas integradas donde el cliente introduce nombres, frases, tema botánico o letras personalizadas antes de enviar el producto al carrito de compras.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Checkout Rápido & SINPE Móvil
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Cierre de venta en 1 minuto: datos de envío, comprobante de SINPE Móvil al número oficial <strong>6400-4640</strong> y redirección directa del pedido formateado al WhatsApp y al WMS de Fio.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 4. ACADEMIA Y TALLERES CREATIVOS */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'academy') && (
-          <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-amber-100 dark:border-amber-900/40 shadow-xl shadow-amber-900/5 space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#EC4899] to-[#BE185D] text-white flex items-center justify-center shadow-md">
-                  <GraduationCap className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Módulo 4</span>
-                  <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-                    Academia y Talleres Creativos
-                  </h2>
-                </div>
-              </div>
-
-              <button
-                onClick={() => onNavigate('workshops')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-amber-800 dark:text-amber-300 text-xs font-bubble font-bold border border-amber-200 dark:border-amber-800 transition-all cursor-pointer"
-              >
-                <span>Ver Cartelera de Talleres</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Cartelera de Talleres (5 Pilares Formativos)
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Exhibición estructurada de los 5 núcleos de aprendizaje: <em>1. Encuadernación Artesanal</em>, <em>2. Agendas Personalizadas</em>, <em>3. Libros de Vacunas Acolchados</em>, <em>4. Sublimación de Tazas & Artículos</em> y <em>5. Stickers & Papelería Bonita</em>.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white text-emerald-600 dark:text-emerald-400">
-                  Gestión de Cupos en Tiempo Real
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Contador dinámico que actualiza los espacios disponibles con avisos de urgencia psicológica para acelerar inscripciones (ej. <em>"¡Solo quedan 3 cupos!"</em>).
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Ficha de Contenido Detallada
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Desglose automatizado de lo que incluye cada formación: Técnicas paso a paso, Materiales incluidos, Tips de emprendimiento y Acompañamiento post-taller.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Registro de Alumnos & Asistencia
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Módulo de administración interno para inscribir alumnos, registrar pagos y validar asistencia en modalidad presencial o virtual.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 5. CAJA, FACTURACIÓN Y REPORTERÍA */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'finance') && (
-          <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-emerald-100 dark:border-emerald-900/40 shadow-xl shadow-emerald-900/5 space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#34D399] to-[#047857] text-white flex items-center justify-center shadow-md">
-                  <Landmark className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Módulo 5</span>
-                  <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-                    Caja, Facturación y Reportería
-                  </h2>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onNavigate('admin', 'billing')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold border border-purple-200 cursor-pointer"
-                >
-                  <Receipt className="w-3.5 h-3.5" />
-                  <span>Facturación POS</span>
-                </button>
-                <button
-                  onClick={() => onNavigate('admin', 'reports')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bubble font-bold shadow-md cursor-pointer"
-                >
-                  <span>Caja & Reportes</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Generación de Factura Rápida & POS
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Creación instantánea de comprobantes de venta con desglose de artículos, descuentos, costo de envío y total en colones, con opción de facturar en mostrador o asociar a un pedido web.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Cierre Diario & Métricas de Ingresos
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Dashboard financiero que consolida ventas diarias, ingresos por SINPE vs Efectivo y balance de caja con botón para cierre contable de jornada.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white text-emerald-600 dark:text-emerald-400">
-                  Envío Directo por WhatsApp
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Botón de un clic para despachar el resumen de compra y comprobante digital directamente al chat de WhatsApp del cliente con formato formal y limpio.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 6. ADMINISTRACIÓN, PRECIOS Y USUARIOS */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'admin') && (
-          <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#8B5CF6] to-[#6D28D9] text-white flex items-center justify-center shadow-md">
-                  <Users className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-bold text-fio-purple uppercase tracking-wider">Módulo 6</span>
-                  <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-                    Administración, Precios y Usuarios
-                  </h2>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onNavigate('admin', 'pricing')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-amber-800 text-xs font-bubble font-bold border border-amber-200 cursor-pointer"
-                >
-                  <Tag className="w-3.5 h-3.5" />
-                  <span>Precios</span>
-                </button>
-                <button
-                  onClick={() => onNavigate('admin', 'users')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bubble font-bold shadow-md cursor-pointer"
-                >
-                  <span>Perfiles & PINs</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Editor de Precios y Listas
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Modificación ágil de costos, precios mayoristas y escalas de descuentos para stickers y productos terminados desde una interfaz centralizada.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Perfiles de Usuarios y Roles (PINs)
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Gestión de accesos diferenciados para Fio (Administradora Principal con acceso total) y Asistentes de Alisto/Ventas con PINs individuales de 4 dígitos.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white text-fio-pink">
-                  Mascota Interactiva (Estrellita Animada)
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Asistente flotante 3D integrada en toda la web que guía con mensajes carismáticos, accesos directos al catálogo, carrito y WhatsApp de soporte.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 7. ANALÍTICA Y MÉTRICAS EN TIEMPO REAL (/metricas) */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'metrics') && (
-          <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-indigo-100 dark:border-indigo-900/40 shadow-xl shadow-indigo-900/5 space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-700 text-white flex items-center justify-center shadow-md">
-                  <BarChart3 className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Módulo 7</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 font-bold animate-pulse">
-                      ● En Vivo (Tiempo Real)
-                    </span>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-                    Analítica & Métricas en Tiempo Real (/metricas)
-                  </h2>
-                </div>
-              </div>
-
-              <button
-                onClick={() => onNavigate('metricas')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 text-xs font-bubble font-bold border border-indigo-200 dark:border-indigo-800 transition-all cursor-pointer"
-              >
-                <span>Abrir Panel /metricas</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Generador de Enlaces de Campaña con Rastreo (?ref=slug)
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Crea links únicos para Instagram Bio, WhatsApp, TikTok o ferias, rastreando clics, cargas de página y destino específico (Portada o secciones puntuales).
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Sincronización en Vivo Multi-Dispositivo
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  0 ms de latencia entre pestañas abiertas y persistencia multi-dispositivo en la nube con polling inteligente (2.5s) y pausa automática en segundo plano.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Desglose por Dispositivos (PC vs Teléfonos Celulares)
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Conteo cuantitativo y barras porcentuales comparativas para conocer con exactitud desde dónde visita la audiencia a By.Fio.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <h3 className="font-bubble font-bold text-sm text-slate-900 dark:text-white">
-                  Ranking de las 16 Secciones de la Web
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Mapeo de popularidad y permanencia de cada sección pública y submódulo de administración, con botón directo para navegar a cada una.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 8. EXPERIENCIA MULTIMEDIA, AUDIO & ARQUITECTURA CLOUD */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'admin') && (
-          <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1B2E] border border-purple-100 dark:border-purple-900/40 shadow-xl shadow-purple-900/5 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-purple-900/40">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-fio-pink to-purple-600 text-white flex items-center justify-center shadow-md">
-                <Star className="w-6 h-6 fill-current" />
-              </div>
-              <div>
-                <span className="text-[11px] font-bold text-fio-pink uppercase tracking-wider">Módulo 8</span>
-                <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white">
-                  Experiencia Multimedia, Audio & Arquitectura Cloud
-                </h2>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <div className="flex items-center gap-2 text-fio-purple">
-                  <Star className="w-4 h-4 fill-fio-purple" />
-                  <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Video Intro By.Fio</h3>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Cinemática de entrada fluida con overlay de bienvenida y botón de reproducción manual en la barra de navegación.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <div className="flex items-center gap-2 text-fio-pink">
-                  <Volume2 className="w-4 h-4" />
-                  <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Audio Háptico Orgánico</h3>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Efectos de sonido de gotas de agua suaves al interactuar con botones para una sensación artesanal y táctil.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <div className="flex items-center gap-2 text-amber-500">
-                  <Palette className="w-4 h-4" />
-                  <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Tema Claro / Oscuro</h3>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Conmutación visual Sol/Luna con contraste de alta legibilidad configurado estrictamente bajo <em>darkMode: 'class'</em>.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 space-y-2">
-                <div className="flex items-center gap-2 text-sky-500">
-                  <Database className="w-4 h-4" />
-                  <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Base de Datos en la Nube</h3>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                  Arquitectura moderna con almacenamiento en la nube de alta disponibilidad, ultrarrápida, escalable y sin caídas de servicio.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-      </div>
-
-      {/* SECCIÓN FINAL REQUERIDA POR EL USUARIO: LISTA CON SOLO EL NOMBRE DE CADA COSA */}
+      {/* 8. LISTA COMPLETA DE TODO LO QUE CONTIENE (ACTUALIZADA) */}
       <section className="p-6 sm:p-10 rounded-3xl bg-gradient-to-br from-slate-900 via-[#1E1233] to-[#2B1048] text-white shadow-2xl border border-purple-800/40 space-y-8">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-fio-purple/30 border border-purple-400/30 text-xs font-bubble font-bold text-fio-yellow">
             <Layers className="w-3.5 h-3.5" />
-            <span>Inventario Exhaustivo de la Plataforma</span>
+            <span>Inventario Exhaustivo Oficial</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bubble font-bold text-white tracking-wide">
             Lista Completa de Todo lo que Contiene
           </h2>
           <p className="text-xs sm:text-sm text-purple-200/80 font-sans">
-            Relación directa de todas las herramientas, pantallas, funciones y módulos implementados en By.Fio:
+            Relación íntegra de todos los módulos base, regalías bonificadas y herramientas que conforman tu plataforma:
           </p>
         </div>
 
-        {/* LISTADO EN COLUMNAS CON SOLO EL NOMBRE DE CADA COSA */}
+        {/* LISTADO EN 3 COLUMNAS LIMPIAS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Columna 1: Logística, WMS & Inventario */}
+          {/* Columna 1: 11 Módulos Base */}
           <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
             <div className="flex items-center gap-2 pb-2 border-b border-white/10 text-fio-pink font-bubble font-bold text-sm">
-              <QrCode className="w-4 h-4" />
-              <span>Logística WMS & Abastecimiento</span>
+              <Boxes className="w-4 h-4" />
+              <span>11 Módulos Base (Valor: ₡130.000/mes)</span>
             </div>
             <ul className="space-y-2 text-xs text-purple-100 font-sans">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Cola de Pedidos en Orden (FIFO)</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>1. Verificación de pagos SinpePay</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡15.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Control de Estados en Tiempo Real</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>2. Tienda Online</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡15.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Alisto Guiado Paso a Paso</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>3. Catálogo de Productos</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡10.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Validación por Escáner QR de Cámara / Láser</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>4. Cursos y Talleres</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡15.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Control de Stock Actual</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>5. Perfiles de Usuario</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡10.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Definición de Mínimos y Máximos</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>6. Cola y Alisto de Pedidos</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡15.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Alertas de Reabastecimiento Automáticas</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>7. Proveedores y Compras</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡10.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Cálculo de Cantidad Sugerida</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>8. Directorio de Clientes</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡10.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Generador de Etiquetas QR e Impresión</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>9. Caja y Reportería</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡15.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Lista Automatizada para Proveedores</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>10. Notificación de Pedidos</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡5.000/mes</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
-                <span>Trazabilidad y Ubicación por Estantería</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-pink" />
+                  <span>11. Web y Mantenimiento continuo</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡10.000/mes</span>
               </li>
             </ul>
           </div>
 
-          {/* Columna 2: Tienda Online, Academia & Facturación */}
+          {/* Columna 2: Regalías 100% GRATIS (₡0) */}
           <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
             <div className="flex items-center gap-2 pb-2 border-b border-white/10 text-emerald-300 font-bubble font-bold text-sm">
-              <ShoppingBag className="w-4 h-4" />
-              <span>Tienda, Academia & POS</span>
+              <Gift className="w-4 h-4" />
+              <span>Regalías Incluidas 100% GRATIS (₡0)</span>
             </div>
             <ul className="space-y-2 text-xs text-purple-100 font-sans">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Vitrina Mobile-First (TikTok & Instagram)</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span>Módulo de Comprobantes por Correo</span>
+                </span>
+                <span className="text-[11px] font-bold text-emerald-300">₡0 (Val. ₡10.000)</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Catálogo Comercial Mayorista Online</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span>Módulo de Agenda para citas y eventos</span>
+                </span>
+                <span className="text-[11px] font-bold text-emerald-300">₡0 (Gratis)</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Personalización Interactiva de Artículos</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span>Hosting, Dominio y Renovaciones Anuales</span>
+                </span>
+                <span className="text-[11px] font-bold text-emerald-300">₡0 (Ahorro $25 USD)</span>
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex items-center gap-2 pt-2 border-t border-white/10 text-[11px] text-purple-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Carrito Flotante & Checkout SINPE 6400-4640</span>
+                <span>Cero pagos por adelantado ni inversión inicial</span>
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex items-center gap-2 text-[11px] text-purple-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Cartelera de Talleres (5 Pilares)</span>
+                <span>Cero cobros anuales sorpresas</span>
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex items-center gap-2 text-[11px] text-purple-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Gestión de Cupos en Tiempo Real</span>
+                <span>Libertad total sin contratos forzosos</span>
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex items-center gap-2 text-[11px] text-purple-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Fichas de Contenido de Talleres</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Registro de Alumnos & Control de Asistencia</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Facturación Rápida en Mostrador & POS</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Cierre Diario de Caja & Gráficos Financieros</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Envío Directo de Factura a WhatsApp</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Ahorro de Tiempo en Pedidos por WhatsApp</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Panel de Pedidos Online Automatizado</span>
+                <span>Acompañamiento directo como Partners</span>
               </li>
             </ul>
           </div>
 
-          {/* Columna 3: Administración, Analítica & Experiencia */}
+          {/* Columna 3: Beneficio Adicional & Operativa */}
           <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
             <div className="flex items-center gap-2 pb-2 border-b border-white/10 text-fio-yellow font-bubble font-bold text-sm">
-              <BarChart3 className="w-4 h-4" />
-              <span>Admin, Analítica & Multimedia</span>
+              <Smartphone className="w-4 h-4" />
+              <span>Beneficio Adicional & Ecosistema</span>
             </div>
             <ul className="space-y-2 text-xs text-purple-100 font-sans">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Panel de Administración Central (Hub)</span>
+              <li className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
+                  <span>App Multiusuario (Celular y PC)</span>
+                </span>
+                <span className="text-[11px] font-bold text-fio-yellow">₡5.000/mes</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Editor de Precios y Listas de Stickers</span>
+                <span>Tarifa Partner: ₡40.000/mes garantizada 12 meses</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Perfiles de Usuarios & PINs de 4 Dígitos</span>
+                <span>Ajuste anual reducido a la mitad (solo 10%)</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Mascota Interactiva (Estrellita Animada)</span>
+                <span>Ahorro mensual directo de más de ₡110.000/mes</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Generador de Enlaces Rastreados (/metricas)</span>
+                <span>Logística WMS con alisto guiado y escaneo QR</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Telemetría en Vivo PC vs Celulares</span>
+                <span>Mascota 3D interactiva Estrellita By.Fio</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Mapeo de Popularidad de las 16 Secciones</span>
+                <span>Panel de Analítica y Métricas (/metricas)</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Video Intro Cinematográfico Oficial By.Fio</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Efectos de Sonido Hápticos (Gotas de Agua)</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Selector de Modo Claro / Modo Oscuro</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Base de Datos en la Nube de Alta Disponibilidad</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-fio-yellow" />
-                <span>Ecosistema Centralizado Unificado</span>
+                <span>Base de datos en la nube con alta disponibilidad</span>
               </li>
             </ul>
           </div>
@@ -1029,7 +973,7 @@ MÓDULOS DEL SISTEMA:
               By.Fio Talleres Creativos & Tienda de Papelería Bonita
             </p>
             <p className="text-[11px] text-purple-200/70 font-sans">
-              Desarrollado con arquitectura moderna de alto rendimiento · Costa Rica 2026
+              Propuesta Oficial de Alianza Estratégica & Modelo Partner · Costa Rica 2026
             </p>
           </div>
 
