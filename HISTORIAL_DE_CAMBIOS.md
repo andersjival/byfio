@@ -17,6 +17,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.0 - Módulo Integral de Historial de Ventas con Filtros por Día, Semana, Mes y Detalle Completo de Pedido
+- [x] **Nuevo Módulo de Historial de Ventas ([`SalesHistorySection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SalesHistorySection.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`routeHelpers.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts)):**
+  - Incorporada nueva sección administrativa *"Historial de Ventas"* con acceso oficial desde el Menú Principal (Hub) y soporte para URL directa (`/admin/ventas`).
+  - **Filtros Temporales de Alta Precisión:**
+    - **Por Día:** Botones directos *"Hoy"*, *"Ayer"* y selector de fecha personalizada (`<input type="date" />`).
+    - **Por Semana:** Botones *"Esta Semana"* (Lunes a Domingo), *"Últimos 7 Días"* y *"Semana Pasada"*.
+    - **Por Mes:** Botones *"Este Mes"*, *"Mes Pasado"* y selector de mes personalizado (`<input type="month" />`).
+    - Opción de visualización general *"Todo"* el histórico.
+  - **Buscador & Filtros Operativos:** Búsqueda en tiempo real por número de orden, cliente, teléfono o productos, combinable con filtros por estado de pago (Pagado / Pendiente) y estado del flujo de alisto.
+  - **Métricas Consolidadas del Período:** Tarjetas en cabecera con cálculo automático de Ventas Totales (₡), Total de Pedidos, Ticket Promedio y Cantidad de Artículos Vendidos.
+  - **Inspección Profunda de "El Pedido que el Cliente Realizó":**
+    - Modal emergente con el desglose exacto de cada artículo (nombre, SKU, estante, cantidad, precio unitario y personalización de grabado en foil `customText`).
+    - Ficha de cliente con teléfono vinculado a WhatsApp con 1 clic, correo y dirección completa o modalidad de retiro.
+    - Resumen financiero formal con desglose de subtotal, costo de envío y total cobrado.
+    - Botones de acción directa para emitir comprobante de pago (`setInvoiceOrder`) y contactar al cliente por WhatsApp.
+  - **Exportación de Datos:** Botón para descargar el reporte filtrado en formato CSV compatible con Excel.
+
 ### Versión 4.15.7 - Eliminación de Botones Duplicados en Cabecera Admin (SINPE BCR y Pedidos Proveedor)
 - [x] **Depuración de la Barra Superior de Administración ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
   - Eliminados los botones redundantes *"SINPE BCR"* y *"Pedidos Proveedor"* de la cabecera del panel de administración.

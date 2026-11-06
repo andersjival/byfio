@@ -1295,9 +1295,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
     if (tab === 'hub') return true;
     const perms = currentUser.permissions as Record<string, boolean | undefined> | undefined;
-    if (tab === 'suppliers') {
+    if (tab === 'suppliers' || tab === 'sales') {
       if (currentUser.role === 'staff' && perms) {
-        return perms['suppliers'] !== false;
+        return perms[tab] !== false;
       }
       return true;
     }
@@ -1324,6 +1324,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customers: true,
       agenda: true,
       suppliers: true,
+      sales: true,
     };
 
     // 1. Si se especificó un perfil concreto en la pantalla de selección
@@ -1423,6 +1424,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customers: true,
       agenda: true,
       suppliers: true,
+      sales: true,
     };
 
     // 0. Cuenta Superadmin Global (superadmin@byfio.com / SuperAdmin2026!)

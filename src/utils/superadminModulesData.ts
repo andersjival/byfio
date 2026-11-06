@@ -454,4 +454,32 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
       },
     ],
   },
+  {
+    id: 'sales',
+    name: 'Historial de Ventas',
+    category: 'Ventas & Caja',
+    description: 'Historial completo de ventas con filtros por día, semana y mes, desglose detallado del pedido del cliente y totales.',
+    iconName: 'ShoppingBag',
+    enabled: true,
+    features: [
+      {
+        id: 'sales_filters',
+        name: 'Filtros por Día, Semana y Mes',
+        description: 'Filtrado temporal flexible para consulta de ventas históricas.',
+        enabled: true,
+      },
+      {
+        id: 'sales_order_detail',
+        name: 'Ver Pedido del Cliente',
+        description: 'Modal y vista expandida con el desglose exacto de los productos, datos del cliente y pagos.',
+        enabled: true,
+      },
+      {
+        id: 'sales_metrics_summary',
+        name: 'Resumen de Facturación del Período',
+        description: 'Cálculo automático de total facturado, ticket promedio y volumen de pedidos.',
+        enabled: true,
+      },
+    ],
+  },
 ];

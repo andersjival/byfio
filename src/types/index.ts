@@ -203,6 +203,7 @@ export interface UserPermissions {
   customers?: boolean; // Directorio de Clientes
   agenda?: boolean;    // Agenda & Organizador de Tareas
   suppliers?: boolean; // Pedidos a Proveedor & Requisiciones
+  sales?: boolean;     // Historial de Ventas
 }
 
 export type AgendaCategory = 'taller' | 'entrega' | 'produccion' | 'proveedor' | 'recordatorio';

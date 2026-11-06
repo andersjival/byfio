@@ -43,6 +43,7 @@ import { AdminPricingModal } from './components/admin/AdminPricingModal';
 import { SinpePaymentsSection } from './components/admin/SinpePaymentsSection';
 import { AgendaSection } from './components/admin/AgendaSection';
 import { SuppliersOrdersSection } from './components/admin/SuppliersOrdersSection';
+import { SalesHistorySection } from './components/admin/SalesHistorySection';
 
 import { MetricsPage } from './components/admin/MetricsPage';
 import { PropuestaPage } from './components/propuesta/PropuestaPage';
@@ -125,6 +126,7 @@ export const App: React.FC = () => {
       else if (tab === 'workshops') targetPath = '/admin/talleres';
       else if (tab === 'pricing') targetPath = '/admin/precios';
       else if (tab === 'users') targetPath = '/admin/usuarios';
+      else if (tab === 'sales') targetPath = '/admin/ventas';
       else targetPath = '/admin';
     }
 
@@ -423,6 +425,7 @@ export const App: React.FC = () => {
                         )}
                         {adminTab === 'agenda' && <AgendaSection />}
                         {adminTab === 'suppliers' && <SuppliersOrdersSection />}
+                        {adminTab === 'sales' && <SalesHistorySection />}
                       </>
                     )}
                   </div>

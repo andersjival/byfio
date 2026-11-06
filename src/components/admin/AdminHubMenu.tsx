@@ -4,7 +4,7 @@ import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
-  BarChart3, Lock, UserCheck, Calendar, Truck
+  BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag
 } from 'lucide-react';
 
 import { AppRoute, SupplierOrder } from '../../types';
@@ -127,6 +127,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       badgeClass: 'bg-amber-100 text-amber-900 font-bold',
       icon: Truck,
       gradient: 'from-[#F59E0B] to-[#B45309]',
+    },
+    {
+      id: 'sales' as AdminTabType,
+      title: 'Historial de Ventas',
+      badge: `${orders.length} ventas`,
+      badgeClass: 'bg-emerald-100 text-emerald-900 font-bold',
+      icon: ShoppingBag,
+      gradient: 'from-[#059669] to-[#047857]',
     },
   ];
 
