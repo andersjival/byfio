@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.20 - Especificación de Condiciones de Instalación SINPE Móvil y Modalidad Alternativa con Pasarela al 1.5%
+- [x] **Condiciones de Instalación y Recepción Gmail ([`SinpePaymentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx), [`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
+  - Renombrado y estandarizado oficial: *"Módulo de Pagos y Recepción SINPE Móvil"*.
+  - Incorporada especificación explícita de instalación: la modalidad directa de verificación de comprobantes opera al **0% de comisión**, bajo la condición técnica obligatoria de que el usuario / comercio reciba los correos de verificación bancaria en una bandeja de **Gmail**.
+- [x] **Sección de Modalidad Alternativa con Pasarela de Pagos (1.5% Comisión) ([`SinpePaymentsSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx), [`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx), [`CashRegisterReports.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Añadida sección informativa destacada sobre la versión con pasarela de pago para confirmación automática en tiempo real con comisión de **1.5% por transacción**.
+  - Requisito legal y fiscal estipulado: esta versión con pasarela puede integrarse siempre y cuando el comercio esté debidamente inscrito en el **Régimen Simplificado** ante Tributación.
+  - Sincronización completa en la propuesta comercial de Partner (Módulo 1 Base y tarjetas comparativas) y en el panel administrativo.
+
 ### Versión 4.16.19 - Optimización de Rendimiento Móvil, Carga Instantánea y Compatibilidad Universal iOS Safari / Android
 - [x] **Carga Instantánea y Desbloqueo en iPhone Safari / Android ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Reducción drástica del tiempo de presentación inicial a 800ms para impacto visual inmediato sin bloqueos de pantalla.

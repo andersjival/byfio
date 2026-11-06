@@ -76,8 +76,8 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     },
     {
       id: 'sinpe' as AdminTabType,
-      title: 'Pagos SINPE BCR',
-      badge: sinpeTransactions.length > 0 ? `${sinpeTransactions.length} verificados` : 'Redirección BCR',
+      title: 'Pagos y Recepción SINPE Móvil',
+      badge: sinpeTransactions.length > 0 ? `${sinpeTransactions.length} verificados` : 'Recepción SINPE',
       badgeClass: sinpeTransactions.length > 0 ? 'bg-purple-100 text-purple-900 font-bold' : 'bg-slate-100 text-slate-700',
       icon: Landmark,
       gradient: 'from-[#6B21A8] to-[#4C1D95]',

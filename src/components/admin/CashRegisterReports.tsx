@@ -295,7 +295,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
             className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 text-xs font-bubble font-bold transition-all active:scale-95 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
           >
             <Landmark className="w-3.5 h-3.5 text-purple-700" />
-            <span>Módulo de Pagos SINPE BCR →</span>
+            <span>Módulo de Pagos y Recepción SINPE Móvil →</span>
           </button>
         </div>
 

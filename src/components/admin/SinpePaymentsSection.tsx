@@ -7,7 +7,8 @@ import {
   CheckCircle2, AlertTriangle, Mail, ShieldCheck,
   Copy, Check, Trash2, ArrowRight, DollarSign,
   GraduationCap, ShoppingBag, Landmark, Phone, Calendar, Hash,
-  RefreshCw, Send, CheckCircle, ExternalLink, Search, ShieldAlert
+  RefreshCw, Send, CheckCircle, ExternalLink, Search, ShieldAlert,
+  CreditCard, Building2, HelpCircle
 } from 'lucide-react';
 
 export const SinpePaymentsSection: React.FC = () => {
@@ -229,7 +230,7 @@ export const SinpePaymentsSection: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 leading-tight">
-                  Módulo de Pagos &amp; Redirección SINPE BCR
+                  Módulo de Pagos y Recepción SINPE Móvil
                 </h2>
                 <span className="text-[11px] uppercase font-bold bg-amber-400 text-purple-950 px-2.5 py-0.5 rounded-full shadow-xs">
                   Banco BCR Oficial
@@ -242,7 +243,7 @@ export const SinpePaymentsSection: React.FC = () => {
                 )}
               </div>
               <p className="text-xs sm:text-sm text-slate-500 font-sans mt-0.5">
-                Procesamiento de notificaciones de <span className="font-mono text-purple-800 font-semibold">mensajero@bancobcr.com</span> con incremento automático de caja en Tienda y Talleres.
+                Procesamiento y validación inteligente de comprobantes SINPE Móvil con incremento automático de caja en Tienda y Talleres.
               </p>
             </div>
           </div>
@@ -256,6 +257,57 @@ export const SinpePaymentsSection: React.FC = () => {
               <Mail className="w-3.5 h-3.5 text-purple-700" />
               <span>Configurar Correo</span>
             </button>
+          </div>
+        </div>
+
+        {/* Sección de Modalidades de Instalación y Condiciones del Módulo */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-3 border-t border-slate-100">
+          {/* Opción 1: Verificación Directa por Correo Gmail (Condición Obligatoria) */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50/40 to-white border border-purple-200 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-purple-700 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Mail className="w-4 h-4 text-amber-300" />
+                </div>
+                <h4 className="font-bubble font-bold text-xs sm:text-sm text-purple-950">
+                  Opción 1: Verificación Directa por Gmail (0% Comisión)
+                </h4>
+              </div>
+              <span className="text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
+                0% Comisión
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 font-sans leading-relaxed">
+              <strong>Condición para instalación:</strong> Este módulo está sujeto a instalación bajo el condicionamiento de que el usuario / comercio pueda recibir los correos de verificación y comprobante de SINPE Móvil directamente en una bandeja de correos de <strong>Gmail</strong>. Esta recepción en Gmail es la condición obligatoria para poder instalar y operar esta versión de verificación directa.
+            </p>
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-purple-900 bg-purple-100/70 px-2.5 py-1 rounded-xl border border-purple-200">
+              <CheckCircle2 className="w-3.5 h-3.5 text-purple-700 shrink-0" />
+              <span>Instalación estándar incluida • Detección anti-fraude y uso único</span>
+            </div>
+          </div>
+
+          {/* Opción 2: Pasarela de Pago Automatizada de Confirmación (1.5% Comisión + Régimen Simplificado) */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50/80 via-orange-50/30 to-white border border-amber-300/80 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <CreditCard className="w-4 h-4 text-amber-100" />
+                </div>
+                <h4 className="font-bubble font-bold text-xs sm:text-sm text-amber-950">
+                  Opción 2: Pasarela de Confirmación SINPE (1.5% Comisión)
+                </h4>
+              </div>
+              <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+                1.5% Pasarela
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 font-sans leading-relaxed">
+              <strong>Versión con pasarela de pago:</strong> Se puede instalar también otra versión de SINPE Móvil en pagos mediante pasarela de pago de confirmación automática en tiempo real con una <strong>comisión de 1.5% por transacción</strong>. Esta versión se puede integrar en el sistema siempre y cuando la persona o negocio esté inscrita en la parte del <strong>Régimen Simplificado</strong>.
+            </p>
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-900 bg-amber-100/80 px-2.5 py-1 rounded-xl border border-amber-200">
+              <Building2 className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+              <span>Confirmación 100% desatendida • Requiere estar en Régimen Simplificado</span>
+            </div>
           </div>
         </div>
 
@@ -770,18 +822,38 @@ export const SinpePaymentsSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Instrucciones paso a paso para Gmail / Outlook */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-xs text-slate-700">
+          {/* Instrucciones paso a paso para Gmail / Pasarela Alternativa */}
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3.5 text-xs text-slate-700">
             <h4 className="font-bubble font-bold text-slate-900 flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Cómo Activar la Redirección Automática en Gmail o Outlook:</span>
+              <span>Condiciones de Instalación y Configuración en Gmail:</span>
             </h4>
+            <div className="p-3 rounded-xl bg-purple-50/80 border border-purple-200 text-purple-950 space-y-1 text-xs">
+              <p className="font-bold flex items-center gap-1.5 text-purple-900">
+                <Mail className="w-3.5 h-3.5 text-purple-700" />
+                <span>Condición obligatoria para instalar esta versión directa (0% comisión):</span>
+              </p>
+              <p className="text-slate-600 font-sans leading-relaxed">
+                El usuario titular debe poder recibir los correos de verificación de transacciones bancarias en su bandeja de entrada de <strong>Gmail</strong>. Una vez recibidos allí, se crea el filtro de reenvío automático o se copian al validador para conciliar en caja sin comisiones intermedias.
+              </p>
+            </div>
+
             <ol className="list-decimal list-inside space-y-1.5 text-slate-600 leading-relaxed font-sans">
-              <li>Ingresa a tu cuenta de correo donde te llegan las notificaciones de SINPE Móvil del BCR.</li>
+              <li>Ingresa a tu cuenta de Gmail donde te llegan las notificaciones de SINPE Móvil del banco.</li>
               <li>Crea un filtro de búsqueda con: <strong>De:</strong> <code className="text-purple-700">mensajero@bancobcr.com</code> y <strong>Asunto:</strong> <code className="text-purple-700">SINPE MÓVIL: Notificación de transacción realizada</code>.</li>
               <li>Configura la acción: <em>"Reenviar a"</em> con la dirección de tu webhook o copia el texto de las notificaciones directamente en este panel.</li>
-              <li>¡Listo! Apenas entra un pago SINPE del BCR, el saldo de la caja aumentará automáticamente y quedará asentado en el sistema con su N° de referencia único.</li>
+              <li>¡Listo! Apenas entra un pago SINPE, el saldo de la caja aumentará automáticamente y quedará asentado con su N° de referencia único anti-fraude.</li>
             </ol>
+
+            <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-950 space-y-1 text-xs">
+              <p className="font-bold flex items-center gap-1.5 text-amber-900">
+                <CreditCard className="w-3.5 h-3.5 text-amber-700" />
+                <span>¿Prefieres confirmación desatendida sin depender de Gmail? (Pasarela 1.5%):</span>
+              </p>
+              <p className="text-slate-600 font-sans leading-relaxed">
+                También es posible instalar la versión con <strong>pasarela de pagos automatizada</strong> (comisión del <strong>1.5%</strong> por transacción). Esta alternativa confirma los pagos en tiempo real en la tienda web, disponible siempre que el negocio esté registrado en el <strong>Régimen Simplificado</strong> ante Tributación.
+              </p>
+            </div>
           </div>
         </div>
       )}
