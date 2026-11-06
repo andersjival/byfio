@@ -17,6 +17,24 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.7 - Blindaje de Seguridad en Notificación de Estrellita (Exclusiva para Administrador y Perfiles Autorizados)
+- [x] **Restricción Estricta de Notificación por Roles y Permisos ([`NewOrderStarAlert.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/NewOrderStarAlert.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Erradicada la aparición de la alerta de la estrellita en la web pública para visitantes y clientes sin sesión activa.
+  - La notificación y el repique de sonido (`playNewOrderChimeSound`) solo se disparan si existe un usuario autenticado con rol Administrador (`role === 'admin'`, `isMasterAdmin` o Superadmin) o perfil Staff con permiso específico habilitado (`workshops` para talleres, `orders` para pedidos).
+  - Bloqueo cuádruple:
+    1. `showNewOrderAlert()` valida sesión y permiso antes de registrar la alerta en estado global.
+    2. Sonido de campana condicionado a `canReceiveOrderNotifications()`.
+    3. `NewOrderStarAlert` renderiza `null` y silencia burbujas ante sesiones públicas o permisos insuficientes.
+    4. Renderizado condicional en `App.tsx` supeditado a existencia de sesión administrativa.
+
+### Versión 4.16.6 - Arranque Automático Instantáneo de Video Intro con Audio
+- [x] **Reproducción Automática Inmediata con Audio ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Eliminado el retraso de 2 segundos de pantalla de letras para que el video arranque de forma 100% automática apenas carga la web.
+  - El video se inicializa directamente con audio activo (`muted=false`, `volume=1.0`) sin requerir que el usuario presione la pantalla.
+  - Gatillado dual inmediato: reproducción automática al montar el componente y respaldo en `onLoadedData` para arrancar en el milisegundo exacto en que los metadatos del video están listos.
+  - Retención de respaldo anti-bloqueo: si una directiva estricta de navegador bloquea audio en carga fría, reproduce fluido sin congelarse y desmutea al primer toque.
+
+
 ### Versión 4.16.5 - Corrección y Estabilidad Total de la Intro Web (Sin Bloqueos de Autoplay ni Congelamiento)
 - [x] **Arranque Fluido sin Bloqueo por Autoplay Policy ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
   - Corrección del bloqueo crítico que congelaba la intro al entrar al video: se eliminó el intento forzado de desmutear en timer (`t2`) sin interacción previa, el cual causaba que el navegador pausara el video de inmediato.
