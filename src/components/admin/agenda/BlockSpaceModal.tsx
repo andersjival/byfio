@@ -52,19 +52,19 @@ export const BlockSpaceModal: React.FC<BlockSpaceModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-[#F1F2F6] rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-white/90 space-y-4">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200">
+      <div className="bg-[#F1F2F6] rounded-3xl max-w-md w-full max-h-[92vh] shadow-2xl border border-white/90 flex flex-col overflow-hidden my-auto animate-in zoom-in-95 duration-150">
+        {/* Header Fijo */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 shrink-0 bg-[#F1F2F6]">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
-              <Lock className="w-5 h-5 text-amber-100" />
+            <div className="w-9 h-9 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+              <Lock className="w-4 h-4 text-amber-100" />
             </div>
             <div>
-              <h3 className="font-bubble font-bold text-base text-slate-900 leading-tight">
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 leading-tight">
                 {initialSpace ? 'Ajustar Espacio Bloqueado' : 'Bloquear Espacio en Agenda'}
               </h3>
-              <p className="text-[11px] text-slate-500 font-sans">
+              <p className="text-[10px] text-slate-500 font-sans">
                 Reservar horarios no disponibles o recesos de descanso
               </p>
             </div>
@@ -72,13 +72,14 @@ export const BlockSpaceModal: React.FC<BlockSpaceModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-white/80 transition-all cursor-pointer"
+            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-white/80 transition-all cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5">
+        <form onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-1 overflow-hidden">
+          <div className="overflow-y-auto px-5 py-3.5 space-y-3 flex-1 scrollbar-thin">
           {/* Título / Motivo */}
           <div>
             <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
@@ -196,8 +197,10 @@ export const BlockSpaceModal: React.FC<BlockSpaceModalProps> = ({
             />
           </div>
 
-          {/* Botones de Acción */}
-          <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+          </div>
+
+          {/* Botones de Acción Fijos al Pie */}
+          <div className="flex items-center justify-between px-5 py-3 border-t border-slate-200 shrink-0 bg-[#F1F2F6]">
             {initialSpace && onDelete ? (
               <button
                 type="button"
@@ -208,7 +211,7 @@ export const BlockSpaceModal: React.FC<BlockSpaceModalProps> = ({
                 className="flex items-center gap-1 text-xs font-bubble text-rose-600 hover:text-rose-800 py-1.5 px-2.5 rounded-xl hover:bg-rose-50 transition-all cursor-pointer"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Eliminar Bloqueo</span>
+                <span>Eliminar</span>
               </button>
             ) : <div />}
 

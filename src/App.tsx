@@ -24,14 +24,12 @@ import { AdminHeader } from './components/admin/AdminHeader';
 import { AdminTabs, type AdminTabType } from './components/admin/AdminTabs';
 import { AdminHubMenu } from './components/admin/AdminHubMenu';
 import { OrdersQueue } from './components/admin/OrdersQueue';
-import { QuickBillingSection } from './components/admin/QuickBillingSection';
 import { InventoryTable } from './components/admin/InventoryTable';
 import { CashRegisterReports } from './components/admin/CashRegisterReports';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
 import { UserProfilesSection } from './components/admin/UserProfilesSection';
 import { CustomersSection } from './components/admin/CustomersSection';
 import { Customer } from './types';
-import { GuidedPickingModal } from './components/admin/GuidedPickingModal';
 import { SupplierOrderModal } from './components/admin/SupplierOrderModal';
 import { QrLabelModal } from './components/admin/QrLabelModal';
 import { InvoiceModal } from './components/admin/InvoiceModal';
@@ -41,13 +39,16 @@ import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
 import { AdminPricingModal } from './components/admin/AdminPricingModal';
 import { SinpePaymentsSection } from './components/admin/SinpePaymentsSection';
-import { AgendaSection } from './components/admin/AgendaSection';
 import { SuppliersOrdersSection } from './components/admin/SuppliersOrdersSection';
 import { SalesHistorySection } from './components/admin/SalesHistorySection';
 
-import { MetricsPage } from './components/admin/MetricsPage';
-import { PropuestaPage } from './components/propuesta/PropuestaPage';
-import { SuperadminSection } from './components/superadmin/SuperadminSection';
+// Carga perezosa (Lazy Loading) de módulos pesados administrativos para carga móvil instantánea
+const QuickBillingSection = React.lazy(() => import('./components/admin/QuickBillingSection').then((m) => ({ default: m.QuickBillingSection })));
+const GuidedPickingModal = React.lazy(() => import('./components/admin/GuidedPickingModal').then((m) => ({ default: m.GuidedPickingModal })));
+const AgendaSection = React.lazy(() => import('./components/admin/AgendaSection').then((m) => ({ default: m.AgendaSection })));
+const MetricsPage = React.lazy(() => import('./components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
+const PropuestaPage = React.lazy(() => import('./components/propuesta/PropuestaPage').then((m) => ({ default: m.PropuestaPage })));
+const SuperadminSection = React.lazy(() => import('./components/superadmin/SuperadminSection').then((m) => ({ default: m.SuperadminSection })));
 
 import { metricsTracker, appendRefToPath, getActiveCampaignRef } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
@@ -297,7 +298,9 @@ export const App: React.FC = () => {
 
               {currentRoute === 'metricas' && isModuleEnabled('metricas') && (
                 isAdminOrSuperadmin ? (
-                  <MetricsPage onNavigate={navigate} />
+                  <React.Suspense fallback={<div className="py-16 text-center font-bubble text-sm text-slate-400">Cargando métricas...</div>}>
+                    <MetricsPage onNavigate={navigate} />
+                  </React.Suspense>
                 ) : (
                   <div className="py-12 max-w-md mx-auto text-center space-y-4 animate-fadeIn">
                     <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 mx-auto flex items-center justify-center shadow-inner">
@@ -319,10 +322,16 @@ export const App: React.FC = () => {
               )}
 
               {currentRoute === 'propuesta' && (
-                <PropuestaPage onNavigate={navigate} />
+                <React.Suspense fallback={<div className="py-16 text-center font-bubble text-sm text-slate-400">Cargando propuesta...</div>}>
+                  <PropuestaPage onNavigate={navigate} />
+                </React.Suspense>
               )}
 
-              {currentRoute === 'superadmin' && <SuperadminSection onNavigate={navigate} />}
+              {currentRoute === 'superadmin' && (
+                <React.Suspense fallback={<div className="py-16 text-center font-bubble text-sm text-slate-400">Cargando panel de superadmin...</div>}>
+                  <SuperadminSection onNavigate={navigate} />
+                </React.Suspense>
+              )}
 
               {currentRoute === 'admin' && (
                 !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
@@ -384,10 +393,12 @@ export const App: React.FC = () => {
 
                         {adminTab === 'orders' && <OrdersQueue />}
                         {adminTab === 'billing' && (
-                          <QuickBillingSection
-                            initialCustomer={billingTargetCustomer}
-                            onClearInitialCustomer={() => setBillingTargetCustomer(null)}
-                          />
+                          <React.Suspense fallback={<div className="py-12 text-center text-slate-400 font-bubble text-sm">Cargando facturación rápida...</div>}>
+                            <QuickBillingSection
+                              initialCustomer={billingTargetCustomer}
+                              onClearInitialCustomer={() => setBillingTargetCustomer(null)}
+                            />
+                          </React.Suspense>
                         )}
                         {adminTab === 'inventory' && <InventoryTable />}
                         {adminTab === 'reports' && (
@@ -411,7 +422,11 @@ export const App: React.FC = () => {
                             }}
                           />
                         )}
-                        {adminTab === 'agenda' && <AgendaSection />}
+                        {adminTab === 'agenda' && (
+                          <React.Suspense fallback={<div className="py-12 text-center text-slate-400 font-bubble text-sm">Cargando agenda...</div>}>
+                            <AgendaSection />
+                          </React.Suspense>
+                        )}
                         {adminTab === 'suppliers' && <SuppliersOrdersSection />}
                         {adminTab === 'sales' && <SalesHistorySection />}
                       </>

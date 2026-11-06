@@ -17,6 +17,28 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.19 - Optimización de Rendimiento Móvil, Carga Instantánea y Compatibilidad Universal iOS Safari / Android
+- [x] **Carga Instantánea y Desbloqueo en iPhone Safari / Android ([`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Reducción drástica del tiempo de presentación inicial a 800ms para impacto visual inmediato sin bloqueos de pantalla.
+  - Temporizador de seguridad recortado a 5.0s (antes 13.5s) con escape automático ante buffering o retrasos de red móvil.
+  - Blindaje contra excepciones de WebKit en iOS Safari (`InvalidStateError` al consultar `currentTime` antes de metadata).
+  - Tocar en cualquier punto de la pantalla entra inmediatamente a la tienda sin demoras.
+  - Memoria de sesión con `safeSessionStorage`: tras ver o saltar la intro, las navegaciones y recargas dentro de la sesión cargan la web al instante en 0.1s.
+- [x] **División de Código y Reducción del Bundle Principal ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`vite.config.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/vite.config.ts)):**
+  - Carga perezosa (`React.lazy` + `Suspense`) de módulos pesados administrativos (`GuidedPickingModal`, `QuickBillingSection`, `AgendaSection`, `MetricsPage`, `PropuestaPage`, `SuperadminSection`).
+  - Aislamiento de librerías de escaneo QR y cámara (`html5-qrcode`, `qrcode.react`) en su propio chunk diferido.
+  - El peso del bundle principal se redujo en más de 330 kB, permitiendo a cualquier teléfono móvil descargar la portada y tienda a máxima velocidad.
+- [x] **Blindaje Universal para Modos Privados y WebViews ([`safeStorage.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/safeStorage.ts), [`main.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx), [`ErrorBoundary.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ErrorBoundary.tsx)):**
+  - Módulo `safeStorage` con almacenamiento en memoria fallback ante bloqueos de `SecurityError` en pestañas privadas de Safari.
+  - Compatibilidad de compilación extendida a Safari 13+, iOS 12+ y WebViews de redes sociales (Instagram, TikTok, WhatsApp).
+
+### Versión 4.16.18 - Ajuste Ergonómico de Altura y Contención en Ventanas de la Agenda
+- [x] **Contención de Altura y Scroll Inteligente ([`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx), [`BlockSpaceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/BlockSpaceModal.tsx), [`CalendarSyncModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarSyncModal.tsx)):**
+  - Limitación estricta de altura máxima a `max-h-[92vh]` con disposición flex en columnas (`flex flex-col overflow-hidden`).
+  - Fijación perimetral de encabezado y pie de página: los títulos y botones de acción ("Guardar Cambios", "Cancelar") permanecen siempre visibles e inmóviles sin salirse de la pantalla ni en resoluciones reducidas ni en dispositivos móviles.
+  - Distribución en 2 columnas para campos de fecha y horario, compactación ergonómica de categorías, prioridades y banner de notificación push, eliminando desbordamientos en los bordes superior e inferior.
+
+
 ### Versión 4.16.17 - Modificación de Cantidad de Productos en Alisto de Pedidos
 - [x] **Ajuste de Unidades en Pantalla de Alisto ([`GuidedPickingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
   - Implementado botón *"Modificar"* junto a la cantidad del producto a alistar.

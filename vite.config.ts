@@ -7,7 +7,7 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     chunkSizeWarningLimit: 700,
-    target: 'es2020',
+    target: ['es2018', 'safari13', 'ios12', 'edge88', 'firefox78', 'chrome87'],
     cssCodeSplit: true,
     minify: 'esbuild',
     rollupOptions: {
@@ -16,6 +16,7 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom'],
           'vendor-icons': ['lucide-react'],
           'vendor-utils': ['canvas-confetti', 'clsx', 'tailwind-merge'],
+          'vendor-qrcode': ['html5-qrcode', 'qrcode.react'],
         },
       },
     },

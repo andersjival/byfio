@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, ArrowRight } from 'lucide-react';
+import { Volume2, ArrowRight } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { isHomeLocation } from '../../utils/routeHelpers';
+import { safeSessionStorage } from '../../utils/safeStorage';
 
 interface WebIntroOverlayProps {
   isOpen: boolean;
@@ -10,62 +11,87 @@ interface WebIntroOverlayProps {
 
 export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFinish }) => {
   const [phase, setPhase] = useState<'gradient-start' | 'video-reveal' | 'video-playing' | 'fading-out'>('gradient-start');
-  const [isMuted, setIsMuted] = useState(true); // Iniciar muted para reproducción garantizada sin bloqueos del navegador
+  const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const [audioBlocked, setAudioBlocked] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const exitTimeoutRef = useRef<number | null>(null);
   const canPlayVideoRef = useRef(false);
   const hasInteractedRef = useRef(false);
   const isExitingRef = useRef(false);
 
-  // Desbloqueo universal de audio (invocado tras interacción genuina del usuario)
+  // Desbloqueo universal de audio tras interacción
   const unlockAudio = () => {
     hasInteractedRef.current = true;
-    setHasInteracted(true);
     setIsMuted(false);
-    setAudioBlocked(false);
     if (videoRef.current) {
-      videoRef.current.muted = false;
-      videoRef.current.volume = 1.0;
-      if (canPlayVideoRef.current) {
-        const playPromise = videoRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {});
+      try {
+        videoRef.current.muted = false;
+        videoRef.current.volume = 1.0;
+        if (canPlayVideoRef.current) {
+          const p = videoRef.current.play();
+          if (p !== undefined) p.catch(() => {});
         }
-      }
+      } catch {}
     }
   };
 
-  // Orquestación: letras por al menos 2 segundos y luego el video dicta el tiempo exacto
+  // Salida suave y rápida
+  const handleStartExit = () => {
+    if (isExitingRef.current) return;
+    isExitingRef.current = true;
+    setPhase('fading-out');
+
+    try {
+      safeSessionStorage.setItem('byfio_seen_web_intro', '1');
+    } catch {}
+
+    if (exitTimeoutRef.current) {
+      window.clearTimeout(exitTimeoutRef.current);
+    }
+
+    exitTimeoutRef.current = window.setTimeout(() => {
+      onFinish();
+    }, 500);
+  };
+
+  // Orquestación rápida y blindada para Safari / Android
   useEffect(() => {
     if (!isOpen) {
       setPhase('gradient-start');
       canPlayVideoRef.current = false;
       isExitingRef.current = false;
       if (videoRef.current) {
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
+        try {
+          videoRef.current.pause();
+          if (videoRef.current.readyState >= 1) {
+            videoRef.current.currentTime = 0;
+          }
+        } catch {}
       }
       return;
     }
 
     setPhase('gradient-start');
     setProgress(0);
-    setAudioBlocked(false);
     canPlayVideoRef.current = false;
     isExitingRef.current = false;
 
-    // Asegurar que el video no inicie antes de que transcurran los 2 segundos de las letras
     if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
+      try {
+        videoRef.current.pause();
+        if (videoRef.current.readyState >= 1) {
+          videoRef.current.currentTime = 0;
+        }
+      } catch {}
     }
 
     const startVideoPlayback = () => {
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
+      if (!videoRef.current) return;
+      try {
+        if (videoRef.current.readyState >= 1) {
+          videoRef.current.currentTime = 0;
+        }
+
         if (hasInteractedRef.current) {
           videoRef.current.muted = false;
           videoRef.current.volume = 1.0;
@@ -81,42 +107,43 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
             .then(() => {
               if (hasInteractedRef.current) {
                 setIsMuted(false);
-                setAudioBlocked(false);
               }
             })
             .catch(() => {
               if (videoRef.current) {
                 videoRef.current.muted = true;
                 setIsMuted(true);
-                setAudioBlocked(true);
-                videoRef.current.play().catch(() => {});
+                videoRef.current.play().catch(() => {
+                  handleStartExit();
+                });
               }
             });
         }
+      } catch {
+        handleStartExit();
       }
     };
 
-    // 1. Las letras permanecen visibles por al menos 2 segundos (2000ms) antes de quitarlas y dar paso al video
+    // 1. Letras por 800ms para impacto instantáneo sin esperas lentas
     const t1 = window.setTimeout(() => {
       canPlayVideoRef.current = true;
       setPhase('video-reveal');
       startVideoPlayback();
-    }, 2000);
+    }, 800);
 
-    // 2. Transición fluida a reproducción activa (sin desmutear a la fuerza sin interacción para no congelar el video)
+    // 2. Transición fluida a reproducción activa
     const t2 = window.setTimeout(() => {
       setPhase('video-playing');
-    }, 2400);
+    }, 1100);
 
-    // 3. Fallback de máxima seguridad (2s letras + 10s video + 1.5s margen) para evitar que la intro quede pegada
+    // 3. Fallback de máxima seguridad reducido a 5s para que NUNCA se trabe en iPhone Safari
     const tSafety = window.setTimeout(() => {
       handleStartExit();
-    }, 13500);
+    }, 5000);
 
-    // 4. Escuchador de desbloqueo táctil/clic global: cualquier toque en pantalla activa el sonido al instante
+    // 4. Cualquier toque en pantalla activa el sonido
     const handleGlobalGesture = () => {
       hasInteractedRef.current = true;
-      setHasInteracted(true);
       unlockAudio();
       gestureEvents.forEach((evt) => {
         window.removeEventListener(evt, handleGlobalGesture, true);
@@ -141,22 +168,6 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     };
   }, [isOpen]);
 
-  // Manejar el término del video (únicamente cuando termina el video o por clic en saltar intro o timeout de seguridad)
-  const handleStartExit = () => {
-    if (isExitingRef.current) return;
-    isExitingRef.current = true;
-    setPhase('fading-out');
-
-    if (exitTimeoutRef.current) {
-      window.clearTimeout(exitTimeoutRef.current);
-    }
-
-    // Esperar a que la transición de opacidad (1000ms) se complete
-    exitTimeoutRef.current = window.setTimeout(() => {
-      onFinish();
-    }, 1000);
-  };
-
   const handleTimeUpdate = () => {
     if (videoRef.current && videoRef.current.duration) {
       const current = videoRef.current.currentTime;
@@ -165,44 +176,31 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     }
   };
 
-  const toggleSound = (e: React.MouseEvent) => {
+  const toggleSound = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     hasInteractedRef.current = true;
-    setHasInteracted(true);
     if (videoRef.current) {
       const nextMuted = !videoRef.current.muted;
       videoRef.current.muted = nextMuted;
       videoRef.current.volume = 1.0;
       setIsMuted(nextMuted);
       if (!nextMuted) {
-        setAudioBlocked(false);
-        // Si el usuario tardó en activar el sonido en los primeros compases, rebobinar a 0 para disfrutar la melodía completa
-        if (videoRef.current.currentTime > 0 && videoRef.current.currentTime < 4) {
-          videoRef.current.currentTime = 0;
-        }
-        videoRef.current.play().catch(() => {});
+        try {
+          if (videoRef.current.currentTime > 0 && videoRef.current.currentTime < 4 && videoRef.current.readyState >= 1) {
+            videoRef.current.currentTime = 0;
+          }
+          videoRef.current.play().catch(() => {});
+        } catch {}
       }
     }
   };
 
-  // Permitir activar sonido haciendo clic o tocando en cualquier parte de la pantalla
-  const handleOverlayTouchOrClick = () => {
-    hasInteractedRef.current = true;
-    setHasInteracted(true);
-    if (isMuted) {
-      unlockAudio();
-    }
-  };
-
-  // El video de intro SOLO debe salir en la página principal cuando carga
   if (!isOpen || !isHomeLocation()) return null;
 
   return (
     <div
-      onClick={handleOverlayTouchOrClick}
-      onPointerDown={handleOverlayTouchOrClick}
-      onTouchStart={handleOverlayTouchOrClick}
-      className={`fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out cursor-pointer ${
+      onClick={handleStartExit}
+      className={`fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out cursor-pointer select-none ${
         phase === 'fading-out'
           ? 'opacity-0 scale-105 pointer-events-none'
           : 'opacity-100 scale-100 pointer-events-auto'
@@ -211,35 +209,20 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
         background: 'radial-gradient(ellipse at 50% 30%, #4A0E78 0%, #2A0845 45%, #120220 100%)',
       }}
     >
-      {/* Luces y Luces Ambientales Profesionales con Gradientes Púrpuras Difuminados */}
+      {/* Luces Ambientales Profesionales */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Glow púrpura central superior */}
         <div
-          className={`absolute -top-32 left-1/2 -translate-x-1/2 w-[42rem] h-[30rem] rounded-full bg-gradient-to-b from-[#A855F7]/35 via-[#7E22CE]/25 to-transparent blur-[120px] transition-all duration-1000 ${
+          className={`absolute -top-32 left-1/2 -translate-x-1/2 w-[42rem] h-[30rem] rounded-full bg-gradient-to-b from-[#A855F7]/35 via-[#7E22CE]/25 to-transparent blur-[120px] transition-all duration-700 ${
             phase === 'gradient-start' ? 'scale-110 opacity-90' : 'scale-100 opacity-60'
           }`}
         />
-
-        {/* Halo rosado / magenta lateral */}
         <div className="absolute top-1/3 -left-20 w-80 h-80 rounded-full bg-[#EC4899]/20 blur-[100px] animate-pulse" />
-
-        {/* Halo dorado / cálido studio */}
         <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-[#F59E0B]/15 blur-[120px]" />
-
-        {/* Patrón sutil de cuadrícula etérea */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
-        />
       </div>
 
-      {/* Presentación inicial de la marca con tipografía oficial en blanco (visible por al menos 2 segundos) */}
+      {/* Presentación inicial de la marca (800ms) */}
       <div
-        className={`absolute z-10 flex flex-col items-center text-center px-4 transition-all duration-700 ease-out pointer-events-none ${
+        className={`absolute z-10 flex flex-col items-center text-center px-4 transition-all duration-500 ease-out pointer-events-none ${
           phase === 'gradient-start'
             ? 'opacity-100 scale-100 blur-0'
             : 'opacity-0 scale-95 blur-md'
@@ -254,9 +237,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
             align="center"
           />
         </div>
-
-        {/* Spinner elegante de carga inicial */}
-        <div className="mt-5 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-fio-pink animate-ping" />
           <div className="w-2.5 h-2.5 rounded-full bg-fio-yellow animate-ping delay-150" />
           <div className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping delay-300" />
@@ -265,7 +246,8 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
 
       {/* Contenedor del Video de Intro */}
       <div
-        className={`relative z-20 w-full max-w-4xl px-3 sm:px-4 transition-all duration-1000 ease-out ${
+        onClick={(e) => e.stopPropagation()}
+        className={`relative z-20 w-full max-w-4xl px-3 sm:px-4 transition-all duration-500 ease-out ${
           phase === 'video-reveal' || phase === 'video-playing'
             ? 'opacity-100 scale-100 translate-y-0 blur-0'
             : 'opacity-0 scale-95 translate-y-4 blur-sm pointer-events-none'
@@ -277,7 +259,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
           <button
             type="button"
             onClick={toggleSound}
-            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md text-xs font-bubble font-bold transition-all active:scale-95 group ${
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md text-xs font-bubble font-bold transition-all active:scale-95 group cursor-pointer ${
               isMuted
                 ? 'bg-amber-400 text-slate-900 shadow-[0_0_20px_rgba(251,191,36,0.6)] animate-pulse'
                 : 'bg-white/20 text-emerald-200 border border-white/25 shadow-lg'
@@ -304,7 +286,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
               e.stopPropagation();
               handleStartExit();
             }}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/90 hover:bg-white text-fio-900 text-xs font-bubble font-bold shadow-neuBtn hover:shadow-neuBtnHover border border-white transition-all active:scale-95"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/95 hover:bg-white text-fio-900 text-xs font-bubble font-bold shadow-neuBtn hover:shadow-neuBtnHover border border-white transition-all active:scale-95 cursor-pointer"
             title="Saltar intro y entrar a la web"
           >
             <span>Saltar intro</span>
@@ -312,32 +294,40 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
           </button>
         </div>
 
-        {/* Marco Cinemático del Video */}
+        {/* Marco Cinemático del Video con soporte nativo Safari/iOS */}
         <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black/60 border border-white/25 shadow-[0_25px_80px_rgba(74,14,120,0.7)] backdrop-blur-md">
           <video
             ref={videoRef}
             src="/assets/intro-web-byfio.mp4?v=20261104"
-            preload="auto"
+            preload="metadata"
             playsInline
             muted={isMuted}
+            autoPlay
             onTimeUpdate={handleTimeUpdate}
             onEnded={handleStartExit}
             onError={handleStartExit}
+            onWaiting={() => {
+              window.setTimeout(() => {
+                if (videoRef.current && videoRef.current.paused) {
+                  handleStartExit();
+                }
+              }, 1500);
+            }}
             className="w-full h-full object-cover"
           />
 
-          {/* Hint interactivo si el navegador retiene audio hasta tocar la pantalla */}
+          {/* Hint interactivo para activar música */}
           {isMuted && (
             <div
               onClick={toggleSound}
-              className="absolute inset-x-4 bottom-4 sm:bottom-6 z-20 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-amber-400 text-slate-900 text-xs sm:text-sm font-bubble font-bold shadow-2xl cursor-pointer hover:bg-amber-300 transition-all animate-bounce"
+              className="absolute inset-x-4 bottom-4 sm:bottom-6 z-20 flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-400 text-slate-900 text-xs sm:text-sm font-bubble font-bold shadow-2xl cursor-pointer hover:bg-amber-300 transition-all animate-bounce"
             >
-              <Volume2 className="w-5 h-5 text-slate-900" />
-              <span>¡Toca la pantalla para escuchar la música de By.Fio! 🎵</span>
+              <Volume2 className="w-4 h-4 text-slate-900" />
+              <span>¡Toca aquí para escuchar la música de By.Fio! 🎵</span>
             </div>
           )}
 
-          {/* Barra de Progreso del Video (Línea Fina Neón) */}
+          {/* Barra de Progreso del Video */}
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-fio-yellow via-fio-pink to-purple-400 transition-all duration-150 ease-linear"
@@ -346,9 +336,9 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
           </div>
         </div>
 
-        {/* Subtítulo bajo el video */}
+        {/* Subtítulo bajo el video con acción rápida */}
         <div className="text-center mt-3 text-purple-200/70 text-[11px] sm:text-xs">
-          <span>By.Fio Creative Studio • Ingresando a la plataforma...</span>
+          <span>By.Fio Creative Studio • Toca en cualquier lugar para saltar y entrar</span>
         </div>
       </div>
     </div>

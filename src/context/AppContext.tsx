@@ -21,6 +21,7 @@ import { playNewOrderChimeSound } from '../utils/soundEffects';
 import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 import { deepSanitize } from '../utils/sanitizeText';
+import { safeSessionStorage } from '../utils/safeStorage';
 
 // Generador de número de orden secuencial garantizado libre de colisiones
 export const getNextOrderNumber = (ordersList: Order[]): string => {
@@ -582,8 +583,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Web Intro Video Overlay state: Solo carga y se reproduce en la portada / home
-  const [isIntroOpen, setIsIntroOpen] = useState<boolean>(() => isHomeLocation());
+  // Web Intro Video Overlay state: Solo carga y se reproduce en la portada / home en la primera visita de sesión
+  const [isIntroOpen, setIsIntroOpen] = useState<boolean>(() => {
+    if (!isHomeLocation()) return false;
+    const hasSeen = safeSessionStorage.getItem('byfio_seen_web_intro');
+    return hasSeen !== '1';
+  });
 
   const playWebIntro = () => {
     setIsIntroOpen(true);

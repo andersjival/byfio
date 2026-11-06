@@ -82,19 +82,19 @@ export const CalendarSyncModal: React.FC<CalendarSyncModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-[#F1F2F6] rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-white/90 space-y-4">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200">
+      <div className="bg-[#F1F2F6] rounded-3xl max-w-md w-full max-h-[92vh] shadow-2xl border border-white/90 flex flex-col overflow-hidden my-auto animate-in zoom-in-95 duration-150">
+        {/* Header Fijo */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 shrink-0 bg-[#F1F2F6]">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-700 via-indigo-600 to-pink-600 text-white flex items-center justify-center shadow-xs">
-              <CalendarSync className="w-5 h-5 text-fio-yellow" />
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-purple-700 via-indigo-600 to-pink-600 text-white flex items-center justify-center shadow-xs">
+              <CalendarSync className="w-4 h-4 text-fio-yellow" />
             </div>
             <div>
-              <h3 className="font-bubble font-bold text-base text-slate-900 leading-tight">
+              <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 leading-tight">
                 Sincronizar Calendario
               </h3>
-              <p className="text-[11px] text-slate-500 font-sans">
+              <p className="text-[10px] text-slate-500 font-sans">
                 Conecta con Google Calendar, Apple Calendar &amp; Outlook
               </p>
             </div>
@@ -102,11 +102,14 @@ export const CalendarSyncModal: React.FC<CalendarSyncModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-white/80 transition-all cursor-pointer"
+            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-white/80 transition-all cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Cuerpo Scrolleable */}
+        <div className="overflow-y-auto px-5 py-3.5 space-y-3.5 flex-1 scrollbar-thin">
 
         {/* Brand Integration Badges */}
         <div className="flex items-center justify-center gap-4 py-2">
@@ -204,11 +207,14 @@ export const CalendarSyncModal: React.FC<CalendarSyncModalProps> = ({
           </p>
         </div>
 
-        <div className="flex justify-end pt-2">
+        </div>
+
+        {/* Footer Fijo */}
+        <div className="flex justify-end px-5 py-3 border-t border-slate-200 shrink-0 bg-[#F1F2F6]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-bubble font-bold text-slate-700 hover:bg-white cursor-pointer"
+            className="px-4 py-1.5 rounded-xl text-xs font-bubble font-bold text-slate-700 hover:bg-white cursor-pointer transition-all"
           >
             Cerrar
           </button>

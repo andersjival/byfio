@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RotateCcw, Home } from 'lucide-react';
+import { safeSessionStorage } from '../../utils/safeStorage';
 
 interface Props {
   children: ReactNode;
@@ -28,13 +29,15 @@ export class ErrorBoundary extends Component<Props, State> {
 
     // Auto-recarga instantánea con bypass de caché si el navegador tiene una versión anterior
     if (isChunkError && typeof window !== 'undefined') {
-      const lastReload = sessionStorage.getItem('byfio_chunk_reload_lock');
-      const now = Date.now();
-      if (!lastReload || now - Number(lastReload) > 10000) {
-        sessionStorage.setItem('byfio_chunk_reload_lock', String(now));
-        window.location.href = window.location.origin + window.location.pathname + '?r=' + now + window.location.hash;
-        return { hasError: false };
-      }
+      try {
+        const lastReload = safeSessionStorage.getItem('byfio_chunk_reload_lock');
+        const now = Date.now();
+        if (!lastReload || now - Number(lastReload) > 10000) {
+          safeSessionStorage.setItem('byfio_chunk_reload_lock', String(now));
+          window.location.href = window.location.origin + window.location.pathname + '?r=' + now + window.location.hash;
+          return { hasError: false };
+        }
+      } catch {}
     }
 
     return { hasError: true, error };
@@ -48,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.props.onReset) {
       this.props.onReset();
     }
-    sessionStorage.removeItem('byfio_chunk_reload_lock');
+    safeSessionStorage.removeItem('byfio_chunk_reload_lock');
     this.setState({ hasError: false, error: undefined });
     window.location.href = window.location.origin + window.location.pathname + '?r=' + Date.now() + window.location.hash;
   };
