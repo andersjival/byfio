@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.22 - Micro-Nota en Ficha de SINPE Móvil
+- [x] **Micro-Nota Estilizada en la Ficha de Propuesta ([PropuestaPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
+  - Añadida micro-nota al pie de la ficha del Módulo de SINPE Móvil: *"Este servicio está incluido siempre y cuando el sistema del cliente permita el reenvío de correos o en caso de poder usar el sistema bajo comisión con confirmación bancaria directa."*
+  - Formato discreto y elegante (`text-[10px]`), borde sutil de separación y asterisco esmeralda.
+  - Sincronizado en el texto de resumen copiable de la propuesta comercial.
+
 ### Versión 4.16.21 - Reubicación de Condiciones SINPE Móvil al Interior del Módulo
 - [x] **Limpieza de Cara Exterior de la Tarjeta ([`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
   - Removido el bloque extenso de condiciones de la cara exterior de la tarjeta en la propuesta comercial.

@@ -65,7 +65,7 @@ Tu sitio funciona bajo un modelo de suscripción mensual personalizada (SaaS). L
 • Libertad total sin ataduras: Al ser por suscripción por uso, no estás amarrada a contratos forzosos. Si el día de mañana decides pausar o retirarte, puedes cancelar tu suscripción en cualquier momento sin penalidades ni compromisos.
 
 Lo que incluye tu plataforma (11 Módulos Base):
-1. Módulo de Pagos y Recepción SINPE Móvil: ₡15.000 / mes
+1. Módulo de Pagos y Recepción SINPE Móvil: ₡15.000 / mes (Servicio incluido si el sistema del cliente permite el reenvío de correos o bajo comisión con confirmación bancaria directa)
 2. Tienda Online: ₡15.000 / mes
 3. Catálogo de Productos: ₡10.000 / mes
 4. Cursos y Talleres: ₡15.000 / mes
@@ -120,6 +120,7 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
       price: '₡15.000 / mes',
       priceNumber: 15000,
       description: 'Validación automatizada de comprobantes Banco BCR con detección de referencia única anti-reutilización y verificación exacta de monto pagado.',
+      footnote: 'Este servicio está incluido siempre y cuando el sistema del cliente permita el reenvío de correos o en caso de poder usar el sistema bajo comisión con confirmación bancaria directa.',
       icon: Landmark,
       color: 'from-emerald-500 to-teal-600',
       tagColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300',
@@ -461,6 +462,12 @@ Quedo atento para que confirmemos el acuerdo y arranquemos con todo.`;
                     <span>{mod.actionLabel}</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
+
+                  {mod.footnote && (
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 font-sans leading-snug px-0.5 pt-1 border-t border-slate-200/40 dark:border-purple-900/20">
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">*</span> {mod.footnote}
+                    </p>
+                  )}
                 </div>
               </div>
             );
