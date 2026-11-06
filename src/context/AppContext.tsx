@@ -184,6 +184,8 @@ export interface NewOrderAlertInfo {
   orderNumber?: string;
   customerName?: string;
   total?: number;
+  isWorkshop?: boolean;
+  workshopTitle?: string;
 }
 
 interface AppContextType {
@@ -620,10 +622,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (newOrders.length > 0) {
       newOrders.forEach((o) => knownOrderIdsRef.current.add(o.id));
       playNewOrderChimeSound();
+      const firstNew = newOrders[0];
+      const isWorkshop = firstNew.items?.some((it) => it.type === 'workshop') || firstNew.id?.startsWith('ord-ws-') || firstNew.orderNumber?.startsWith('#WS');
+      const wsItem = firstNew.items?.find((it) => it.type === 'workshop');
       showNewOrderAlert({
-        orderNumber: newOrders[0].orderNumber,
-        customerName: newOrders[0].customerName,
-        total: newOrders[0].total,
+        orderNumber: firstNew.orderNumber,
+        customerName: firstNew.customerName,
+        total: firstNew.total,
+        isWorkshop: Boolean(isWorkshop),
+        workshopTitle: wsItem?.name,
       });
     }
   };
@@ -1049,10 +1056,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     playNewOrderChimeSound();
+    const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
+    const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
     showNewOrderAlert({
       orderNumber: newOrder.orderNumber,
       customerName: newOrder.customerName,
       total: newOrder.total,
+      isWorkshop: Boolean(isWsOrder),
+      workshopTitle: wsItemInOrder?.name,
     });
 
     fetch('/api/orders', {
@@ -2211,10 +2222,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     playNewOrderChimeSound();
+    const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
+    const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
     showNewOrderAlert({
       orderNumber: newOrder.orderNumber,
       customerName: newOrder.customerName,
       total: newOrder.total,
+      isWorkshop: Boolean(isWsOrder),
+      workshopTitle: wsItemInOrder?.name,
     });
 
     // Notificación en tiempo real (0ms) a todas las pestañas de administración y clientes
@@ -2803,10 +2818,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     playNewOrderChimeSound();
+    const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
+    const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
     showNewOrderAlert({
       orderNumber: newOrder.orderNumber,
       customerName: newOrder.customerName,
       total: newOrder.total,
+      isWorkshop: Boolean(isWsOrder),
+      workshopTitle: wsItemInOrder?.name,
     });
 
     try {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme, StarAlertDuration } from '../../types';
-import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play } from 'lucide-react';
+import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play, GraduationCap } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound, playNewOrderChimeSound } from '../../utils/soundEffects';
 
 interface AdminDesignSettingsModalProps {
@@ -366,15 +366,27 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
               <span>Notificación de la Estrellita (Nuevos Pedidos)</span>
             </span>
-            <button
-              type="button"
-              onClick={() => showNewOrderAlert({ orderNumber: '#FIO-DEMO' })}
-              className="inline-flex items-center gap-1 text-[10.5px] font-bubble font-bold text-fio-pink hover:text-pink-700 bg-pink-50 hover:bg-pink-100 px-2.5 py-1 rounded-full border border-pink-200 transition-all active:scale-95 cursor-pointer shadow-2xs"
-              title="Probar cómo se ve la estrellita con la configuración actual"
-            >
-              <Play className="w-3 h-3 fill-current text-fio-pink" />
-              <span>Probar Estrellita</span>
-            </button>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <button
+                type="button"
+                onClick={() => showNewOrderAlert({ orderNumber: '#FIO-DEMO' })}
+                className="inline-flex items-center gap-1 text-[10.5px] font-bubble font-bold text-fio-pink hover:text-pink-700 bg-pink-50 hover:bg-pink-100 px-2.5 py-1 rounded-full border border-pink-200 transition-all active:scale-95 cursor-pointer shadow-2xs"
+                title="Probar notificación de pedido normal"
+              >
+                <Play className="w-3 h-3 fill-current text-fio-pink" />
+                <span>Probar Pedido</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => showNewOrderAlert({ orderNumber: '#WS-DEMO', isWorkshop: true, workshopTitle: 'Taller de Encuadernación Artesanal' })}
+                className="inline-flex items-center gap-1 text-[10.5px] font-bubble font-bold text-purple-700 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200 transition-all active:scale-95 cursor-pointer shadow-2xs"
+                title="Probar notificación de inscripción a taller"
+              >
+                <GraduationCap className="w-3 h-3 text-purple-600" />
+                <span>Probar Taller</span>
+              </button>
+            </div>
           </div>
 
           <p className="text-[11px] text-slate-500 leading-snug">

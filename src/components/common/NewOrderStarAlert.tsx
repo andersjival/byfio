@@ -1,13 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, Heart, Star, ShoppingBag, Clock, Check } from 'lucide-react';
+import { X, Heart, Star, ShoppingBag, Clock, Check, GraduationCap } from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
 export const NewOrderStarAlert: React.FC = () => {
-  const { newOrderAlert, closeNewOrderAlert, starAlertDuration } = useApp();
+  const { newOrderAlert, closeNewOrderAlert, starAlertDuration, orders } = useApp();
   const [isExiting, setIsExiting] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Detección inteligente si la compra es un taller creativo
+  const matchedOrder = newOrderAlert?.orderNumber
+    ? orders.find((o) => o.orderNumber === newOrderAlert.orderNumber)
+    : null;
+
+  const isWorkshop = Boolean(
+    newOrderAlert?.isWorkshop ||
+    matchedOrder?.items?.some((it) => it.type === 'workshop') ||
+    matchedOrder?.id?.startsWith('ord-ws-') ||
+    matchedOrder?.notes?.toLowerCase().includes('taller') ||
+    (newOrderAlert?.orderNumber && newOrderAlert.orderNumber.startsWith('#WS'))
+  );
+
+  const workshopTitle =
+    newOrderAlert?.workshopTitle ||
+    matchedOrder?.items?.find((it) => it.type === 'workshop')?.name;
 
   useEffect(() => {
     if (newOrderAlert) {
@@ -124,20 +141,44 @@ export const NewOrderStarAlert: React.FC = () => {
         {/* Etiqueta superior */}
         <div className="mt-3.5 flex items-center justify-center gap-1.5 text-xs font-bubble font-bold text-fio-pink dark:text-pink-300">
           <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-          <span>by.fio Notificaciones</span>
+          <span>{isWorkshop ? 'by.fio Talleres Creativos' : 'by.fio Notificaciones'}</span>
         </div>
 
-        {/* Mensaje Solicitado: "Hemos recibido un nuevo pedido" */}
+        {/* Mensaje Solicitado: Notificación adaptativa según tipo de compra */}
         <h3 className="font-bubble font-black text-xl sm:text-2xl text-fio-900 dark:text-purple-100 tracking-wide mt-1 leading-snug">
-          Hemos recibido un nuevo pedido
+          {isWorkshop
+            ? 'Hemos recibido una nueva inscripción al taller'
+            : 'Hemos recibido un nuevo pedido'}
         </h3>
 
-        {/* Detalle del Pedido si está disponible */}
+        {/* Detalle de la Compra / Inscripción si está disponible */}
         {newOrderAlert.orderNumber && (
           <div className="mt-2.5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/40 border border-purple-200/80 dark:border-purple-700/50 text-xs sm:text-sm font-bubble font-bold text-purple-900 dark:text-purple-200">
-            <ShoppingBag className="w-4 h-4 text-fio-pink shrink-0" />
-            <span>Pedido {newOrderAlert.orderNumber}</span>
+            {isWorkshop ? (
+              <GraduationCap className="w-4 h-4 text-purple-600 shrink-0" />
+            ) : (
+              <ShoppingBag className="w-4 h-4 text-fio-pink shrink-0" />
+            )}
+            <span>
+              {isWorkshop ? 'Inscripción ' : 'Pedido '}
+              {newOrderAlert.orderNumber}
+            </span>
           </div>
+        )}
+
+        {/* Nombre / Título del Taller Creativo */}
+        {isWorkshop && workshopTitle && (
+          <div className="mt-2 px-3 py-1.5 rounded-xl bg-purple-100/70 dark:bg-purple-950/60 border border-purple-200/80 dark:border-purple-800/50 text-xs font-bubble font-bold text-purple-900 dark:text-purple-200">
+            🎨 {workshopTitle}
+          </div>
+        )}
+
+        {/* Nombre del Alumno o Cliente */}
+        {newOrderAlert.customerName && (
+          <p className="mt-1.5 text-[11px] font-sans text-slate-500 dark:text-slate-400">
+            {isWorkshop ? 'Alumno(a): ' : 'Cliente: '}
+            <strong className="text-slate-700 dark:text-slate-200">{newOrderAlert.customerName}</strong>
+          </p>
         )}
 
         {/* Bloque de Tiempo y Barra de Progreso */}

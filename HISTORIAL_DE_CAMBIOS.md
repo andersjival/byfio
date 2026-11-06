@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.4 - Notificación de Estrellita Adaptativa para Inscripciones a Talleres Creativos
+- [x] **Detección Automática y Mensaje Personalizado para Talleres ([`NewOrderStarAlert.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/NewOrderStarAlert.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Cuando la compra corresponde a un taller creativo, el título de la alerta de la estrellita cambia dinámicamente a: *"Hemos recibido una nueva inscripción al taller"*.
+  - En compras de productos regulares o catálogo, conserva el mensaje estándar *"Hemos recibido un nuevo pedido"*.
+  - Detección dual ultra-robusta: flag explícito `isWorkshop` y verificación retroactiva por número de orden e ítems tipo `'workshop'`.
+  - Despliegue visual adaptativo: distintivo de birrete (`GraduationCap`), etiqueta *"Inscripción #ORDEN"*, nombre del taller creativo (`🎨 Título del Taller`) y nombre del alumno(a).
+- [x] **Botones de Prueba Rápida en Panel de Administración ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx)):**
+  - Añadido botón interactivo *"Probar Taller 🎨"* en la Cola de Pedidos y en el configurador de diseño para verificar la animación y el mensaje de taller con un solo clic.
+
 ### Versión 4.16.3 - Propuesta Integral y Modelo Partner By.Fio con 11 Módulos Base, Regalías y Desglose Financiero
 - [x] **Propuesta Comercial de Alianza Partner Oficial ([`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
   - Incorporada la estructura formal completa de propuesta comercial y alianza estratégica adaptada al negocio de Fio (creadora de contenido, talleres creativos y papelería).

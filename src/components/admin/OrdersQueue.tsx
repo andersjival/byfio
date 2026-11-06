@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star } from 'lucide-react';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star, GraduationCap } from 'lucide-react';
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
@@ -104,7 +104,7 @@ export const OrdersQueue: React.FC = () => {
             <span>{soundNewOrderEnabled ? 'Sonido: Activado' : 'Sonido: Silenciado'}</span>
           </button>
 
-          {/* Botón Probar Notificación de la Estrellita */}
+          {/* Botón Probar Notificación de la Estrellita (Pedido General) */}
           <button
             type="button"
             onClick={() => {
@@ -113,10 +113,28 @@ export const OrdersQueue: React.FC = () => {
               });
             }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-pink-200 bg-pink-50 text-fio-pink hover:bg-pink-100 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs"
-            title="Probar notificación animada de la estrellita"
+            title="Probar notificación animada de la estrellita (Pedido)"
           >
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-            <span>Probar Estrellita</span>
+            <span>Probar Pedido</span>
+          </button>
+
+          {/* Botón Probar Notificación de la Estrellita (Inscripción a Taller) */}
+          <button
+            type="button"
+            onClick={() => {
+              showNewOrderAlert({
+                orderNumber: '#WS-DEMO',
+                customerName: 'Valeria Solís',
+                isWorkshop: true,
+                workshopTitle: 'Taller de Encuadernación Artesanal',
+              });
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs"
+            title="Probar notificación de la estrellita para taller: Hemos recibido una nueva inscripción al taller"
+          >
+            <GraduationCap className="w-3.5 h-3.5 text-purple-600" />
+            <span>Probar Taller 🎨</span>
           </button>
 
           <div className="flex items-center gap-2 bg-purple-50 text-purple-900 px-3 py-1.5 rounded-2xl border border-purple-200 text-xs font-semibold">
