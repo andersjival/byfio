@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.13 - Erradicación de Agendas Duplicadas, Purga en D1 y Blindaje Reactivo Universal
+- [x] **Purga de Duplicados en Base de Datos Cloudflare D1 ([`agenda.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/agenda.ts)):**
+  - Limpieza y purga inmediata ejecutada en producción sobre la tabla `site_metrics` (`app_agenda_items`), eliminando 7 entradas redundantes generadas por clics consecutivos y dejando únicamente los 5 registros legítimos únicos.
+  - Implementación del deduplicador de servidor en `functions/api/agenda.ts`: las peticiones `GET` y `POST` filtran automáticamente duplicados por identificador y clave compuesta de título y fecha antes de enviar o persistir.
+- [x] **Blindaje y Deduplicación Reactiva en Cliente ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx), [`SupplierOrderModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierOrderModal.tsx)):**
+  - Implementada función universal `deduplicateAgendaItems` integrada en el estado inicial de `localStorage`, `saveAgendaItems`, el canal de difusión `BroadcastChannel` y la sincronización con la nube.
+  - `addAgendaItem` valida si ya existe una actividad idéntica (mismo título normalizado y fecha), retornando la referencia existente sin registrar copias.
+  - Protección contra doble clic en formularios mediante estados de bloqueo `isSubmitting` en la creación de actividades y `isSavingAgenda` en órdenes a proveedor.
+
 ### Versión 4.16.12 - Desbloqueo y Robustez en Confirmación de Reserva de Talleres con Pago Verificado
 - [x] **Flujo de Confirmación de Reserva y Checkout de Talleres Inmediato ([`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Eliminado el bloqueo silencioso del botón "Confirmar Reserva con Pago Verificado": se implementó `noValidate` en el formulario y un despachador de eventos con control de excepciones `try/catch`.
