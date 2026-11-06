@@ -5,7 +5,7 @@ import {
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
   SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus,
-  SupplierOrder, SupplierOrderStatus
+  SupplierOrder, SupplierOrderStatus, DailyClosingRecord
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -372,6 +372,10 @@ interface AppContextType {
   updateSupplierOrder: (id: string, updates: Partial<SupplierOrder>) => void;
   deleteSupplierOrder: (id: string) => void;
   updateSupplierOrderStatus: (id: string, newStatus: SupplierOrderStatus) => void;
+  dailyClosings: DailyClosingRecord[];
+  saveDailyClosing: (closingData: Omit<DailyClosingRecord, 'id' | 'closedAt'> & { id?: string; closedAt?: string }) => DailyClosingRecord;
+  deleteDailyClosing: (id: string) => void;
+  getDailyClosingByDate: (dateStr: string) => DailyClosingRecord | undefined;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -401,6 +405,7 @@ const STORAGE_KEYS = {
   SUPERADMIN_MODULES: SUPERADMIN_STORAGE_KEY,
   AGENDA_ITEMS: AGENDA_STORAGE_KEY,
   SUPPLIER_ORDERS: 'byfio_supplier_orders_v1',
+  DAILY_CLOSINGS: 'byfio_daily_closings_v1',
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -920,6 +925,63 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return ord;
     });
     saveSupplierOrders(updated);
+  };
+
+  const [dailyClosings, setDailyClosings] = useState<DailyClosingRecord[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.DAILY_CLOSINGS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return deepSanitize(parsed);
+        }
+      }
+    } catch {}
+    return [];
+  });
+
+  const saveDailyClosings = (closingsList: DailyClosingRecord[]) => {
+    const sanitized = deepSanitize(closingsList);
+    setDailyClosings(sanitized);
+    try {
+      localStorage.setItem(STORAGE_KEYS.DAILY_CLOSINGS, JSON.stringify(sanitized));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', dailyClosings: sanitized });
+    } catch {}
+    try {
+      fetch('/api/daily-closings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ closings: sanitized }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const saveDailyClosing = (closingData: Omit<DailyClosingRecord, 'id' | 'closedAt'> & { id?: string; closedAt?: string }): DailyClosingRecord => {
+    const existingIndex = dailyClosings.findIndex((c) => c.closingDate === closingData.closingDate);
+    const record: DailyClosingRecord = {
+      ...closingData,
+      id: closingData.id || (existingIndex >= 0 ? dailyClosings[existingIndex].id : `closing-${closingData.closingDate}-${Date.now()}`),
+      closedAt: closingData.closedAt || new Date().toISOString(),
+    };
+
+    let nextList: DailyClosingRecord[];
+    if (existingIndex >= 0) {
+      nextList = dailyClosings.map((c, idx) => (idx === existingIndex ? record : c));
+    } else {
+      nextList = [record, ...dailyClosings].sort((a, b) => b.closingDate.localeCompare(a.closingDate));
+    }
+
+    saveDailyClosings(nextList);
+    return record;
+  };
+
+  const deleteDailyClosing = (id: string) => {
+    const updated = dailyClosings.filter((c) => c.id !== id);
+    saveDailyClosings(updated);
+  };
+
+  const getDailyClosingByDate = (dateStr: string): DailyClosingRecord | undefined => {
+    return dailyClosings.find((c) => c.closingDate === dateStr);
   };
 
   const createDirectInvoiceOrder = (orderData: {
@@ -1647,6 +1709,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(event.data.supplierOrders)) {
           setSupplierOrders(deepSanitize(event.data.supplierOrders));
         }
+        if (Array.isArray(event.data.dailyClosings)) {
+          setDailyClosings(deepSanitize(event.data.dailyClosings));
+        }
       }
     };
 
@@ -1848,6 +1913,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           }
         })
         .catch(() => {});
+      // 5c. Sincronizar cierres de caja diarios en la nube
+      fetch('/api/daily-closings')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data?.closings) && data.closings.length > 0) {
+            setDailyClosings((prev) => {
+              const sanitized = deepSanitize(data.closings);
+              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.DAILY_CLOSINGS, JSON.stringify(sanitized));
+                } catch {}
+                return sanitized;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+
       // 6. Sincronizar perfiles de usuario en tiempo real con bypass de caché
       const cacheBuster = `?_t=${Date.now()}`;
       fetch(`/api/users${cacheBuster}`, { cache: 'no-store' })
@@ -3169,6 +3253,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateSupplierOrder,
         deleteSupplierOrder,
         updateSupplierOrderStatus,
+        dailyClosings,
+        saveDailyClosing,
+        deleteDailyClosing,
+        getDailyClosingByDate,
       }}
     >
       {children}

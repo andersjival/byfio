@@ -223,6 +223,25 @@ export interface AgendaItem {
   createdAt: string;
 }
 
+export interface DailyClosingRecord {
+  id: string;
+  closingDate: string; // YYYY-MM-DD
+  closedAt: string; // ISO 8601
+  closedBy: string; // Nombre de la persona o administradora que cerró
+  totalCashGrand: number; // Total general recaudado
+  totalStoreSales: number; // Ventas tienda y catálogo
+  totalWorkshopSales: number; // Ingresos talleres creativos
+  sinpeTotal: number; // Total cobrado por SINPE Móvil (BCR + Web)
+  otherTotal: number; // Transferencias y otros medios
+  netProfit: number; // Ganancia neta estimada
+  ordersCount: number; // Pedidos atendidos hoy
+  sinpeCount: number; // Comprobantes SINPE BCR verificados
+  pendingCount: number; // Pedidos pendientes en cola
+  cashCounted?: number; // Monto físico contado en caja
+  difference?: number; // Diferencia entre contado y teórico
+  notes?: string; // Observaciones de la jornada
+}
+
 export interface UserProfile {
   id: string;
   name: string; // Nombre guardado y leído SIEMPRE EN MAYÚSCULAS

@@ -83,6 +83,7 @@ export const App: React.FC = () => {
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(initial.workshopId || null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
+  const [dailyClosingDate, setDailyClosingDate] = useState<string | undefined>(undefined);
   const [isDesignModalOpen, setIsDesignModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -409,7 +410,13 @@ export const App: React.FC = () => {
                         )}
                         {adminTab === 'inventory' && <InventoryTable />}
                         {adminTab === 'reports' && (
-                          <CashRegisterReports onOpenDailyClosing={() => setIsDailyClosingOpen(true)} onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />
+                          <CashRegisterReports
+                            onOpenDailyClosing={(date) => {
+                              setDailyClosingDate(date);
+                              setIsDailyClosingOpen(true);
+                            }}
+                            onNavigateToSinpe={() => handleSelectAdminTab('sinpe')}
+                          />
                         )}
                         {adminTab === 'sinpe' && <SinpePaymentsSection />}
                         {adminTab === 'workshops' && <WorkshopEnrollmentsSection onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />}
@@ -501,7 +508,14 @@ export const App: React.FC = () => {
         {isNewProductModalOpen && <NewProductModal />}
         {isNewWorkshopModalOpen && <NewWorkshopModal />}
         {isDailyClosingOpen && isFeatureEnabled('reports', 'daily_closing') && (
-          <DailyClosingModal isOpen={isDailyClosingOpen} onClose={() => setIsDailyClosingOpen(false)} />
+          <DailyClosingModal
+            isOpen={isDailyClosingOpen}
+            initialDate={dailyClosingDate}
+            onClose={() => {
+              setIsDailyClosingOpen(false);
+              setDailyClosingDate(undefined);
+            }}
+          />
         )}
         {isDesignModalOpen && <AdminDesignSettingsModal isOpen={isDesignModalOpen} onClose={() => setIsDesignModalOpen(false)} />}
         {isPricingModalOpen && <AdminPricingModal />}

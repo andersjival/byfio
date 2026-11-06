@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.1 - Cierre de Caja Diario Persistente con Historial y Filtros por Día y Fecha
+- [x] **Cierre de Caja Diario y Persistencia Oficial ([`DailyClosingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`daily-closings.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/daily-closings.ts)):**
+  - Implementada selección de fecha para realizar el cierre diario (*"Hoy"*, *"Ayer"* o fecha específica con selector interactivo).
+  - Cálculo automático de totales de caja (Ventas Tienda & Catálogo, Talleres Creativos, SINPE Móvil BCR + Web y otros medios).
+  - Soporte para arqueo físico con cálculo en vivo de diferencia (Cuadrado, Sobrante, Faltante), notas y responsable del turno.
+  - Botón *"Guardar Cierre de Caja"* / *"Actualizar Cierre Guardado"* con almacenamiento persistente en memoria local (`localStorage`), difusión entre pestañas (`BroadcastChannel`) y persistencia en la nube Cloudflare D1 (`/api/daily-closings`).
+- [x] **Historial de Cierres Diarios y Consultas Posteriores ([`CashRegisterReports.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Incorporada nueva sección *"Historial de Cierres de Caja Diarios"* dentro del módulo de Caja & Reportería.
+  - **Filtros por Día y Fecha:** Botones rápidos *"Todos"*, *"Hoy"*, *"Ayer"*, *"Semana"*, *"Mes"* y selector de fecha exacta (`<input type="date" />`).
+  - Tabla completa con historial de actas guardadas: fecha, hora, responsable, desglose por canal, total recaudado, estado de arqueo y notas.
+  - Botón directo *"Ver Acta"* para abrir cualquier cierre pasado, reimprimir el comprobante formal o compartir el resumen oficial por WhatsApp.
+  - Pestaña de consulta histórica integrada también dentro del modal de cierre para inspección ágil.
+
 ### Versión 4.16.0 - Módulo Integral de Historial de Ventas con Filtros por Día, Semana, Mes y Detalle Completo de Pedido
 - [x] **Nuevo Módulo de Historial de Ventas ([`SalesHistorySection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SalesHistorySection.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`routeHelpers.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts)):**
   - Incorporada nueva sección administrativa *"Historial de Ventas"* con acceso oficial desde el Menú Principal (Hub) y soporte para URL directa (`/admin/ventas`).

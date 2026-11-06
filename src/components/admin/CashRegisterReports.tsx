@@ -1,23 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { formatCRC } from '../../utils/formatters';
+import { formatCRC, formatShortDate } from '../../utils/formatters';
 import {
   DollarSign, TrendingUp, Calendar, CheckCircle2, AlertCircle,
   FileSpreadsheet, Landmark, ShoppingBag, GraduationCap,
-  ExternalLink, ShieldCheck, Mail
+  ExternalLink, ShieldCheck, Mail, History, Trash2, ArrowRight, User
 } from 'lucide-react';
 
 interface CashRegisterReportsProps {
-  onOpenDailyClosing: () => void;
+  onOpenDailyClosing: (date?: string) => void;
   onNavigateToSinpe?: () => void;
 }
 
 export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpenDailyClosing, onNavigateToSinpe }) => {
-  const { orders, products, sinpeTransactions, setIsSinpeModalOpen, workshops, isFeatureEnabled } = useApp();
+  const { orders, products, sinpeTransactions, setIsSinpeModalOpen, workshops, isFeatureEnabled, dailyClosings, deleteDailyClosing } = useApp();
   const [timeRange, setTimeRange] = useState<'today' | 'week'>('today');
+
+  // Filtros del Historial de Cierres Diarios
+  const [closingFilterMode, setClosingFilterMode] = useState<'all' | 'today' | 'yesterday' | 'week' | 'month' | 'custom'>('all');
+  const [closingFilterCustomDate, setClosingFilterCustomDate] = useState<string>('');
 
   const todayStr = new Date().toISOString().slice(0, 10);
   const oneWeekAgoMs = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  const yesterdayStr = useMemo(() => {
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    return y.toISOString().slice(0, 10);
+  }, []);
+
+  const currentMonthStr = useMemo(() => {
+    return new Date().toISOString().slice(0, 7);
+  }, []);
+
+  const filteredClosings = useMemo(() => {
+    const now = new Date();
+    const sevenDaysAgoStr = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+    return dailyClosings.filter((c) => {
+      if (closingFilterMode === 'today') return c.closingDate === todayStr;
+      if (closingFilterMode === 'yesterday') return c.closingDate === yesterdayStr;
+      if (closingFilterMode === 'week') return c.closingDate >= sevenDaysAgoStr;
+      if (closingFilterMode === 'month') return c.closingDate.startsWith(currentMonthStr);
+      if (closingFilterMode === 'custom' && closingFilterCustomDate) return c.closingDate === closingFilterCustomDate;
+      return true;
+    });
+  }, [dailyClosings, closingFilterMode, closingFilterCustomDate, todayStr, yesterdayStr, currentMonthStr]);
 
   // Filtrado de Órdenes por Fecha
   const filteredOrders = orders.filter((o) => {
@@ -141,7 +169,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
           {isFeatureEnabled('reports', 'daily_closing') && (
             <button
-              onClick={onOpenDailyClosing}
+              onClick={() => onOpenDailyClosing()}
               className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95"
             >
               <FileSpreadsheet className="w-4 h-4 text-fio-yellow" />
@@ -332,6 +360,261 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
           </div>
         )}
       </div>
+
+      {/* SECCIÓN NUEVA: HISTORIAL DE CIERRES DE CAJA DIARIOS GUARDADOS */}
+      {isFeatureEnabled('reports', 'daily_closing') && (
+        <div className="border border-slate-200 rounded-3xl p-4 sm:p-5 bg-white space-y-4 shadow-claySm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-fio-800 to-purple-900 text-white flex items-center justify-center shadow-xs shrink-0">
+                <History className="w-4 h-4 text-fio-yellow" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900">
+                    Historial de Cierres de Caja Diarios
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-900">
+                    {filteredClosings.length} {filteredClosings.length === 1 ? 'cierre' : 'cierres'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 font-sans">
+                  Consultas posteriores de actas de arqueo guardadas, filtradas por día y fecha.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onOpenDailyClosing()}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95 cursor-pointer self-start sm:self-auto"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-fio-yellow" />
+              <span>Realizar Cierre de Hoy</span>
+            </button>
+          </div>
+
+          {/* Filtros por Día y Fecha */}
+          <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2.5">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[11px] font-bold text-slate-500 uppercase mr-1">Filtrar por:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setClosingFilterMode('all');
+                  setClosingFilterCustomDate('');
+                }}
+                className={`px-3 py-1 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  closingFilterMode === 'all'
+                    ? 'bg-fio-800 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-purple-100 border border-slate-200'
+                }`}
+              >
+                Todos
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setClosingFilterMode('today');
+                  setClosingFilterCustomDate('');
+                }}
+                className={`px-3 py-1 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  closingFilterMode === 'today'
+                    ? 'bg-fio-800 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-purple-100 border border-slate-200'
+                }`}
+              >
+                Hoy
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setClosingFilterMode('yesterday');
+                  setClosingFilterCustomDate('');
+                }}
+                className={`px-3 py-1 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  closingFilterMode === 'yesterday'
+                    ? 'bg-fio-800 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-purple-100 border border-slate-200'
+                }`}
+              >
+                Ayer
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setClosingFilterMode('week');
+                  setClosingFilterCustomDate('');
+                }}
+                className={`px-3 py-1 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  closingFilterMode === 'week'
+                    ? 'bg-fio-800 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-purple-100 border border-slate-200'
+                }`}
+              >
+                Semana
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setClosingFilterMode('month');
+                  setClosingFilterCustomDate('');
+                }}
+                className={`px-3 py-1 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  closingFilterMode === 'month'
+                    ? 'bg-fio-800 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-purple-100 border border-slate-200'
+                }`}
+              >
+                Mes
+              </button>
+            </div>
+
+            {/* Selector de Fecha Específica */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-xl border border-slate-200">
+              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-[11px] font-bold text-slate-500">Fecha exacta:</span>
+              <input
+                type="date"
+                value={closingFilterCustomDate}
+                onChange={(e) => {
+                  setClosingFilterCustomDate(e.target.value);
+                  setClosingFilterMode('custom');
+                }}
+                className="text-xs font-semibold text-slate-800 bg-transparent outline-none cursor-pointer"
+              />
+            </div>
+          </div>
+
+          {/* Tabla / Listado de Cierres Diarios */}
+          {filteredClosings.length === 0 ? (
+            <div className="text-center py-8 text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-2">
+              <FileSpreadsheet className="w-8 h-8 text-slate-300 mx-auto" />
+              <p className="text-xs font-semibold text-slate-600">
+                No hay cierres de caja guardados para el filtro seleccionado.
+              </p>
+              <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+                Realiza el cierre de caja de hoy para registrar las ventas y mantener el historial contable al día.
+              </p>
+              <button
+                type="button"
+                onClick={() => onOpenDailyClosing()}
+                className="px-3.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
+              >
+                Hacer Cierre de Hoy
+              </button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-2xl border border-slate-200">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[10px]">
+                  <tr>
+                    <th className="py-2.5 px-3">Fecha del Cierre</th>
+                    <th className="py-2.5 px-3">Responsable</th>
+                    <th className="py-2.5 px-3 text-right">Ventas Tienda</th>
+                    <th className="py-2.5 px-3 text-right">Ingresos Talleres</th>
+                    <th className="py-2.5 px-3 text-right">Total SINPE</th>
+                    <th className="py-2.5 px-3 text-right">Total en Caja</th>
+                    <th className="py-2.5 px-2 text-center">Arqueo</th>
+                    <th className="py-2.5 px-3 text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredClosings.map((c) => (
+                    <tr key={c.id} className="hover:bg-purple-50/20 transition-colors">
+                      <td className="py-2.5 px-3 whitespace-nowrap">
+                        <span className="font-mono font-bold text-fio-900 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 text-xs">
+                          {c.closingDate}
+                        </span>
+                        <span className="text-[10px] text-slate-400 block mt-0.5">
+                          {formatShortDate(c.closedAt)}
+                        </span>
+                      </td>
+
+                      <td className="py-2.5 px-3">
+                        <span className="font-semibold text-slate-900 flex items-center gap-1">
+                          <User className="w-3 h-3 text-fio-pink shrink-0" />
+                          {c.closedBy}
+                        </span>
+                        {c.notes && (
+                          <span className="text-[10px] text-slate-500 italic truncate max-w-[150px] block" title={c.notes}>
+                            "{c.notes}"
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="py-2.5 px-3 text-right font-medium text-slate-700 whitespace-nowrap">
+                        {formatCRC(c.totalStoreSales)}
+                      </td>
+
+                      <td className="py-2.5 px-3 text-right font-medium text-slate-700 whitespace-nowrap">
+                        {formatCRC(c.totalWorkshopSales)}
+                      </td>
+
+                      <td className="py-2.5 px-3 text-right font-medium text-purple-900 whitespace-nowrap">
+                        {formatCRC(c.sinpeTotal)}
+                      </td>
+
+                      <td className="py-2.5 px-3 text-right font-bubble font-bold text-slate-900 text-sm whitespace-nowrap">
+                        {formatCRC(c.totalCashGrand)}
+                        <span className="text-[10px] text-emerald-700 block font-sans font-medium">
+                          +{formatCRC(c.netProfit)} est.
+                        </span>
+                      </td>
+
+                      <td className="py-2.5 px-2 text-center whitespace-nowrap">
+                        {c.difference !== undefined ? (
+                          <span
+                            className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              c.difference === 0
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : c.difference > 0
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {c.difference === 0 ? '✓ Cuadrado' : formatCRC(c.difference)}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 font-sans">
+                            Teórico
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => onOpenDailyClosing(c.closingDate)}
+                            className="px-2.5 py-1 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-[11px] font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
+                            title="Ver acta completa o imprimir este cierre"
+                          >
+                            Ver Acta
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (window.confirm(`¿Estás seguro de eliminar el registro de cierre del día ${c.closingDate}?`)) {
+                                deleteDailyClosing(c.id);
+                              }
+                            }}
+                            className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                            title="Eliminar este cierre"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
