@@ -233,6 +233,7 @@ interface AppContextType {
   unmarkItemPicked: (orderId: string, itemSku: string) => void;
   markAllItemsPicked: (orderId: string) => { isComplete: boolean };
   markItemMissing: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
+  updateOrderItemQuantity: (orderId: string, itemSku: string, newQuantity: number) => { success: boolean; error?: string };
   missingInventoryReports: InventoryMissingReport[];
   resolveMissingReport: (reportId: string) => void;
   deleteMissingReport: (reportId: string) => void;
@@ -465,13 +466,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const sanitizeOrderList = (orderList: any[]): Order[] => {
     return deepSanitize(orderList).map((o: Order) => {
+      const hasItems = Array.isArray(o.items) && o.items.length > 0;
       const isAllAlistado =
-        Array.isArray(o.items) &&
-        o.items.length > 0 &&
+        hasItems &&
         o.items.every((it) => it.isPicked || it.isMissing);
+
+      // Si todo el alisto está al 100% y sigue en pending o picking, avanzar a packing
       if (isAllAlistado && (o.orderStatus === 'pending' || o.orderStatus === 'picking')) {
         return { ...o, orderStatus: 'packing' as OrderStatus };
       }
+
+      // BLINDAJE ESTRICTO: Un pedido NO puede estar en packing, packed o delivered si su alisto NO está al 100%
+      if (!isAllAlistado && (o.orderStatus === 'packing' || o.orderStatus === 'packed' || o.orderStatus === 'delivered')) {
+        const hasAnyPicked = hasItems && o.items.some((it) => it.isPicked);
+        return {
+          ...o,
+          orderStatus: (hasAnyPicked ? 'picking' : 'pending') as OrderStatus,
+          packedAt: undefined,
+          deliveredAt: undefined,
+        };
+      }
+
       return o;
     });
   };
@@ -2688,6 +2703,85 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return { isComplete: completed };
   };
 
+  const updateOrderItemQuantity = (
+    orderId: string,
+    itemSku: string,
+    newQuantity: number
+  ) => {
+    const cleanQty = Math.max(0, Math.floor(newQuantity));
+    let updatedActiveOrder: Order | null = null;
+    let found = false;
+
+    setOrders((prev) => {
+      const updated = prev.map((order) => {
+        if (order.id !== orderId) return order;
+
+        const updatedItems = order.items.map((it) => {
+          if (it.sku === itemSku) {
+            found = true;
+            return {
+              ...it,
+              quantity: cleanQty,
+            };
+          }
+          return it;
+        });
+
+        const subtotal = updatedItems.reduce((acc, it) => acc + it.price * it.quantity, 0);
+        const total = subtotal + (order.shippingFee || 0);
+        const allProcessed = updatedItems.length > 0 && updatedItems.every((it) => it.isPicked || it.isMissing);
+
+        const updatedOrder: Order = {
+          ...order,
+          items: updatedItems,
+          subtotal,
+          total,
+          orderStatus: allProcessed ? 'packing' : order.orderStatus,
+          packedAt: allProcessed ? (order.packedAt || new Date().toISOString()) : order.packedAt,
+        };
+
+        updatedActiveOrder = updatedOrder;
+
+        fetch('/api/orders', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: orderId,
+            orderStatus: updatedOrder.orderStatus,
+            packedAt: updatedOrder.packedAt,
+            items: updatedItems,
+            subtotal,
+            total,
+          }),
+        }).catch(() => {});
+
+        return updatedOrder;
+      });
+
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updated));
+
+      try {
+        syncChannel?.postMessage({
+          type: 'SYNC_UPDATE',
+          orders: updated,
+        });
+      } catch {}
+
+      return updated;
+    });
+
+    if (updatedActiveOrder) {
+      setActivePickingOrder(updatedActiveOrder);
+    }
+
+    if (!found) {
+      return { success: false, error: `No se encontró el producto ${itemSku} en este pedido.` };
+    }
+
+    playAudioBeep('success');
+    return { success: true };
+  };
+
   const resolveMissingReport = (reportId: string) => {
     setMissingInventoryReports((prev) => {
       const next = prev.map((rep) => (rep.id === reportId ? { ...rep, resolved: true, resolvedAt: new Date().toISOString() } : rep));
@@ -2705,11 +2799,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
+    // BLINDAJE ESTRICTO: Un pedido NO puede pasar a packing, packed o delivered si su alisto NO está al 100%
+    const currentOrder = orders.find((o) => o.id === orderId);
+    if (newStatus === 'packing' || newStatus === 'packed' || newStatus === 'delivered') {
+      const hasItems = Array.isArray(currentOrder?.items) && currentOrder.items.length > 0;
+      const isComplete = hasItems && currentOrder.items.every((it) => it.isPicked || it.isMissing);
+      if (!isComplete) {
+        console.warn(`[Blindaje Alisto] El pedido ${orderId} no puede avanzar a '${newStatus}' sin completar el 100% de alisto.`);
+        return;
+      }
+    }
+
     const nowIso = new Date().toISOString();
     const packedAt = (newStatus === 'packing' || newStatus === 'packed') ? nowIso : undefined;
     const deliveredAt = (newStatus === 'delivered') ? nowIso : undefined;
     let updatedOrders: Order[] = [];
     setOrders((prev) => {
+      // Verificación defensiva contra datos desactualizados en closure
+      const targetInPrev = prev.find((o) => o.id === orderId);
+      if (newStatus === 'packing' || newStatus === 'packed' || newStatus === 'delivered') {
+        const hasItems = Array.isArray(targetInPrev?.items) && targetInPrev.items.length > 0;
+        const isComplete = hasItems && targetInPrev.items.every((it) => it.isPicked || it.isMissing);
+        if (!isComplete) {
+          return prev;
+        }
+      }
+
       updatedOrders = prev.map((o) =>
         o.id === orderId
           ? {
@@ -3440,6 +3555,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         unmarkItemPicked,
         markAllItemsPicked,
         markItemMissing,
+        updateOrderItemQuantity,
         missingInventoryReports,
         resolveMissingReport,
         deleteMissingReport,

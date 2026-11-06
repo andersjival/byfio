@@ -276,26 +276,69 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
 export const onRequestPut = async (context: { request: Request; env: Env }) => {
   try {
-    const { id, orderStatus, packedAt, deliveredAt, items } = await context.request.json() as any;
+    const { id, orderStatus, packedAt, deliveredAt, items, subtotal, total, notes } = await context.request.json() as any;
 
     if (context.env.DB && id) {
+      // Blindaje estricto de backend: No permitir avanzar a packing, packed o delivered sin 100% alisto
+      if (orderStatus === 'packing' || orderStatus === 'packed' || orderStatus === 'delivered') {
+        let checkItems = items;
+        if (!checkItems || !Array.isArray(checkItems) || checkItems.length === 0) {
+          const { results } = await context.env.DB.prepare('SELECT items_json FROM orders WHERE id = ?').bind(id).all();
+          if (results && results.length > 0) {
+            try {
+              checkItems = JSON.parse((results[0] as any).items_json || '[]');
+            } catch {
+              checkItems = [];
+            }
+          }
+        }
+        const isComplete = Array.isArray(checkItems) && checkItems.length > 0 && checkItems.every((it: any) => it.isPicked || it.isMissing);
+        if (!isComplete) {
+          return new Response(JSON.stringify({ error: 'Order cannot transition to packing/packed/delivered without 100% picking' }), {
+            headers: { 'Content-Type': 'application/json' },
+            status: 400,
+          });
+        }
+      }
+
       if (items !== undefined && Array.isArray(items) && items.length > 0) {
         await context.env.DB.prepare(
-          'UPDATE orders SET order_status = ?, packed_at = COALESCE(?, packed_at), delivered_at = COALESCE(?, delivered_at), items_json = ? WHERE id = ?'
+          `UPDATE orders SET
+            order_status = COALESCE(?, order_status),
+            packed_at = COALESCE(?, packed_at),
+            delivered_at = COALESCE(?, delivered_at),
+            items_json = ?,
+            subtotal = COALESCE(?, subtotal),
+            total = COALESCE(?, total),
+            notes = COALESCE(?, notes)
+          WHERE id = ?`
         ).bind(
-          orderStatus,
+          orderStatus || null,
           packedAt || null,
           deliveredAt || null,
           JSON.stringify(items),
+          subtotal !== undefined ? subtotal : null,
+          total !== undefined ? total : null,
+          notes || null,
           id
         ).run();
       } else {
         await context.env.DB.prepare(
-          'UPDATE orders SET order_status = ?, packed_at = COALESCE(?, packed_at), delivered_at = COALESCE(?, delivered_at) WHERE id = ?'
+          `UPDATE orders SET
+            order_status = COALESCE(?, order_status),
+            packed_at = COALESCE(?, packed_at),
+            delivered_at = COALESCE(?, delivered_at),
+            subtotal = COALESCE(?, subtotal),
+            total = COALESCE(?, total),
+            notes = COALESCE(?, notes)
+          WHERE id = ?`
         ).bind(
-          orderStatus,
+          orderStatus || null,
           packedAt || null,
           deliveredAt || null,
+          subtotal !== undefined ? subtotal : null,
+          total !== undefined ? total : null,
+          notes || null,
           id
         ).run();
       }

@@ -58,37 +58,36 @@ export const OrdersQueue: React.FC = () => {
     );
   }, [orders]);
 
-  // Determina si un pedido ya finalizó el alisto (progreso 100% o estado packing/packed/delivered)
+  // Determina si un pedido ya finalizó el alisto (progreso 100% estricto de todos los items)
   const isOrderFullyAlistado = (order: Order) => {
     return (
-      order.orderStatus === 'packing' ||
-      order.orderStatus === 'packed' ||
-      order.orderStatus === 'delivered' ||
-      (Array.isArray(order.items) &&
-        order.items.length > 0 &&
-        order.items.every((it) => it.isPicked || it.isMissing))
+      Array.isArray(order.items) &&
+      order.items.length > 0 &&
+      order.items.every((it) => it.isPicked || it.isMissing)
     );
   };
 
-  // 1. Pendientes de Alisto: SOLO los que NO se han alistado (progreso < 100%)
+  // 1. Pendientes de Alisto: SOLO los que NO se han completado en alisto (progreso < 100%)
   const pendingOrders = sortedOrders.filter(
-    (o) => (o.orderStatus === 'pending' || o.orderStatus === 'picking') && !isOrderFullyAlistado(o)
+    (o) => !isOrderFullyAlistado(o)
   );
 
-  // 2. En Empaque: pedidos cuyo alisto ya está al 100% o que tienen estado de empaque
+  // 2. En Empaque: pedidos cuyo alisto YA está al 100% y están en fase de empaque
   const packingOrders = sortedOrders.filter(
     (o) =>
-      o.orderStatus === 'packing' ||
-      ((o.orderStatus === 'pending' || o.orderStatus === 'picking') && isOrderFullyAlistado(o))
+      isOrderFullyAlistado(o) &&
+      (o.orderStatus === 'packing' || o.orderStatus === 'pending' || o.orderStatus === 'picking')
   );
 
-  // 3. Empacados
-  const packedOrders = sortedOrders.filter((o) => o.orderStatus === 'packed');
+  // 3. Empacados: pedidos con alisto al 100% y marcados como empacados
+  const packedOrders = sortedOrders.filter(
+    (o) => isOrderFullyAlistado(o) && o.orderStatus === 'packed'
+  );
 
-  // 4. Terminados: Los pedidos recién terminados caen ARRIBA en la lista por fecha de entrega/finalización
+  // 4. Terminados: pedidos con alisto al 100% y marcados como entregados (caen arriba por fecha de entrega)
   const deliveredOrders = React.useMemo(() => {
     return [...orders]
-      .filter((o) => o.orderStatus === 'delivered')
+      .filter((o) => isOrderFullyAlistado(o) && o.orderStatus === 'delivered')
       .sort((a, b) => {
         const timeA = new Date(a.deliveredAt || a.packedAt || a.createdAt).getTime();
         const timeB = new Date(b.deliveredAt || b.packedAt || b.createdAt).getTime();
@@ -343,6 +342,8 @@ export const OrdersQueue: React.FC = () => {
           const isFinished = isOrderFullyAlistado(order);
           const effectiveStatus: OrderStatus = isFinished && (order.orderStatus === 'pending' || order.orderStatus === 'picking')
             ? 'packing'
+            : !isFinished && (order.orderStatus === 'packing' || order.orderStatus === 'packed' || order.orderStatus === 'delivered')
+            ? (order.items?.some((it) => it.isPicked) ? 'picking' : 'pending')
             : order.orderStatus;
 
           const isNewlyFinished = recentlyFinishedIds.has(order.id);

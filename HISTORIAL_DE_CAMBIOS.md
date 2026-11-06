@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.16 - Blindaje Estricto de Alisto Obligatorio para Empaque, Empacados y Despacho
+- [x] **Regla Estricta de Alisto Obligatorio ([`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Ningún pedido puede pasar a *En Empaque* (`packing`), *Empacados* (`packed`) o *Terminado/Despachado* (`delivered`) si su alisto no está al 100% completado (`isPicked: true` o `isMissing: true` en todos sus productos).
+  - Eliminada la condición circular que consideraba un pedido alistado únicamente por su estado. Ahora la validación verifica matemáticamente la totalidad de ítems del pedido.
+  - Los pedidos sin alisto completo se mantienen y muestran estrictamente en la pestaña *"Pendientes de Alisto"*, ocultándose de *"En Empaque"*, *"Empacados"* y *"Terminados"*.
+- [x] **Protección en Facturación y Acciones Rápidas ([`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx)):**
+  - Desactivada la mutación forzada de estado a `packed` al abrir o facturar pedidos existentes si su alisto aún no está completo al 100%.
+- [x] **Validación Defensiva en Backend y Saneamiento Automático ([`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - `updateOrderStatus` y el endpoint PUT `/api/orders` bloquean cualquier intento de transición a `packing`, `packed` o `delivered` si el alisto no está al 100%.
+  - `sanitizeOrderList` normaliza automáticamente en carga y sincronización cualquier registro histórico con alisto incompleto devolviéndolo a `pending` o `picking`.
+  - Reparados los registros en la base de datos Cloudflare D1 (`byfiocr-db`), devolviendo los pedidos con progreso en cero a `pending` para su procesamiento reglamentario.
+
 ### Versión 4.16.15 - Botones Aceptar Propuesta con Flujo de Confirmación y Notificación Exclusiva a Superadmin
 - [x] **Botones "Aceptar Propuesta" en Múltiples Secciones ([`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
   - Incorporados 5 botones de acción directa *"Aceptar Propuesta"* distribuidos estratégicamente a lo largo de la propuesta: Hero Header, Tarifa Partner ₡40.000/mes, Resumen de Ahorro Real, ¿Cómo arrancamos? y Banner de Cierre Final.

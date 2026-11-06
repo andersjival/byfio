@@ -382,9 +382,14 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
   };
 
   const handleBillAndOpenExisting = (order: Order) => {
-    if (order.orderStatus === 'pending' || order.orderStatus === 'picking' || order.orderStatus === 'packing') {
+    // Solo si el pedido ya completó el 100% de alisto puede pasar a empacado al facturar
+    const hasItems = Array.isArray(order.items) && order.items.length > 0;
+    const isComplete = hasItems && order.items.every((it) => it.isPicked || it.isMissing);
+    if (isComplete && (order.orderStatus === 'pending' || order.orderStatus === 'picking' || order.orderStatus === 'packing')) {
       updateOrderStatus(order.id, 'packed');
       setSelectedExistingOrder({ ...order, orderStatus: 'packed' });
+    } else {
+      setSelectedExistingOrder(order);
     }
     setInvoiceOrder(order);
   };

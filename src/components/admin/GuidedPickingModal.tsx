@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   X, CheckCircle, AlertTriangle, MapPin, Heart, Scan, QrCode,
-  ClipboardList, Printer, FileCheck, Check, LogOut, FileText, Package
+  ClipboardList, Printer, FileCheck, Check, LogOut, FileText, Package,
+  Edit3
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -16,6 +17,7 @@ export const GuidedPickingModal: React.FC = () => {
     startPicking,
     markItemPicked,
     markItemMissing,
+    updateOrderItemQuantity,
     setInvoiceOrder,
     isFeatureEnabled,
   } = useApp();
@@ -23,6 +25,9 @@ export const GuidedPickingModal: React.FC = () => {
   const [manualInput, setManualInput] = useState('');
   const [scanFeedback, setScanFeedback] = useState<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null);
   const [showSummaryList, setShowSummaryList] = useState(false);
+  const [isEditingQty, setIsEditingQty] = useState(false);
+  const [tempQty, setTempQty] = useState<number>(1);
+  const [editingItemSku, setEditingItemSku] = useState<string | null>(null);
 
   if (!activePickingOrder) return null;
 
@@ -44,7 +49,6 @@ export const GuidedPickingModal: React.FC = () => {
   const nextPendingOrder = orders.find(
     (o) =>
       o.id !== currentOrder.id &&
-      (o.orderStatus === 'pending' || o.orderStatus === 'picking') &&
       !(Array.isArray(o.items) && o.items.length > 0 && o.items.every((it) => it.isPicked || it.isMissing))
   );
 
