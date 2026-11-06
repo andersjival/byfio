@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.16.15 - Botones Aceptar Propuesta con Flujo de Confirmación y Notificación Exclusiva a Superadmin
+- [x] **Botones "Aceptar Propuesta" en Múltiples Secciones ([`PropuestaPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/propuesta/PropuestaPage.tsx)):**
+  - Incorporados 5 botones de acción directa *"Aceptar Propuesta"* distribuidos estratégicamente a lo largo de la propuesta: Hero Header, Tarifa Partner ₡40.000/mes, Resumen de Ahorro Real, ¿Cómo arrancamos? y Banner de Cierre Final.
+  - Flujo de aceptación interactivo con modal dedicado: muestra el mensaje de confirmación previo (*"Haz clic en el botón 'Aceptar Propuesta' para formalizar tu acuerdo. Inmediatamente después de tu clic, se enviará la notificación exclusiva al panel de Superadmin para iniciar la implementación de tu plataforma"*), campos de contacto precompletados y botón de formalización.
+  - Estado de éxito tras el clic con animación de confeti, efectos de sonido y retroalimentación confirmando el envío inmediato.
+- [x] **Recepción y Notificaciones Exclusivas en Consola Superadmin ([`SuperadminSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`proposal-acceptances.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/proposal-acceptances.ts)):**
+  - **Aislamiento Estricto:** La notificación de aceptación de propuesta llega única y exclusivamente a la consola de Superadmin (`isSuperAdminAuthenticated`); ningún usuario administrador estándar o staff tiene acceso.
+  - Banner de alerta visual en el encabezado de Superadmin con conteo de aceptaciones pendientes, datos del cliente, teléfono y botones de acción rápida (*WhatsApp*, *Atender*, *Ver en Pestaña*).
+  - Pestaña dedicada *"Propuestas Aceptadas"* dentro de la consola con filtros por estado (*Pendientes*, *Contactadas*, *Activas*), cambio de estado, enlace a WhatsApp y eliminación segura.
+  - Sincronización en la nube multi-dispositivo Cloudflare D1 vía `/api/proposal-acceptances` y en tiempo real local con `BroadcastChannel`.
+
 ### Versión 4.16.14 - Nueva Vista de Agenda Calendario Semanal y Diaria con Bloqueo de Espacios y Sincronización
 - [x] **Cuadrícula de Calendario Semanal y Diaria ([`CalendarAgendaView.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarAgendaView.tsx), [`CalendarTopBar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarTopBar.tsx), [`AgendaSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
   - Implementación de la vista de agenda tipo cuadrícula inspirada en la referencia: cabecera con toggle `[ Vista Diaria | Semanal ]`, selector de intervalo (60 min, 30 min, 15 min), navegador semanal `< 2 nov - 8 nov >` con indicador `Hoy`, y filtro de equipo (`Todo el Equipo (2)`, `Fiorella`, `Taller & Envíos`).

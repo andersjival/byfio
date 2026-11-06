@@ -348,7 +348,7 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
         </button>
       </div>
 
-      {activeSuperadminTab === 'suppliers' ? (
+      {activeSuperadminTab === 'suppliers' && (
         <div className="space-y-4 animate-in fade-in duration-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-amber-500/10 border border-amber-300/80 rounded-3xl shadow-xs">
             <div className="flex items-center gap-3">
@@ -397,7 +397,198 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
 
           <SuppliersOrdersSection />
         </div>
-      ) : (
+      )}
+
+      {/* PESTAÑA DE PROPUESTAS ACEPTADAS (EXCLUSIVO SUPERADMIN) */}
+      {activeSuperadminTab === 'proposals' && (
+        <div className="space-y-4 animate-in fade-in duration-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 border border-emerald-300/80 rounded-3xl shadow-xs">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveSuperadminTab('modules')}
+                className="p-2 rounded-xl bg-white hover:bg-emerald-50 text-emerald-950 border border-emerald-300 transition-all cursor-pointer shadow-2xs"
+                title="Volver al Gestor Maestro de Módulos"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono uppercase font-bold text-emerald-950 bg-emerald-200 px-2 py-0.5 rounded-full">
+                    Exclusivo Superadmin
+                  </span>
+                  <span className="text-xs text-emerald-800 font-semibold">
+                    Registro Confidencial de Propuestas Aceptadas
+                  </span>
+                </div>
+                <h2 className="text-base sm:text-lg font-bubble font-bold text-slate-900">
+                  Notificaciones de Aceptación de Propuesta Partner
+                </h2>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigate('propuesta')}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bubble font-bold shadow-xs cursor-pointer"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Ver Ficha Propuesta</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Filtros de Estado */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+            <div className="flex items-center gap-1.5">
+              {[
+                { id: 'all', label: `Todas (${proposalAcceptances.length})` },
+                { id: 'pending', label: `Pendientes (${proposalAcceptances.filter((a) => a.status === 'pending').length})` },
+                { id: 'contacted', label: `Contactadas (${proposalAcceptances.filter((a) => a.status === 'contacted').length})` },
+                { id: 'active', label: `Activas (${proposalAcceptances.filter((a) => a.status === 'active').length})` },
+              ].map((pill) => (
+                <button
+                  key={pill.id}
+                  type="button"
+                  onClick={() => setProposalStatusFilter(pill.id as any)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-semibold transition-all cursor-pointer ${
+                    proposalStatusFilter === pill.id
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  {pill.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Lista de Aceptaciones */}
+          <div className="space-y-3">
+            {proposalAcceptances
+              .filter((acc) => proposalStatusFilter === 'all' || acc.status === proposalStatusFilter)
+              .map((acc) => (
+                <div
+                  key={acc.id}
+                  className={`p-5 rounded-2xl border transition-all space-y-3 ${
+                    acc.status === 'pending'
+                      ? 'bg-amber-50/70 border-amber-300 shadow-sm'
+                      : acc.status === 'contacted'
+                      ? 'bg-sky-50/70 border-sky-300'
+                      : 'bg-emerald-50/70 border-emerald-300'
+                  }`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200/60">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-fio-purple to-fio-pink text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                        <Award className="w-5 h-5 text-fio-yellow" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bubble font-bold text-base text-slate-900">
+                            {acc.clientName}
+                          </h3>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                              acc.status === 'pending'
+                                ? 'bg-amber-200 text-amber-900 animate-pulse'
+                                : acc.status === 'contacted'
+                                ? 'bg-sky-200 text-sky-900'
+                                : 'bg-emerald-200 text-emerald-900'
+                            }`}
+                          >
+                            {acc.status === 'pending'
+                              ? '● Pendiente de Contacto'
+                              : acc.status === 'contacted'
+                              ? '✓ Contactado'
+                              : '★ Socio Activo'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 font-sans">
+                          Aceptado el {new Date(acc.acceptedAt).toLocaleString('es-CR')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="text-xs font-bold text-slate-500 block">Plan Aceptado</span>
+                      <span className="font-bubble font-bold text-sm text-fio-purple">
+                        {acc.planName} • ₡{acc.monthlyFee.toLocaleString()}/mes
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-white/80 border border-slate-200/70 text-xs text-slate-700 font-sans">
+                    <span className="font-bold text-slate-900 block mb-0.5">Mensaje o Nota del Cliente:</span>
+                    <p className="italic">{acc.notes || 'Sin notas adicionales.'}</p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`https://wa.me/506${acc.clientPhone.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(acc.clientName)},%20te%20escribo%20del%20equipo%20técnico%20de%20By.Fio%20para%20coordinar%20la%20activación%20de%20tu%20plataforma%20digital.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bubble font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>WhatsApp ({acc.clientPhone})</span>
+                      </a>
+
+                      <a
+                        href={`tel:${acc.clientPhone}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bubble font-semibold transition-all cursor-pointer"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>Llamar</span>
+                      </a>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={acc.status}
+                        onChange={(e) => updateProposalAcceptanceStatus(acc.id, e.target.value as any)}
+                        className="px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 outline-none cursor-pointer"
+                      >
+                        <option value="pending">Estado: Pendiente</option>
+                        <option value="contacted">Estado: Contactado</option>
+                        <option value="active">Estado: Socio Activo</option>
+                      </select>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (await confirm('¿Eliminar esta notificación de aceptación de propuesta?', { title: 'Eliminar Notificación', variant: 'danger', confirmLabel: 'Sí, eliminar' })) {
+                            deleteProposalAcceptance(acc.id);
+                          }
+                        }}
+                        className="p-1.5 rounded-xl hover:bg-rose-100 text-slate-400 hover:text-rose-600 transition-all cursor-pointer"
+                        title="Eliminar notificación"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+            {proposalAcceptances.length === 0 && (
+              <div className="p-12 text-center bg-white rounded-3xl border border-dashed border-slate-300 text-slate-400 space-y-2">
+                <Award className="w-10 h-10 mx-auto text-slate-300" />
+                <h4 className="font-bubble font-bold text-base text-slate-700">
+                  No hay propuestas aceptadas todavía
+                </h4>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto font-sans">
+                  Cuando un cliente o Fio haga clic en "Aceptar Propuesta" en la página /propuesta, la notificación se registrará exclusivamente aquí en tiempo real.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeSuperadminTab === 'modules' && (
         <>
           {/* Tarjeta de Control Directo de Modos de Inventario (Stock vs Disponibilidad) */}
           <div className="p-4 sm:p-5 rounded-3xl bg-white border border-purple-200/80 shadow-[0_4px_20px_rgba(147,51,234,0.06)] flex flex-col md:flex-row md:items-center justify-between gap-4">
