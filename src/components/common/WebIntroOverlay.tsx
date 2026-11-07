@@ -9,6 +9,15 @@ interface WebIntroOverlayProps {
   onFinish: () => void;
 }
 
+const isMobileOrTabletDevice = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const ua = window.navigator.userAgent || (window.navigator as any).vendor || '';
+  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet|Silk/i.test(ua);
+  const isIPad = /Macintosh/i.test(ua) && Boolean(navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+  const isTouchScreen = ('ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)) && window.innerWidth <= 1024;
+  return Boolean(isMobileUA || isIPad || isTouchScreen);
+};
+
 export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFinish }) => {
   const [phase, setPhase] = useState<'gradient-start' | 'video-reveal' | 'video-playing' | 'fading-out'>('gradient-start');
   const [isMuted, setIsMuted] = useState(true);
@@ -18,6 +27,8 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
   const canPlayVideoRef = useRef(false);
   const hasInteractedRef = useRef(false);
   const isExitingRef = useRef(false);
+  const isMobile = useRef(isMobileOrTabletDevice()).current;
+  const enterTimeRef = useRef<number>(Date.now());
 
   // Desbloqueo universal de audio tras interacción
   const unlockAudio = () => {
@@ -36,8 +47,12 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
   };
 
   // Salida suave y rápida
-  const handleStartExit = () => {
+  const handleStartExit = (force = false) => {
     if (isExitingRef.current) return;
+    if (isMobile && !force) {
+      const elapsed = Date.now() - enterTimeRef.current;
+      if (elapsed < 3000) return;
+    }
     isExitingRef.current = true;
     setPhase('fading-out');
 
@@ -71,6 +86,25 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
       return;
     }
 
+    // MODO MÓVIL: No cargar video, mantener pantalla de marca y 3 puntos mínimo 3 segundos
+    if (isMobile) {
+      setPhase('gradient-start');
+      isExitingRef.current = false;
+      enterTimeRef.current = Date.now();
+
+      const mobileTimer = window.setTimeout(() => {
+        handleStartExit(true);
+      }, 3200);
+
+      return () => {
+        window.clearTimeout(mobileTimer);
+        if (exitTimeoutRef.current) {
+          window.clearTimeout(exitTimeoutRef.current);
+        }
+      };
+    }
+
+    // MODO ESCRITORIO: Video completo
     setPhase('gradient-start');
     setProgress(0);
     canPlayVideoRef.current = false;
@@ -197,9 +231,51 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
 
   if (!isOpen || !isHomeLocation()) return null;
 
+  // En dispositivos móviles (iPhone, Android, Tablet), no renderizar ni descargar el video:
+  if (isMobile) {
+    return (
+      <div
+        onClick={() => handleStartExit(false)}
+        className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center overflow-hidden transition-all duration-500 ease-in-out select-none ${
+          phase === 'fading-out'
+            ? 'opacity-0 scale-105 pointer-events-none'
+            : 'opacity-100 scale-100 pointer-events-auto'
+        }`}
+        style={{
+          background: 'radial-gradient(ellipse at 50% 30%, #4A0E78 0%, #2A0845 45%, #120220 100%)',
+        }}
+      >
+        {/* Luces Ambientales */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[32rem] h-[24rem] rounded-full bg-gradient-to-b from-[#A855F7]/35 via-[#7E22CE]/25 to-transparent blur-[100px]" />
+          <div className="absolute top-1/3 -left-20 w-72 h-72 rounded-full bg-[#EC4899]/20 blur-[90px] animate-pulse" />
+          <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-[#F59E0B]/15 blur-[100px]" />
+        </div>
+
+        {/* Presentación móvil limpia: Logo By.Fio + 3 puntitos animados */}
+        <div className="relative z-10 flex flex-col items-center text-center px-6">
+          <div className="relative mb-2 flex items-center justify-center">
+            <BrandLogo
+              size="hero"
+              showSlogan={true}
+              textColor="text-white"
+              sloganColor="text-white/85"
+              align="center"
+            />
+          </div>
+          <div className="mt-6 flex items-center gap-2.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-fio-pink animate-ping" />
+            <div className="w-2.5 h-2.5 rounded-full bg-fio-yellow animate-ping delay-150" />
+            <div className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping delay-300" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      onClick={handleStartExit}
+      onClick={() => handleStartExit()}
       className={`fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out cursor-pointer select-none ${
         phase === 'fading-out'
           ? 'opacity-0 scale-105 pointer-events-none'
@@ -304,8 +380,8 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
             muted={isMuted}
             autoPlay
             onTimeUpdate={handleTimeUpdate}
-            onEnded={handleStartExit}
-            onError={handleStartExit}
+            onEnded={() => handleStartExit(true)}
+            onError={() => handleStartExit(true)}
             onWaiting={() => {
               window.setTimeout(() => {
                 if (videoRef.current && videoRef.current.paused) {
