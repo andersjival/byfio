@@ -28,7 +28,11 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
   const hasInteractedRef = useRef(false);
   const isExitingRef = useRef(false);
   const isMobile = useRef(isMobileOrTabletDevice()).current;
-  const enterTimeRef = useRef<number>(Date.now());
+  const enterTimeRef = useRef<number>(
+    typeof window !== 'undefined' && (window as any).__byfio_start_time
+      ? (window as any).__byfio_start_time
+      : Date.now()
+  );
 
   // Desbloqueo universal de audio tras interacción
   const unlockAudio = () => {
@@ -90,11 +94,15 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
     if (isMobile) {
       setPhase('gradient-start');
       isExitingRef.current = false;
-      enterTimeRef.current = Date.now();
+
+
+      const elapsed = Date.now() - enterTimeRef.current;
+      const minDuration = 3200; // Garantizar mínimo 3.2 segundos en pantalla de carga
+      const remainingTime = Math.max(800, minDuration - elapsed);
 
       const mobileTimer = window.setTimeout(() => {
         handleStartExit(true);
-      }, 3200);
+      }, remainingTime);
 
       return () => {
         window.clearTimeout(mobileTimer);
