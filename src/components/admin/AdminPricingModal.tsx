@@ -322,8 +322,10 @@ export const AdminPricingModal: React.FC = () => {
                             <label className="text-[9px] uppercase font-bold text-slate-400 block">Precio (₡)</label>
                             <input
                               type="number"
+                              min={0}
+                              step="any"
                               value={tier.price}
-                              onChange={(e) => handleUpdateTier(catIdx, tierIdx, 'price', parseInt(e.target.value) || 0)}
+                              onChange={(e) => handleUpdateTier(catIdx, tierIdx, 'price', parseFloat(e.target.value) || 0)}
                               className="w-full px-2 py-1 rounded-lg border border-slate-200 font-mono font-bold text-slate-800 text-xs"
                             />
                           </div>

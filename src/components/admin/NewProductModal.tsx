@@ -482,7 +482,7 @@ export const NewProductModal: React.FC = () => {
                   required
                   type="number"
                   min="0"
-                  step="100"
+                  step="any"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-fio-200 font-bubble font-bold text-fio-900 text-sm"
@@ -495,7 +495,7 @@ export const NewProductModal: React.FC = () => {
                   required
                   type="number"
                   min="0"
-                  step="100"
+                  step="any"
                   value={costPrice}
                   onChange={(e) => setCostPrice(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-fio-200 text-gray-600 font-semibold"

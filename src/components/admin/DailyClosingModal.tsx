@@ -414,6 +414,8 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                     </label>
                     <input
                       type="number"
+                      min={0}
+                      step="any"
                       placeholder="Ej: 45000"
                       value={cashCounted}
                       onChange={(e) => setCashCounted(e.target.value)}

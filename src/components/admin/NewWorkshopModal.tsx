@@ -318,6 +318,7 @@ export const NewWorkshopModal: React.FC = () => {
                       onChange={(e) => set('price', Number(e.target.value))}
                       placeholder="35000"
                       min={0}
+                      step="any"
                       className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-fio-300 focus:outline-none"
                       required
                     />
