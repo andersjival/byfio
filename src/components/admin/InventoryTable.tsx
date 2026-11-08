@@ -336,9 +336,9 @@ export const InventoryTable: React.FC = () => {
               <th className="pb-3 px-2">Categoría</th>
               <th className="pb-3 px-2">Ubicación</th>
               <th className="pb-3 px-2">Precio</th>
+              <th className="pb-3 px-2 text-center">Stock Actual</th>
               {inventoryMode === 'stock' ? (
                 <>
-                  <th className="pb-3 px-2 text-center">Stock</th>
                   <th className="pb-3 px-2 text-center">Alerta Mín/Máx</th>
                   <th className="pb-3 px-2 text-center">A Reponer</th>
                 </>
@@ -386,11 +386,20 @@ export const InventoryTable: React.FC = () => {
                         }`}
                       />
                       <div>
-                        <span className={`font-mono font-bold text-[11px] px-1.5 py-0.5 rounded ${
-                          isZeroStock ? 'bg-red-200 text-red-900 font-black' : 'text-fio-800 bg-fio-100'
-                        }`}>
-                          {prod.sku}
-                        </span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className={`font-mono font-bold text-[11px] px-1.5 py-0.5 rounded ${
+                            isZeroStock ? 'bg-red-200 text-red-900 font-black' : 'text-fio-800 bg-fio-100'
+                          }`}>
+                            {prod.sku}
+                          </span>
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                            isZeroStock
+                              ? 'bg-red-100 text-red-700 border-red-200'
+                              : 'bg-purple-100 text-fio-800 border-purple-200'
+                          }`}>
+                            Stock: {prod.stock} {prod.unit || 'uds'}
+                          </span>
+                        </div>
                         <p className={`font-semibold line-clamp-1 transition-colors ${
                           isZeroStock ? 'text-red-900 font-bold' : 'text-gray-800 group-hover:text-fio-800'
                         }`}>
@@ -447,26 +456,48 @@ export const InventoryTable: React.FC = () => {
 
                   <td className="py-3 px-2 font-bubble font-bold text-gray-800">{formatCRC(prod.price)}</td>
 
+                  {/* Columna Stock Actual (Siempre visible en pantalla principal) */}
+                  <td className="py-3 px-2 text-center">
+                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-xl border ${
+                      isZeroStock
+                        ? 'bg-red-100 border-red-300 ring-2 ring-red-200'
+                        : isCritical
+                        ? 'bg-amber-50 border-amber-300 ring-1 ring-amber-200'
+                        : 'bg-fio-100/60 border-fio-200'
+                    }`}>
+                      <button
+                        type="button"
+                        onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))}
+                        className="p-1 text-gray-500 hover:text-red-600 hover:bg-white rounded transition-colors active:scale-90"
+                        title="Reducir stock en 1 unidad"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <div className="flex flex-col items-center min-w-[34px] px-0.5">
+                        <span className={`font-bubble font-bold text-sm leading-none ${
+                          isZeroStock ? 'text-red-700 font-black' : isCritical ? 'text-amber-800' : 'text-gray-900'
+                        }`}>
+                          {prod.stock}
+                        </span>
+                        <span className={`text-[9px] font-semibold leading-tight mt-0.5 ${
+                          isZeroStock ? 'text-red-600' : 'text-gray-500'
+                        }`}>
+                          {isZeroStock ? 'Agotado' : (prod.unit || 'uds')}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => updateProductStock(prod.id, prod.stock + 1)}
+                        className="p-1 text-gray-500 hover:text-emerald-600 hover:bg-white rounded transition-colors active:scale-90"
+                        title="Aumentar stock en 1 unidad"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </td>
+
                   {inventoryMode === 'stock' ? (
                     <>
-                      <td className="py-3 px-2 text-center">
-                        <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-xl border ${
-                          isZeroStock ? 'bg-red-100 border-red-300 ring-2 ring-red-200' : 'bg-fio-100/60 border-fio-200'
-                        }`}>
-                          <button onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))} className="p-0.5 text-gray-500 hover:text-red-600">
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className={`font-bubble font-bold text-sm w-6 ${
-                            isZeroStock ? 'text-red-700 font-black' : isCritical ? 'text-red-600' : 'text-gray-900'
-                          }`}>
-                            {prod.stock}
-                          </span>
-                          <button onClick={() => updateProductStock(prod.id, prod.stock + 1)} className="p-0.5 text-gray-500 hover:text-emerald-600">
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
-                      </td>
-
                       <td className="py-3 px-2 text-center">
                         {isZeroStock ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-600 text-white font-bold text-[10px] shadow-sm animate-pulse">

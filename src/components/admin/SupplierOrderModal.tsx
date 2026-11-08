@@ -22,6 +22,9 @@ export const SupplierOrderModal: React.FC = () => {
   useEffect(() => {
     if (isSupplierModalOpen) {
       document.body.classList.add('supplier-order-open');
+      // Cada vez que se abre el modal, resetear exclusiones para reflejar exactamente los productos pendientes
+      setExcludedIds(new Set());
+      setAdditionalProductIds([]);
     } else {
       document.body.classList.remove('supplier-order-open');
     }
@@ -30,14 +33,11 @@ export const SupplierOrderModal: React.FC = () => {
     };
   }, [isSupplierModalOpen]);
 
-  // Artículos base que requieren atención (por debajo de minStock, stock <= 0, no disponibles o agregados manualmente)
+  // Artículos base pendientes de pedir (únicamente productos con stock en cero / agotados con botón Pedir, o agregados manualmente)
   const baseItems = useMemo(() => {
     return products.filter(
       (p) =>
-        p.stock <= p.minStock ||
         p.stock <= 0 ||
-        p.isAvailable === false ||
-        p.showInStore === false ||
         additionalProductIds.includes(p.id)
     );
   }, [products, additionalProductIds]);
