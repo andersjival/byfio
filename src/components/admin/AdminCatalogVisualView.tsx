@@ -64,9 +64,6 @@ export const AdminCatalogVisualView: React.FC<AdminCatalogVisualViewProps> = ({ 
             <h1 className="font-bubble font-bold text-lg sm:text-2xl text-fio-900 leading-tight">
               Catálogo Digital Online
             </h1>
-            <p className="text-[11px] sm:text-xs text-slate-500 font-sans">
-              Galería visual de artículos exclusivos y fotos en alta definición
-            </p>
           </div>
         </div>
 

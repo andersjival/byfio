@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
-  BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone
+  BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone, Save
 } from 'lucide-react';
 
 import { AppRoute, SupplierOrder } from '../../types';
@@ -19,6 +19,24 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
   const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, toggleSuperadminModule, currentUser, agendaItems, supplierOrders } = useApp();
   const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
+  const [catalogWebCheck, setCatalogWebCheck] = useState<boolean>(isModuleEnabled('catalogo'));
+  const [catalogSaveToast, setCatalogSaveToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCatalogWebCheck(isModuleEnabled('catalogo'));
+  }, [isModuleEnabled]);
+
+  const handleSaveCatalogVisibility = () => {
+    if (catalogWebCheck !== isModuleEnabled('catalogo')) {
+      toggleSuperadminModule('catalogo');
+    }
+    setCatalogSaveToast(
+      catalogWebCheck
+        ? '✓ ¡Guardado! Catálogo activado: botón y sección visibles en la web.'
+        : '✓ ¡Guardado! Catálogo desactivado: botón y sección ocultos de la web.'
+    );
+    setTimeout(() => setCatalogSaveToast(null), 3500);
+  };
 
   const copyCatalogLink = () => {
     const link = `${window.location.origin}/catalogo`;
@@ -288,25 +306,35 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
-              {/* Botón para Activar / Desactivar Catálogo en la Web */}
-              <button
-                type="button"
-                onClick={() => toggleSuperadminModule('catalogo')}
-                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold border transition-all active:scale-95 shadow-2xs ${
-                  isModuleEnabled('catalogo')
-                    ? 'bg-white hover:bg-rose-50 text-rose-600 border-rose-200'
-                    : 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 shadow-sm'
-                }`}
-                title="Activar o desactivar al instante el botón de Catálogo en la página web"
-              >
-                <span>{isModuleEnabled('catalogo') ? 'Desactivar de la Web' : 'Activar en la Web'}</span>
-              </button>
+              {/* Checkbox y Botón Guardar para Activar / Desactivar Catálogo en la Web */}
+              <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-xl border border-purple-200 shadow-2xs">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={catalogWebCheck}
+                    onChange={(e) => setCatalogWebCheck(e.target.checked)}
+                    className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 border-slate-300 cursor-pointer accent-purple-600"
+                  />
+                  <span className="text-xs font-bubble font-bold text-slate-800">
+                    {catalogWebCheck ? 'Visible en Web' : 'Oculto en Web'}
+                  </span>
+                </label>
+                <button
+                  type="button"
+                  onClick={handleSaveCatalogVisibility}
+                  className="flex items-center gap-1 px-3 py-1 rounded-lg bg-fio-800 hover:bg-fio-900 text-white text-xs font-bubble font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
+                  title="Guardar el estado de activación o desactivación del catálogo"
+                >
+                  <Save className="w-3 h-3 text-fio-yellow" />
+                  <span>Guardar</span>
+                </button>
+              </div>
 
               {/* Botón Nueva Vista Catálogo Visual */}
               <button
                 type="button"
                 onClick={() => onSelectTab('catalog-view')}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
                 title="Abrir vista de catálogo exclusiva con fotos y slider sin barra de info"
               >
                 <BookOpen className="w-3.5 h-3.5 text-fio-yellow" />
@@ -314,6 +342,13 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               </button>
             </div>
           </div>
+
+          {catalogSaveToast && (
+            <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bubble font-bold text-center animate-fadeIn flex items-center justify-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+              <span>{catalogSaveToast}</span>
+            </div>
+          )}
 
           {/* Enlaces de compartir (visibles cuando está activo en la web) */}
           {isModuleEnabled('catalogo') && (
