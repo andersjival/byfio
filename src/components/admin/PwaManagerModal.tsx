@@ -4,7 +4,7 @@ import {
   Smartphone, Monitor, Download, Share2, Copy, Check,
   ExternalLink, QrCode, Sparkles, ShieldCheck, Users,
   Boxes, Receipt, Calendar, X, ChevronRight, Info,
-  Laptop, Tablet, CheckCircle2, MessageCircle, AlertCircle
+  Laptop, Tablet, CheckCircle2, MessageCircle, AlertCircle, KeyRound
 } from 'lucide-react';
 import { usePwaInstall } from '../../hooks/usePwaInstall';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
@@ -89,57 +89,18 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
     setTimeout(() => setInstallResult(null), 4000);
   };
 
-  // Aplicaciones generadas para los Colaboradores del Negocio
-  const collaboratorApps: CollaboratorApp[] = [
-    {
-      id: 'alisto',
-      title: 'App Alisto & Bodega (Operativo)',
-      roleTag: 'Colaborador Alisto',
-      badgeColor: 'bg-fio-pink text-white',
-      description: 'Checklist táctil para preparación de pedidos en bodega y taller. Privacidad total: oculta montos y finanzas.',
-      path: '/pedidos-mobile',
-      icon: Boxes,
-      deviceRecommend: 'mobile',
-      deviceRecommendText: '📱 Celular / Tablet de Bodega',
-      shareMessage: '¡Hola! Te comparto tu acceso a la App de Alisto de Pedidos de By.Fio. Ábrela en tu celular para descargarla e ingresar con tu PIN:',
-    },
-    {
-      id: 'empaque',
-      title: 'App Empaque & Envíos',
-      roleTag: 'Mesa de Empaque',
-      badgeColor: 'bg-purple-600 text-white',
-      description: 'Control de pedidos en empaque, rotulado, notas de envío y despacho por mensajería o Correos de CR.',
-      path: '/pedidos?view=packing',
-      icon: Smartphone,
-      deviceRecommend: 'all',
-      deviceRecommendText: '📱 Celular o 💻 Computadora',
-      shareMessage: '¡Hola! Te comparto tu acceso a la App de Empaque de By.Fio. Ábrela en tu celular para descargarla e ingresar con tu PIN:',
-    },
-    {
-      id: 'pos',
-      title: 'App Mostrador & Facturación POS',
-      roleTag: 'Caja & Mostrador',
-      badgeColor: 'bg-emerald-600 text-white',
-      description: 'Búsqueda por orden o cliente, cobros rápidos por SINPE / Efectivo y emisión de comprobantes.',
-      path: '/admin?tab=billing',
-      icon: Receipt,
-      deviceRecommend: 'tablet',
-      deviceRecommendText: '💻 Tablet o Laptop Mostrador',
-      shareMessage: '¡Hola! Te comparto tu acceso a la App POS de By.Fio. Ábrela para descargarla e ingresar con tu PIN:',
-    },
-    {
-      id: 'agenda',
-      title: 'App Agenda del Taller & Citas',
-      roleTag: 'Equipo Taller',
-      badgeColor: 'bg-amber-600 text-white',
-      description: 'Calendario interactivo, fechas límite de entrega, citas de clientes y control de agenda.',
-      path: '/admin?tab=agenda',
-      icon: Calendar,
-      deviceRecommend: 'all',
-      deviceRecommendText: '📱 Celular / 💻 PC',
-      shareMessage: '¡Hola! Te comparto tu acceso a la App Agenda de By.Fio. Ábrela para descargarla e ingresar con tu PIN:',
-    },
-  ];
+  // Aplicación ÚNICA para los Colaboradores del Negocio (los permisos definen la funcionalidad)
+  const collaboratorApp = {
+    id: 'colaborador',
+    title: 'App Colaborador By.Fio (Única)',
+    roleTag: 'Permisos Dinámicos',
+    badgeColor: 'bg-gradient-to-r from-fio-pink to-purple-600 text-white',
+    description: 'Aplicación única para todo el equipo de trabajo. Las herramientas y vistas disponibles se adaptan automáticamente según los permisos y el PIN que le asignes a cada colaborador en Perfiles de Usuario.',
+    path: '/instalar-app?app=colaborador',
+    icon: Users,
+    deviceRecommendText: '📱 Celular, Tablet o Computadora',
+    shareMessage: '¡Hola! Te comparto tu acceso a la App de Colaboradores de By.Fio. Abre este enlace en tu celular para descargar la app e ingresar con tu PIN personal:',
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/75 backdrop-blur-xs animate-fadeIn overflow-y-auto">
@@ -216,7 +177,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>👥 Apps para Colaboradores ({collaboratorApps.length})</span>
+            <span>👥 PWA para Colaboradores (App Única)</span>
           </button>
 
           <button
@@ -424,94 +385,124 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
             </div>
           )}
 
-          {/* TAB 2: APPS PARA COLABORADORES (EQUIPO) */}
+          {/* TAB 2: APP ÚNICA PARA COLABORADORES */}
           {activeTab === 'collaborators' && (
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 text-xs text-indigo-950 dark:text-indigo-200 font-sans flex items-start gap-2.5">
                 <Users className="w-4 h-4 text-indigo-600 dark:text-indigo-400 mt-0.5 shrink-0" />
                 <p className="leading-relaxed">
-                  Estas aplicaciones están creadas especialmente para tu equipo de trabajo. Tienen <strong>protección de privacidad</strong> (ocultan ventas y finanzas a los colaboradores de bodega) y cuentan con botón de <strong>Copiar</strong> y botón de <strong>Compartir directo por WhatsApp</strong> para que las envíes a sus celulares.
+                  Esta es la <strong>única aplicación para tus colaboradores</strong>. No necesitas compartir varias apps distintas: una sola app sirve para todo tu equipo, y <strong>lo que cada colaborador puede ver o hacer se define exclusivamente mediante los permisos y el PIN</strong> que le asignes en el panel de Perfiles de Usuario.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {collaboratorApps.map((app) => {
-                  const AppIcon = app.icon;
-                  const fullUrl = `${origin}/instalar-app?app=${app.id}`;
-
-                  return (
-                    <div
-                      key={app.id}
-                      className="p-4 rounded-2xl bg-white dark:bg-[#252136] border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-3"
-                    >
-                      <div className="space-y-2">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200 flex items-center justify-center shrink-0">
-                              <AppIcon className="w-4.5 h-4.5" />
-                            </div>
-                            <div>
-                              <h4 className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight">
-                                {app.title}
-                              </h4>
-                              <span className={`inline-block px-2 py-0.2 rounded-full text-[9px] font-bold mt-0.5 ${app.badgeColor}`}>
-                                {app.roleTag}
-                              </span>
-                            </div>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => setSelectedQrApp({ title: app.title, url: fullUrl })}
-                            className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-purple-600 transition-all cursor-pointer"
-                            title="Generar código QR para escanear en taller"
-                          >
-                            <QrCode className="w-4 h-4" />
-                          </button>
-                        </div>
-
-                        <p className="text-[11px] text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
-                          {app.description}
-                        </p>
-
-                        <div className="text-[10px] font-mono text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-2.5 py-1 rounded-lg truncate">
-                          {app.deviceRecommendText} • Descarga + PIN
-                        </div>
-                      </div>
-
-                      {/* Botones de Acción: Copiar y Compartir */}
-                      <div className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(fullUrl, `app-${app.id}`)}
-                          className="flex-1 py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bubble font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
-                        >
-                          {copiedKey === `app-${app.id}` ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>¡Copiado!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-3.5 h-3.5 text-fio-pink" />
-                              <span>Copiar Enlace</span>
-                            </>
-                          )}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => shareViaWebShare(app.title, app.shareMessage, fullUrl, `share-${app.id}`)}
-                          className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
-                          title="Compartir por WhatsApp con el colaborador"
-                        >
-                          <Share2 className="w-3.5 h-3.5" />
-                          <span>Compartir</span>
-                        </button>
-                      </div>
+              {/* Tarjeta Principal de la App Única de Colaboradores */}
+              <div className="p-5 rounded-3xl bg-white dark:bg-[#252136] border-2 border-purple-200/90 dark:border-purple-800/80 shadow-md space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-fio-pink via-purple-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                      <Users className="w-6 h-6 text-fio-yellow" />
                     </div>
-                  );
-                })}
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-bubble font-bold text-base sm:text-lg text-slate-900 dark:text-white leading-tight">
+                          {collaboratorApp.title}
+                        </h4>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-purple-100 text-purple-900 dark:bg-purple-900/60 dark:text-purple-200 border border-purple-200 dark:border-purple-700">
+                          1 Sola App para todo el Equipo
+                        </span>
+                      </div>
+                      <p className="text-xs text-purple-700 dark:text-purple-300 font-medium mt-0.5">
+                        {collaboratorApp.deviceRecommendText} • Descarga guiada + PIN
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedQrApp({ title: collaboratorApp.title, url: `${origin}${collaboratorApp.path}` })}
+                    className="p-2 rounded-xl bg-purple-50 dark:bg-purple-900/40 hover:bg-purple-100 dark:hover:bg-purple-900/70 text-purple-700 dark:text-purple-300 transition-all cursor-pointer flex items-center gap-1.5 self-start sm:self-auto text-xs font-bubble font-bold border border-purple-200/70"
+                    title="Generar código QR para escanear en taller"
+                  >
+                    <QrCode className="w-4 h-4 text-fio-pink" />
+                    <span>Ver Código QR</span>
+                  </button>
+                </div>
+
+                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+                  {collaboratorApp.description}
+                </p>
+
+                {/* Resumen de Módulos Gobernados por Permisos */}
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/70 dark:border-slate-800 space-y-2">
+                  <div className="text-[11px] font-bubble font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-fio-pink" />
+                    <span>Módulos que se activan según los permisos del PIN:</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300 font-sans">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-pink-500 shrink-0" />
+                      <span><strong>Alisto &amp; Bodega:</strong> Picking táctil (oculta finanzas)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
+                      <span><strong>Empaque:</strong> Rotulación y despacho</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                      <span><strong>Mostrador POS:</strong> Búsqueda de órdenes y cobros</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                      <span><strong>Agenda:</strong> Citas y fechas límite del taller</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones de Acción de la App Única */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(`${origin}${collaboratorApp.path}`, 'app-colaborador')}
+                    className="flex-1 py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bubble font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 border border-slate-200 dark:border-slate-700"
+                  >
+                    {copiedKey === 'app-colaborador' ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-600" />
+                        <span>¡Enlace Copiado!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 text-fio-pink" />
+                        <span>Copiar Enlace de la App</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => shareViaWebShare(collaboratorApp.title, collaboratorApp.shareMessage, `${origin}${collaboratorApp.path}`, 'share-colaborador')}
+                    className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer active:scale-95"
+                    title="Compartir por WhatsApp con el colaborador"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    <span>Compartir por WhatsApp</span>
+                  </button>
+
+                  {onSelectAdminTab && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSelectAdminTab('users');
+                        onClose();
+                      }}
+                      className="py-2.5 px-3.5 rounded-xl bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 text-purple-900 dark:text-purple-200 font-bubble font-bold text-xs flex items-center justify-center gap-1.5 border border-purple-200 dark:border-purple-800/50 cursor-pointer active:scale-95 transition-all"
+                      title="Ir a configurar qué puede hacer cada colaborador"
+                    >
+                      <KeyRound className="w-3.5 h-3.5 text-fio-pink" />
+                      <span>Configurar Permisos &amp; PINs</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -26,6 +26,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
   - **App Móvil de Pedidos (Celular):** Franja superior con ícono y nombre subrayado del colaborador responsable del alisto.
   - **Modal de Alisto Guiado y Facturación Rápida:** Resumen de cierre indicando formalmente el colaborador que procesó la orden.
 
+### Versión 4.17.9 - Unificación de PWA para Colaboradores en una Sola Aplicación Dinámica por Permisos
+- [x] **Unificación de la PWA de Colaboradores ([PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx)):**
+  - Erradicada la dispersión de 4 aplicaciones separadas en el panel PWA; sustituida por una única aplicación oficial: App Colaborador By.Fio.
+  - Centralizado un único enlace de instalación /instalar-app?app=colaborador, botón de compartir por WhatsApp y código QR unificado para todo el equipo de trabajo.
+- [x] **Activación Funcional 100% Gobernada por Permisos ([PwaInstallPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/pwa/PwaInstallPage.tsx)):**
+  - Al ingresar con su código PIN, la aplicación única evalúa los permisos activos del colaborador en tiempo real:
+    - Si únicamente tiene permisos de Alisto, abre directamente la interfaz táctil de bodega y picking.
+    - Si cuenta con permisos de facturación, agenda, empaque o inventario, despliega el panel administrativo adaptado exclusivamente a sus módulos autorizados.
+
 ### Versión 4.17.8 - Botón Desactivar Módulo Completo y Modo Ocultar Nombre con Funcionalidades Activas en Superadmin
 - [x] **Control Dual de Módulos en Superadmin ([SuperadminModuleCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminModuleCard.tsx), [SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):
   - Añadido el botón Desactivar Todo el Módulo: apaga por completo el módulo y desmarca todas sus funcionalidades en 1 clic (sin ningún check, ni el módulo ni las funcionalidades operan).

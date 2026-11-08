@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { usePwaInstall } from '../../hooks/usePwaInstall';
-import { AppRoute, UserProfile } from '../../types';
+import { AppRoute, UserProfile, UserPermissions } from '../../types';
 import {
   Download, Smartphone, ShieldCheck, KeyRound, Check,
   Boxes, Receipt, Calendar, ArrowRight, Share2, Sparkles,
-  CheckCircle2, AlertCircle, RefreshCw, Lock, ChevronRight, User
+  CheckCircle2, AlertCircle, RefreshCw, Lock, ChevronRight, User, Users
 } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
@@ -37,48 +37,15 @@ const APPS_CONFIG: Record<string, AppTargetConfig> = {
     icon: ShieldCheck,
     suggestedProfile: 'Fiorella (Fio)',
   },
-  alisto: {
-    id: 'alisto',
-    title: 'App Alisto & Bodega',
-    roleTag: 'Colaborador Alisto',
-    badgeColor: 'bg-pink-600 text-white',
-    description: 'Checklist táctil para preparación y empaque de pedidos en bodega con privacidad de ventas.',
+  colaborador: {
+    id: 'colaborador',
+    title: 'App Colaborador By.Fio (Única)',
+    roleTag: 'Permisos Dinámicos por Perfil',
+    badgeColor: 'bg-gradient-to-r from-fio-pink to-purple-600 text-white',
+    description: 'Aplicación única para todo el equipo de trabajo. Al ingresar con tu PIN, se activarán automáticamente tus herramientas autorizadas (Alisto, Empaque, Mostrador POS o Agenda).',
     destinationRoute: 'pedidos-mobile',
-    icon: Boxes,
+    icon: Users,
     suggestedProfile: 'Colaborador Alisto',
-  },
-  empaque: {
-    id: 'empaque',
-    title: 'App Empaque & Envíos',
-    roleTag: 'Mesa de Empaque',
-    badgeColor: 'bg-indigo-600 text-white',
-    description: 'Control de pedidos listos para rotulación y despacho con mensajería o Correos de CR.',
-    destinationRoute: 'admin',
-    destinationTab: 'orders',
-    icon: Smartphone,
-    suggestedProfile: 'Colaborador Alisto',
-  },
-  pos: {
-    id: 'pos',
-    title: 'App Mostrador & Facturación POS',
-    roleTag: 'Caja & Mostrador',
-    badgeColor: 'bg-emerald-600 text-white',
-    description: 'Búsqueda rápida de clientes y cobros inmediatos por SINPE Móvil o efectivo.',
-    destinationRoute: 'admin',
-    destinationTab: 'billing',
-    icon: Receipt,
-    suggestedProfile: 'Fiorella (Fio)',
-  },
-  agenda: {
-    id: 'agenda',
-    title: 'App Agenda del Taller',
-    roleTag: 'Equipo Taller',
-    badgeColor: 'bg-amber-600 text-white',
-    description: 'Calendario de actividades, talleres creativos y fechas límite de pedidos.',
-    destinationRoute: 'admin',
-    destinationTab: 'agenda',
-    icon: Calendar,
-    suggestedProfile: 'Fiorella (Fio)',
   },
 };
 
@@ -94,10 +61,8 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      const appParam = params.get('app') || params.get('target') || 'alisto';
-      if (APPS_CONFIG[appParam]) {
-        setTargetKey(appParam);
-      }
+      const appParam = (params.get('app') || params.get('target') || 'colaborador').toLowerCase();
+      setTargetKey(appParam === 'admin' ? 'admin' : 'colaborador');
     }
   }, []);
 
@@ -174,18 +139,40 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
     setPinError(null);
   };
 
-  // Verificación del PIN
+  // Verificación del PIN y redirección dinámica según permisos
   const verifyPin = (pinToTest: string) => {
     const res = loginWithPin(pinToTest, selectedProfile ? selectedProfile.name : undefined);
-    if (res.success) {
+    if (res.success && res.user) {
       playBubblePopSound();
       setIsSuccess(true);
+      const user = res.user;
+
       setTimeout(() => {
-        // Redirigir a la vista de la aplicación
-        if (currentApp.destinationTab && onSelectAdminTab) {
-          onSelectAdminTab(currentApp.destinationTab);
+        if (user.role === 'admin' || user.isMasterAdmin) {
+          onNavigate('admin');
+        } else {
+          // Colaborador: la funcionalidad la definen sus permisos
+          const perms = (user.permissions || {}) as UserPermissions;
+          const isAlistoOnly = perms.orders && !perms.billing && !perms.inventory && !perms.reports && !perms.agenda;
+
+          if (isAlistoOnly) {
+            onNavigate('pedidos-mobile');
+          } else if (perms.orders) {
+            if (onSelectAdminTab) onSelectAdminTab('orders');
+            onNavigate('admin');
+          } else if (perms.billing) {
+            if (onSelectAdminTab) onSelectAdminTab('billing');
+            onNavigate('admin');
+          } else if (perms.inventory) {
+            if (onSelectAdminTab) onSelectAdminTab('inventory');
+            onNavigate('admin');
+          } else if (perms.agenda) {
+            if (onSelectAdminTab) onSelectAdminTab('agenda');
+            onNavigate('admin');
+          } else {
+            onNavigate('admin');
+          }
         }
-        onNavigate(currentApp.destinationRoute);
       }, 700);
     } else {
       setPinError(res.error || 'PIN incorrecto. Intenta de nuevo.');
