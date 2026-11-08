@@ -4,7 +4,7 @@ import { AdminTabType } from './AdminTabs';
 import {
   QrCode, Receipt, Boxes, Landmark, GraduationCap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
-  BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag
+  BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone
 } from 'lucide-react';
 
 import { AppRoute, SupplierOrder } from '../../types';
@@ -12,9 +12,10 @@ import { AppRoute, SupplierOrder } from '../../types';
 interface AdminHubMenuProps {
   onSelectTab: (tab: AdminTabType) => void;
   onNavigate?: (route: AppRoute) => void;
+  onOpenPwaModal?: () => void;
 }
 
-export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate }) => {
+export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate, onOpenPwaModal }) => {
   const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, currentUser, agendaItems, supplierOrders } = useApp();
   const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
@@ -199,6 +200,40 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
           })}
         </div>
       </div>
+
+      
+        {/* Tarjeta Ejecutiva del Centro de Aplicaciones PWA (PC & Celular) */}
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#200B3B] via-[#3B1161] to-[#170529] border border-purple-500/50 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-fio-pink via-purple-600 to-indigo-700 text-white flex items-center justify-center shadow-md shrink-0">
+              <Smartphone className="w-6 h-6 text-fio-yellow" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-white">
+                  Centro de Aplicaciones PWA (PC &amp; Celular)
+                </h3>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-fio-pink/30 text-pink-200 border border-fio-pink/40 font-bubble font-bold">
+                  ★ Administradora &amp; Colaboradores
+                </span>
+              </div>
+              <p className="text-xs text-purple-200/90 font-sans max-w-2xl leading-relaxed">
+                Instala la plataforma en tu computadora de escritorio y en tu celular personal. Genera las aplicaciones táctiles para tus colaboradores (Alisto, Empaque, Mostrador y Agenda) para compartirlas con 1 clic por WhatsApp.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 w-full md:w-auto shrink-0 flex-wrap sm:flex-nowrap">
+            <button
+              type="button"
+              onClick={onOpenPwaModal}
+              className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-fio-pink to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bubble font-bold shadow-md active:scale-95 transition-all cursor-pointer"
+            >
+              <Smartphone className="w-4 h-4 text-fio-yellow" />
+              <span>Gestionar Aplicaciones PWA</span>
+            </button>
+          </div>
+        </div>
 
       {/* Sección Catálogo Comercial Online (Aparece de abajo hacia arriba) */}
       <div className="pt-2 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">

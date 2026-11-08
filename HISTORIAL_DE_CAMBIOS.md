@@ -17,6 +17,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.17.6 - Centro de Aplicaciones PWA Adaptativas para Administradora (PC y Celular) y Colaboradores
+- [x] **PWA Oficial Multi-versión ([manifest.webmanifest](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest.webmanifest), [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js), [usePwaInstall.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/usePwaInstall.ts)):**
+  - Registro de manifiesto web PWA con accesos directos dinámicos, soporte offline Network-First y detector reactivo de modo standalone e instalabilidad.
+- [x] **PWA Administradora para 2 Dispositivos (Computadora & Celular) ([PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx)):**
+  - **PWA Computadora / PC:** Experiencia en ventana independiente sin barras de navegador, multiventana y optimizada para pantallas anchas en oficina/estudio.
+  - **PWA Celular / Móvil:** Experiencia 100% táctil para smartphone, botones de 48px al alcance del pulgar, alertas push sonoras con campanilla arpegiada y teclado numérico de PIN.
+  - Código QR dinámico para escanear desde la pantalla de la PC y abrir al instante la app administradora en el celular.
+- [x] **Generador de Aplicaciones para Colaboradores con Copiar y Compartir ([PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx)):**
+  - Generación de aplicaciones específicas por rol: *App Alisto & Bodega* (oculta ventas/montos para máxima privacidad), *App Empaque & Envíos*, *App Mostrador POS* y *App Agenda del Taller*.
+  - Botón individual de **Copiar Enlace** con notificación táctil y botón de **Compartir por WhatsApp / Web Share API** con mensaje pre-redactado para enviar a los colaboradores con 1 clic.
+  - Códigos QR individuales para escanear en taller o bodega.
+- [x] **Diseño Adaptativo con Dock Táctil Móvil ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Dock táctil inferior flotante en celulares para alternar entre Hub, Alisto, Cobro, Agenda y Apps PWA en 1 toque.
+  - Tarjeta ejecutiva integrada en el Menú Principal (Hub) para gestión y conmutación ágil de la PWA.
+
+
 
 ### Versión 4.17.5 - Visibilidad Inmediata y Omnipresente del Control de Stock / Disponibilidad (Superadmin y Admin)
 - [x] **Panel Superadmin ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):**

@@ -40,6 +40,8 @@ import { NewWorkshopModal } from './components/admin/NewWorkshopModal';
 import { DailyClosingModal } from './components/admin/DailyClosingModal';
 import { AdminDesignSettingsModal } from './components/admin/AdminDesignSettingsModal';
 import { AdminPricingModal } from './components/admin/AdminPricingModal';
+import { PwaManagerModal } from './components/admin/PwaManagerModal';
+import { AdminMobileDock } from './components/admin/AdminMobileDock';
 import { SinpePaymentsSection } from './components/admin/SinpePaymentsSection';
 import { SuppliersOrdersSection } from './components/admin/SuppliersOrdersSection';
 import { SalesHistorySection } from './components/admin/SalesHistorySection';
@@ -90,6 +92,7 @@ export const App: React.FC = () => {
   const [isDesignModalOpen, setIsDesignModalOpen] = useState(Boolean(initial.openDesignModal));
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
   const [billingTargetCustomer, setBillingTargetCustomer] = useState<Customer | null>(null);
@@ -414,12 +417,12 @@ export const App: React.FC = () => {
                     </div>
                   ) : null
                 ) : (
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-3 sm:space-y-4 pb-20 sm:pb-4">
                     {/* Si está en el Menú Principal (Hub) - Renderizado Instantáneo 0ms */}
                     {adminTab === 'hub' ? (
                       <>
-                        <AdminHeader onOpenDesignModal={handleOpenDesignModal} onNavigate={navigate} onSelectTab={handleSelectAdminTab} />
-                        <AdminHubMenu onSelectTab={handleSelectAdminTab} onNavigate={navigate} />
+                        <AdminHeader onOpenDesignModal={handleOpenDesignModal} onOpenPwaModal={() => setIsPwaModalOpen(true)} onNavigate={navigate} onSelectTab={handleSelectAdminTab} />
+                        <AdminHubMenu onSelectTab={handleSelectAdminTab} onNavigate={navigate} onOpenPwaModal={() => setIsPwaModalOpen(true)} />
                       </>
                     ) : (
                       /* Si está dentro de una sección específica */
@@ -569,6 +572,23 @@ export const App: React.FC = () => {
       {isModuleEnabled('store') && isFeatureEnabled('store', 'interactive_cart') && (
         <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
       )}
+      {/* Centro de Aplicaciones PWA (PC & Celular) */}
+      <PwaManagerModal
+        isOpen={isPwaModalOpen}
+        onClose={() => setIsPwaModalOpen(false)}
+        onSelectAdminTab={handleSelectAdminTab}
+        onNavigate={navigate}
+      />
+
+      {/* Dock Táctil Inferior para Navegación Móvil de Administración */}
+      {currentRoute === 'admin' && Boolean(currentUser && (currentUser.role === 'admin' || currentUser.role === 'staff')) && (
+        <AdminMobileDock
+          activeTab={adminTab}
+          onSelectTab={handleSelectAdminTab}
+          onOpenPwaModal={() => setIsPwaModalOpen(true)}
+        />
+      )}
+
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
       <StudioScheduleModal isOpen={isScheduleModalOpen} onClose={() => setIsScheduleModalOpen(false)} />
