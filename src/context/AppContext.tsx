@@ -253,6 +253,7 @@ interface AppContextType {
   addWorkshop: (wsData: Omit<Workshop, 'id'>) => Workshop;
   updateWorkshop: (wsId: string, updatedData: Partial<Workshop>) => void;
   deleteWorkshop: (wsId: string) => void;
+  resetWorkshopsToDefaults: () => Promise<void>;
   editingWorkshop: Workshop | null;
   setEditingWorkshop: (ws: Workshop | null) => void;
   bookWorkshopDirect: (
@@ -458,13 +459,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [workshops, setWorkshops] = useState<Workshop[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.WORKSHOPS);
-    const initial = saved ? JSON.parse(saved) : INITIAL_WORKSHOPS;
-    const sanitized = deepSanitize(initial);
-    if (saved && JSON.stringify(sanitized) !== JSON.stringify(initial)) {
-      try { localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(sanitized)); } catch {}
-    }
-    return sanitized;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.WORKSHOPS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return deepSanitize(parsed);
+        }
+      }
+    } catch {}
+    const initial = deepSanitize(INITIAL_WORKSHOPS);
+    try { localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(initial)); } catch {}
+    return initial;
   });
 
   const sanitizeOrderList = (orderList: any[]): Order[] => {
@@ -2086,6 +2092,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           isInitialOrdersLoadRef.current = false;
         });
 
+      // 2b. Sincronizar talleres creativos en tiempo real desde D1
+      fetch('/api/workshops')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setWorkshops((prev) => {
+              const sanitized = deepSanitize(data);
+              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(sanitized));
+                } catch {}
+                return sanitized;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+
       // 3. Sincronizar transacciones verificadas SINPE BCR en tiempo real
       fetch('/api/sinpe-transactions')
         .then((res) => (res.ok ? res.json() : null))
@@ -3150,17 +3175,49 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addWorkshop = (wsData: Omit<Workshop, 'id'>): Workshop => {
     const newWs: Workshop = { ...wsData, id: `ws-${Date.now()}` };
     setWorkshops((prev) => [...prev, newWs]);
+    try {
+      fetch('/api/workshops', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newWs),
+      }).catch(() => {});
+    } catch {}
     return newWs;
   };
 
   const deleteWorkshop = (wsId: string) => {
     setWorkshops((prev) => prev.filter((w) => w.id !== wsId));
+    try {
+      fetch(`/api/workshops?id=${encodeURIComponent(wsId)}`, {
+        method: 'DELETE',
+      }).catch(() => {});
+    } catch {}
   };
 
   const updateWorkshop = (wsId: string, updatedData: Partial<Workshop>) => {
-    setWorkshops((prev) =>
-      prev.map((w) => (w.id === wsId ? { ...w, ...updatedData } : w))
-    );
+    setWorkshops((prev) => {
+      const updated = prev.map((w) => (w.id === wsId ? { ...w, ...updatedData } : w));
+      const target = updated.find((w) => w.id === wsId);
+      if (target) {
+        try {
+          fetch('/api/workshops', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(target),
+          }).catch(() => {});
+        } catch {}
+      }
+      return updated;
+    });
+  };
+
+  const resetWorkshopsToDefaults = async () => {
+    const clean = deepSanitize(INITIAL_WORKSHOPS);
+    setWorkshops(clean);
+    try {
+      localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(clean));
+      await fetch('/api/workshops?reset=true', { method: 'DELETE' });
+    } catch {}
   };
 
   const bookWorkshopDirect = (
@@ -3680,6 +3737,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addWorkshop,
         updateWorkshop,
         deleteWorkshop,
+        resetWorkshopsToDefaults,
         bookWorkshopDirect,
         resetToDefaults,
         sinpeTransactions,

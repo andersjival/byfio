@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { ProductCategory, Product, AppRoute } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
+import { ProductDetailModal } from './ProductDetailModal';
 import {
   ShoppingBag, Search, Star, Heart,
   Check, AlertCircle, Flower2, SlidersHorizontal, Plus, Minus,
@@ -30,6 +31,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [addedAnimationId, setAddedAnimationId] = useState<string | null>(null);
+  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
 
   const getQty = (id: string) => quantities[id] || 1;
 
@@ -59,9 +61,9 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
     setCustomTextInputs((prev) => ({ ...prev, [prodId]: val }));
   };
 
-  const handleAdd = (product: Product) => {
-    const customText = customTextInputs[product.id] || '';
-    const qty = getQty(product.id);
+  const handleAdd = (product: Product, overrideQty?: number, overrideText?: string) => {
+    const customText = overrideText !== undefined ? overrideText : (customTextInputs[product.id] || '');
+    const qty = overrideQty !== undefined ? overrideQty : getQty(product.id);
     addToCart({
       type: 'product',
       id: product.id,
@@ -224,7 +226,11 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                 className="group flex flex-col bg-[#F1F2F6] rounded-[30px] p-4 sm:p-5 border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300"
               >
                 {/* Contenedor de Imagen con Marco Neumórfico Rehundido */}
-                <div className="relative h-48 w-full rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset border border-white/80">
+                <div
+                  onClick={() => setDetailProduct(p)}
+                  className="relative h-48 w-full rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset border border-white/80 cursor-pointer group/img"
+                  title="Toca para ver galería de fotos y detalles"
+                >
                   <img
                     src={p.image}
                     alt={p.name}
@@ -265,6 +271,12 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                       Stock: {p.stock}
                     </span>
                   )}
+                                  {/* Indicador de múltiples fotos si aplica */}
+                  {Array.isArray(p.images) && p.images.length > 1 && (
+                    <span className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[10px] font-bubble font-bold shadow-md flex items-center gap-1.5 z-10 border border-white/20 pointer-events-none">
+                      <span>📷 {p.images.length} fotos</span>
+                    </span>
+                  )}
                 </div>
 
                 {/* Contenido de la Tarjeta */}
@@ -288,11 +300,19 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                       </div>
                     </div>
 
-                    <h3 className="font-bubble text-lg text-slate-900 font-bold leading-snug line-clamp-1 group-hover:text-fio-800 transition-colors">
+                    <h3
+                      onClick={() => setDetailProduct(p)}
+                      className="font-bubble text-lg text-slate-900 font-bold leading-snug line-clamp-1 group-hover:text-fio-800 transition-colors cursor-pointer"
+                      title="Toca para ver características y fotos"
+                    >
                       {p.name}
                     </h3>
 
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-sans">
+                    <p
+                      onClick={() => setDetailProduct(p)}
+                      className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-sans cursor-pointer hover:text-slate-700 transition-colors"
+                      title="Toca para ver características y fotos"
+                    >
                       {p.description}
                     </p>
 
@@ -401,6 +421,28 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
           })}
         </div>
       )}
+
+      {/* Modal Detallado con Galería de Fotos y Características */}
+      <ProductDetailModal
+        product={detailProduct}
+        onClose={() => setDetailProduct(null)}
+        initialCustomText={detailProduct ? (customTextInputs[detailProduct.id] || '') : ''}
+        onCustomTextChange={(text) => {
+          if (detailProduct) {
+            handleCustomTextChange(detailProduct.id, text);
+          }
+        }}
+        onAddToCart={(prod, qty, text) => {
+          if (text !== undefined) {
+            handleCustomTextChange(prod.id, text);
+          }
+          if (qty !== undefined) {
+            setQuantities((prev) => ({ ...prev, [prod.id]: qty }));
+          }
+          handleAdd(prod, qty, text);
+          setDetailProduct(null);
+        }}
+      />
 
       {/* Frase Calm & Artisanal al Pie */}
       <div className="text-center py-6 text-xs text-slate-400 font-sans tracking-widest uppercase">

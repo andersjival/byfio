@@ -13,10 +13,17 @@ interface WorkshopsPageProps {
 }
 
 export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
-  const { workshops, addToCart, cart } = useApp();
+  const { workshops, addToCart, cart, resetWorkshopsToDefaults } = useApp();
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const [copiedWsId, setCopiedWsId] = useState<string | null>(null);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
+
+  // Auto-recuperación defensiva si la lista de talleres está vacía
+  useEffect(() => {
+    if (workshops.length === 0) {
+      resetWorkshopsToDefaults();
+    }
+  }, [workshops.length, resetWorkshopsToDefaults]);
 
   // Check ?taller=ID in URL
   useEffect(() => {
@@ -132,7 +139,27 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* Grid de Talleres — Cajas Neumórficas Táctiles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+      {workshops.length === 0 ? (
+        <div className="py-12 sm:py-16 text-center space-y-4 bg-[#F1F2F6] rounded-[32px] p-8 border border-white/90 shadow-neuCard max-w-lg mx-auto animate-fadeIn">
+          <div className="w-16 h-16 rounded-2xl bg-purple-50 text-fio-pink mx-auto flex items-center justify-center shadow-neuInset">
+            <GraduationCap className="w-8 h-8" />
+          </div>
+          <h3 className="font-bubble font-bold text-xl text-slate-800">
+            Cargando talleres creativos...
+          </h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto font-sans leading-relaxed">
+            Restaurando la programación de talleres y cursos creativos de la academia.
+          </p>
+          <button
+            type="button"
+            onClick={() => resetWorkshopsToDefaults()}
+            className="neu-btn-primary px-6 py-2.5 rounded-xl font-bubble text-xs font-bold text-white shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
+          >
+            Cargar Talleres de by.fio
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
         {workshops.map((ws) => {
           const isHighlighted = highlightId === ws.id;
           const isFull = ws.spotsAvailable <= 0;
@@ -257,7 +284,8 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

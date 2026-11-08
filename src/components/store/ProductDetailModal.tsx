@@ -35,6 +35,15 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     if (product.images && product.images.length > 0) {
       return product.images;
     }
+    if (product.sku === 'FIO-TAZ-03' || product.id === 'prod-3') {
+      return [
+        '/images/products/taza-stitch-ohana.jpg',
+        '/images/products/taza-dragonball-super.jpg',
+        '/images/products/taza-ariel-sirenita.jpg',
+        '/images/products/taza-lilo-stitch-princess.jpg',
+        '/images/products/taza-looney-tunes-bugs.jpg',
+      ];
+    }
     return [product.image];
   }, [product]);
 
