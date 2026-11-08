@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.17.10 - Corrección de Botón Carrito Cortado en PWA de Escritorio & Adaptabilidad Responsive en Navbar
+- [x] **Ajuste de Ancho y Contenedor de Encabezado ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Ampliado el contenedor central de `max-w-7xl` (1280px) a `max-w-[1600px]`, aprovechando pantallas de escritorio y monitores de alta resolución sin estrangular los elementos de navegación.
+  - Añadido margen de seguridad `mr-0.5 sm:mr-1` y `shrink-0` al botón neumórfico del Carrito para garantizar separación física respecto al borde de ventana y barra de desplazamiento vertical en la PWA de escritorio.
+- [x] **Distribución Dinámica de Elementos en Navbar ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Slogan de marca bajo demanda (`hidden 2xl:block`): en resoluciones estándar de laptop o PWA de escritorio (<1536px) muestra el logotipo compacto sin slogan, liberando ~140px de espacio horizontal.
+  - Íconos sociales de TikTok e Instagram optimizados a `hidden 2xl:flex`, recuperando ~75px adicionales.
+  - Botón de "Me Gusta": texto reducido a ícono táctil interactivo en resoluciones intermedias (`hidden 2xl:inline`), preservando el estado de feedback y ahorrando ~60px.
+  - Píldora de usuario administrador: texto "Pedidos" optimizado a `hidden xl:inline` y ancho máximo refinado, erradicando cualquier desbordamiento o recorte horizontal del botón "Carrito" en cualquier tamaño de pantalla.
+
 ### Versión 4.17.9 - Trazabilidad de Alisto: Registro y Visualización del Nombre del Perfil que Alistó el Pedido
 - [x] **Persistencia y Trazabilidad del Perfil de Alisto ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [types/index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts), [orders.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
   - Incorporados los campos `pickedBy` y `pickedAt` en el modelo de datos del pedido y en la base de datos Cloudflare D1.

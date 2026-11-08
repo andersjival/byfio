@@ -42,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-white/70 shadow-[0_2px_12px_rgba(180,160,200,0.05)] transition-all">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 min-h-[50px] sm:min-h-[54px] py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 w-full">
+      <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 min-h-[50px] sm:min-h-[54px] py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 w-full">
         {/* Logo de Marca con botón de Volver a Tienda inmediatamente al lado en Admin */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
@@ -51,10 +51,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center shrink-0 text-left focus:outline-none"
             title="Ir al inicio de by.fio"
           >
-            <div className="hidden xl:block">
+            <div className="hidden 2xl:block">
               <BrandLogo size="sm" showSlogan={true} />
             </div>
-            <div className="block xl:hidden">
+            <div className="block 2xl:hidden">
               <BrandLogo size="sm" showSlogan={false} />
             </div>
           </button>
@@ -157,7 +157,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 rel="noopener noreferrer"
                 title="TikTok oficial @by_fio"
                 aria-label="TikTok @by_fio"
-                className="hidden xl:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-slate-700 hover:text-black hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all shrink-0"
+                className="hidden 2xl:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-slate-700 hover:text-black hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all shrink-0"
               >
                 <TikTokIcon className="w-3.5 h-3.5" />
               </a>
@@ -169,7 +169,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 rel="noopener noreferrer"
                 title="Instagram @by_fio10"
                 aria-label="Instagram @by_fio10"
-                className="hidden xl:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-fio-pink hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all shrink-0"
+                className="hidden 2xl:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-fio-pink hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all shrink-0"
               >
                 <Instagram className="w-3.5 h-3.5" />
               </a>
@@ -225,13 +225,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 aria-label="Dar Me Gusta a esta página"
               >
                 <Heart className={`w-3.5 h-3.5 fill-pink-500 text-pink-500 transition-transform ${likePopped ? 'scale-150 animate-bounce' : 'group-hover:scale-125'}`} />
-                <span className="hidden sm:inline">{likePopped ? '¡+1 Like!' : 'Me Gusta'}</span>
+                <span className="hidden 2xl:inline">{likePopped ? '¡+1 Like!' : 'Me Gusta'}</span>
               </button>
 
               {/* Sesión de Usuario o Botón Iniciar Sesión 3D */}
               {currentUser ? (
                 <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white/90 border border-purple-200/80 rounded-2xl shadow-xs shrink-0">
-                  <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 text-xs font-bubble font-bold text-slate-700 max-w-[70px] sm:max-w-[120px] xl:max-w-[150px]">
+                  <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 text-xs font-bubble font-bold text-slate-700 max-w-[65px] sm:max-w-[95px] xl:max-w-[120px] 2xl:max-w-[150px]">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                     <span className="truncate">{currentUser.name.split(' ')[0]}</span>
                     {currentUser.role === 'admin' && (
@@ -253,8 +253,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className="inline-flex items-center gap-1 px-2 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 text-xs font-bubble font-bold transition-all shrink-0 cursor-pointer"
                         title="Ir a Gestión de Pedidos Móvil"
                       >
-                        <PackageCheck className="w-3 h-3 text-emerald-400" />
-                        <span className="hidden sm:inline">Pedidos</span>
+                        <PackageCheck className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span className="hidden xl:inline">Pedidos</span>
                       </button>
                       <button
                         type="button"
@@ -294,7 +294,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="button"
                   onClick={() => setIsCartOpen(true)}
                   aria-label="Abrir Carrito"
-                  className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0 cursor-pointer"
+                  className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0 cursor-pointer mr-0.5 sm:mr-1"
                 >
                   <ShoppingBag className="w-4 h-4 text-white" />
                   <span className="hidden sm:inline">Carrito</span>
