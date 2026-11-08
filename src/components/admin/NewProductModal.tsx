@@ -561,7 +561,7 @@ export const NewProductModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 animate-fadeIn">
-      <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-clayLg border border-fio-200 overflow-hidden my-4">
+      <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-clayLg border border-fio-200 overflow-hidden my-4">
         {/* Header Superior */}
         <div className="p-4 sm:p-5 border-b border-fio-200 flex items-center justify-between bg-gradient-to-r from-fio-100/80 via-white to-purple-50/80">
           <div className="flex items-center gap-3">
@@ -621,7 +621,7 @@ export const NewProductModal: React.FC = () => {
             </div>
 
             {/* Datos Principales (Nombre, SKU, Categoría, Estante) */}
-            <div className="md:col-span-8 space-y-3">
+            <div className="md:col-span-8 lg:col-span-8.5 space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="sm:col-span-2">
                   <label className="block font-bold text-gray-700 mb-1">Nombre del Producto / Insumo *</label>
@@ -658,7 +658,7 @@ export const NewProductModal: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* Categoría */}
                 <div>
                   <label className="block font-bold text-gray-700 text-xs mb-1.5">Categoría *</label>
@@ -676,20 +676,20 @@ export const NewProductModal: React.FC = () => {
                             handleSaveEditCategory();
                           }
                         }}
-                        className="flex-1 px-3 py-2 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-gray-900 focus:outline-none text-xs"
+                        className="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-gray-900 focus:outline-none text-xs"
                         autoFocus
                       />
                       <button
                         type="button"
                         onClick={handleSaveEditCategory}
-                        className="px-3 py-2 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer shadow-2xs"
+                        className="px-2.5 py-1.5 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer shadow-2xs shrink-0"
                       >
                         Guardar
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEditingCat(false)}
-                        className="px-2.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
                       >
                         Cancelar
                       </button>
@@ -707,27 +707,27 @@ export const NewProductModal: React.FC = () => {
                             handleAddCustomCategory();
                           }
                         }}
-                        className="flex-1 px-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 font-semibold text-gray-900 focus:outline-none text-xs"
+                        className="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl border-2 border-fio-pink bg-pink-50/40 font-semibold text-gray-900 focus:outline-none text-xs"
                         autoFocus
                       />
                       <button
                         type="button"
                         onClick={handleAddCustomCategory}
-                        className="px-3 py-2 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer shadow-2xs"
+                        className="px-2.5 py-1.5 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer shadow-2xs shrink-0"
                       >
                         Agregar
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsCreatingNewCat(false)}
-                        className="px-2.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
                       >
                         Cancelar
                       </button>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1.5">
-                      <div className="relative flex-1">
+                    <div className="flex items-center gap-1">
+                      <div className="relative flex-1 min-w-0">
                         <select
                           value={category}
                           onChange={(e) => {
@@ -738,32 +738,32 @@ export const NewProductModal: React.FC = () => {
                               setCategory(e.target.value as ProductCategory);
                             }
                           }}
-                          className="w-full px-3 py-2 pr-8 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800 focus:ring-2 focus:ring-fio-400 focus:outline-none cursor-pointer text-xs appearance-none"
+                          className="w-full px-2.5 pr-6 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800 focus:ring-2 focus:ring-fio-400 focus:outline-none cursor-pointer text-xs appearance-none truncate"
                         >
                           {availableCategories.map((c) => (
                             <option key={c} value={c}>{c}</option>
                           ))}
                           <option value="__new__" className="text-fio-pink font-bold">✨ + Nueva Categoría...</option>
                         </select>
-                        <ChevronDown className="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
 
-                      {/* Botones chiquititos para editar, eliminar y crear categoría */}
+                      {/* Botones compactos: Lápiz, Basurero y Más */}
                       <button
                         type="button"
                         onClick={handleStartEditCategory}
-                        className="w-8 h-8 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        className="w-6.5 h-6.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
                         title={`Editar o renombrar categoría "${category}"`}
                       >
-                        <Pencil className="w-3.5 h-3.5" />
+                        <Pencil className="w-3 h-3" />
                       </button>
                       <button
                         type="button"
                         onClick={handleDeleteCategory}
-                        className="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        className="w-6.5 h-6.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
                         title={`Eliminar categoría "${category}"`}
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3 h-3" />
                       </button>
                       <button
                         type="button"
@@ -771,10 +771,10 @@ export const NewProductModal: React.FC = () => {
                           setIsCreatingNewCat(true);
                           setCustomCategory('');
                         }}
-                        className="w-8 h-8 rounded-xl bg-pink-50 hover:bg-pink-100 text-fio-pink border border-pink-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        className="w-6.5 h-6.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-fio-pink border border-pink-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
                         title="Crear nueva categoría"
                       >
-                        <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                        <Plus className="w-3 h-3 stroke-[2.5]" />
                       </button>
                     </div>
                   )}
@@ -786,7 +786,7 @@ export const NewProductModal: React.FC = () => {
 
                   {isEditingLocation ? (
                     <div className="flex items-center gap-1.5">
-                      <div className="relative flex-1">
+                      <div className="relative flex-1 min-w-0">
                         <input
                           type="text"
                           placeholder="Nombre de ubicación..."
@@ -798,29 +798,29 @@ export const NewProductModal: React.FC = () => {
                               handleSaveEditLocation();
                             }
                           }}
-                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-purple-900 focus:outline-none text-xs"
+                          className="w-full pl-7 pr-2.5 py-1.5 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-purple-900 focus:outline-none text-xs"
                           autoFocus
                         />
-                        <MapPin className="w-3.5 h-3.5 text-fio-purple absolute left-2.5 top-1/2 -translate-y-1/2" />
+                        <MapPin className="w-3.5 h-3.5 text-fio-purple absolute left-2 top-1/2 -translate-y-1/2" />
                       </div>
                       <button
                         type="button"
                         onClick={handleSaveEditLocation}
-                        className="px-3 py-2 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer shadow-2xs"
+                        className="px-2.5 py-1.5 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer shadow-2xs shrink-0"
                       >
                         Guardar
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEditingLocation(false)}
-                        className="px-2.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
                       >
                         Cancelar
                       </button>
                     </div>
                   ) : isCreatingNewLocation ? (
                     <div className="flex items-center gap-1.5">
-                      <div className="relative flex-1">
+                      <div className="relative flex-1 min-w-0">
                         <input
                           type="text"
                           placeholder="Ej: Estante E-3 o Cajón #4"
@@ -832,30 +832,30 @@ export const NewProductModal: React.FC = () => {
                               handleAddCustomLocation();
                             }
                           }}
-                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900 placeholder:text-gray-400 text-xs"
+                          className="w-full pl-7 pr-2.5 py-1.5 rounded-xl border-2 border-fio-pink bg-pink-50/40 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900 placeholder:text-gray-400 text-xs"
                           autoFocus
                         />
-                        <MapPin className="w-3.5 h-3.5 text-fio-pink absolute left-2.5 top-1/2 -translate-y-1/2" />
+                        <MapPin className="w-3.5 h-3.5 text-fio-pink absolute left-2 top-1/2 -translate-y-1/2" />
                       </div>
                       <button
                         type="button"
                         onClick={handleAddCustomLocation}
-                        className="px-3 py-2 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer shadow-2xs"
+                        className="px-2.5 py-1.5 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer shadow-2xs shrink-0"
                       >
                         Agregar
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsCreatingNewLocation(false)}
-                        className="px-2.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
                         title="Volver a lista de ubicaciones existentes"
                       >
                         Cancelar
                       </button>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1.5">
-                      <div className="relative flex-1">
+                    <div className="flex items-center gap-1">
+                      <div className="relative flex-1 min-w-0">
                         <select
                           value={shelfLocation}
                           onChange={(e) => {
@@ -866,37 +866,37 @@ export const NewProductModal: React.FC = () => {
                               setShelfLocation(e.target.value);
                             }
                           }}
-                          className="w-full pl-8 pr-8 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-purple-900 focus:ring-2 focus:ring-fio-400 focus:outline-none appearance-none cursor-pointer text-xs"
+                          className="w-full pl-7 pr-6 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-purple-900 focus:ring-2 focus:ring-fio-400 focus:outline-none appearance-none cursor-pointer text-xs truncate"
                         >
                           {availableLocations.map((loc) => (
                             <option key={loc} value={loc}>
-                              📍 {loc}
+                              {loc}
                             </option>
                           ))}
                           <option value="__new__" className="text-fio-pink font-bold">
                             ✨ + Crear nueva ubicación...
                           </option>
                         </select>
-                        <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <ChevronDown className="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <MapPin className="w-3.5 h-3.5 text-fio-pink absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
 
-                      {/* Botones chiquititos para editar, eliminar y crear ubicación */}
+                      {/* Botones compactos: Lápiz, Basurero y Más */}
                       <button
                         type="button"
                         onClick={handleStartEditLocation}
-                        className="w-8 h-8 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        className="w-6.5 h-6.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
                         title={`Editar o renombrar ubicación "${shelfLocation}"`}
                       >
-                        <Pencil className="w-3.5 h-3.5" />
+                        <Pencil className="w-3 h-3" />
                       </button>
                       <button
                         type="button"
                         onClick={handleDeleteLocation}
-                        className="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        className="w-6.5 h-6.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
                         title={`Eliminar ubicación "${shelfLocation}"`}
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3 h-3" />
                       </button>
                       <button
                         type="button"
@@ -904,10 +904,10 @@ export const NewProductModal: React.FC = () => {
                           setIsCreatingNewLocation(true);
                           setCustomLocation('');
                         }}
-                        className="w-8 h-8 rounded-xl bg-pink-50 hover:bg-pink-100 text-fio-pink border border-pink-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        className="w-6.5 h-6.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-fio-pink border border-pink-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
                         title="Crear nueva ubicación"
                       >
-                        <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                        <Plus className="w-3 h-3 stroke-[2.5]" />
                       </button>
                     </div>
                   )}
