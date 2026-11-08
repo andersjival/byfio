@@ -2151,7 +2151,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               const merged = data.map((cloudProd: Product) => {
                 const local = prevMap.get(cloudProd.id);
                 const lastLocalUpdate = lastLocalProductUpdateRef.current.get(cloudProd.id) || 0;
-                const isRecentlyUpdatedLocally = now - lastLocalUpdate < 6000;
+                const isRecentlyUpdatedLocally = now - lastLocalUpdate < 15000;
 
                 const baseStock = isRecentlyUpdatedLocally && local ? local.stock : cloudProd.stock;
                 const isZeroStock = Number(baseStock) <= 0;
@@ -2176,6 +2176,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   ? cloudProd.showInCatalog
                   : isAvail;
 
+                const effectiveImages = isRecentlyUpdatedLocally && local && local.images && local.images.length > 0
+                  ? local.images
+                  : cloudProd.images;
+                const effectiveImage = isRecentlyUpdatedLocally && local && local.image
+                  ? local.image
+                  : cloudProd.image;
+
                 if (
                   !local ||
                   local.stock !== baseStock ||
@@ -2192,11 +2199,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   isAvailable: isAvail,
                   showInStore: inStore,
                   showInCatalog: inCat,
+                  images: effectiveImages,
+                  image: effectiveImage,
                 };
               });
 
               if (idsChanged || hasFieldChanges || merged.length !== prev.length) {
-                localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(merged));
+                try {
+                  localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(merged));
+                } catch (e) {
+                  console.warn('LocalStorage lleno al sincronizar productos', e);
+                }
                 // Remover del carrito si fue eliminado de la nube
                 setCart((prevCart) => prevCart.filter((item) => item.type !== 'product' || cloudIds.has(item.id)));
                 return merged;
@@ -3214,7 +3227,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     let updatedProducts: Product[] = [];
     setProducts((prev) => {
       updatedProducts = [newProduct, ...prev];
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      try {
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      } catch (e) {
+        console.warn('LocalStorage lleno al agregar producto', e);
+      }
       return updatedProducts;
     });
 
@@ -3223,7 +3240,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newProduct),
-    }).catch(() => {});
+    }).then(async (res) => {
+      if (!res.ok) {
+        const txt = await res.text();
+        console.error('Error al crear producto en D1:', res.status, txt);
+      }
+    }).catch((err) => {
+      console.error('Error de red al crear producto en D1:', err);
+    });
 
     // Notificación en vivo (0ms) a todas las pestañas abiertas
     try {
@@ -3296,7 +3320,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     let updatedProducts: Product[] = [];
     setProducts((prev) => {
       updatedProducts = prev.map((p) => (p.id === productId ? updatedTarget : p));
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      try {
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      } catch (e) {
+        console.warn('LocalStorage lleno al actualizar producto', e);
+      }
       return updatedProducts;
     });
 
@@ -3309,7 +3337,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedTarget),
-    }).catch(() => {});
+    }).then(async (res) => {
+      if (!res.ok) {
+        const txt = await res.text();
+        console.error('Error al guardar producto en D1:', res.status, txt);
+      }
+    }).catch((err) => {
+      console.error('Error de red al sincronizar con D1:', err);
+    });
 
     try {
       syncChannel?.postMessage({

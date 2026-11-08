@@ -56,7 +56,7 @@ const mapRowToProduct = (r: ProductDbRow) => {
 
   const primaryImage = (r.sku === 'FIO-TAZ-03' && (!r.image || r.image.includes('unsplash')))
     ? '/images/products/taza-stitch-ohana.jpg'
-    : r.image;
+    : (productImages.length > 0 && productImages[0] ? productImages[0] : r.image);
 
   return {
     id: r.id,
@@ -81,16 +81,24 @@ const mapRowToProduct = (r: ProductDbRow) => {
   };
 };
 
+const ensureProductColumns = async (db: any) => {
+  if (!db) return;
+  try {
+    await db.prepare('ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1').run().catch(() => {});
+  } catch {}
+  try {
+    await db.prepare('ALTER TABLE products ADD COLUMN images_json TEXT').run().catch(() => {});
+  } catch {}
+};
+
 export const onRequestGet = async (context: { env: Env }) => {
   try {
     if (!context.env.DB) {
       return new Response(JSON.stringify({ error: 'DB binding not available' }), { status: 500 });
     }
 
-    // Auto-migración defensiva: asegurar columna is_available y reparar nulos a 1 (disponibles)
-    await context.env.DB.prepare(
-      'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
-    ).run().catch(() => {});
+    // Auto-migración defensiva: asegurar columnas is_available e images_json y reparar nulos a 1
+    await ensureProductColumns(context.env.DB);
 
     await context.env.DB.prepare(
       'UPDATE products SET is_available = 1 WHERE is_available IS NULL'
@@ -125,12 +133,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const isAvail = stock <= 0 ? 0 : (data.isAvailable !== undefined ? (data.isAvailable ? 1 : 0) : 1);
 
     if (context.env.DB) {
-      await context.env.DB.prepare(
-        'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
-      ).run().catch(() => {});
-      await context.env.DB.prepare(
-        'ALTER TABLE products ADD COLUMN images_json TEXT'
-      ).run().catch(() => {});
+      await ensureProductColumns(context.env.DB);
 
       const userImages = Array.isArray(data.images) && data.images.length > 0
         ? data.images.filter((img: string) => !img.includes('placeholder-new-product'))
@@ -180,9 +183,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
     const body = await context.request.json() as any;
 
     if (context.env.DB) {
-      await context.env.DB.prepare(
-        'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
-      ).run().catch(() => {});
+      await ensureProductColumns(context.env.DB);
 
       // Soporte para actualización de stock en lote (batch de pedidos / alisto)
       if (Array.isArray(body)) {
@@ -224,6 +225,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
       const imagesJson = userImages.length > 0
         ? JSON.stringify(userImages)
         : (images !== undefined ? JSON.stringify(images) : (image ? JSON.stringify([image]) : null));
+      const primaryImgToUpdate = userImages.length > 0 ? userImages[0] : (image ?? null);
 
       if (id) {
         // Regla: si el stock es <= 0, se deshabilita automáticamente (is_available = 0).
@@ -264,7 +266,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           stock ?? null,
           minStock ?? null,
           maxStock ?? null,
-          image ?? null,
+          primaryImgToUpdate,
           isCustomizable !== undefined ? (isCustomizable ? 1 : 0) : null,
           customizationPlaceholder ?? null,
           unit ?? null,
@@ -284,15 +286,18 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
             `INSERT OR REPLACE INTO products (
               id, sku, name, category, shelf_location, price, cost_price,
               stock, min_stock, max_stock, image, is_customizable,
-              customization_placeholder, unit, description, is_available
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+              customization_placeholder, unit, description, is_available, images_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
           ).bind(
             id, sku || 'SKU-NEW', name, category || 'General',
             shelfLocation || 'Estante A-1', price || 0, costPrice || 0,
-            insertStock, minStock || 0, maxStock || 0, image || '',
+            insertStock, minStock || 0, maxStock || 0, primaryImgToUpdate || '',
             isCustomizable ? 1 : 0, customizationPlaceholder || null,
             unit || 'Unidad', description || '',
-            insertAvail
+            insertAvail, imagesJson
+          ).run().catch(() => {});
+        }
+      }
           ).run().catch(() => {});
         }
       }

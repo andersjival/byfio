@@ -41,7 +41,7 @@ export const MultiImageUploadField: React.FC<MultiImageUploadFieldProps> = ({
         const dataUrl = event.target?.result as string;
         const img = new Image();
         img.onload = () => {
-          const MAX_DIM = 1200;
+          const MAX_DIM = 960;
           let { width, height } = img;
           if (width > MAX_DIM || height > MAX_DIM) {
             if (width > height) {
@@ -58,7 +58,7 @@ export const MultiImageUploadField: React.FC<MultiImageUploadFieldProps> = ({
           const ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', 0.85));
+            resolve(canvas.toDataURL('image/jpeg', 0.80));
           } else {
             resolve(dataUrl);
           }
