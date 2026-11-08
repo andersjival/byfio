@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.4 - Blindaje Integral de Persistencia y Visualización del Perfil de Alisto & Auto-llenado de Pedidos Web
+- [x] **Persistencia en Base de Datos D1 ([orders.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
+  - Conectadas las columnas `picked_by` y `picked_at` en las sentencias SQL `UPDATE` y `INSERT` de la API de Cloudflare D1. Anteriormente las columnas existían pero no estaban enlazadas en los binds del query.
+- [x] **Captura Automática del Perfil en Contexto ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Actualizadas `markItemPicked`, `markAllItemsPicked` y `updateOrderStatus` para estampar `currentUser.name` en `order.pickedBy` y registrar `pickedAt`.
+  - En `sanitizeOrderList`, se auto-completan pedidos históricos al 100% de alisto sin perfil previo asignándoles "Administración".
+- [x] **Visualización y Fallback Resiliente en Paneles ([OrdersQueue.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx), [GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [QuickBillingSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx)):**
+  - Los badges de "Alistó: [Nombre]" ahora se muestran con fallback inteligente para pedidos ya alistados, garantizando visualización inmediata.
+- [x] **Auto-llenado de Nombre en Pedidos Web ([CheckoutModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - Al realizar pedidos desde la tienda pública o checkout, si hay un usuario autenticado, su nombre y teléfono se cargan automáticamente como cliente.
+
 ### Versión 4.19.3 - Eliminación de Barra de Desplazamiento y Ajuste Ergonómico de Pestañas en Centro de Aplicaciones PWA
 - [x] **Ajuste Responsivo y Supresión de Scrollbar ([PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx))**:
   - Eliminada por completo la barra de desplazamiento horizontal (`overflow-x-auto custom-scrollbar`) ubicada debajo de las pestañas del Centro de Aplicaciones PWA.

@@ -127,6 +127,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const order = await context.request.json() as any;
 
     if (context.env.DB) {
+      try { await context.env.DB.prepare('ALTER TABLE orders ADD COLUMN picked_by TEXT').run(); } catch {}
+      try { await context.env.DB.prepare('ALTER TABLE orders ADD COLUMN picked_at TEXT').run(); } catch {}
       // 1. Obtener todos los pedidos existentes para calcular el máximo correlativo real y blindar contra colisiones
       const { results: existingRows } = await context.env.DB.prepare(
         "SELECT id, order_number FROM orders WHERE order_number LIKE '#FIO-%'"
@@ -160,8 +162,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         `INSERT INTO orders (
           id, order_number, customer_name, customer_phone, customer_email,
           delivery_method, shipping_address, payment_method, payment_status,
-          order_status, items_json, subtotal, shipping_fee, total, notes, packed_at, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          order_status, items_json, subtotal, shipping_fee, total, notes, packed_at, picked_by, picked_at, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
           order_number = excluded.order_number,
           customer_name = excluded.customer_name,
@@ -177,7 +179,9 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
           shipping_fee = excluded.shipping_fee,
           total = excluded.total,
           notes = excluded.notes,
-          packed_at = excluded.packed_at`
+          packed_at = excluded.packed_at,
+          picked_by = COALESCE(excluded.picked_by, orders.picked_by),
+          picked_at = COALESCE(excluded.picked_at, orders.picked_at)`
       ).bind(
         order.id,
         safeOrderNumber,
@@ -195,6 +199,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         order.total,
         order.notes || null,
         order.packedAt || null,
+        order.pickedBy || null,
+        order.pickedAt || null,
         order.createdAt || new Date().toISOString()
       ).run();
 
@@ -250,7 +256,9 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
             items_json = ?,
             subtotal = COALESCE(?, subtotal),
             total = COALESCE(?, total),
-            notes = COALESCE(?, notes)
+            notes = COALESCE(?, notes),
+            picked_by = COALESCE(?, picked_by),
+            picked_at = COALESCE(?, picked_at)
           WHERE id = ?`
         ).bind(
           orderStatus || null,
@@ -260,6 +268,8 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           subtotal !== undefined ? subtotal : null,
           total !== undefined ? total : null,
           notes || null,
+          pickedBy || null,
+          pickedAt || null,
           id
         ).run();
       } else {
@@ -270,7 +280,9 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
             delivered_at = COALESCE(?, delivered_at),
             subtotal = COALESCE(?, subtotal),
             total = COALESCE(?, total),
-            notes = COALESCE(?, notes)
+            notes = COALESCE(?, notes),
+            picked_by = COALESCE(?, picked_by),
+            picked_at = COALESCE(?, picked_at)
           WHERE id = ?`
         ).bind(
           orderStatus || null,
@@ -279,6 +291,8 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           subtotal !== undefined ? subtotal : null,
           total !== undefined ? total : null,
           notes || null,
+          pickedBy || null,
+          pickedAt || null,
           id
         ).run();
       }

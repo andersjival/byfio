@@ -25,11 +25,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     markSinpeTransactionUsed,
     simulateBcrEmailNotification,
     isFeatureEnabled,
+    currentUser,
   } = useApp();
 
   const [deliveryMethod, setDeliveryMethod] = useState<'envio' | 'retiro'>('envio');
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerName, setCustomerName] = useState(() => currentUser?.name || '');
+  const [customerPhone, setCustomerPhone] = useState(() => (currentUser as any)?.phone || '');
   const [shippingAddress, setShippingAddress] = useState('');
   const [paymentTab, setPaymentTab] = useState<'sinpe' | 'transferencia'>('sinpe');
   const [sinpeReference, setSinpeReference] = useState('');

@@ -6,7 +6,7 @@ import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
-  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled, showNewOrderAlert, deleteOrder } = useApp();
+  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled, showNewOrderAlert, deleteOrder, currentUser } = useApp();
   const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packing' | 'packed' | 'delivered'>('all');
 
   // IDs de pedidos recién terminados que deben mostrar el colorcito temporal
@@ -47,7 +47,7 @@ export const OrdersQueue: React.FC = () => {
   }, [recentlyFinishedIds]);
 
   const handleMarkDelivered = (orderId: string) => {
-    updateOrderStatus(orderId, 'delivered');
+    updateOrderStatus(orderId, 'delivered', currentUser?.name);
     setRecentlyFinishedIds((prev) => new Set([...prev, orderId]));
   };
 
@@ -379,13 +379,13 @@ export const OrdersQueue: React.FC = () => {
                       <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                       <span>Pagado por {order.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia'} (Verificado)</span>
                     </span>
-                    {order.pickedBy && (
+                    {(order.pickedBy || isFinished) && (
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1 shadow-xs">
                         <UserCheck className="w-3 h-3 text-fio-pink" />
-                        <span>Alistó: <strong>{order.pickedBy}</strong></span>
-                        {order.pickedAt && (
+                        <span>Alistó: <strong>{order.pickedBy || currentUser?.name || 'Administración'}</strong></span>
+                        {(order.pickedAt || order.packedAt) && (
                           <span className="text-[9px] text-purple-600 font-mono font-normal">
-                            ({new Date(order.pickedAt).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })})
+                            ({new Date(order.pickedAt || order.packedAt!).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })})
                           </span>
                         )}
                       </span>
@@ -491,7 +491,7 @@ export const OrdersQueue: React.FC = () => {
                       {effectiveStatus === 'packing' && (
                         <button
                           type="button"
-                          onClick={() => updateOrderStatus(order.id, 'packed')}
+                          onClick={() => updateOrderStatus(order.id, 'packed', currentUser?.name)}
                           className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
                           title="Marcar pedido como empacado"
                         >

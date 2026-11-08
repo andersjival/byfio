@@ -48,6 +48,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
     validateSinpeReference,
     registerSinpeTransaction,
     isFeatureEnabled,
+    currentUser,
   } = useApp();
   const confirm = useConfirm();
   const showAlert = useAlert();
@@ -386,7 +387,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
     const hasItems = Array.isArray(order.items) && order.items.length > 0;
     const isComplete = hasItems && order.items.every((it) => it.isPicked || it.isMissing);
     if (isComplete && (order.orderStatus === 'pending' || order.orderStatus === 'picking' || order.orderStatus === 'packing')) {
-      updateOrderStatus(order.id, 'packed');
+      updateOrderStatus(order.id, 'packed', currentUser?.name);
       setSelectedExistingOrder({ ...order, orderStatus: 'packed' });
     } else {
       setSelectedExistingOrder(order);
@@ -1171,9 +1172,9 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                     <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">
                       Datos Cargados Correctamente ✅
                     </span>
-                    {selectedExistingOrder.pickedBy && (
+                    {(selectedExistingOrder.pickedBy || (Array.isArray(selectedExistingOrder.items) && selectedExistingOrder.items.length > 0 && selectedExistingOrder.items.every(it => it.isPicked || it.isMissing))) && (
                       <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-purple-100 text-purple-900 border border-purple-300">
-                        📦 Alistado por: <strong>{selectedExistingOrder.pickedBy}</strong>
+                        📦 Alistado por: <strong>{selectedExistingOrder.pickedBy || currentUser?.name || 'Administración'}</strong>
                       </span>
                     )}
                   </div>

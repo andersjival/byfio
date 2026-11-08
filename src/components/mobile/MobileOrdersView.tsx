@@ -68,7 +68,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
     }
 
     if (targetOrder) {
-      const res = markItemPicked(targetOrder.id, rawSku);
+      const res = markItemPicked(targetOrder.id, rawSku, currentUser?.name);
       if (res && res.error) {
         setScanNotification({ message: res.error, type: 'error' });
       } else {
@@ -199,7 +199,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
     if (item.isPicked) {
       unmarkItemPicked(orderId, item.sku);
     } else {
-      markItemPicked(orderId, item.sku);
+      markItemPicked(orderId, item.sku, currentUser?.name);
     }
   };
 
@@ -604,15 +604,15 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                 </div>
 
                 {/* Indicador del Perfil que Alistó el Pedido */}
-                {order.pickedBy && (
+                {(order.pickedBy || isOrderFullyAlistado(order)) && (
                   <div className="px-4 py-1.5 bg-purple-950/60 border-b border-purple-800/40 flex items-center justify-between text-xs">
                     <span className="flex items-center gap-1.5 text-purple-300 font-bubble font-bold text-[11px]">
                       <UserCheck className="w-3.5 h-3.5 text-fio-pink" />
-                      <span>Alistado por: <strong className="text-white underline decoration-fio-pink">{order.pickedBy}</strong></span>
+                      <span>Alistado por: <strong className="text-white underline decoration-fio-pink">{order.pickedBy || currentUser?.name || 'Administración'}</strong></span>
                     </span>
-                    {order.pickedAt && (
+                    {(order.pickedAt || order.packedAt) && (
                       <span className="text-[10px] text-purple-400 font-mono">
-                        {new Date(order.pickedAt).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(order.pickedAt || order.packedAt!).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     )}
                   </div>
@@ -717,7 +717,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                     {!isFullyAlistado && (
                       <button
                         type="button"
-                        onClick={() => markAllItemsPicked(order.id)}
+                        onClick={() => markAllItemsPicked(order.id, currentUser?.name)}
                         className="text-[10px] text-purple-400 hover:text-purple-300 cursor-pointer font-bold"
                       >
                         Alistar todos
@@ -821,7 +821,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                       {isAdmin && (
                         <button
                           type="button"
-                          onClick={() => updateOrderStatus(order.id, 'delivered')}
+                          onClick={() => updateOrderStatus(order.id, 'delivered', currentUser?.name)}
                           className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bubble font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
                         >
                           Marcar como Entregado ✅
@@ -835,7 +835,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                       </span>
                       <button
                         type="button"
-                        onClick={() => updateOrderStatus(order.id, 'packed')}
+                        onClick={() => updateOrderStatus(order.id, 'packed', currentUser?.name)}
                         className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bubble font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
                       >
                         Pasar a Empacado 📦

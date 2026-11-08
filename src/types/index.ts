@@ -295,6 +295,7 @@ export interface UserProfile {
 export interface AuthUser {
   id?: string;
   email?: string;
+  phone?: string;
   name: string;
   role: 'admin' | 'staff' | 'customer';
   permissions?: UserPermissions;

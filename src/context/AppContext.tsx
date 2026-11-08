@@ -485,7 +485,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       // Si todo el alisto está al 100% y sigue en pending o picking, avanzar a packing
       if (isAllAlistado && (o.orderStatus === 'pending' || o.orderStatus === 'picking')) {
-        return { ...o, orderStatus: 'packing' as OrderStatus };
+        return {
+          ...o,
+          orderStatus: 'packing' as OrderStatus,
+          pickedBy: o.pickedBy || 'Administración',
+          pickedAt: o.pickedAt || o.packedAt || o.createdAt,
+        };
+      }
+      if (isAllAlistado && !o.pickedBy) {
+        return {
+          ...o,
+          pickedBy: 'Administración',
+          pickedAt: o.pickedAt || o.packedAt || o.createdAt,
+        };
       }
 
       // BLINDAJE ESTRICTO: Un pedido NO puede estar en packing, packed o delivered si su alisto NO está al 100%
@@ -2733,10 +2745,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }).catch(() => {});
   };
 
-  const markItemPicked = (orderId: string, itemSku: string) => {
+  const markItemPicked = (orderId: string, itemSku: string, pickerName?: string) => {
     let completed = false;
     let found = false;
     let updatedActiveOrder: Order | null = null;
+    const actorName = pickerName || currentUser?.name || 'Administración';
+    const nowIso = new Date().toISOString();
 
     setOrders((prev) =>
       prev.map((order) => {
@@ -2761,18 +2775,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           updatedItems[unpickedIdx] = {
             ...updatedItems[unpickedIdx],
             isPicked: true,
-            pickedAt: new Date().toISOString(),
+            pickedAt: nowIso,
           };
         }
 
         const allPicked = updatedItems.every((it) => it.isPicked || it.isMissing);
         if (allPicked) completed = true;
 
+        const resolvedPickedBy = order.pickedBy || actorName;
+        const resolvedPickedAt = order.pickedAt || nowIso;
+
         const updatedOrder: Order = {
           ...order,
           items: updatedItems,
           orderStatus: allPicked ? 'packing' : 'picking',
-          packedAt: allPicked ? (order.packedAt || new Date().toISOString()) : order.packedAt,
+          packedAt: allPicked ? (order.packedAt || nowIso) : order.packedAt,
+          pickedBy: resolvedPickedBy,
+          pickedAt: resolvedPickedAt,
         };
 
         updatedActiveOrder = updatedOrder;
@@ -2785,6 +2804,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             id: orderId,
             orderStatus: updatedOrder.orderStatus,
             packedAt: updatedOrder.packedAt,
+            pickedBy: updatedOrder.pickedBy,
+            pickedAt: updatedOrder.pickedAt,
             items: updatedItems,
           }),
         }).catch(() => {});
@@ -2846,9 +2867,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const markAllItemsPicked = (orderId: string) => {
+  const markAllItemsPicked = (orderId: string, pickerName?: string) => {
     let completedOrder: Order | null = null;
     const now = new Date().toISOString();
+    const actorName = pickerName || currentUser?.name || 'Administración';
     setOrders((prev) =>
       prev.map((order) => {
         if (order.id !== orderId) return order;
@@ -2863,6 +2885,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           items: updatedItems,
           orderStatus: 'packing',
           packedAt: now,
+          pickedBy: order.pickedBy || actorName,
+          pickedAt: order.pickedAt || now,
         };
         if (activePickingOrder?.id === orderId) {
           setActivePickingOrder(completedOrder);
@@ -2874,6 +2898,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             id: orderId,
             orderStatus: 'packing',
             packedAt: now,
+            pickedBy: completedOrder.pickedBy,
+            pickedAt: completedOrder.pickedAt,
             items: updatedItems,
           }),
         }).catch(() => {});
@@ -3069,7 +3095,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
-  const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
+  const updateOrderStatus = (orderId: string, newStatus: OrderStatus, customPickerName?: string) => {
     // BLINDAJE ESTRICTO: Un pedido NO puede pasar a packing, packed o delivered si su alisto NO está al 100%
     const currentOrder = orders.find((o) => o.id === orderId);
     if (newStatus === 'packing' || newStatus === 'packed' || newStatus === 'delivered') {
@@ -3084,6 +3110,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const nowIso = new Date().toISOString();
     const packedAt = (newStatus === 'packing' || newStatus === 'packed') ? nowIso : undefined;
     const deliveredAt = (newStatus === 'delivered') ? nowIso : undefined;
+    const actorName = customPickerName || currentUser?.name || 'Administración';
+
     let updatedOrders: Order[] = [];
     setOrders((prev) => {
       // Verificación defensiva contra datos desactualizados en closure
@@ -3103,6 +3131,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               orderStatus: newStatus,
               packedAt: packedAt || o.packedAt,
               deliveredAt: deliveredAt || o.deliveredAt,
+              pickedBy: o.pickedBy || (newStatus !== 'pending' ? actorName : undefined),
+              pickedAt: o.pickedAt || (newStatus !== 'pending' ? nowIso : undefined),
             }
           : o
       );
@@ -3111,6 +3141,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
 
     const targetOrder = orders.find((o) => o.id === orderId);
+    const resolvedPickedBy = targetOrder?.pickedBy || actorName;
+    const resolvedPickedAt = targetOrder?.pickedAt || nowIso;
 
     fetch('/api/orders', {
       method: 'PUT',
@@ -3120,6 +3152,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         orderStatus: newStatus,
         packedAt,
         deliveredAt,
+        pickedBy: resolvedPickedBy,
+        pickedAt: resolvedPickedAt,
         items: targetOrder?.items,
       }),
     }).catch(() => {});
