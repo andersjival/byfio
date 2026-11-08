@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, ArrowRight } from 'lucide-react';
+import { Volume2, ArrowRight, ShoppingBag, PackageCheck } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { isHomeLocation } from '../../utils/routeHelpers';
 import { safeSessionStorage } from '../../utils/safeStorage';
@@ -7,6 +7,8 @@ import { safeSessionStorage } from '../../utils/safeStorage';
 interface WebIntroOverlayProps {
   isOpen: boolean;
   onFinish: () => void;
+  onSelectOrders?: () => void;
+  onSelectStore?: () => void;
 }
 
 const isMobileOrTabletDevice = (): boolean => {
@@ -18,7 +20,12 @@ const isMobileOrTabletDevice = (): boolean => {
   return Boolean(isMobileUA || isIPad || isTouchScreen);
 };
 
-export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFinish }) => {
+export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
+  isOpen,
+  onFinish,
+  onSelectOrders,
+  onSelectStore,
+}) => {
   const [phase, setPhase] = useState<'gradient-start' | 'video-reveal' | 'video-playing' | 'fading-out'>('gradient-start');
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -420,8 +427,37 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({ isOpen, onFini
           </div>
         </div>
 
+        {/* Acceso Directo de Entrada: "Tienda" y "Entrar a pedidos" */}
+        <div className="flex items-center justify-center gap-2.5 sm:gap-3 mt-3 px-1">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleStartExit();
+              onSelectStore?.();
+            }}
+            className="flex-1 max-w-[190px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          >
+            <ShoppingBag className="w-4 h-4 text-white" />
+            <span>Tienda</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleStartExit();
+              onSelectOrders?.();
+            }}
+            className="flex-1 max-w-[210px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-emerald-400/50 text-emerald-300 font-bubble font-bold text-xs sm:text-sm shadow-lg hover:bg-slate-800 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          >
+            <PackageCheck className="w-4 h-4 text-emerald-400" />
+            <span>Entrar a pedidos</span>
+          </button>
+        </div>
+
         {/* Subtítulo bajo el video con acción rápida */}
-        <div className="text-center mt-3 text-purple-200/70 text-[11px] sm:text-xs">
+        <div className="text-center mt-2.5 text-purple-200/70 text-[11px] sm:text-xs">
           <span>By.Fio Creative Studio • Toca en cualquier lugar para saltar y entrar</span>
         </div>
       </div>

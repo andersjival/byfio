@@ -2,7 +2,7 @@ import React from 'react';
 import { AppRoute } from '../../types';
 import { AnimatedByfioLetters } from '../common/AnimatedByfioLetters';
 import { HeroAnimatedSlogan } from './HeroAnimatedSlogan';
-import { ShoppingBag, Calendar, Heart, Star, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Calendar, Heart, Star, CheckCircle2, PackageCheck } from 'lucide-react';
 
 interface HeroDualProps {
   onScrollToWorkshops: () => void;
@@ -38,24 +38,36 @@ export const HeroDual: React.FC<HeroDualProps> = ({
           Talleres creativos de encuadernación, agendas y sublimación, junto a productos personalizados con amor e insumos en Costa Rica.
         </p>
 
-        {/* Botones Duales con Estilo Neumórfico Táctil */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-lg mx-auto pt-2 pb-2 w-full px-2 sm:px-0">
+        {/* Dos Botones de Entrada Mandatorios: "Tienda" y "Entrar a pedidos" */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-lg mx-auto pt-2 pb-1 w-full px-2 sm:px-0">
           <button
             type="button"
-            onClick={onScrollToWorkshops}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 sm:gap-3 px-6 py-3.5 sm:px-9 sm:py-4.5 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-sm sm:text-lg shadow-neuBtnHover active:scale-95 transition-all"
+            onClick={onScrollToProducts}
+            className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 sm:gap-3 px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl neu-btn-primary text-white font-bubble font-bold text-sm sm:text-base shadow-neuBtnHover active:scale-95 transition-all cursor-pointer"
           >
-            <Calendar className="w-5 h-5 text-[#FFF07C]" />
-            <span>Ver Talleres Creativos</span>
+            <ShoppingBag className="w-5 h-5 text-[#FFF07C]" />
+            <span>Tienda</span>
           </button>
 
           <button
             type="button"
-            onClick={onScrollToProducts}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 sm:gap-3 px-6 py-3.5 sm:px-9 sm:py-4.5 rounded-2xl neu-btn bg-[#F1F2F6] text-slate-800 border border-white/90 font-bubble font-bold text-sm sm:text-lg shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
+            onClick={() => onNavigate?.('pedidos-mobile')}
+            className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 sm:gap-3 px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl neu-btn bg-[#F1F2F6] text-slate-800 border border-white/90 font-bubble font-bold text-sm sm:text-base shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all cursor-pointer group"
           >
-            <ShoppingBag className="w-5 h-5 text-amber-500" />
-            <span>Ir a la Tienda &amp; Insumos</span>
+            <PackageCheck className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
+            <span>Entrar a pedidos</span>
+          </button>
+        </div>
+
+        {/* Enlace sutil para ver talleres */}
+        <div className="text-center pb-1">
+          <button
+            type="button"
+            onClick={onScrollToWorkshops}
+            className="inline-flex items-center gap-1.5 text-xs text-purple-900/80 hover:text-fio-purple font-bubble font-bold underline underline-offset-4 cursor-pointer transition-colors"
+          >
+            <Calendar className="w-3.5 h-3.5 text-purple-700" />
+            <span>O explorar los Talleres Creativos Presenciales →</span>
           </button>
         </div>
 

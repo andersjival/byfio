@@ -16,6 +16,8 @@ import { PricingStickersSection } from './components/store/PricingStickersSectio
 import { PaymentAccountsModal } from './components/common/PaymentAccountsModal';
 import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
+import { AppEntryGatewayModal } from './components/common/AppEntryGatewayModal';
+import { MobileOrdersView } from './components/mobile/MobileOrdersView';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { NewOrderStarAlert } from './components/common/NewOrderStarAlert';
 import { LoginModal } from './components/common/LoginModal';
@@ -91,6 +93,16 @@ export const App: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
   const [billingTargetCustomer, setBillingTargetCustomer] = useState<Customer | null>(null);
+  const [isEntryGatewayOpen, setIsEntryGatewayOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const initialRoute = parseRouteFromLocation().route;
+    if (initialRoute !== 'home') return false;
+    try {
+      return !sessionStorage.getItem('byfio_entry_gateway_dismissed');
+    } catch {
+      return false;
+    }
+  });
 
   const handleOpenDesignModal = () => {
     setIsDesignModalOpen(true);
@@ -133,6 +145,7 @@ export const App: React.FC = () => {
     else if (newRoute === 'precios') targetPath = '/precios';
     else if (newRoute === 'catalogo') targetPath = '/catalogo';
     else if (newRoute === 'store') targetPath = '/tienda';
+    else if (newRoute === 'pedidos-mobile') targetPath = '/pedidos';
     else if (newRoute === 'workshops') targetPath = '/talleres';
     else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
     else if (newRoute === 'admin') {
@@ -262,6 +275,14 @@ export const App: React.FC = () => {
       }
     }
   }, [currentUser, currentRoute, adminTab]);
+
+  if (currentRoute === 'pedidos-mobile') {
+    return (
+      <ErrorBoundary fallbackTitle="Inconveniente al cargar la vista de pedidos">
+        <MobileOrdersView onNavigate={navigate} />
+      </ErrorBoundary>
+    );
+  }
 
   return (
     <div className="relative min-h-screen flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800 overflow-x-hidden w-full max-w-full">
@@ -512,8 +533,38 @@ export const App: React.FC = () => {
       )}
       {/* El video intro solo debe cargar y mostrarse en la página principal (home) */}
       {currentRoute === 'home' && isIntroOpen && (
-        <WebIntroOverlay isOpen={isIntroOpen} onFinish={closeWebIntro} />
+        <WebIntroOverlay
+          isOpen={isIntroOpen}
+          onFinish={closeWebIntro}
+          onSelectStore={() => {
+            closeWebIntro();
+            navigate('store');
+          }}
+          onSelectOrders={() => {
+            closeWebIntro();
+            navigate('pedidos-mobile');
+          }}
+        />
       )}
+
+      {/* Modal de Entrada Dual: Tienda o Entrar a pedidos */}
+      <AppEntryGatewayModal
+        isOpen={isEntryGatewayOpen && !isIntroOpen && currentRoute === 'home'}
+        onSelectStore={() => {
+          try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
+          setIsEntryGatewayOpen(false);
+          navigate('store');
+        }}
+        onSelectOrders={() => {
+          try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
+          setIsEntryGatewayOpen(false);
+          navigate('pedidos-mobile');
+        }}
+        onClose={() => {
+          try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
+          setIsEntryGatewayOpen(false);
+        }}
+      />
       <FloatingMascot currentRoute={currentRoute} />
       {isModuleEnabled('store') && isFeatureEnabled('store', 'interactive_cart') && (
         <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />

@@ -39,6 +39,19 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'superadmin', adminTab: 'hub' };
   }
 
+  // Vista separada optimizada para móviles de Gestión de Pedidos (/pedidos, /pedidos-movil, /app/pedidos)
+  if (
+    (!path.startsWith('/admin') && (path === '/pedidos' || path.startsWith('/pedidos/') || path === '/pedidos-movil' || path.startsWith('/pedidos-movil/'))) ||
+    path.includes('/app/pedidos') ||
+    hash.includes('pedidos-movil') ||
+    hash.includes('app/pedidos') ||
+    seccionParam === 'pedidos-movil' ||
+    seccionParam === 'pedidos-mobile' ||
+    seccionParam === 'app-pedidos'
+  ) {
+    return { route: 'pedidos-mobile', adminTab: 'orders' };
+  }
+
   // Admin sub-rutas independientes (por pathname, hash o query param)
   if (
     path.includes('/admin/pedidos') ||

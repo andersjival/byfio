@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { BrandLogo } from './BrandLogo';
 import { TikTokIcon } from './TikTokIcon';
 import { AppRoute } from '../../types';
-import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid, LogOut, ShieldCheck, Sun, Moon, Heart } from 'lucide-react';
+import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid, LogOut, ShieldCheck, Sun, Moon, Heart, PackageCheck } from 'lucide-react';
 import { metricsTracker } from '../../services/metricsTracker';
 
 interface NavbarProps {
@@ -258,14 +258,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                     )}
                   </div>
                   {(currentUser.role === 'admin' || currentUser.role === 'staff') && (
-                    <button
-                      type="button"
-                      onClick={() => handleNav('admin')}
-                      className="inline-block px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold transition-all shrink-0 cursor-pointer"
-                      title="Ir al panel de administración"
-                    >
-                      Panel
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => handleNav('pedidos-mobile')}
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 text-xs font-bubble font-bold transition-all shrink-0 cursor-pointer"
+                        title="Ir a Gestión de Pedidos Móvil"
+                      >
+                        <PackageCheck className="w-3 h-3 text-emerald-400" />
+                        <span className="hidden sm:inline">Pedidos</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleNav('admin')}
+                        className="inline-block px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-purple text-xs font-bubble font-bold transition-all shrink-0 cursor-pointer"
+                        title="Ir al panel de administración"
+                      >
+                        Panel
+                      </button>
+                    </>
                   )}
                   <button
                     type="button"
@@ -496,6 +507,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             📋 Propuesta Partner
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleNav('pedidos-mobile')}
+            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn ${
+              currentRoute === 'pedidos-mobile'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                : 'bg-gradient-to-r from-slate-900 to-purple-950 text-white hover:text-emerald-300 border border-purple-500/30 shadow-neuBtn'
+            }`}
+          >
+            📦 Entrar a pedidos (Móvil)
           </button>
 
           {currentUser ? (

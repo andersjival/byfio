@@ -13,7 +13,8 @@ export type AppRoute =
   | 'login'
   | 'metricas'
   | 'propuesta'
-  | 'superadmin';
+  | 'superadmin'
+  | 'pedidos-mobile';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 

@@ -17,6 +17,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.17.0 - Vista Móvil Separada de Gestión de Pedidos y Selector de Entrada Dual
+- [x] **Vista Móvil Independiente para Gestión de Pedidos ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Creada interfaz de operaciones dedicada para smartphones y tablets en ruta `/pedidos` y `/pedidos-movil`.
+  - Estilos propios estilo consola oscura de operaciones, separada del diseño de la tienda pública (sin cabecera pública, sin pie de página ni mascotas).
+  - Conexión directa en tiempo real a la base de datos Cloudflare D1 con indicador de sincronización en vivo y botón de recarga manual.
+  - Barra de búsqueda instantánea por número de orden, cliente, teléfono o producto.
+  - Pestañas con contadores en tiempo real: Todos, Por Alistar, En Empaque, Empacados y Terminados.
+- [x] **Adaptación por Perfil de Usuario y Permisos:**
+  - **Perfil Operario de Alisto / Bodega:** Vista operativa enfocada exclusivamente en el alisto de productos (SKU, cantidad, estante, personalizaciones solicitadas y checklist táctil con barra de progreso). Oculta datos financieros, montos y configuraciones para máxima privacidad y concentración.
+  - **Perfil Administración (Fio / Gerencia):** Acceso total con totales en colones, estado de pago (Pagado/Pendiente), botón directo a WhatsApp del cliente (`https://wa.me/506...`), dirección con copia rápida y controles completos de cambio de estado.
+  - Teclado numérico táctil de PIN integrado para alternar de perfil en 2 segundos sin salir de la vista.
+- [x] **Compuerta de Entrada Dual ("Tienda" y "Entrar a pedidos") ([AppEntryGatewayModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/AppEntryGatewayModal.tsx), [HeroDual.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx), [WebIntroOverlay.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx), [Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Al ingresar a la aplicación se ofrecen dos botones mandatorios de alto impacto:
+    1. **"Tienda":** Acceso directo a la tienda pública, catálogo y talleres.
+    2. **"Entrar a pedidos":** Acceso inmediato a la nueva vista separada optimizada para móviles de pedidos.
+  - Integrado en modal de entrada de bienvenida, en el Hero principal y en la intro con video.
+
 ### Versión 4.16.23 - Sistema Semiautomático y Jerarquía de 3 Modalidades SINPE Móvil
 - [x] **Arquitectura de 3 Modalidades de SINPE Móvil ([SinpePaymentsSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SinpePaymentsSection.tsx)):**
   - **Sistema 1 (Automático por Gmail - 0% Comisión):** Especificado que si el cliente NO tiene sistema de confirmación de correo en su banco, NO se puede instalar este sistema.
