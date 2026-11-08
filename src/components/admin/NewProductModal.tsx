@@ -8,7 +8,7 @@ import {
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
   Store, BookOpen, ChevronDown, Plus, RotateCcw, Trash2, Sparkles, Upload
 } from 'lucide-react';
-import { ImageUploadField } from '../common/ImageUploadField';
+import { MultiImageUploadField } from '../common/MultiImageUploadField';
 
 const DEFAULT_PRODUCT_PLACEHOLDER = '/images/placeholder-new-product.jpg';
 
@@ -76,10 +76,7 @@ export const NewProductModal: React.FC = () => {
   const [minStock, setMinStock] = useState('5');
   const [maxStock, setMaxStock] = useState('20');
   const [unit, setUnit] = useState('Unidad');
-  const [image, setImage] = useState('');
-  const [galleryImages, setGalleryImages] = useState<string[]>([]);
-  const [isAddingExtraPhoto, setIsAddingExtraPhoto] = useState(false);
-  const [newPhotoUrl, setNewPhotoUrl] = useState('');
+  const [productPhotos, setProductPhotos] = useState<string[]>([]);
   const [description, setDescription] = useState('');
   const [isCustomizable, setIsCustomizable] = useState(false);
   const [customizationPlaceholder, setCustomizationPlaceholder] = useState('');
@@ -415,14 +412,8 @@ export const NewProductModal: React.FC = () => {
       const rawImages = (editingProduct.images && editingProduct.images.length > 0)
         ? editingProduct.images
         : (editingProduct.image ? [editingProduct.image] : []);
-      const realImages = rawImages.filter((img) => !img.includes('placeholder-new-product'));
-      if (realImages.length > 0) {
-        setImage(realImages[0]);
-        setGalleryImages(realImages.slice(1));
-      } else {
-        setImage(editingProduct.image || '');
-        setGalleryImages([]);
-      }
+      const realImages = rawImages.filter((img) => img && !img.includes('placeholder-new-product'));
+      setProductPhotos(realImages.slice(0, 10));
       setDescription(editingProduct.description || '');
       setIsCustomizable(editingProduct.isCustomizable);
       setCustomizationPlaceholder(editingProduct.customizationPlaceholder || '');
@@ -445,7 +436,7 @@ export const NewProductModal: React.FC = () => {
       setMinStock('5');
       setMaxStock('20');
       setUnit('Unidad');
-      setImage('');
+      setProductPhotos([]);
       setDescription('');
       setIsCustomizable(false);
       setCustomizationPlaceholder('');
@@ -507,9 +498,9 @@ export const NewProductModal: React.FC = () => {
     }
     }
 
-    const finalImage =
-      image.trim() ||
-      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80';
+    const realPhotos = productPhotos.filter((img) => img && !img.includes('placeholder-new-product'));
+    const finalImage = realPhotos.length > 0 ? realPhotos[0] : DEFAULT_PRODUCT_PLACEHOLDER;
+    const finalImages = realPhotos.length > 0 ? realPhotos : [DEFAULT_PRODUCT_PLACEHOLDER];
 
     const finalDesc = description.trim() || `${name.trim()} de alta calidad elaborado artesanalmente por by.fio.`;
 
@@ -531,6 +522,7 @@ export const NewProductModal: React.FC = () => {
         maxStock: Number(maxStock) || 0,
         unit: unit.trim() || 'Unidad',
         image: finalImage,
+        images: finalImages,
         description: finalDesc,
         isCustomizable,
         customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
@@ -554,6 +546,7 @@ export const NewProductModal: React.FC = () => {
         maxStock: Number(maxStock) || 0,
         unit: unit.trim() || 'Unidad',
         image: finalImage,
+        images: finalImages,
         description: finalDesc,
         isCustomizable,
         customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
@@ -623,172 +616,15 @@ export const NewProductModal: React.FC = () => {
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-5 text-xs max-h-[80vh] overflow-y-auto">
           {/* Bloque 1: Identidad & Foto */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-            {/* Foto con Previsualización en Vivo y Carga Multifuncional (URL, Archivo, Ctrl+V, Drag & Drop) */}
-            <div className="md:col-span-4 lg:col-span-3.5 space-y-3">
-              <ImageUploadField
-                value={image}
-                onChange={(newUrl) => setImage(newUrl)}
-                label="Fotografía del Producto"
-                aspectRatio="square"
-                compact
+            {/* Foto con Previsualización en Vivo y Carga Multifuncional (hasta 10 fotos) */}
+            <div className="md:col-span-4 lg:col-span-3.5">
+              <MultiImageUploadField
+                images={productPhotos}
+                onChange={setProductPhotos}
+                maxImages={10}
                 defaultPlaceholder={DEFAULT_PRODUCT_PLACEHOLDER}
+                label="Fotografías del Producto"
               />
-
-              {/* Indicador de Foto de Referencia Predeterminada */}
-              {(!image || image === DEFAULT_PRODUCT_PLACEHOLDER) && (
-                <div className="p-2 rounded-xl bg-purple-50/90 border border-purple-200 text-center space-y-0.5 animate-fadeIn">
-                  <span className="text-[10px] font-bubble font-bold text-purple-900 flex items-center justify-center gap-1">
-                    <Sparkles className="w-3 h-3 text-fio-pink" />
-                    <span>Foto de referencia temporal</span>
-                  </span>
-                  <p className="text-[9px] text-purple-600 leading-tight">
-                    Al subir o pegar tus fotos, esta imagen quedará automáticamente eliminada y solo se verán las tuyas.
-                  </p>
-                </div>
-              )}
-
-              {/* Sección de Galería de Fotos del Producto */}
-              <div className="p-2.5 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-gray-700 flex items-center gap-1">
-                    <ImageIcon className="w-3.5 h-3.5 text-fio-pink" />
-                    <span>Fotos ({image && image !== DEFAULT_PRODUCT_PLACEHOLDER ? 1 + galleryImages.length : galleryImages.length})</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setIsAddingExtraPhoto((v) => !v)}
-                    className="text-[10px] font-bubble font-bold text-fio-pink hover:text-fio-800 flex items-center gap-0.5 px-2 py-0.5 rounded-lg hover:bg-pink-50 transition-colors cursor-pointer"
-                  >
-                    <Plus className="w-3 h-3 stroke-[2.5]" />
-                    <span>{isAddingExtraPhoto ? 'Cerrar' : '+ Otra foto'}</span>
-                  </button>
-                </div>
-
-                {/* Subidor rápido para otra foto */}
-                {isAddingExtraPhoto && (
-                  <div className="p-2 rounded-xl bg-white border border-pink-200 space-y-2 shadow-2xs animate-fadeIn">
-                    <div className="flex gap-1">
-                      <input
-                        type="text"
-                        value={newPhotoUrl}
-                        onChange={(e) => setNewPhotoUrl(e.target.value)}
-                        placeholder="Pega enlace de foto..."
-                        className="flex-1 px-2 py-1 rounded-lg border border-slate-200 text-xs text-gray-800 focus:outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (newPhotoUrl.trim()) {
-                            if (!image || image === DEFAULT_PRODUCT_PLACEHOLDER) {
-                              setImage(newPhotoUrl.trim());
-                            } else {
-                              setGalleryImages((prev) => [...prev, newPhotoUrl.trim()]);
-                            }
-                            setNewPhotoUrl('');
-                            setIsAddingExtraPhoto(false);
-                          }
-                        }}
-                        className="px-2.5 py-1 bg-fio-pink text-white rounded-lg text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer"
-                      >
-                        OK
-                      </button>
-                    </div>
-                    <label className="flex items-center justify-center gap-1.5 py-1 rounded-lg border border-dashed border-purple-300 bg-purple-50/40 hover:bg-purple-50 text-[10px] font-bold text-purple-700 hover:text-purple-900 cursor-pointer transition-colors">
-                      <Upload className="w-3 h-3" />
-                      <span>Subir archivo desde el dispositivo</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (ev) => {
-                              const url = ev.target?.result as string;
-                              if (url) {
-                                if (!image || image === DEFAULT_PRODUCT_PLACEHOLDER) {
-                                  setImage(url);
-                                } else {
-                                  setGalleryImages((prev) => [...prev, url]);
-                                }
-                                setIsAddingExtraPhoto(false);
-                              }
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                      />
-                    </label>
-                  </div>
-                )}
-
-                {/* Miniaturas */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 min-h-[50px]">
-                  {image && image !== DEFAULT_PRODUCT_PLACEHOLDER ? (
-                    <div className="relative group shrink-0 w-11 h-11 rounded-lg border-2 border-fio-pink overflow-hidden shadow-2xs">
-                      <img src={image} alt="Principal" className="w-full h-full object-cover" />
-                      <span className="absolute bottom-0 inset-x-0 bg-fio-pink/90 text-white text-[7px] font-bold text-center py-0.2">
-                        Principal
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (galleryImages.length > 0) {
-                            setImage(galleryImages[0]);
-                            setGalleryImages((prev) => prev.slice(1));
-                          } else {
-                            setImage('');
-                          }
-                        }}
-                        className="absolute top-0.5 right-0.5 p-0.5 bg-black/60 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                        title="Eliminar foto principal"
-                      >
-                        <X className="w-2.5 h-2.5" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 italic py-1 px-1">
-                      <img src={DEFAULT_PRODUCT_PLACEHOLDER} alt="Referencia" className="w-8 h-8 rounded-md object-cover opacity-60 border border-slate-200" />
-                      <span>Sin fotos añadidas</span>
-                    </div>
-                  )}
-
-                  {galleryImages.map((extraImg, idx) => (
-                    <div
-                      key={idx}
-                      className="relative group shrink-0 w-11 h-11 rounded-lg border border-slate-200 overflow-hidden shadow-2xs hover:border-fio-pink transition-colors cursor-pointer"
-                      onClick={() => {
-                        const oldPrimary = image;
-                        setImage(extraImg);
-                        setGalleryImages((prev) => {
-                          const next = [...prev];
-                          if (oldPrimary && oldPrimary !== DEFAULT_PRODUCT_PLACEHOLDER) {
-                            next[idx] = oldPrimary;
-                          } else {
-                            next.splice(idx, 1);
-                          }
-                          return next;
-                        });
-                      }}
-                      title="Clic para establecer como foto principal"
-                    >
-                      <img src={extraImg} alt={`Foto ${idx + 2}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setGalleryImages((prev) => prev.filter((_, i) => i !== idx));
-                        }}
-                        className="absolute top-0.5 right-0.5 p-0.5 bg-black/60 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                        title="Eliminar esta foto"
-                      >
-                        <X className="w-2.5 h-2.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Datos Principales (Nombre, SKU, Categoría, Estante) */}
