@@ -367,7 +367,7 @@ interface AppContextType {
   isModuleEnabled: (moduleIdOrAlias: string) => boolean;
   isFeatureEnabled: (moduleId: string, featureId: string) => boolean;
   agendaItems: AgendaItem[];
-  addAgendaItem: (item: Omit<AgendaItem, 'id' | 'createdAt'>) => AgendaItem;
+  addAgendaItem: (item: Omit<AgendaItem, 'id' | 'createdAt'> & { id?: string }) => AgendaItem;
   updateAgendaItem: (id: string, updates: Partial<AgendaItem>) => void;
   deleteAgendaItem: (id: string) => void;
   toggleAgendaItemStatus: (id: string) => void;
@@ -910,21 +910,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
   };
 
-  const addAgendaItem = (itemData: Omit<AgendaItem, 'id' | 'createdAt'>): AgendaItem => {
+  const addAgendaItem = (itemData: Omit<AgendaItem, 'id' | 'createdAt'> & { id?: string }): AgendaItem => {
     const titleNorm = itemData.title.trim().toLowerCase();
     const dateNorm = (itemData.date || '').trim();
 
-    // Detección y bloqueo estricto de duplicados
+    // Detección y actualización si ya existe por ID o supplierOrderId
     const existing = agendaItems.find(
-      (it) => it.title.trim().toLowerCase() === titleNorm && (it.date || '').trim() === dateNorm
+      (it) =>
+        (itemData.id && it.id === itemData.id) ||
+        (itemData.supplierOrderId && it.supplierOrderId === itemData.supplierOrderId) ||
+        (it.title.trim().toLowerCase() === titleNorm && (it.date || '').trim() === dateNorm)
     );
     if (existing) {
+      if (itemData.id || itemData.supplierOrderId) {
+        const updated = agendaItems.map((it) =>
+          it.id === existing.id ? { ...it, ...itemData } : it
+        );
+        saveAgendaItems(updated);
+        return { ...existing, ...itemData };
+      }
       return existing;
     }
 
     const newItem: AgendaItem = {
       ...itemData,
-      id: `agenda-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      id: itemData.id || `agenda-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       createdAt: new Date().toISOString(),
     };
     saveAgendaItems([newItem, ...agendaItems]);
@@ -1005,6 +1015,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const deleteSupplierOrder = (id: string) => {
     const updated = supplierOrders.filter((ord) => ord.id !== id);
     saveSupplierOrders(updated);
+
+    // Eliminar también cualquier evento de agenda vinculado a esta orden
+    const nextAgenda = agendaItems.filter(
+      (it) => it.supplierOrderId !== id && it.id !== `agenda-supp-${id}` && !it.notes?.includes(`RefID: ${id}`)
+    );
+    if (nextAgenda.length !== agendaItems.length) {
+      saveAgendaItems(nextAgenda);
+    }
   };
 
   const updateSupplierOrderStatus = (id: string, newStatus: SupplierOrderStatus) => {

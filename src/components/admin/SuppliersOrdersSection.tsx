@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
-import { SupplierOrder, SupplierOrderItem, SupplierOrderStatus } from '../../types';
+import { SupplierOrder, SupplierOrderItem, SupplierOrderStatus, AgendaPriority } from '../../types';
 import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatters';
 import {
   Truck, Plus, Search, Calendar, Phone, Mail, CheckCircle2, Clock,
@@ -20,6 +20,7 @@ export const SuppliersOrdersSection: React.FC = () => {
     setIsSupplierModalOpen,
     agendaItems,
     addAgendaItem,
+    deleteAgendaItem,
   } = useApp();
   const confirm = useConfirm();
   const showAlert = useAlert();
@@ -29,20 +30,101 @@ export const SuppliersOrdersSection: React.FC = () => {
   const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
   const [viewingOrder, setViewingOrder] = useState<SupplierOrder | null>(null);
 
-  const handleSaveToAgenda = (order: SupplierOrder) => {
-    const isAlreadyInAgenda = agendaItems?.some(
-      (item) => item.title.includes(order.orderNumber) || (item.notes && item.notes.includes(order.orderNumber))
+  // Estado y Control del Modal de Agendamiento
+  const [orderToSchedule, setOrderToSchedule] = useState<SupplierOrder | null>(null);
+  const [scheduleDate, setScheduleDate] = useState<string>('');
+  const [scheduleTime, setScheduleTime] = useState<string>('10:00');
+  const [schedulePriority, setSchedulePriority] = useState<AgendaPriority>('alta');
+  const [scheduleNotes, setScheduleNotes] = useState<string>('');
+
+  const getOrderAgendaItem = (order: SupplierOrder) => {
+    return agendaItems?.find(
+      (it) =>
+        it.supplierOrderId === order.id ||
+        it.id === `agenda-supp-${order.id}` ||
+        it.notes?.includes(`RefID: ${order.id}`)
     );
-    if (isAlreadyInAgenda) return;
+  };
+
+  const handleOpenScheduleModal = (order: SupplierOrder) => {
+    const existing = getOrderAgendaItem(order);
+    const today = new Date().toISOString().split('T')[0];
+
+    if (existing) {
+      setScheduleDate(existing.date);
+      // Extraer hora si viene en formato 12h
+      let rawTime = '10:00';
+      if (existing.time) {
+        const timeMatch = existing.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+        if (timeMatch) {
+          let h = parseInt(timeMatch[1], 10);
+          const m = timeMatch[2];
+          const ampm = (timeMatch[3] || '').toUpperCase();
+          if (ampm === 'PM' && h < 12) h += 12;
+          if (ampm === 'AM' && h === 12) h = 0;
+          rawTime = `${String(h).padStart(2, '0')}:${m}`;
+        }
+      }
+      setScheduleTime(rawTime);
+      setSchedulePriority(existing.priority || 'alta');
+      setScheduleNotes(existing.notes ? existing.notes.replace(/\[RefID:.*?\]/g, '').trim() : '');
+    } else {
+      setScheduleDate(today);
+      setScheduleTime('10:00');
+      setSchedulePriority(order.status === 'draft' ? 'alta' : 'media');
+      setScheduleNotes(
+        `Llamar a ${order.supplierName} para tramitar pedido ${order.orderNumber} (${order.totalUnits} uds - ${formatCRC(order.totalCost)}).`
+      );
+    }
+    setOrderToSchedule(order);
+  };
+
+  const handleConfirmSchedule = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!orderToSchedule || !scheduleDate) return;
+
+    let formattedTime = scheduleTime;
+    if (scheduleTime) {
+      const [hStr, mStr] = scheduleTime.split(':');
+      const h = parseInt(hStr, 10);
+      const m = mStr || '00';
+      if (!isNaN(h)) {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        formattedTime = `${String(h12).padStart(2, '0')}:${m} ${ampm}`;
+      }
+    }
 
     addAgendaItem({
-      title: `Pedido a Proveedor (${order.orderNumber}): ${order.supplierName}`,
-      date: new Date().toISOString().split('T')[0],
-      time: '10:00 AM',
+      id: `agenda-supp-${orderToSchedule.id}`,
+      supplierOrderId: orderToSchedule.id,
+      title: `Pedido a Proveedor (${orderToSchedule.orderNumber}): ${orderToSchedule.supplierName}`,
+      date: scheduleDate,
+      time: formattedTime,
       category: 'proveedor',
-      priority: order.status === 'draft' ? 'alta' : 'media',
+      priority: schedulePriority,
       status: 'pending',
-      notes: `Requisición de ${order.items.length} productos (${order.totalUnits} uds) para ${order.supplierName}. Total: ${formatCRC(order.totalCost)}. Estado: ${order.status === 'draft' ? 'Por pedir' : 'Pedido realizado'}. Ref: ${order.orderNumber}`,
+      notes: `${scheduleNotes.trim()} [RefID: ${orderToSchedule.id}]`,
+    });
+
+    showAlert(
+      `¡Pedido ${orderToSchedule.orderNumber} agendado para el ${scheduleDate} a las ${formattedTime}!`,
+      { title: 'Pedido Agendado con Éxito', variant: 'info' }
+    );
+
+    setOrderToSchedule(null);
+  };
+
+  const handleRemoveFromAgenda = (order: SupplierOrder) => {
+    const existing = getOrderAgendaItem(order);
+    if (existing) {
+      deleteAgendaItem(existing.id);
+    } else {
+      deleteAgendaItem(`agenda-supp-${order.id}`);
+    }
+    showAlert(`El recordatorio del pedido ${order.orderNumber} fue retirado de la agenda.`, {
+      title: 'Eliminado de Agenda',
+      variant: 'info',
     });
   };
 
@@ -181,7 +263,16 @@ export const SuppliersOrdersSection: React.FC = () => {
 
     const totalUnits = newOrderItems.reduce((acc, it) => acc + it.orderQty, 0);
     const totalCost = newOrderItems.reduce((acc, it) => acc + it.subtotal, 0);
-    const nextNum = `#PROV-${new Date().getFullYear()}-${String(supplierOrders.length + 1).padStart(3, '0')}`;
+    const currentYear = new Date().getFullYear();
+    let maxNum = 0;
+    supplierOrders.forEach((o) => {
+      const match = o.orderNumber.match(/#PROV-\d{4}-(\d+)/);
+      if (match) {
+        const n = parseInt(match[1], 10);
+        if (!isNaN(n) && n > maxNum) maxNum = n;
+      }
+    });
+    const nextNum = `#PROV-${currentYear}-${String(maxNum + 1).padStart(3, '0')}`;
 
     addSupplierOrder({
       orderNumber: nextNum,
@@ -623,28 +714,45 @@ export const SuppliersOrdersSection: React.FC = () => {
                       </a>
                     )}
 
-                    {/* Botón Guardar en Agenda */}
-                    {agendaItems?.some((item) => item.title.includes(order.orderNumber) || (item.notes && item.notes.includes(order.orderNumber))) ? (
-                      <button
-                        type="button"
-                        disabled={true}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bubble font-bold cursor-not-allowed opacity-90 shadow-2xs"
-                        title="Este pedido ya fue guardado en la Agenda del Taller"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                        <span>Guardado en Agenda</span>
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleSaveToAgenda(order)}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-bubble text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer"
-                        title="Guardar este pedido en la Agenda del Taller"
-                      >
-                        <Calendar className="w-4 h-4 text-purple-700" />
-                        <span>Guardar en Agenda</span>
-                      </button>
-                    )}
+                    {/* Botón Guardar / Ver en Agenda */}
+                    {(() => {
+                      const agendaItem = getOrderAgendaItem(order);
+                      if (agendaItem) {
+                        return (
+                          <div className="inline-flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenScheduleModal(order)}
+                              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 text-xs font-bubble font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
+                              title="Clic para cambiar fecha u hora de la cita en agenda"
+                            >
+                              <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                              <span>Agendado: {agendaItem.date.slice(5)} {agendaItem.time || ''}</span>
+                              <Edit3 className="w-3 h-3 text-emerald-800 ml-0.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFromAgenda(order)}
+                              className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                              title="Eliminar este recordatorio de la agenda"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        );
+                      }
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenScheduleModal(order)}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-bubble text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer"
+                          title="Programar fecha y hora en la Agenda del Taller"
+                        >
+                          <Calendar className="w-4 h-4 text-purple-700" />
+                          <span>Guardar en Agenda</span>
+                        </button>
+                      );
+                    })()}
                   </div>
 
                   <div className="flex items-center gap-2 justify-end">
@@ -1132,27 +1240,34 @@ export const SuppliersOrdersSection: React.FC = () => {
             </div>
 
             <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2 shrink-0">
-              {agendaItems?.some((item) => item.title.includes(viewingOrder.orderNumber) || (item.notes && item.notes.includes(viewingOrder.orderNumber))) ? (
-                <button
-                  type="button"
-                  disabled={true}
-                  className="px-3.5 py-2 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 font-bubble text-xs font-bold cursor-not-allowed opacity-90 flex items-center gap-1.5"
-                  title="Este pedido ya fue guardado en la Agenda del Taller"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Guardado en Agenda</span>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleSaveToAgenda(viewingOrder)}
-                  className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
-                  title="Guardar este pedido en la Agenda del Taller"
-                >
-                  <Calendar className="w-4 h-4 text-purple-200" />
-                  <span>Guardar en Agenda</span>
-                </button>
-              )}
+              {(() => {
+                const agendaItem = getOrderAgendaItem(viewingOrder);
+                if (agendaItem) {
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => handleOpenScheduleModal(viewingOrder)}
+                      className="px-3.5 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 font-bubble text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                      title="Modificar fecha u hora de la cita en agenda"
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                      <span>Agendado: {agendaItem.date.slice(5)} {agendaItem.time || ''}</span>
+                      <Edit3 className="w-3 h-3 text-emerald-800 ml-0.5" />
+                    </button>
+                  );
+                }
+                return (
+                  <button
+                    type="button"
+                    onClick={() => handleOpenScheduleModal(viewingOrder)}
+                    className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                    title="Programar fecha y hora en la Agenda del Taller"
+                  >
+                    <Calendar className="w-4 h-4 text-purple-200" />
+                    <span>Guardar en Agenda</span>
+                  </button>
+                );
+              })()}
 
               <button
                 type="button"
@@ -1173,6 +1288,183 @@ export const SuppliersOrdersSection: React.FC = () => {
           </div>
         </div>
       )}
+      {/* Modal: Agendar Pedido a Proveedor con Fecha y Hora */}
+      {orderToSchedule && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
+          <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border-2 border-purple-200 overflow-hidden flex flex-col">
+            {/* Header Modal */}
+            <div className="px-5 py-4 bg-gradient-to-r from-purple-700 to-indigo-700 text-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-2xl bg-white/20 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bubble font-bold text-base leading-tight">
+                    Agendar Pedido a Proveedor
+                  </h3>
+                  <p className="text-[11px] text-purple-200">
+                    {orderToSchedule.orderNumber} • {orderToSchedule.supplierName}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOrderToSchedule(null)}
+                className="p-1 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Formulario */}
+            <form onSubmit={handleConfirmSchedule} className="p-5 space-y-4 text-xs font-sans">
+              {/* Resumen del Pedido */}
+              <div className="p-3 bg-purple-50/70 border border-purple-200 rounded-2xl flex items-center justify-between">
+                <div>
+                  <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-200 text-purple-900">
+                    {orderToSchedule.orderNumber}
+                  </span>
+                  <p className="font-bubble font-bold text-slate-800 text-sm mt-1">{orderToSchedule.supplierName}</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] text-slate-500 font-mono block">{orderToSchedule.totalUnits} unidades</span>
+                  <span className="font-bubble font-bold text-purple-900 text-xs">{formatCRC(orderToSchedule.totalCost)}</span>
+                </div>
+              </div>
+
+              {/* Selector de Fecha */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-slate-700 flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Fecha en la Agenda *</span>
+                  </label>
+                  <div className="flex items-center gap-1 text-[10px]">
+                    <button
+                      type="button"
+                      onClick={() => setScheduleDate(new Date().toISOString().split('T')[0])}
+                      className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-purple-100 text-slate-600 hover:text-purple-800 font-semibold cursor-pointer"
+                    >
+                      Hoy
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const d = new Date();
+                        d.setDate(d.getDate() + 1);
+                        setScheduleDate(d.toISOString().split('T')[0]);
+                      }}
+                      className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-purple-100 text-slate-600 hover:text-purple-800 font-semibold cursor-pointer"
+                    >
+                      Mañana
+                    </button>
+                  </div>
+                </div>
+                <input
+                  type="date"
+                  required
+                  value={scheduleDate}
+                  onChange={(e) => setScheduleDate(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
+              </div>
+
+              {/* Selector de Hora */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-slate-700 flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Hora del Recordatorio *</span>
+                  </label>
+                  <div className="flex items-center gap-1 text-[10px]">
+                    {['09:00', '11:00', '14:00', '16:00'].map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setScheduleTime(t)}
+                        className={`px-1.5 py-0.5 rounded font-mono font-semibold cursor-pointer ${
+                          scheduleTime === t
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-slate-100 hover:bg-purple-100 text-slate-600 hover:text-purple-800'
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <input
+                  type="time"
+                  required
+                  value={scheduleTime}
+                  onChange={(e) => setScheduleTime(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
+              </div>
+
+              {/* Selector de Prioridad */}
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Prioridad en Agenda
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['alta', 'media', 'baja'] as const).map((prio) => (
+                    <button
+                      key={prio}
+                      type="button"
+                      onClick={() => setSchedulePriority(prio as AgendaPriority)}
+                      className={`py-1.5 rounded-xl border text-center font-bubble font-bold text-xs capitalize transition-all cursor-pointer ${
+                        schedulePriority === prio
+                          ? prio === 'alta'
+                            ? 'bg-rose-100 border-rose-400 text-rose-800'
+                            : prio === 'media'
+                            ? 'bg-amber-100 border-amber-400 text-amber-800'
+                            : 'bg-emerald-100 border-emerald-400 text-emerald-800'
+                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      {prio === 'alta' ? '🚨 Alta' : prio === 'media' ? '⚡ Media' : '☕ Normal'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Nota / Recordatorio */}
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Nota / Tarea a Realizar
+                </label>
+                <textarea
+                  rows={2}
+                  value={scheduleNotes}
+                  onChange={(e) => setScheduleNotes(e.target.value)}
+                  placeholder="Detalles sobre lo que se debe hacer..."
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
+              </div>
+
+              {/* Botones de Acción */}
+              <div className="pt-2 border-t border-slate-200 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setOrderToSchedule(null)}
+                  className="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 font-bubble text-xs font-bold hover:bg-slate-50 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-md active:scale-95 transition-all cursor-pointer"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>Confirmar y Guardar en Agenda</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

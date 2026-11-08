@@ -235,6 +235,7 @@ export interface AgendaItem {
   notes?: string;
   isAutoWorkshop?: boolean;
   notifyBell?: boolean; // Campanita de notificación push sonora activa
+  supplierOrderId?: string; // ID único de la orden de proveedor vinculada
   createdAt: string;
 }
 
