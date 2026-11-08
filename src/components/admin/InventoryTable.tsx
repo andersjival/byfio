@@ -27,15 +27,17 @@ export const InventoryTable: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable'>('all');
 
   const isStockModeEnabled = isFeatureEnabled('inventory', 'inventory_stock_mode') !== false;
-  const isAvailabilityModeEnabled = isFeatureEnabled('inventory', 'product_availability_mode') !== false || isFeatureEnabled('inventory', 'inventory_availability_mode') !== false;
+  const isAvailabilityModeEnabled = isFeatureEnabled('inventory', 'product_availability_mode') !== false;
 
   React.useEffect(() => {
-    if (!isStockModeEnabled && isAvailabilityModeEnabled && inventoryMode === 'stock') {
+    if (!isStockModeEnabled && inventoryMode === 'stock') {
       setInventoryMode('availability');
     } else if (!isAvailabilityModeEnabled && isStockModeEnabled && inventoryMode === 'availability') {
       setInventoryMode('stock');
     }
   }, [isStockModeEnabled, isAvailabilityModeEnabled, inventoryMode, setInventoryMode]);
+
+  const showStockColumn = isStockModeEnabled && inventoryMode === 'stock';
 
   const zeroStockCount = useMemo(() => products.filter((p) => p.stock <= 0).length, [products]);
   const unavailableCount = useMemo(
@@ -197,18 +199,51 @@ export const InventoryTable: React.FC = () => {
           </button>
         </div>
 
-        {/* Botón Realizar Pedido a Proveedor */}
-        {isFeatureEnabled('inventory', 'supplier_list') && (
-          <button
-            type="button"
-            onClick={() => setIsSupplierModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-fio-800 border border-purple-300 font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 shrink-0"
-            title="Generar orden de compra y reposición para enviar al proveedor por WhatsApp"
-          >
-            <Truck className="w-3.5 h-3.5 text-fio-pink" />
-            <span>Realizar Pedido a Proveedor</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          {/* Selector de Modo de Inventario (Si ambos están disponibles) */}
+          {isStockModeEnabled && isAvailabilityModeEnabled && (
+            <div className="inline-flex items-center gap-1 p-1 bg-white rounded-xl border border-fio-200 shadow-2xs">
+              <span className="text-[10px] font-bold text-gray-400 uppercase px-1.5">Modo:</span>
+              <button
+                type="button"
+                onClick={() => setInventoryMode('stock')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bubble font-bold transition-all ${
+                  inventoryMode === 'stock'
+                    ? 'bg-fio-800 text-white shadow-2xs'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+                title="Mostrar existencias numéricas y alertas de stock mínimo"
+              >
+                📦 Stock Numérico
+              </button>
+              <button
+                type="button"
+                onClick={() => setInventoryMode('availability')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bubble font-bold transition-all ${
+                  inventoryMode === 'availability'
+                    ? 'bg-emerald-600 text-white shadow-2xs'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+                title="Ocultar columna de stock numérico y activar disponibilidad rápida"
+              >
+                ⚡ Disponibilidad Rápida
+              </button>
+            </div>
+          )}
+
+          {/* Botón Realizar Pedido a Proveedor */}
+          {isFeatureEnabled('inventory', 'supplier_list') && (
+            <button
+              type="button"
+              onClick={() => setIsSupplierModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-fio-800 border border-purple-300 font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 shrink-0"
+              title="Generar orden de compra y reposición para enviar al proveedor por WhatsApp"
+            >
+              <Truck className="w-3.5 h-3.5 text-fio-pink" />
+              <span>Realizar Pedido a Proveedor</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Selector de Categorías & Buscador */}
@@ -254,7 +289,9 @@ export const InventoryTable: React.FC = () => {
               <th className="pb-3 px-2">Categoría</th>
               <th className="pb-3 px-2">Ubicación</th>
               <th className="pb-3 px-2">Precio</th>
-              <th className="pb-3 px-2 text-center">Stock Actual</th>
+              {showStockColumn && (
+                <th className="pb-3 px-2 text-center">Stock Actual</th>
+              )}
               {inventoryMode === 'stock' ? (
                 <>
                   <th className="pb-3 px-2 text-center">Alerta Mín/Máx</th>
@@ -310,13 +347,23 @@ export const InventoryTable: React.FC = () => {
                           }`}>
                             {prod.sku}
                           </span>
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
-                            isZeroStock
-                              ? 'bg-red-100 text-red-700 border-red-200'
-                              : 'bg-purple-100 text-fio-800 border-purple-200'
-                          }`}>
-                            Stock: {prod.stock} {prod.unit || 'uds'}
-                          </span>
+                          {showStockColumn ? (
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                              isZeroStock
+                                ? 'bg-red-100 text-red-700 border-red-200'
+                                : 'bg-purple-100 text-fio-800 border-purple-200'
+                            }`}>
+                              Stock: {prod.stock} {prod.unit || 'uds'}
+                            </span>
+                          ) : (
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                              prod.isAvailable !== false
+                                ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                                : 'bg-rose-100 text-rose-800 border-rose-200'
+                            }`}>
+                              {prod.isAvailable !== false ? 'Disponible' : 'Desactivado'}
+                            </span>
+                          )}
                         </div>
                         <p className={`font-semibold line-clamp-1 transition-colors ${
                           isZeroStock ? 'text-red-900 font-bold' : 'text-gray-800 group-hover:text-fio-800'
@@ -374,45 +421,47 @@ export const InventoryTable: React.FC = () => {
 
                   <td className="py-3 px-2 font-bubble font-bold text-gray-800">{formatCRC(prod.price)}</td>
 
-                  {/* Columna Stock Actual (Siempre visible en pantalla principal) */}
-                  <td className="py-3 px-2 text-center">
-                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-xl border ${
-                      isZeroStock
-                        ? 'bg-red-100 border-red-300 ring-2 ring-red-200'
-                        : isCritical
-                        ? 'bg-amber-50 border-amber-300 ring-1 ring-amber-200'
-                        : 'bg-fio-100/60 border-fio-200'
-                    }`}>
-                      <button
-                        type="button"
-                        onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))}
-                        className="p-1 text-gray-500 hover:text-red-600 hover:bg-white rounded transition-colors active:scale-90"
-                        title="Reducir stock en 1 unidad"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <div className="flex flex-col items-center min-w-[34px] px-0.5">
-                        <span className={`font-bubble font-bold text-sm leading-none ${
-                          isZeroStock ? 'text-red-700 font-black' : isCritical ? 'text-amber-800' : 'text-gray-900'
-                        }`}>
-                          {prod.stock}
-                        </span>
-                        <span className={`text-[9px] font-semibold leading-tight mt-0.5 ${
-                          isZeroStock ? 'text-red-600' : 'text-gray-500'
-                        }`}>
-                          {isZeroStock ? 'Agotado' : (prod.unit || 'uds')}
-                        </span>
+                  {/* Columna Stock Actual (Solo visible si showStockColumn está activo) */}
+                  {showStockColumn && (
+                    <td className="py-3 px-2 text-center">
+                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-xl border ${
+                        isZeroStock
+                          ? 'bg-red-100 border-red-300 ring-2 ring-red-200'
+                          : isCritical
+                          ? 'bg-amber-50 border-amber-300 ring-1 ring-amber-200'
+                          : 'bg-fio-100/60 border-fio-200'
+                      }`}>
+                        <button
+                          type="button"
+                          onClick={() => updateProductStock(prod.id, Math.max(0, prod.stock - 1))}
+                          className="p-1 text-gray-500 hover:text-red-600 hover:bg-white rounded transition-colors active:scale-90"
+                          title="Reducir stock en 1 unidad"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <div className="flex flex-col items-center min-w-[34px] px-0.5">
+                          <span className={`font-bubble font-bold text-sm leading-none ${
+                            isZeroStock ? 'text-red-700 font-black' : isCritical ? 'text-amber-800' : 'text-gray-900'
+                          }`}>
+                            {prod.stock}
+                          </span>
+                          <span className={`text-[9px] font-semibold leading-tight mt-0.5 ${
+                            isZeroStock ? 'text-red-600' : 'text-gray-500'
+                          }`}>
+                            {isZeroStock ? 'Agotado' : (prod.unit || 'uds')}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => updateProductStock(prod.id, prod.stock + 1)}
+                          className="p-1 text-gray-500 hover:text-emerald-600 hover:bg-white rounded transition-colors active:scale-90"
+                          title="Aumentar stock en 1 unidad"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => updateProductStock(prod.id, prod.stock + 1)}
-                        className="p-1 text-gray-500 hover:text-emerald-600 hover:bg-white rounded transition-colors active:scale-90"
-                        title="Aumentar stock en 1 unidad"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </td>
+                    </td>
+                  )}
 
                   {inventoryMode === 'stock' ? (
                     <>
@@ -544,7 +593,7 @@ export const InventoryTable: React.FC = () => {
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={inventoryMode === 'stock' ? 8 : 7} className="py-12 text-center text-gray-500">
+                <td colSpan={showStockColumn ? (inventoryMode === 'stock' ? 8 : 7) : (inventoryMode === 'stock' ? 7 : 6)} className="py-12 text-center text-gray-500">
                   <div className="max-w-xs mx-auto space-y-2">
                     <p className="font-bubble font-bold text-sm text-gray-700">
                       No hay productos con los filtros seleccionados

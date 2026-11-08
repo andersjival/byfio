@@ -16,7 +16,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate, onOpenPwaModal }) => {
-  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, currentUser, agendaItems, supplierOrders } = useApp();
+  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, toggleSuperadminModule, currentUser, agendaItems, supplierOrders } = useApp();
   const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
@@ -151,6 +151,15 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       icon: ShoppingBag,
       gradient: 'from-[#059669] to-[#047857]',
     },
+    {
+      id: 'catalog-view' as AdminTabType,
+      title: 'Catálogo Visual & Fotos',
+      desc: 'Vista sin barra de información, slider de estrellitas y galería de fotos',
+      badge: 'Vista Visual',
+      badgeClass: 'bg-purple-100 text-purple-900 font-bold',
+      icon: BookOpen,
+      gradient: 'from-[#EC4899] to-[#8B5CF6]',
+    },
   ];
 
   const menuItems = allMenuItems.filter((item) => hasPermission(item.id));
@@ -253,23 +262,62 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
 
       {/* Sección Catálogo Comercial Online (Aparece de abajo hacia arriba) */}
       <div className="pt-2 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-        {isModuleEnabled('catalogo') && (
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/70 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/80 shadow-2xs flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
-                <BookOpen className="w-4 h-4" />
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
+                <BookOpen className="w-5 h-5 text-fio-yellow" />
               </div>
               <div>
-                <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900">
-                  Catálogo Comercial Online (Vista en Lista &amp; Pedidos)
-                </h4>
-                <p className="text-[11px] text-slate-500 font-sans">
-                  Comparte el enlace oficial con clientes mayoristas o en redes para que ordenen directo por WhatsApp y SINPE.
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900">
+                    Catálogo Comercial Online (Público &amp; Vista Visual)
+                  </h4>
+                  <span className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full ${
+                    isModuleEnabled('catalogo')
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      : 'bg-rose-100 text-rose-700 border border-rose-200'
+                  }`}>
+                    {isModuleEnabled('catalogo') ? '✓ Activo en la Web' : '✗ Desactivado / Oculto'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 font-sans mt-0.5">
+                  Controla la presencia del catálogo en la web pública o accede a la vista visual exclusiva con fotos y slider.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
+              {/* Botón para Activar / Desactivar Catálogo en la Web */}
+              <button
+                type="button"
+                onClick={() => toggleSuperadminModule('catalogo')}
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold border transition-all active:scale-95 shadow-2xs ${
+                  isModuleEnabled('catalogo')
+                    ? 'bg-white hover:bg-rose-50 text-rose-600 border-rose-200'
+                    : 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 shadow-sm'
+                }`}
+                title="Activar o desactivar al instante el botón de Catálogo en la página web"
+              >
+                <span>{isModuleEnabled('catalogo') ? 'Desactivar de la Web' : 'Activar en la Web'}</span>
+              </button>
+
+              {/* Botón Nueva Vista Catálogo Visual */}
+              <button
+                type="button"
+                onClick={() => onSelectTab('catalog-view')}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
+                title="Abrir vista de catálogo exclusiva con fotos y slider sin barra de info"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-fio-yellow" />
+                <span>Vista Catálogo Visual</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Enlaces de compartir (visibles cuando está activo en la web) */}
+          {isModuleEnabled('catalogo') && (
+            <div className="pt-2 border-t border-purple-100 flex items-center justify-end gap-2 flex-wrap">
               <button
                 type="button"
                 onClick={copyCatalogLink}
@@ -306,11 +354,11 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                 className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-semibold shadow-xs active:scale-95 transition-all"
               >
                 <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
-                <span>Ver Catálogo</span>
+                <span>Ver en la Web</span>
               </a>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Tarjeta de Acceso a la Propuesta Oficial para el Dueño (Solo Admin y Superadmin) */}
         {isAdminOrSuperadmin && (

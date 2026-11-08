@@ -588,7 +588,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isSinpeModalOpen, setIsSinpeModalOpen] = useState(false);
 
-  // Reportes de Faltantes de Inventario detectados durante el Alisto Manual
+  // Reportes de Faltantes de Inventario detectados al Alistar Pedido
   const [missingInventoryReports, setMissingInventoryReports] = useState<InventoryMissingReport[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.MISSING_INVENTORY);
     return saved ? JSON.parse(saved) : [];
@@ -1430,6 +1430,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const toggleSuperadminFeature = (moduleId: string, featureId: string, enabled?: boolean) => {
+    let nextFeatureState = false;
     const updated = superadminModules.map((m) => {
       if (m.id === moduleId) {
         return {
@@ -1437,6 +1438,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           features: m.features.map((f) => {
             if (f.id === featureId) {
               const nextState = enabled !== undefined ? enabled : !f.enabled;
+              nextFeatureState = nextState;
               return { ...f, enabled: nextState };
             }
             return f;
@@ -1446,6 +1448,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return m;
     });
     saveSuperadminModules(updated);
+
+    // Sincronización instantánea del modo de inventario (Stock vs Disponibilidad Rápida)
+    if (moduleId === 'inventory') {
+      if (featureId === 'product_availability_mode') {
+        const targetMode = nextFeatureState ? 'availability' : 'stock';
+        setInventoryModeState(targetMode);
+        localStorage.setItem(STORAGE_KEYS.INVENTORY_MODE, targetMode);
+      } else if (featureId === 'inventory_stock_mode') {
+        const targetMode = nextFeatureState ? 'stock' : 'availability';
+        setInventoryModeState(targetMode);
+        localStorage.setItem(STORAGE_KEYS.INVENTORY_MODE, targetMode);
+      }
+    }
   };
 
   const deactivateSuperadminModuleComplete = (moduleId: string) => {
@@ -1501,7 +1516,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (clean === 'precios' || clean === 'stickers' || clean === 'pricing') return 'pricing';
     if (clean === 'usuarios' || clean === 'perfiles' || clean === 'users') return 'users';
     if (clean === 'metricas') return 'metricas';
-    if (clean === 'catalogo') return 'catalogo';
+    if (clean === 'catalogo' || clean === 'catalog-view' || clean === 'catalog_view') return 'catalogo';
     if (clean === 'tienda' || clean === 'store') return 'store';
     return clean;
   };
@@ -1517,6 +1532,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const normalized = normalizeModuleId(moduleId);
     const mod = superadminModules.find((m) => m.id === normalized);
     if (!mod) return true;
+    if (!mod.enabled) return false;
     const feat = mod.features.find((f) => f.id === featureId);
     if (!feat) return true;
     return feat.enabled;
@@ -1632,6 +1648,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const livePerms = matchingProfile.permissions as unknown as Record<string, boolean | undefined> | undefined;
       if (tab === 'sinpe') {
         return Boolean(livePerms?.sinpe ?? livePerms?.reports);
+      }
+      if (tab === 'catalog-view') {
+        return isModuleEnabled('catalogo');
       }
       if (tab === 'suppliers' || tab === 'sales') {
         if (currentUser.role === 'staff' && livePerms) {
@@ -2732,7 +2751,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           )
         );
 
-        // En alisto manual, si no coincide por SKU exacto, alistar el primer producto pendiente
+        // Al alistar pedido, si no coincide por SKU exacto, alistar el primer producto pendiente
         if (unpickedIdx === -1 && pickingMode === 'manual') {
           unpickedIdx = updatedItems.findIndex((it) => !it.isPicked && !it.isMissing);
         }

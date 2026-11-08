@@ -263,13 +263,20 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
           <button
             type="button"
-            onClick={() => setInventoryMode(inventoryMode === 'stock' ? 'availability' : 'stock')}
+            onClick={() => {
+              const nextMode = inventoryMode === 'stock' ? 'availability' : 'stock';
+              setInventoryMode(nextMode);
+              toggleSuperadminFeature('inventory', 'inventory_stock_mode', nextMode === 'stock');
+              toggleSuperadminFeature('inventory', 'product_availability_mode', nextMode === 'availability');
+              setSaveToast(nextMode === 'stock' ? '✓ Modo Stock Numérico activado (Columna visible en Admin)' : '✓ Modo Disponibilidad Rápida activado (Columna Stock desactivada)');
+              setTimeout(() => setSaveToast(null), 3000);
+            }}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
               inventoryMode === 'stock'
                 ? 'bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300'
                 : 'bg-fio-800 hover:bg-fio-900 text-white shadow-sm'
             }`}
-            title={inventoryMode === 'stock' ? 'Desactiva la columna de stock y activa el modo de disponibilidad' : 'Vuelve a mostrar la columna de stock numérico'}
+            title={inventoryMode === 'stock' ? 'Desactiva la columna de stock y activa el modo de disponibilidad rápida' : 'Vuelve a mostrar la columna de stock numérico'}
           >
             {inventoryMode === 'stock' ? (
               <>
@@ -286,7 +293,14 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
 
           <button
             type="button"
-            onClick={() => setInventoryMode(inventoryMode === 'availability' ? 'stock' : 'availability')}
+            onClick={() => {
+              const nextMode = inventoryMode === 'availability' ? 'stock' : 'availability';
+              setInventoryMode(nextMode);
+              toggleSuperadminFeature('inventory', 'inventory_stock_mode', nextMode === 'stock');
+              toggleSuperadminFeature('inventory', 'product_availability_mode', nextMode === 'availability');
+              setSaveToast(nextMode === 'availability' ? '✓ Modo Disponibilidad Rápida activado (Columna Stock desactivada)' : '✓ Modo Stock Numérico activado');
+              setTimeout(() => setSaveToast(null), 3000);
+            }}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
               inventoryMode === 'availability'
                 ? 'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300'

@@ -161,7 +161,7 @@ export const GuidedPickingModal: React.FC = () => {
             </span>
             <div className="min-w-0">
               <span className="text-xs sm:text-[10px] text-fio-300 uppercase tracking-widest font-bold block truncate">
-                Alisto {pickingMode === 'barcode' ? 'con Código' : 'Manual'}
+                {pickingMode === 'barcode' ? 'Alisto con Código' : 'Alistar Pedido'}
               </span>
               <h2 className="font-bubble font-bold text-base sm:text-base truncate">
                 Pedido {currentOrder.orderNumber} — {currentOrder.customerName}
@@ -404,7 +404,7 @@ export const GuidedPickingModal: React.FC = () => {
                           onClick={() => setPickingMode('manual')}
                           className="text-fio-pink hover:text-purple-700 font-bold underline cursor-pointer"
                         >
-                          Cambiar a Alisto Manual
+                          Cambiar a Alistar Pedido
                         </button>
                       )}
                     </div>
@@ -419,7 +419,7 @@ export const GuidedPickingModal: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  /* Modo 2: Alisto Manual (Botón de Aceptar/Continuar, Faltante y Salir) */
+                  /* Modo 2: Alistar Pedido (Botón de Aceptar/Continuar, Faltante y Salir) */
                   <div className="p-3.5 sm:p-3.5 bg-purple-50/70 rounded-2xl border-2 border-purple-200 space-y-2.5 sm:space-y-2.5">
                     <p className="text-xs sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
                       <ClipboardList className="w-4 h-4 text-fio-pink" />

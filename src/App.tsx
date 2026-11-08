@@ -26,6 +26,7 @@ import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { AdminHeader } from './components/admin/AdminHeader';
 import { AdminTabs, type AdminTabType } from './components/admin/AdminTabs';
 import { AdminHubMenu } from './components/admin/AdminHubMenu';
+import { AdminCatalogVisualView } from './components/admin/AdminCatalogVisualView';
 import { OrdersQueue } from './components/admin/OrdersQueue';
 import { InventoryTable } from './components/admin/InventoryTable';
 import { CashRegisterReports } from './components/admin/CashRegisterReports';
@@ -186,6 +187,10 @@ export const App: React.FC = () => {
   };
 
   const handleSelectAdminTab = (tab: AdminTabType) => {
+    if (tab === 'catalog-view') {
+      navigate('admin', tab);
+      return;
+    }
     if (tab !== 'hub' && (!isModuleEnabled(tab) || !hasPermission(tab))) {
       navigate('admin', 'hub');
       return;
@@ -195,8 +200,12 @@ export const App: React.FC = () => {
 
   // Protección: Si el módulo activo fue desactivado por Superadmin o revocado al colaborador, volver al Hub de inmediato
   useEffect(() => {
-    if (currentRoute === 'admin' && adminTab !== 'hub' && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
-      setAdminTab('hub');
+    if (currentRoute === 'admin' && adminTab !== 'hub') {
+      if (adminTab === 'catalog-view') {
+        // catalog-view está disponible dentro del panel admin
+      } else if (!isModuleEnabled(adminTab) || !hasPermission(adminTab)) {
+        setAdminTab('hub');
+      }
     } else if ((currentRoute === 'workshops' || currentRoute === 'workshop-detail') && !isModuleEnabled('workshops')) {
       navigate('home');
     } else if (currentRoute === 'store' && !isModuleEnabled('store')) {
@@ -487,6 +496,9 @@ export const App: React.FC = () => {
                         )}
                         {adminTab === 'suppliers' && <SuppliersOrdersSection />}
                         {adminTab === 'sales' && <SalesHistorySection />}
+                        {adminTab === 'catalog-view' && (
+                          <AdminCatalogVisualView onBackToHub={() => handleSelectAdminTab('hub')} />
+                        )}
                       </>
                     )}
                   </div>

@@ -13,7 +13,8 @@ export type AdminTabType =
   | 'customers'
   | 'agenda'
   | 'suppliers'
-  | 'sales';
+  | 'sales'
+  | 'catalog-view';
 
 export interface AdminTabsProps {
   activeTab?: AdminTabType;

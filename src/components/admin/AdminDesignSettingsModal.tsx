@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme, StarAlertDuration } from '../../types';
-import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play, GraduationCap } from 'lucide-react';
+import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play, GraduationCap, BookOpen, Check } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound, playNewOrderChimeSound } from '../../utils/soundEffects';
 
 interface AdminDesignSettingsModalProps {
@@ -24,9 +24,30 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
     starAlertDuration,
     setStarAlertDuration,
     showNewOrderAlert,
+    isModuleEnabled,
+    toggleSuperadminModule,
   } = useApp();
 
+  const isCatalogCurrentlyActive = isModuleEnabled('catalogo');
+  const [catalogEnabled, setCatalogEnabled] = React.useState<boolean>(isCatalogCurrentlyActive);
+  const [saveSuccessNotice, setSaveSuccessNotice] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    setCatalogEnabled(isModuleEnabled('catalogo'));
+  }, [isModuleEnabled, isOpen]);
+
   if (!isOpen) return null;
+
+  const handleApplyAndSave = () => {
+    if (catalogEnabled !== isModuleEnabled('catalogo')) {
+      toggleSuperadminModule('catalogo');
+    }
+    setSaveSuccessNotice(catalogEnabled ? '✓ Catálogo Online activado en la web' : '✓ Catálogo Online desactivado de la web');
+    setTimeout(() => {
+      setSaveSuccessNotice(null);
+      onClose();
+    }, 450);
+  };
 
   const fontOptions: { id: TypographyTheme; name: string; desc: string; sample: string; fontClass: string }[] = [
     {
@@ -77,6 +98,44 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Control del Botón y Sección de Catálogo Online en la Web Pública */}
+        <div className="p-4 rounded-3xl bg-gradient-to-r from-purple-50 via-pink-50/50 to-purple-50 border-2 border-purple-200/90 shadow-2xs space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shrink-0 shadow-2xs">
+                <BookOpen className="w-5 h-5 text-fio-yellow" />
+              </div>
+              <div>
+                <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-900 leading-tight">
+                  Botón &amp; Sección de Catálogo Online en la Web
+                </h3>
+                <p className="text-[11px] text-slate-500 font-sans leading-tight mt-0.5">
+                  Activa o desactiva al instante el botón de Catálogo en la barra superior y toda la sección pública (/catalogo).
+                </p>
+              </div>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+              <input
+                type="checkbox"
+                checked={catalogEnabled}
+                onChange={(e) => setCatalogEnabled(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-fio-800"></div>
+            </label>
+          </div>
+
+          <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-purple-100">
+            <span className="text-slate-600 font-medium">Estado del botón en la página:</span>
+            <span className={`font-bubble font-bold px-2.5 py-0.5 rounded-full text-[10.5px] ${
+              catalogEnabled ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-700 border border-rose-200'
+            }`}>
+              {catalogEnabled ? '✓ Catálogo Visible en la Web' : '✗ Catálogo Desactivado y Oculto'}
+            </span>
+          </div>
         </div>
 
         {/* 1. Selector de Tema de Color */}
@@ -457,14 +516,20 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
           </div>
         </div>
 
-        {/* Botón de Confirmación */}
-        <div className="pt-2">
+        {/* Botón de Confirmación y Guardado */}
+        <div className="pt-2 space-y-2">
+          {saveSuccessNotice && (
+            <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bubble font-bold text-center animate-fadeIn flex items-center justify-center gap-1.5">
+              <Check className="w-4 h-4 text-emerald-700 stroke-[2.5]" />
+              <span>{saveSuccessNotice}</span>
+            </div>
+          )}
           <button
             type="button"
-            onClick={onClose}
-            className="w-full py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn transition-all"
+            onClick={handleApplyAndSave}
+            className="w-full py-3 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
           >
-            Aplicar y Cerrar
+            <span>Guardar Configuración y Aplicar Cambios</span>
           </button>
         </div>
       </div>

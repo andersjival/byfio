@@ -14,7 +14,7 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
     id: 'orders',
     name: 'Cola de Pedidos & Alisto WMS',
     category: 'Operaciones & WMS',
-    description: 'Gestión de flujo de pedidos, alisto manual por pasos, escaneo QR y control de empaque.',
+    description: 'Gestión de flujo de pedidos, alistar pedido paso a paso, escaneo QR y control de empaque.',
     iconName: 'QrCode',
     enabled: true,
     features: [
@@ -32,8 +32,8 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
       },
       {
         id: 'manual_picking',
-        name: 'Alisto Manual',
-        description: 'Alisto guiado producto por producto con botones táctiles de acción Listo y Faltante.',
+        name: 'Alistar Pedido',
+        description: 'Alistar pedido producto por producto con botones táctiles de acción Listo y Faltante.',
         enabled: true,
       },
       {
@@ -413,6 +413,12 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
     enabled: true,
     features: [
       {
+        id: 'catalog_public_button',
+        name: 'Botón y Acceso Público de Catálogo en la Barra Web',
+        description: 'Muestra u oculta el botón de Catálogo en la barra de navegación pública y protege la ruta /catalogo.',
+        enabled: true,
+      },
+      {
         id: 'catalog_view',
         name: 'Vista Comercial en Lista con Filtros',
         description: 'Exploración por categorías con imágenes de alta definición y precios actualizados.',
@@ -422,6 +428,12 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
         id: 'whatsapp_orders',
         name: 'Generación de Pedidos Directos a WhatsApp',
         description: 'Botón para enviar cotización estructurada al WhatsApp comercial de by.fio.',
+        enabled: true,
+      },
+      {
+        id: 'catalog_admin_visual_view',
+        name: 'Vista Visual de Catálogo en Panel Admin (Slider Estrellitas & Fotos)',
+        description: 'Vista visual sin barra de información, con slider rotativo de estrellitas y galería de fotos.',
         enabled: true,
       },
     ],

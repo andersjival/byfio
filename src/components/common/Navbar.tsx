@@ -115,7 +115,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {isModuleEnabled('catalogo') && (
+            {isModuleEnabled('catalogo') && isFeatureEnabled('catalogo', 'catalog_public_button') && (
               <button
                 type="button"
                 onClick={() => handleNav('catalogo')}
@@ -458,7 +458,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               Tienda
             </button>
           )}
-          {isModuleEnabled('catalogo') && (
+          {isModuleEnabled('catalogo') && isFeatureEnabled('catalogo', 'catalog_public_button') && (
             <button
               type="button"
               onClick={() => handleNav('catalogo')}

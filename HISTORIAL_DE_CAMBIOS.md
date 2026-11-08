@@ -17,6 +17,26 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.1 - Renombrado Oficial de "Alisto Manual" a "Alistar Pedido" en Toda la Plataforma
+- [x] **Homologación de Nomenclatura en Operaciones WMS ([OrdersQueue.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [superadminModulesData.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts))**:
+  - Sustituida la frase "Alisto Manual" por "Alistar Pedido" en todos los botones primarios, títulos de modales guiados, tooltips y opciones de cambio de modo de alisto.
+  - Actualizado el catálogo maestro de módulos en Superadmin para reflejar formalmente la funcionalidad con el nombre "Alistar Pedido".
+
+### Versión 4.19.0 - Control de Visibilidad de Catálogo en Admin, Nueva Vista Visual con Slider de Estrellitas y Sincronización de Stock vs Disponibilidad Rápida
+- [x] **Sincronización Total de Stock vs Disponibilidad Rápida ([InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx), [SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx), [AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Solucionado el fallo donde el switch de disponibilidad rápida en Superadmin no afectaba al panel admin: ahora al activarse o desactivarse conmuta de inmediato el `inventoryMode`.
+  - La columna y las celdas de "Stock Actual" ahora se desactivan y ocultan por completo cuando el control de stock está desactivado o se encuentra en modo de disponibilidad rápida.
+  - Añadida píldora de alternancia de modo (`📦 Stock Numérico` / `⚡ Disponibilidad Rápida`) en la barra de filtros del inventario del administrador cuando ambos modos están habilitados.
+- [x] **Control Instantáneo del Catálogo Público por el Administrador ([AdminDesignSettingsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Incorporado interruptor en el modal de Configuración y en el Menú Principal (Hub) para activar o desactivar la sección y botón del catálogo en la web.
+  - Al pulsar el check y guardar, la barra de navegación pública (escritorio y móvil) oculta instantáneamente el botón "Catálogo", y la ruta `/catalogo` redirige a portada.
+- [x] **Nueva Vista Visual de Catálogo en Panel Admin ([AdminCatalogVisualView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminCatalogVisualView.tsx), [AdminTabs.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Diseñada la vista exclusiva sin barra de información administrativa ni KPIs, con encabezado minimalista que incluye únicamente el logotipo de By.Fio y el título "Catálogo Digital Online".
+  - Slider dinámico automático alternando entre el banner oficial de las estrellitas (`vid-estrellita.mp4`) y el banner de catálogo online ByFio (`imagen-catalogo-digital.jpeg`).
+  - Cuadrícula orientada a fotografías de alta resolución con precios en ₡, ubicación física de estante y modal táctil de vista previa.
+- [x] **Permisos y Módulos de Superadmin ([superadminModulesData.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
+  - Añadidas las subfuncionalidades `catalog_public_button` y `catalog_admin_visual_view` en el módulo de Catálogo de Superadmin para habilitar o restringir el botón público o la vista visual interna.
+
 ### Versión 4.18.1 - Ocultamiento del Botón Superadmin en el Panel de Administración de la PWA
 - [x] **Privatización Total del Acceso a Superadmin ([AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):
   - Removido el botón Superadmin de la barra de acciones del panel de control de administración y PWA.
