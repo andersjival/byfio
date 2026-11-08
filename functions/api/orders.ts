@@ -96,85 +96,19 @@ const mapRowToOrder = (r: OrderDbRow) => {
 export const onRequestGet = async (context: { env: Env }) => {
   try {
     if (!context.env.DB) {
-      return new Response(JSON.stringify({ error: 'DB binding not available' }), { status: 500 });
+      return new Response(JSON.stringify([]), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+        },
+      });
     }
 
-    let { results } = await context.env.DB.prepare(
+    const { results } = await context.env.DB.prepare(
       'SELECT * FROM orders ORDER BY created_at DESC'
     ).all();
 
-    // Solo si la base de datos de pedidos está completamente vacía, sembrar la orden fundacional #FIO-1001
-    if (!results || results.length === 0) {
-      try {
-        await context.env.DB.prepare(
-          `INSERT OR IGNORE INTO orders (
-            id, order_number, customer_name, customer_phone, customer_email,
-            delivery_method, shipping_address, payment_method, payment_status,
-            order_status, items_json, subtotal, shipping_fee, total, notes, created_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        ).bind(
-          'ord-1001',
-          '#FIO-1001',
-          'Sofía Solano Brenes',
-          '8845-2190',
-          'sofia.solano@gmail.com',
-          'envio',
-          'Curridabat, San José, de la Pops 200m Sur, Casa 14A con portón blanco.',
-          'sinpe',
-          'paid',
-          'delivered',
-          JSON.stringify([
-            {
-              id: 'item-101',
-              type: 'product',
-              sku: 'FIO-AG-01',
-              name: 'Agenda Personalizada 2027 Tapa Dura',
-              price: 18500,
-              quantity: 1,
-              shelfLocation: 'Estante A-1 (Nivel 2)',
-              customText: 'Nombre: Sofía Solano / Portada Flores Lavanda',
-              isPicked: false,
-              image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=500&q=80',
-            },
-            {
-              id: 'item-102',
-              type: 'product',
-              sku: 'FIO-TAZ-03',
-              name: 'Taza Cerámica Sublimada con Inicial & Flores',
-              price: 6500,
-              quantity: 1,
-              shelfLocation: 'Estante B-1 (Nivel 3)',
-              customText: 'Letra S en color lila con borde dorado',
-              isPicked: false,
-              image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=500&q=80',
-            },
-            {
-              id: 'item-103',
-              type: 'product',
-              sku: 'FIO-STK-05',
-              name: 'Pack 40 Stickers Holográficos Kawaii & Flores',
-              price: 4500,
-              quantity: 1,
-              shelfLocation: 'Gaveta C-1 (Mostrador)',
-              isPicked: false,
-              image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=500&q=80',
-            },
-          ]),
-          29500,
-          2500,
-          32000,
-          'Empacar con tarjeta de cumpleaños para Sofi.',
-          '2026-10-28T09:15:00.000Z'
-        ).run();
-
-        const refetched = await context.env.DB.prepare(
-          'SELECT * FROM orders ORDER BY created_at DESC'
-        ).all();
-        results = refetched.results;
-      } catch {}
-    }
-
-    const orders = (results as OrderDbRow[]).map(mapRowToOrder);
+    const orders = (results as OrderDbRow[] || []).map(mapRowToOrder);
     return new Response(JSON.stringify(orders), {
       headers: {
         'Content-Type': 'application/json',
@@ -346,6 +280,41 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error: any) {
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+  }
+};
+
+export const onRequestDelete = async (context: { request: Request; env: Env }) => {
+  try {
+    const url = new URL(context.request.url);
+    const id = url.searchParams.get('id');
+    const all = url.searchParams.get('all');
+
+    if (!context.env.DB) {
+      return new Response(JSON.stringify({ success: true, localOnly: true }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (id) {
+      await context.env.DB.prepare('DELETE FROM orders WHERE id = ?').bind(id).run();
+      return new Response(JSON.stringify({ success: true, deletedId: id }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (all === 'true') {
+      await context.env.DB.prepare('DELETE FROM orders').run();
+      return new Response(JSON.stringify({ success: true, clearedAll: true }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    return new Response(JSON.stringify({ error: 'Missing id or all=true parameter' }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 400,
     });
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });

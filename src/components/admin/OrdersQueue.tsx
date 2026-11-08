@@ -2,11 +2,11 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star, GraduationCap } from 'lucide-react';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star, GraduationCap, Trash2 } from 'lucide-react';
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
-  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled, showNewOrderAlert } = useApp();
+  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled, showNewOrderAlert, deleteOrder } = useApp();
   const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packing' | 'packed' | 'delivered'>('all');
 
   // IDs de pedidos recién terminados que deben mostrar el colorcito temporal
@@ -451,6 +451,19 @@ export const OrdersQueue: React.FC = () => {
                           <span>Alisto Manual</span>
                         </button>
                       )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`¿Eliminar permanentemente el pedido ${order.orderNumber} de ${order.customerName}?`)) {
+                            deleteOrder(order.id);
+                          }
+                        }}
+                        className="p-3 sm:p-2 rounded-2xl text-slate-400 hover:text-red-600 hover:bg-red-50 border border-slate-200 transition-colors cursor-pointer self-center"
+                        title="Eliminar pedido"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </>
                   ) : (
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -487,6 +500,19 @@ export const OrdersQueue: React.FC = () => {
                           <span>Marcar Terminado</span>
                         </button>
                       )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`¿Eliminar permanentemente el pedido ${order.orderNumber} de ${order.customerName}?`)) {
+                            deleteOrder(order.id);
+                          }
+                        }}
+                        className="p-2.5 rounded-2xl text-slate-400 hover:text-red-600 hover:bg-red-50 border border-slate-200 transition-colors cursor-pointer"
+                        title="Eliminar pedido"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   )}
                 </div>

@@ -195,6 +195,8 @@ interface AppContextType {
   products: Product[];
   workshops: Workshop[];
   orders: Order[];
+  deleteOrder: (id: string) => Promise<void>;
+  clearAllOrders: () => Promise<void>;
   cart: CartItem[];
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
@@ -494,7 +496,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [orders, setOrders] = useState<Order[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
-    const initial = saved ? JSON.parse(saved) : INITIAL_ORDERS;
+    const initial = saved ? JSON.parse(saved) : [];
     const sanitized = sanitizeOrderList(initial);
     const sorted = Array.isArray(sanitized)
       ? [...sanitized].sort(
@@ -648,7 +650,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     new Set((() => {
       try {
         const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
-        const list: Order[] = saved ? JSON.parse(saved) : INITIAL_ORDERS;
+        const list: Order[] = saved ? JSON.parse(saved) : [];
         return Array.isArray(list) ? list.map((o) => o.id) : [];
       } catch {
         return [];
@@ -2064,19 +2066,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       fetch('/api/orders')
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
             const cleanData: Order[] = sanitizeOrderList(data);
             checkAndNotifyNewOrders(cleanData);
             setOrders((prev) => {
-              const map = new Map<string, Order>();
-              prev.forEach((o) => map.set(o.id, deepSanitize(o)));
-              cleanData.forEach((o: Order) => map.set(o.id, deepSanitize(o)));
-              const merged = sanitizeOrderList(Array.from(map.values())).sort(
+              const sorted = [...cleanData].sort(
                 (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
               );
-              if (merged.length !== prev.length || JSON.stringify(merged) !== JSON.stringify(prev)) {
-                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(merged));
-                return merged;
+              if (JSON.stringify(sorted) !== JSON.stringify(prev)) {
+                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(sorted));
+                return sorted;
               }
               return prev;
             });
@@ -3522,6 +3521,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  const deleteOrder = async (orderId: string) => {
+    setOrders((prev) => {
+      const updated = prev.filter((o) => o.id !== orderId);
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updated));
+      return updated;
+    });
+    knownOrderIdsRef.current.delete(orderId);
+    try {
+      await fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, { method: 'DELETE' });
+    } catch {}
+  };
+
+  const clearAllOrders = async () => {
+    setOrders([]);
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([]));
+    knownOrderIdsRef.current.clear();
+    try {
+      await fetch('/api/orders?all=true', { method: 'DELETE' });
+    } catch {}
+  };
+
   const resetToDefaults = () => {
     setProducts(INITIAL_PRODUCTS);
     setOrders(INITIAL_ORDERS);
@@ -3548,6 +3568,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         products,
         workshops,
         orders,
+        deleteOrder,
+        clearAllOrders,
         cart,
         isCartOpen,
         setIsCartOpen,
