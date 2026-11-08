@@ -656,6 +656,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     })())
   );
   const isInitialOrdersLoadRef = useRef(true);
+  // Registro de marcas de tiempo de modificaciones locales de productos para evitar rebote de polling
+  const lastLocalProductUpdateRef = useRef<Map<string, number>>(new Map());
 
   const checkAndNotifyNewOrders = (incomingOrders: Order[]) => {
     if (isInitialOrdersLoadRef.current) {
@@ -1264,8 +1266,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const qty = deductionsBySku.get(prod.sku) || 0;
         if (qty > 0) {
           const newStock = Math.max(0, prod.stock - qty);
-          batchUpdates.push({ id: prod.id, stock: newStock });
-          return { ...prod, stock: newStock };
+          const isZero = newStock <= 0;
+          batchUpdates.push({ id: prod.id, stock: newStock, ...(isZero ? { isAvailable: false } : {}) });
+          return {
+            ...prod,
+            stock: newStock,
+            ...(isZero ? { isAvailable: false, showInStore: false, showInCatalog: false } : {}),
+          };
         }
         return prod;
       });
@@ -1973,23 +1980,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 }
               }
 
+              const now = Date.now();
               const prevMap = new Map(prev.map((p) => [p.id, p]));
               let hasFieldChanges = false;
               const merged = data.map((cloudProd: Product) => {
                 const local = prevMap.get(cloudProd.id);
-                const isAvail = typeof cloudProd.isAvailable === 'boolean'
-                  ? cloudProd.isAvailable 
-                  : (typeof local?.isAvailable === 'boolean' ? local.isAvailable : true);
-                const inStore = typeof cloudProd.showInStore === 'boolean'
+                const lastLocalUpdate = lastLocalProductUpdateRef.current.get(cloudProd.id) || 0;
+                const isRecentlyUpdatedLocally = now - lastLocalUpdate < 6000;
+
+                const baseStock = isRecentlyUpdatedLocally && local ? local.stock : cloudProd.stock;
+                const isZeroStock = Number(baseStock) <= 0;
+
+                let isAvail: boolean;
+                if (isZeroStock) {
+                  isAvail = false; // Deshabilitado automático cuando está en cero
+                } else if (isRecentlyUpdatedLocally && local && typeof local.isAvailable === 'boolean') {
+                  isAvail = local.isAvailable; // Respetar cambio manual reciente
+                } else if (typeof cloudProd.isAvailable === 'boolean') {
+                  isAvail = cloudProd.isAvailable;
+                } else if (local && typeof local.isAvailable === 'boolean') {
+                  isAvail = local.isAvailable;
+                } else {
+                  isAvail = true;
+                }
+
+                const inStore = typeof cloudProd.showInStore === 'boolean' && !isRecentlyUpdatedLocally
                   ? cloudProd.showInStore
                   : isAvail;
-                const inCat = typeof cloudProd.showInCatalog === 'boolean'
+                const inCat = typeof cloudProd.showInCatalog === 'boolean' && !isRecentlyUpdatedLocally
                   ? cloudProd.showInCatalog
                   : isAvail;
 
                 if (
                   !local ||
-                  local.stock !== cloudProd.stock ||
+                  local.stock !== baseStock ||
                   local.isAvailable !== isAvail ||
                   local.price !== cloudProd.price ||
                   local.name !== cloudProd.name
@@ -1999,6 +2023,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
                 return {
                   ...cloudProd,
+                  stock: baseStock,
                   isAvailable: isAvail,
                   showInStore: inStore,
                   showInCatalog: inCat,
@@ -2400,8 +2425,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const qtyToDeduct = deductionsByProdId.get(prod.id) || deductionsBySku.get(prod.sku) || 0;
         if (qtyToDeduct > 0) {
           const newStock = Math.max(0, prod.stock - qtyToDeduct);
-          batchUpdates.push({ id: prod.id, stock: newStock });
-          return { ...prod, stock: newStock };
+          const isZero = newStock <= 0;
+          batchUpdates.push({ id: prod.id, stock: newStock, ...(isZero ? { isAvailable: false } : {}) });
+          return {
+            ...prod,
+            stock: newStock,
+            ...(isZero ? { isAvailable: false, showInStore: false, showInCatalog: false } : {}),
+          };
         }
         return prod;
       });
@@ -2872,24 +2902,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     minStock?: number,
     maxStock?: number
   ) => {
+    const target = products.find((p) => p.id === productId);
+    if (!target) return;
+
+    lastLocalProductUpdateRef.current.set(productId, Date.now());
+
+    const isZero = stock <= 0;
+    const updatedProduct: Product = {
+      ...target,
+      stock,
+      minStock: minStock !== undefined ? minStock : target.minStock,
+      maxStock: maxStock !== undefined ? maxStock : target.maxStock,
+      ...(isZero
+        ? { isAvailable: false, showInStore: false, showInCatalog: false }
+        : {}),
+    };
+
     let updatedProducts: Product[] = [];
     setProducts((prev) => {
-      updatedProducts = prev.map((p) =>
-        p.id === productId
-          ? {
-              ...p,
-              stock,
-              minStock: minStock !== undefined ? minStock : p.minStock,
-              maxStock: maxStock !== undefined ? maxStock : p.maxStock,
-            }
-          : p
-      );
+      updatedProducts = prev.map((p) => (p.id === productId ? updatedProduct : p));
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
       return updatedProducts;
     });
 
-    // Si el stock llega a cero, extraer de inmediato del carrito activo
-    if (stock <= 0) {
+    if (isZero) {
       setCart((prevCart) => {
         const nextCart = prevCart.filter((it) => it.type !== 'product' || it.id !== productId);
         if (nextCart.length !== prevCart.length) {
@@ -2902,68 +2938,66 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     fetch('/api/products', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: productId, stock, minStock, maxStock }),
-    }).catch(() => {});
-
-    try {
-      syncChannel?.postMessage({
-        type: 'SYNC_UPDATE',
-        products: updatedProducts,
-      });
-    } catch {}
-  };
-
-  const toggleProductAvailability = (productId: string) => {
-    let nextAvailable = false;
-    let targetProduct: Product | undefined;
-    let updatedProducts: Product[] = [];
-    setProducts((prev) => {
-      updatedProducts = prev.map((p) => {
-        if (p.id === productId) {
-          nextAvailable = p.isAvailable === false ? true : false;
-          targetProduct = {
-            ...p,
-            isAvailable: nextAvailable,
-            showInStore: nextAvailable,
-            showInCatalog: nextAvailable,
-          };
-          return targetProduct;
-        }
-        return p;
-      });
-
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
-      return updatedProducts;
-    });
-
-    // Si se desactiva el producto, eliminarlo de inmediato del carrito para que nadie lo compre por error
-    setCart((prevCart) => prevCart.filter((it) => it.type !== 'product' || it.id !== productId || nextAvailable));
-
-    // Sincronizar estado en la base de datos en la nube D1 enviando también respaldo por si falta en D1
-    fetch('/api/products', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id: productId,
-        isAvailable: nextAvailable,
-        name: targetProduct?.name,
-        sku: targetProduct?.sku,
-        category: targetProduct?.category,
-        shelfLocation: targetProduct?.shelfLocation,
-        price: targetProduct?.price,
-        costPrice: targetProduct?.costPrice,
-        stock: targetProduct?.stock,
-        minStock: targetProduct?.minStock,
-        maxStock: targetProduct?.maxStock,
-        image: targetProduct?.image,
-        description: targetProduct?.description,
+        stock,
+        minStock: updatedProduct.minStock,
+        maxStock: updatedProduct.maxStock,
+        ...(isZero ? { isAvailable: false } : {}),
       }),
     }).catch(() => {});
 
     try {
       syncChannel?.postMessage({
         type: 'SYNC_UPDATE',
-        products: updatedProducts,
+        products: products.map((p) => (p.id === productId ? updatedProduct : p)),
+      });
+    } catch {}
+  };
+
+  const toggleProductAvailability = (productId: string) => {
+    const targetProduct = products.find((p) => p.id === productId);
+    if (!targetProduct) return;
+
+    lastLocalProductUpdateRef.current.set(productId, Date.now());
+
+    const nextAvailable = targetProduct.isAvailable === false;
+    // Si se habilita manualmente pero el stock estaba en cero o menor, asignar al menos 5 unidades o minStock para que quede activo al 100%
+    const nextStock = nextAvailable && targetProduct.stock <= 0
+      ? Math.max(1, targetProduct.minStock || 5)
+      : targetProduct.stock;
+
+    const updatedProduct: Product = {
+      ...targetProduct,
+      stock: nextStock,
+      isAvailable: nextAvailable,
+      showInStore: nextAvailable,
+      showInCatalog: nextAvailable,
+    };
+
+    let updatedProducts: Product[] = [];
+    setProducts((prev) => {
+      updatedProducts = prev.map((p) => (p.id === productId ? updatedProduct : p));
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+      return updatedProducts;
+    });
+
+    // Si se desactiva el producto, eliminarlo de inmediato del carrito
+    if (!nextAvailable) {
+      setCart((prevCart) => prevCart.filter((it) => it.type !== 'product' || it.id !== productId));
+    }
+
+    // Sincronizar estado completo en D1
+    fetch('/api/products', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedProduct),
+    }).catch(() => {});
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        products: products.map((p) => (p.id === productId ? updatedProduct : p)),
       });
     } catch {}
   };
@@ -3033,34 +3067,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateProduct = (productId: string, updatedData: Partial<Product>) => {
+    const existing = products.find((p) => p.id === productId);
+    if (!existing) return;
+
+    lastLocalProductUpdateRef.current.set(productId, Date.now());
+
+    // Regla: si el nuevo stock es <= 0, se deshabilita automáticamente
+    // Pero si el stock es > 0, se respeta 100% lo que el usuario haya seleccionado en isAvailable
+    const newStock = updatedData.stock !== undefined ? updatedData.stock : existing.stock;
+    const isAutoDisabled = newStock <= 0;
+
+    const mergedData = { ...updatedData };
+    if (isAutoDisabled) {
+      mergedData.isAvailable = false;
+      mergedData.showInStore = false;
+      mergedData.showInCatalog = false;
+    }
+
+    const updatedTarget: Product = {
+      ...existing,
+      ...mergedData,
+    };
+
     let updatedProducts: Product[] = [];
-    let updatedTarget: Product | null = null;
     setProducts((prev) => {
-      updatedProducts = prev.map((p) => {
-        if (p.id === productId) {
-          updatedTarget = { ...p, ...updatedData };
-          return updatedTarget;
-        }
-        return p;
-      });
+      updatedProducts = prev.map((p) => (p.id === productId ? updatedTarget : p));
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
       return updatedProducts;
     });
 
-    // Sincronizar cambios en D1
-    if (updatedTarget) {
-      fetch('/api/products', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedTarget),
-      }).catch(() => {});
+    if (updatedTarget.isAvailable === false) {
+      setCart((prevCart) => prevCart.filter((it) => it.type !== 'product' || it.id !== productId));
     }
 
-    // Notificación en vivo (0ms) a todas las pestañas abiertas
+    // Sincronizar cambios en D1 garantizado
+    fetch('/api/products', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedTarget),
+    }).catch(() => {});
+
     try {
       syncChannel?.postMessage({
         type: 'SYNC_UPDATE',
-        products: updatedProducts,
+        products: products.map((p) => (p.id === productId ? updatedTarget : p)),
       });
     } catch {}
   };

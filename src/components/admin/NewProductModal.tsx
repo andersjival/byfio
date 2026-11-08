@@ -413,7 +413,8 @@ export const NewProductModal: React.FC = () => {
       setCustomizationPlaceholder(editingProduct.customizationPlaceholder || '');
       setShowInStore(editingProduct.showInStore !== false);
       setShowInCatalog(editingProduct.showInCatalog !== false);
-      setIsAvailable(editingProduct.isAvailable !== false);
+      const curStock = Number(editingProduct.stock) || 0;
+      setIsAvailable(curStock <= 0 ? false : editingProduct.isAvailable !== false);
       setIsCreatingNewCat(false);
       setCustomCategory('');
     } else {
@@ -497,6 +498,10 @@ export const NewProductModal: React.FC = () => {
 
     const finalDesc = description.trim() || `${name.trim()} de alta calidad elaborado artesanalmente por by.fio.`;
 
+    const numStock = Number(stock) || 0;
+    const isZero = numStock <= 0;
+    const finalIsAvailable = isZero ? false : isAvailable;
+
     if (editingProduct) {
       // Modo Edición Completa
       updateProduct(editingProduct.id, {
@@ -506,7 +511,7 @@ export const NewProductModal: React.FC = () => {
         shelfLocation: finalShelfLocation,
         price: Number(price) || 0,
         costPrice: Number(costPrice) || 0,
-        stock: Number(stock) || 0,
+        stock: numStock,
         minStock: Number(minStock) || 0,
         maxStock: Number(maxStock) || 0,
         unit: unit.trim() || 'Unidad',
@@ -514,9 +519,9 @@ export const NewProductModal: React.FC = () => {
         description: finalDesc,
         isCustomizable,
         customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
-        showInStore,
-        showInCatalog,
-        isAvailable,
+        showInStore: finalIsAvailable ? showInStore : false,
+        showInCatalog: finalIsAvailable ? showInCatalog : false,
+        isAvailable: finalIsAvailable,
       });
 
       setSuccessToast('¡Artículo actualizado y guardado correctamente!');
@@ -529,7 +534,7 @@ export const NewProductModal: React.FC = () => {
         shelfLocation: finalShelfLocation,
         price: Number(price) || 0,
         costPrice: Number(costPrice) || 0,
-        stock: Number(stock) || 0,
+        stock: numStock,
         minStock: Number(minStock) || 0,
         maxStock: Number(maxStock) || 0,
         unit: unit.trim() || 'Unidad',
@@ -537,9 +542,9 @@ export const NewProductModal: React.FC = () => {
         description: finalDesc,
         isCustomizable,
         customizationPlaceholder: isCustomizable ? customizationPlaceholder.trim() || 'Texto personalizado' : undefined,
-        showInStore,
-        showInCatalog,
-        isAvailable,
+        showInStore: finalIsAvailable ? showInStore : false,
+        showInCatalog: finalIsAvailable ? showInCatalog : false,
+        isAvailable: finalIsAvailable,
       });
 
       setSuccessToast('¡Artículo creado y agregado al inventario!');
@@ -964,7 +969,12 @@ export const NewProductModal: React.FC = () => {
                   type="number"
                   min="0"
                   value={stock}
-                  onChange={(e) => setStock(e.target.value)}
+                  onChange={(e) => {
+                    setStock(e.target.value);
+                    if (Number(e.target.value) <= 0) {
+                      setIsAvailable(false);
+                    }
+                  }}
                   className="w-full px-3 py-2 rounded-xl border border-fio-200 font-bubble font-bold text-fio-800 text-sm"
                 />
               </div>
