@@ -105,7 +105,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/75 backdrop-blur-xs animate-fadeIn overflow-y-auto">
       <div
-        className="w-full max-w-3xl max-h-[94vh] sm:max-h-[90vh] my-auto bg-[#FBF9F6] dark:bg-[#1E1B2E] rounded-3xl shadow-2xl border border-purple-200/90 dark:border-purple-800/80 flex flex-col relative overflow-hidden animate-scaleUp text-slate-800 dark:text-slate-100"
+        className="w-full max-w-4xl max-h-[94vh] sm:max-h-[90vh] my-auto bg-[#FBF9F6] dark:bg-[#1E1B2E] rounded-3xl shadow-2xl border border-purple-200/90 dark:border-purple-800/80 flex flex-col relative overflow-hidden animate-scaleUp text-slate-800 dark:text-slate-100"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Fijo con Indicador de Dispositivo Activo */}
@@ -153,44 +153,44 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
         )}
 
         {/* Pestañas de Navegación del Centro PWA */}
-        <div className="px-4 sm:px-6 pt-3 pb-2 border-b border-purple-100 dark:border-purple-900/40 flex items-center gap-2 overflow-x-auto custom-scrollbar shrink-0 bg-slate-50/50 dark:bg-slate-900/30">
+        <div className="px-4 sm:px-6 py-2.5 border-b border-purple-100 dark:border-purple-900/40 grid grid-cols-1 sm:grid-cols-3 gap-2 shrink-0 bg-slate-50/50 dark:bg-slate-900/30">
           <button
             type="button"
             onClick={() => setActiveTab('admin')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center justify-center gap-2 transition-all cursor-pointer text-center ${
               activeTab === 'admin'
                 ? 'bg-purple-600 text-white shadow-sm'
                 : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-600 border border-slate-200 dark:border-slate-700'
             }`}
           >
-            <ShieldCheck className="w-4 h-4" />
-            <span>👑 PWA Administradora (PC &amp; Celular)</span>
+            <ShieldCheck className="w-4 h-4 shrink-0" />
+            <span className="truncate">👑 PWA Administración</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('collaborators')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center justify-center gap-2 transition-all cursor-pointer text-center ${
               activeTab === 'collaborators'
                 ? 'bg-purple-600 text-white shadow-sm'
                 : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-600 border border-slate-200 dark:border-slate-700'
             }`}
           >
-            <Users className="w-4 h-4" />
-            <span>👥 PWA para Colaboradores (App Única)</span>
+            <Users className="w-4 h-4 shrink-0" />
+            <span className="truncate">👥 PWA Colaboradores</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('guide')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center justify-center gap-2 transition-all cursor-pointer text-center ${
               activeTab === 'guide'
                 ? 'bg-purple-600 text-white shadow-sm'
                 : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-600 border border-slate-200 dark:border-slate-700'
             }`}
           >
-            <Info className="w-4 h-4" />
-            <span>📲 Cómo Instalar</span>
+            <Info className="w-4 h-4 shrink-0" />
+            <span className="truncate">📲 Cómo se Instala</span>
           </button>
         </div>
 

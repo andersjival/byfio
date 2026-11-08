@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.3 - Eliminación de Barra de Desplazamiento y Ajuste Ergonómico de Pestañas en Centro de Aplicaciones PWA
+- [x] **Ajuste Responsivo y Supresión de Scrollbar ([PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx))**:
+  - Eliminada por completo la barra de desplazamiento horizontal (`overflow-x-auto custom-scrollbar`) ubicada debajo de las pestañas del Centro de Aplicaciones PWA.
+  - Reemplazada la disposición con scroll por un grid adaptativo (`grid grid-cols-1 sm:grid-cols-3 gap-2`) con distribución equilibrada al 100% del ancho del modal.
+  - Sintetizadas las etiquetas de navegación a "👑 PWA Administración", "👥 PWA Colaboradores" y "📲 Cómo se Instala".
+  - Ampliado el ancho máximo de la ventana modal a `max-w-4xl` (896px) para una lectura espaciosa y sin desbordamientos en cualquier pantalla.
+
+### Versión 4.19.2 - Renombrado Oficial de "Inventario & Etiquetas QR" a "Mis Productos"
+- [x] **Actualización de Nomenclatura en Módulo de Inventario ([superadminModulesData.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [UserProfilesSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx), [InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Renombrado oficialmente el módulo de "Inventario & Etiquetas QR" por "Mis Productos" en el gestor maestro de Superadmin.
+  - Actualizada la tarjeta del Menú Principal del Admin (Hub), la asignación de permisos de perfiles de usuario y el encabezado de la tabla de existencias para reflejar "Mis Productos".
+
 ### Versión 4.19.1 - Renombrado Oficial de "Alisto Manual" a "Alistar Pedido" en Toda la Plataforma
 - [x] **Homologación de Nomenclatura en Operaciones WMS ([OrdersQueue.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [superadminModulesData.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts))**:
   - Sustituida la frase "Alisto Manual" por "Alistar Pedido" en todos los botones primarios, títulos de modales guiados, tooltips y opciones de cambio de modo de alisto.

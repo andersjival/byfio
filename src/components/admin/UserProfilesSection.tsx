@@ -198,7 +198,7 @@ export const UserProfilesSection: React.FC = () => {
   const permissionModules: { key: keyof UserPermissions; label: string; desc: string; icon: any }[] = [
     { key: 'orders', label: 'Cola de Pedidos', desc: 'Cola de pedidos, escaneo de picking y empaque', icon: QrCode },
     { key: 'billing', label: 'Facturación Rápida', desc: 'Búsqueda de órdenes y facturas por número', icon: Receipt },
-    { key: 'inventory', label: 'Inventario & QR', desc: 'Catálogo de insumos, stock y etiquetas QR', icon: Boxes },
+    { key: 'inventory', label: 'Mis Productos', desc: 'Catálogo de insumos, stock y etiquetas QR', icon: Boxes },
     { key: 'reports', label: 'Caja & Reportería', desc: 'Arqueo diario, balances y cobros del día', icon: Landmark },
     { key: 'workshops', label: 'Talleres & Alumnos', desc: 'Inscripciones, cupos y lista de participantes', icon: GraduationCap },
     { key: 'pricing', label: 'Precios & Stickers', desc: 'Lista oficial y editor de tarifas de stickers', icon: Tag },

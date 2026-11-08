@@ -108,7 +108,7 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
   },
   {
     id: 'inventory',
-    name: 'Inventario & Etiquetas QR',
+    name: 'Mis Productos',
     category: 'Operaciones & WMS',
     description: 'Catálogo de existencias, ubicaciones en estante, alertas de stock mínimo y etiquetas QR.',
     iconName: 'Boxes',

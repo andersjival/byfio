@@ -63,7 +63,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     },
     {
       id: 'inventory' as AdminTabType,
-      title: 'Inventario & QR',
+      title: 'Mis Productos',
       desc: 'Catálogo de insumos, stock y etiquetas QR',
       badge: criticalProducts.length > 0 ? `${criticalProducts.length} por reponer` : `${products.length} productos`,
       badgeClass: criticalProducts.length > 0 ? 'bg-red-500 text-white' : 'bg-sky-50 text-sky-700',

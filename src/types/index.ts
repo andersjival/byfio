@@ -231,7 +231,7 @@ export interface CartItem {
 export interface UserPermissions {
   orders: boolean;     // Cola de Pedidos y Alisto QR
   billing: boolean;    // Facturación Rápida
-  inventory: boolean;  // Inventario & Etiquetas QR
+  inventory: boolean;  // Mis Productos
   reports: boolean;    // Caja & Reportería
   workshops: boolean;  // Talleres & Alumnos
   pricing: boolean;    // Precios & Stickers
