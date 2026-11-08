@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Workshop } from '../../types';
+import { Workshop, WorkshopBenefitItem } from '../../types';
 import { formatCRC } from '../../utils/formatters';
+import {
+  AVAILABLE_BENEFIT_ICONS,
+  BenefitIcon,
+  getDefaultWorkshopBenefits
+} from '../../utils/workshopBenefits';
 import {
   X, Plus, Trash2, GraduationCap, Star, Image as ImageIcon,
   Calendar, Clock, MapPin, DollarSign, Users, CheckCircle2, Eye, Link2,
-  Coffee, ShieldCheck, Heart, Sparkles, Check
+  Heart, Sparkles, Check, Search, ChevronDown, Smile
 } from 'lucide-react';
 import { ImageUploadField } from '../common/ImageUploadField';
 
@@ -22,14 +27,9 @@ interface WorkshopFormData {
   includes: string[];
   image: string;
   description: string;
-  hasCoffeeBreak: boolean;
-  coffeeBreakText: string;
-  hasToolsIncluded: boolean;
-  toolsText: string;
-  hasTakeHomeProject: boolean;
-  takeHomeText: string;
   instructorName: string;
   instructorSubtitle: string;
+  benefits: WorkshopBenefitItem[];
 }
 
 const EMPTY: WorkshopFormData = {
@@ -49,14 +49,28 @@ const EMPTY: WorkshopFormData = {
   ],
   image: '',
   description: '',
-  hasCoffeeBreak: true,
-  coffeeBreakText: 'Coffee break artesanal con repostería dulce y bebidas.',
-  hasToolsIncluded: true,
-  toolsText: 'Uso ilimitado de herramientas de alta precisión durante el taller.',
-  hasTakeHomeProject: true,
-  takeHomeText: 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
   instructorName: 'Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)',
   instructorSubtitle: 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+  benefits: [
+    {
+      id: 'ben-coffee',
+      icon: 'Coffee',
+      text: 'Coffee break artesanal con repostería dulce y bebidas.',
+      enabled: true,
+    },
+    {
+      id: 'ben-tools',
+      icon: 'ShieldCheck',
+      text: 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+      enabled: true,
+    },
+    {
+      id: 'ben-project',
+      icon: 'Star',
+      text: 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+      enabled: true,
+    },
+  ],
 };
 
 const QUICK_INCLUDE_SUGGESTIONS = [
@@ -66,6 +80,15 @@ const QUICK_INCLUDE_SUGGESTIONS = [
   'Sticker sheets y laminados',
   'Archivos imprimibles 2027',
   'Empaque protector para llevar',
+];
+
+const PRESET_BENEFITS = [
+  { icon: 'Award', text: 'Certificado oficial de participación by.fio' },
+  { icon: 'MessageCircle', text: 'Acceso a grupo VIP de WhatsApp para dudas y seguimiento' },
+  { icon: 'Video', text: 'Grabación en video de la sesión con acceso permanente' },
+  { icon: 'Folder', text: 'Plantillas y archivos vectoriales editables listos para usar' },
+  { icon: 'Gift', text: 'Kit de regalo con muestras sorpresa de materiales' },
+  { icon: 'BadgePercent', text: '15% de descuento en tu próxima compra de insumos' },
 ];
 
 export const NewWorkshopModal: React.FC = () => {
@@ -81,10 +104,14 @@ export const NewWorkshopModal: React.FC = () => {
   const [form, setForm] = useState<WorkshopFormData>(EMPTY);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
+  // Selector de íconos modal
+  const [activeIconPickerBenefitId, setActiveIconPickerBenefitId] = useState<string | null>(null);
+  const [iconSearch, setIconSearch] = useState('');
+  const [selectedIconCategory, setSelectedIconCategory] = useState<string>('Todos');
+
   // Sincronizar formulario si estamos en modo edición o creación
   useEffect(() => {
     if (editingWorkshop) {
-      const isVirtual = editingWorkshop.modality === 'Virtual en Vivo';
       setForm({
         title: editingWorkshop.title,
         subtitle: editingWorkshop.subtitle || '',
@@ -95,17 +122,12 @@ export const NewWorkshopModal: React.FC = () => {
         price: editingWorkshop.price,
         spotsAvailable: editingWorkshop.spotsAvailable,
         totalSpots: editingWorkshop.totalSpots,
-        includes: editingWorkshop.includes.length > 0 ? editingWorkshop.includes : [''],
+        includes: editingWorkshop.includes && editingWorkshop.includes.length > 0 ? editingWorkshop.includes : [''],
         image: editingWorkshop.image,
         description: editingWorkshop.description || '',
-        hasCoffeeBreak: editingWorkshop.hasCoffeeBreak !== undefined ? editingWorkshop.hasCoffeeBreak : !isVirtual,
-        coffeeBreakText: editingWorkshop.coffeeBreakText || 'Coffee break artesanal con repostería dulce y bebidas.',
-        hasToolsIncluded: editingWorkshop.hasToolsIncluded !== undefined ? editingWorkshop.hasToolsIncluded : true,
-        toolsText: editingWorkshop.toolsText || 'Uso ilimitado de herramientas de alta precisión durante el taller.',
-        hasTakeHomeProject: editingWorkshop.hasTakeHomeProject !== undefined ? editingWorkshop.hasTakeHomeProject : true,
-        takeHomeText: editingWorkshop.takeHomeText || 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
         instructorName: editingWorkshop.instructorName || 'Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)',
         instructorSubtitle: editingWorkshop.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+        benefits: getDefaultWorkshopBenefits(editingWorkshop),
       });
     } else {
       setForm(EMPTY);
@@ -116,6 +138,7 @@ export const NewWorkshopModal: React.FC = () => {
 
   const set = (key: keyof WorkshopFormData, val: any) => setForm((f) => ({ ...f, [key]: val }));
 
+  // Manejo de materiales incluidos
   const handleIncludeChange = (idx: number, val: string) => {
     setForm((f) => {
       const inc = [...f.includes];
@@ -127,7 +150,6 @@ export const NewWorkshopModal: React.FC = () => {
   const addInclude = (customText?: string) => {
     const textToAdd = typeof customText === 'string' ? customText : '';
     setForm((f) => {
-      // Si el último está vacío y se pasa un texto, rellenarlo
       if (textToAdd && f.includes.length === 1 && f.includes[0] === '') {
         return { ...f, includes: [textToAdd] };
       }
@@ -138,6 +160,62 @@ export const NewWorkshopModal: React.FC = () => {
   const removeInclude = (idx: number) =>
     setForm((f) => ({ ...f, includes: f.includes.filter((_, i) => i !== idx) }));
 
+  // Manejo de beneficios destacados
+  const handleToggleBenefit = (id: string) => {
+    setForm((f) => ({
+      ...f,
+      benefits: f.benefits.map((b) => (b.id === id ? { ...b, enabled: !b.enabled } : b)),
+    }));
+  };
+
+  const handleBenefitTextChange = (id: string, text: string) => {
+    setForm((f) => ({
+      ...f,
+      benefits: f.benefits.map((b) => (b.id === id ? { ...b, text } : b)),
+    }));
+  };
+
+  const handleBenefitIconChange = (id: string, iconName: string) => {
+    setForm((f) => ({
+      ...f,
+      benefits: f.benefits.map((b) => (b.id === id ? { ...b, icon: iconName } : b)),
+    }));
+    setActiveIconPickerBenefitId(null);
+    setIconSearch('');
+  };
+
+  const handleAddBenefit = (preset?: { icon: string; text: string }) => {
+    const newId = 'ben-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6);
+    const newBenefit: WorkshopBenefitItem = {
+      id: newId,
+      icon: preset?.icon || 'Sparkles',
+      text: preset?.text || '',
+      enabled: true,
+    };
+    setForm((f) => ({
+      ...f,
+      benefits: [...f.benefits, newBenefit],
+    }));
+  };
+
+  const handleRemoveBenefit = (id: string) => {
+    setForm((f) => ({
+      ...f,
+      benefits: f.benefits.filter((b) => b.id !== id),
+    }));
+  };
+
+  // Filtrado de íconos para el selector
+  const filteredIcons = useMemo(() => {
+    return AVAILABLE_BENEFIT_ICONS.filter((iconDef) => {
+      const matchesCategory = selectedIconCategory === 'Todos' || iconDef.category === selectedIconCategory;
+      const matchesSearch =
+        iconDef.name.toLowerCase().includes(iconSearch.toLowerCase()) ||
+        iconDef.label.toLowerCase().includes(iconSearch.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [iconSearch, selectedIconCategory]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim() || !form.price) return;
@@ -145,6 +223,14 @@ export const NewWorkshopModal: React.FC = () => {
     const imageUrl =
       form.image.trim() ||
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80';
+
+    const cleanBenefits = form.benefits
+      .map((b) => ({ ...b, text: b.text.trim() }))
+      .filter((b) => b.text.length > 0);
+
+    const coffeeBen = cleanBenefits.find((b) => b.icon === 'Coffee');
+    const toolsBen = cleanBenefits.find((b) => b.icon === 'ShieldCheck');
+    const projectBen = cleanBenefits.find((b) => b.icon === 'Star');
 
     const workshopPayload = {
       title: form.title.trim(),
@@ -161,25 +247,22 @@ export const NewWorkshopModal: React.FC = () => {
       includes: form.includes.map((i) => i.trim()).filter(Boolean),
       image: imageUrl,
       description: form.description.trim(),
-      hasCoffeeBreak: form.hasCoffeeBreak,
-      coffeeBreakText: form.coffeeBreakText.trim(),
-      hasToolsIncluded: form.hasToolsIncluded,
-      toolsText: form.toolsText.trim(),
-      hasTakeHomeProject: form.hasTakeHomeProject,
-      takeHomeText: form.takeHomeText.trim(),
       instructorName: form.instructorName.trim(),
       instructorSubtitle: form.instructorSubtitle.trim(),
+      benefits: cleanBenefits,
+      hasCoffeeBreak: coffeeBen ? coffeeBen.enabled : (form.modality !== 'Virtual en Vivo'),
+      coffeeBreakText: coffeeBen ? coffeeBen.text : 'Coffee break artesanal con repostería dulce y bebidas.',
+      hasToolsIncluded: toolsBen ? toolsBen.enabled : true,
+      toolsText: toolsBen ? toolsBen.text : 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+      hasTakeHomeProject: projectBen ? projectBen.enabled : true,
+      takeHomeText: projectBen ? projectBen.text : 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
     };
 
     if (editingWorkshop) {
-      // Modo Edición / Modificación de Taller Existente
       updateWorkshop(editingWorkshop.id, workshopPayload);
       setSuccessToast('¡Taller modificado y guardado con éxito!');
     } else {
-      // Modo Creación de Nuevo Taller
       const newWs = addWorkshop(workshopPayload);
-
-      // Copiar enlace al portapapeles
       const link = `${window.location.origin}/talleres/${newWs.id}`;
       navigator.clipboard.writeText(link).catch(() => {});
       setSuccessToast('¡Taller creado y enlace copiado al portapapeles!');
@@ -195,6 +278,7 @@ export const NewWorkshopModal: React.FC = () => {
   const handleClose = () => {
     setEditingWorkshop(null);
     setForm(EMPTY);
+    setActiveIconPickerBenefitId(null);
     setIsNewWorkshopModalOpen(false);
   };
 
@@ -221,8 +305,8 @@ export const NewWorkshopModal: React.FC = () => {
                 </div>
                 <p className="text-xs text-slate-500 font-sans mt-0.5">
                   {editingWorkshop
-                    ? 'Actualiza foto, título, descripción de la experiencia, materiales o beneficios. Los cambios se sincronizan en vivo.'
-                    : 'Publica un nuevo taller con foto, fechas, experiencia, materiales y beneficios incluidos.'}
+                    ? 'Actualiza foto, título, descripción de experiencia, materiales o beneficios destacados con íconos personalizados.'
+                    : 'Publica un nuevo taller con foto, fechas, experiencia, materiales y beneficios con íconos a elegir.'}
                 </p>
               </div>
             </div>
@@ -329,10 +413,17 @@ export const NewWorkshopModal: React.FC = () => {
                       onChange={(e) => {
                         const val = e.target.value as 'Presencial' | 'Virtual en Vivo';
                         set('modality', val);
-                        if (val === 'Virtual en Vivo' && form.hasCoffeeBreak) {
-                          set('hasCoffeeBreak', false);
-                        } else if (val === 'Presencial' && !form.hasCoffeeBreak) {
-                          set('hasCoffeeBreak', true);
+                        if (val === 'Virtual en Vivo') {
+                          // Desactivar coffee break en virtual
+                          setForm((prev) => ({
+                            ...prev,
+                            modality: val,
+                            benefits: prev.benefits.map((b) =>
+                              b.icon === 'Coffee' ? { ...b, enabled: false } : b
+                            ),
+                          }));
+                        } else {
+                          set('modality', val);
                         }
                       }}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white"
@@ -467,7 +558,7 @@ export const NewWorkshopModal: React.FC = () => {
                   <textarea
                     value={form.description}
                     onChange={(e) => set('description', e.target.value)}
-                    rows={7}
+                    rows={6}
                     placeholder="Describe en qué consiste el taller, las técnicas que se aprenderán paso a paso, el ambiente de la clase y el proyecto con el que cada alumno saldrá terminado... (Puedes separar en varios párrafos)"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none leading-relaxed"
                   />
@@ -510,7 +601,7 @@ export const NewWorkshopModal: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                   {form.includes.map((inc, idx) => (
                     <div key={idx} className="flex items-center gap-2">
                       <span className="w-4 text-center text-xs text-slate-400 font-bold">{idx + 1}.</span>
@@ -535,91 +626,192 @@ export const NewWorkshopModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Beneficios Adicionales: Coffee Break, Herramientas y Proyecto Terminado */}
+              {/* =========================================================
+                  SERVICIOS Y BENEFICIOS DESTACADOS CON CATÁLOGO DE ÍCONOS
+                  ========================================================= */}
               <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-                  Servicios &amp; Beneficios Destacados
-                </span>
-
-                {/* 1. Coffee Break */}
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={form.hasCoffeeBreak}
-                        onChange={(e) => set('hasCoffeeBreak', e.target.checked)}
-                        className="rounded text-fio-pink focus:ring-fio-pink w-4 h-4 cursor-pointer"
-                      />
-                      <Coffee className="w-4 h-4 text-amber-500" />
-                      <span>Incluir Coffee Break</span>
-                    </label>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {form.hasCoffeeBreak ? 'Activado' : 'Desactivado'}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-fio-800 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-fio-pink" />
+                      Servicios &amp; Beneficios Destacados
                     </span>
+                    <p className="text-[11px] text-slate-500">
+                      Personaliza el texto y el ícono de cada beneficio destacado ({AVAILABLE_BENEFIT_ICONS.length} íconos disponibles).
+                    </p>
                   </div>
-                  {form.hasCoffeeBreak && (
-                    <input
-                      value={form.coffeeBreakText}
-                      onChange={(e) => set('coffeeBreakText', e.target.value)}
-                      placeholder="Ej: Coffee break artesanal con repostería dulce y bebidas."
-                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white"
-                    />
-                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => handleAddBenefit()}
+                    className="inline-flex items-center gap-1 text-xs font-bold text-fio-800 hover:text-fio-600 bg-fio-50 hover:bg-fio-100 px-3 py-1.5 rounded-xl border border-fio-200/80 transition-colors cursor-pointer shrink-0"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Agregar Beneficio</span>
+                  </button>
                 </div>
 
-                {/* 2. Herramientas en Clase */}
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={form.hasToolsIncluded}
-                        onChange={(e) => set('hasToolsIncluded', e.target.checked)}
-                        className="rounded text-fio-pink focus:ring-fio-pink w-4 h-4 cursor-pointer"
-                      />
-                      <ShieldCheck className="w-4 h-4 text-fio-600" />
-                      <span>Uso de Herramientas de Precisión en Clase</span>
-                    </label>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {form.hasToolsIncluded ? 'Activado' : 'Desactivado'}
-                    </span>
+                {/* Plantillas Rápidas de Beneficios Comunes */}
+                <div className="p-3 rounded-xl bg-purple-50/60 border border-purple-100 space-y-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 block">
+                    Plantillas rápidas con ícono integrado:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {PRESET_BENEFITS.map((p, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleAddBenefit(p)}
+                        className="text-[10.5px] bg-white hover:bg-purple-100/70 text-slate-700 hover:text-purple-900 px-2 py-1 rounded-lg border border-purple-200 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
+                        title="Agregar esta plantilla con su ícono"
+                      >
+                        <BenefitIcon name={p.icon} className="w-3 h-3 shrink-0" />
+                        <span className="truncate max-w-[180px]">{p.text.split(' ')[0]} {p.text.split(' ')[1]} {p.text.split(' ')[2]}...</span>
+                        <Plus className="w-2.5 h-2.5 text-purple-600" />
+                      </button>
+                    ))}
                   </div>
-                  {form.hasToolsIncluded && (
-                    <input
-                      value={form.toolsText}
-                      onChange={(e) => set('toolsText', e.target.value)}
-                      placeholder="Ej: Uso ilimitado de herramientas de alta precisión durante el taller."
-                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white"
-                    />
-                  )}
                 </div>
 
-                {/* 3. Proyecto Terminado para Llevar */}
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={form.hasTakeHomeProject}
-                        onChange={(e) => set('hasTakeHomeProject', e.target.checked)}
-                        className="rounded text-fio-pink focus:ring-fio-pink w-4 h-4 cursor-pointer"
-                      />
-                      <Star className="w-4 h-4 text-fio-pink fill-fio-pink" />
-                      <span>Proyecto Terminado para Llevar</span>
-                    </label>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {form.hasTakeHomeProject ? 'Activado' : 'Desactivado'}
-                    </span>
-                  </div>
-                  {form.hasTakeHomeProject && (
-                    <input
-                      value={form.takeHomeText}
-                      onChange={(e) => set('takeHomeText', e.target.value)}
-                      placeholder="Ej: Te llevás tu proyecto completo y terminado a casa el mismo día."
-                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white"
-                    />
-                  )}
+                {/* Lista de Beneficios con Selector de Ícono y Texto */}
+                <div className="space-y-2.5">
+                  {form.benefits.map((benefit, idx) => {
+                    const isIconPickerOpen = activeIconPickerBenefitId === benefit.id;
+
+                    return (
+                      <div
+                        key={benefit.id}
+                        className={`p-3.5 rounded-2xl border transition-all ${
+                          benefit.enabled
+                            ? 'bg-slate-50/80 border-slate-200 shadow-xs'
+                            : 'bg-slate-100/60 border-slate-200/60 opacity-60'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          {/* Checkbox de Activación */}
+                          <input
+                            type="checkbox"
+                            checked={benefit.enabled}
+                            onChange={() => handleToggleBenefit(benefit.id)}
+                            className="rounded text-fio-pink focus:ring-fio-pink w-4 h-4 cursor-pointer shrink-0"
+                            title={benefit.enabled ? 'Desactivar de la vista' : 'Activar en la vista'}
+                          />
+
+                          {/* Botón de Ícono: Muestra el ícono actual y permite cambiarlo */}
+                          <div className="relative">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (isIconPickerOpen) {
+                                  setActiveIconPickerBenefitId(null);
+                                } else {
+                                  setActiveIconPickerBenefitId(benefit.id);
+                                  setIconSearch('');
+                                }
+                              }}
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-fio-50 border border-slate-200 shadow-xs text-xs font-semibold text-slate-700 transition-colors cursor-pointer shrink-0"
+                              title="Toca para cambiar el ícono de este beneficio"
+                            >
+                              <BenefitIcon name={benefit.icon} className="w-4 h-4 shrink-0" />
+                              <ChevronDown className="w-3 h-3 text-slate-400" />
+                            </button>
+                          </div>
+
+                          {/* Campo de Texto */}
+                          <input
+                            value={benefit.text}
+                            onChange={(e) => handleBenefitTextChange(benefit.id, e.target.value)}
+                            placeholder="Describe el beneficio (ej: Coffee break con repostería, Grabación en video...)"
+                            className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white font-sans"
+                          />
+
+                          {/* Botón Eliminar Beneficio */}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveBenefit(benefit.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
+                            title="Eliminar este beneficio"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        {/* PANEL DESPLEGABLE: Selector de Íconos para este Beneficio */}
+                        {isIconPickerOpen && (
+                          <div className="mt-3 p-3.5 rounded-2xl bg-white border border-fio-200 shadow-lg space-y-3 animate-fadeIn">
+                            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                              <span className="text-xs font-bubble font-bold text-slate-800 flex items-center gap-1.5">
+                                <Sparkles className="w-3.5 h-3.5 text-fio-pink" />
+                                <span>Elige un ícono ({AVAILABLE_BENEFIT_ICONS.length} disponibles)</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setActiveIconPickerBenefitId(null)}
+                                className="p-1 rounded-md text-slate-400 hover:text-slate-600 text-xs"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            {/* Buscador de Ícono y Categorías */}
+                            <div className="space-y-2">
+                              <div className="relative">
+                                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                                <input
+                                  type="text"
+                                  value={iconSearch}
+                                  onChange={(e) => setIconSearch(e.target.value)}
+                                  placeholder="Buscar ícono (café, certificado, video, regalo...)"
+                                  className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-fio-300 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="flex flex-wrap gap-1">
+                                {['Todos', 'Experiencia & Servicios', 'Herramientas & Material', 'Digital & Aprendizaje', 'Comunidad & Beneficios'].map((cat) => (
+                                  <button
+                                    key={cat}
+                                    type="button"
+                                    onClick={() => setSelectedIconCategory(cat)}
+                                    className={`text-[10px] px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
+                                      selectedIconCategory === cat
+                                        ? 'bg-fio-800 text-white border-fio-800 font-bold'
+                                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                                    }`}
+                                  >
+                                    {cat === 'Experiencia & Servicios' ? 'Servicios' : cat === 'Herramientas & Material' ? 'Herramientas' : cat === 'Digital & Aprendizaje' ? 'Digital' : cat === 'Comunidad & Beneficios' ? 'Comunidad' : cat}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Rejilla de Íconos Seleccionables */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-56 overflow-y-auto pr-1 pt-1">
+                              {filteredIcons.map((iconDef) => {
+                                const isCurrent = benefit.icon === iconDef.name;
+                                return (
+                                  <button
+                                    key={iconDef.name}
+                                    type="button"
+                                    onClick={() => handleBenefitIconChange(benefit.id, iconDef.name)}
+                                    className={`flex items-center gap-2 p-2 rounded-xl text-left border transition-all cursor-pointer ${
+                                      isCurrent
+                                        ? 'bg-fio-50 border-fio-pink ring-2 ring-fio-pink/30 text-fio-900 font-bold shadow-xs'
+                                        : 'bg-slate-50/70 hover:bg-fio-50/60 border-slate-200/80 text-slate-700 hover:border-fio-200'
+                                    }`}
+                                  >
+                                    <div className="w-7 h-7 rounded-lg bg-white shadow-2xs border border-slate-100 flex items-center justify-center shrink-0">
+                                      <BenefitIcon name={iconDef.name} className="w-4 h-4" />
+                                    </div>
+                                    <span className="text-[11px] leading-tight truncate">{iconDef.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

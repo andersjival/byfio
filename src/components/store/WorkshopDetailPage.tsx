@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Workshop, AppRoute } from '../../types';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
+import { BenefitIcon, getDefaultWorkshopBenefits } from '../../utils/workshopBenefits';
 import { TreeNavigation } from '../common/TreeNavigation';
 import { PaymentAccountsCard, PartialPaymentInfo } from '../common/PaymentAccountsCard';
 import {
@@ -95,6 +96,10 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
   const takeHomeText = workshop.takeHomeText || 'Te llevás tu proyecto completo y terminado a casa el mismo día.';
   const instructorName = workshop.instructorName || 'Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)';
   const instructorSubtitle = workshop.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.';
+  const benefitsList = workshop.benefits && Array.isArray(workshop.benefits) && workshop.benefits.length > 0
+    ? workshop.benefits
+    : getDefaultWorkshopBenefits(workshop);
+  const activeBenefits = benefitsList.filter((b) => b.enabled && b.text && b.text.trim());
   const totalPrice = workshop.price * quantity;
 
   // Copiar link directo a este taller
@@ -480,27 +485,15 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
               ))}
             </ul>
 
-            {/* Destacados Adicionales Configurables */}
-            {(hasCoffeeBreak || hasToolsIncluded || hasTakeHomeProject) && (
+            {/* Destacados Adicionales Configurables con Íconos Dinámicos */}
+            {activeBenefits.length > 0 && (
               <div className="pt-3 border-t border-slate-200/60 space-y-2 text-xs text-slate-500">
-                {hasCoffeeBreak && (
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Coffee className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span>{coffeeBreakText}</span>
+                {activeBenefits.map((b) => (
+                  <div key={b.id} className="flex items-center gap-2 text-slate-600">
+                    <BenefitIcon name={b.icon} className="w-4 h-4 shrink-0" />
+                    <span>{b.text}</span>
                   </div>
-                )}
-                {hasToolsIncluded && (
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <ShieldCheck className="w-4 h-4 text-fio-600 shrink-0" />
-                    <span>{toolsText}</span>
-                  </div>
-                )}
-                {hasTakeHomeProject && (
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Star className="w-4 h-4 text-fio-pink fill-fio-pink shrink-0" />
-                    <span>{takeHomeText}</span>
-                  </div>
-                )}
+                ))}
               </div>
             )}
           </div>
@@ -821,18 +814,12 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                       <span>{inc}</span>
                     </li>
                   ))}
-                  {hasCoffeeBreak && (
-                    <li className="flex items-start gap-1.5">
-                      <Coffee className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                      <span>{coffeeBreakText}</span>
+                  {activeBenefits.map((b) => (
+                    <li key={b.id} className="flex items-start gap-1.5">
+                      <BenefitIcon name={b.icon} className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <span>{b.text}</span>
                     </li>
-                  )}
-                  {hasToolsIncluded && (
-                    <li className="flex items-start gap-1.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-fio-600 shrink-0 mt-0.5" />
-                      <span>{toolsText}</span>
-                    </li>
-                  )}
+                  ))}
                 </ul>
 
                 <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-500 space-y-1">

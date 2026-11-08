@@ -204,6 +204,26 @@ const mapRowToWorkshop = (r: WorkshopDbRow) => {
     takeHomeText: benefits.takeHomeText !== undefined ? benefits.takeHomeText : 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
     instructorName: benefits.instructorName || 'Fiorella Patricia Jara Gutiérrez (Fio)',
     instructorSubtitle: benefits.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+    benefits: Array.isArray(benefits.benefits) && benefits.benefits.length > 0 ? benefits.benefits : [
+      {
+        id: 'ben-coffee',
+        icon: 'Coffee',
+        text: benefits.coffeeBreakText !== undefined ? benefits.coffeeBreakText : 'Coffee break artesanal con repostería dulce y bebidas.',
+        enabled: hasCoffeeBreak,
+      },
+      {
+        id: 'ben-tools',
+        icon: 'ShieldCheck',
+        text: benefits.toolsText !== undefined ? benefits.toolsText : 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+        enabled: benefits.hasToolsIncluded !== undefined ? Boolean(benefits.hasToolsIncluded) : true,
+      },
+      {
+        id: 'ben-project',
+        icon: 'Star',
+        text: benefits.takeHomeText !== undefined ? benefits.takeHomeText : 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+        enabled: benefits.hasTakeHomeProject !== undefined ? Boolean(benefits.hasTakeHomeProject) : true,
+      },
+    ],
   };
 };
 
@@ -312,6 +332,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const id = data.id || `ws-${Date.now()}`;
 
     const benefits = {
+      benefits: Array.isArray(data.benefits) ? data.benefits : [],
       hasCoffeeBreak: data.hasCoffeeBreak !== undefined ? Boolean(data.hasCoffeeBreak) : (data.modality !== 'Virtual en Vivo'),
       coffeeBreakText: data.coffeeBreakText || 'Coffee break artesanal con repostería dulce y bebidas.',
       hasToolsIncluded: data.hasToolsIncluded !== undefined ? Boolean(data.hasToolsIncluded) : true,
@@ -365,6 +386,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
     }
 
     const benefits = {
+      benefits: Array.isArray(data.benefits) ? data.benefits : [],
       hasCoffeeBreak: data.hasCoffeeBreak !== undefined ? Boolean(data.hasCoffeeBreak) : (data.modality !== 'Virtual en Vivo'),
       coffeeBreakText: data.coffeeBreakText !== undefined ? data.coffeeBreakText : 'Coffee break artesanal con repostería dulce y bebidas.',
       hasToolsIncluded: data.hasToolsIncluded !== undefined ? Boolean(data.hasToolsIncluded) : true,

@@ -96,6 +96,13 @@ export interface Product {
   isAvailable?: boolean; // Activo/Disponible para venta en modo disponibilidad (default true)
 }
 
+export interface WorkshopBenefitItem {
+  id: string;
+  icon: string;
+  text: string;
+  enabled: boolean;
+}
+
 export interface Workshop {
   id: string;
   title: string;
@@ -119,6 +126,7 @@ export interface Workshop {
   takeHomeText?: string;
   instructorName?: string;
   instructorSubtitle?: string;
+  benefits?: WorkshopBenefitItem[];
 }
 
 export interface OrderItem {
