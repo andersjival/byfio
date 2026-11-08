@@ -86,6 +86,7 @@ export interface Product {
   minStock: number;
   maxStock: number;
   image: string;
+  images?: string[];
   isCustomizable: boolean;
   customizationPlaceholder?: string;
   unit: string;
@@ -108,6 +109,7 @@ export interface Workshop {
   totalSpots: number;
   includes: string[];
   image: string;
+  images?: string[];
   description: string;
 }
 
@@ -201,6 +203,7 @@ export interface CartItem {
   quantity: number;
   customText?: string;
   image: string;
+  images?: string[];
   shelfLocation?: string;
   spotsLeft?: number;
 }

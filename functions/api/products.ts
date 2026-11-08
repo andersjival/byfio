@@ -31,6 +31,30 @@ const mapRowToProduct = (r: ProductDbRow) => {
   const isZeroStock = Number(r.stock) <= 0;
   const effectiveAvail = isZeroStock ? false : isAvail;
 
+  let productImages: string[] = [];
+  if ((r as any).images_json) {
+    try {
+      const parsed = JSON.parse((r as any).images_json);
+      if (Array.isArray(parsed) && parsed.length > 0) productImages = parsed;
+    } catch {}
+  }
+  if (productImages.length === 0 && r.sku === 'FIO-TAZ-03') {
+    productImages = [
+      '/images/products/taza-stitch-ohana.jpg',
+      '/images/products/taza-dragonball-super.jpg',
+      '/images/products/taza-ariel-sirenita.jpg',
+      '/images/products/taza-lilo-stitch-princess.jpg',
+      '/images/products/taza-looney-tunes-bugs.jpg',
+      r.image || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=500&q=80',
+    ];
+  } else if (productImages.length === 0 && r.image) {
+    productImages = [r.image];
+  }
+
+  const primaryImage = (r.sku === 'FIO-TAZ-03' && (!r.image || r.image.includes('unsplash')))
+    ? '/images/products/taza-stitch-ohana.jpg'
+    : r.image;
+
   return {
     id: r.id,
     sku: r.sku,
@@ -42,7 +66,8 @@ const mapRowToProduct = (r: ProductDbRow) => {
     stock: r.stock,
     minStock: r.min_stock,
     maxStock: r.max_stock,
-    image: r.image,
+    image: primaryImage,
+    images: productImages,
     isCustomizable: Boolean(r.is_customizable),
     customizationPlaceholder: r.customization_placeholder,
     unit: r.unit,

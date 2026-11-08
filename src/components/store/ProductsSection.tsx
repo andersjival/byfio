@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { ProductCategory, Product } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import { ShoppingBag, Search, Star, AlertCircle, Check } from 'lucide-react';
+import { ProductDetailModal } from './ProductDetailModal';
 
 const CATEGORIES: ('Todas' | ProductCategory)[] = [
   'Todas',
@@ -18,6 +19,7 @@ export const ProductsSection: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<'Todas' | ProductCategory>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
+  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
 
   const filteredProducts = products.filter((p) => {
     // Si el producto está en cero o se desactiva, desaparece automáticamente de la tienda
@@ -109,7 +111,7 @@ export const ProductsSection: React.FC = () => {
               className="flex flex-col bg-[#F1F2F6] rounded-3xl overflow-hidden border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all duration-300 group"
             >
               {/* Imagen y Estado de Stock o Disponibilidad */}
-              <div className="relative h-44 bg-fio-100 overflow-hidden">
+              <div className="relative h-44 bg-fio-100 overflow-hidden cursor-pointer" onClick={() => setDetailProduct(p)} title="Ver detalles y fotos del producto">
                 <img
                   src={p.image}
                   alt={p.name}
@@ -158,10 +160,10 @@ export const ProductsSection: React.FC = () => {
                     <span className="text-[10px] text-gray-400">{p.unit}</span>
                   </div>
 
-                  <h3 className="font-bubble font-bold text-base text-fio-900 line-clamp-1 mb-1">
+                  <h3 className="font-bubble font-bold text-base text-fio-900 line-clamp-1 mb-1 cursor-pointer hover:text-fio-pink transition-colors" onClick={() => setDetailProduct(p)} title="Ver detalles y fotos del producto">
                     {p.name}
                   </h3>
-                  <p className="text-xs text-gray-500 line-clamp-2 mb-3">{p.description}</p>
+                  <p className="text-xs text-gray-500 line-clamp-2 mb-3 cursor-pointer hover:text-gray-700 transition-colors" onClick={() => setDetailProduct(p)} title="Ver detalles y fotos del producto">{p.description}</p>
 
                   {/* Input de Personalización si Aplica */}
                   {p.isCustomizable && (
@@ -204,6 +206,17 @@ export const ProductsSection: React.FC = () => {
           );
         })}
       </div>
+      {/* Modal Detallado con Galería de Fotos */}
+      <ProductDetailModal
+        product={detailProduct}
+        onClose={() => setDetailProduct(null)}
+        initialCustomText={detailProduct ? (customTextInputs[detailProduct.id] || '') : ''}
+        onCustomTextChange={(text) => {
+          if (detailProduct) {
+            handleCustomTextChange(detailProduct.id, text);
+          }
+        }}
+      />
     </section>
   );
 };
