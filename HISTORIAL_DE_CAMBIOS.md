@@ -18,6 +18,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
 
+### Versión 4.17.5 - Visibilidad Inmediata y Omnipresente del Control de Stock / Disponibilidad (Superadmin y Admin)
+- [x] **Panel Superadmin ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):**
+  - Reubicada la tarjeta interactiva de "Control de Stock & Disponibilidad de Producto" al inicio absoluto del panel Superadmin (directamente debajo de las métricas maestras).
+  - Integrados los botones directos [Desactivar / Activar stock de inventario] y [Desactivar / Activar disponibilidad de producto] para alternar modos en vivo con un solo clic.
+  - Actualizado el indicador de métricas principales mostrando el modo activo: "Stock Numérico" vs "Disponibilidad".
+- [x] **Cabecera del Panel de Administración ([AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Añadido botón rápido de conmutación [Desactivar stock / Activar stock] junto a Configuración para acceso instantáneo desde cualquier vista del panel.
+- [x] **Tabla de Inventario ([InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Verificación dual de flags de disponibilidad (product_availability_mode e inventory_availability_mode) garantizando compatibilidad y persistencia del modo seleccionado.
+- [x] **Catálogo de Módulos Superadmin ([superadminModulesData.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/superadminModulesData.ts)):**
+  - Clarificados los nombres de las funcionalidades a "Control y Columna de Stock Numérico (Activar / Desactivar Stock)" y "Control de Disponibilidad Rápida de Productos (Activar / Desactivar)".
+
 ### Versión 4.17.4 - Sincronización Inmediata Online de Permisos de Colaboradores en Tiempo Real
 - [x] **Sincronización Bidireccional en Vivo (0ms BroadcastChannel + 4s Cloud D1 Polling):**
   - Cuando el administrador activa o desactiva cualquier permiso o el perfil de un colaborador, los cambios se transmiten de inmediato a todas las pestañas y dispositivos mediante BroadcastChannel, eventos de ventana yfio_user_profiles_updated, storage y persistencia en Cloudflare D1.

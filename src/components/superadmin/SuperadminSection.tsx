@@ -203,11 +203,85 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
           </div>
 
           <div className="bg-purple-950/50 rounded-xl p-2.5 border border-purple-500/20">
-            <span className="text-[10px] text-purple-300 font-medium block">Modo de Control</span>
-            <span className="text-xs font-bubble font-bold text-emerald-300 truncate block mt-1">
-              Tiempo Real (Live)
+            <span className="text-[10px] text-purple-300 font-medium block">Modo Inventario</span>
+            <span className={`text-xs font-bubble font-bold truncate block mt-1 ${inventoryMode === 'stock' ? 'text-purple-300' : 'text-emerald-300'}`}>
+              {inventoryMode === 'stock' ? 'Stock Numérico' : 'Disponibilidad'}
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* Tarjeta de Control Directo de Modos de Inventario (Stock vs Disponibilidad) */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-white border-2 border-purple-300 shadow-[0_4px_25px_rgba(147,51,234,0.08)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-700 to-pink-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <SlidersHorizontal className="w-5 h-5 text-fio-yellow" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-mono tracking-wider text-purple-700 uppercase font-bold bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200/60">
+                Funcionalidad Directa Superadmin
+              </span>
+              <span className="text-xs text-slate-500 font-medium">
+                Modo actual: <strong className="text-purple-700 font-bold">{inventoryMode === 'stock' ? 'Stock Numérico Real' : 'Disponibilidad Rápida'}</strong>
+              </span>
+            </div>
+            <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-800 leading-tight">
+              Control de Stock &amp; Disponibilidad de Producto
+            </h3>
+            <p className="text-xs text-slate-500 font-sans">
+              Alterna al instante el comportamiento del inventario y la visibilidad de los artículos en la tienda
+            </p>
+          </div>
+        </div>
+
+        {/* Los 2 botones exactos con interacción inmediata */}
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
+          <button
+            type="button"
+            onClick={() => setInventoryMode(inventoryMode === 'stock' ? 'availability' : 'stock')}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
+              inventoryMode === 'stock'
+                ? 'bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300'
+                : 'bg-fio-800 hover:bg-fio-900 text-white shadow-sm'
+            }`}
+            title={inventoryMode === 'stock' ? 'Desactiva la columna de stock y activa el modo de disponibilidad' : 'Vuelve a mostrar la columna de stock numérico'}
+          >
+            {inventoryMode === 'stock' ? (
+              <>
+                <ToggleLeft className="w-4 h-4 text-rose-500" />
+                <span>Desactivar stock de inventario</span>
+              </>
+            ) : (
+              <>
+                <Boxes className="w-4 h-4 text-fio-yellow" />
+                <span>Activar stock de inventario</span>
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setInventoryMode(inventoryMode === 'availability' ? 'stock' : 'availability')}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
+              inventoryMode === 'availability'
+                ? 'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300'
+                : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+            }`}
+            title={inventoryMode === 'availability' ? 'Desactiva el modo disponibilidad y regresa a stock real' : 'Activa la columna de disponibilidad y oculta el stock'}
+          >
+            {inventoryMode === 'availability' ? (
+              <>
+                <ToggleRight className="w-4 h-4 text-emerald-600" />
+                <span>Desactivar disponibilidad de producto</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-white" />
+                <span>Activar disponibilidad de producto</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 
@@ -590,80 +664,6 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
 
       {activeSuperadminTab === 'modules' && (
         <>
-          {/* Tarjeta de Control Directo de Modos de Inventario (Stock vs Disponibilidad) */}
-          <div className="p-4 sm:p-5 rounded-3xl bg-white border border-purple-200/80 shadow-[0_4px_20px_rgba(147,51,234,0.06)] flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-700 to-pink-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                <SlidersHorizontal className="w-5 h-5 text-fio-yellow" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-mono tracking-wider text-purple-700 uppercase font-bold bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200/60">
-                    Funcionalidad Directa Superadmin
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    Modo actual: <strong className="text-purple-700 font-bold">{inventoryMode === 'stock' ? 'Stock Numérico Real' : 'Disponibilidad Rápida'}</strong>
-                  </span>
-                </div>
-                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-800 leading-tight">
-                  Control de Stock &amp; Disponibilidad de Producto
-                </h3>
-                <p className="text-xs text-slate-500 font-sans">
-                  Alterna al instante el comportamiento del inventario y la visibilidad de los artículos en la tienda
-                </p>
-              </div>
-            </div>
-
-            {/* Los 2 botones exactos de la captura con interacción inmediata */}
-            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
-              <button
-                type="button"
-                onClick={() => setInventoryMode(inventoryMode === 'stock' ? 'availability' : 'stock')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
-                  inventoryMode === 'stock'
-                    ? 'bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300'
-                    : 'bg-fio-800 hover:bg-fio-900 text-white shadow-sm'
-                }`}
-                title={inventoryMode === 'stock' ? 'Desactiva la columna de stock y activa el modo de disponibilidad' : 'Vuelve a mostrar la columna de stock numérico'}
-              >
-                {inventoryMode === 'stock' ? (
-                  <>
-                    <ToggleLeft className="w-4 h-4 text-rose-500" />
-                    <span>Desactivar stock de inventario</span>
-                  </>
-                ) : (
-                  <>
-                    <Boxes className="w-4 h-4 text-fio-yellow" />
-                    <span>Activar stock de inventario</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setInventoryMode(inventoryMode === 'availability' ? 'stock' : 'availability')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
-                  inventoryMode === 'availability'
-                    ? 'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300'
-                    : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
-                }`}
-                title={inventoryMode === 'availability' ? 'Desactiva el modo disponibilidad y regresa a stock real' : 'Activa la columna de disponibilidad y oculta el stock'}
-              >
-                {inventoryMode === 'availability' ? (
-                  <>
-                    <ToggleRight className="w-4 h-4 text-emerald-600" />
-                    <span>Desactivar disponibilidad de producto</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 text-white" />
-                    <span>Activar disponibilidad de producto</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
           {/* Tarjeta de Acceso y Control Directo: Pedidos a Proveedor en Superadmin */}
           <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-amber-500/10 border border-amber-300/80 shadow-[0_4px_20px_rgba(245,158,11,0.08)] flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">

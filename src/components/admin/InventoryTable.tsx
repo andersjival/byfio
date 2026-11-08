@@ -28,7 +28,7 @@ export const InventoryTable: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable'>('all');
 
   const isStockModeEnabled = isFeatureEnabled('inventory', 'inventory_stock_mode') !== false;
-  const isAvailabilityModeEnabled = isFeatureEnabled('inventory', 'product_availability_mode') !== false;
+  const isAvailabilityModeEnabled = isFeatureEnabled('inventory', 'product_availability_mode') !== false || isFeatureEnabled('inventory', 'inventory_availability_mode') !== false;
 
   React.useEffect(() => {
     if (!isStockModeEnabled && isAvailabilityModeEnabled && inventoryMode === 'stock') {

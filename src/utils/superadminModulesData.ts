@@ -122,13 +122,13 @@ export const INITIAL_SUPERADMIN_MODULES: SuperadminModuleConfig[] = [
       },
       {
         id: 'inventory_stock_mode',
-        name: 'Desactivar stock de inventario',
+        name: 'Control y Columna de Stock Numérico (Activar / Desactivar Stock)',
         description: 'Permite alternar el control exacto con columna de existencias numéricas y alertas de stock.',
         enabled: true,
       },
       {
         id: 'product_availability_mode',
-        name: 'Activar disponibilidad de producto',
+        name: 'Control de Disponibilidad Rápida de Productos (Activar / Desactivar)',
         description: 'Permite alternar el modo de disponibilidad rápida para activar o pausar productos en tienda.',
         enabled: true,
       },
