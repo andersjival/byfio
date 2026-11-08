@@ -49,6 +49,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 
 
+### Versión 4.17.6 - Exclusividad del Control de Stock en Superadmin y Limpieza del Panel Admin
+- [x] **Aislamiento Exclusivo del Control de Stock en Superadmin ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):**
+  - Los botones interactivos [Desactivar stock de inventario / Activar stock de inventario] y [Desactivar disponibilidad de producto / Activar disponibilidad de producto] operan de forma exclusiva dentro del panel de Superadmin (/panel/superadmin).
+- [x] **Eliminación Total de Controles de Stock del Panel de Administración ([AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Removido el botón de acceso rápido de stock de la cabecera del panel administrativo.
+  - Eliminado el banner conmutador de modos y botones de conmutación dentro de la tabla de inventario del administrador, preservando la vista operativa limpia y garantizando que solo Superadmin gobierne el modo de inventario del sitio.
+
 ### Versión 4.17.5 - Visibilidad Inmediata y Omnipresente del Control de Stock / Disponibilidad (Superadmin y Admin)
 - [x] **Panel Superadmin ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):**
   - Reubicada la tarjeta interactiva de "Control de Stock & Disponibilidad de Producto" al inicio absoluto del panel Superadmin (directamente debajo de las métricas maestras).

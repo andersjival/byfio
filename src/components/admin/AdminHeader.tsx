@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
 import {
   Package, AlertTriangle, ShoppingCart, RefreshCw,
-  FileText, Palette, DollarSign, Shield, Settings, Boxes, Smartphone
+  FileText, Palette, DollarSign, Shield, Settings, Smartphone
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -29,8 +29,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
     isModuleEnabled,
     currentUser,
     logoutUser,
-    inventoryMode,
-    setInventoryMode,
   } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
 
@@ -114,21 +112,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
             <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
               {colorTheme === 'vibrant' ? 'Morado' : colorTheme === 'dark' ? 'Oscuro' : 'Zen'}
             </span>
-          </button>
-
-          {/* Botón Rápido de Control de Stock: Activar / Desactivar Stock */}
-          <button
-            type="button"
-            onClick={() => setInventoryMode(inventoryMode === 'stock' ? 'availability' : 'stock')}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bubble font-bold transition-all active:scale-95 cursor-pointer shadow-xs border ${
-              inventoryMode === 'stock'
-                ? 'bg-purple-100 hover:bg-purple-200 text-purple-950 border-purple-300'
-                : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border-emerald-300'
-            }`}
-            title={inventoryMode === 'stock' ? 'Clic para desactivar columna de stock y pasar a modo disponibilidad' : 'Clic para activar columna de stock numérico'}
-          >
-            <Boxes className="w-3.5 h-3.5 text-purple-700" />
-            <span>{inventoryMode === 'stock' ? 'Desactivar stock' : 'Activar stock'}</span>
           </button>
 
           {/* Reset Demo */}

@@ -4,8 +4,7 @@ import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   QrCode, AlertOctagon, Plus, Minus, Search, MapPin,
-  PlusCircle, Trash2, Pencil, Boxes, ToggleLeft,
-  ToggleRight, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck
+  PlusCircle, Trash2, Pencil, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck
 } from 'lucide-react';
 
 export const InventoryTable: React.FC = () => {
@@ -116,88 +115,7 @@ export const InventoryTable: React.FC = () => {
         )}
       </div>
 
-      {/* Control Switch / Selector de Modo de Inventario */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-4 bg-gradient-to-r from-purple-50/80 via-fio-50/90 to-pink-50/70 rounded-2xl border border-fio-200 mb-5 shadow-2xs">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-xs transition-colors bg-fio-800 text-white">
-            <Boxes className="w-5 h-5 text-fio-yellow" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bubble font-bold text-sm text-fio-900">Modo de Operación:</span>
-              <span className={`text-[11px] font-bubble font-bold px-2.5 py-0.5 rounded-full border ${
-                inventoryMode === 'stock'
-                  ? 'bg-purple-100 text-fio-800 border-purple-200'
-                  : 'bg-emerald-100 text-emerald-800 border-emerald-300'
-              }`}>
-                {inventoryMode === 'stock' ? '📦 Inventario Real con Stock Numérico' : '📋 Inventario por Disponibilidad Rápida'}
-              </span>
-            </div>
-            <p className="text-[11px] text-gray-500 mt-0.5">
-              {inventoryMode === 'stock'
-                ? 'Control exacto con columna de stock y alertas. La columna de stock está visible.'
-                : 'Control simplificado: la columna de stock se oculta y puedes activar o desactivar cada producto para Tienda, Catálogo y Carrito.'}
-            </p>
-          </div>
-        </div>
-
-        {/* Botones de Control de Modo */}
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          {/* Botón 1: Stock de Inventario */}
-          {isStockModeEnabled && (
-            <button
-              type="button"
-              onClick={() => setInventoryMode(inventoryMode === 'stock' ? 'availability' : 'stock')}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 ${
-                inventoryMode === 'stock'
-                  ? 'bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300'
-                  : 'bg-fio-800 hover:bg-fio-900 text-white shadow-sm'
-              }`}
-              title={inventoryMode === 'stock' ? 'Desactiva la columna de stock y activa el modo de disponibilidad' : 'Vuelve a mostrar la columna de stock numérico'}
-            >
-              {inventoryMode === 'stock' ? (
-                <>
-                  <ToggleLeft className="w-4 h-4 text-rose-500" />
-                  <span>Desactivar stock de inventario</span>
-                </>
-              ) : (
-                <>
-                  <Boxes className="w-4 h-4 text-fio-yellow" />
-                  <span>Activar stock de inventario</span>
-                </>
-              )}
-            </button>
-          )}
-
-          {/* Botón 2: Disponibilidad de Producto */}
-          {isAvailabilityModeEnabled && (
-            <button
-              type="button"
-              onClick={() => setInventoryMode(inventoryMode === 'availability' ? 'stock' : 'availability')}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 ${
-                inventoryMode === 'availability'
-                  ? 'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300'
-                  : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
-              }`}
-              title={inventoryMode === 'availability' ? 'Desactiva el modo disponibilidad y regresa a stock real' : 'Activa la columna de disponibilidad y oculta el stock'}
-            >
-              {inventoryMode === 'availability' ? (
-                <>
-                  <ToggleRight className="w-4 h-4 text-emerald-600" />
-                  <span>Desactivar disponibilidad de producto</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-white" />
-                  <span>Activar disponibilidad de producto</span>
-                </>
-              )}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Botones de Filtro Rápido por Existencias en Cero y Disponibilidad para Pedidos */}
+{/* Botones de Filtro Rápido por Existencias en Cero y Disponibilidad para Pedidos */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-fio-50/70 rounded-2xl border border-fio-200 mb-4">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-[11px] font-bold text-gray-500 uppercase mr-1 flex items-center gap-1">
