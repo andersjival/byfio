@@ -658,49 +658,13 @@ export const NewProductModal: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {/* Categoría */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block font-bold text-gray-700">Categoría *</label>
-                    {!isCreatingNewCat && !isEditingCat && (
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={handleStartEditCategory}
-                          className="text-[10px] text-gray-500 hover:text-fio-800 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-gray-100 transition-colors cursor-pointer"
-                          title="Editar nombre de la categoría seleccionada"
-                        >
-                          <Pencil className="w-3 h-3 text-fio-purple" />
-                          <span>Editar</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleDeleteCategory}
-                          className="text-[10px] text-red-500 hover:text-red-700 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors cursor-pointer"
-                          title="Eliminar categoría seleccionada"
-                        >
-                          <Trash2 className="w-3 h-3 text-red-500" />
-                          <span>Eliminar</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsCreatingNewCat(true);
-                            setCustomCategory('');
-                          }}
-                          className="text-[10px] text-fio-pink hover:text-fio-800 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-pink-50 transition-colors cursor-pointer"
-                          title="Crear nueva categoría"
-                        >
-                          <Plus className="w-3 h-3" />
-                          <span>Nueva</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  <label className="block font-bold text-gray-700 text-xs mb-1.5">Categoría *</label>
 
                   {isEditingCat ? (
-                    <div className="flex gap-1.5">
+                    <div className="flex items-center gap-1.5">
                       <input
                         type="text"
                         placeholder="Nombre de la categoría..."
@@ -712,26 +676,26 @@ export const NewProductModal: React.FC = () => {
                             handleSaveEditCategory();
                           }
                         }}
-                        className="flex-1 px-3 py-2 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-gray-900 focus:outline-none"
+                        className="flex-1 px-3 py-2 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-gray-900 focus:outline-none text-xs"
                         autoFocus
                       />
                       <button
                         type="button"
                         onClick={handleSaveEditCategory}
-                        className="px-2.5 py-1.5 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer"
+                        className="px-3 py-2 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer shadow-2xs"
                       >
                         Guardar
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEditingCat(false)}
-                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-2.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
                       >
                         Cancelar
                       </button>
                     </div>
                   ) : isCreatingNewCat ? (
-                    <div className="flex gap-1.5">
+                    <div className="flex items-center gap-1.5">
                       <input
                         type="text"
                         placeholder="Nueva categoría..."
@@ -743,87 +707,85 @@ export const NewProductModal: React.FC = () => {
                             handleAddCustomCategory();
                           }
                         }}
-                        className="flex-1 px-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 font-semibold text-gray-900 focus:outline-none"
+                        className="flex-1 px-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 font-semibold text-gray-900 focus:outline-none text-xs"
                         autoFocus
                       />
                       <button
                         type="button"
                         onClick={handleAddCustomCategory}
-                        className="px-2.5 py-1.5 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer"
+                        className="px-3 py-2 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer shadow-2xs"
                       >
                         Agregar
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsCreatingNewCat(false)}
-                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-2.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
                       >
                         Cancelar
                       </button>
                     </div>
                   ) : (
-                    <select
-                      value={category}
-                      onChange={(e) => {
-                        if (e.target.value === '__new__') {
+                    <div className="flex items-center gap-1.5">
+                      <div className="relative flex-1">
+                        <select
+                          value={category}
+                          onChange={(e) => {
+                            if (e.target.value === '__new__') {
+                              setIsCreatingNewCat(true);
+                              setCustomCategory('');
+                            } else {
+                              setCategory(e.target.value as ProductCategory);
+                            }
+                          }}
+                          className="w-full px-3 py-2 pr-8 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800 focus:ring-2 focus:ring-fio-400 focus:outline-none cursor-pointer text-xs appearance-none"
+                        >
+                          {availableCategories.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                          <option value="__new__" className="text-fio-pink font-bold">✨ + Nueva Categoría...</option>
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+
+                      {/* Botones chiquititos para editar, eliminar y crear categoría */}
+                      <button
+                        type="button"
+                        onClick={handleStartEditCategory}
+                        className="w-8 h-8 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        title={`Editar o renombrar categoría "${category}"`}
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDeleteCategory}
+                        className="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        title={`Eliminar categoría "${category}"`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
                           setIsCreatingNewCat(true);
                           setCustomCategory('');
-                        } else {
-                          setCategory(e.target.value as ProductCategory);
-                        }
-                      }}
-                      className="w-full px-3 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800 focus:ring-2 focus:ring-fio-400 focus:outline-none cursor-pointer"
-                    >
-                      {availableCategories.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                      <option value="__new__" className="text-fio-pink font-bold">✨ + Nueva Categoría...</option>
-                    </select>
+                        }}
+                        className="w-8 h-8 rounded-xl bg-pink-50 hover:bg-pink-100 text-fio-pink border border-pink-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        title="Crear nueva categoría"
+                      >
+                        <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                      </button>
+                    </div>
                   )}
                 </div>
 
                 {/* Ubicación en Estante */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block font-bold text-gray-700">Ubicación en Estante (WMS) *</label>
-                    {!isCreatingNewLocation && !isEditingLocation && (
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={handleStartEditLocation}
-                          className="text-[10px] text-gray-500 hover:text-fio-800 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-gray-100 transition-colors cursor-pointer"
-                          title="Editar nombre de la ubicación seleccionada"
-                        >
-                          <Pencil className="w-3 h-3 text-fio-pink" />
-                          <span>Editar</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleDeleteLocation}
-                          className="text-[10px] text-red-500 hover:text-red-700 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors cursor-pointer"
-                          title="Eliminar ubicación seleccionada"
-                        >
-                          <Trash2 className="w-3 h-3 text-red-500" />
-                          <span>Eliminar</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsCreatingNewLocation(true);
-                            setCustomLocation('');
-                          }}
-                          className="text-[10px] text-fio-pink hover:text-fio-800 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-pink-50 transition-colors cursor-pointer"
-                          title="Crear nueva ubicación"
-                        >
-                          <Plus className="w-3 h-3" />
-                          <span>Nueva</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  <label className="block font-bold text-gray-700 text-xs mb-1.5">Ubicación en Estante (WMS) *</label>
 
                   {isEditingLocation ? (
-                    <div className="flex gap-1.5">
+                    <div className="flex items-center gap-1.5">
                       <div className="relative flex-1">
                         <input
                           type="text"
@@ -836,32 +798,32 @@ export const NewProductModal: React.FC = () => {
                               handleSaveEditLocation();
                             }
                           }}
-                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-purple-900 focus:outline-none"
+                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-purple-900 focus:outline-none text-xs"
                           autoFocus
                         />
-                        <MapPin className="w-4 h-4 text-fio-purple absolute left-2.5 top-2.5" />
+                        <MapPin className="w-3.5 h-3.5 text-fio-purple absolute left-2.5 top-1/2 -translate-y-1/2" />
                       </div>
                       <button
                         type="button"
                         onClick={handleSaveEditLocation}
-                        className="px-2.5 py-1.5 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer"
+                        className="px-3 py-2 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer shadow-2xs"
                       >
                         Guardar
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEditingLocation(false)}
-                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-2.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
                       >
                         Cancelar
                       </button>
                     </div>
                   ) : isCreatingNewLocation ? (
-                    <div className="flex gap-1.5">
+                    <div className="flex items-center gap-1.5">
                       <div className="relative flex-1">
                         <input
                           type="text"
-                          placeholder="Ej: Estante E-3 (Nivel 1) o Cajón #4"
+                          placeholder="Ej: Estante E-3 o Cajón #4"
                           value={customLocation}
                           onChange={(e) => setCustomLocation(e.target.value)}
                           onKeyDown={(e) => {
@@ -870,52 +832,83 @@ export const NewProductModal: React.FC = () => {
                               handleAddCustomLocation();
                             }
                           }}
-                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900 placeholder:text-gray-400"
+                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900 placeholder:text-gray-400 text-xs"
                           autoFocus
                         />
-                        <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5" />
+                        <MapPin className="w-3.5 h-3.5 text-fio-pink absolute left-2.5 top-1/2 -translate-y-1/2" />
                       </div>
                       <button
                         type="button"
                         onClick={handleAddCustomLocation}
-                        className="px-2.5 py-1.5 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer"
+                        className="px-3 py-2 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer shadow-2xs"
                       >
                         Agregar
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsCreatingNewLocation(false)}
-                        className="px-2.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-2.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
                         title="Volver a lista de ubicaciones existentes"
                       >
                         Cancelar
                       </button>
                     </div>
                   ) : (
-                    <div className="relative">
-                      <select
-                        value={shelfLocation}
-                        onChange={(e) => {
-                          if (e.target.value === '__new__') {
-                            setIsCreatingNewLocation(true);
-                            setCustomLocation('');
-                          } else {
-                            setShelfLocation(e.target.value);
-                          }
-                        }}
-                        className="w-full pl-8 pr-8 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-purple-900 focus:ring-2 focus:ring-fio-400 focus:outline-none appearance-none cursor-pointer"
-                      >
-                        {availableLocations.map((loc) => (
-                          <option key={loc} value={loc}>
-                            📍 {loc}
+                    <div className="flex items-center gap-1.5">
+                      <div className="relative flex-1">
+                        <select
+                          value={shelfLocation}
+                          onChange={(e) => {
+                            if (e.target.value === '__new__') {
+                              setIsCreatingNewLocation(true);
+                              setCustomLocation('');
+                            } else {
+                              setShelfLocation(e.target.value);
+                            }
+                          }}
+                          className="w-full pl-8 pr-8 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-purple-900 focus:ring-2 focus:ring-fio-400 focus:outline-none appearance-none cursor-pointer text-xs"
+                        >
+                          {availableLocations.map((loc) => (
+                            <option key={loc} value={loc}>
+                              📍 {loc}
+                            </option>
+                          ))}
+                          <option value="__new__" className="text-fio-pink font-bold">
+                            ✨ + Crear nueva ubicación...
                           </option>
-                        ))}
-                        <option value="__new__" className="text-fio-pink font-bold">
-                          ✨ + Crear nueva ubicación...
-                        </option>
-                      </select>
-                      <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5 pointer-events-none" />
-                      <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-2.5 pointer-events-none" />
+                        </select>
+                        <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <ChevronDown className="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+
+                      {/* Botones chiquititos para editar, eliminar y crear ubicación */}
+                      <button
+                        type="button"
+                        onClick={handleStartEditLocation}
+                        className="w-8 h-8 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        title={`Editar o renombrar ubicación "${shelfLocation}"`}
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDeleteLocation}
+                        className="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        title={`Eliminar ubicación "${shelfLocation}"`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCreatingNewLocation(true);
+                          setCustomLocation('');
+                        }}
+                        className="w-8 h-8 rounded-xl bg-pink-50 hover:bg-pink-100 text-fio-pink border border-pink-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        title="Crear nueva ubicación"
+                      >
+                        <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                      </button>
                     </div>
                   )}
                 </div>
