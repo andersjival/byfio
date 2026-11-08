@@ -5,7 +5,7 @@ import { UserProfile, UserPermissions } from '../../types';
 import {
   Users, Plus, KeyRound, Shield, Check, X, Edit3, Trash2,
   CheckCircle2, AlertCircle, Copy, Eye, EyeOff, Star,
-  QrCode, Receipt, Boxes, Landmark, GraduationCap, Tag, UserCheck, Calendar, Truck
+  QrCode, Receipt, Boxes, Landmark, GraduationCap, Tag, UserCheck, Calendar, Truck, ShoppingBag
 } from 'lucide-react';
 
 export const UserProfilesSection: React.FC = () => {
@@ -32,6 +32,7 @@ export const UserProfilesSection: React.FC = () => {
     customers: false,
     agenda: false,
     suppliers: false,
+    sales: false,
   });
 
   const [revealedPins, setRevealedPins] = useState<{ [id: string]: boolean }>({});
@@ -69,6 +70,7 @@ export const UserProfilesSection: React.FC = () => {
       customers: false,
       agenda: false,
       suppliers: false,
+      sales: false,
     });
     setFormError(null);
     setIsModalOpen(true);
@@ -91,6 +93,7 @@ export const UserProfilesSection: React.FC = () => {
       customers: !!profile.permissions?.customers,
       agenda: profile.permissions?.agenda !== undefined ? !!profile.permissions.agenda : true,
       suppliers: profile.permissions?.suppliers !== undefined ? !!profile.permissions.suppliers : true,
+      sales: profile.permissions?.sales !== undefined ? !!profile.permissions.sales : true,
     });
     setFormError(null);
     setIsModalOpen(true);
@@ -108,6 +111,7 @@ export const UserProfilesSection: React.FC = () => {
       customers: grantAll,
       agenda: grantAll,
       suppliers: grantAll,
+      sales: grantAll,
     });
   };
 
@@ -202,6 +206,7 @@ export const UserProfilesSection: React.FC = () => {
     { key: 'customers', label: 'Directorio de Clientes', desc: 'Registro de clientes y fichas para pedidos', icon: UserCheck },
     { key: 'agenda', label: 'Agenda & Tareas', desc: 'Acceso al organizador del taller y calendario', icon: Calendar },
     { key: 'suppliers', label: 'Pedidos a Proveedor', desc: 'Órdenes de compra, borradores e historial con proveedores', icon: Truck },
+    { key: 'sales', label: 'Historial de Ventas', desc: 'Consulta de ventas realizadas y órdenes facturadas', icon: ShoppingBag },
   ];
 
   const allChecked = Object.values(permissions).every((v) => v);

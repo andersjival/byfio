@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+
+### Versión 4.17.3 - Erradicación Total de Botones de Mención y Migas de Pan (TreeNavigation)
+- [x] **Eliminación Definitiva de Etiquetas de Ubicación ([TreeNavigation.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/TreeNavigation.tsx)):**
+  - Desactivado por completo el componente de mención y migas de pan (⭐ by.fio / página actual) en toda la aplicación.
+  - Erradicadas las etiquetas de ubicación que aparecían en la parte superior al navegar en Catálogo, Tienda, Talleres y Detalle de Talleres.
+  - Las vistas mantienen una cabecera limpia, despejada y enfocada directamente en el contenido sin duplicidad de mención.
 ### Versión 4.17.2 - Ocultamiento de Acceso a Propuesta en Navegación Pública del Home
 - [x] **Privatización de Acceso a Propuesta ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Removidos los botones "Propuesta" y "📋 Propuesta Partner" de la barra de navegación pública de escritorio y menú móvil en la página de inicio (home).

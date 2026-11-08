@@ -181,16 +181,16 @@ export const App: React.FC = () => {
   };
 
   const handleSelectAdminTab = (tab: AdminTabType) => {
-    if (tab !== 'hub' && !isModuleEnabled(tab)) {
+    if (tab !== 'hub' && (!isModuleEnabled(tab) || !hasPermission(tab))) {
       navigate('admin', 'hub');
       return;
     }
     navigate('admin', tab);
   };
 
-  // Protección: Si el módulo activo fue desactivado por Superadmin, volver al Hub o a Home de inmediato
+  // Protección: Si el módulo activo fue desactivado por Superadmin o revocado al colaborador, volver al Hub de inmediato
   useEffect(() => {
-    if (currentRoute === 'admin' && adminTab !== 'hub' && !isModuleEnabled(adminTab)) {
+    if (currentRoute === 'admin' && adminTab !== 'hub' && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
       setAdminTab('hub');
     } else if ((currentRoute === 'workshops' || currentRoute === 'workshop-detail') && !isModuleEnabled('workshops')) {
       navigate('home');
@@ -203,7 +203,7 @@ export const App: React.FC = () => {
     } else if (currentRoute === 'metricas' && !isModuleEnabled('metricas')) {
       navigate('admin');
     }
-  }, [currentRoute, adminTab, isModuleEnabled]);
+  }, [currentRoute, adminTab, isModuleEnabled, hasPermission]);
 
   // Redirigir a portada si se cierra sesión estando en admin para que la cortina cubra la tienda limpia
   useEffect(() => {

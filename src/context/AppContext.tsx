@@ -746,6 +746,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  const broadcastAndSaveProfiles = (updated: UserProfile[]) => {
+    const sanitized = deepSanitize(updated);
+    setUserProfiles(sanitized);
+    try {
+      localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(sanitized));
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        userProfiles: sanitized,
+      });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('byfio_user_profiles_updated', { detail: sanitized })
+        );
+      }
+    } catch {}
+    syncProfilesToCloud(sanitized);
+  };
+
   const addUserProfile = (profileData: Omit<UserProfile, 'id' | 'createdAt'>) => {
     const newProfile: UserProfile = {
       ...profileData,
@@ -755,9 +773,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: new Date().toISOString(),
     };
     const updated = [newProfile, ...userProfiles];
-    setUserProfiles(updated);
-    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
-    syncProfilesToCloud(updated);
+    broadcastAndSaveProfiles(updated);
     return newProfile;
   };
 
@@ -771,23 +787,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         pin: updates.pin ? updates.pin.trim().slice(0, 4) : p.pin,
       };
     });
-    setUserProfiles(updated);
-    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
-    syncProfilesToCloud(updated);
+    broadcastAndSaveProfiles(updated);
   };
 
   const deleteUserProfile = (id: string) => {
     const updated = userProfiles.filter((p) => p.id !== id);
-    setUserProfiles(updated);
-    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
-    syncProfilesToCloud(updated);
+    broadcastAndSaveProfiles(updated);
   };
 
   const toggleUserProfileStatus = (id: string) => {
     const updated = userProfiles.map((p) => (p.id === id ? { ...p, isActive: !p.isActive } : p));
-    setUserProfiles(updated);
-    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(updated));
-    syncProfilesToCloud(updated);
+    broadcastAndSaveProfiles(updated);
   };
 
   const [customers, setCustomers] = useState<Customer[]>(() => {
@@ -1582,7 +1592,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!currentUser) return false;
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
     if (tab === 'hub') return true;
+
+    // Sincronización dinámica instantánea con el perfil activo en userProfiles
+    const matchingProfile = userProfiles.find(
+      (p) => (p.id && currentUser.id && p.id === currentUser.id) || p.name.toUpperCase() === currentUser.name.toUpperCase()
+    );
+    if (matchingProfile) {
+      if (!matchingProfile.isActive) return false;
+      const livePerms = matchingProfile.permissions as Record<string, boolean | undefined> | undefined;
+      if (tab === 'sinpe') {
+        return Boolean(livePerms?.sinpe ?? livePerms?.reports);
+      }
+      if (tab === 'suppliers' || tab === 'sales') {
+        if (currentUser.role === 'staff' && livePerms) {
+          return livePerms[tab] !== false;
+        }
+        return true;
+      }
+      if (currentUser.role === 'staff' && livePerms) {
+        return Boolean(livePerms[tab]);
+      }
+    }
+
     const perms = currentUser.permissions as Record<string, boolean | undefined> | undefined;
+    if (tab === 'sinpe') {
+      return Boolean(perms?.sinpe ?? perms?.reports);
+    }
     if (tab === 'suppliers' || tab === 'sales') {
       if (currentUser.role === 'staff' && perms) {
         return perms[tab] !== false;
@@ -1876,6 +1911,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsLogoutTransitionOpen(true);
   };
 
+  // Sincronización inmediata online de la sesión del colaborador ante cambios en userProfiles
+  useEffect(() => {
+    if (!currentUser || currentUser.role !== 'staff') return;
+    const matchingProfile = userProfiles.find(
+      (p) => (p.id && currentUser.id && p.id === currentUser.id) || p.name.toUpperCase() === currentUser.name.toUpperCase()
+    );
+
+    // Si el perfil fue desactivado o eliminado por el administrador, expulsar inmediatamente
+    if (!matchingProfile || !matchingProfile.isActive) {
+      logoutUser();
+      return;
+    }
+
+    // Si los permisos o datos fueron modificados, sincronizar currentUser en memoria y localStorage al instante
+    const permsChanged = JSON.stringify(currentUser.permissions) !== JSON.stringify(matchingProfile.permissions);
+    const nameChanged = currentUser.name !== matchingProfile.name;
+    const roleChanged = currentUser.role !== matchingProfile.role;
+
+    if (permsChanged || nameChanged || roleChanged) {
+      const updatedUser: AuthUser = {
+        ...currentUser,
+        name: matchingProfile.name,
+        role: matchingProfile.role,
+        permissions: matchingProfile.permissions,
+        isMasterAdmin: matchingProfile.role === 'admin',
+      };
+      setCurrentUser(updatedUser);
+      try {
+        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(updatedUser));
+      } catch {}
+    }
+  }, [userProfiles, currentUser]);
+
   const closeLogoutTransition = () => {
     setIsLogoutTransitionOpen(false);
   };
@@ -1961,6 +2029,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(event.data.proposalAcceptances)) {
           setProposalAcceptances(deepSanitize(event.data.proposalAcceptances));
         }
+        if (Array.isArray(event.data.userProfiles)) {
+          const cleanProfiles: UserProfile[] = deepSanitize(event.data.userProfiles);
+          setUserProfiles(cleanProfiles);
+          try {
+            localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(cleanProfiles));
+          } catch {}
+        }
       }
     };
 
@@ -1981,6 +2056,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           }
         } catch {}
       }
+      if (e.key === STORAGE_KEYS.USER_PROFILES && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) {
+            setUserProfiles(deepSanitize(parsed));
+          }
+        } catch {}
+      }
     };
 
     const handleLocalUpdate = (e: any) => {
@@ -1989,14 +2072,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     };
 
+    const handleLocalProfilesUpdate = (e: any) => {
+      if (Array.isArray(e.detail)) {
+        setUserProfiles(deepSanitize(e.detail));
+      }
+    };
+
     syncChannel.addEventListener('message', handleSync);
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('byfio_superadmin_modules_updated', handleLocalUpdate);
+    window.addEventListener('byfio_user_profiles_updated', handleLocalProfilesUpdate);
 
     return () => {
       syncChannel.removeEventListener('message', handleSync);
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('byfio_superadmin_modules_updated', handleLocalUpdate);
+      window.removeEventListener('byfio_user_profiles_updated', handleLocalProfilesUpdate);
     };
   }, []);
 
@@ -2259,14 +2350,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .catch(() => {});
     };
 
-    // Carga de perfiles de usuario garantizando los 3 perfiles maestros
+    // Carga de perfiles de usuario garantizando el perfil maestro prof-admin
     const handleLoadedProfiles = (data: any) => {
       if (data && Array.isArray(data.profiles) && data.profiles.length > 0) {
         const cloudProfiles: UserProfile[] = deepSanitize(data.profiles);
         setUserProfiles((prev) => {
           const map = new Map<string, UserProfile>();
-          DEFAULT_USER_PROFILES.forEach((p) => map.set(p.id, deepSanitize(p)));
-          prev.forEach((p) => map.set(p.id, deepSanitize(p)));
+          DEFAULT_USER_PROFILES.forEach((p) => {
+            if (p.id === 'prof-admin') map.set(p.id, deepSanitize(p));
+          });
           cloudProfiles.forEach((p) => map.set(p.id, deepSanitize(p)));
           const merged = deepSanitize(Array.from(map.values()));
           if (JSON.stringify(prev) !== JSON.stringify(merged)) {
@@ -2283,7 +2375,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Carga inicial inmediata
     fetchLatestData();
 
-    // Temporizador inteligente: 8s únicamente si la pestaña está activa y visible
+    // Temporizador inteligente: 4s únicamente si la pestaña está activa y visible
     let pollingTimer: ReturnType<typeof setInterval> | null = null;
 
     const startPolling = () => {
@@ -2292,7 +2384,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (!document.hidden) {
             fetchLatestData();
           }
-        }, 8000);
+        }, 4000);
       }
     };
 
