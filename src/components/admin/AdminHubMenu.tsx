@@ -46,6 +46,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'orders' as AdminTabType,
       title: 'Cola de Pedidos',
+      desc: 'Cola de pedidos, escaneo de picking y empaque',
       badge: pendingOrders.length > 0 ? `${pendingOrders.length} por alistar` : 'Al día',
       badgeClass: pendingOrders.length > 0 ? 'bg-fio-pink text-white animate-pulse' : 'bg-emerald-50 text-emerald-700',
       icon: QrCode,
@@ -54,6 +55,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'billing' as AdminTabType,
       title: 'Facturación Rápida',
+      desc: 'Búsqueda de órdenes y facturas por número',
       badge: 'Buscar por # orden',
       badgeClass: 'bg-fio-100 text-fio-800',
       icon: Receipt,
@@ -62,6 +64,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'inventory' as AdminTabType,
       title: 'Inventario & QR',
+      desc: 'Catálogo de insumos, stock y etiquetas QR',
       badge: criticalProducts.length > 0 ? `${criticalProducts.length} por reponer` : `${products.length} productos`,
       badgeClass: criticalProducts.length > 0 ? 'bg-red-500 text-white' : 'bg-sky-50 text-sky-700',
       icon: Boxes,
@@ -70,6 +73,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'reports' as AdminTabType,
       title: 'Caja & Reportería',
+      desc: 'Arqueo diario, balances y cobros del día',
       badge: 'Cierre diario & arqueo',
       badgeClass: 'bg-amber-50 text-amber-800',
       icon: Landmark,
@@ -78,6 +82,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'sinpe' as AdminTabType,
       title: 'Pagos y Recepción SINPE Móvil',
+      desc: 'Recepción, validación de comprobantes y auditoría SINPE',
       badge: sinpeTransactions.length > 0 ? `${sinpeTransactions.length} verificados` : 'Recepción SINPE',
       badgeClass: sinpeTransactions.length > 0 ? 'bg-purple-100 text-purple-900 font-bold' : 'bg-slate-100 text-slate-700',
       icon: Landmark,
@@ -86,6 +91,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'workshops' as AdminTabType,
       title: 'Talleres & Alumnos',
+      desc: 'Inscripciones, cupos y lista de participantes',
       badge: `${workshops.length} programados`,
       badgeClass: 'bg-pink-50 text-fio-pink',
       icon: GraduationCap,
@@ -94,6 +100,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'pricing' as AdminTabType,
       title: 'Precios & Stickers',
+      desc: 'Lista oficial y editor de tarifas de stickers',
       badge: 'Editor de lista',
       badgeClass: 'bg-amber-100 text-amber-900',
       icon: Tag,
@@ -102,6 +109,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'users' as AdminTabType,
       title: 'Perfiles de Usuarios',
+      desc: 'Crear, editar o revocar accesos a otros usuarios',
       badge: `${activeProfiles.length} activos`,
       badgeClass: 'bg-purple-100 text-purple-900',
       icon: Users,
@@ -110,6 +118,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'customers' as AdminTabType,
       title: 'Directorio de Clientes',
+      desc: 'Registro de clientes y fichas para pedidos',
       badge: `${customers.length} registrados`,
       badgeClass: 'bg-emerald-100 text-emerald-900',
       icon: UserCheck,
@@ -118,6 +127,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'agenda' as AdminTabType,
       title: 'Agenda & Tareas',
+      desc: 'Acceso al organizador del taller y calendario',
       badge: `${agendaItems.filter((i) => i.status === 'pending').length} pendientes`,
       badgeClass: 'bg-purple-100 text-purple-900 font-bold',
       icon: Calendar,
@@ -126,6 +136,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'suppliers' as AdminTabType,
       title: 'Pedidos a Proveedor',
+      desc: 'Órdenes de compra, borradores e historial con proveedores',
       badge: `${supplierOrders.filter((o: SupplierOrder) => o.status === 'draft').length} por pedir • ${supplierOrders.filter((o: SupplierOrder) => o.status === 'ordered').length} realizados`,
       badgeClass: 'bg-amber-100 text-amber-900 font-bold',
       icon: Truck,
@@ -134,6 +145,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'sales' as AdminTabType,
       title: 'Historial de Ventas',
+      desc: 'Consulta de ventas realizadas y órdenes facturadas',
       badge: `${orders.length} ventas`,
       badgeClass: 'bg-emerald-100 text-emerald-900 font-bold',
       icon: ShoppingBag,
@@ -185,11 +197,15 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                   <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-pink group-hover:translate-x-0.5 transition-all" />
                 </div>
 
-                {/* Título & Badge Limpio (Sin Párrafos Relleno) */}
-                <div className="space-y-1.5">
+                {/* Título, Descripción Unificada & Badge */}
+                <div className="space-y-1">
                   <h3 className="font-bubble font-bold text-xs sm:text-sm text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
                     {item.title}
                   </h3>
+
+                  <p className="text-[10px] text-slate-500 font-sans line-clamp-1 group-hover:text-slate-700" title={item.desc}>
+                    {item.desc}
+                  </p>
 
                   <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${item.badgeClass}`}>
                     {item.badge}

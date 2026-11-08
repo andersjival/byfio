@@ -196,13 +196,13 @@ export const UserProfilesSection: React.FC = () => {
   };
 
   const permissionModules: { key: keyof UserPermissions; label: string; desc: string; icon: any }[] = [
-    { key: 'orders', label: 'Pedidos & Alisto QR', desc: 'Cola de pedidos, escaneo de picking y empaque', icon: QrCode },
+    { key: 'orders', label: 'Cola de Pedidos', desc: 'Cola de pedidos, escaneo de picking y empaque', icon: QrCode },
     { key: 'billing', label: 'Facturación Rápida', desc: 'Búsqueda de órdenes y facturas por número', icon: Receipt },
     { key: 'inventory', label: 'Inventario & QR', desc: 'Catálogo de insumos, stock y etiquetas QR', icon: Boxes },
     { key: 'reports', label: 'Caja & Reportería', desc: 'Arqueo diario, balances y cobros del día', icon: Landmark },
     { key: 'workshops', label: 'Talleres & Alumnos', desc: 'Inscripciones, cupos y lista de participantes', icon: GraduationCap },
     { key: 'pricing', label: 'Precios & Stickers', desc: 'Lista oficial y editor de tarifas de stickers', icon: Tag },
-    { key: 'users', label: 'Gestión de Perfiles', desc: 'Crear, editar o revocar accesos a otros usuarios', icon: Users },
+    { key: 'users', label: 'Perfiles de Usuarios', desc: 'Crear, editar o revocar accesos a otros usuarios', icon: Users },
     { key: 'customers', label: 'Directorio de Clientes', desc: 'Registro de clientes y fichas para pedidos', icon: UserCheck },
     { key: 'agenda', label: 'Agenda & Tareas', desc: 'Acceso al organizador del taller y calendario', icon: Calendar },
     { key: 'suppliers', label: 'Pedidos a Proveedor', desc: 'Órdenes de compra, borradores e historial con proveedores', icon: Truck },
@@ -391,6 +391,7 @@ export const UserProfilesSection: React.FC = () => {
                       return (
                         <span
                           key={mod.key}
+                          title={`${mod.label}: ${mod.desc}`}
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold transition-all border ${
                             hasIt
                               ? 'bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950/80 dark:text-purple-200 dark:border-purple-500/50 shadow-2xs'
