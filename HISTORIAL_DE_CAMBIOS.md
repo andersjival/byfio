@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.17.2 - Ocultamiento de Acceso a Propuesta en Navegación Pública del Home
+- [x] **Privatización de Acceso a Propuesta ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Removidos los botones "Propuesta" y "📋 Propuesta Partner" de la barra de navegación pública de escritorio y menú móvil en la página de inicio (home).
+  - La propuesta comercial permanece preservada para uso interno en el panel de Administración ([AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)), panel de Superadmin y mediante enlace directo (`/propuesta`).
+
 ### Versión 4.17.1 - Notificaciones Push y Alerta Sonora en Celular para Pedidos en Tiempo Real
 - [x] **Sistema de Notificaciones Push Nativas y Alerta Sonora ([pushNotifications.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/pushNotifications.ts), [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js)):**
   - Implementada integración nativa con la Web Push API y Service Worker para teléfonos móviles (Android Chrome e iOS Safari PWA).
