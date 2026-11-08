@@ -14,7 +14,8 @@ export type AppRoute =
   | 'metricas'
   | 'propuesta'
   | 'superadmin'
-  | 'pedidos-mobile';
+  | 'pedidos-mobile'
+  | 'pwa-install';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 
@@ -206,6 +207,8 @@ export interface Order {
   createdAt: string;
   packedAt?: string;
   deliveredAt?: string;
+  pickedBy?: string;
+  pickedAt?: string;
   notes?: string;
   customFields?: { [key: string]: string };
 }

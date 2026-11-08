@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star, GraduationCap, Trash2 } from 'lucide-react';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star, GraduationCap, Trash2, UserCheck } from 'lucide-react';
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
 
 export const OrdersQueue: React.FC = () => {
@@ -379,6 +379,17 @@ export const OrdersQueue: React.FC = () => {
                       <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                       <span>Pagado por {order.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia'} (Verificado)</span>
                     </span>
+                    {order.pickedBy && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1 shadow-xs">
+                        <UserCheck className="w-3 h-3 text-fio-pink" />
+                        <span>Alistó: <strong>{order.pickedBy}</strong></span>
+                        {order.pickedAt && (
+                          <span className="text-[9px] text-purple-600 font-mono font-normal">
+                            ({new Date(order.pickedAt).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })})
+                          </span>
+                        )}
+                      </span>
+                    )}
                     <span className="text-xs text-gray-400 flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
                       {formatShortDate(order.createdAt)}

@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import {
   X, CheckCircle, AlertTriangle, MapPin, Heart, Scan, QrCode,
   ClipboardList, Printer, FileCheck, Check, LogOut, FileText, Package,
-  Edit3
+  Edit3, UserCheck
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -497,6 +497,12 @@ export const GuidedPickingModal: React.FC = () => {
                 <h3 className="font-bubble font-bold text-lg sm:text-2xl text-fio-900 leading-snug">
                   ¡Alisto del Pedido {currentOrder.orderNumber} Finalizado!
                 </h3>
+                {currentOrder.pickedBy && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 text-purple-900 border border-purple-300 text-xs font-bubble font-bold my-1 shadow-xs">
+                    <UserCheck className="w-3.5 h-3.5 text-fio-pink" />
+                    <span>Alistado por: <strong>{currentOrder.pickedBy}</strong></span>
+                  </div>
+                )}
                 <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mt-1">
                   {missingCount === 0
                     ? `Se alistaron exitosamente los ${pickedCount} producto(s). El pedido pasó a la sección de Empaque.`

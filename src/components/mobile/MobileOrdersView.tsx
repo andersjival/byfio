@@ -7,7 +7,7 @@ import {
   Bell, BellRing, Volume2, Smartphone,
   CreditCard, Shield, ShieldCheck, KeyRound, LogOut, RefreshCw,
   Store, Boxes, ChevronDown, ChevronUp, Copy, MessageCircle,
-  Check, Truck, Tag, Calendar, AlertCircle, Sparkles, X, User
+  Check, Truck, Tag, Calendar, AlertCircle, Sparkles, X, User, UserCheck
 } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import {
@@ -485,6 +485,21 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                     </div>
                   </div>
                 </div>
+
+                {/* Indicador del Perfil que Alistó el Pedido */}
+                {order.pickedBy && (
+                  <div className="px-4 py-1.5 bg-purple-950/60 border-b border-purple-800/40 flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-1.5 text-purple-300 font-bubble font-bold text-[11px]">
+                      <UserCheck className="w-3.5 h-3.5 text-fio-pink" />
+                      <span>Alistado por: <strong className="text-white underline decoration-fio-pink">{order.pickedBy}</strong></span>
+                    </span>
+                    {order.pickedAt && (
+                      <span className="text-[10px] text-purple-400 font-mono">
+                        {new Date(order.pickedAt).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
+                )}
 
                 {/* Barra de Progreso de Alisto */}
                 <div className="px-4 py-2 bg-slate-950/40 border-b border-slate-800/40 flex items-center justify-between gap-3 text-xs">

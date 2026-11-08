@@ -26,6 +26,30 @@ export const parseRouteFromLocation = (): RouteInfo => {
     ''
   ).toLowerCase();
 
+    // 0a. Portal de Instalación PWA y Onboarding con PIN (/instalar, /instalar-app, /app, /descargar, /pwa)
+  if (
+    path === '/app' ||
+    path.startsWith('/app/') ||
+    path === '/instalar' ||
+    path.startsWith('/instalar/') ||
+    path === '/instalar-app' ||
+    path.startsWith('/instalar-app/') ||
+    path === '/descargar' ||
+    path.startsWith('/descargar/') ||
+    path === '/pwa' ||
+    path.startsWith('/pwa/') ||
+    hash.includes('instalar') ||
+    hash.includes('descargar') ||
+    hash.includes('app-install') ||
+    seccionParam === 'instalar' ||
+    seccionParam === 'instalar-app' ||
+    seccionParam === 'descargar' ||
+    seccionParam === 'pwa' ||
+    searchParams.has('install')
+  ) {
+    return { route: 'pwa-install', adminTab: 'hub' };
+  }
+
   // 0. Superadmin Portal Maestro Exclusivo (/panel/superadmin o /superadmin)
   if (
     path.includes('/panel/superadmin') ||

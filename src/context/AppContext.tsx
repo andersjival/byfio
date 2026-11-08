@@ -233,15 +233,15 @@ interface AppContextType {
   pickingMode: 'barcode' | 'manual';
   setPickingMode: (mode: 'barcode' | 'manual') => void;
   startPicking: (orderId: string, mode?: 'barcode' | 'manual') => void;
-  markItemPicked: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
+  markItemPicked: (orderId: string, itemSku: string, pickerName?: string) => { isComplete: boolean; error?: string };
   unmarkItemPicked: (orderId: string, itemSku: string) => void;
-  markAllItemsPicked: (orderId: string) => { isComplete: boolean };
+  markAllItemsPicked: (orderId: string, pickerName?: string) => { isComplete: boolean };
   markItemMissing: (orderId: string, itemSku: string) => { isComplete: boolean; error?: string };
   updateOrderItemQuantity: (orderId: string, itemSku: string, newQuantity: number) => { success: boolean; error?: string };
   missingInventoryReports: InventoryMissingReport[];
   resolveMissingReport: (reportId: string) => void;
   deleteMissingReport: (reportId: string) => void;
-  updateOrderStatus: (orderId: string, newStatus: OrderStatus) => void;
+  updateOrderStatus: (orderId: string, newStatus: OrderStatus, pickerName?: string) => void;
   inventoryMode: InventoryMode;
   setInventoryMode: (mode: InventoryMode) => void;
   toggleProductAvailability: (productId: string) => void;

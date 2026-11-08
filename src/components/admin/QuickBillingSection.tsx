@@ -1171,6 +1171,11 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                     <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">
                       Datos Cargados Correctamente ✅
                     </span>
+                    {selectedExistingOrder.pickedBy && (
+                      <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-purple-100 text-purple-900 border border-purple-300">
+                        📦 Alistado por: <strong>{selectedExistingOrder.pickedBy}</strong>
+                      </span>
+                    )}
                   </div>
                   <h3 className="font-bubble font-bold text-xl text-gray-800 dark:text-white mt-2">
                     {selectedExistingOrder.customerName}

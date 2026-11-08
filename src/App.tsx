@@ -18,6 +18,7 @@ import { StudioScheduleModal } from './components/common/StudioScheduleModal';
 import { WebIntroOverlay } from './components/common/WebIntroOverlay';
 import { AppEntryGatewayModal } from './components/common/AppEntryGatewayModal';
 import { MobileOrdersView } from './components/mobile/MobileOrdersView';
+import { PwaInstallPage } from './components/pwa/PwaInstallPage';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { NewOrderStarAlert } from './components/common/NewOrderStarAlert';
 import { LoginModal } from './components/common/LoginModal';
@@ -149,6 +150,7 @@ export const App: React.FC = () => {
     else if (newRoute === 'catalogo') targetPath = '/catalogo';
     else if (newRoute === 'store') targetPath = '/tienda';
     else if (newRoute === 'pedidos-mobile') targetPath = '/pedidos';
+    else if (newRoute === 'pwa-install') targetPath = '/instalar-app';
     else if (newRoute === 'workshops') targetPath = '/talleres';
     else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
     else if (newRoute === 'admin') {
@@ -283,6 +285,14 @@ export const App: React.FC = () => {
     return (
       <ErrorBoundary fallbackTitle="Inconveniente al cargar la vista de pedidos">
         <MobileOrdersView onNavigate={navigate} />
+      </ErrorBoundary>
+    );
+  }
+
+  if (currentRoute === 'pwa-install') {
+    return (
+      <ErrorBoundary fallbackTitle="Inconveniente al cargar el portal de instalación">
+        <PwaInstallPage onNavigate={navigate} onSelectAdminTab={setAdminTab} />
       </ErrorBoundary>
     );
   }

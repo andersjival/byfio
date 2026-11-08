@@ -87,6 +87,8 @@ const mapRowToOrder = (r: OrderDbRow) => {
     shippingFee: r.shipping_fee,
     total: r.total,
     notes: r.notes ? healString(r.notes) : undefined,
+    pickedBy: r.picked_by ? healString(r.picked_by) : undefined,
+    pickedAt: r.picked_at ? normalizeIsoDate(r.picked_at) : undefined,
     packedAt: r.packed_at ? normalizeIsoDate(r.packed_at) : undefined,
     deliveredAt: r.delivered_at ? normalizeIsoDate(r.delivered_at) : undefined,
     createdAt: normalizeIsoDate(r.created_at),
@@ -210,7 +212,11 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
 export const onRequestPut = async (context: { request: Request; env: Env }) => {
   try {
-    const { id, orderStatus, packedAt, deliveredAt, items, subtotal, total, notes } = await context.request.json() as any;
+    const { id, orderStatus, packedAt, deliveredAt, items, subtotal, total, notes, pickedBy, pickedAt } = await context.request.json() as any;
+    if (context.env.DB) {
+      try { await context.env.DB.prepare('ALTER TABLE orders ADD COLUMN picked_by TEXT').run(); } catch {}
+      try { await context.env.DB.prepare('ALTER TABLE orders ADD COLUMN picked_at TEXT').run(); } catch {}
+    }
 
     if (context.env.DB && id) {
       // Blindaje estricto de backend: No permitir avanzar a packing, packed o delivered sin 100% alisto

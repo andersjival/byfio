@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.17.9 - Trazabilidad de Alisto: Registro y Visualización del Nombre del Perfil que Alistó el Pedido
+- [x] **Persistencia y Trazabilidad del Perfil de Alisto ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [types/index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts), [orders.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
+  - Incorporados los campos `pickedBy` y `pickedAt` en el modelo de datos del pedido y en la base de datos Cloudflare D1.
+  - Al completar el alisto (manual, escáner o masivo), el sistema captura automáticamente el nombre del perfil activo del colaborador (`currentUser.name`) o administrador y la marca de tiempo exacta.
+- [x] **Visualización Omnipresente en Paneles ([OrdersQueue.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx), [GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx), [QuickBillingSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx)):**
+  - **Cola de Pedidos (PC):** Badge destacado *"Alistó: [Nombre]"* con hora de preparación visible en todas las etapas (Alisto, En Empaque, Empacados y Terminados).
+  - **App Móvil de Pedidos (Celular):** Franja superior con ícono y nombre subrayado del colaborador responsable del alisto.
+  - **Modal de Alisto Guiado y Facturación Rápida:** Resumen de cierre indicando formalmente el colaborador que procesó la orden.
+
 ### Versión 4.17.8 - Botón Desactivar Módulo Completo y Modo Ocultar Nombre con Funcionalidades Activas en Superadmin
 - [x] **Control Dual de Módulos en Superadmin ([SuperadminModuleCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminModuleCard.tsx), [SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):
   - Añadido el botón Desactivar Todo el Módulo: apaga por completo el módulo y desmarca todas sus funcionalidades en 1 clic (sin ningún check, ni el módulo ni las funcionalidades operan).
@@ -25,6 +34,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
   - Actualizada isFeatureEnabled para responder directamente al estado individual de cada check, permitiendo que funciones en segundo plano permanezcan habilitadas cuando el módulo está oculto en la vista del administrador.
 - [x] **Botón Guardar Cambios con Confirmación en Tiempo Real ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):
   - Añadido botón destacado de guardado con feedback visual y sincronización inmediata hacia Cloudflare D1.
+
+### Versión 4.17.8 - Portal Especializado de Descarga PWA & Onboarding con Código PIN para Enlaces Compartidos
+- [x] **Flujo Guiado de Descarga & PIN ([PwaInstallPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/pwa/PwaInstallPage.tsx)):**
+  - Desarrollada la vista dedicada /instalar-app que recibe al usuario al abrir un enlace compartido de cualquier aplicación PWA (Administradora, Alisto, Empaque, POS o Agenda).
+  - **Paso 1 (Descarga / Instalación):** Guía al usuario según su dispositivo para descargar e instalar la app en su pantalla de inicio (promptInstall con 1 clic en Android/Chrome/Edge, y guía de 3 pasos en iOS Safari).
+  - **Paso 2 (Código de Acceso PIN):** Tras la descarga (o al abrir desde el icono instalado en modo standalone), presenta el teclado numérico táctil y el selector de perfil para ingresar el PIN de 4 dígitos y desbloquear el acceso directo a la aplicación.
+- [x] **Enrutamiento y Sincronización de Enlaces Compartidos ([routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts), [PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Los botones de Copiar Enlace, Compartir por WhatsApp y los códigos QR del Centro PWA generan automáticamente enlaces /instalar-app?app=[id], asegurando que cada colaborador pase por el flujo de instalación y autenticación con PIN.
 
 ### Versión 4.17.7 - Homologación Exacta de Nombres y Descripciones entre Panel Principal y Permisos de Usuarios
 - [x] **Unificación Total de Nombres y Descripciones ([AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [UserProfilesSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx)):

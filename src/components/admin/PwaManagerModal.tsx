@@ -46,7 +46,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://byfiocr.pages.dev';
 
   const adminPcUrl = `${origin}/admin`;
-  const adminMobileUrl = `${origin}/admin`;
+  const adminMobileUrl = `${origin}/instalar-app?app=admin`;
 
   const copyToClipboard = (text: string, key: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -101,7 +101,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
       icon: Boxes,
       deviceRecommend: 'mobile',
       deviceRecommendText: '📱 Celular / Tablet de Bodega',
-      shareMessage: '¡Hola! Te comparto tu acceso a la App de Alisto de Pedidos de By.Fio. Ábrela en tu celular e instálala en tu pantalla de inicio:',
+      shareMessage: '¡Hola! Te comparto tu acceso a la App de Alisto de Pedidos de By.Fio. Ábrela en tu celular para descargarla e ingresar con tu PIN:',
     },
     {
       id: 'empaque',
@@ -113,7 +113,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
       icon: Smartphone,
       deviceRecommend: 'all',
       deviceRecommendText: '📱 Celular o 💻 Computadora',
-      shareMessage: '¡Hola! Te comparto tu acceso a la App de Empaque y Despacho de By.Fio:',
+      shareMessage: '¡Hola! Te comparto tu acceso a la App de Empaque de By.Fio. Ábrela en tu celular para descargarla e ingresar con tu PIN:',
     },
     {
       id: 'pos',
@@ -125,7 +125,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
       icon: Receipt,
       deviceRecommend: 'tablet',
       deviceRecommendText: '💻 Tablet o Laptop Mostrador',
-      shareMessage: '¡Hola! Te comparto el acceso al módulo de Facturación Rápida POS de By.Fio:',
+      shareMessage: '¡Hola! Te comparto tu acceso a la App POS de By.Fio. Ábrela para descargarla e ingresar con tu PIN:',
     },
     {
       id: 'agenda',
@@ -137,7 +137,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
       icon: Calendar,
       deviceRecommend: 'all',
       deviceRecommendText: '📱 Celular / 💻 PC',
-      shareMessage: '¡Hola! Te comparto tu acceso a la Agenda del Taller de By.Fio:',
+      shareMessage: '¡Hola! Te comparto tu acceso a la App Agenda de By.Fio. Ábrela para descargarla e ingresar con tu PIN:',
     },
   ];
 
@@ -397,7 +397,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                         onClick={() =>
                           shareViaWebShare(
                             'App Administradora By.Fio',
-                            'Aquí tienes tu acceso directo a la app administradora de By.Fio:',
+                            '¡Hola! Aquí tienes tu acceso para descargar la App Administradora de By.Fio en tu celular e ingresar con tu PIN:',
                             adminMobileUrl,
                             'share-admin-mobile'
                           )
@@ -437,7 +437,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {collaboratorApps.map((app) => {
                   const AppIcon = app.icon;
-                  const fullUrl = `${origin}${app.path}`;
+                  const fullUrl = `${origin}/instalar-app?app=${app.id}`;
 
                   return (
                     <div
@@ -475,7 +475,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                         </p>
 
                         <div className="text-[10px] font-mono text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-2.5 py-1 rounded-lg truncate">
-                          {app.deviceRecommendText} • {app.path}
+                          {app.deviceRecommendText} • Descarga + PIN
                         </div>
                       </div>
 
