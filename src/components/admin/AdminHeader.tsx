@@ -5,7 +5,7 @@ import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
 import {
   Package, AlertTriangle, ShoppingCart, RefreshCw,
-  FileText, Palette, DollarSign, Shield, Settings, Smartphone
+  FileText, Palette, DollarSign, Settings, Smartphone
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -54,22 +54,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
 
         {/* Acciones Rápidas & Botón Discreto de Personalización Visual */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Botón de Acceso Superadmin (Solo Admin y Superadmin) */}
-          {isAdminOrSuperadmin && (
-            <button
-              type="button"
-              onClick={() => {
-                if (onNavigate) onNavigate('superadmin');
-                else window.location.href = '/panel/superadmin';
-              }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bubble font-bold border border-slate-700 shadow-xs transition-all active:scale-95 cursor-pointer"
-              title="Abrir panel maestro de Superadmin (Activar/Desactivar Módulos)"
-            >
-              <Shield className="w-3.5 h-3.5 text-pink-400" />
-              <span>Superadmin</span>
-            </button>
-          )}
-
           {/* Botón de Propuesta Oficial para el Dueño (Solo Admin y Superadmin) */}
           {isAdminOrSuperadmin && (
             <button

@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.18.1 - Ocultamiento del Botón Superadmin en el Panel de Administración de la PWA
+- [x] **Privatización Total del Acceso a Superadmin ([AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):
+  - Removido el botón Superadmin de la barra de acciones del panel de control de administración y PWA.
+  - El administrador del comercio y colaboradores no visualizan ningún enlace al gestor maestro de Superadmin en su panel de trabajo.
+  - El acceso a Superadmin se mantiene estrictamente reservado para desarrolladores vía URL directa y credenciales maestras de seguridad.
+
 ### Versión 4.18.0 - Corrección de Fallo Fatal al Escanear Producto en PWA & Soporte Integral de Escáner y Modificación en Móvil
 - [x] **Erradicación del Error "Inconveniente al cargar el portal de instalación" ([PwaInstallPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/pwa/PwaInstallPage.tsx)):**
   - Resuelto el `TypeError: Cannot read properties of undefined (reading 'icon')` derivado de la clave obsoleta `'alisto'` en la inicialización de estado tras la unificación del ecosistema PWA.
