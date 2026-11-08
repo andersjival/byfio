@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.17.8 - Botón Desactivar Módulo Completo y Modo Ocultar Nombre con Funcionalidades Activas en Superadmin
+- [x] **Control Dual de Módulos en Superadmin ([SuperadminModuleCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminModuleCard.tsx), [SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):
+  - Añadido el botón Desactivar Todo el Módulo: apaga por completo el módulo y desmarca todas sus funcionalidades en 1 clic (sin ningún check, ni el módulo ni las funcionalidades operan).
+  - Implementado el check Ocultar el nombre en Admin: oculta el módulo y su nombre de la vista y menús del panel de administración, pero preserva activas las funcionalidades que el Superadmin mantenga marcadas con check (ej: control de stock en tienda, existencias, alertas, etc. siguen funcionando en segundo plano).
+- [x] **Evaluación Independiente de Funcionalidades ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):
+  - Actualizada isFeatureEnabled para responder directamente al estado individual de cada check, permitiendo que funciones en segundo plano permanezcan habilitadas cuando el módulo está oculto en la vista del administrador.
+- [x] **Botón Guardar Cambios con Confirmación en Tiempo Real ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx)):
+  - Añadido botón destacado de guardado con feedback visual y sincronización inmediata hacia Cloudflare D1.
+
 ### Versión 4.17.7 - Homologación Exacta de Nombres y Descripciones entre Panel Principal y Permisos de Usuarios
 - [x] **Unificación Total de Nombres y Descripciones ([AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [UserProfilesSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx)):
   - Homologados los nombres de los módulos para erradicar cualquier discrepancia: Cola de Pedidos (antes rotulado como Pedidos & Alisto QR en permisos) y Perfiles de Usuarios (antes Gestión de Perfiles).

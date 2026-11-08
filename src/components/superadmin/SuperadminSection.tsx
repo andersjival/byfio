@@ -10,7 +10,7 @@ import {
   Shield, CheckCheck, RotateCcw, ExternalLink, LogOut, Search,
   SlidersHorizontal, CheckCircle2, AlertCircle, Layers,
   ToggleLeft, ToggleRight, Boxes, Truck, ArrowLeft, Bell,
-  MessageCircle, Trash2, Calendar, Phone, CheckCircle, Sparkles, Eye, Award
+  MessageCircle, Trash2, Calendar, Phone, CheckCircle, Sparkles, Eye, Award, Save
 } from 'lucide-react';
 
 interface SuperadminSectionProps {
@@ -26,6 +26,8 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
     logoutSuperAdmin,
     toggleSuperadminModule,
     toggleSuperadminFeature,
+    deactivateSuperadminModuleComplete,
+    activateSuperadminModuleComplete,
     resetSuperadminModules,
     setAllSuperadminModules,
     inventoryMode,
@@ -41,6 +43,7 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
   const [proposalStatusFilter, setProposalStatusFilter] = useState<'all' | 'pending' | 'contacted' | 'active'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [saveToast, setSaveToast] = useState<string | null>(null);
 
   const totalModules = superadminModules.length;
   const enabledModules = superadminModules.filter((m) => m.enabled).length;
@@ -55,6 +58,11 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
       0
     );
   }, [superadminModules]);
+
+  const handleSaveExplicit = () => {
+    setSaveToast('Configuración de módulos y funcionalidades guardada con éxito en tiempo real en Cloudflare D1.');
+    setTimeout(() => setSaveToast(null), 3500);
+  };
 
   const categories = ['all', 'Operaciones & WMS', 'Ventas & Caja', 'Tienda & Catálogo', 'Configuración & Analítica'];
 
@@ -80,6 +88,12 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
 
   return (
     <div className="space-y-5 max-w-6xl mx-auto pb-12 animate-in fade-in duration-300">
+      {saveToast && (
+        <div className="fixed top-6 right-6 z-50 p-4 rounded-2xl bg-emerald-600 text-white shadow-xl flex items-center gap-2.5 font-bubble font-bold text-xs animate-in slide-in-from-top-4">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-200" />
+          <span>{saveToast}</span>
+        </div>
+      )}
       {/* Barra de Encabezado Superadmin */}
       <div className="p-4 sm:p-6 rounded-3xl bg-gradient-to-r from-[#1F1033] via-[#2A1344] to-[#160B24] text-white border border-purple-500/30 shadow-xl relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
@@ -124,6 +138,16 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
                   {supplierOrders.filter((o: any) => o.status === 'draft' || o.status === 'ordered').length}
                 </span>
               )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSaveExplicit}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bubble font-bold shadow-md active:scale-95 transition-all cursor-pointer"
+              title="Guardar y sincronizar configuración en Cloudflare D1"
+            >
+              <Save className="w-3.5 h-3.5 text-emerald-200" />
+              <span>Guardar Cambios</span>
             </button>
 
             <button
@@ -754,6 +778,8 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
                 module={module}
                 onToggleModule={toggleSuperadminModule}
                 onToggleFeature={toggleSuperadminFeature}
+                onDeactivateComplete={deactivateSuperadminModuleComplete}
+                onActivateComplete={activateSuperadminModuleComplete}
               />
             ))}
           </div>

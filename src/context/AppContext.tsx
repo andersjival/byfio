@@ -366,6 +366,8 @@ interface AppContextType {
   logoutSuperAdmin: () => void;
   toggleSuperadminModule: (moduleId: string, enabled?: boolean) => void;
   toggleSuperadminFeature: (moduleId: string, featureId: string, enabled?: boolean) => void;
+  deactivateSuperadminModuleComplete: (moduleId: string) => void;
+  activateSuperadminModuleComplete: (moduleId: string) => void;
   resetSuperadminModules: () => void;
   setAllSuperadminModules: (enabled: boolean) => void;
   isModuleEnabled: (moduleIdOrAlias: string) => boolean;
@@ -1446,6 +1448,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     saveSuperadminModules(updated);
   };
 
+  const deactivateSuperadminModuleComplete = (moduleId: string) => {
+    const updated = superadminModules.map((m) => {
+      if (m.id === moduleId) {
+        return {
+          ...m,
+          enabled: false,
+          features: m.features.map((f) => ({ ...f, enabled: false })),
+        };
+      }
+      return m;
+    });
+    saveSuperadminModules(updated);
+  };
+
+  const activateSuperadminModuleComplete = (moduleId: string) => {
+    const updated = superadminModules.map((m) => {
+      if (m.id === moduleId) {
+        return {
+          ...m,
+          enabled: true,
+          features: m.features.map((f) => ({ ...f, enabled: true })),
+        };
+      }
+      return m;
+    });
+    saveSuperadminModules(updated);
+  };
+
   const resetSuperadminModules = () => {
     saveSuperadminModules(INITIAL_SUPERADMIN_MODULES);
   };
@@ -1487,9 +1517,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const normalized = normalizeModuleId(moduleId);
     const mod = superadminModules.find((m) => m.id === normalized);
     if (!mod) return true;
-    if (!mod.enabled) return false;
     const feat = mod.features.find((f) => f.id === featureId);
-    return feat ? feat.enabled : true;
+    if (!feat) return true;
+    return feat.enabled;
   };
 
   const loginSuperAdmin = (user: string, pass: string) => {
@@ -3881,6 +3911,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         logoutSuperAdmin,
         toggleSuperadminModule,
         toggleSuperadminFeature,
+        deactivateSuperadminModuleComplete,
+        activateSuperadminModuleComplete,
         resetSuperadminModules,
         setAllSuperadminModules,
         isModuleEnabled,
