@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useConfirm } from '../../context/ConfirmContext';
 import { ProductCategory } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import {
   X, PlusCircle, Hash, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
-  Store, BookOpen, ChevronDown, Plus, RotateCcw
+  Store, BookOpen, ChevronDown, Plus, RotateCcw, Trash2
 } from 'lucide-react';
 import { ImageUploadField } from '../common/ImageUploadField';
 
@@ -36,6 +37,9 @@ const DEFAULT_SHELF_LOCATIONS = [
 ];
 
 const CUSTOM_LOCATIONS_STORAGE_KEY = 'byfio_custom_shelf_locations_v1';
+const DELETED_LOCATIONS_STORAGE_KEY = 'byfio_deleted_shelf_locations_v1';
+const CUSTOM_CATEGORIES_STORAGE_KEY = 'byfio_custom_categories_v1';
+const DELETED_CATEGORIES_STORAGE_KEY = 'byfio_deleted_categories_v1';
 
 export const NewProductModal: React.FC = () => {
   const {
@@ -47,6 +51,14 @@ export const NewProductModal: React.FC = () => {
     editingProduct,
     setEditingProduct,
   } = useApp();
+  const confirm = useConfirm();
+
+  const [isEditingLocation, setIsEditingLocation] = useState(false);
+  const [locationEditName, setLocationEditName] = useState('');
+  const [isEditingCat, setIsEditingCat] = useState(false);
+  const [categoryEditName, setCategoryEditName] = useState('');
+  const [locationsVersion, setLocationsVersion] = useState(0);
+  const [categoriesVersion, setCategoriesVersion] = useState(0);
 
   const [name, setName] = useState('');
   const [sku, setSku] = useState('');
@@ -71,34 +83,314 @@ export const NewProductModal: React.FC = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
-  // Ubicaciones disponibles combinadas (por defecto + productos existentes + guardadas en localStorage)
-  const availableLocations = useMemo(() => {
-    const locSet = new Set<string>(DEFAULT_SHELF_LOCATIONS);
+  // Categorías disponibles (por defecto + personalizadas + de productos - eliminadas)
+  const availableCategories = useMemo(() => {
+    const deletedSet = new Set<string>();
+    try {
+      const delSaved = localStorage.getItem(DELETED_CATEGORIES_STORAGE_KEY);
+      if (delSaved) {
+        const parsed: string[] = JSON.parse(delSaved);
+        if (Array.isArray(parsed)) parsed.forEach((d) => d && deletedSet.add(d.trim()));
+      }
+    } catch {}
+
+    const catSet = new Set<string>();
+    DEFAULT_CATEGORIES.forEach((c) => {
+      if (!deletedSet.has(c.trim())) catSet.add(c.trim());
+    });
+
+    try {
+      const saved = localStorage.getItem(CUSTOM_CATEGORIES_STORAGE_KEY);
+      if (saved) {
+        const parsed: string[] = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((c) => {
+            if (c && typeof c === 'string' && c.trim() && !deletedSet.has(c.trim())) {
+              catSet.add(c.trim());
+            }
+          });
+        }
+      }
+    } catch {}
+
     if (Array.isArray(products)) {
       products.forEach((p) => {
-        if (p.shelfLocation && typeof p.shelfLocation === 'string' && p.shelfLocation.trim()) {
-          locSet.add(p.shelfLocation.trim());
+        if (p.category && typeof p.category === 'string' && p.category.trim() && !deletedSet.has(p.category.trim())) {
+          catSet.add(p.category.trim());
         }
       });
     }
+
+    if (category && category.trim() && !deletedSet.has(category.trim())) {
+      catSet.add(category.trim());
+    }
+
+    const list = Array.from(catSet).filter(Boolean);
+    return list.length > 0 ? list : ['General'];
+  }, [products, category, categoriesVersion]);
+
+  // Ubicaciones disponibles combinadas (por defecto + productos existentes + guardadas - eliminadas)
+  const availableLocations = useMemo(() => {
+    const deletedSet = new Set<string>();
+    try {
+      const delSaved = localStorage.getItem(DELETED_LOCATIONS_STORAGE_KEY);
+      if (delSaved) {
+        const parsed: string[] = JSON.parse(delSaved);
+        if (Array.isArray(parsed)) parsed.forEach((d) => d && deletedSet.add(d.trim()));
+      }
+    } catch {}
+
+    const locSet = new Set<string>();
+    DEFAULT_SHELF_LOCATIONS.forEach((l) => {
+      if (!deletedSet.has(l.trim())) locSet.add(l.trim());
+    });
+
     try {
       const saved = localStorage.getItem(CUSTOM_LOCATIONS_STORAGE_KEY);
       if (saved) {
         const parsed: string[] = JSON.parse(saved);
         if (Array.isArray(parsed)) {
           parsed.forEach((l) => {
-            if (l && typeof l === 'string' && l.trim()) locSet.add(l.trim());
+            if (l && typeof l === 'string' && l.trim() && !deletedSet.has(l.trim())) {
+              locSet.add(l.trim());
+            }
           });
         }
       }
     } catch {}
-    if (shelfLocation && shelfLocation.trim()) {
+
+    if (Array.isArray(products)) {
+      products.forEach((p) => {
+        if (p.shelfLocation && typeof p.shelfLocation === 'string' && p.shelfLocation.trim() && !deletedSet.has(p.shelfLocation.trim())) {
+          locSet.add(p.shelfLocation.trim());
+        }
+      });
+    }
+
+    if (shelfLocation && shelfLocation.trim() && !deletedSet.has(shelfLocation.trim())) {
       locSet.add(shelfLocation.trim());
     }
-    return Array.from(locSet)
+
+    const list = Array.from(locSet)
       .filter(Boolean)
       .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base', numeric: true }));
-  }, [products, shelfLocation]);
+
+    return list.length > 0 ? list : ['Estante Principal'];
+  }, [products, shelfLocation, locationsVersion]);
+
+  // Handlers de Categoría (Editar y Eliminar)
+  const handleStartEditCategory = () => {
+    setCategoryEditName(category);
+    setIsEditingCat(true);
+  };
+
+  const handleSaveEditCategory = () => {
+    const oldCat = category.trim();
+    const newCat = categoryEditName.trim();
+    if (!newCat || oldCat === newCat) {
+      setIsEditingCat(false);
+      return;
+    }
+
+    try {
+      const saved = localStorage.getItem(CUSTOM_CATEGORIES_STORAGE_KEY);
+      const list: string[] = saved ? JSON.parse(saved) : [];
+      const updatedList = list.filter((c) => c.trim() !== oldCat);
+      if (!updatedList.includes(newCat)) updatedList.push(newCat);
+      localStorage.setItem(CUSTOM_CATEGORIES_STORAGE_KEY, JSON.stringify(updatedList));
+
+      const delSaved = localStorage.getItem(DELETED_CATEGORIES_STORAGE_KEY);
+      const delList: string[] = delSaved ? JSON.parse(delSaved) : [];
+      if (!delList.includes(oldCat)) {
+        delList.push(oldCat);
+        localStorage.setItem(DELETED_CATEGORIES_STORAGE_KEY, JSON.stringify(delList));
+      }
+    } catch {}
+
+    if (Array.isArray(products)) {
+      products.forEach((p) => {
+        if (p.category === oldCat) {
+          updateProduct(p.id, { category: newCat });
+        }
+      });
+    }
+
+    setCategory(newCat);
+    setIsEditingCat(false);
+    setCategoriesVersion((v) => v + 1);
+    setSuccessToast(`¡Categoría renombrada a "${newCat}"!`);
+  };
+
+  const handleDeleteCategory = async () => {
+    const catToDelete = category.trim();
+    const ok = await confirm(
+      `¿Deseas eliminar la categoría "${catToDelete}"? Los productos asignados a esta categoría se reasignarán a otra categoría disponible.`,
+      {
+        title: 'Eliminar Categoría',
+        confirmLabel: 'Sí, Eliminar',
+        cancelLabel: 'Cancelar',
+        variant: 'danger',
+      }
+    );
+    if (!ok) return;
+
+    try {
+      const delSaved = localStorage.getItem(DELETED_CATEGORIES_STORAGE_KEY);
+      const delList: string[] = delSaved ? JSON.parse(delSaved) : [];
+      if (!delList.includes(catToDelete)) {
+        delList.push(catToDelete);
+        localStorage.setItem(DELETED_CATEGORIES_STORAGE_KEY, JSON.stringify(delList));
+      }
+
+      const saved = localStorage.getItem(CUSTOM_CATEGORIES_STORAGE_KEY);
+      if (saved) {
+        const list: string[] = JSON.parse(saved);
+        const filtered = list.filter((c) => c.trim() !== catToDelete);
+        localStorage.setItem(CUSTOM_CATEGORIES_STORAGE_KEY, JSON.stringify(filtered));
+      }
+    } catch {}
+
+    const remaining = availableCategories.filter((c) => c !== catToDelete);
+    const nextCat = remaining.length > 0 ? remaining[0] : 'General';
+
+    if (Array.isArray(products)) {
+      products.forEach((p) => {
+        if (p.category === catToDelete) {
+          updateProduct(p.id, { category: nextCat });
+        }
+      });
+    }
+
+    setCategory(nextCat);
+    setIsEditingCat(false);
+    setCategoriesVersion((v) => v + 1);
+    setSuccessToast(`¡Categoría "${catToDelete}" eliminada correctamente!`);
+  };
+
+  // Handlers de Ubicación (Editar y Eliminar)
+  const handleStartEditLocation = () => {
+    setLocationEditName(shelfLocation);
+    setIsEditingLocation(true);
+  };
+
+  const handleSaveEditLocation = () => {
+    const oldLoc = shelfLocation.trim();
+    const newLoc = locationEditName.trim();
+    if (!newLoc || oldLoc === newLoc) {
+      setIsEditingLocation(false);
+      return;
+    }
+
+    try {
+      const saved = localStorage.getItem(CUSTOM_LOCATIONS_STORAGE_KEY);
+      const list: string[] = saved ? JSON.parse(saved) : [];
+      const updatedList = list.filter((l) => l.trim() !== oldLoc);
+      if (!updatedList.includes(newLoc)) updatedList.push(newLoc);
+      localStorage.setItem(CUSTOM_LOCATIONS_STORAGE_KEY, JSON.stringify(updatedList));
+
+      const delSaved = localStorage.getItem(DELETED_LOCATIONS_STORAGE_KEY);
+      const delList: string[] = delSaved ? JSON.parse(delSaved) : [];
+      if (!delList.includes(oldLoc)) {
+        delList.push(oldLoc);
+        localStorage.setItem(DELETED_LOCATIONS_STORAGE_KEY, JSON.stringify(delList));
+      }
+    } catch {}
+
+    if (Array.isArray(products)) {
+      products.forEach((p) => {
+        if (p.shelfLocation === oldLoc) {
+          updateProduct(p.id, { shelfLocation: newLoc });
+        }
+      });
+    }
+
+    setShelfLocation(newLoc);
+    setIsEditingLocation(false);
+    setLocationsVersion((v) => v + 1);
+    setSuccessToast(`¡Ubicación renombrada a "${newLoc}"!`);
+  };
+
+  const handleDeleteLocation = async () => {
+    const locToDelete = shelfLocation.trim();
+    const ok = await confirm(
+      `¿Deseas eliminar la ubicación "${locToDelete}"? Los productos asignados a este estante se reubicarán automáticamente.`,
+      {
+        title: 'Eliminar Ubicación',
+        confirmLabel: 'Sí, Eliminar',
+        cancelLabel: 'Cancelar',
+        variant: 'danger',
+      }
+    );
+    if (!ok) return;
+
+    try {
+      const delSaved = localStorage.getItem(DELETED_LOCATIONS_STORAGE_KEY);
+      const delList: string[] = delSaved ? JSON.parse(delSaved) : [];
+      if (!delList.includes(locToDelete)) {
+        delList.push(locToDelete);
+        localStorage.setItem(DELETED_LOCATIONS_STORAGE_KEY, JSON.stringify(delList));
+      }
+
+      const saved = localStorage.getItem(CUSTOM_LOCATIONS_STORAGE_KEY);
+      if (saved) {
+        const list: string[] = JSON.parse(saved);
+        const filtered = list.filter((l) => l.trim() !== locToDelete);
+        localStorage.setItem(CUSTOM_LOCATIONS_STORAGE_KEY, JSON.stringify(filtered));
+      }
+    } catch {}
+
+    const remaining = availableLocations.filter((l) => l !== locToDelete);
+    const nextLoc = remaining.length > 0 ? remaining[0] : 'Estante Principal';
+
+    if (Array.isArray(products)) {
+      products.forEach((p) => {
+        if (p.shelfLocation === locToDelete) {
+          updateProduct(p.id, { shelfLocation: nextLoc });
+        }
+      });
+    }
+
+    setShelfLocation(nextLoc);
+    setIsEditingLocation(false);
+    setLocationsVersion((v) => v + 1);
+    setSuccessToast(`¡Ubicación "${locToDelete}" eliminada correctamente!`);
+  };
+
+  const handleAddCustomCategory = () => {
+    const newCat = customCategory.trim();
+    if (!newCat) return;
+    try {
+      const saved = localStorage.getItem(CUSTOM_CATEGORIES_STORAGE_KEY);
+      const list = saved ? JSON.parse(saved) : [];
+      if (!list.includes(newCat)) {
+        list.push(newCat);
+        localStorage.setItem(CUSTOM_CATEGORIES_STORAGE_KEY, JSON.stringify(list));
+      }
+    } catch {}
+    setCategory(newCat as ProductCategory);
+    setCustomCategory('');
+    setIsCreatingNewCat(false);
+    setCategoriesVersion((v) => v + 1);
+    setSuccessToast(`¡Categoría "${newCat}" creada con éxito!`);
+  };
+
+  const handleAddCustomLocation = () => {
+    const newLoc = customLocation.trim();
+    if (!newLoc) return;
+    try {
+      const saved = localStorage.getItem(CUSTOM_LOCATIONS_STORAGE_KEY);
+      const list = saved ? JSON.parse(saved) : [];
+      if (!list.includes(newLoc)) {
+        list.push(newLoc);
+        localStorage.setItem(CUSTOM_LOCATIONS_STORAGE_KEY, JSON.stringify(list));
+      }
+    } catch {}
+    setShelfLocation(newLoc);
+    setCustomLocation('');
+    setIsCreatingNewLocation(false);
+    setLocationsVersion((v) => v + 1);
+    setSuccessToast(`¡Ubicación "${newLoc}" creada con éxito!`);
+  };
 
   // Sincronizar formulario según modo edición o creación
   useEffect(() => {
@@ -185,6 +477,18 @@ export const NewProductModal: React.FC = () => {
           localStorage.setItem(CUSTOM_LOCATIONS_STORAGE_KEY, JSON.stringify(list));
         }
       } catch {}
+
+    // Guardar en la lista persistente de categorías personalizadas
+    if (isCreatingNewCat && customCategory.trim()) {
+      try {
+        const saved = localStorage.getItem(CUSTOM_CATEGORIES_STORAGE_KEY);
+        const list: string[] = saved ? JSON.parse(saved) : [];
+        if (!list.includes(customCategory.trim())) {
+          list.push(customCategory.trim());
+          localStorage.setItem(CUSTOM_CATEGORIES_STORAGE_KEY, JSON.stringify(list));
+        }
+      } catch {}
+    }
     }
 
     const finalImage =
@@ -350,65 +654,239 @@ export const NewProductModal: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Categoría */}
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Categoría *</label>
-                  {!isCreatingNewCat ? (
-                    <select
-                      value={category}
-                      onChange={(e) => (e.target.value === '__new__' ? setIsCreatingNewCat(true) : setCategory(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800"
-                    >
-                      {DEFAULT_CATEGORIES.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                      <option value="__new__">✨ + Nueva Categoría...</option>
-                    </select>
-                  ) : (
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-bold text-gray-700">Categoría *</label>
+                    {!isCreatingNewCat && !isEditingCat && (
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={handleStartEditCategory}
+                          className="text-[10px] text-gray-500 hover:text-fio-800 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-gray-100 transition-colors cursor-pointer"
+                          title="Editar nombre de la categoría seleccionada"
+                        >
+                          <Pencil className="w-3 h-3 text-fio-purple" />
+                          <span>Editar</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDeleteCategory}
+                          className="text-[10px] text-red-500 hover:text-red-700 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors cursor-pointer"
+                          title="Eliminar categoría seleccionada"
+                        >
+                          <Trash2 className="w-3 h-3 text-red-500" />
+                          <span>Eliminar</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsCreatingNewCat(true);
+                            setCustomCategory('');
+                          }}
+                          className="text-[10px] text-fio-pink hover:text-fio-800 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-pink-50 transition-colors cursor-pointer"
+                          title="Crear nueva categoría"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Nueva</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {isEditingCat ? (
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        placeholder="Nombre de la categoría..."
+                        value={categoryEditName}
+                        onChange={(e) => setCategoryEditName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleSaveEditCategory();
+                          }
+                        }}
+                        className="flex-1 px-3 py-2 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-gray-900 focus:outline-none"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSaveEditCategory}
+                        className="px-2.5 py-1.5 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingCat(false)}
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : isCreatingNewCat ? (
                     <div className="flex gap-1.5">
                       <input
                         type="text"
                         placeholder="Nueva categoría..."
                         value={customCategory}
                         onChange={(e) => setCustomCategory(e.target.value)}
-                        className="flex-1 px-3 py-2 rounded-xl border border-fio-300 bg-purple-50 font-semibold"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddCustomCategory();
+                          }
+                        }}
+                        className="flex-1 px-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 font-semibold text-gray-900 focus:outline-none"
+                        autoFocus
                       />
                       <button
                         type="button"
+                        onClick={handleAddCustomCategory}
+                        className="px-2.5 py-1.5 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer"
+                      >
+                        Agregar
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setIsCreatingNewCat(false)}
-                        className="px-2 py-1 bg-gray-100 rounded-xl text-[10px] font-bold"
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
                       >
                         Cancelar
                       </button>
                     </div>
+                  ) : (
+                    <select
+                      value={category}
+                      onChange={(e) => {
+                        if (e.target.value === '__new__') {
+                          setIsCreatingNewCat(true);
+                          setCustomCategory('');
+                        } else {
+                          setCategory(e.target.value as ProductCategory);
+                        }
+                      }}
+                      className="w-full px-3 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800 focus:ring-2 focus:ring-fio-400 focus:outline-none cursor-pointer"
+                    >
+                      {availableCategories.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                      <option value="__new__" className="text-fio-pink font-bold">✨ + Nueva Categoría...</option>
+                    </select>
                   )}
                 </div>
 
+                {/* Ubicación en Estante */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block font-bold text-gray-700">Ubicación en Estante (WMS) *</label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsCreatingNewLocation(!isCreatingNewLocation);
-                        if (!isCreatingNewLocation) setCustomLocation('');
-                      }}
-                      className="text-[11px] font-bubble font-bold text-fio-pink hover:text-fio-800 transition-colors flex items-center gap-1 cursor-pointer"
-                    >
-                      {isCreatingNewLocation ? (
-                        <>
-                          <RotateCcw className="w-3 h-3" />
-                          <span>Elegir existente</span>
-                        </>
-                      ) : (
-                        <>
+                    {!isCreatingNewLocation && !isEditingLocation && (
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={handleStartEditLocation}
+                          className="text-[10px] text-gray-500 hover:text-fio-800 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-gray-100 transition-colors cursor-pointer"
+                          title="Editar nombre de la ubicación seleccionada"
+                        >
+                          <Pencil className="w-3 h-3 text-fio-pink" />
+                          <span>Editar</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDeleteLocation}
+                          className="text-[10px] text-red-500 hover:text-red-700 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors cursor-pointer"
+                          title="Eliminar ubicación seleccionada"
+                        >
+                          <Trash2 className="w-3 h-3 text-red-500" />
+                          <span>Eliminar</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsCreatingNewLocation(true);
+                            setCustomLocation('');
+                          }}
+                          className="text-[10px] text-fio-pink hover:text-fio-800 font-bold flex items-center gap-0.5 px-1.5 py-0.5 rounded hover:bg-pink-50 transition-colors cursor-pointer"
+                          title="Crear nueva ubicación"
+                        >
                           <Plus className="w-3 h-3" />
-                          <span>+ Nueva ubicación</span>
-                        </>
-                      )}
-                    </button>
+                          <span>Nueva</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
 
-                  {!isCreatingNewLocation ? (
+                  {isEditingLocation ? (
+                    <div className="flex gap-1.5">
+                      <div className="relative flex-1">
+                        <input
+                          type="text"
+                          placeholder="Nombre de ubicación..."
+                          value={locationEditName}
+                          onChange={(e) => setLocationEditName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleSaveEditLocation();
+                            }
+                          }}
+                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-purple bg-purple-50/50 font-semibold text-purple-900 focus:outline-none"
+                          autoFocus
+                        />
+                        <MapPin className="w-4 h-4 text-fio-purple absolute left-2.5 top-2.5" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleSaveEditLocation}
+                        className="px-2.5 py-1.5 bg-fio-purple text-white rounded-xl text-xs font-bold hover:bg-fio-800 transition-all cursor-pointer"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingLocation(false)}
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : isCreatingNewLocation ? (
+                    <div className="flex gap-1.5">
+                      <div className="relative flex-1">
+                        <input
+                          type="text"
+                          placeholder="Ej: Estante E-3 (Nivel 1) o Cajón #4"
+                          value={customLocation}
+                          onChange={(e) => setCustomLocation(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleAddCustomLocation();
+                            }
+                          }}
+                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900 placeholder:text-gray-400"
+                          autoFocus
+                        />
+                        <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleAddCustomLocation}
+                        className="px-2.5 py-1.5 bg-fio-pink text-white rounded-xl text-xs font-bold hover:bg-pink-600 transition-all cursor-pointer"
+                      >
+                        Agregar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsCreatingNewLocation(false)}
+                        className="px-2.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        title="Volver a lista de ubicaciones existentes"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : (
                     <div className="relative">
                       <select
                         value={shelfLocation}
@@ -433,29 +911,6 @@ export const NewProductModal: React.FC = () => {
                       </select>
                       <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5 pointer-events-none" />
                       <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-2.5 pointer-events-none" />
-                    </div>
-                  ) : (
-                    <div className="flex gap-1.5">
-                      <div className="relative flex-1">
-                        <input
-                          required={isCreatingNewLocation}
-                          type="text"
-                          placeholder="Ej: Estante E-3 (Nivel 1) o Cajón #4"
-                          value={customLocation}
-                          onChange={(e) => setCustomLocation(e.target.value)}
-                          className="w-full pl-8 pr-3 py-2 rounded-xl border-2 border-fio-pink bg-pink-50/40 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-purple-900 placeholder:text-gray-400"
-                          autoFocus
-                        />
-                        <MapPin className="w-4 h-4 text-fio-pink absolute left-2.5 top-2.5" />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setIsCreatingNewLocation(false)}
-                        className="px-2.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
-                        title="Volver a lista de ubicaciones existentes"
-                      >
-                        Cancelar
-                      </button>
                     </div>
                   )}
                 </div>
