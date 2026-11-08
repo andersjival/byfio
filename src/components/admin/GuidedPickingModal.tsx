@@ -29,6 +29,15 @@ export const GuidedPickingModal: React.FC = () => {
   const [tempQty, setTempQty] = useState<number>(1);
   const [editingItemSku, setEditingItemSku] = useState<string | null>(null);
 
+  const activeOrderId = activePickingOrder?.id;
+  const activeOrderObj = activePickingOrder ? (orders.find((o) => o.id === activeOrderId) || activePickingOrder) : null;
+  const currentItemSku = activeOrderObj?.items.find((it) => !it.isPicked && !it.isMissing)?.sku;
+
+  // Limpiar cualquier feedback residual al cambiar de producto, orden o modo
+  React.useEffect(() => {
+    setScanFeedback(null);
+  }, [activeOrderId, currentItemSku, pickingMode]);
+
   if (!activePickingOrder) return null;
 
   // Sincronización reactiva directa con el estado general de orders
@@ -82,12 +91,10 @@ export const GuidedPickingModal: React.FC = () => {
     setScanFeedback(null);
     const result = markItemPicked(currentOrder.id, itemSku);
 
-    if (result.error) {
+    if (result.error && pickingMode === 'barcode') {
       setScanFeedback({ type: 'error', message: result.error });
       return;
     }
-
-    setScanFeedback({ type: 'success', message: `¡Alistado! Producto verificado con éxito.` });
 
     if (result.isComplete) {
       triggerCompletion();
@@ -320,31 +327,33 @@ export const GuidedPickingModal: React.FC = () => {
                   </div>
                 )}
 
-                {/* Feedback de Escaneo o Acción */}
-                {scanFeedback && (
-                  <div
-                    className={`p-2 rounded-xl border text-xs font-bold flex items-center gap-2 ${
-                      scanFeedback.type === 'success'
-                        ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                        : scanFeedback.type === 'warning'
-                        ? 'bg-amber-50 text-amber-900 border-amber-300'
-                        : 'bg-red-50 text-red-800 border-red-300 animate-bounce'
-                    }`}
-                  >
-                    {scanFeedback.type === 'success' ? (
-                      <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                    ) : (
-                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                    )}
-                    <span className="text-xs">{scanFeedback.message}</span>
-                  </div>
-                )}
+
 
                 {/* ACCIÓN SEGÚN EL MODO: CÓDIGO vs MANUAL */}
                 {pickingMode === 'barcode' ? (
                   /* Modo 1: Alisto con Código (Escáner Láser / QR) */
                   <div className="p-3 sm:p-4 bg-fio-50 rounded-2xl border border-fio-200 space-y-2.5 sm:space-y-3">
                     <p className="text-xs font-bold text-fio-900">Validar Código con Escáner o Teclado:</p>
+
+                    {/* Feedback de Escaneo (Solo visible si se está usando escáner o código) */}
+                    {scanFeedback && (
+                      <div
+                        className={`p-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 ${
+                          scanFeedback.type === 'success'
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                            : scanFeedback.type === 'warning'
+                            ? 'bg-amber-50 text-amber-900 border-amber-300'
+                            : 'bg-red-50 text-red-800 border-red-300'
+                        }`}
+                      >
+                        {scanFeedback.type === 'success' ? (
+                          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                        ) : (
+                          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                        )}
+                        <span className="text-xs">{scanFeedback.message}</span>
+                      </div>
+                    )}
 
                     <form
                       onSubmit={(e) => {
@@ -372,18 +381,10 @@ export const GuidedPickingModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleSimulateScanCurrent}
-                        className="flex-1 py-3.5 sm:py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm sm:text-xs font-bold flex items-center justify-center gap-2 shadow-sm active:scale-95 cursor-pointer"
+                        className="w-full py-3.5 sm:py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm sm:text-xs font-bold flex items-center justify-center gap-2 shadow-sm active:scale-95 cursor-pointer"
                       >
                         <Scan className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                         <span>Validar ({currentItem.sku})</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleSimulateWrongScan}
-                        title="Probar alerta de error al escanear QR incorrecto"
-                        className="py-3.5 sm:py-2 px-3 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-sm sm:text-xs font-bold cursor-pointer"
-                      >
-                        Probar Error
                       </button>
                     </div>
 

@@ -2539,7 +2539,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (order.id !== orderId) return order;
 
         const updatedItems = [...order.items];
-        const unpickedIdx = updatedItems.findIndex((it) => it.sku === itemSku && !it.isPicked);
+        const cleanSku = (itemSku || '').trim().toUpperCase();
+        let unpickedIdx = updatedItems.findIndex(
+          (it) => !it.isPicked && !it.isMissing && (
+            (it.sku && it.sku.trim().toUpperCase() === cleanSku) ||
+            (it.id && it.id === itemSku)
+          )
+        );
+
+        // En alisto manual, si no coincide por SKU exacto, alistar el primer producto pendiente
+        if (unpickedIdx === -1 && pickingMode === 'manual') {
+          unpickedIdx = updatedItems.findIndex((it) => !it.isPicked && !it.isMissing);
+        }
 
         if (unpickedIdx !== -1) {
           found = true;
@@ -2583,8 +2594,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     if (!found) {
-      playAudioBeep('error');
-      return { isComplete: false, error: `El código QR "${itemSku}" no coincide con el producto requerido en este paso.` };
+      // Solo emitir error si estamos en modo código/QR
+      if (pickingMode === 'barcode') {
+        playAudioBeep('error');
+        return { isComplete: false, error: `El código "${itemSku}" no coincide con el producto requerido en este paso.` };
+      }
+      return { isComplete: false };
     }
 
     if (completed) {
