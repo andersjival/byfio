@@ -298,9 +298,6 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           ).run().catch(() => {});
         }
       }
-          ).run().catch(() => {});
-        }
-      }
     }
 
     return new Response(JSON.stringify({ success: true }), {
