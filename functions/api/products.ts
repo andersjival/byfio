@@ -35,7 +35,10 @@ const mapRowToProduct = (r: ProductDbRow) => {
   if ((r as any).images_json) {
     try {
       const parsed = JSON.parse((r as any).images_json);
-      if (Array.isArray(parsed) && parsed.length > 0) productImages = parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const real = parsed.filter((img: string) => !img.includes('placeholder-new-product'));
+        productImages = real.length > 0 ? real : parsed;
+      }
     } catch {}
   }
   if (productImages.length === 0 && r.sku === 'FIO-TAZ-03') {
@@ -125,13 +128,23 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       await context.env.DB.prepare(
         'ALTER TABLE products ADD COLUMN is_available INTEGER DEFAULT 1'
       ).run().catch(() => {});
+      await context.env.DB.prepare(
+        'ALTER TABLE products ADD COLUMN images_json TEXT'
+      ).run().catch(() => {});
+
+      const userImages = Array.isArray(data.images) && data.images.length > 0
+        ? data.images.filter((img: string) => !img.includes('placeholder-new-product'))
+        : (data.image && !data.image.includes('placeholder-new-product') ? [data.image] : []);
+      const finalImg = userImages.length > 0 ? userImages[0] : (data.image || '/images/placeholder-new-product.jpg');
+      const finalImagesList = userImages.length > 0 ? userImages : ['/images/placeholder-new-product.jpg'];
+      const imagesJson = JSON.stringify(finalImagesList);
 
       await context.env.DB.prepare(
         `INSERT OR REPLACE INTO products (
           id, sku, name, category, shelf_location, price, cost_price,
           stock, min_stock, max_stock, image, is_customizable,
-          customization_placeholder, unit, description, is_available
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          customization_placeholder, unit, description, is_available, images_json
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         id,
         data.sku,
@@ -148,7 +161,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         data.customizationPlaceholder || null,
         data.unit || 'Unidad',
         data.description || '',
-        isAvail
+        isAvail,
+        imagesJson
       ).run();
     }
 
@@ -201,8 +215,15 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
       const {
         id, stock, minStock, maxStock, isAvailable,
         name, sku, category, shelfLocation, price, costPrice,
-        image, isCustomizable, customizationPlaceholder, unit, description
+        image, images, isCustomizable, customizationPlaceholder, unit, description
       } = body;
+
+      const userImages = Array.isArray(images) && images.length > 0
+        ? images.filter((img: string) => !img.includes('placeholder-new-product'))
+        : (image && !image.includes('placeholder-new-product') ? [image] : []);
+      const imagesJson = userImages.length > 0
+        ? JSON.stringify(userImages)
+        : (images !== undefined ? JSON.stringify(images) : (image ? JSON.stringify([image]) : null));
 
       if (id) {
         // Regla: si el stock es <= 0, se deshabilita automáticamente (is_available = 0).
@@ -230,7 +251,8 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
             customization_placeholder = COALESCE(?, customization_placeholder),
             unit = COALESCE(?, unit),
             description = COALESCE(?, description),
-            is_available = CASE WHEN ? IS NOT NULL THEN ? ELSE is_available END
+            is_available = CASE WHEN ? IS NOT NULL THEN ? ELSE is_available END,
+            images_json = CASE WHEN ? IS NOT NULL THEN ? ELSE images_json END
           WHERE id = ?`
         ).bind(
           sku ?? null,
@@ -249,6 +271,8 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           description ?? null,
           effectiveAvail,
           effectiveAvail,
+          imagesJson,
+          imagesJson,
           id
         ).run();
 

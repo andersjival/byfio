@@ -272,9 +272,9 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                     </span>
                   )}
                                   {/* Indicador de múltiples fotos si aplica */}
-                  {Array.isArray(p.images) && p.images.length > 1 && (
+                  {Array.isArray(p.images) && p.images.filter(img => !img.includes('placeholder-new-product')).length > 1 && (
                     <span className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[10px] font-bubble font-bold shadow-md flex items-center gap-1.5 z-10 border border-white/20 pointer-events-none">
-                      <span>📷 {p.images.length} fotos</span>
+                      <span>📷 {p.images.filter(img => !img.includes('placeholder-new-product')).length} fotos</span>
                     </span>
                   )}
                 </div>

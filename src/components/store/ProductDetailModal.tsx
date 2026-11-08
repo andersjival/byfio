@@ -33,6 +33,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const images = useMemo(() => {
     if (!product) return [];
     if (product.images && product.images.length > 0) {
+      const real = product.images.filter((img) => !img.includes('placeholder-new-product'));
+      if (real.length > 0) return real;
       return product.images;
     }
     if (product.sku === 'FIO-TAZ-03' || product.id === 'prod-3') {

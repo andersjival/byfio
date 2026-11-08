@@ -14,7 +14,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   value,
   onChange,
   label = 'Fotografía',
-  defaultPlaceholder = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80',
+  defaultPlaceholder = '/images/placeholder-new-product.jpg',
   aspectRatio = 'video',
   compact = false,
 }) => {
