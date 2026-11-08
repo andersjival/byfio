@@ -22,6 +22,18 @@ const getAudioContext = (): AudioContext | null => {
 };
 
 /**
+ * Desbloquea el contexto de audio tras interacción del usuario en teléfonos móviles
+ */
+export const unlockAudioContext = () => {
+  try {
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume();
+    }
+  } catch {}
+};
+
+/**
  * Sonido orgánico de burbuja estallando / pop (Bubble Pop)
  * Simula la liberación instantánea de presión acústica de una burbuja al reventar.
  */
@@ -34,6 +46,13 @@ export const playBubblePopSound = (volume = 0.3) => {
 
     const ctx = getAudioContext();
     if (!ctx) return;
+
+    // Vibración háptica en teléfonos móviles al sonar un nuevo pedido
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([350, 150, 350, 150, 600]);
+      } catch {}
+    }
 
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -72,6 +91,13 @@ export const playWaterDropSound = (volume = 0.22) => {
     const ctx = getAudioContext();
     if (!ctx) return;
 
+    // Vibración háptica en teléfonos móviles al sonar un nuevo pedido
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([350, 150, 350, 150, 600]);
+      } catch {}
+    }
+
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -108,6 +134,13 @@ export const playNewOrderChimeSound = (volume = 0.35) => {
 
     const ctx = getAudioContext();
     if (!ctx) return;
+
+    // Vibración háptica en teléfonos móviles al sonar un nuevo pedido
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([350, 150, 350, 150, 600]);
+      } catch {}
+    }
 
     // Acorde arpegiado brillante en Mi Mayor (E Major) con timbre tipo marimba / celesta
     const notes = [
@@ -151,6 +184,13 @@ export const playAgendaBellSound = (volume = 0.35) => {
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
+
+    // Vibración háptica en teléfonos móviles al sonar un nuevo pedido
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([350, 150, 350, 150, 600]);
+      } catch {}
+    }
 
     const now = ctx.currentTime;
 

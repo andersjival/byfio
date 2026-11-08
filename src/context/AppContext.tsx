@@ -18,6 +18,7 @@ import {
 } from '../utils/superadminModulesData';
 import { playAudioBeep } from '../utils/formatters';
 import { playNewOrderChimeSound } from '../utils/soundEffects';
+import { sendOrderPushNotification } from '../utils/pushNotifications';
 import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 import { deepSanitize } from '../utils/sanitizeText';
@@ -683,8 +684,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       // Solo reproducir sonido de campana y desplegar alerta si hay un usuario logueado con permiso adecuado
       if (canReceiveOrderNotifications(Boolean(isWorkshop))) {
-        playNewOrderChimeSound();
+        playNewOrderChimeSound(0.85);
         showNewOrderAlert({
+          orderNumber: firstNew.orderNumber,
+          customerName: firstNew.customerName,
+          total: firstNew.total,
+          isWorkshop: Boolean(isWorkshop),
+          workshopTitle: wsItem?.name,
+        });
+        sendOrderPushNotification({
           orderNumber: firstNew.orderNumber,
           customerName: firstNew.customerName,
           total: firstNew.total,
@@ -1251,8 +1259,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
     if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
-      playNewOrderChimeSound();
+      playNewOrderChimeSound(0.85);
       showNewOrderAlert({
+        orderNumber: newOrder.orderNumber,
+        customerName: newOrder.customerName,
+        total: newOrder.total,
+        isWorkshop: Boolean(isWsOrder),
+        workshopTitle: wsItemInOrder?.name,
+      });
+      sendOrderPushNotification({
         orderNumber: newOrder.orderNumber,
         customerName: newOrder.customerName,
         total: newOrder.total,
@@ -1582,6 +1597,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const canReceiveOrderNotifications = (isWorkshop?: boolean) => {
     if (isSuperAdminAuthenticated) return true;
+    if (typeof window !== 'undefined' && (window.location.pathname.includes('/pedidos') || window.location.hash.includes('pedidos'))) {
+      return true;
+    }
     if (!currentUser) return false;
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
     return hasPermission(isWorkshop ? 'workshops' : 'orders');
@@ -2514,8 +2532,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
     if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
-      playNewOrderChimeSound();
+      playNewOrderChimeSound(0.85);
       showNewOrderAlert({
+        orderNumber: newOrder.orderNumber,
+        customerName: newOrder.customerName,
+        total: newOrder.total,
+        isWorkshop: Boolean(isWsOrder),
+        workshopTitle: wsItemInOrder?.name,
+      });
+      sendOrderPushNotification({
         orderNumber: newOrder.orderNumber,
         customerName: newOrder.customerName,
         total: newOrder.total,
@@ -3292,8 +3317,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
     if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
-      playNewOrderChimeSound();
+      playNewOrderChimeSound(0.85);
       showNewOrderAlert({
+        orderNumber: newOrder.orderNumber,
+        customerName: newOrder.customerName,
+        total: newOrder.total,
+        isWorkshop: Boolean(isWsOrder),
+        workshopTitle: wsItemInOrder?.name,
+      });
+      sendOrderPushNotification({
         orderNumber: newOrder.orderNumber,
         customerName: newOrder.customerName,
         total: newOrder.total,

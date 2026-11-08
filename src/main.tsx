@@ -8,6 +8,13 @@ import { safeSessionStorage } from './utils/safeStorage';
 
 // Auto-recarga inmediata y transparente cuando se despliega una versión nueva y un chunk viejo no existe
 if (typeof window !== 'undefined') {
+  // Registro transparente de Service Worker para notificaciones push en tiempo real
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+
   window.addEventListener('vite:preloadError', (event) => {
     event.preventDefault();
     try {

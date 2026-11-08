@@ -4,11 +4,18 @@ import { Order, OrderStatus, OrderItem, AppRoute, UserProfile } from '../../type
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import {
   PackageCheck, Search, CheckCircle2, Clock, Phone, MapPin,
+  Bell, BellRing, Volume2, Smartphone,
   CreditCard, Shield, ShieldCheck, KeyRound, LogOut, RefreshCw,
   Store, Boxes, ChevronDown, ChevronUp, Copy, MessageCircle,
   Check, Truck, Tag, Calendar, AlertCircle, Sparkles, X, User
 } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
+import {
+  getPushPermission,
+  requestPushNotificationPermission,
+  testPushAndSoundAlert,
+  isPushSupported
+} from '../../utils/pushNotifications';
 
 interface MobileOrdersViewProps {
   onNavigate: (route: AppRoute) => void;
@@ -36,6 +43,20 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
   const [selectedProfileName, setSelectedProfileName] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copiedAddressId, setCopiedAddressId] = useState<string | null>(null);
+  const [pushPermission, setPushPermission] = useState<NotificationPermission>(() => getPushPermission());
+  const [isTestingPush, setIsTestingPush] = useState(false);
+
+  const handleEnablePush = async () => {
+    const granted = await requestPushNotificationPermission();
+    setPushPermission(getPushPermission());
+  };
+
+  const handleTestPush = async () => {
+    setIsTestingPush(true);
+    await testPushAndSoundAlert();
+    setPushPermission(getPushPermission());
+    setTimeout(() => setIsTestingPush(false), 1200);
+  };
 
   // Rol del usuario actual
   const isAdmin = currentUser?.role === 'admin' || !!currentUser?.isMasterAdmin;
@@ -240,6 +261,48 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
             <span>Salir</span>
           </button>
         )}
+      </div>
+
+      {/* Barra de Notificaciones Push y Alerta Sonora en Tiempo Real */}
+      <div className="bg-slate-900/90 border-b border-slate-800/80 px-3 py-2 flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          {pushPermission === 'granted' ? (
+            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <BellRing className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Notificaciones Push y Sonido en Celular: Activos 🔔</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 text-xs text-amber-300 font-bold">
+              <Bell className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+              <span>Sonido y Push en Celular: Pendiente</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {pushPermission !== 'granted' ? (
+            <button
+              type="button"
+              onClick={handleEnablePush}
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-bubble font-bold text-xs shadow-md active:scale-95 transition-all cursor-pointer flex items-center gap-1"
+            >
+              <BellRing className="w-3.5 h-3.5 text-slate-950" />
+              <span>Activar Notificaciones</span>
+            </button>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={handleTestPush}
+            disabled={isTestingPush}
+            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bubble font-bold active:scale-95 transition-all cursor-pointer flex items-center gap-1"
+            title="Probar sonido de campana y vibración en celular"
+          >
+            <Volume2 className="w-3.5 h-3.5 text-purple-400" />
+            <span>{isTestingPush ? 'Sonando...' : 'Probar Alerta'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Barra de Búsqueda */}

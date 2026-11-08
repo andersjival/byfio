@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.17.1 - Notificaciones Push y Alerta Sonora en Celular para Pedidos en Tiempo Real
+- [x] **Sistema de Notificaciones Push Nativas y Alerta Sonora ([pushNotifications.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/pushNotifications.ts), [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js)):**
+  - Implementada integración nativa con la Web Push API y Service Worker para teléfonos móviles (Android Chrome e iOS Safari PWA).
+  - Al ingresar un nuevo pedido en tiempo real, el celular emite la campanilla sonora de orden (chime arpegiado a alto volumen) y patrón de vibración háptica ([350ms, 150ms, 350ms, 150ms, 600ms]).
+  - Despliegue de notificación nativa con número de orden, nombre del cliente y monto total en colones, abriendo directamente la vista de pedidos al pulsar.
+- [x] **Barra de Control y Prueba Rápida en Celular ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Añadida barra de estado de notificaciones en la vista móvil de pedidos con botón *"Activar Notificaciones"* y botón *"Probar Alerta"* para comprobar el timbre sonoro y la vibración en vivo.
+  - La vista `/pedidos` activa la recepción sonora permanente garantizando que los colaboradores en el estudio o taller escuchen el timbre inmediatamente al entrar una compra.
+
 ### Versión 4.17.0 - Vista Móvil Separada de Gestión de Pedidos y Selector de Entrada Dual
 - [x] **Vista Móvil Independiente para Gestión de Pedidos ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
   - Creada interfaz de operaciones dedicada para smartphones y tablets en ruta `/pedidos` y `/pedidos-movil`.
