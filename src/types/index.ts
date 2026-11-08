@@ -111,6 +111,14 @@ export interface Workshop {
   image: string;
   images?: string[];
   description: string;
+  hasCoffeeBreak?: boolean;
+  coffeeBreakText?: string;
+  hasToolsIncluded?: boolean;
+  toolsText?: string;
+  hasTakeHomeProject?: boolean;
+  takeHomeText?: string;
+  instructorName?: string;
+  instructorSubtitle?: string;
 }
 
 export interface OrderItem {

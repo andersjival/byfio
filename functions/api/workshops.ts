@@ -16,6 +16,7 @@ interface WorkshopDbRow {
   includes_json: string;
   image?: string;
   description?: string;
+  benefits_json?: string;
 }
 
 const DEFAULT_WORKSHOPS = [
@@ -38,6 +39,14 @@ const DEFAULT_WORKSHOPS = [
     ],
     image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80',
     description: 'Crea tu primer cuaderno de pasta dura con acabados profesionales. No requieres experiencia previa.',
+    hasCoffeeBreak: true,
+    coffeeBreakText: 'Coffee break artesanal con repostería dulce y bebidas.',
+    hasToolsIncluded: true,
+    toolsText: 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+    hasTakeHomeProject: true,
+    takeHomeText: 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+    instructorName: 'Fiorella Patricia Jara Gutiérrez (Fio)',
+    instructorSubtitle: 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
   },
   {
     id: 'ws-2',
@@ -58,6 +67,14 @@ const DEFAULT_WORKSHOPS = [
     ],
     image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=700&q=80',
     description: 'El taller favorito para iniciar un negocio rentable de papelería en temporada de fin de año.',
+    hasCoffeeBreak: true,
+    coffeeBreakText: 'Coffee break artesanal con repostería dulce y bebidas.',
+    hasToolsIncluded: true,
+    toolsText: 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+    hasTakeHomeProject: true,
+    takeHomeText: 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+    instructorName: 'Fiorella Patricia Jara Gutiérrez (Fio)',
+    instructorSubtitle: 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
   },
   {
     id: 'ws-3',
@@ -78,6 +95,14 @@ const DEFAULT_WORKSHOPS = [
     ],
     image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=700&q=80',
     description: 'Un producto con altísima demanda durante todo el año para mamás y amantes de las mascotas.',
+    hasCoffeeBreak: true,
+    coffeeBreakText: 'Coffee break artesanal con repostería dulce y bebidas.',
+    hasToolsIncluded: true,
+    toolsText: 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+    hasTakeHomeProject: true,
+    takeHomeText: 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+    instructorName: 'Fiorella Patricia Jara Gutiérrez (Fio)',
+    instructorSubtitle: 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
   },
   {
     id: 'ws-4',
@@ -98,6 +123,14 @@ const DEFAULT_WORKSHOPS = [
     ],
     image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=700&q=80',
     description: 'Aprende a evitar fantasmas, impresiones opacas y errores costosos en tus productos sublimados.',
+    hasCoffeeBreak: true,
+    coffeeBreakText: 'Coffee break artesanal con repostería dulce y bebidas.',
+    hasToolsIncluded: true,
+    toolsText: 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+    hasTakeHomeProject: true,
+    takeHomeText: 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+    instructorName: 'Fiorella Patricia Jara Gutiérrez (Fio)',
+    instructorSubtitle: 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
   },
   {
     id: 'ws-5',
@@ -118,6 +151,14 @@ const DEFAULT_WORKSHOPS = [
     ],
     image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=700&q=80',
     description: 'Aprende desde tu casa con materiales que puedes conseguir fácilmente o recibir en kit.',
+    hasCoffeeBreak: false,
+    coffeeBreakText: '',
+    hasToolsIncluded: false,
+    toolsText: '',
+    hasTakeHomeProject: true,
+    takeHomeText: 'Tus proyectos terminados listos para comercializar o regalar.',
+    instructorName: 'Fiorella Patricia Jara Gutiérrez (Fio)',
+    instructorSubtitle: 'Sesión virtual en vivo con asesoría directa y resolución de dudas en tiempo real.',
   },
 ];
 
@@ -128,6 +169,18 @@ const mapRowToWorkshop = (r: WorkshopDbRow) => {
   } catch {
     includes = [];
   }
+
+  let benefits: any = {};
+  if (r.benefits_json) {
+    try {
+      benefits = JSON.parse(r.benefits_json);
+    } catch {}
+  }
+
+  const isVirtual = r.modality === 'Virtual en Vivo';
+  const hasCoffeeBreak = benefits.hasCoffeeBreak !== undefined
+    ? Boolean(benefits.hasCoffeeBreak)
+    : !isVirtual;
 
   return {
     id: r.id,
@@ -143,6 +196,14 @@ const mapRowToWorkshop = (r: WorkshopDbRow) => {
     includes,
     image: r.image || '',
     description: r.description || '',
+    hasCoffeeBreak,
+    coffeeBreakText: benefits.coffeeBreakText !== undefined ? benefits.coffeeBreakText : 'Coffee break artesanal con repostería dulce y bebidas.',
+    hasToolsIncluded: benefits.hasToolsIncluded !== undefined ? Boolean(benefits.hasToolsIncluded) : true,
+    toolsText: benefits.toolsText !== undefined ? benefits.toolsText : 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+    hasTakeHomeProject: benefits.hasTakeHomeProject !== undefined ? Boolean(benefits.hasTakeHomeProject) : true,
+    takeHomeText: benefits.takeHomeText !== undefined ? benefits.takeHomeText : 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+    instructorName: benefits.instructorName || 'Fiorella Patricia Jara Gutiérrez (Fio)',
+    instructorSubtitle: benefits.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
   };
 };
 
@@ -161,9 +222,12 @@ const ensureWorkshopsTable = async (db: any) => {
       total_spots INTEGER NOT NULL,
       includes_json TEXT NOT NULL,
       image TEXT,
-      description TEXT
+      description TEXT,
+      benefits_json TEXT
     );
   `).run().catch(() => {});
+
+  await db.prepare('ALTER TABLE workshops ADD COLUMN benefits_json TEXT').run().catch(() => {});
 };
 
 export const onRequestGet = async (context: { env: Env }) => {
@@ -186,11 +250,22 @@ export const onRequestGet = async (context: { env: Env }) => {
     if (!results || results.length === 0) {
       // Auto-sembrar talleres por defecto si la tabla está vacía
       for (const ws of DEFAULT_WORKSHOPS) {
+        const benefitsJson = JSON.stringify({
+          hasCoffeeBreak: ws.hasCoffeeBreak,
+          coffeeBreakText: ws.coffeeBreakText,
+          hasToolsIncluded: ws.hasToolsIncluded,
+          toolsText: ws.toolsText,
+          hasTakeHomeProject: ws.hasTakeHomeProject,
+          takeHomeText: ws.takeHomeText,
+          instructorName: ws.instructorName,
+          instructorSubtitle: ws.instructorSubtitle,
+        });
+
         await context.env.DB.prepare(`
           INSERT OR REPLACE INTO workshops (
             id, title, subtitle, date, schedule, modality, location,
-            price, spots_available, total_spots, includes_json, image, description
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            price, spots_available, total_spots, includes_json, image, description, benefits_json
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
           ws.id,
           ws.title,
@@ -204,7 +279,8 @@ export const onRequestGet = async (context: { env: Env }) => {
           ws.totalSpots,
           JSON.stringify(ws.includes),
           ws.image,
-          ws.description
+          ws.description,
+          benefitsJson
         ).run().catch(() => {});
       }
 
@@ -235,14 +311,25 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const data = (await context.request.json()) as any;
     const id = data.id || `ws-${Date.now()}`;
 
+    const benefits = {
+      hasCoffeeBreak: data.hasCoffeeBreak !== undefined ? Boolean(data.hasCoffeeBreak) : (data.modality !== 'Virtual en Vivo'),
+      coffeeBreakText: data.coffeeBreakText || 'Coffee break artesanal con repostería dulce y bebidas.',
+      hasToolsIncluded: data.hasToolsIncluded !== undefined ? Boolean(data.hasToolsIncluded) : true,
+      toolsText: data.toolsText || 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+      hasTakeHomeProject: data.hasTakeHomeProject !== undefined ? Boolean(data.hasTakeHomeProject) : true,
+      takeHomeText: data.takeHomeText || 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+      instructorName: data.instructorName || 'Fiorella Patricia Jara Gutiérrez (Fio)',
+      instructorSubtitle: data.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+    };
+
     if (context.env.DB) {
       await ensureWorkshopsTable(context.env.DB);
 
       await context.env.DB.prepare(`
         INSERT OR REPLACE INTO workshops (
           id, title, subtitle, date, schedule, modality, location,
-          price, spots_available, total_spots, includes_json, image, description
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          price, spots_available, total_spots, includes_json, image, description, benefits_json
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).bind(
         id,
         data.title,
@@ -256,7 +343,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         Number(data.totalSpots) || 0,
         JSON.stringify(Array.isArray(data.includes) ? data.includes : []),
         data.image || '',
-        data.description || ''
+        data.description || '',
+        JSON.stringify(benefits)
       ).run();
     }
 
@@ -276,6 +364,17 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
       return new Response(JSON.stringify({ error: 'Workshop ID is required' }), { status: 400 });
     }
 
+    const benefits = {
+      hasCoffeeBreak: data.hasCoffeeBreak !== undefined ? Boolean(data.hasCoffeeBreak) : (data.modality !== 'Virtual en Vivo'),
+      coffeeBreakText: data.coffeeBreakText !== undefined ? data.coffeeBreakText : 'Coffee break artesanal con repostería dulce y bebidas.',
+      hasToolsIncluded: data.hasToolsIncluded !== undefined ? Boolean(data.hasToolsIncluded) : true,
+      toolsText: data.toolsText !== undefined ? data.toolsText : 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+      hasTakeHomeProject: data.hasTakeHomeProject !== undefined ? Boolean(data.hasTakeHomeProject) : true,
+      takeHomeText: data.takeHomeText !== undefined ? data.takeHomeText : 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+      instructorName: data.instructorName || 'Fiorella Patricia Jara Gutiérrez (Fio)',
+      instructorSubtitle: data.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+    };
+
     if (context.env.DB) {
       await ensureWorkshopsTable(context.env.DB);
 
@@ -292,7 +391,8 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           total_spots = ?,
           includes_json = ?,
           image = ?,
-          description = ?
+          description = ?,
+          benefits_json = ?
         WHERE id = ?
       `).bind(
         data.title,
@@ -307,6 +407,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
         JSON.stringify(Array.isArray(data.includes) ? data.includes : []),
         data.image || '',
         data.description || '',
+        JSON.stringify(benefits),
         data.id
       ).run();
     }
@@ -331,11 +432,22 @@ export const onRequestDelete = async (context: { request: Request; env: Env }) =
       if (isReset) {
         await context.env.DB.prepare('DELETE FROM workshops').run();
         for (const ws of DEFAULT_WORKSHOPS) {
+          const benefitsJson = JSON.stringify({
+            hasCoffeeBreak: ws.hasCoffeeBreak,
+            coffeeBreakText: ws.coffeeBreakText,
+            hasToolsIncluded: ws.hasToolsIncluded,
+            toolsText: ws.toolsText,
+            hasTakeHomeProject: ws.hasTakeHomeProject,
+            takeHomeText: ws.takeHomeText,
+            instructorName: ws.instructorName,
+            instructorSubtitle: ws.instructorSubtitle,
+          });
+
           await context.env.DB.prepare(`
             INSERT INTO workshops (
               id, title, subtitle, date, schedule, modality, location,
-              price, spots_available, total_spots, includes_json, image, description
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              price, spots_available, total_spots, includes_json, image, description, benefits_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `).bind(
             ws.id,
             ws.title,
@@ -349,7 +461,8 @@ export const onRequestDelete = async (context: { request: Request; env: Env }) =
             ws.totalSpots,
             JSON.stringify(ws.includes),
             ws.image,
-            ws.description
+            ws.description,
+            benefitsJson
           ).run().catch(() => {});
         }
         return new Response(JSON.stringify({ success: true, reset: true }), {

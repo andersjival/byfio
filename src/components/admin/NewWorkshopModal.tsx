@@ -4,7 +4,8 @@ import { Workshop } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import {
   X, Plus, Trash2, GraduationCap, Star, Image as ImageIcon,
-  Calendar, Clock, MapPin, DollarSign, Users, CheckCircle2, Eye, Link2
+  Calendar, Clock, MapPin, DollarSign, Users, CheckCircle2, Eye, Link2,
+  Coffee, ShieldCheck, Heart, Sparkles, Check
 } from 'lucide-react';
 import { ImageUploadField } from '../common/ImageUploadField';
 
@@ -21,6 +22,14 @@ interface WorkshopFormData {
   includes: string[];
   image: string;
   description: string;
+  hasCoffeeBreak: boolean;
+  coffeeBreakText: string;
+  hasToolsIncluded: boolean;
+  toolsText: string;
+  hasTakeHomeProject: boolean;
+  takeHomeText: string;
+  instructorName: string;
+  instructorSubtitle: string;
 }
 
 const EMPTY: WorkshopFormData = {
@@ -33,10 +42,31 @@ const EMPTY: WorkshopFormData = {
   price: 35000,
   spotsAvailable: 10,
   totalSpots: 10,
-  includes: ['Materiales completos incluidos', 'Herramientas de uso en clase', 'Coffee break dulce artesanal'],
+  includes: [
+    'Materiales completos incluidos para cada alumno',
+    'Kit de herramientas de uso durante la sesión',
+    'Guía y patrones de trabajo paso a paso',
+  ],
   image: '',
   description: '',
+  hasCoffeeBreak: true,
+  coffeeBreakText: 'Coffee break artesanal con repostería dulce y bebidas.',
+  hasToolsIncluded: true,
+  toolsText: 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+  hasTakeHomeProject: true,
+  takeHomeText: 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+  instructorName: 'Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)',
+  instructorSubtitle: 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
 };
+
+const QUICK_INCLUDE_SUGGESTIONS = [
+  'Kit de herramientas',
+  'Papeles y cartones artesanales',
+  'Tazas e insumos de sublimación',
+  'Sticker sheets y laminados',
+  'Archivos imprimibles 2027',
+  'Empaque protector para llevar',
+];
 
 export const NewWorkshopModal: React.FC = () => {
   const {
@@ -48,12 +78,13 @@ export const NewWorkshopModal: React.FC = () => {
     setEditingWorkshop,
   } = useApp();
 
-  const [form, setForm] = useState(EMPTY);
+  const [form, setForm] = useState<WorkshopFormData>(EMPTY);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
   // Sincronizar formulario si estamos en modo edición o creación
   useEffect(() => {
     if (editingWorkshop) {
+      const isVirtual = editingWorkshop.modality === 'Virtual en Vivo';
       setForm({
         title: editingWorkshop.title,
         subtitle: editingWorkshop.subtitle || '',
@@ -67,6 +98,14 @@ export const NewWorkshopModal: React.FC = () => {
         includes: editingWorkshop.includes.length > 0 ? editingWorkshop.includes : [''],
         image: editingWorkshop.image,
         description: editingWorkshop.description || '',
+        hasCoffeeBreak: editingWorkshop.hasCoffeeBreak !== undefined ? editingWorkshop.hasCoffeeBreak : !isVirtual,
+        coffeeBreakText: editingWorkshop.coffeeBreakText || 'Coffee break artesanal con repostería dulce y bebidas.',
+        hasToolsIncluded: editingWorkshop.hasToolsIncluded !== undefined ? editingWorkshop.hasToolsIncluded : true,
+        toolsText: editingWorkshop.toolsText || 'Uso ilimitado de herramientas de alta precisión durante el taller.',
+        hasTakeHomeProject: editingWorkshop.hasTakeHomeProject !== undefined ? editingWorkshop.hasTakeHomeProject : true,
+        takeHomeText: editingWorkshop.takeHomeText || 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
+        instructorName: editingWorkshop.instructorName || 'Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)',
+        instructorSubtitle: editingWorkshop.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
       });
     } else {
       setForm(EMPTY);
@@ -75,7 +114,7 @@ export const NewWorkshopModal: React.FC = () => {
 
   if (!isNewWorkshopModalOpen) return null;
 
-  const set = (key: string, val: string | number) => setForm((f) => ({ ...f, [key]: val }));
+  const set = (key: keyof WorkshopFormData, val: any) => setForm((f) => ({ ...f, [key]: val }));
 
   const handleIncludeChange = (idx: number, val: string) => {
     setForm((f) => {
@@ -85,7 +124,17 @@ export const NewWorkshopModal: React.FC = () => {
     });
   };
 
-  const addInclude = () => setForm((f) => ({ ...f, includes: [...f.includes, ''] }));
+  const addInclude = (customText?: string) => {
+    const textToAdd = typeof customText === 'string' ? customText : '';
+    setForm((f) => {
+      // Si el último está vacío y se pasa un texto, rellenarlo
+      if (textToAdd && f.includes.length === 1 && f.includes[0] === '') {
+        return { ...f, includes: [textToAdd] };
+      }
+      return { ...f, includes: [...f.includes, textToAdd] };
+    });
+  };
+
   const removeInclude = (idx: number) =>
     setForm((f) => ({ ...f, includes: f.includes.filter((_, i) => i !== idx) }));
 
@@ -97,39 +146,38 @@ export const NewWorkshopModal: React.FC = () => {
       form.image.trim() ||
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80';
 
+    const workshopPayload = {
+      title: form.title.trim(),
+      subtitle: form.subtitle.trim(),
+      date: form.date.trim(),
+      schedule: form.schedule.trim(),
+      modality: form.modality,
+      location: form.location.trim(),
+      price: Number(form.price),
+      totalSpots: Number(form.totalSpots),
+      spotsAvailable: editingWorkshop
+        ? Math.min(Number(form.totalSpots), editingWorkshop.spotsAvailable)
+        : Number(form.totalSpots),
+      includes: form.includes.map((i) => i.trim()).filter(Boolean),
+      image: imageUrl,
+      description: form.description.trim(),
+      hasCoffeeBreak: form.hasCoffeeBreak,
+      coffeeBreakText: form.coffeeBreakText.trim(),
+      hasToolsIncluded: form.hasToolsIncluded,
+      toolsText: form.toolsText.trim(),
+      hasTakeHomeProject: form.hasTakeHomeProject,
+      takeHomeText: form.takeHomeText.trim(),
+      instructorName: form.instructorName.trim(),
+      instructorSubtitle: form.instructorSubtitle.trim(),
+    };
+
     if (editingWorkshop) {
       // Modo Edición / Modificación de Taller Existente
-      updateWorkshop(editingWorkshop.id, {
-        title: form.title.trim(),
-        subtitle: form.subtitle.trim(),
-        date: form.date.trim(),
-        schedule: form.schedule.trim(),
-        modality: form.modality,
-        location: form.location.trim(),
-        price: Number(form.price),
-        totalSpots: Number(form.totalSpots),
-        spotsAvailable: Math.min(Number(form.totalSpots), editingWorkshop.spotsAvailable),
-        includes: form.includes.map((i) => i.trim()).filter(Boolean),
-        image: imageUrl,
-        description: form.description.trim(),
-      });
+      updateWorkshop(editingWorkshop.id, workshopPayload);
       setSuccessToast('¡Taller modificado y guardado con éxito!');
     } else {
       // Modo Creación de Nuevo Taller
-      const newWs = addWorkshop({
-        title: form.title.trim(),
-        subtitle: form.subtitle.trim(),
-        date: form.date.trim(),
-        schedule: form.schedule.trim(),
-        modality: form.modality,
-        location: form.location.trim(),
-        price: Number(form.price),
-        totalSpots: Number(form.totalSpots),
-        spotsAvailable: Number(form.totalSpots),
-        includes: form.includes.map((i) => i.trim()).filter(Boolean),
-        image: imageUrl,
-        description: form.description.trim(),
-      });
+      const newWs = addWorkshop(workshopPayload);
 
       // Copiar enlace al portapapeles
       const link = `${window.location.origin}/talleres/${newWs.id}`;
@@ -173,8 +221,8 @@ export const NewWorkshopModal: React.FC = () => {
                 </div>
                 <p className="text-xs text-slate-500 font-sans mt-0.5">
                   {editingWorkshop
-                    ? 'Actualiza foto, título, descripción, cupos o precio. Los cambios se guardarán de inmediato.'
-                    : 'Publica un nuevo taller con foto, fechas, temario y materiales incluidos.'}
+                    ? 'Actualiza foto, título, descripción de la experiencia, materiales o beneficios. Los cambios se sincronizan en vivo.'
+                    : 'Publica un nuevo taller con foto, fechas, experiencia, materiales y beneficios incluidos.'}
                 </p>
               </div>
             </div>
@@ -182,7 +230,7 @@ export const NewWorkshopModal: React.FC = () => {
             <button
               type="button"
               onClick={handleClose}
-              className="flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2 rounded-2xl bg-[#F5F1EB] hover:bg-slate-200 text-slate-700 hover:text-slate-900 font-bubble font-bold text-xs transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2 rounded-2xl bg-[#F5F1EB] hover:bg-slate-200 text-slate-700 hover:text-slate-900 font-bubble font-bold text-xs transition-all active:scale-95 cursor-pointer"
               title="Cerrar ventana a pantalla completa"
             >
               <X className="w-4 h-4" />
@@ -205,7 +253,7 @@ export const NewWorkshopModal: React.FC = () => {
             {/* =========================================================
                 COLUMNA IZQUIERDA: DATOS CLAVE, FOTO Y LOGÍSTICA
                 ========================================================= */}
-            <div className="lg:col-span-7 space-y-5">
+            <div className="lg:col-span-6 space-y-5">
               {/* Título y Subtítulo */}
               <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-fio-800 flex items-center gap-1.5">
@@ -228,7 +276,7 @@ export const NewWorkshopModal: React.FC = () => {
 
                 <div>
                   <label className="text-xs font-semibold text-slate-600 block mb-1">
-                    Subtítulo / Frase Corta
+                    Subtítulo / Frase Resumen
                   </label>
                   <input
                     value={form.subtitle}
@@ -278,7 +326,15 @@ export const NewWorkshopModal: React.FC = () => {
                     </label>
                     <select
                       value={form.modality}
-                      onChange={(e) => set('modality', e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value as 'Presencial' | 'Virtual en Vivo';
+                        set('modality', val);
+                        if (val === 'Virtual en Vivo' && form.hasCoffeeBreak) {
+                          set('hasCoffeeBreak', false);
+                        } else if (val === 'Presencial' && !form.hasCoffeeBreak) {
+                          set('hasCoffeeBreak', true);
+                        }
+                      }}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white"
                     >
                       <option value="Presencial">Presencial</option>
@@ -346,7 +402,7 @@ export const NewWorkshopModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Foto / Imagen Multifuncional (URL, Subir archivo, Pegar Ctrl+V, Arrastrar y Soltar) */}
+              {/* Foto Principal */}
               <ImageUploadField
                 value={form.image}
                 onChange={(newUrl) => set('image', newUrl)}
@@ -354,36 +410,74 @@ export const NewWorkshopModal: React.FC = () => {
                 aspectRatio="video"
                 defaultPlaceholder="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80"
               />
-            </div>
 
-            {/* =========================================================
-                COLUMNA DERECHA: DESCRIPCIÓN Y MATERIALES INCLUIDOS
-                ========================================================= */}
-            <div className="lg:col-span-5 space-y-5">
-              {/* Descripción Extensa */}
+              {/* Profesor / Acompañamiento Personalizado */}
               <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-                  Descripción &amp; Experiencia del Alumno
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <Heart className="w-3.5 h-3.5 text-fio-pink fill-fio-pink" />
+                  Sello del Instructor / Acompañamiento
                 </span>
 
                 <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                    Nombre o Cargo del Instructor
+                  </label>
+                  <input
+                    value={form.instructorName}
+                    onChange={(e) => set('instructorName', e.target.value)}
+                    placeholder="Ej: Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                    Frase de Acompañamiento / Dinámica
+                  </label>
+                  <input
+                    value={form.instructorSubtitle}
+                    onChange={(e) => set('instructorSubtitle', e.target.value)}
+                    placeholder="Ej: Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual."
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* =========================================================
+                COLUMNA DERECHA: EXPERIENCIA, MATERIALES Y BENEFICIOS
+                ========================================================= */}
+            <div className="lg:col-span-6 space-y-5">
+              {/* ¿De qué trata esta experiencia? */}
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-fio-800 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    ¿De qué trata esta experiencia?
+                  </span>
+                  <span className="text-[10px] text-fio-pink font-semibold bg-pink-50 px-2 py-0.5 rounded-full border border-pink-100">
+                    Visible en la web
+                  </span>
+                </div>
+
+                <div>
                   <label className="text-xs font-bold text-slate-700 block mb-1">
-                    ¿De qué trata este taller?
+                    Descripción detallada de la experiencia
                   </label>
                   <textarea
                     value={form.description}
                     onChange={(e) => set('description', e.target.value)}
-                    rows={6}
-                    placeholder="Describe las técnicas que aprenderán, el proyecto con el que saldrán terminado, a quién va dirigido y por qué es una experiencia única..."
+                    rows={7}
+                    placeholder="Describe en qué consiste el taller, las técnicas que se aprenderán paso a paso, el ambiente de la clase y el proyecto con el que cada alumno saldrá terminado... (Puedes separar en varios párrafos)"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none leading-relaxed"
                   />
                   <p className="text-[11px] text-slate-400 mt-1">
-                    Esta descripción se mostrará de forma destacada en la página individual del taller.
+                    Todo lo que escribas aquí se mostrará exactamente bajo el título <strong>"¿De qué trata esta experiencia?"</strong> en la página del taller.
                   </p>
                 </div>
               </div>
 
-              {/* Lista Dinámica de ¿Qué Incluye? */}
+              {/* Materiales y Todo lo que Incluye */}
               <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
@@ -391,15 +485,32 @@ export const NewWorkshopModal: React.FC = () => {
                   </span>
                   <button
                     type="button"
-                    onClick={addInclude}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-fio-800 hover:text-fio-600 transition-colors"
+                    onClick={() => addInclude()}
+                    className="inline-flex items-center gap-1 text-xs font-bold text-fio-800 hover:text-fio-600 transition-colors cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Agregar ítem</span>
                   </button>
                 </div>
 
-                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                {/* Sugerencias Rápidas */}
+                <div className="flex flex-wrap gap-1.5 pt-1 pb-1">
+                  <span className="text-[10px] text-slate-400 self-center mr-1">Sugerencias:</span>
+                  {QUICK_INCLUDE_SUGGESTIONS.map((sug, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => addInclude(sug)}
+                      className="text-[10px] bg-slate-100 hover:bg-fio-100 text-slate-600 hover:text-fio-800 px-2 py-0.5 rounded-lg border border-slate-200 transition-colors cursor-pointer flex items-center gap-1"
+                      title="Agregar sugerencia a la lista"
+                    >
+                      <Plus className="w-2.5 h-2.5" />
+                      <span>{sug}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                   {form.includes.map((inc, idx) => (
                     <div key={idx} className="flex items-center gap-2">
                       <span className="w-4 text-center text-xs text-slate-400 font-bold">{idx + 1}.</span>
@@ -413,7 +524,7 @@ export const NewWorkshopModal: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => removeInclude(idx)}
-                          className="p-1 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
+                          className="p-1 rounded-lg text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
                           title="Eliminar este ítem"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -421,6 +532,94 @@ export const NewWorkshopModal: React.FC = () => {
                       )}
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Beneficios Adicionales: Coffee Break, Herramientas y Proyecto Terminado */}
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                  Servicios &amp; Beneficios Destacados
+                </span>
+
+                {/* 1. Coffee Break */}
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form.hasCoffeeBreak}
+                        onChange={(e) => set('hasCoffeeBreak', e.target.checked)}
+                        className="rounded text-fio-pink focus:ring-fio-pink w-4 h-4 cursor-pointer"
+                      />
+                      <Coffee className="w-4 h-4 text-amber-500" />
+                      <span>Incluir Coffee Break</span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      {form.hasCoffeeBreak ? 'Activado' : 'Desactivado'}
+                    </span>
+                  </div>
+                  {form.hasCoffeeBreak && (
+                    <input
+                      value={form.coffeeBreakText}
+                      onChange={(e) => set('coffeeBreakText', e.target.value)}
+                      placeholder="Ej: Coffee break artesanal con repostería dulce y bebidas."
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white"
+                    />
+                  )}
+                </div>
+
+                {/* 2. Herramientas en Clase */}
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form.hasToolsIncluded}
+                        onChange={(e) => set('hasToolsIncluded', e.target.checked)}
+                        className="rounded text-fio-pink focus:ring-fio-pink w-4 h-4 cursor-pointer"
+                      />
+                      <ShieldCheck className="w-4 h-4 text-fio-600" />
+                      <span>Uso de Herramientas de Precisión en Clase</span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      {form.hasToolsIncluded ? 'Activado' : 'Desactivado'}
+                    </span>
+                  </div>
+                  {form.hasToolsIncluded && (
+                    <input
+                      value={form.toolsText}
+                      onChange={(e) => set('toolsText', e.target.value)}
+                      placeholder="Ej: Uso ilimitado de herramientas de alta precisión durante el taller."
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white"
+                    />
+                  )}
+                </div>
+
+                {/* 3. Proyecto Terminado para Llevar */}
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form.hasTakeHomeProject}
+                        onChange={(e) => set('hasTakeHomeProject', e.target.checked)}
+                        className="rounded text-fio-pink focus:ring-fio-pink w-4 h-4 cursor-pointer"
+                      />
+                      <Star className="w-4 h-4 text-fio-pink fill-fio-pink" />
+                      <span>Proyecto Terminado para Llevar</span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      {form.hasTakeHomeProject ? 'Activado' : 'Desactivado'}
+                    </span>
+                  </div>
+                  {form.hasTakeHomeProject && (
+                    <input
+                      value={form.takeHomeText}
+                      onChange={(e) => set('takeHomeText', e.target.value)}
+                      placeholder="Ej: Te llevás tu proyecto completo y terminado a casa el mismo día."
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none bg-white"
+                    />
+                  )}
                 </div>
               </div>
 
@@ -443,14 +642,14 @@ export const NewWorkshopModal: React.FC = () => {
               <button
                 type="button"
                 onClick={handleClose}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all cursor-pointer"
               >
                 Cancelar
               </button>
 
               <button
                 type="submit"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3 rounded-2xl bg-gradient-to-r from-fio-800 to-fio-pink hover:from-fio-900 hover:to-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn hover:shadow-lg active:scale-98 transition-all"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3 rounded-2xl bg-gradient-to-r from-fio-800 to-fio-pink hover:from-fio-900 hover:to-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn hover:shadow-lg active:scale-98 transition-all cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>{editingWorkshop ? 'Guardar Cambios del Taller' : 'Crear Taller y Copiar Enlace'}</span>

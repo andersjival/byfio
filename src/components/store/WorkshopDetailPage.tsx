@@ -86,6 +86,15 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
   }
 
   const isFull = workshop.spotsAvailable <= 0;
+  const isVirtual = workshop.modality === 'Virtual en Vivo';
+  const hasCoffeeBreak = workshop.hasCoffeeBreak !== undefined ? workshop.hasCoffeeBreak : !isVirtual;
+  const coffeeBreakText = workshop.coffeeBreakText || 'Coffee break artesanal con repostería dulce y bebidas.';
+  const hasToolsIncluded = workshop.hasToolsIncluded !== undefined ? workshop.hasToolsIncluded : true;
+  const toolsText = workshop.toolsText || 'Uso ilimitado de herramientas de alta precisión durante el taller.';
+  const hasTakeHomeProject = workshop.hasTakeHomeProject !== undefined ? workshop.hasTakeHomeProject : true;
+  const takeHomeText = workshop.takeHomeText || 'Te llevás tu proyecto completo y terminado a casa el mismo día.';
+  const instructorName = workshop.instructorName || 'Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)';
+  const instructorSubtitle = workshop.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.';
   const totalPrice = workshop.price * quantity;
 
   // Copiar link directo a este taller
@@ -411,16 +420,20 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
             </p>
 
             <div className="pt-2 border-t border-slate-200/60 space-y-3 text-sm text-slate-600 leading-relaxed font-sans">
-              <p className="font-bold text-slate-800">
+              <p className="font-bold text-slate-800 text-base">
                 ¿De qué trata esta experiencia?
               </p>
-              <p>
-                {workshop.description ||
-                  'En este taller práctico aprenderás paso a paso las técnicas de diseño, armado y acabado artesanal para crear proyectos con calidad profesional.'}
-              </p>
-              <p>
-                Durante las horas de clase, compartirás en un ambiente relajado, inspirador y con asesoría continua. No necesitas tener ningún conocimiento previo: la clase está pensada para que aprendas desde cero con total tranquilidad y salgas con tu proyecto 100% terminado y listo para usar o emprender.
-              </p>
+              {workshop.description ? (
+                workshop.description.split('\n').filter((p) => p.trim()).map((paragraph, idx) => (
+                  <p key={idx} className="leading-relaxed">
+                    {paragraph}
+                  </p>
+                ))
+              ) : (
+                <p className="leading-relaxed">
+                  En este taller práctico aprenderás paso a paso las técnicas de diseño, armado y acabado artesanal para crear proyectos con calidad profesional.
+                </p>
+              )}
             </div>
 
             {/* Sello de Acompañamiento Fio */}
@@ -430,10 +443,10 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
               </div>
               <div>
                 <p className="text-xs font-bubble font-bold text-slate-900">
-                  Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)
+                  {instructorName}
                 </p>
                 <p className="text-[11px] text-slate-500 font-sans">
-                  Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.
+                  {instructorSubtitle}
                 </p>
               </div>
             </div>
@@ -467,21 +480,29 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
               ))}
             </ul>
 
-            {/* Destacados Adicionales */}
-            <div className="pt-3 border-t border-slate-200/60 space-y-2 text-xs text-slate-500">
-              <div className="flex items-center gap-2 text-slate-600">
-                <Coffee className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>Coffee break artesanal con repostería dulce y bebidas.</span>
+            {/* Destacados Adicionales Configurables */}
+            {(hasCoffeeBreak || hasToolsIncluded || hasTakeHomeProject) && (
+              <div className="pt-3 border-t border-slate-200/60 space-y-2 text-xs text-slate-500">
+                {hasCoffeeBreak && (
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Coffee className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span>{coffeeBreakText}</span>
+                  </div>
+                )}
+                {hasToolsIncluded && (
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <ShieldCheck className="w-4 h-4 text-fio-600 shrink-0" />
+                    <span>{toolsText}</span>
+                  </div>
+                )}
+                {hasTakeHomeProject && (
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Star className="w-4 h-4 text-fio-pink fill-fio-pink shrink-0" />
+                    <span>{takeHomeText}</span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-slate-600">
-                <ShieldCheck className="w-4 h-4 text-fio-600 shrink-0" />
-                <span>Uso ilimitado de herramientas de alta precisión durante el taller.</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-600">
-                <Star className="w-4 h-4 text-fio-pink fill-fio-pink shrink-0" />
-                <span>Te llevás tu proyecto completo y terminado a casa el mismo día.</span>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Caja 2: Inversión, Reserva e Inscripción / Pago con SINPE */}
@@ -800,14 +821,18 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                       <span>{inc}</span>
                     </li>
                   ))}
-                  <li className="flex items-start gap-1.5">
-                    <Coffee className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                    <span>Coffee break artesanal con repostería dulce y bebidas.</span>
-                  </li>
-                  <li className="flex items-start gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-fio-600 shrink-0 mt-0.5" />
-                    <span>Uso ilimitado de herramientas de alta precisión durante el taller.</span>
-                  </li>
+                  {hasCoffeeBreak && (
+                    <li className="flex items-start gap-1.5">
+                      <Coffee className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                      <span>{coffeeBreakText}</span>
+                    </li>
+                  )}
+                  {hasToolsIncluded && (
+                    <li className="flex items-start gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-fio-600 shrink-0 mt-0.5" />
+                      <span>{toolsText}</span>
+                    </li>
+                  )}
                 </ul>
 
                 <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-500 space-y-1">
