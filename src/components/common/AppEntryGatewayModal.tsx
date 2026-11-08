@@ -132,7 +132,7 @@ export const AppEntryGatewayModal: React.FC<AppEntryGatewayModalProps> = ({
         {/* Micro-nota inferior */}
         <div className="pt-2 text-[11px] text-slate-400 font-sans flex items-center justify-center gap-2">
           <ShieldCheck className="w-3.5 h-3.5 text-purple-500" />
-          <span>Sincronizado en tiempo real con la base de datos Cloudflare D1</span>
+          <span>Sincronizado en tiempo real</span>
         </div>
       </div>
     </div>

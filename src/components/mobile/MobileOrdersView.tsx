@@ -184,10 +184,6 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                 Móvil
               </span>
             </div>
-            <div className="flex items-center gap-1 text-[10px] text-slate-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>D1 En Vivo</span>
-            </div>
           </div>
         </div>
 

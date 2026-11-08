@@ -32,6 +32,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
   - Integrada la descripción funcional exacta en las tarjetas del Menú Principal del Administrador y en la lista de permisos/modal de perfiles (Cola de pedidos, escaneo de picking y empaque, Crear, editar o revocar accesos a otros usuarios, etc.).
   - Añadido tooltip informativo con título y descripción completa en los chips de módulos autorizados de cada perfil de colaborador.
 
+### Versión 4.17.7 - Erradicación de Menciones Técnicas "D1 En Vivo" en PWA Móvil y Modales
+- [x] **Limpieza Visual en PWA Móvil ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Eliminada la etiqueta y el punto verde pulsante "D1 En Vivo" de la cabecera de la aplicación móvil de pedidos para celular (administrador y colaboradores).
+- [x] **Limpieza en Modales de Entrada ([AppEntryGatewayModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/AppEntryGatewayModal.tsx)):**
+  - Reemplazada la referencia técnica a la base de datos por un rótulo limpio y profesional: "Sincronizado en tiempo real".
+
 ### Versión 4.17.6 - Centro de Aplicaciones PWA Adaptativas para Administradora (PC y Celular) y Colaboradores
 - [x] **PWA Oficial Multi-versión ([manifest.webmanifest](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest.webmanifest), [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js), [usePwaInstall.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/usePwaInstall.ts)):**
   - Registro de manifiesto web PWA con accesos directos dinámicos, soporte offline Network-First y detector reactivo de modo standalone e instalabilidad.
