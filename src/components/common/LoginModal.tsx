@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2, AlertCircle, LogOut, KeyRound, Shield } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
@@ -34,12 +34,67 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     triggerLoginCinematic,
     isFeatureEnabled,
   } = useApp();
-  const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>('email');
+  const isBackdropMouseDownRef = useRef(false);
+
+  const [loginMethod, setLoginMethod] = useState<'email' | 'pin'>(() => {
+    try {
+      return (localStorage.getItem('byfio_saved_login_method') as 'email' | 'pin') || 'email';
+    } catch {
+      return 'email';
+    }
+  });
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => {
+    try {
+      return localStorage.getItem('byfio_saved_login_email') || '';
+    } catch {
+      return '';
+    }
+  });
   const [password, setPassword] = useState('');
   const [pinCode, setPinCode] = useState('');
-  const [profileNameInput, setProfileNameInput] = useState('');
+  const [profileNameInput, setProfileNameInput] = useState(() => {
+    try {
+      return localStorage.getItem('byfio_saved_login_profile') || '';
+    } catch {
+      return '';
+    }
+  });
+
+  const handleSelectLoginMethod = (method: 'email' | 'pin') => {
+    setLoginMethod(method);
+    setErrorMessage(null);
+    try {
+      localStorage.setItem('byfio_saved_login_method', method);
+    } catch {}
+  };
+
+  const handleEmailChange = (val: string) => {
+    setEmail(val);
+    if (errorMessage) setErrorMessage(null);
+    try {
+      localStorage.setItem('byfio_saved_login_email', val);
+    } catch {}
+  };
+
+  const handleProfileNameChange = (pName: string) => {
+    setProfileNameInput(pName);
+    if (errorMessage) setErrorMessage(null);
+    try {
+      localStorage.setItem('byfio_saved_login_profile', pName);
+    } catch {}
+  };
+
+  const handleBackdropMouseDown = (e: React.MouseEvent) => {
+    isBackdropMouseDownRef.current = e.target === e.currentTarget;
+  };
+
+  const handleBackdropMouseUp = (e: React.MouseEvent) => {
+    if (isBackdropMouseDownRef.current && e.target === e.currentTarget) {
+      onClose();
+    }
+    isBackdropMouseDownRef.current = false;
+  };
   const [pinAttempts, setPinAttempts] = useState(() => {
     try {
       return Number(sessionStorage.getItem('byfio_pin_attempts') || 0);
@@ -272,7 +327,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setLoginMethod('email');
+                    handleSelectLoginMethod('email');
                     setErrorMessage(null);
                   }}
                   className={`flex-1 py-1.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
@@ -289,7 +344,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      setLoginMethod('pin');
+                      handleSelectLoginMethod('pin');
                       setErrorMessage(null);
                     }}
                     className={`flex-1 py-1.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center justify-center gap-1.5 ${
@@ -318,8 +373,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                           key={p.id}
                           type="button"
                           onClick={() => {
-                            setLoginMethod('pin');
-                            setProfileNameInput(p.name);
+                            handleSelectLoginMethod('pin');
+                            handleProfileNameChange(p.name);
                             setErrorMessage(null);
                           }}
                           className={`px-2.5 py-1 rounded-xl text-[10px] font-bubble font-bold transition-all border cursor-pointer ${
@@ -433,7 +488,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                           key={p.id}
                           type="button"
                           onClick={() => {
-                            setProfileNameInput(p.name);
+                            handleProfileNameChange(p.name);
                             if (errorMessage) setErrorMessage(null);
                           }}
                           className={`px-2 py-0.5 rounded-lg text-[10px] font-bubble font-bold transition-all border cursor-pointer ${
@@ -457,7 +512,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     placeholder="Escribe o toca tu perfil"
                     value={profileNameInput}
                     onChange={(e) => {
-                      setProfileNameInput(e.target.value);
+                      handleProfileNameChange(e.target.value);
                       if (errorMessage) setErrorMessage(null);
                     }}
                     required
@@ -541,7 +596,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   placeholder={mode === 'login' ? 'Correo (ej. fio@byfiocr.com)' : 'Correo electrónico'}
                   value={email}
                   onChange={(e) => {
-                    setEmail(e.target.value);
+                    handleEmailChange(e.target.value);
                     if (errorMessage) setErrorMessage(null);
                   }}
                   required
@@ -686,7 +741,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       <div
         className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain flex flex-col items-center p-2 sm:p-4 py-4 sm:py-6"
         style={{ minHeight: '100dvh' }}
-        onClick={onClose}
+        onMouseDown={handleBackdropMouseDown}
+        onMouseUp={handleBackdropMouseUp}
       >
         {/* Cortina translúcida que tapa la web de arriba hacia abajo y luego se desvanece suavemente */}
         <div
@@ -702,6 +758,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         {/* Ventana de login: centrada con margen vertical seguro para que NUNCA se corte arriba ni abajo */}
         <div
           onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onMouseUp={(e) => e.stopPropagation()}
           className={`relative z-30 w-full max-w-[395px] mx-auto my-auto py-2 flex justify-center ${
             loginIntroStage >= 1
               ? 'login-exit-up'
