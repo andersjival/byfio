@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { SupplierOrder, SupplierOrderItem, SupplierOrderStatus } from '../../types';
@@ -56,6 +56,39 @@ export const SuppliersOrdersSection: React.FC = () => {
   const [selectedProductId, setSelectedProductId] = useState('');
   const [selectedQty, setSelectedQty] = useState(1);
   const [newOrderItems, setNewOrderItems] = useState<SupplierOrderItem[]>([]);
+
+  // Buscador Inteligente de Productos para Nueva Orden
+  const [productSearchQuery, setProductSearchQuery] = useState('');
+  const [isProductSearchOpen, setIsProductSearchOpen] = useState(false);
+  const productSearchContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        productSearchContainerRef.current &&
+        !productSearchContainerRef.current.contains(e.target as Node)
+      ) {
+        setIsProductSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const searchableProducts = useMemo(() => {
+    if (!productSearchQuery.trim()) {
+      return products;
+    }
+    const q = productSearchQuery.toLowerCase().trim();
+    return products.filter((p) => {
+      const matchName = p.name.toLowerCase().includes(q);
+      const matchSku = p.sku.toLowerCase().includes(q);
+      const matchCat = (p.category || '').toLowerCase().includes(q);
+      const matchLoc = (p.shelfLocation || '').toLowerCase().includes(q);
+      const matchDesc = (p.description || '').toLowerCase().includes(q);
+      return matchName || matchSku || matchCat || matchLoc || matchDesc;
+    });
+  }, [products, productSearchQuery]);
 
   // Conteos
   const totalCount = supplierOrders.length;
@@ -131,6 +164,8 @@ export const SuppliersOrdersSection: React.FC = () => {
 
     setSelectedProductId('');
     setSelectedQty(1);
+    setProductSearchQuery('');
+    setIsProductSearchOpen(false);
   };
 
   const handleRemoveItemFromNewOrder = (index: number) => {
@@ -766,38 +801,193 @@ export const SuppliersOrdersSection: React.FC = () => {
                     <span>Agregar Productos a la Orden</span>
                   </h4>
 
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <select
-                      value={selectedProductId}
-                      onChange={(e) => setSelectedProductId(e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-sans focus:outline-none focus:ring-2 focus:ring-amber-400"
-                    >
-                      <option value="">Selecciona un producto del inventario...</option>
-                      {products.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name} ({p.sku}) — Stock actual: {p.stock}
-                        </option>
-                      ))}
-                    </select>
+                  {/* Buscador Inteligente & Selector de Productos */}
+                  <div ref={productSearchContainerRef} className="relative">
+                    {!selectedProductId ? (
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={productSearchQuery}
+                          onChange={(e) => {
+                            setProductSearchQuery(e.target.value);
+                            setIsProductSearchOpen(true);
+                          }}
+                          onFocus={() => setIsProductSearchOpen(true)}
+                          placeholder="🔍 Busca por nombre, código SKU (ej: FIO-AG), estante o categoría..."
+                          className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-sans text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-2xs"
+                        />
+                        <Search className="w-4 h-4 text-amber-600 absolute left-3 top-3 pointer-events-none" />
+                        {productSearchQuery ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProductSearchQuery('');
+                              setIsProductSearchOpen(true);
+                            }}
+                            className="p-1 text-slate-400 hover:text-slate-600 absolute right-2.5 top-2.5 rounded-full hover:bg-slate-100 cursor-pointer"
+                            title="Limpiar búsqueda"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setIsProductSearchOpen(!isProductSearchOpen)}
+                            className="p-1 text-slate-400 hover:text-slate-600 absolute right-2.5 top-2.5 rounded-full hover:bg-slate-100 cursor-pointer"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </button>
+                        )}
 
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        min="1"
-                        value={selectedQty}
-                        onChange={(e) => setSelectedQty(Math.max(1, parseInt(e.target.value) || 1))}
-                        className="w-20 px-2.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-mono font-bold text-center focus:outline-none focus:ring-2 focus:ring-amber-400"
-                        placeholder="Cant."
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddItemToNewOrder}
-                        disabled={!selectedProductId}
-                        className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white font-bubble font-bold text-xs transition-colors cursor-pointer"
-                      >
-                        Agregar
-                      </button>
-                    </div>
+                        {/* Dropdown Flotante con Resultados en Tiempo Real */}
+                        {isProductSearchOpen && (
+                          <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border-2 border-amber-300 rounded-2xl shadow-2xl max-h-64 overflow-y-auto z-50 divide-y divide-slate-100">
+                            {searchableProducts.length === 0 ? (
+                              <div className="p-4 text-center text-xs text-slate-500">
+                                🔍 No se encontraron productos para "{productSearchQuery}". Intenta con otro nombre, código o estante.
+                              </div>
+                            ) : (
+                              searchableProducts.map((p) => {
+                                const isZero = p.stock <= 0;
+                                const costVal = p.costPrice || Math.round(p.price * 0.45);
+                                return (
+                                  <div
+                                    key={p.id}
+                                    onClick={() => {
+                                      setSelectedProductId(p.id);
+                                      setIsProductSearchOpen(false);
+                                      setProductSearchQuery('');
+                                    }}
+                                    className="p-2.5 hover:bg-amber-50 cursor-pointer flex items-center justify-between gap-3 transition-colors group"
+                                  >
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                      <img
+                                        src={p.image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=100&q=80'}
+                                        alt={p.name}
+                                        className="w-9 h-9 rounded-lg object-cover shrink-0 border border-slate-200"
+                                      />
+                                      <div className="min-w-0">
+                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                          <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">
+                                            {p.sku}
+                                          </span>
+                                          <p className="font-bubble font-bold text-xs text-slate-900 truncate group-hover:text-amber-800">
+                                            {p.name}
+                                          </p>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5 flex-wrap">
+                                          <span>📁 {p.category}</span>
+                                          {p.shelfLocation && <span>📍 {p.shelfLocation}</span>}
+                                          <span className="font-mono font-bold text-slate-600">
+                                            Costo: {formatCRC(costVal)}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="text-right shrink-0">
+                                      <span
+                                        className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                          isZero
+                                            ? 'bg-rose-100 text-rose-700 border border-rose-200'
+                                            : 'bg-emerald-100 text-emerald-800'
+                                        }`}
+                                      >
+                                        Stock: {p.stock} {isZero && '• ¡Pedir!'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              })
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      /* Producto Seleccionado: Card interactiva para definir cantidad y agregar */
+                      (() => {
+                        const selectedProd = products.find((p) => p.id === selectedProductId);
+                        if (!selectedProd) return null;
+                        const isZero = selectedProd.stock <= 0;
+                        const costVal = selectedProd.costPrice || Math.round(selectedProd.price * 0.45);
+
+                        return (
+                          <div className="p-3 bg-amber-50/80 border-2 border-amber-300 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <img
+                                src={selectedProd.image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=100&q=80'}
+                                alt={selectedProd.name}
+                                className="w-10 h-10 rounded-xl object-cover shrink-0 border border-amber-200"
+                              />
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">
+                                    {selectedProd.sku}
+                                  </span>
+                                  <p className="font-bubble font-bold text-xs text-slate-900 truncate">
+                                    {selectedProd.name}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5 flex-wrap">
+                                  <span className={isZero ? 'text-rose-600 font-bold' : 'text-slate-600'}>
+                                    Stock actual: {selectedProd.stock}
+                                  </span>
+                                  <span>•</span>
+                                  <span>Costo: <b>{formatCRC(costVal)}</b></span>
+                                  {selectedProd.shelfLocation && (
+                                    <>
+                                      <span>•</span>
+                                      <span>📍 {selectedProd.shelfLocation}</span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                              <div className="flex items-center gap-1">
+                                <span className="text-[11px] font-bold text-slate-600">Cant:</span>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={selectedQty}
+                                  onChange={(e) => setSelectedQty(Math.max(1, parseInt(e.target.value) || 1))}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                      handleAddItemToNewOrder();
+                                    }
+                                  }}
+                                  className="w-16 px-2 py-1.5 rounded-xl border border-amber-300 bg-white text-xs font-mono font-bold text-center focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                  autoFocus
+                                />
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={handleAddItemToNewOrder}
+                                className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bubble font-bold text-xs transition-all shadow-xs active:scale-95 cursor-pointer flex items-center gap-1"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Agregar</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedProductId('');
+                                  setSelectedQty(1);
+                                  setProductSearchQuery('');
+                                }}
+                                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 rounded-xl transition-colors cursor-pointer"
+                                title="Cambiar de producto / volver a buscar"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()
+                    )}
                   </div>
 
                   {/* Lista de Artículos Agregados */}

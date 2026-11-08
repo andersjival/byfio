@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
 import {
-  X, Printer, MessageCircle, AlertTriangle, CheckCircle,
+  X, Printer, MessageCircle, AlertTriangle, CheckCircle, Search,
   Plus, Minus, Trash2, RefreshCw, FileText, Edit3, Eye, Calendar, Truck
 } from 'lucide-react';
 
@@ -12,6 +12,7 @@ export const SupplierOrderModal: React.FC = () => {
   const [excludedIds, setExcludedIds] = useState<Set<string>>(new Set());
   const [additionalProductIds, setAdditionalProductIds] = useState<string[]>([]);
   const [selectedAddId, setSelectedAddId] = useState<string>('');
+  const [searchAddQuery, setSearchAddQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'editor' | 'document'>('editor');
   const [savedInAgenda, setSavedInAgenda] = useState(false);
   const [isSavingAgenda, setIsSavingAgenda] = useState(false);
@@ -93,6 +94,18 @@ export const SupplierOrderModal: React.FC = () => {
     const currentIds = new Set(orderItems.map((i) => i.id));
     return products.filter((p) => !currentIds.has(p.id));
   }, [products, orderItems]);
+
+  const filteredAvailableToAdd = useMemo(() => {
+    if (!searchAddQuery.trim()) return availableToAdd;
+    const q = searchAddQuery.toLowerCase().trim();
+    return availableToAdd.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.sku.toLowerCase().includes(q) ||
+        (p.shelfLocation || '').toLowerCase().includes(q) ||
+        (p.category || '').toLowerCase().includes(q)
+    );
+  }, [availableToAdd, searchAddQuery]);
 
   if (!isSupplierModalOpen) return null;
 
@@ -404,16 +417,40 @@ export const SupplierOrderModal: React.FC = () => {
                   </table>
                 </div>
 
-                {/* Agregar otro producto del catálogo */}
+                {/* Agregar otro producto del catálogo con buscador inteligente */}
                 {availableToAdd.length > 0 && (
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+                    <div className="relative flex-1">
+                      <input
+                        type="text"
+                        value={searchAddQuery}
+                        onChange={(e) => setSearchAddQuery(e.target.value)}
+                        placeholder="🔍 Filtrar por nombre, SKU o estante..."
+                        className="w-full pl-8 pr-7 py-2 rounded-xl border border-slate-300 bg-white text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-purple-400 placeholder:text-slate-400"
+                      />
+                      <Search className="w-3.5 h-3.5 text-purple-600 absolute left-2.5 top-2.5 pointer-events-none" />
+                      {searchAddQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchAddQuery('')}
+                          className="p-1 text-slate-400 hover:text-slate-600 absolute right-2 top-2 rounded-full hover:bg-slate-100 cursor-pointer"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+
                     <select
                       value={selectedAddId}
                       onChange={(e) => setSelectedAddId(e.target.value)}
                       className="flex-1 text-xs px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-purple-400"
                     >
-                      <option value="">+ Agregar otro producto del inventario a este pedido...</option>
-                      {availableToAdd.map((p) => (
+                      <option value="">
+                        {searchAddQuery
+                          ? `Resultados (${filteredAvailableToAdd.length})...`
+                          : '+ Seleccionar producto para añadir al pedido...'}
+                      </option>
+                      {filteredAvailableToAdd.map((p) => (
                         <option key={p.id} value={p.id}>
                           {p.sku} — {p.name} (Stock: {p.stock})
                         </option>
@@ -435,8 +472,9 @@ export const SupplierOrderModal: React.FC = () => {
                             [selectedAddId]: prev[selectedAddId] || 5,
                           }));
                           setSelectedAddId('');
+                          setSearchAddQuery('');
                         }}
-                        className="px-4 py-2 rounded-xl bg-purple-800 hover:bg-purple-900 text-white font-bubble text-xs font-bold transition-all shadow-xs active:scale-95 shrink-0"
+                        className="px-4 py-2 rounded-xl bg-purple-800 hover:bg-purple-900 text-white font-bubble text-xs font-bold transition-all shadow-xs active:scale-95 shrink-0 cursor-pointer"
                       >
                         + Añadir al Pedido
                       </button>
