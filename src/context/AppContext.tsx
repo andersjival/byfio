@@ -1599,7 +1599,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
     if (matchingProfile) {
       if (!matchingProfile.isActive) return false;
-      const livePerms = matchingProfile.permissions as Record<string, boolean | undefined> | undefined;
+      const livePerms = matchingProfile.permissions as unknown as Record<string, boolean | undefined> | undefined;
       if (tab === 'sinpe') {
         return Boolean(livePerms?.sinpe ?? livePerms?.reports);
       }

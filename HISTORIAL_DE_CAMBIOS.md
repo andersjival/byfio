@@ -18,6 +18,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
 
+### Versión 4.17.4 - Sincronización Inmediata Online de Permisos de Colaboradores en Tiempo Real
+- [x] **Sincronización Bidireccional en Vivo (0ms BroadcastChannel + 4s Cloud D1 Polling):**
+  - Cuando el administrador activa o desactiva cualquier permiso o el perfil de un colaborador, los cambios se transmiten de inmediato a todas las pestañas y dispositivos mediante BroadcastChannel, eventos de ventana yfio_user_profiles_updated, storage y persistencia en Cloudflare D1.
+- [x] **Evaluación Dinámica de Permisos y Expulsión Automática ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):
+  - La función hasPermission evalúa en caliente el perfil activo en userProfiles, garantizando que cualquier cambio en los accesos se refleje al instante sin depender de sesiones desactualizadas.
+  - Si se revoca el permiso de una sección en la que el colaborador se encuentra navegando, el sistema lo expulsa automáticamente al Menú Principal (Hub).
+  - Si se desactiva o elimina el perfil del colaborador, la sesión se revoca en el acto con cierre inmediato (logoutUser).
+- [x] **Gestión Integral de Módulos ([UserProfilesSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx)):
+  - Añadido el control de permisos para Historial de Ventas (sales) en la edición y creación de perfiles.
+
 ### Versión 4.17.3 - Erradicación Total de Botones de Mención y Migas de Pan (TreeNavigation)
 - [x] **Eliminación Definitiva de Etiquetas de Ubicación ([TreeNavigation.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/TreeNavigation.tsx)):**
   - Desactivado por completo el componente de mención y migas de pan (⭐ by.fio / página actual) en toda la aplicación.
