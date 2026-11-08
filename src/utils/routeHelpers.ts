@@ -26,26 +26,16 @@ export const parseRouteFromLocation = (): RouteInfo => {
     ''
   ).toLowerCase();
 
-    // 0a. Portal de Instalación PWA y Onboarding con PIN (/instalar, /instalar-app, /app, /descargar, /pwa)
+  // 0a. Portal Exclusivo de Instalación PWA y Onboarding con PIN (solo rutas explícitas)
   if (
-    path === '/app' ||
-    path.startsWith('/app/') ||
     path === '/instalar' ||
     path.startsWith('/instalar/') ||
     path === '/instalar-app' ||
     path.startsWith('/instalar-app/') ||
-    path === '/descargar' ||
-    path.startsWith('/descargar/') ||
-    path === '/pwa' ||
-    path.startsWith('/pwa/') ||
+    hash.includes('instalar-app') ||
     hash.includes('instalar') ||
-    hash.includes('descargar') ||
-    hash.includes('app-install') ||
-    seccionParam === 'instalar' ||
     seccionParam === 'instalar-app' ||
-    seccionParam === 'descargar' ||
-    seccionParam === 'pwa' ||
-    searchParams.has('install')
+    seccionParam === 'instalar'
   ) {
     return { route: 'pwa-install', adminTab: 'hub' };
   }
@@ -63,15 +53,26 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'superadmin', adminTab: 'hub' };
   }
 
-  // Vista separada optimizada para móviles de Gestión de Pedidos (/pedidos, /pedidos-movil, /app/pedidos)
+  // Vista separada optimizada para móviles de Gestión de Pedidos (/pedidos, /pedidos-movil, /app/pedidos, /alisto, /picking)
   if (
-    (!path.startsWith('/admin') && (path === '/pedidos' || path.startsWith('/pedidos/') || path === '/pedidos-movil' || path.startsWith('/pedidos-movil/'))) ||
-    path.includes('/app/pedidos') ||
+    (!path.startsWith('/admin') && (
+      path === '/pedidos' || path.startsWith('/pedidos/') ||
+      path === '/pedidos-movil' || path.startsWith('/pedidos-movil/') ||
+      path === '/pedidos-mobile' || path.startsWith('/pedidos-mobile/') ||
+      path === '/alisto' || path.startsWith('/alisto/') ||
+      path === '/picking' || path.startsWith('/picking/') ||
+      path === '/app' || path.startsWith('/app/pedidos')
+    )) ||
     hash.includes('pedidos-movil') ||
+    hash.includes('pedidos-mobile') ||
     hash.includes('app/pedidos') ||
+    hash.includes('alisto') ||
+    hash.includes('picking') ||
     seccionParam === 'pedidos-movil' ||
     seccionParam === 'pedidos-mobile' ||
-    seccionParam === 'app-pedidos'
+    seccionParam === 'app-pedidos' ||
+    seccionParam === 'alisto' ||
+    seccionParam === 'picking'
   ) {
     return { route: 'pedidos-mobile', adminTab: 'orders' };
   }

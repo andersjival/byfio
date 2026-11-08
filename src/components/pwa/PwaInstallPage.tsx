@@ -57,7 +57,15 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
   const { isInstallable, isStandalone, isIOS, isAndroid, promptInstall } = usePwaInstall();
 
   // Detectar la aplicación objetivo mediante query params
-  const [targetKey, setTargetKey] = useState<string>('alisto');
+  const [targetKey, setTargetKey] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const appParam = (params.get('app') || params.get('target') || 'colaborador').toLowerCase();
+      return appParam === 'admin' ? 'admin' : 'colaborador';
+    }
+    return 'colaborador';
+  });
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -66,8 +74,8 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
     }
   }, []);
 
-  const currentApp = APPS_CONFIG[targetKey] || APPS_CONFIG.alisto;
-  const AppIcon = currentApp.icon;
+  const currentApp = APPS_CONFIG[targetKey] || APPS_CONFIG.colaborador;
+  const AppIcon = currentApp?.icon || Users;
 
   // Si la aplicación ya está instalada y corriendo como PWA standalone, pasar de inmediato al PIN
   const [step, setStep] = useState<'install' | 'pin'>(() => (isStandalone ? 'pin' : 'install'));

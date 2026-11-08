@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.18.0 - Corrección de Fallo Fatal al Escanear Producto en PWA & Soporte Integral de Escáner y Modificación en Móvil
+- [x] **Erradicación del Error "Inconveniente al cargar el portal de instalación" ([PwaInstallPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/pwa/PwaInstallPage.tsx)):**
+  - Resuelto el `TypeError: Cannot read properties of undefined (reading 'icon')` derivado de la clave obsoleta `'alisto'` en la inicialización de estado tras la unificación del ecosistema PWA.
+  - Implementado inicializador seguro síncrono que detecta el parámetro `?app=admin` o asigna por defecto `colaborador`, blindando `currentApp` y `AppIcon` con fallback permanente para impedir cualquier caída del `ErrorBoundary`.
+- [x] **Blindaje y Delimitación Quirúrgica del Router ([routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts)):**
+  - Restringido el portal de instalación PWA exclusivamente a rutas exactas (`/instalar`, `/instalar-app`), eliminando interceptaciones indebidas de rutas como `/app`, `/app/*` o lecturas de query params.
+  - Habilitado soporte explícito de rutas móviles de alisto (`/alisto`, `/picking`, `/app/pedidos`, `/pedidos-mobile`) para direccionar sin fricción hacia la vista móvil de pedidos.
+- [x] **Soporte de Escaneo Láser y Modificación de Cantidad en Celular ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Incorporado procesamiento automático de escaneo por URL (`?sku=...`, `?scan=...`, `?barcode=...`) y por teclado láser / tecla Enter en la barra de búsqueda para marcar de inmediato el artículo como alistado con confirmación sonora y toast flotante.
+  - Añadido botón y modal táctil "Modificar" en cada producto para que el operario de alisto pueda registrar existencias menores encontradas en estante y actualizar la cantidad en tiempo real.
+
 ### Versión 4.17.10 - Corrección de Botón Carrito Cortado en PWA de Escritorio & Adaptabilidad Responsive en Navbar
 - [x] **Ajuste de Ancho y Contenedor de Encabezado ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Ampliado el contenedor central de `max-w-7xl` (1280px) a `max-w-[1600px]`, aprovechando pantallas de escritorio y monitores de alta resolución sin estrangular los elementos de navegación.

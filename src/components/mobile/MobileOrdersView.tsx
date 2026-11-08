@@ -7,7 +7,8 @@ import {
   Bell, BellRing, Volume2, Smartphone,
   CreditCard, Shield, ShieldCheck, KeyRound, LogOut, RefreshCw,
   Store, Boxes, ChevronDown, ChevronUp, Copy, MessageCircle,
-  Check, Truck, Tag, Calendar, AlertCircle, Sparkles, X, User, UserCheck
+  Check, Truck, Tag, Calendar, AlertCircle, Sparkles, X, User, UserCheck,
+  Scan, Edit3
 } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import {
@@ -28,6 +29,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
     markItemPicked,
     unmarkItemPicked,
     markAllItemsPicked,
+    updateOrderItemQuantity,
     currentUser,
     loginWithPin,
     logoutUser,
@@ -45,6 +47,75 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
   const [copiedAddressId, setCopiedAddressId] = useState<string | null>(null);
   const [pushPermission, setPushPermission] = useState<NotificationPermission>(() => getPushPermission());
   const [isTestingPush, setIsTestingPush] = useState(false);
+  const [scanNotification, setScanNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [editingItemData, setEditingItemData] = useState<{ orderId: string; itemSku: string; itemName: string; currentQty: number } | null>(null);
+  const [tempQty, setTempQty] = useState<number>(1);
+
+  // Soporte de Escaneo de Códigos de Barra / SKU en la vista móvil de pedidos
+  const handleProcessBarcodeScan = (scannedText: string) => {
+    const rawSku = scannedText.trim();
+    if (!rawSku) return;
+
+    // Buscar primero en el pedido actualmente abierto o en pedidos pendientes
+    let targetOrder = orders.find(
+      (o) => o.id === expandedOrderId && o.items?.some((it) => it.sku.toLowerCase() === rawSku.toLowerCase() && !it.isPicked)
+    );
+
+    if (!targetOrder) {
+      targetOrder = orders.find(
+        (o) => !isOrderFullyAlistado(o) && o.items?.some((it) => it.sku.toLowerCase() === rawSku.toLowerCase() && !it.isPicked)
+      );
+    }
+
+    if (targetOrder) {
+      const res = markItemPicked(targetOrder.id, rawSku);
+      if (res && res.error) {
+        setScanNotification({ message: res.error, type: 'error' });
+      } else {
+        playBubblePopSound();
+        setScanNotification({ message: `¡Correcto! ${rawSku} alistado en orden ${targetOrder.orderNumber}`, type: 'success' });
+        setExpandedOrderId(targetOrder.id);
+      }
+    } else {
+      const alreadyPickedOrder = orders.find((o) => o.items?.some((it) => it.sku.toLowerCase() === rawSku.toLowerCase() && it.isPicked));
+      if (alreadyPickedOrder) {
+        setScanNotification({ message: `El producto ${rawSku} ya fue alistado previamente.`, type: 'error' });
+      } else {
+        setScanNotification({ message: `SKU "${rawSku}" no encontrado en pedidos pendientes.`, type: 'error' });
+      }
+    }
+
+    setTimeout(() => setScanNotification(null), 3500);
+  };
+
+  // Procesar escaneo automático si llega por parámetro URL (?sku=... o ?scan=...)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const skuParam = params.get('sku') || params.get('scan') || params.get('barcode');
+      if (skuParam) {
+        handleProcessBarcodeScan(skuParam);
+        const url = new URL(window.location.href);
+        url.searchParams.delete('sku');
+        url.searchParams.delete('scan');
+        url.searchParams.delete('barcode');
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+  }, [orders]);
+
+  const handleSaveQuantity = () => {
+    if (!editingItemData) return;
+    const res = updateOrderItemQuantity(editingItemData.orderId, editingItemData.itemSku, tempQty);
+    if (res.success) {
+      playBubblePopSound();
+      setScanNotification({ message: `Cantidad de "${editingItemData.itemName}" actualizada a ${tempQty}.`, type: 'success' });
+      setEditingItemData(null);
+    } else {
+      setScanNotification({ message: res.error || 'Error al actualizar cantidad', type: 'error' });
+    }
+    setTimeout(() => setScanNotification(null), 3000);
+  };
 
   const handleEnablePush = async () => {
     const granted = await requestPushNotificationPermission();
@@ -301,26 +372,72 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
         </div>
       </div>
 
-      {/* Barra de Búsqueda */}
+      {/* Banner flotante de feedback de escaneo / alisto */}
+      {scanNotification && (
+        <div className="px-3 pt-2">
+          <div className={`p-3 rounded-2xl flex items-center justify-between text-xs font-bubble font-bold shadow-lg animate-fadeIn ${
+            scanNotification.type === 'success'
+              ? 'bg-emerald-950/90 border border-emerald-500/80 text-emerald-200'
+              : 'bg-rose-950/90 border border-rose-500/80 text-rose-200'
+          }`}>
+            <div className="flex items-center gap-2">
+              {scanNotification.type === 'success' ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              ) : (
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              )}
+              <span>{scanNotification.message}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setScanNotification(null)}
+              className="p-1 text-slate-400 hover:text-white cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Barra de Búsqueda y Escáner */}
       <div className="px-3 pt-3">
-        <div className="relative">
+        <div className="relative flex items-center">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar por #orden, cliente, teléfono o producto..."
-            className="w-full pl-9 pr-9 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-slate-100 placeholder:text-slate-500 text-xs sm:text-sm focus:outline-none focus:border-purple-500 transition-colors"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && searchQuery.trim()) {
+                handleProcessBarcodeScan(searchQuery);
+                setSearchQuery('');
+              }
+            }}
+            placeholder="Buscar o escanear SKU / código de barras..."
+            className="w-full pl-9 pr-16 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-slate-100 placeholder:text-slate-500 text-xs sm:text-sm focus:outline-none focus:border-purple-500 transition-colors"
           />
-          {searchQuery && (
+          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+            {searchQuery ? (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="text-slate-400 hover:text-white cursor-pointer p-1"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            ) : null}
             <button
               type="button"
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white cursor-pointer"
+              onClick={() => {
+                const manualSku = prompt('Ingresa el código SKU del producto escaneado:');
+                if (manualSku) handleProcessBarcodeScan(manualSku);
+              }}
+              className="p-1.5 rounded-xl bg-purple-900/50 hover:bg-purple-800/80 text-purple-300 hover:text-white border border-purple-700/50 transition-all cursor-pointer"
+              title="Escanear o ingresar SKU manual"
             >
-              <X className="w-3.5 h-3.5" />
+              <Scan className="w-3.5 h-3.5" />
             </button>
-          )}
+          </div>
         </div>
       </div>
 
@@ -627,6 +744,26 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                             <span className={`text-xs font-bold ${item.isPicked ? 'line-through text-slate-400' : 'text-slate-100'}`}>
                               {item.name}
                             </span>
+                            {!item.isPicked && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingItemData({
+                                    orderId: order.id,
+                                    itemSku: item.sku,
+                                    itemName: item.name,
+                                    currentQty: item.quantity,
+                                  });
+                                  setTempQty(item.quantity);
+                                }}
+                                className="ml-auto px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-[10px] font-bubble font-bold flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                                title="Modificar cantidad de productos encontrados"
+                              >
+                                <Edit3 className="w-3 h-3 text-amber-400" />
+                                <span>Modificar</span>
+                              </button>
+                            )}
                           </div>
 
                           {/* Ubicación en Estante */}
@@ -789,6 +926,89 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                 className="h-12 rounded-2xl bg-slate-800/50 hover:bg-slate-800 text-slate-400 font-bubble text-xs active:scale-95 transition-all cursor-pointer"
               >
                 ←
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para Modificar Cantidad de Ítem en Alisto */}
+      {editingItemData && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn"
+          onClick={() => setEditingItemData(null)}
+        >
+          <div
+            className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl space-y-4 animate-scaleUp text-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-amber-400" />
+                <h3 className="font-bubble font-bold text-sm text-white">
+                  Modificar Cantidad en Alisto
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingItemData(null)}
+                className="p-1 rounded-full text-slate-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              <p className="text-xs text-slate-300 font-sans">
+                Producto: <strong className="text-white">{editingItemData.itemName}</strong>
+              </p>
+              <p className="text-[11px] text-slate-400">
+                Cantidad solicitada: <strong className="text-purple-300">{editingItemData.currentQty} unidades</strong>
+              </p>
+              <p className="text-[11px] text-amber-300/90 font-sans leading-relaxed">
+                Si encontraste menos existencias en estante, ajusta la cantidad real y presiona Aceptar:
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 py-2">
+              <button
+                type="button"
+                onClick={() => setTempQty((prev) => Math.max(0, prev - 1))}
+                className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg flex items-center justify-center border border-slate-700 active:scale-95 cursor-pointer"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                min="0"
+                max={editingItemData.currentQty}
+                value={tempQty}
+                onChange={(e) => setTempQty(Math.max(0, parseInt(e.target.value) || 0))}
+                className="w-20 text-center py-2 rounded-xl bg-slate-950 border border-purple-500 font-mono font-bold text-lg text-white"
+              />
+              <button
+                type="button"
+                onClick={() => setTempQty((prev) => Math.min(editingItemData.currentQty, prev + 1))}
+                className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg flex items-center justify-center border border-slate-700 active:scale-95 cursor-pointer"
+              >
+                +
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setEditingItemData(null)}
+                className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bubble text-xs cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveQuantity}
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bubble font-bold text-xs shadow-md active:scale-95 cursor-pointer"
+              >
+                Aceptar
               </button>
             </div>
           </div>
