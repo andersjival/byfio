@@ -213,24 +213,25 @@ body[data-font-theme="hybrid"] .font-bubble {
 }
 
 .neu-btn-pastel-pink {
-  background: linear-gradient(135deg, #FBCFE8 0%, #F472B6 100%);
-  color: #500724;
+  background: linear-gradient(135deg, #D4AEFA 0%, #C084FC 100%);
+  color: #FFFFFF;
   border-radius: 1rem;
-  box-shadow: 0 4px 12px -1px rgba(219, 39, 119, 0.35);
+  box-shadow: 0 4px 12px -1px rgba(147, 51, 234, 0.35);
   border: none;
   transition: all 0.22s ease-in-out;
   cursor: pointer;
 }
 
 .neu-btn-pastel-pink:hover {
-  background: linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%) !important;
-  color: #500724 !important;
+  background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%) !important;
+  color: #FFFFFF !important;
   box-shadow: 0 6px 16px -1px rgba(219, 39, 119, 0.45);
   transform: translateY(-1px);
 }
 
 .neu-btn-pastel-pink:active {
-  box-shadow: inset 2px 2px 5px rgba(190, 24, 93, 0.35) !important;
+  background: linear-gradient(135deg, #DB2777 0%, #BE185D 100%) !important;
+  box-shadow: inset 2px 2px 5px rgba(190, 24, 93, 0.4) !important;
   transform: translateY(0px) !important;
 }
 
