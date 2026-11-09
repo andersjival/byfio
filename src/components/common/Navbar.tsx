@@ -371,10 +371,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     ? 'neu-btn-primary text-white shadow-neuBtnHover'
                     : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:shadow-neuBtnHover'
                 }`}
-                title="Ir al Menú Principal del Panel de Control"
+                title="Ir al Menú del Panel de Control"
               >
                 <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-yellow shrink-0" />
-                <span className="whitespace-nowrap">Menú Principal</span>
+                <span className="whitespace-nowrap">Menú</span>
               </button>
 
               

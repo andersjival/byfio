@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.14 - Cambio de Nomenclatura a "Menú" en PWA de Admin y 60 Frases Nuevas para la Estrellita
+- [x] **Compactación de Botón de Navegación ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [AdminCatalogVisualView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminCatalogVisualView.tsx)):**
+  - Sustituida la palabra "Menú Principal" por "Menú" en el botón principal de la cabecera PWA de administración y en los retornos de navegación, optimizando el espacio horizontal en pantallas táctiles y móviles.
+- [x] **Ampliación de Frases Motivacionales de la Estrellita ([FloatingMascot.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - Añadidas 60 frases adicionales, cortas, inspiradoras y 100% únicas sobre creatividad, alegría, talleres, empaque con amor y trabajo en equipo.
+  - El repertorio total asciende a 120 mensajes con selección aleatoria sin repeticiones inmediatas.
+
 ### Versión 4.19.13 - Retiro de Botón Apps PWA en el Dock Flotante Móvil de Administración
 - [x] **Depuración de Barra Flotante Inferior ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx))**:
   - Eliminado el botón flotante inferior *"Apps PWA"* del menú dock de celular en la PWA del administrador.

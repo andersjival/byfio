@@ -74,7 +74,7 @@ export const AdminCatalogVisualView: React.FC<AdminCatalogVisualViewProps> = ({ 
           title="Regresar al Menú Principal de Administración"
         >
           <ArrowLeft className="w-4 h-4 text-fio-pink shrink-0" />
-          <span className="whitespace-nowrap">Volver al Menú Principal</span>
+          <span className="whitespace-nowrap">Volver al Menú</span>
         </button>
       </div>
 
