@@ -46,7 +46,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bubble font-bold text-fio-900 leading-tight">
-            Panel de Control &amp; Alisto QR
+            Panel de control y alisto
           </h1>
         </div>
 

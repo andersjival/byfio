@@ -17,6 +17,10 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.29 - Actualización de Título en Cabecera Administrativa
+- [x] **Renombrado del Título Principal ([AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Modificado el título principal de la cabecera del panel administrativo de *"Panel de Control & Alisto QR"* a *"Panel de control y alisto"*, simplificando la nomenclatura y eliminando el sufijo técnico QR.
+
 ### Versión 4.19.28 - Blindaje Definitivo PWA en iOS Safari / Móvil (Storage, SW y Audio)
 - [x] **Blindaje de Storage en Navegación Privada / In-App ([index.html](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html)):**
   - Implementado polyfill en memoria para `localStorage` y `sessionStorage` que previene errores fatales de cuota/permisos (`SecurityError`) en Safari iOS en modo navegación privada o webviews.
