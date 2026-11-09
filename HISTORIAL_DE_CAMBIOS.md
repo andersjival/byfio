@@ -17,6 +17,33 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.26 - Compatibilidad Total PWA Colaboradores para Android e iOS (iPhone) con Escáner de Cámara y Safe-Area Insets
+- [x] **Escáner de Código de Barras con Cámara Trasera en Tiempo Real ([CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx), [MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Implementado modal con escáner activo mediante `Html5Qrcode` (`facingMode: "environment"`), compatible con navegadores móviles de Android (Chrome, Samsung Internet) e iPhone (Safari, Chrome iOS).
+  - Soporte de linterna/flash (torch), retícula de enfoque animada, aviso de feedback sonoro/vibratorio y botón para ingreso de SKU manual alternativo.
+  - Conexión directa en la barra de búsqueda del módulo de alisto móvil para escanear y marcar productos en pedidos pendientes.
+- [x] **Flujo de Instalación Adaptativo para Android e iOS ([PwaInstallPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/pwa/PwaInstallPage.tsx), [usePwaInstall.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/usePwaInstall.ts)):**
+  - Detección precisa de navegadores dentro de aplicaciones (In-App Browser como WhatsApp, Instagram) en iOS, mostrando advertencia para abrir la página en Safari.
+  - Guía contextual para Android (1-clic nativo o menú de 3 puntos en Chrome) y para iPhone (botón Compartir ⬆️ > "Agregar a pantalla de inicio" ➕).
+  - Redirección automática al módulo de pedidos si el usuario ya está autenticado o si la URL porta un parámetro de escaneo (`sku`/`scan`), eliminando mensajes de error.
+  - Protección de seguridad en la lista de perfiles contra objetos nulos o incompletos.
+- [x] **Protección Safe-Area para Notch y Barra Gestual ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx), [AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx)):**
+  - Cabecera fija protegida con `pt-[max(0.625rem,env(safe-area-inset-top))]` para evitar solapes con la Dynamic Island, notch o status bar de iPhone y Android.
+  - Dock táctil inferior y espaciador protegidos con `env(safe-area-inset-bottom)` para respetar la barra gestual (Home Indicator) de iPhones y Android modernos.
+
+### Versión 4.19.25 - Rediseño Pastel y Armonización Visual del Módulo de Pedidos y Alisto
+- [x] **Eliminación Total de Fondos Oscuros y Verdes Neón ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Se suprimieron completamente el fondo negro (`bg-slate-950`), barras oscuras (`bg-slate-900`) y acentos verde esmeralda (`bg-emerald-600/500`) en la vista móvil de pedidos.
+  - La pantalla ahora implementa el fondo cerámico cálido oficial (`#FAF7F2`), tarjetas blancas (`bg-white`), bordes lila suaves (`border-purple-200`) y tipografía oscura legible (`text-slate-800` y `text-fio-900`).
+- [x] **Botones, Píldoras de Filtro y Checkboxes Pastel ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Los botones de acción para marcar pedidos ("Pasar a Empacado", "Marcar como Entregado") y checkboxes de alisto fueron renovados con gradientes suaves pastel lila/rosa (`from-purple-500 to-fio-pink`).
+  - Los filtros de estado y badges se actualizaron a tonos pastel ámbar, lavanda, rosa y lila, en perfecta armonía con el resto de la tienda.
+  - Los modales de teclado numérico (PIN) y ajuste de cantidades se transformaron en tarjetas blancas con botones lila pastel.
+- [x] **Armonización de Pedidos Escritorio y Alisto Guiado ([OrdersQueue.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Actualizados los botones principales de alisto y facturación, retirando fondos negros y verdes en favor de gradientes pastel lila/rosa.
+- [x] **Unificación de Nomenclatura a 'Pedidos' ([AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx)):**
+  - Estandarizado el botón a *"Pedidos"* en la tarjeta del Hub principal y en el botón de la barra móvil inferior.
+
 ### Versión 4.19.24 - Renombrado de 'Hub' / 'Menú' a 'Inicio' en la PWA del Colaborador
 - [x] **Unificación de Nomenclatura en Vista Móvil de Pedidos ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
   - Cambiada la etiqueta y título del botón de retorno de la cabecera en el módulo de alisto móvil para colaboradores: reemplazado *"Menú"* por *"Inicio"* (`title="Ir a Inicio"`).

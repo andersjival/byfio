@@ -148,7 +148,7 @@ export const GuidedPickingModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-start sm:items-center justify-center pt-1.5 sm:pt-4 px-2 sm:px-4 pb-2 sm:pb-5">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-sm flex items-start sm:items-center justify-center pt-1.5 sm:pt-4 px-2 sm:px-4 pb-2 sm:pb-5">
       <div className="relative w-full max-w-3xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border-2 sm:border-4 border-fio-300 overflow-hidden flex flex-col max-h-[96vh] sm:max-h-[90vh]">
         {/* Header de Alisto Compacto */}
         <div className="px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-fio-800 to-fio-900 text-white flex items-center justify-between gap-2 shrink-0">
@@ -274,9 +274,9 @@ export const GuidedPickingModal: React.FC = () => {
                         <button
                           type="button"
                           onClick={handleConfirmEditQuantity}
-                          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white font-bubble font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
                         >
-                          <Check className="w-4 h-4 text-emerald-200" />
+                          <Check className="w-4 h-4 text-white" />
                           <span>Aceptar ({tempQty} ud)</span>
                         </button>
 
@@ -382,7 +382,7 @@ export const GuidedPickingModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleSimulateScanCurrent}
-                        className="w-full py-3.5 sm:py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm sm:text-xs font-bold flex items-center justify-center gap-2 shadow-sm active:scale-95 cursor-pointer"
+                        className="w-full py-3.5 sm:py-2 px-3 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white rounded-xl text-sm sm:text-xs font-bold flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
                       >
                         <Scan className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                         <span>Validar ({currentItem.sku})</span>
@@ -431,9 +431,9 @@ export const GuidedPickingModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleMarkItemPickedManual(currentItem.sku)}
-                      className="w-full py-4 sm:py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-base flex items-center justify-center gap-2.5 shadow-clayBtn transition-all cursor-pointer min-h-[52px]"
+                      className="w-full py-4 sm:py-3.5 px-4 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-base flex items-center justify-center gap-2.5 shadow-clayBtn transition-all cursor-pointer min-h-[52px]"
                     >
-                      <Check className="w-6 h-6 sm:w-5 sm:h-5 text-emerald-200" />
+                      <Check className="w-6 h-6 sm:w-5 sm:h-5 text-white" />
                       <span>Aceptar y Continuar ({currentItem.quantity} ud)</span>
                     </button>
 
@@ -486,7 +486,7 @@ export const GuidedPickingModal: React.FC = () => {
           ) : (
             /* Flujo Post-Finalización: Continuar con el siguiente pedido */
             <div className="py-4 sm:py-6 px-2 sm:px-6 text-center space-y-4">
-              <div className="inline-flex p-3 sm:p-4 rounded-full bg-emerald-100 text-emerald-600 shadow-sm animate-bounce">
+              <div className="inline-flex p-3 sm:p-4 rounded-full bg-purple-100 text-purple-700 shadow-sm animate-bounce">
                 <CheckCircle className="w-10 h-10 sm:w-14 sm:h-14" />
               </div>
 
@@ -519,7 +519,7 @@ export const GuidedPickingModal: React.FC = () => {
                     setInvoiceOrder(currentOrder);
                     setActivePickingOrder(null);
                   }}
-                  className="w-full py-2.5 sm:py-3 px-4 bg-fio-800 hover:bg-fio-900 active:scale-[0.98] text-white rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-clayBtn transition-all cursor-pointer"
+                  className="w-full py-2.5 sm:py-3 px-4 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 active:scale-[0.98] text-white rounded-xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-clayBtn transition-all cursor-pointer"
                 >
                   <Printer className="w-4 h-4 text-fio-yellow" />
                   <span>Generar Factura de una Vez</span>
@@ -616,7 +616,7 @@ export const GuidedPickingModal: React.FC = () => {
                     key={`${it.sku}-${idx}`}
                     className={`p-2 sm:p-2.5 rounded-xl border flex items-center justify-between gap-2 ${
                       it.isPicked
-                        ? 'bg-emerald-50/60 border-emerald-300'
+                        ? 'bg-purple-50/70 border-purple-300'
                         : it.isMissing
                         ? 'bg-amber-50/70 border-amber-300'
                         : 'bg-white border-slate-200'
@@ -660,7 +660,7 @@ export const GuidedPickingModal: React.FC = () => {
                       <span
                         className={`px-2 py-0.5 rounded-lg text-[10px] font-bold font-bubble ${
                           it.isPicked
-                            ? 'bg-emerald-600 text-white'
+                            ? 'bg-purple-600 text-white'
                             : it.isMissing
                             ? 'bg-amber-500 text-white'
                             : 'bg-slate-100 text-slate-600'

@@ -121,7 +121,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
   const allMenuItems = [
     {
       id: 'orders' as AdminTabType,
-      title: 'Cola de Pedidos',
+      title: 'Pedidos',
 
       icon: QrCode,
       gradient: 'from-[#A855F7] to-[#6B21A8]',

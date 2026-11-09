@@ -7,6 +7,7 @@ export interface PwaInstallState {
   isIOS: boolean;
   isAndroid: boolean;
   isWindows: boolean;
+  isInAppBrowser: boolean;
   promptInstall: () => Promise<'accepted' | 'dismissed' | 'unavailable'>;
 }
 
@@ -80,9 +81,13 @@ export const usePwaInstall = (): PwaInstallState => {
   }, [deferredPrompt]);
 
   const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
-  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+  const isIOS =
+    (/iPad|iPhone|iPod/.test(userAgent) ||
+      (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+    !(window as any).MSStream;
   const isAndroid = /Android/.test(userAgent);
   const isWindows = /Windows/.test(userAgent);
+  const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Twitter|Snapchat|TikTok|MicroMessenger/i.test(userAgent);
 
   return {
     isInstallable: !!deferredPrompt,
@@ -91,6 +96,7 @@ export const usePwaInstall = (): PwaInstallState => {
     isIOS,
     isAndroid,
     isWindows,
+    isInAppBrowser,
     promptInstall,
   };
 };

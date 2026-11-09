@@ -129,15 +129,15 @@ export const OrdersQueue: React.FC = () => {
         );
       case 'packed':
         return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1 shadow-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-pink-100 text-pink-900 border border-pink-300 flex items-center gap-1 shadow-xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-fio-pink" />
             <span>Empacado</span>
           </span>
         );
       case 'delivered':
         return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300 flex items-center gap-1 shadow-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1 shadow-xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
             <span>Terminado</span>
           </span>
         );
@@ -292,15 +292,15 @@ export const OrdersQueue: React.FC = () => {
           onClick={() => setFilterMode('packed')}
           className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
             filterMode === 'packed'
-              ? 'bg-emerald-600 text-white shadow-xs'
-              : 'text-slate-700 hover:text-emerald-700'
+              ? 'bg-fio-pink text-white shadow-xs'
+              : 'text-slate-700 hover:text-pink-600'
           }`}
         >
           <CheckCircle2 className="w-3.5 h-3.5" />
           <span>Empacados</span>
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-              filterMode === 'packed' ? 'bg-white text-emerald-800' : 'bg-emerald-100 text-emerald-900'
+              filterMode === 'packed' ? 'bg-white text-pink-700' : 'bg-pink-100 text-pink-800'
             }`}
           >
             {packedOrders.length}
@@ -312,14 +312,14 @@ export const OrdersQueue: React.FC = () => {
           onClick={() => setFilterMode('delivered')}
           className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
             filterMode === 'delivered'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-blue-700'
+              ? 'bg-purple-600 text-white shadow-xs'
+              : 'text-slate-600 hover:text-purple-700'
           }`}
         >
           <span>Terminados</span>
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-              filterMode === 'delivered' ? 'bg-white text-blue-700' : 'bg-blue-100 text-blue-800'
+              filterMode === 'delivered' ? 'bg-white text-purple-700' : 'bg-purple-100 text-purple-800'
             }`}
           >
             {deliveredOrders.length}
@@ -353,11 +353,11 @@ export const OrdersQueue: React.FC = () => {
               key={order.id}
               className={`p-4 sm:p-5 rounded-2xl border transition-all duration-1000 ${
                 isNewlyFinished
-                  ? 'border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50 shadow-[0_0_25px_rgba(16,185,129,0.35)] ring-4 ring-emerald-300/50 scale-[1.01]'
+                  ? 'border-2 border-purple-400 bg-gradient-to-r from-purple-50 via-pink-50/70 to-purple-50 shadow-[0_0_25px_rgba(168,85,247,0.25)] ring-4 ring-purple-300/40 scale-[1.01]'
                   : !isFinished && order.orderStatus === 'picking'
                   ? 'border-fio-500 bg-fio-50/70 shadow-md ring-2 ring-fio-400'
                   : effectiveStatus === 'delivered'
-                  ? 'border-emerald-200 bg-emerald-50/25 hover:border-emerald-300 shadow-sm'
+                  ? 'border-purple-200 bg-purple-50/25 hover:border-purple-300 shadow-sm'
                   : 'border-fio-200 hover:border-fio-300 bg-white shadow-sm'
               }`}
             >
@@ -370,13 +370,13 @@ export const OrdersQueue: React.FC = () => {
                     </span>
                     {getStatusBadge(effectiveStatus)}
                     {isNewlyFinished && (
-                      <span className="px-3 py-1 rounded-full text-xs font-bubble font-black bg-emerald-600 text-white shadow-md animate-pulse flex items-center gap-1.5 transition-all">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-200" />
+                      <span className="px-3 py-1 rounded-full text-xs font-bubble font-black bg-purple-600 text-white shadow-md animate-pulse flex items-center gap-1.5 transition-all">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-purple-200" />
                         <span>¡Recién Terminado! ✨</span>
                       </span>
                     )}
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-xs">
-                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1 shadow-xs">
+                      <CheckCircle2 className="w-3 h-3 text-purple-600" />
                       <span>Pagado por {order.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia'} (Verificado)</span>
                     </span>
                     {(order.pickedBy || isFinished) && (
@@ -428,7 +428,7 @@ export const OrdersQueue: React.FC = () => {
                   <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden shadow-inner">
                     <div
                       className={`h-full transition-all duration-300 ${
-                        isFinished ? 'bg-emerald-500' : 'bg-gradient-to-r from-fio-500 via-fio-400 to-fio-pink'
+                        isFinished ? 'bg-gradient-to-r from-purple-500 to-fio-pink' : 'bg-gradient-to-r from-fio-500 via-fio-400 to-fio-pink'
                       }`}
                       style={{ width: `${progressPercent}%` }}
                     />
@@ -443,7 +443,7 @@ export const OrdersQueue: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => startPicking(order.id, 'barcode')}
-                          className="flex items-center justify-center gap-2 px-4 py-3.5 sm:px-3.5 sm:py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-black text-sm sm:text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer min-h-[48px]"
+                          className="flex items-center justify-center gap-2 px-4 py-3.5 sm:px-3.5 sm:py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white font-bubble font-black text-sm sm:text-xs shadow-clayBtn transition-all active:scale-95 cursor-pointer min-h-[48px]"
                           title="Alisto guiado con escáner QR o código de barras"
                         >
                           <QrCode className="w-5 h-5 sm:w-4 sm:h-4 text-fio-yellow shrink-0" />
@@ -455,7 +455,7 @@ export const OrdersQueue: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => startPicking(order.id, 'manual')}
-                          className="flex items-center justify-center gap-2 px-4 py-3.5 sm:px-3.5 sm:py-2.5 rounded-2xl bg-white hover:bg-purple-50/80 text-fio-800 border-2 border-purple-300 hover:border-purple-500 font-bubble font-black text-sm sm:text-xs shadow-xs transition-all active:scale-95 cursor-pointer min-h-[48px]"
+                          className="flex items-center justify-center gap-2 px-4 py-3.5 sm:px-3.5 sm:py-2.5 rounded-2xl bg-white hover:bg-purple-50/80 text-purple-900 border-2 border-purple-200 hover:border-purple-400 font-bubble font-black text-sm sm:text-xs shadow-xs transition-all active:scale-95 cursor-pointer min-h-[48px]"
                           title="Alistar pedido paso a paso producto por producto con reporte de faltante"
                         >
                           <ClipboardList className="w-5 h-5 sm:w-4 sm:h-4 text-fio-pink shrink-0" />
@@ -481,7 +481,7 @@ export const OrdersQueue: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setInvoiceOrder(order)}
-                        className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs font-bold transition-all shadow-clayBtn cursor-pointer active:scale-95"
+                        className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white font-bubble text-xs font-bold transition-all shadow-clayBtn cursor-pointer active:scale-95"
                         title="Generar o imprimir comprobante y factura oficial"
                       >
                         <Printer className="w-4 h-4 text-fio-yellow" />
@@ -492,7 +492,7 @@ export const OrdersQueue: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => updateOrderStatus(order.id, 'packed', currentUser?.name)}
-                          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
                           title="Marcar pedido como empacado"
                         >
                           <Package className="w-4 h-4 text-amber-200" />
@@ -504,10 +504,10 @@ export const OrdersQueue: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleMarkDelivered(order.id)}
-                          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bubble text-xs font-bold transition-all cursor-pointer shadow-neuBtn active:scale-95"
                           title="Marcar pedido como terminado"
                         >
-                          <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+                          <CheckCircle2 className="w-4 h-4 text-purple-200" />
                           <span>Marcar Terminado</span>
                         </button>
                       )}

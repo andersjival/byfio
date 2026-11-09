@@ -54,7 +54,33 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
   onSelectAdminTab,
 }) => {
   const { loginWithPin, userProfiles, currentUser } = useApp();
-  const { isInstallable, isStandalone, isIOS, isAndroid, promptInstall } = usePwaInstall();
+  const { isInstallable, isStandalone, isIOS, isAndroid, isInAppBrowser, promptInstall } = usePwaInstall();
+
+  // Si el usuario ya está autenticado o hay un escaneo de SKU en la URL, redirigir directamente
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const sku = params.get('sku') || params.get('scan') || params.get('barcode');
+      if (sku) {
+        onNavigate('pedidos-mobile');
+        return;
+      }
+    }
+
+    if (currentUser) {
+      if (currentUser.role === 'admin' || currentUser.isMasterAdmin) {
+        onNavigate('admin');
+      } else {
+        const perms = (currentUser.permissions || {}) as UserPermissions;
+        const isAlistoOnly = perms.orders && !perms.billing && !perms.inventory && !perms.reports && !perms.agenda;
+        if (isAlistoOnly) {
+          onNavigate('pedidos-mobile');
+        } else {
+          onNavigate('admin');
+        }
+      }
+    }
+  }, [currentUser]);
 
   // Detectar la aplicación objetivo mediante query params
   const [targetKey, setTargetKey] = useState<string>(() => {
@@ -93,11 +119,11 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
   const [isSuccess, setIsSuccess] = useState(false);
   const [installFeedback, setInstallFeedback] = useState<string | null>(null);
 
-  // Auto-seleccionar perfil sugerido si coincide
+  // Auto-seleccionar perfil sugerido si coincide (con blindaje contra perfiles sin nombre)
   useEffect(() => {
-    if (userProfiles.length > 0 && !selectedProfile) {
+    if (Array.isArray(userProfiles) && userProfiles.length > 0 && !selectedProfile) {
       const match = userProfiles.find(
-        (p) => p.isActive && p.name.toLowerCase().includes(currentApp.suggestedProfile?.toLowerCase() || '')
+        (p) => p && p.isActive && p.name && p.name.toLowerCase().includes(currentApp?.suggestedProfile?.toLowerCase() || '')
       );
       if (match) setSelectedProfile(match);
     }
@@ -289,7 +315,7 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
               </ul>
             </div>
 
-            {/* BOTÓN 1: INSTALACIÓN EN ANDROID / CHROME / EDGE */}
+            {/* BOTÓN 1: INSTALACIÓN EN ANDROID / CHROME / EDGE (1-CLIC NATIVO) */}
             {isInstallable && (
               <button
                 type="button"
@@ -301,18 +327,45 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
               </button>
             )}
 
-            {/* GUÍA 2: INSTRUCCIONES PARA IPHONE / IPAD (SAFARI) */}
+            {/* GUÍA ANDROID (SI EL NAVEGADOR AÚN NO HA DISPARADO EL EVENTO AUTOMÁTICO) */}
+            {isAndroid && !isStandalone && !isInstallable && (
+              <div className="p-4 rounded-2xl bg-slate-950/80 border border-emerald-500/30 text-left space-y-2.5">
+                <p className="text-xs font-bubble font-bold text-emerald-300 flex items-center gap-1.5">
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Cómo instalar en tu Android (Chrome / Samsung):</span>
+                </p>
+                <ol className="text-xs text-slate-300 space-y-2 pl-4 list-decimal leading-relaxed">
+                  <li>Toca el menú de <strong>tres puntos</strong> <span className="text-amber-400 font-bold">⋮</span> en la esquina superior de Chrome.</li>
+                  <li>Selecciona <strong>"Instalar aplicación"</strong> o <strong>"Agregar a la pantalla principal"</strong> 📲.</li>
+                  <li>Pulsa <strong>"Instalar"</strong> para tener el acceso directo en tu celular.</li>
+                </ol>
+              </div>
+            )}
+
+            {/* GUÍA IPHONE / IPAD (SAFARI CON DETECCIÓN DE NAVEGADOR INTEGRADO) */}
             {isIOS && !isStandalone && (
               <div className="p-4 rounded-2xl bg-slate-950/80 border border-purple-500/30 text-left space-y-2.5">
                 <p className="text-xs font-bubble font-bold text-pink-300 flex items-center gap-1.5">
                   <Share2 className="w-3.5 h-3.5" />
                   <span>Cómo instalar en tu iPhone / iPad:</span>
                 </p>
-                <ol className="text-xs text-slate-300 space-y-2 pl-4 list-decimal leading-relaxed">
-                  <li>Toca el botón <strong>Compartir</strong> <span className="text-sky-400 font-bold">⬆️</span> en la barra inferior de Safari.</li>
-                  <li>Desliza hacia abajo y pulsa <strong>"Agregar a Inicio"</strong> ➕.</li>
-                  <li>Toca <strong>"Agregar"</strong> en la esquina superior derecha.</li>
-                </ol>
+                {isInAppBrowser ? (
+                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs space-y-1">
+                    <p className="font-bold flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Estás dentro de WhatsApp / Red Social:</span>
+                    </p>
+                    <p className="text-[11px] text-slate-300">
+                      Toca los <strong>3 puntos</strong> o el icono de <strong>brújula 🧭</strong> y selecciona <strong>"Abrir en Safari"</strong> para poder instalar la app.
+                    </p>
+                  </div>
+                ) : (
+                  <ol className="text-xs text-slate-300 space-y-2 pl-4 list-decimal leading-relaxed">
+                    <li>Toca el botón <strong>Compartir</strong> <span className="text-sky-400 font-bold">⬆️</span> en la barra inferior de Safari.</li>
+                    <li>Desliza hacia abajo y pulsa <strong>"Agregar a Inicio"</strong> ➕.</li>
+                    <li>Toca <strong>"Agregar"</strong> en la esquina superior derecha.</li>
+                  </ol>
+                )}
               </div>
             )}
 
@@ -360,8 +413,8 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
                 Selecciona tu Perfil:
               </span>
               <div className="flex items-center gap-1.5 flex-wrap">
-                {userProfiles
-                  .filter((p) => p.isActive)
+                {Array.isArray(userProfiles) && userProfiles
+                  .filter((p) => p && p.isActive && p.name)
                   .map((p) => {
                     const isSelected = selectedProfile?.id === p.id;
                     return (
