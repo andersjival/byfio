@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.5 - Retiro del Botón de Acceso Rápido a Superadmin en Modal de Inicio de Sesión de la Dueña
+- [x] **Aislamiento de Perfil de Administración ([LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
+  - Eliminado el botón `⚡ Entrar como Superadmin (1 Clic directo)` del modal de inicio de sesión de colaboradores y administración.
+  - Asegurada la privacidad y exclusividad del panel maestro de Superadmin, accesible únicamente mediante su ruta segura (`/panel/superadmin`).
+
 ### Versión 4.19.4 - Blindaje Integral de Persistencia y Visualización del Perfil de Alisto & Auto-llenado de Pedidos Web
 - [x] **Persistencia en Base de Datos D1 ([orders.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts)):**
   - Conectadas las columnas `picked_by` y `picked_at` en las sentencias SQL `UPDATE` y `INSERT` de la API de Cloudflare D1. Anteriormente las columnas existían pero no estaban enlazadas en los binds del query.

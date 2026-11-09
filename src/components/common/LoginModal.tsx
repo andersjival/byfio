@@ -390,37 +390,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   </div>
                 </div>
               )}
-
-              {/* Acceso Rápido Superadmin */}
-              <div className="flex flex-col items-center gap-1.5 pt-1.5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    loginSuperAdmin('superadmin@byfio.com', 'SuperAdmin2026!');
-                    const superAdminUser: AuthUser = {
-                      email: 'superadmin@byfio.com',
-                      name: 'SUPERADMIN MAESTRO',
-                      role: 'admin',
-                      isMasterAdmin: true,
-                      permissions: {
-                        orders: true,
-                        billing: true,
-                        inventory: true,
-                        reports: true,
-                        workshops: true,
-                        pricing: true,
-                        users: true,
-                      },
-                    };
-                    handleLoginSuccess(superAdminUser);
-                  }}
-                  className="w-full py-2 rounded-xl bg-gradient-to-r from-purple-700 via-pink-600 to-purple-800 hover:opacity-95 text-white font-bubble font-bold text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-98 transition-all cursor-pointer"
-                  title="Acceso directo de 1 clic al panel maestro de Superadmin"
-                >
-                  <Shield className="w-3.5 h-3.5 text-fio-yellow" />
-                  <span>⚡ Entrar como Superadmin (1 Clic directo)</span>
-                </button>
-              </div>
             </div>
           )}
           {/* Mensaje de Sesión Activa con Botón Directo al Admin */}
