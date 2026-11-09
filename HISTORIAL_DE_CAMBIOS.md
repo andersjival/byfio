@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.22 - Renombrado de Pestaña 'Hub' a 'Inicio' en Barra Inferior PWA Móvil
+- [x] **Actualización de Nomenclatura en Barra Móvil ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx)):**
+  - Se sustituyó la palabra técnica *"Hub"* por *"Inicio"* en el primer botón de navegación de la barra fija inferior para smartphones y PWA de administración.
+  - Actualizado el texto informativo del botón a *"Ir a Inicio"*, manteniendo la coherencia visual con el icono de casa y facilitando la orientación intuitiva del usuario en pantallas táctiles.
+
+### Versión 4.19.21 - Logo PWA con Puntas Redondeadas para PC y Escritorio
+- [x] **Iconos Squircle con Esquinas Curvas Anti-aliasing ([logo-byfio-512.png](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/logo-byfio-512.png), [logo-byfio-192.png](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/logo-byfio-192.png)):**
+  - Generados iconos PNG optimizados con máscara de bordes redondeados (`rx=112` en 512px, `rx=42` en 192px y `rx=440` en 2000px HD) con transparencia en las esquinas, eliminando las esquinas en ángulo recto de 90°.
+  - Los 4 vértices del icono ahora cuentan con canal alfa al 0% permitiendo que la ventana, barra de tareas y acceso directo de Windows/macOS en Chrome y Edge lo muestren con curva suave integrada.
+- [x] **Configuración PWA Desktop y Apple ([manifest.json](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest.json), [manifest.webmanifest](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest.webmanifest), [index.html](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html)):**
+  - Declarados los nuevos iconos con `"purpose": "any"` tanto en `manifest.json` como en `manifest.webmanifest` para forzar a los navegadores de escritorio (Windows/Mac) a utilizarlos con transparencia en lugar de estirar los maskable completos.
+  - Actualizadas las etiquetas `<link rel="icon">` y `<link rel="apple-touch-icon">` en `index.html` vinculando los recursos de esquinas redondeadas en 192px y 512px.
+
 ### Versión 4.19.20 - Retiro de 'Cobrar' y 'Agenda' en PWA de Colaboradores y Corrección del Menú Flotante
 - [x] **Exclusión Estricta de Cobrar y Agenda para Colaboradores ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx)):**
   - Los botones de *"Cobrar"* (facturación POS) y *"Agenda"* ahora están ocultos y no existen en la PWA de colaboradores ni para usuarios con rol `staff`.

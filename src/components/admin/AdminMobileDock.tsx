@@ -36,10 +36,10 @@ export const AdminMobileDock: React.FC<AdminMobileDockProps> = ({
             ? 'bg-purple-100 dark:bg-purple-900/60 text-purple-900 dark:text-purple-200 font-bold scale-[1.02] shadow-xs'
             : 'text-slate-500 hover:text-purple-600'
         }`}
-        title="Ir al Menú Principal"
+        title="Ir a Inicio"
       >
         <Home className="w-4 h-4 mb-0.5 text-purple-700 dark:text-purple-300" />
-        <span className="text-[10px] font-bubble">Hub</span>
+        <span className="text-[10px] font-bubble">Inicio</span>
       </button>
 
       <button
