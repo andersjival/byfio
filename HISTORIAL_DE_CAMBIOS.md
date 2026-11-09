@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.24 - Renombrado de 'Hub' / 'Menú' a 'Inicio' en la PWA del Colaborador
+- [x] **Unificación de Nomenclatura en Vista Móvil de Pedidos ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Cambiada la etiqueta y título del botón de retorno de la cabecera en el módulo de alisto móvil para colaboradores: reemplazado *"Menú"* por *"Inicio"* (`title="Ir a Inicio"`).
+  - Mantiene la coherencia visual con el botón *"Inicio"* de la barra fija táctil inferior ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx)), garantizando una experiencia intuitiva y uniforme para los colaboradores en celulares y PWA.
+
+### Versión 4.19.23 - Login Flotante Centrado con Fondo de Marca para PWA de Administración
+- [x] **Aislamiento Exclusivo de Pantalla de Login en PWA Admin ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Retirados completamente el Navbar de la tienda, la decoración de fondo genérica, la mascota flotante, el pie de página y los textos/bloques informativos previos para usuarios no autenticados en la PWA de administración (`/admin`).
+  - La pantalla ahora presenta exclusivamente la tarjeta 3D de login centrada vertical y horizontalmente sobre el escritorio, flotando suavemente en el espacio abierto central.
+- [x] **Fondo Fotográfico de Marca Oficial ([bg-pwa-login.png](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/bg-pwa-login.png)):**
+  - Incorporada como fondo completo (`bg-cover bg-center`) la fotografía de papelería, cuadernos By.Fio, stickers y mascota estrella, con un sutil filtro ambiental que maximiza el contraste de la tarjeta.
+- [x] **Acceso Directo al Panel Tras Autenticación ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
+  - Una vez validado el acceso (correo/contraseña o PIN), se transiciona de inmediato al panel de administración normal (`AdminHeader`, `AdminHubMenu`, accesos operativos y barra inferior).
+  - Ocultado el enlace de auto-registro en el login administrativo (`forcedRole="admin"`) para restringir el portal exclusivamente a personal autorizado.
+
 ### Versión 4.19.22 - Renombrado de Pestaña 'Hub' a 'Inicio' en Barra Inferior PWA Móvil
 - [x] **Actualización de Nomenclatura en Barra Móvil ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx)):**
   - Se sustituyó la palabra técnica *"Hub"* por *"Inicio"* en el primer botón de navegación de la barra fija inferior para smartphones y PWA de administración.

@@ -287,15 +287,15 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
 
-          {/* Botón Volver al Menú Principal */}
+          {/* Botón Volver a Inicio */}
           <button
             type="button"
             onClick={() => onNavigate('admin', 'hub')}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-900/60 hover:bg-purple-800/80 text-purple-200 border border-purple-700/70 text-xs font-bubble font-bold transition-all active:scale-95 cursor-pointer"
-            title="Ir al Menú Principal"
+            title="Ir a Inicio"
           >
             <Home className="w-3.5 h-3.5 text-purple-300" />
-            <span>Menú</span>
+            <span>Inicio</span>
           </button>
 
           {/* Botón Salir a Tienda Pública */}

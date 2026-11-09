@@ -323,6 +323,67 @@ export const App: React.FC = () => {
     );
   }
 
+  // Portal Exclusivo PWA de Administración: Pantalla Limpia con Fondo de Marca y Login Flotante Centrado
+  if (currentRoute === 'admin' && (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff'))) {
+    const isStandalone = typeof window !== 'undefined' && (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true
+    );
+
+    return (
+      <ErrorBoundary fallbackTitle="Inconveniente al cargar el acceso administrativo">
+        <div
+          className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center p-3 sm:p-6 bg-cover bg-center bg-no-repeat overflow-y-auto select-none"
+          style={{
+            backgroundImage: "url('/bg-pwa-login.png')",
+            backgroundColor: '#EBD8F7',
+          }}
+        >
+          {/* Overlay ambiental de realce y calidez para la tarjeta 3D */}
+          <div className="absolute inset-0 bg-purple-950/10 pointer-events-none" />
+
+          {/* Botón sutil de regreso exclusivo para navegación web regular (oculto en PWA standalone) */}
+          {!isStandalone && (
+            <button
+              type="button"
+              onClick={() => navigate('home')}
+              className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 hover:bg-white text-slate-700 text-xs font-bubble font-bold backdrop-blur-md border border-purple-200/60 shadow-xs transition-all active:scale-95 cursor-pointer"
+              title="Volver a la tienda pública"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-fio-pink" />
+              <span>Volver a la tienda</span>
+            </button>
+          )}
+
+          {/* Tarjeta de login centrada y flotante sobre el escritorio */}
+          <div className="relative z-10 w-full max-w-[395px] my-auto flex items-center justify-center">
+            <LoginModal
+              isOpen={true}
+              onClose={() => {
+                closeLogoutTransition();
+                navigate('home');
+              }}
+              isStandalonePage={true}
+              forcedRole="admin"
+              isLogoutCurtain={isLogoutTransitionOpen}
+              onSuccess={(user) => {
+                closeLogoutTransition();
+                if (user.email === 'superadmin@byfio.com') {
+                  navigate('superadmin');
+                } else if (user.role === 'admin' || user.role === 'staff') {
+                  const isAlistoOnly = user.role === 'staff' && user.permissions?.orders && !user.permissions?.billing && !user.permissions?.inventory;
+                  navigate('admin', isAlistoOnly ? 'orders' : undefined);
+                } else {
+                  navigate('home');
+                }
+              }}
+            />
+          </div>
+        </div>
+      </ErrorBoundary>
+    );
+  }
+
   return (
     <div className="relative min-h-screen flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800 overflow-x-hidden w-full max-w-full">
       {/* Fondo Decorativo Sereno Estilo Cerámico / Zen */}
@@ -418,42 +479,7 @@ export const App: React.FC = () => {
               )}
 
               {currentRoute === 'admin' && (
-                !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff') ? (
-                  /* Puerta de Entrada Segura a Administración con URL Protegida (oculta durante la cortina de logout) */
-                  !isLogoutTransitionOpen ? (
-                    <div className="py-6 sm:py-10 max-w-[395px] mx-auto space-y-4 animate-fadeIn">
-                      <div className="text-center space-y-2 mb-2">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs shadow-neuBtn">
-                          <Shield className="w-3.5 h-3.5" />
-                          <span>Acceso Seguro a Administración</span>
-                        </div>
-                        <h2 className="text-2xl sm:text-3xl font-bubble font-bold text-slate-900">
-                          Inicia Sesión para Continuar
-                        </h2>
-                        <p className="text-xs text-slate-500 font-sans max-w-sm mx-auto">
-                          Esta área está protegida. Ingresa tus credenciales maestras de administradora o tu código PIN de 4 dígitos.
-                        </p>
-                      </div>
-
-                      <LoginModal
-                        isOpen={true}
-                        onClose={() => navigate('home')}
-                        isStandalonePage={true}
-                        onSuccess={(user) => {
-                          if (user.email === 'superadmin@byfio.com') {
-                            navigate('superadmin');
-                          } else if (user.role === 'admin' || user.role === 'staff') {
-                            const isAlistoOnly = user.role === 'staff' && user.permissions?.orders && !user.permissions?.billing && !user.permissions?.inventory;
-                            navigate('admin', isAlistoOnly ? 'orders' : undefined);
-                          } else {
-                            navigate('home');
-                          }
-                        }}
-                      />
-                    </div>
-                  ) : null
-                ) : (
-                  <div className="space-y-3 sm:space-y-4 pb-20 sm:pb-4">
+                <div className="space-y-3 sm:space-y-4 pb-20 sm:pb-4">
                     {/* Si está en el Menú Principal (Hub) - Renderizado Instantáneo 0ms */}
                     {adminTab === 'hub' ? (
                       <>
@@ -519,7 +545,6 @@ export const App: React.FC = () => {
                       </>
                     )}
                   </div>
-                )
               )}
             </ErrorBoundary>
           </main>

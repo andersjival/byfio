@@ -20,6 +20,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   isStandalonePage = false,
   onSuccess,
   isLogoutCurtain = false,
+  forcedRole = 'all',
 }) => {
   const showAlert = useAlert();
   const {
@@ -256,6 +257,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         }
 
         if (result.success && result.user) {
+          if (
+            forcedRole === 'admin' &&
+            result.user.role !== 'admin' &&
+            result.user.role !== 'staff' &&
+            !result.user.isMasterAdmin &&
+            result.user.email !== 'superadmin@byfio.com'
+          ) {
+            setErrorMessage('Acceso reservado únicamente para administración y colaboradores.');
+            return;
+          }
           handleLoginSuccess(result.user);
         } else {
           setErrorMessage(result.error || 'Credenciales incorrectas. Verifica tu correo y contraseña.');
@@ -263,6 +274,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       } else {
         const result = registerUser(email, password, name);
         if (result.success && result.user) {
+          if (
+            forcedRole === 'admin' &&
+            result.user.role !== 'admin' &&
+            result.user.role !== 'staff' &&
+            !result.user.isMasterAdmin &&
+            result.user.email !== 'superadmin@byfio.com'
+          ) {
+            setErrorMessage('Acceso reservado únicamente para administración y colaboradores.');
+            return;
+          }
           handleLoginSuccess(result.user);
         } else {
           setErrorMessage(result.error || 'Error al crear la cuenta.');
@@ -649,7 +670,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             )}
           </button>
 
-          {loginMethod === 'email' && (
+          {loginMethod === 'email' && forcedRole !== 'admin' && (
             <p className="signup-text mt-3">
               {mode === 'login' ? (
                 <>
