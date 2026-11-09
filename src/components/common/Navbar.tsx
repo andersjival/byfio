@@ -481,7 +481,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="p-3 rounded-2xl bg-white/80 border border-purple-200/80 shadow-xs space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-sm font-bubble font-bold text-slate-800">{currentUser.name}</span>
                 </div>
                 {currentUser.role === 'admin' && (
