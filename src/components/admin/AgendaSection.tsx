@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { AgendaItem, AgendaCategory, AgendaPriority } from '../../types';
 import { CalendarAgendaView } from './agenda/CalendarAgendaView';
+import { AgendaDetailModal } from './agenda/AgendaDetailModal';
 import {
   Calendar as CalendarIcon, CheckCircle2, Circle, Clock, Plus,
   Trash2, Edit3, Search, GraduationCap, Package, Scissors,
@@ -154,8 +155,14 @@ export const AgendaSection: React.FC = () => {
   const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'grid'>('calendar');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<AgendaItem | null>(null);
+  const [selectedDetailItem, setSelectedDetailItem] = useState<AgendaItem | null>(null);
   const [showCompletedSection, setShowCompletedSection] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const activeDetailItem = useMemo(() => {
+    if (!selectedDetailItem) return null;
+    return agendaItems.find((i) => i.id === selectedDetailItem.id) || selectedDetailItem;
+  }, [selectedDetailItem, agendaItems]);
 
   // Form State
   const [formData, setFormData] = useState<{
@@ -559,6 +566,7 @@ export const AgendaSection: React.FC = () => {
           workshops={workshops}
           onAddNewItem={(date, time) => openNewModal(date, time)}
           onEditItem={openEditModal}
+          onSelectItem={(item) => setSelectedDetailItem(item)}
           onToggleStatus={handleToggleStatus}
           onDeleteItem={deleteAgendaItem}
         />
@@ -724,6 +732,7 @@ export const AgendaSection: React.FC = () => {
                     todayStr={todayStr}
                     onToggle={handleToggleStatus}
                     onEdit={openEditModal}
+                    onSelect={(item) => setSelectedDetailItem(item)}
                     onDelete={deleteAgendaItem}
                   />
                 ))}
@@ -753,6 +762,7 @@ export const AgendaSection: React.FC = () => {
                     todayStr={todayStr}
                     onToggle={handleToggleStatus}
                     onEdit={openEditModal}
+                    onSelect={(item) => setSelectedDetailItem(item)}
                     onDelete={deleteAgendaItem}
                   />
                 ))}
@@ -781,6 +791,7 @@ export const AgendaSection: React.FC = () => {
                     todayStr={todayStr}
                     onToggle={handleToggleStatus}
                     onEdit={openEditModal}
+                    onSelect={(item) => setSelectedDetailItem(item)}
                     onDelete={deleteAgendaItem}
                   />
                 ))}
@@ -812,6 +823,7 @@ export const AgendaSection: React.FC = () => {
                       todayStr={todayStr}
                       onToggle={handleToggleStatus}
                       onEdit={openEditModal}
+                      onSelect={(item) => setSelectedDetailItem(item)}
                       onDelete={deleteAgendaItem}
                     />
                   ))}
@@ -830,6 +842,7 @@ export const AgendaSection: React.FC = () => {
               todayStr={todayStr}
               onToggle={handleToggleStatus}
               onEdit={openEditModal}
+              onSelect={(item) => setSelectedDetailItem(item)}
               onDelete={deleteAgendaItem}
             />
           ))}
@@ -1345,6 +1358,22 @@ export const AgendaSection: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 7. Modal Pop-Up de Detalle Estructurado (Adaptado para Celular / PWA) */}
+      <AgendaDetailModal
+        isOpen={!!activeDetailItem}
+        item={activeDetailItem}
+        onClose={() => setSelectedDetailItem(null)}
+        onEdit={(item) => {
+          setSelectedDetailItem(null);
+          openEditModal(item);
+        }}
+        onToggleStatus={handleToggleStatus}
+        onDelete={(id) => {
+          setSelectedDetailItem(null);
+          deleteAgendaItem(id);
+        }}
+      />
     </div>
   );
 };
@@ -1355,6 +1384,7 @@ interface AgendaListItemProps {
   todayStr: string;
   onToggle: (item: AgendaItem) => void;
   onEdit: (item: AgendaItem) => void;
+  onSelect?: (item: AgendaItem) => void;
   onDelete: (id: string) => void;
 }
 
@@ -1363,6 +1393,7 @@ const AgendaListItem: React.FC<AgendaListItemProps> = ({
   todayStr,
   onToggle,
   onEdit,
+  onSelect,
   onDelete,
 }) => {
   const confirm = useConfirm();
@@ -1400,7 +1431,10 @@ const AgendaListItem: React.FC<AgendaListItemProps> = ({
           )}
         </button>
 
-        <div className="min-w-0 flex-1">
+        <div
+          className="min-w-0 flex-1 cursor-pointer"
+          onClick={() => onSelect?.(item)}
+        >
           <div className="flex items-center gap-2 flex-wrap mb-1">
             {/* Badge de Categoría */}
             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${cat.bg} ${cat.color} ${cat.border}`}>
@@ -1432,7 +1466,10 @@ const AgendaListItem: React.FC<AgendaListItemProps> = ({
             {item.notifyBell && (
               <button
                 type="button"
-                onClick={() => playAgendaBellSound(0.4)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playAgendaBellSound(0.4);
+                }}
                 title="Campanita sonora activada - Clic para escuchar sonido"
                 className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 hover:bg-purple-100 transition-all cursor-pointer"
               >
@@ -1449,13 +1486,14 @@ const AgendaListItem: React.FC<AgendaListItemProps> = ({
             )}
           </div>
 
-          <h4 className={`font-bubble font-bold text-xs sm:text-sm leading-snug ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}`}>
+          <h4 className={`font-bubble font-bold text-xs sm:text-sm leading-snug hover:text-purple-700 transition-colors ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}`}>
             {item.title}
           </h4>
 
           {item.notes && (
-            <p className="text-[11px] text-slate-500 font-sans mt-0.5 line-clamp-1 leading-relaxed">
-              {item.notes}
+            <p className="text-[11px] text-slate-500 font-sans mt-0.5 line-clamp-1 leading-relaxed flex items-center gap-1">
+              <span>📝</span>
+              <span>{item.notes}</span>
             </p>
           )}
         </div>
@@ -1495,6 +1533,7 @@ interface AgendaCardItemProps {
   todayStr: string;
   onToggle: (item: AgendaItem) => void;
   onEdit: (item: AgendaItem) => void;
+  onSelect?: (item: AgendaItem) => void;
   onDelete: (id: string) => void;
 }
 
@@ -1503,6 +1542,7 @@ const AgendaCardItem: React.FC<AgendaCardItemProps> = ({
   todayStr,
   onToggle,
   onEdit,
+  onSelect,
   onDelete,
 }) => {
   const confirm = useConfirm();
@@ -1539,7 +1579,10 @@ const AgendaCardItem: React.FC<AgendaCardItemProps> = ({
         <div className="flex items-start gap-2.5 my-2">
           <button
             type="button"
-            onClick={() => onToggle(item)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle(item);
+            }}
             className="mt-0.5 cursor-pointer text-slate-400 hover:text-emerald-600 transition-colors shrink-0"
             title={isDone ? 'Marcar como pendiente' : 'Marcar como completada'}
           >
@@ -1550,14 +1593,18 @@ const AgendaCardItem: React.FC<AgendaCardItemProps> = ({
             )}
           </button>
 
-          <div className="min-w-0">
-            <h3 className={`font-bubble font-bold text-sm text-slate-900 leading-snug ${isDone ? 'line-through text-slate-400' : ''}`}>
+          <div
+            className="min-w-0 flex-1 cursor-pointer"
+            onClick={() => onSelect?.(item)}
+          >
+            <h3 className={`font-bubble font-bold text-sm text-slate-900 leading-snug hover:text-purple-700 transition-colors ${isDone ? 'line-through text-slate-400' : ''}`}>
               {item.title}
             </h3>
 
             {item.notes && (
-              <p className="text-xs text-slate-500 font-sans mt-1 leading-relaxed line-clamp-3">
-                {item.notes}
+              <p className="text-xs text-slate-500 font-sans mt-1 leading-relaxed line-clamp-2 flex items-center gap-1">
+                <span>📝</span>
+                <span>{item.notes}</span>
               </p>
             )}
           </div>

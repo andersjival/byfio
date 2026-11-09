@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.18 - Simplificación Minimalista de Botones del Menú Principal (Hub) en PWA de Administración
+- [x] **Diseño Limpio y Exclusivo de Icono y Título ([AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Retiradas las descripciones secundarias y etiquetas badge de cada tarjeta del menú, mostrando únicamente el icono del módulo y su nombre oficial.
+  - Aumentado el tamaño tipográfico de los nombres de módulo a `text-sm sm:text-base font-bubble font-bold` para una lectura más cómoda, nítida y visual en la PWA y en pantallas móviles.
+  - Ajustada la altura y espaciado de las tarjetas (`min-h-[105px] sm:min-h-[118px]`) con cajas de iconos más amplias (`w-10 h-10 sm:w-11 sm:h-11`).
+
+### Versión 4.19.17 - Modal Pop-Up Móvil Estructurado y Celdas Limpias en Agenda PWA
+- [x] **Celdas Limpias y Compactas en Agenda ([CalendarAgendaView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarAgendaView.tsx)):**
+  - En la vista móvil y PWA, cuando un horario tiene una actividad asignada solo se muestra el título conciso y lo necesario (horario, categoría e indicador `📝 Detalle`), evitando desbordamientos de texto dentro de las cuadrículas horarias.
+- [x] **Pop-Up de Detalle Adaptado para Celular ([AgendaDetailModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/AgendaDetailModal.tsx), [AgendaSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AgendaSection.tsx)):**
+  - Al hacer clic en cualquier actividad de la agenda se despliega un pop-up móvil tipo bottom-sheet con animación suave.
+  - Presenta de forma estructurada todo el contenido interno: fecha completa, rango de horas, badges de estado/categoría/prioridad, texto y notas con viñetas o listas numeradas, enlace telefónico directo (`tel:`), botón de copiar notas y acciones táctiles inmediatas (Completar/Reabrir, Editar y Eliminar).
+
 ### Versión 4.19.16 - Eliminación Total de 'Entrar a Pedidos' y Modales de Entrada en el Home Público
 - [x] **Retiro Definitivo del Botón 'Entrar a Pedidos' en el Home ([HeroDual.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx)):**
   - Suprimido de raíz el botón *"Entrar a pedidos"* del Hero principal del Home, dejando únicamente los botones comerciales de cara al cliente: *"Tienda"* y *"Talleres Creativos"*.

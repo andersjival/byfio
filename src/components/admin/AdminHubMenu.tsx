@@ -269,32 +269,24 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                 key={item.id}
                 type="button"
                 onClick={() => onSelectTab(item.id)}
-                className="group text-left rounded-2xl p-4 bg-[#FDFBF9] hover:bg-pink-50/40 border border-white/90 hover:border-pink-200/90 shadow-[0_4px_16px_rgba(180,160,200,0.08)] hover:shadow-[0_8px_24px_rgba(236,72,153,0.18)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[125px] sm:min-h-[140px]"
+                className="group text-left rounded-2xl p-3.5 sm:p-4 bg-[#FDFBF9] hover:bg-pink-50/40 border border-white/90 hover:border-pink-200/90 shadow-[0_4px_16px_rgba(180,160,200,0.08)] hover:shadow-[0_8px_24px_rgba(236,72,153,0.18)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[105px] sm:min-h-[118px]"
               >
-                {/* Icono Elegante con Gradiente & Badge */}
-                <div className="flex items-start justify-between gap-2 mb-3">
+                {/* Icono Elegante con Gradiente */}
+                <div className="flex items-start justify-between gap-2 mb-2">
                   <div
-                    className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}
+                    className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
                   </div>
 
                   <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-pink group-hover:translate-x-0.5 transition-all" />
                 </div>
 
-                {/* Título, Descripción Unificada & Badge */}
-                <div className="space-y-1">
-                  <h3 className="font-bubble font-bold text-xs sm:text-sm text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
+                {/* Título de Módulo con Letras Más Grandes */}
+                <div>
+                  <h3 className="font-bubble font-bold text-sm sm:text-base text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
                     {item.title}
                   </h3>
-
-                  <p className="text-[10px] text-slate-500 font-sans line-clamp-1 group-hover:text-slate-700" title={item.desc}>
-                    {item.desc}
-                  </p>
-
-                  <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${item.badgeClass}`}>
-                    {item.badge}
-                  </span>
                 </div>
               </button>
             );

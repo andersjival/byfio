@@ -134,6 +134,7 @@ interface CalendarAgendaViewProps {
   workshops?: Workshop[];
   onAddNewItem: (initialDate?: string, initialTime?: string) => void;
   onEditItem: (item: AgendaItem) => void;
+  onSelectItem?: (item: AgendaItem) => void;
   onToggleStatus: (item: AgendaItem) => void;
   onDeleteItem: (id: string) => void;
 }
@@ -143,6 +144,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
   workshops = [],
   onAddNewItem,
   onEditItem,
+  onSelectItem,
   onToggleStatus,
   onDeleteItem,
 }) => {
@@ -469,7 +471,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                 return (
                                   <div
                                     key={`${item.id}-${hourLabel}`}
-                                    onClick={() => onEditItem(item)}
+                                    onClick={() => (onSelectItem ? onSelectItem(item) : onEditItem(item))}
                                     className={`p-2 rounded-xl border text-xs shadow-xs transition-all cursor-pointer group/item flex flex-col justify-between ${
                                       isDone
                                         ? 'bg-slate-100 border-slate-200 opacity-60'
@@ -503,21 +505,28 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                       </button>
                                     </div>
 
-                                    {item.time && (
-                                      <div className="flex items-center justify-between text-[10px] font-mono mt-1 text-slate-500">
-                                        <span className="flex items-center gap-0.5">
-                                          <Clock className="w-2.5 h-2.5" />
-                                          <span>
-                                            {item.endTime
+                                    <div className="flex items-center justify-between text-[10px] font-mono mt-1 text-slate-500">
+                                      <span className="flex items-center gap-0.5 truncate mr-1">
+                                        {item.time && <Clock className="w-2.5 h-2.5 shrink-0" />}
+                                        <span className="truncate">
+                                          {item.time
+                                            ? item.endTime
                                               ? (isContinuation ? `Hasta ${item.endTime}` : `${item.time} - ${item.endTime}`)
-                                              : item.time}
-                                          </span>
+                                              : item.time
+                                            : 'Ver detalle'}
                                         </span>
+                                      </span>
+                                      <div className="flex items-center gap-1 shrink-0">
+                                        {item.notes && (
+                                          <span className="text-[9px] font-sans px-1 rounded bg-white/80 text-purple-700 border border-purple-200/60 font-bold" title="Tiene notas">
+                                            📝
+                                          </span>
+                                        )}
                                         {item.priority === 'alta' && (
                                           <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                                         )}
                                       </div>
-                                    )}
+                                    </div>
                                   </div>
                                 );
                               })}
@@ -619,11 +628,18 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                   .map((item) => (
                                     <div
                                       key={item.id}
-                                      onClick={() => onEditItem(item)}
-                                      className="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-xs cursor-pointer hover:shadow-sm"
+                                      onClick={() => (onSelectItem ? onSelectItem(item) : onEditItem(item))}
+                                      className="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-xs cursor-pointer hover:shadow-sm hover:border-purple-300 transition-all"
                                     >
-                                      <div className="font-bubble font-bold text-purple-900">{item.title}</div>
-                                      {item.notes && <div className="text-[11px] text-purple-700 font-sans mt-0.5">{item.notes}</div>}
+                                      <div className="font-bubble font-bold text-purple-900 truncate">{item.title}</div>
+                                      <div className="flex items-center justify-between text-[10px] text-purple-700 font-mono mt-1">
+                                        <span className="truncate">{item.endTime ? `${item.time} - ${item.endTime}` : item.time || 'Programado'}</span>
+                                        {item.notes && (
+                                          <span className="text-[9px] bg-purple-100 text-purple-800 font-sans font-bold px-1.5 py-0.5 rounded-md shrink-0 ml-1">
+                                            📝 Detalle
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
                                   ))}
                               </div>
@@ -637,11 +653,18 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                   .map((item) => (
                                     <div
                                       key={item.id}
-                                      onClick={() => onEditItem(item)}
-                                      className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-xs cursor-pointer hover:shadow-sm"
+                                      onClick={() => (onSelectItem ? onSelectItem(item) : onEditItem(item))}
+                                      className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-xs cursor-pointer hover:shadow-sm hover:border-sky-300 transition-all"
                                     >
-                                      <div className="font-bubble font-bold text-sky-900">{item.title}</div>
-                                      {item.notes && <div className="text-[11px] text-sky-700 font-sans mt-0.5">{item.notes}</div>}
+                                      <div className="font-bubble font-bold text-sky-900 truncate">{item.title}</div>
+                                      <div className="flex items-center justify-between text-[10px] text-sky-700 font-mono mt-1">
+                                        <span className="truncate">{item.endTime ? `${item.time} - ${item.endTime}` : item.time || 'Programado'}</span>
+                                        {item.notes && (
+                                          <span className="text-[9px] bg-sky-100 text-sky-800 font-sans font-bold px-1.5 py-0.5 rounded-md shrink-0 ml-1">
+                                            📝 Detalle
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
                                   ))}
                               </div>
@@ -654,14 +677,22 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                               {hourItems.map((item) => (
                                 <div
                                   key={item.id}
-                                  onClick={() => onEditItem(item)}
-                                  className="p-3 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between cursor-pointer hover:border-purple-300"
+                                  onClick={() => (onSelectItem ? onSelectItem(item) : onEditItem(item))}
+                                  className="p-3 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between cursor-pointer hover:border-purple-300 transition-all"
                                 >
-                                  <div>
-                                    <div className="font-bubble font-bold text-xs sm:text-sm text-slate-900">{item.title}</div>
-                                    {item.notes && <p className="text-xs text-slate-500 font-sans mt-0.5">{item.notes}</p>}
+                                  <div className="min-w-0 pr-2">
+                                    <div className="font-bubble font-bold text-xs sm:text-sm text-slate-900 truncate">{item.title}</div>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                      <span className="text-[10px] font-mono text-purple-700 font-bold">
+                                        {item.endTime ? `${item.time} - ${item.endTime}` : item.time}
+                                      </span>
+                                      {item.notes && (
+                                        <span className="text-[9px] bg-slate-100 text-slate-600 font-sans font-semibold px-1.5 py-0.2 rounded">
+                                          📝 Ver detalle
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
-                                  <span className="text-xs font-mono text-purple-700 font-bold">{item.endTime ? `${item.time} - ${item.endTime}` : item.time}</span>
                                 </div>
                               ))}
                             </div>
