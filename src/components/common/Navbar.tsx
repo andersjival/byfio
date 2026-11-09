@@ -60,10 +60,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Ir al inicio de by.fio"
           >
             <div className="hidden 2xl:block">
-              <BrandLogo size="sm" showSlogan={true} />
+              <BrandLogo size="sm" showSlogan={true} variant="badge" />
             </div>
             <div className="block 2xl:hidden">
-              <BrandLogo size="sm" showSlogan={false} />
+              <BrandLogo size="sm" showSlogan={false} variant="badge" />
             </div>
           </button>
 

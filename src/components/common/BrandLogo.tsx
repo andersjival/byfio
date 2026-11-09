@@ -13,11 +13,16 @@ interface BrandLogoProps {
 export const BrandLogo: React.FC<BrandLogoProps> = ({
   size = 'md',
   showSlogan = true,
-  textColor = 'text-fio-800',
-  sloganColor = 'text-purple-600/90',
+  variant = 'text',
+  textColor,
+  sloganColor,
   align = 'start',
 }) => {
   const [isPopped, setIsPopped] = useState(false);
+  const isBadge = variant === 'badge';
+
+  const resolvedTextColor = textColor || (isBadge ? 'text-white' : 'text-fio-800');
+  const resolvedSloganColor = sloganColor || (isBadge ? 'text-purple-200' : 'text-purple-600/90');
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -77,11 +82,15 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     <div
       className={`flex flex-col ${
         align === 'center' ? 'items-center text-center' : 'items-start'
-      } select-none group cursor-pointer pt-0.5`}
+      } select-none group cursor-pointer ${
+        isBadge
+          ? 'px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl bg-gradient-to-r from-[#4A0E78] via-[#6B21A8] to-[#7E22CE] text-white shadow-neuBtn border border-purple-400/30 hover:shadow-neuBtnHover hover:scale-[1.02] active:scale-95 transition-all'
+          : 'pt-0.5'
+      }`}
     >
       {/* Fila Principal: by + corazón interactivo + fio en una sola línea continua */}
       <div
-        className={`flex items-center tracking-tight font-bubble font-bold ${textColor} leading-none`}
+        className={`flex items-center tracking-tight font-bubble font-bold ${resolvedTextColor} leading-none`}
       >
         <span className={`${dims.text} tracking-tight drop-shadow-sm`}>
           by
@@ -123,7 +132,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       {/* Slogan Oficial: TALLERES CREATIVOS & TIENDA */}
       {showSlogan && (
         <span
-          className={`${dims.slogan} font-bold tracking-wider uppercase ${sloganColor} mt-1 leading-tight select-none`}
+          className={`${dims.slogan} font-bold tracking-wider uppercase ${resolvedSloganColor} mt-1 leading-tight select-none`}
         >
           Talleres Creativos & Tienda
         </span>
