@@ -44,34 +44,34 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       case 'sm':
         return {
           text: 'text-xl sm:text-2xl',
-          heart: 'w-4 h-4 sm:w-5 sm:h-5',
-          star: 'w-4 h-4 sm:w-4.5 sm:h-4.5',
-          starPos: 'top-[-2px] sm:top-[-3px]',
+          heartSize: 14,
+          starSize: 15,
+          starTop: '-9px',
           slogan: 'text-[7.5px] sm:text-[9.5px]',
         };
       case 'lg':
         return {
           text: 'text-3xl sm:text-4xl',
-          heart: 'w-6 h-6',
-          star: 'w-5 h-5 sm:w-6 sm:h-6',
-          starPos: 'top-[-3px] sm:top-[-4px]',
+          heartSize: 22,
+          starSize: 22,
+          starTop: '-14px',
           slogan: 'text-xs sm:text-sm',
         };
       case 'hero':
         return {
           text: 'text-5xl sm:text-6xl',
-          heart: 'w-9 h-9 sm:w-11 sm:h-11',
-          star: 'w-8 h-8 sm:w-10 sm:h-10',
-          starPos: 'top-[-5px] sm:top-[-6px]',
+          heartSize: 36,
+          starSize: 36,
+          starTop: '-24px',
           slogan: 'text-sm sm:text-base',
         };
       case 'md':
       default:
         return {
           text: 'text-2xl sm:text-3xl',
-          heart: 'w-5 h-5 sm:w-6 sm:h-6',
-          star: 'w-4.5 h-4.5 sm:w-5.5 sm:h-5.5',
-          starPos: 'top-[-3px] sm:top-[-4px]',
+          heartSize: 17,
+          starSize: 18,
+          starTop: '-11px',
           slogan: 'text-[9px] sm:text-[10px]',
         };
     }
@@ -104,7 +104,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           type="button"
           onClick={handleHeartClick}
           aria-label="Tocar corazón by.fio"
-          className="inline-flex items-center justify-center mx-1 sm:mx-1.5 focus:outline-none focus:ring-0 active:scale-125 cursor-pointer"
+          className="inline-flex items-center justify-center mx-1 sm:mx-1.5 self-center translate-y-[1px] focus:outline-none focus:ring-0 active:scale-125 cursor-pointer"
           title="¡Tócame!"
         >
           <span
@@ -113,7 +113,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
             }`}
           >
             <svg
-              className={`${dims.heart} text-[#9BE4FF] drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)] fill-current`}
+              style={{
+                width: `${dims.heartSize}px`,
+                height: `${dims.heartSize}px`,
+                filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))',
+              }}
+              className="fill-[#9BE4FF]"
               viewBox="0 0 24 24"
             >
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -124,12 +129,25 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         {/* Palabra "fio" continua con la estrella posada exactamente sobre la letra i */}
         <span className={`${dims.text} tracking-tight inline-flex items-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.12)]`}>
           <span>f</span>
-          <span className="relative inline-block">
-            {/* Estrella colocada justo encima de la letra i (#FFF07C) */}
+          <span className="relative inline-flex items-center justify-center">
+            {/* Estrella colocada justo encima de la letra i (#FFF07C) con rotación e iluminación */}
             <span
-              className={`absolute ${dims.starPos} left-1/2 -translate-x-1/2 pointer-events-none text-[#FFF07C] drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)] animate-pulse`}
+              className="absolute pointer-events-none z-10"
+              style={{
+                top: dims.starTop,
+                left: '50%',
+                transform: 'translateX(-40%) rotate(12deg)',
+              }}
             >
-              <svg className={`${dims.star} fill-current`} viewBox="0 0 24 24">
+              <svg
+                style={{
+                  width: `${dims.starSize}px`,
+                  height: `${dims.starSize}px`,
+                  filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.22))',
+                }}
+                className="fill-[#FFF07C]"
+                viewBox="0 0 24 24"
+              >
                 <path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.88L12 17.27l-6.18 3.24 1.18-6.88-5-4.87 6.91-1z" />
               </svg>
             </span>
