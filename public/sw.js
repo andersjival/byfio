@@ -1,5 +1,5 @@
 // Service Worker oficial By.Fio para PWA, Notificaciones Push y Gestión de Pedidos en Tiempo Real
-const CACHE_VERSION = 'byfio-pwa-v4.19.21';
+const CACHE_VERSION = 'byfio-pwa-v4.19.28';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -19,15 +19,36 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Soporte PWA offline con estrategia Network-First (evita desactualizaciones)
+// Soporte PWA con protección total para WebKit / iOS Safari
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  if (url.pathname.startsWith('/api/')) return;
 
+  // NUNCA interceptar APIs, peticiones multimedia (.mp4/.webm/.mp3) o con cabecera Range para no romper video en Safari
+  if (
+    url.pathname.startsWith('/api/') ||
+    url.pathname.endsWith('.mp4') ||
+    url.pathname.endsWith('.webm') ||
+    url.pathname.endsWith('.mp3') ||
+    event.request.headers.get('range')
+  ) {
+    return;
+  }
+
+  // Dejar que las peticiones se sirvan directamente por red
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    fetch(event.request).catch(async () => {
+      const cached = await caches.match(event.request);
+      if (cached) return cached;
+      if (event.request.mode === 'navigate') {
+        const indexFallback = await caches.match('/index.html');
+        if (indexFallback) return indexFallback;
+      }
+      return new Response('Contenido no disponible sin conexión.', {
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      });
     })
   );
 });

@@ -19,8 +19,13 @@ if (typeof window !== 'undefined') {
         .catch(() => {});
     });
 
+    let hadController = Boolean(navigator.serviceWorker.controller);
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController) {
+        hadController = true;
+        return; // Primer registro: no recargar para no interrumpir la navegación en Safari / iOS
+      }
       if (!refreshing) {
         refreshing = true;
         window.location.reload();

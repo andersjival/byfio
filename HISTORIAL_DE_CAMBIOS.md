@@ -17,6 +17,20 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.28 - Blindaje Definitivo PWA en iOS Safari / Móvil (Storage, SW y Audio)
+- [x] **Blindaje de Storage en Navegación Privada / In-App ([index.html](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html)):**
+  - Implementado polyfill en memoria para `localStorage` y `sessionStorage` que previene errores fatales de cuota/permisos (`SecurityError`) en Safari iOS en modo navegación privada o webviews.
+- [x] **Prevención de Bucle de Recarga en Service Worker ([main.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx), [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js)):**
+  - Evitada la recarga en el primer registro del Service Worker en iOS mediante flag `hadController`.
+  - Excluidos archivos multimedia y solicitudes con cabecera `Range` del Service Worker para evitar bloqueos en WebKit iOS.
+  - Actualizada la versión de caché a `byfio-pwa-v4.19.28`.
+- [x] **Protección de Volumen de Audio en iOS ([WebIntroOverlay.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Aislada la propiedad `volume` de solo lectura en iOS con `try-catch` para evitar fallos de renderizado al iniciar la aplicación.
+- [x] **Ámbito Dinámico en Manifest PWA ([manifest.json](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest.json), [manifest.webmanifest](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest.webmanifest)):**
+  - Ajustado `start_url: "/"` en los manifests para permitir apertura contextual limpia tanto en el portal de colaboradores como en la tienda y administración.
+- [x] **Carga Diferida del Escáner de Cámara ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Transformado `CameraBarcodeScannerModal` a importación diferida (`React.lazy`) para aligerar la carga inicial en dispositivos móviles.
+
 ### Versión 4.19.27 - Solución Integral de Pantalla en Blanco en Código QR de Colaborador PWA
 - [x] **Blindaje de Dominio Público en Códigos QR ([PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx)):**
   - Forzado el dominio público oficial `https://byfiocr.pages.dev` en todos los códigos QR y enlaces compartidos cuando el administrador se encuentra en localhost o redes locales, erradicando el fallo de conexión y pantalla en blanco en teléfonos móviles.

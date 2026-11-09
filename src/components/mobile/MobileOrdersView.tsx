@@ -18,7 +18,10 @@ import {
   isPushSupported
 } from '../../utils/pushNotifications';
 import { AdminMobileDock } from '../admin/AdminMobileDock';
-import { CameraBarcodeScannerModal } from './CameraBarcodeScannerModal';
+
+const CameraBarcodeScannerModal = React.lazy(() =>
+  import('./CameraBarcodeScannerModal').then((m) => ({ default: m.CameraBarcodeScannerModal }))
+);
 
 interface MobileOrdersViewProps {
   onNavigate: (route: AppRoute, tab?: any) => void;
@@ -1027,11 +1030,15 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
       )}
 
       {/* Modal Escáner de Código de Barras con Cámara */}
-      <CameraBarcodeScannerModal
-        isOpen={isCameraScannerOpen}
-        onClose={() => setIsCameraScannerOpen(false)}
-        onScan={handleProcessBarcodeScan}
-      />
+      <React.Suspense fallback={null}>
+        {isCameraScannerOpen && (
+          <CameraBarcodeScannerModal
+            isOpen={isCameraScannerOpen}
+            onClose={() => setIsCameraScannerOpen(false)}
+            onScan={handleProcessBarcodeScan}
+          />
+        )}
+      </React.Suspense>
 
       {/* Dock Táctil Inferior para Navegación Móvil */}
       <AdminMobileDock

@@ -3,7 +3,7 @@
   "name": "by.fio — Gestión & Ecosistema Digital",
   "short_name": "by.fio Admin",
   "description": "Plataforma oficial PWA de Gestión Comercial, Taller y Alisto de Pedidos By.Fio",
-  "start_url": "/admin",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",

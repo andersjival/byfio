@@ -32,7 +32,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
     if (videoRef.current) {
       try {
         videoRef.current.muted = false;
-        videoRef.current.volume = 1.0;
+        try { videoRef.current.volume = 1.0; } catch {}
         if (canPlayVideoRef.current && videoRef.current.paused) {
           const p = videoRef.current.play();
           if (p !== undefined) p.catch(() => {});
@@ -99,7 +99,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
 
         // Entrar automáticamente CON MÚSICA activada
         videoRef.current.muted = false;
-        videoRef.current.volume = 1.0;
+        try { videoRef.current.volume = 1.0; } catch {}
         setIsMuted(false);
 
         const playPromise = videoRef.current.play();

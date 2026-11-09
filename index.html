@@ -59,6 +59,30 @@
     <link rel="apple-touch-icon" sizes="512x512" href="/logo-byfio-512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script>
+      // Blindaje de almacenamiento para Safari en iOS (Navegación Privada y WebViews)
+      (function() {
+        try {
+          var k = '__byfio_ios_test__';
+          window.localStorage.setItem(k, k);
+          window.localStorage.removeItem(k);
+        } catch (e) {
+          var mem = {};
+          var store = {
+            getItem: function(key) { return mem[key] !== undefined ? mem[key] : null; },
+            setItem: function(key, val) { mem[key] = String(val); },
+            removeItem: function(key) { delete mem[key]; },
+            clear: function() { mem = {}; },
+            key: function(i) { return Object.keys(mem)[i] || null; },
+            get length() { return Object.keys(mem).length; }
+          };
+          try {
+            Object.defineProperty(window, 'localStorage', { value: store, configurable: true });
+            Object.defineProperty(window, 'sessionStorage', { value: store, configurable: true });
+          } catch (err) {}
+        }
+      })();
+    </script>
     <style>
       html, body {
         background-color: #120220;
