@@ -1,18 +1,16 @@
 import React from 'react';
-import { Home, PackageCheck, Receipt, Calendar, Smartphone } from 'lucide-react';
+import { Home, PackageCheck, Receipt, Calendar } from 'lucide-react';
 import { AdminTabType } from './AdminTabs';
 import { playWaterDropSound } from '../../utils/soundEffects';
 
 interface AdminMobileDockProps {
   activeTab: AdminTabType;
   onSelectTab: (tab: AdminTabType) => void;
-  onOpenPwaModal: () => void;
 }
 
 export const AdminMobileDock: React.FC<AdminMobileDockProps> = ({
   activeTab,
   onSelectTab,
-  onOpenPwaModal,
 }) => {
   return (
     <div className="sm:hidden fixed bottom-3 left-3 right-3 z-40 bg-white/95 dark:bg-[#1C1829]/95 backdrop-blur-md rounded-2xl shadow-[0_8px_32px_rgba(30,10,60,0.22)] border border-purple-200/90 dark:border-purple-800/80 px-2 py-1.5 flex items-center justify-around gap-1 animate-in slide-in-from-bottom-3 duration-200">
@@ -82,19 +80,6 @@ export const AdminMobileDock: React.FC<AdminMobileDockProps> = ({
       >
         <Calendar className="w-4 h-4 mb-0.5 text-amber-500" />
         <span className="text-[10px] font-bubble">Agenda</span>
-      </button>
-
-      <button
-        type="button"
-        onClick={() => {
-          playWaterDropSound();
-          onOpenPwaModal();
-        }}
-        className="flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink text-white font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
-        title="Centro de Aplicaciones PWA (PC & Celular)"
-      >
-        <Smartphone className="w-4 h-4 mb-0.5 text-fio-yellow" />
-        <span className="text-[10px] font-bubble text-white">Apps PWA</span>
       </button>
     </div>
   );

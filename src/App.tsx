@@ -616,7 +616,6 @@ export const App: React.FC = () => {
         <AdminMobileDock
           activeTab={adminTab}
           onSelectTab={handleSelectAdminTab}
-          onOpenPwaModal={() => setIsPwaModalOpen(true)}
         />
       )}
 
