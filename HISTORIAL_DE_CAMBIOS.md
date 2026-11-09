@@ -17,6 +17,27 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.20 - Retiro de 'Cobrar' y 'Agenda' en PWA de Colaboradores y Corrección del Menú Flotante
+- [x] **Exclusión Estricta de Cobrar y Agenda para Colaboradores ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx)):**
+  - Los botones de *"Cobrar"* (facturación POS) y *"Agenda"* ahora están ocultos y no existen en la PWA de colaboradores ni para usuarios con rol `staff`.
+  - Los colaboradores disponen únicamente de los accesos pertinentes: *"Hub"* y *"Alisto"*, con un diseño equilibrado al 50% de ancho y área táctil cómoda.
+  - Para la administradora (rol `admin`), se mantienen los 4 accesos directos operativos completos.
+- [x] **Corrección de Navegación del Botón 'Hub' en Menú Flotante ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Solucionado el rebote que forzaba a los colaboradores con perfil exclusivo de alisto a volver a pedidos cada vez que pulsaban *"Hub"*. Ahora la auto-selección inicial ocurre solo al entrar y respeta el retorno voluntario al Hub principal.
+- [x] **Integración del Menú Flotante en Vista Móvil de Pedidos ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Incorporado el dock flotante táctil inferior en la vista dedicada de pedidos móvil y botón *"Menú"* en la cabecera, permitiendo alternar entre el Hub y Alisto desde cualquier sección.
+
+### Versión 4.19.19 - Reproducción Completa de Video Intro con Audio Automático y Retiro de Cinta Amarilla
+- [x] **Corrección de Duración y Prevención de Corte Prematuro ([WebIntroOverlay.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx))**:
+  - Eliminado el temporizador artificial de 5 segundos que cortaba el video a la mitad; ahora se reproduce en su totalidad (10 segundos) finalizando fluidamente mediante el evento natural `onEnded`.
+  - Suprimida la interrupción prematura por buffering en `onWaiting` y ampliado el fallback de seguridad a 15 segundos.
+  - Habilitada la reproducción del video intro en todos los dispositivos (móviles y escritorio) con soporte nativo `playsInline`.
+- [x] **Arranque Automático con Música y Desbloqueo Inmediato ([WebIntroOverlay.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx))**:
+  - Configurado el inicio del video directamente con audio activo (`muted: false`, `volume: 1.0`), con respaldo táctil universal para desmutear al primer toque en navegadores con directivas estrictas de autoplay.
+- [x] **Retiro Definitivo de la Cinta Amarilla Inferior ([WebIntroOverlay.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx))**:
+  - Eliminado el banner/cinta amarilla animada (`bg-amber-400`) situada al pie del video.
+  - Estilizado el control de audio superior con efecto glassmorphism sobrio y sin tonos amarillos.
+
 ### Versión 4.19.18 - Simplificación Minimalista de Botones del Menú Principal (Hub) en PWA de Administración
 - [x] **Diseño Limpio y Exclusivo de Icono y Título ([AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
   - Retiradas las descripciones secundarias y etiquetas badge de cada tarjeta del menú, mostrando únicamente el icono del módulo y su nombre oficial.

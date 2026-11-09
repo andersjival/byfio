@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from './context/AppContext';
 import { AppRoute } from './types';
 import { BackgroundDecor } from './components/common/BackgroundDecor';
@@ -289,15 +289,23 @@ export const App: React.FC = () => {
     }
   }, [currentRoute, adminTab]);
 
-  // Auto-seleccionar Cola de Pedidos si el colaborador ingresa con perfil exclusivo de Alisto
+  const hasAutoRedirectedAlistoRef = useRef<string | null>(null);
+
+  // Auto-seleccionar Cola de Pedidos únicamente al iniciar sesión si el colaborador ingresa con perfil exclusivo de Alisto
   useEffect(() => {
     if (currentUser?.role === 'staff' && currentRoute === 'admin') {
-      const isAlistoOnly = currentUser.permissions?.orders && !currentUser.permissions?.billing && !currentUser.permissions?.inventory;
-      if (isAlistoOnly && adminTab === 'hub') {
-        setAdminTab('orders');
+      const userKey = currentUser.id || currentUser.name;
+      if (hasAutoRedirectedAlistoRef.current !== userKey) {
+        hasAutoRedirectedAlistoRef.current = userKey;
+        const isAlistoOnly = currentUser.permissions?.orders && !currentUser.permissions?.billing && !currentUser.permissions?.inventory;
+        if (isAlistoOnly && adminTab === 'hub') {
+          setAdminTab('orders');
+        }
       }
+    } else if (!currentUser) {
+      hasAutoRedirectedAlistoRef.current = null;
     }
-  }, [currentUser, currentRoute, adminTab]);
+  }, [currentUser, currentRoute]);
 
   if (currentRoute === 'pedidos-mobile') {
     return (

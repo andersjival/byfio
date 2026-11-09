@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, ArrowRight, ShoppingBag, PackageCheck } from 'lucide-react';
+import { Volume2, ArrowRight, ShoppingBag } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
-import { isHomeLocation, isCollaboratorPwaContext } from '../../utils/routeHelpers';
+import { isHomeLocation } from '../../utils/routeHelpers';
 import { safeSessionStorage } from '../../utils/safeStorage';
 
 interface WebIntroOverlayProps {
@@ -11,37 +11,21 @@ interface WebIntroOverlayProps {
   onSelectStore?: () => void;
 }
 
-const isMobileOrTabletDevice = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  const ua = window.navigator.userAgent || (window.navigator as any).vendor || '';
-  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet|Silk/i.test(ua);
-  const isIPad = /Macintosh/i.test(ua) && Boolean(navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
-  const isTouchScreen = ('ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)) && window.innerWidth <= 1024;
-  return Boolean(isMobileUA || isIPad || isTouchScreen);
-};
-
 export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
   isOpen,
   onFinish,
-  onSelectOrders,
   onSelectStore,
 }) => {
   const [phase, setPhase] = useState<'gradient-start' | 'video-reveal' | 'video-playing' | 'fading-out'>('gradient-start');
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const exitTimeoutRef = useRef<number | null>(null);
   const canPlayVideoRef = useRef(false);
   const hasInteractedRef = useRef(false);
   const isExitingRef = useRef(false);
-  const isMobile = useRef(isMobileOrTabletDevice()).current;
-  const enterTimeRef = useRef<number>(
-    typeof window !== 'undefined' && (window as any).__byfio_start_time
-      ? (window as any).__byfio_start_time
-      : Date.now()
-  );
 
-  // Desbloqueo universal de audio tras interacción
+  // Desbloqueo universal de audio
   const unlockAudio = () => {
     hasInteractedRef.current = true;
     setIsMuted(false);
@@ -49,7 +33,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
       try {
         videoRef.current.muted = false;
         videoRef.current.volume = 1.0;
-        if (canPlayVideoRef.current) {
+        if (canPlayVideoRef.current && videoRef.current.paused) {
           const p = videoRef.current.play();
           if (p !== undefined) p.catch(() => {});
         }
@@ -57,13 +41,9 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
     }
   };
 
-  // Salida suave y rápida
-  const handleStartExit = (force = false) => {
+  // Salida suave cuando termina el video o el usuario decide salir
+  const handleStartExit = (_force = false) => {
     if (isExitingRef.current) return;
-    if (isMobile && !force) {
-      const elapsed = Date.now() - enterTimeRef.current;
-      if (elapsed < 3000) return;
-    }
     isExitingRef.current = true;
     setPhase('fading-out');
 
@@ -80,7 +60,6 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
     }, 500);
   };
 
-  // Orquestación rápida y blindada para Safari / Android
   useEffect(() => {
     if (!isOpen) {
       setPhase('gradient-start');
@@ -97,29 +76,6 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
       return;
     }
 
-    // MODO MÓVIL: No cargar video, mantener pantalla de marca y 3 puntos mínimo 3 segundos
-    if (isMobile) {
-      setPhase('gradient-start');
-      isExitingRef.current = false;
-
-
-      const elapsed = Date.now() - enterTimeRef.current;
-      const minDuration = 3200; // Garantizar mínimo 3.2 segundos en pantalla de carga
-      const remainingTime = Math.max(800, minDuration - elapsed);
-
-      const mobileTimer = window.setTimeout(() => {
-        handleStartExit(true);
-      }, remainingTime);
-
-      return () => {
-        window.clearTimeout(mobileTimer);
-        if (exitTimeoutRef.current) {
-          window.clearTimeout(exitTimeoutRef.current);
-        }
-      };
-    }
-
-    // MODO ESCRITORIO: Video completo
     setPhase('gradient-start');
     setProgress(0);
     canPlayVideoRef.current = false;
@@ -141,67 +97,62 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
           videoRef.current.currentTime = 0;
         }
 
-        if (hasInteractedRef.current) {
-          videoRef.current.muted = false;
-          videoRef.current.volume = 1.0;
-          setIsMuted(false);
-        } else {
-          videoRef.current.muted = true;
-          setIsMuted(true);
-        }
+        // Entrar automáticamente CON MÚSICA activada
+        videoRef.current.muted = false;
+        videoRef.current.volume = 1.0;
+        setIsMuted(false);
 
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
           playPromise
             .then(() => {
-              if (hasInteractedRef.current) {
-                setIsMuted(false);
-              }
+              // Éxito: video reproduciéndose con música automáticamente
+              setIsMuted(false);
             })
             .catch(() => {
+              // Si la directiva de seguridad del navegador bloquea audio antes de cualquier toque:
+              // Reproducir con video de inmediato y desmutear al primer toque
               if (videoRef.current) {
                 videoRef.current.muted = true;
                 setIsMuted(true);
                 videoRef.current.play().catch(() => {
-                  handleStartExit();
+                  handleStartExit(true);
                 });
               }
             });
         }
       } catch {
-        handleStartExit();
+        handleStartExit(true);
       }
     };
 
-    // 1. Letras por 800ms para impacto instantáneo sin esperas lentas
+    // 1. Mostrar logotipo inicial 800ms para transición fluida
     const t1 = window.setTimeout(() => {
       canPlayVideoRef.current = true;
       setPhase('video-reveal');
       startVideoPlayback();
     }, 800);
 
-    // 2. Transición fluida a reproducción activa
+    // 2. Transición a reproducción activa
     const t2 = window.setTimeout(() => {
       setPhase('video-playing');
     }, 1100);
 
-    // 3. Fallback de máxima seguridad reducido a 5s para que NUNCA se trabe en iPhone Safari
+    // 3. Fallback de seguridad extendido (15s) para dar margen completo al video de 10s
+    // El video termina naturalmente mediante el evento onEnded
     const tSafety = window.setTimeout(() => {
-      handleStartExit();
-    }, 5000);
+      handleStartExit(true);
+    }, 15000);
 
-    // 4. Cualquier toque en pantalla activa el sonido
+    // 4. Cualquier interacción en la pantalla desmutea el audio inmediatamente si el navegador lo bloqueó
     const handleGlobalGesture = () => {
       hasInteractedRef.current = true;
       unlockAudio();
-      gestureEvents.forEach((evt) => {
-        window.removeEventListener(evt, handleGlobalGesture, true);
-      });
     };
 
     const gestureEvents = ['pointerdown', 'touchstart', 'mousedown', 'keydown', 'click'];
     gestureEvents.forEach((evt) => {
-      window.addEventListener(evt, handleGlobalGesture, true);
+      window.addEventListener(evt, handleGlobalGesture, { capture: true, once: true });
     });
 
     return () => {
@@ -233,60 +184,10 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
       videoRef.current.muted = nextMuted;
       videoRef.current.volume = 1.0;
       setIsMuted(nextMuted);
-      if (!nextMuted) {
-        try {
-          if (videoRef.current.currentTime > 0 && videoRef.current.currentTime < 4 && videoRef.current.readyState >= 1) {
-            videoRef.current.currentTime = 0;
-          }
-          videoRef.current.play().catch(() => {});
-        } catch {}
-      }
     }
   };
 
   if (!isOpen || !isHomeLocation()) return null;
-
-  // En dispositivos móviles (iPhone, Android, Tablet), no renderizar ni descargar el video:
-  if (isMobile) {
-    return (
-      <div
-        onClick={() => handleStartExit(false)}
-        className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center overflow-hidden transition-all duration-500 ease-in-out select-none ${
-          phase === 'fading-out'
-            ? 'opacity-0 scale-105 pointer-events-none'
-            : 'opacity-100 scale-100 pointer-events-auto'
-        }`}
-        style={{
-          background: 'radial-gradient(ellipse at 50% 30%, #4A0E78 0%, #2A0845 45%, #120220 100%)',
-        }}
-      >
-        {/* Luces Ambientales */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[32rem] h-[24rem] rounded-full bg-gradient-to-b from-[#A855F7]/35 via-[#7E22CE]/25 to-transparent blur-[100px]" />
-          <div className="absolute top-1/3 -left-20 w-72 h-72 rounded-full bg-[#EC4899]/20 blur-[90px] animate-pulse" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-[#F59E0B]/15 blur-[100px]" />
-        </div>
-
-        {/* Presentación móvil limpia: Logo By.Fio + 3 puntitos animados */}
-        <div className="relative z-10 flex flex-col items-center text-center px-6">
-          <div className="relative mb-2 flex items-center justify-center">
-            <BrandLogo
-              size="hero"
-              showSlogan={true}
-              textColor="text-white"
-              sloganColor="text-white/85"
-              align="center"
-            />
-          </div>
-          <div className="mt-6 flex items-center gap-2.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-fio-pink animate-ping" />
-            <div className="w-2.5 h-2.5 rounded-full bg-fio-yellow animate-ping delay-150" />
-            <div className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping delay-300" />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -352,14 +253,14 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
             onClick={toggleSound}
             className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md text-xs font-bubble font-bold transition-all active:scale-95 group cursor-pointer ${
               isMuted
-                ? 'bg-amber-400 text-slate-900 shadow-[0_0_20px_rgba(251,191,36,0.6)] animate-pulse'
+                ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30 shadow-lg'
                 : 'bg-white/20 text-emerald-200 border border-white/25 shadow-lg'
             }`}
             title={isMuted ? 'Activar sonido' : 'Silenciar'}
           >
             {isMuted ? (
               <>
-                <Volume2 className="w-4 h-4 text-slate-900 animate-bounce" />
+                <Volume2 className="w-4 h-4 text-white" />
                 <span>Activar sonido 🔊</span>
               </>
             ) : (
@@ -385,38 +286,20 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
           </button>
         </div>
 
-        {/* Marco Cinemático del Video con soporte nativo Safari/iOS */}
+        {/* Marco Cinemático del Video con soporte nativo Safari/iOS/Android */}
         <div className="relative aspect-video w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black/60 border border-white/25 shadow-[0_25px_80px_rgba(74,14,120,0.7)] backdrop-blur-md">
           <video
             ref={videoRef}
-            src="/assets/intro-web-byfio.mp4?v=20261104"
-            preload="metadata"
+            src="/assets/intro-web-byfio.mp4?v=20261109"
+            preload="auto"
             playsInline
             muted={isMuted}
             autoPlay
             onTimeUpdate={handleTimeUpdate}
             onEnded={() => handleStartExit(true)}
             onError={() => handleStartExit(true)}
-            onWaiting={() => {
-              window.setTimeout(() => {
-                if (videoRef.current && videoRef.current.paused) {
-                  handleStartExit();
-                }
-              }, 1500);
-            }}
             className="w-full h-full object-cover"
           />
-
-          {/* Hint interactivo para activar música */}
-          {isMuted && (
-            <div
-              onClick={toggleSound}
-              className="absolute inset-x-4 bottom-4 sm:bottom-6 z-20 flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-400 text-slate-900 text-xs sm:text-sm font-bubble font-bold shadow-2xl cursor-pointer hover:bg-amber-300 transition-all animate-bounce"
-            >
-              <Volume2 className="w-4 h-4 text-slate-900" />
-              <span>¡Toca aquí para escuchar la música de By.Fio! 🎵</span>
-            </div>
-          )}
 
           {/* Barra de Progreso del Video */}
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 overflow-hidden">

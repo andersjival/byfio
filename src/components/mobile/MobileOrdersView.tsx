@@ -8,7 +8,7 @@ import {
   CreditCard, Shield, ShieldCheck, KeyRound, LogOut, RefreshCw,
   Store, Boxes, ChevronDown, ChevronUp, Copy, MessageCircle,
   Check, Truck, Tag, Calendar, AlertCircle, Sparkles, X, User, UserCheck,
-  Scan, Edit3
+  Scan, Edit3, Home
 } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import {
@@ -17,9 +17,10 @@ import {
   testPushAndSoundAlert,
   isPushSupported
 } from '../../utils/pushNotifications';
+import { AdminMobileDock } from '../admin/AdminMobileDock';
 
 interface MobileOrdersViewProps {
-  onNavigate: (route: AppRoute) => void;
+  onNavigate: (route: AppRoute, tab?: any) => void;
 }
 
 export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }) => {
@@ -284,6 +285,17 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
             title="Refrescar lista desde la base de datos"
           >
             <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Botón Volver al Menú Principal */}
+          <button
+            type="button"
+            onClick={() => onNavigate('admin', 'hub')}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-900/60 hover:bg-purple-800/80 text-purple-200 border border-purple-700/70 text-xs font-bubble font-bold transition-all active:scale-95 cursor-pointer"
+            title="Ir al Menú Principal"
+          >
+            <Home className="w-3.5 h-3.5 text-purple-300" />
+            <span>Menú</span>
           </button>
 
           {/* Botón Salir a Tienda Pública */}
@@ -1014,6 +1026,14 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
           </div>
         </div>
       )}
+
+      {/* Dock Táctil Inferior para Navegación Móvil */}
+      <AdminMobileDock
+        activeTab="orders"
+        onSelectTab={(tab) => {
+          onNavigate('admin', tab);
+        }}
+      />
     </div>
   );
 };
