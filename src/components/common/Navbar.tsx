@@ -49,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-white/70 shadow-[0_2px_12px_rgba(180,160,200,0.05)] transition-all">
+    <header className="sticky top-0 z-40 bg-gradient-to-r from-[#C99BF9] via-[#D4AEFA] to-[#E2C0F4] border-b border-white/50 shadow-[0_4px_20px_rgba(180,130,220,0.25)] transition-all">
       <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 min-h-[50px] sm:min-h-[54px] py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 w-full">
         {/* Logo de Marca con botón de Volver a Tienda inmediatamente al lado en Admin */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
@@ -60,10 +60,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Ir al inicio de by.fio"
           >
             <div className="hidden 2xl:block">
-              <BrandLogo size="sm" showSlogan={true} variant="badge" />
+              <BrandLogo size="md" showSlogan={false} variant="header" />
             </div>
             <div className="block 2xl:hidden">
-              <BrandLogo size="sm" showSlogan={false} variant="badge" />
+              <BrandLogo size="sm" showSlogan={false} variant="header" />
             </div>
           </button>
 
@@ -83,7 +83,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Links de Navegación de Páginas Principales con Estilo Neumórfico Táctil (Solo en Modo Público) */}
         {currentRoute !== 'admin' && currentRoute !== 'superadmin' && (
-          <nav className="hidden xl:flex items-center gap-1 xl:gap-2 p-1 xl:p-1.5 rounded-2xl bg-[#ECEEF2] shadow-neuInset border border-white/60 shrink">
+          <nav className="hidden xl:flex items-center gap-1 xl:gap-2 p-1 xl:p-1.5 rounded-2xl bg-white/40 shadow-neuInset border border-white/60 shrink">
             <button
               type="button"
               onClick={() => handleNav('home')}
@@ -398,7 +398,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Menú Desplegable en Móvil y Tablets (Solo en modo Tienda/Público) */}
       {mobileOpen && currentRoute !== 'admin' && (
-        <nav className="xl:hidden border-t border-slate-200/40 bg-[#FAF7F2]/95 backdrop-blur-md px-4 py-3 space-y-2 animate-fadeIn">
+        <nav className="xl:hidden border-t border-white/40 bg-gradient-to-b from-[#C99BF9] to-[#E2C0F4] backdrop-blur-md px-4 py-3 space-y-2 animate-fadeIn">
           <button
             type="button"
             onClick={() => handleNav('home')}
