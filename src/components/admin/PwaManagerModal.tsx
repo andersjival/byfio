@@ -102,7 +102,14 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
 
   if (!isOpen) return null;
 
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://byfiocr.pages.dev';
+  const isLocalHost = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.startsWith('192.168.') ||
+    window.location.hostname.endsWith('.local')
+  );
+  const publicOrigin = 'https://byfiocr.pages.dev';
+  const origin = isLocalHost ? publicOrigin : (typeof window !== 'undefined' ? window.location.origin : publicOrigin);
 
   const adminPcUrl = `${origin}/admin`;
   const adminMobileUrl = `${origin}/instalar-app?app=admin`;

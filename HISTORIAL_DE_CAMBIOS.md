@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.27 - Solución Integral de Pantalla en Blanco en Código QR de Colaborador PWA
+- [x] **Blindaje de Dominio Público en Códigos QR ([PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx)):**
+  - Forzado el dominio público oficial `https://byfiocr.pages.dev` en todos los códigos QR y enlaces compartidos cuando el administrador se encuentra en localhost o redes locales, erradicando el fallo de conexión y pantalla en blanco en teléfonos móviles.
+- [x] **Enrutamiento Universal de Colaboradores ([routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts)):**
+  - Agregadas las rutas `/colaborador`, `/colaboradores`, `/app/colaborador` y detección de query params (`?app=colaborador`, `?target=colaborador`, `?pwa=colaborador`) directamente al portal PWA de instalación `pwa-install`, evitando pantallas vacías al escanear desde cualquier aplicación de cámara.
+- [x] **Protección contra Excepciones y Filtrado Exclusivo de Colaboradores ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [PwaInstallPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/pwa/PwaInstallPage.tsx)):**
+  - Blindadas las comparaciones de nombre de usuario contra `undefined` en `hasPermission` y sincronización de perfiles.
+  - En la PWA de colaboradores ahora se filtran exclusivamente los perfiles de colaboradores (`role === 'staff'`), ocultando el perfil de administración.
+- [x] **Bumping de Versión de Caché PWA ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js)):**
+  - Actualizado a `byfio-pwa-v4.19.21` para forzar invalidación de caché y entrega inmediata del bundle corregido.
+
+
 ### Versión 4.19.26 - Compatibilidad Total PWA Colaboradores para Android e iOS (iPhone) con Escáner de Cámara y Safe-Area Insets
 - [x] **Escáner de Código de Barras con Cámara Trasera en Tiempo Real ([CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx), [MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
   - Implementado modal con escáner activo mediante `Html5Qrcode` (`facingMode: "environment"`), compatible con navegadores móviles de Android (Chrome, Samsung Internet) e iPhone (Safari, Chrome iOS).

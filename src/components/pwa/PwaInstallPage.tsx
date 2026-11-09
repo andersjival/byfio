@@ -119,15 +119,22 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
   const [isSuccess, setIsSuccess] = useState(false);
   const [installFeedback, setInstallFeedback] = useState<string | null>(null);
 
+  const availableProfiles = Array.isArray(userProfiles)
+    ? userProfiles.filter((p) => p && p.isActive && p.name && (targetKey === 'colaborador' ? p.role === 'staff' : true))
+    : [];
+  const displayProfiles = availableProfiles.length > 0
+    ? availableProfiles
+    : (Array.isArray(userProfiles) ? userProfiles.filter((p) => p && p.isActive && p.name) : []);
+
   // Auto-seleccionar perfil sugerido si coincide (con blindaje contra perfiles sin nombre)
   useEffect(() => {
-    if (Array.isArray(userProfiles) && userProfiles.length > 0 && !selectedProfile) {
-      const match = userProfiles.find(
+    if (displayProfiles.length > 0 && !selectedProfile) {
+      const match = displayProfiles.find(
         (p) => p && p.isActive && p.name && p.name.toLowerCase().includes(currentApp?.suggestedProfile?.toLowerCase() || '')
       );
-      if (match) setSelectedProfile(match);
+      setSelectedProfile(match || (displayProfiles.length === 1 ? displayProfiles[0] : null));
     }
-  }, [userProfiles, currentApp, selectedProfile]);
+  }, [displayProfiles, currentApp, selectedProfile]);
 
   // Manejador del botón Descargar / Instalar
   const handleInstallApp = async () => {
@@ -413,9 +420,7 @@ export const PwaInstallPage: React.FC<PwaInstallPageProps> = ({
                 Selecciona tu Perfil:
               </span>
               <div className="flex items-center gap-1.5 flex-wrap">
-                {Array.isArray(userProfiles) && userProfiles
-                  .filter((p) => p && p.isActive && p.name)
-                  .map((p) => {
+                {displayProfiles.map((p) => {
                     const isSelected = selectedProfile?.id === p.id;
                     return (
                       <button

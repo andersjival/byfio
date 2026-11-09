@@ -84,7 +84,7 @@ export const usePwaInstall = (): PwaInstallState => {
   const isIOS =
     (/iPad|iPhone|iPod/.test(userAgent) ||
       (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
-    !(window as any).MSStream;
+    (typeof window !== 'undefined' ? !(window as any).MSStream : true);
   const isAndroid = /Android/.test(userAgent);
   const isWindows = /Windows/.test(userAgent);
   const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Twitter|Snapchat|TikTok|MicroMessenger/i.test(userAgent);

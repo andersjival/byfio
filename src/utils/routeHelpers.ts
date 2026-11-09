@@ -32,10 +32,18 @@ export const parseRouteFromLocation = (): RouteInfo => {
     path.startsWith('/instalar/') ||
     path === '/instalar-app' ||
     path.startsWith('/instalar-app/') ||
+    path === '/colaborador' ||
+    path.startsWith('/colaborador/') ||
+    path === '/colaboradores' ||
+    path.startsWith('/colaboradores/') ||
+    path === '/app/colaborador' ||
     hash.includes('instalar-app') ||
     hash.includes('instalar') ||
+    hash.includes('colaborador') ||
     seccionParam === 'instalar-app' ||
-    seccionParam === 'instalar'
+    seccionParam === 'instalar' ||
+    seccionParam === 'colaborador' ||
+    ((searchParams.get('app') === 'colaborador' || searchParams.get('target') === 'colaborador' || searchParams.get('pwa') === 'colaborador') && path !== '/pedidos' && !path.startsWith('/admin'))
   ) {
     return { route: 'pwa-install', adminTab: 'hub' };
   }

@@ -1653,7 +1653,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Sincronización dinámica instantánea con el perfil activo en userProfiles
     const matchingProfile = userProfiles.find(
-      (p) => (p.id && currentUser.id && p.id === currentUser.id) || p.name.toUpperCase() === currentUser.name.toUpperCase()
+      (p) => (p.id && currentUser.id && p.id === currentUser.id) || Boolean(p.name && currentUser?.name && p.name.toUpperCase() === currentUser.name.toUpperCase())
     );
     if (matchingProfile) {
       if (!matchingProfile.isActive) return false;
@@ -1976,7 +1976,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (!currentUser || currentUser.role !== 'staff') return;
     const matchingProfile = userProfiles.find(
-      (p) => (p.id && currentUser.id && p.id === currentUser.id) || p.name.toUpperCase() === currentUser.name.toUpperCase()
+      (p) => (p.id && currentUser.id && p.id === currentUser.id) || Boolean(p.name && currentUser?.name && p.name.toUpperCase() === currentUser.name.toUpperCase())
     );
 
     // Si el perfil fue desactivado o eliminado por el administrador, expulsar inmediatamente
