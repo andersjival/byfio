@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.7 - Estrellita con Mensajes Positivos Centrada en Pantalla para PWA del Admin y PWA del Colaborador
+- [x] **Posicionamiento Central de la Mascota en PWA ([FloatingMascot.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - La estrellita con los mensajes motivacionales (`vid-estrellita.mp4` y colección de 60 frases positivas) ahora se despliega exactamente en el centro de la pantalla (`fixed inset-0 flex items-center justify-center`) tanto en la PWA del Administrador como en la PWA del Colaborador (`/pedidos-mobile`).
+  - Incorporado telón de fondo suave con efecto blur (`bg-black/45 backdrop-blur-xs`), tarjeta centrada con bordes neón y avatar circular con insignia animada de corazón.
+- [x] **Saludo Personalizado y Ergonomía Táctil ([FloatingMascot.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - Mensaje superior adaptativo: *"¡Hola Fiorella! • by.fio Creativa"* para la administradora y *"¡Hola [Nombre]! • by.fio Equipo"* para colaboradores.
+  - Efecto máquina de escribir fluido, lectura pausada (8s), auto-despedida suave y botón principal *"¡A darlo todo hoy! ✨"* con cierre inmediato al toque o al clic en el fondo.
+- [x] **Aislamiento en Web Pública ([FloatingMascot.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
+  - Para visitantes de la tienda o catálogo público, el asistente de WhatsApp se mantiene discretamente en la esquina inferior derecha.
+
 ### Versión 4.19.6 - Retiro de Botón / Etiqueta de Tema ("Morado") en Encabezados Web y PWA
 - [x] **Limpieza de Barra Superior en Web y PWA ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Removido el botón `Diseño & Letra` con la etiqueta dinámica `Morado / Oscuro / Zen` de la barra de navegación superior.

@@ -90,7 +90,7 @@ interface FloatingMascotProps {
 }
 
 export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) => {
-  const { isIntroOpen, loginIntroStage } = useApp();
+  const { isIntroOpen, loginIntroStage, currentUser } = useApp();
   const [isVisible, setIsVisible] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -102,15 +102,22 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
   const adminTriggeredRef = useRef(false);
   const clientTriggeredRef = useRef(false);
 
-  // Flujo específico para Panel de Administración:
-  // Sale 5 segundos después de que carga la última animación del login
+  // Detección estricta si estamos en la PWA del Admin o en la PWA del Colaborador
+  const isAdminOrStaff = Boolean(
+    currentRoute === 'admin' ||
+    currentRoute === 'pedidos-mobile' ||
+    currentRoute === 'superadmin' ||
+    (currentUser && (currentUser.role === 'admin' || currentUser.role === 'staff'))
+  );
+
+  // Flujo específico para PWA del Admin y PWA del Colaborador:
+  // Se activa 3.5 segundos después de ingresar y sale EN EL CENTRO DE LA PANTALLA
   useEffect(() => {
-    if (currentRoute !== 'admin') {
+    if (!isAdminOrStaff) {
       adminTriggeredRef.current = false;
       return;
     }
 
-    // Si aún está corriendo alguna de las etapas de animación (1 a 6), esperamos a que finalice en 0
     if (loginIntroStage > 0) {
       return;
     }
@@ -121,7 +128,6 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
 
     adminTriggeredRef.current = true;
 
-    // 5 segundos exactos tras finalizar la última animación
     const timer = window.setTimeout(() => {
       const msg = getNextMotivationalMessage();
       setSelectedMessage(msg);
@@ -135,17 +141,17 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
 
       const enteredTimer = window.setTimeout(() => {
         setHasEntered(true);
-      }, 1150);
+      }, 600);
 
       return () => window.clearTimeout(enteredTimer);
-    }, 5000);
+    }, 3500);
 
     return () => window.clearTimeout(timer);
-  }, [currentRoute, loginIntroStage]);
+  }, [currentRoute, loginIntroStage, isAdminOrStaff]);
 
   // Efecto Máquina de Escribir respetando caracteres Unicode/Emojis y lectura pausada
   useEffect(() => {
-    if (currentRoute !== 'admin' || !showSpeechBubble || !selectedMessage) {
+    if (!isAdminOrStaff || !showSpeechBubble || !selectedMessage) {
       return;
     }
 
@@ -156,7 +162,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
       if (currChars.length < allChars.length) {
         const charTimer = window.setTimeout(() => {
           setTypedText(allChars.slice(0, currChars.length + 1).join(''));
-        }, 55);
+        }, 45);
         return () => window.clearTimeout(charTimer);
       } else {
         setMascotStatus('reading');
@@ -164,37 +170,27 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
     }
 
     if (mascotStatus === 'reading') {
-      // 7 segundos completos para lectura tranquila del mensaje motivacional
+      // 8 segundos completos para lectura tranquila del mensaje motivacional
       const readTimer = window.setTimeout(() => {
-        setTypedText('¡Adiós! 👋✨');
+        setTypedText('¡A dar lo mejor hoy! ✨👋');
         setMascotStatus('goodbye');
-      }, 7000);
+      }, 8000);
       return () => window.clearTimeout(readTimer);
     }
 
     if (mascotStatus === 'goodbye') {
-      // 1.8 segundos mostrando la despedida antes de descender animadamente
+      // 2 segundos mostrando la despedida antes de descender animadamente
       const exitTimer = window.setTimeout(() => {
-        setMascotStatus('exiting');
-        setIsExiting(true);
-
-        const hideTimer = window.setTimeout(() => {
-          setIsVisible(false);
-          setShowSpeechBubble(false);
-          setIsExiting(false);
-          setMascotStatus('idle');
-        }, 750);
-
-        return () => window.clearTimeout(hideTimer);
-      }, 1800);
+        handleDismiss();
+      }, 2000);
 
       return () => window.clearTimeout(exitTimer);
     }
-  }, [currentRoute, showSpeechBubble, selectedMessage, typedText, mascotStatus]);
+  }, [isAdminOrStaff, showSpeechBubble, selectedMessage, typedText, mascotStatus]);
 
   // Flujo para páginas públicas (tienda, catálogo, talleres, inicio)
   useEffect(() => {
-    if (currentRoute === 'admin') {
+    if (isAdminOrStaff) {
       return;
     }
 
@@ -217,10 +213,124 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
     }, 5000);
 
     return () => window.clearTimeout(entranceTimer);
-  }, [currentRoute, isIntroOpen]);
+  }, [currentRoute, isIntroOpen, isAdminOrStaff]);
+
+  const handleDismiss = () => {
+    playWaterDropSound();
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      setShowSpeechBubble(false);
+      setIsExiting(false);
+      setMascotStatus('idle');
+    }, 550);
+  };
 
   if (isIntroOpen || !isVisible) return null;
 
+  // =========================================================================
+  // VISTA 1: PWA DEL ADMIN & PWA DEL COLABORADOR — EN EL CENTRO DE LA PANTALLA
+  // =========================================================================
+  if (isAdminOrStaff) {
+    const greetingName = currentUser?.name
+      ? currentUser.name.split(' ')[0]
+      : (currentUser?.role === 'staff' ? 'Equipo' : 'Fiorella');
+
+    return (
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mensaje Motivacional de by.fio"
+        className={`fixed inset-0 z-[125] flex items-center justify-center p-4 transition-all duration-300 ${
+          isExiting ? 'bg-black/0 pointer-events-none' : 'bg-black/45 backdrop-blur-xs'
+        }`}
+        onClick={handleDismiss}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`relative w-full max-w-sm sm:max-w-md bg-white/95 dark:bg-[#1a142a]/95 backdrop-blur-2xl rounded-3xl p-5 sm:p-6 shadow-2xl border-2 border-fio-200/90 dark:border-purple-500/40 text-center overflow-hidden transition-all ${
+            isExiting
+              ? 'animate-star-alert-down'
+              : 'animate-star-alert-in-top'
+          }`}
+        >
+          {/* Glow ambiental decorativo */}
+          <div className="absolute -top-16 -left-16 w-44 h-44 bg-fio-pink/20 dark:bg-pink-600/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-amber-400/20 dark:bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Botón X de Cierre en la esquina superior derecha */}
+          <button
+            type="button"
+            onClick={handleDismiss}
+            className="absolute top-3.5 right-3.5 text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-full hover:bg-slate-100 dark:hover:bg-purple-900/40 transition-colors cursor-pointer"
+            aria-label="Cerrar mensaje motivacional"
+            title="Cerrar mensaje"
+          >
+            <X className="w-5 h-5 stroke-[2.5]" />
+          </button>
+
+          {/* Avatar Circular Centrado con Video de la Estrellita */}
+          <div className="relative mx-auto w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden flex items-center justify-center shadow-xl border-4 border-white dark:border-purple-900/60 bg-gradient-to-tr from-amber-100 via-pink-100 to-purple-100">
+            <video
+              src="/assets/vid-estrellita.mp4"
+              preload="metadata"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover scale-105 pointer-events-none"
+            />
+            {/* Insignia de Corazón Animada */}
+            <span className="absolute -top-1 -right-1 w-7 h-7 bg-fio-pink text-white rounded-full flex items-center justify-center shadow-md animate-bounce">
+              <Heart className="w-4 h-4 fill-current" />
+            </span>
+          </div>
+
+          {/* Etiqueta superior personalizada */}
+          <div className="mt-3.5 flex items-center justify-center gap-1.5 text-xs font-bubble font-bold text-fio-pink dark:text-pink-300">
+            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+            <span>
+              {currentUser?.role === 'staff'
+                ? `¡Hola ${greetingName}! • by.fio Equipo`
+                : `¡Hola ${greetingName}! • by.fio Creativa`}
+            </span>
+          </div>
+
+          {/* Título */}
+          <h3 className="font-bubble font-black text-xl sm:text-2xl text-fio-900 dark:text-purple-100 tracking-wide mt-1 leading-snug">
+            Mensaje Positivo del Día 🌸
+          </h3>
+
+          {/* Burbuja del Mensaje con Efecto Máquina de Escribir */}
+          <div className="mt-3.5 p-4 rounded-2xl bg-purple-50/80 dark:bg-purple-900/30 border border-purple-200/80 dark:border-purple-800/50 shadow-inner">
+            <p className="font-bubble font-bold text-base sm:text-lg text-slate-800 dark:text-purple-100 leading-relaxed min-h-[56px] flex items-center justify-center">
+              <span>
+                {typedText}
+                {mascotStatus === 'typing' && (
+                  <span className="inline-block w-2 h-4 ml-1 bg-fio-pink animate-pulse align-middle rounded-full" />
+                )}
+              </span>
+            </p>
+          </div>
+
+          {/* Botón Principal para Cerrar / Continuar */}
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={handleDismiss}
+              className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-purple-700 via-fio-pink to-purple-800 hover:opacity-95 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+            >
+              <span>¡A darlo todo hoy! ✨</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // VISTA 2: WEB PÚBLICA (Tienda / Catálogo) — ESQUINA INFERIOR DERECHA
+  // =========================================================================
   const defaultMsg = '¡Hola Fio! Vi la tienda online y me gustaría hacer una consulta sobre los talleres y personalizados.';
   const waUrl = getWhatsAppLink('64004640', defaultMsg);
 
@@ -285,93 +395,45 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
         </div>
       )}
 
-      {/* Cartel Superior con Borde de Luz Multicolor y Efecto Máquina de Escribir */}
+      {/* Cartel para Tienda Pública */}
       {showSpeechBubble && !isOpen && (
-        currentRoute === 'admin' ? (
-          /* Cartel Exclusivo de Administración con Borde de Luz y 60 Mensajes Motivacionales */
-          <div
-            onClick={() => {
-              playWaterDropSound();
-              setIsExiting(true);
-              setTimeout(() => {
-                setIsVisible(false);
-                setShowSpeechBubble(false);
-                setIsExiting(false);
-              }, 700);
-            }}
-            className="mb-2.5 max-w-[315px] sm:max-w-[340px] mascot-border-beam cursor-pointer group animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-300"
-            title="Toca para despedir"
-          >
-            <div className="mascot-border-beam-inner p-3.5 sm:p-4 shadow-xl relative">
-              <div className="flex items-center justify-between gap-1.5 mb-1.5 border-b border-purple-100/70 dark:border-purple-800/40 pb-1">
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-bubble font-bold text-fio-pink dark:text-pink-300">
-                  <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                  <span>Mensaje Positivo</span>
-                </span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-400 font-sans font-medium">by.fio</span>
-              </div>
-              <p className="mascot-speech-text text-[14px] sm:text-[15px] font-bubble font-bold leading-relaxed tracking-wide min-h-[46px] flex items-center">
-                <span>
-                  {typedText}
-                  {mascotStatus === 'typing' && (
-                    <span className="inline-block w-2 h-4 ml-1 bg-fio-pink animate-pulse align-middle rounded-full" />
-                  )}
-                </span>
-              </p>
-              {/* Colita de la burbujita hacia la estrellita */}
-              <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-[#1a142a] rotate-45 border-r border-b border-fio-200/80 dark:border-purple-500/30" />
-            </div>
+        <div
+          onClick={() => {
+            playWaterDropSound();
+            setIsOpen(true);
+            setShowSpeechBubble(false);
+          }}
+          className="mb-2 max-w-[230px] bg-white/95 dark:bg-[#1f1a32]/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-fio-200/80 dark:border-purple-500/30 flex items-center gap-2 cursor-pointer hover:shadow-2xl transition-all duration-200 animate-in fade-in zoom-in-95 slide-in-from-bottom-2 relative group"
+        >
+          <div className="flex-1">
+            <p className="text-[12px] font-bold text-fio-900 dark:text-purple-100 leading-tight">
+              ¡Bienvenido a <span className="text-fio-pink font-bubble">by.fio</span>! ✨
+            </p>
+            <p className="text-[11px] text-gray-500 dark:text-purple-300 font-medium leading-tight mt-0.5">
+              ¿Tenés alguna consulta?
+            </p>
           </div>
-        ) : (
-          /* Cartel para Tienda Pública (Sin decir 'soy estrellita') */
-          <div
-            onClick={() => {
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
               playWaterDropSound();
-              setIsOpen(true);
               setShowSpeechBubble(false);
             }}
-            className="mb-2 max-w-[230px] bg-white/95 dark:bg-[#1f1a32]/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-fio-200/80 dark:border-purple-500/30 flex items-center gap-2 cursor-pointer hover:shadow-2xl transition-all duration-200 animate-in fade-in zoom-in-95 slide-in-from-bottom-2 relative group"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-purple-900/30 transition-colors"
+            aria-label="Cerrar saludo"
           >
-            <div className="flex-1">
-              <p className="text-[12px] font-bold text-fio-900 dark:text-purple-100 leading-tight">
-                ¡Bienvenido a <span className="text-fio-pink font-bubble">by.fio</span>! ✨
-              </p>
-              <p className="text-[11px] text-gray-500 dark:text-purple-300 font-medium leading-tight mt-0.5">
-                ¿Tenés alguna consulta?
-              </p>
-            </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                playWaterDropSound();
-                setShowSpeechBubble(false);
-              }}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-purple-900/30 transition-colors"
-              aria-label="Cerrar saludo"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-            {/* Colita de la burbujita hacia la estrellita */}
-            <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-[#1f1a32] rotate-45 border-r border-b border-fio-200/80 dark:border-purple-500/30" />
-          </div>
-        )
+            <X className="w-3.5 h-3.5" />
+          </button>
+          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-[#1f1a32] rotate-45 border-r border-b border-fio-200/80 dark:border-purple-500/30" />
+        </div>
       )}
 
-      {/* Botón Flotante con Video / Avatar de la Estrellita (SIN BORDE) */}
+      {/* Botón Flotante con Video de la Estrellita */}
       <button
         onClick={() => {
           playWaterDropSound();
-          if (currentRoute === 'admin') {
-            setIsExiting(true);
-            setTimeout(() => {
-              setIsVisible(false);
-              setShowSpeechBubble(false);
-              setIsExiting(false);
-            }, 700);
-          } else {
-            setIsOpen(!isOpen);
-            setShowSpeechBubble(false);
-          }
+          setIsOpen(!isOpen);
+          setShowSpeechBubble(false);
         }}
         className="relative group rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-0 p-0"
         aria-label="Ayuda con by.fio"
@@ -388,7 +450,6 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
           />
         </div>
 
-        {/* Insignia de Corazón */}
         <span className="absolute -top-1 -right-1 w-6 h-6 bg-fio-pink text-white rounded-full flex items-center justify-center shadow-md animate-bounce">
           <Heart className="w-3.5 h-3.5 fill-current" />
         </span>
