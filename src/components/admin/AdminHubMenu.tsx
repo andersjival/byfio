@@ -122,7 +122,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'orders' as AdminTabType,
       title: 'Cola de Pedidos',
-                  badgeClass: pendingOrders.length > 0 ? 'bg-fio-pink text-white animate-pulse' : 'bg-emerald-50 text-emerald-700',
+
       icon: QrCode,
       gradient: 'from-[#A855F7] to-[#6B21A8]',
     },
@@ -135,7 +135,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'inventory' as AdminTabType,
       title: 'Mis Productos',
-                  badgeClass: criticalProducts.length > 0 ? 'bg-red-500 text-white' : 'bg-sky-50 text-sky-700',
+
       icon: Boxes,
       gradient: 'from-[#38BDF8] to-[#4338CA]',
     },
@@ -148,7 +148,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'sinpe' as AdminTabType,
       title: 'Pagos y Recepción SINPE Móvil',
-                  badgeClass: sinpeTransactions.length > 0 ? 'bg-purple-100 text-purple-900 font-bold' : 'bg-slate-100 text-slate-700',
+
       icon: Landmark,
       gradient: 'from-[#6B21A8] to-[#4C1D95]',
     },
@@ -215,7 +215,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               <Star className="w-3.5 h-3.5 fill-current" />
             </span>
             <h2 className="font-bubble font-bold text-sm sm:text-base text-fio-900">
-              Menú Principal de Administración
+              Menú de Administración
             </h2>
           </div>
           <span className="text-[11px] text-slate-400 font-sans hidden sm:inline">
