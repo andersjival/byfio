@@ -10,6 +10,7 @@ import {
   setHapticVibrationIntensity,
   triggerHapticFeedback,
   calculateHapticDuration,
+  isVibrationSupported,
 } from '../../utils/haptics';
 
 interface AdminDesignSettingsModalProps {
@@ -79,8 +80,14 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
 
   const handleTestHaptic = () => {
     triggerHapticFeedback(vibrationIntensity, true);
-    setHapticNotice(`⚡ Probando vibración nivel ${vibrationIntensity} (${calculateHapticDuration(vibrationIntensity)}ms)`);
-    setTimeout(() => setHapticNotice(null), 2500);
+    const dur = calculateHapticDuration(vibrationIntensity);
+    const hasVib = isVibrationSupported();
+    setHapticNotice(
+      hasVib
+        ? `⚡ Vibración física emitida: Nivel ${vibrationIntensity} (${dur}ms)`
+        : `⚡ Vibración táctil emitida: Nivel ${vibrationIntensity} (${dur}ms) • En celulares activa el motor físico`
+    );
+    setTimeout(() => setHapticNotice(null), 3000);
   };
 
   React.useEffect(() => {
@@ -557,6 +564,7 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
                   <span className="text-[10px] text-slate-400">1: ~7ms sutil • 10: ~32ms firme</span>
                   <button
                     type="button"
+                    data-haptic-test="true"
                     onClick={handleTestHaptic}
                     className="inline-flex items-center gap-1 text-[10.5px] font-bubble font-bold text-white bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-700 px-2.5 py-1 rounded-xl shadow-2xs active:scale-95 transition-all cursor-pointer"
                   >

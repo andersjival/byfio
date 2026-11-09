@@ -16,6 +16,7 @@ import {
   setHapticVibrationIntensity,
   triggerHapticFeedback,
   calculateHapticDuration,
+  isVibrationSupported,
 } from '../../utils/haptics';
 
 interface PwaManagerModalProps {
@@ -89,7 +90,13 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
 
   const handleTestVibration = () => {
     triggerHapticFeedback(vibrationIntensity, true);
-    setVibrationNotice(`⚡ Probando vibración suave (Nivel ${vibrationIntensity} • ${calculateHapticDuration(vibrationIntensity)}ms)`);
+    const dur = calculateHapticDuration(vibrationIntensity);
+    const hasVib = isVibrationSupported();
+    setVibrationNotice(
+      hasVib
+        ? `⚡ Vibración física emitida: Nivel ${vibrationIntensity} (${dur}ms)`
+        : `⚡ Vibración táctil emitida: Nivel ${vibrationIntensity} (${dur}ms) • En celulares activa el motor físico`
+    );
     setTimeout(() => setVibrationNotice(null), 3000);
   };
 
@@ -573,6 +580,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                     </div>
                     <button
                       type="button"
+                      data-haptic-test="true"
                       onClick={handleTestVibration}
                       className="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-700 text-white font-bubble font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap"
                       title="Probar pulsación táctil con la intensidad configurada"
@@ -718,6 +726,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                     </div>
                     <button
                       type="button"
+                      data-haptic-test="true"
                       onClick={handleTestVibration}
                       className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-gradient-to-r from-purple-700 via-fio-purple to-fio-pink hover:from-purple-800 hover:to-pink-700 text-white font-bubble font-bold text-sm shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
                     >

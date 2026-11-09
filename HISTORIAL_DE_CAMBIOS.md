@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.15 - Solución Integral a Prueba de Vibración Háptica Táctil
+- [x] **Desbloqueo de Debounce y Calibración Física ([haptics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/haptics.ts)):**
+  - Corregido el bloqueo donde el escucha global de clics en fase de captura consumía el debounce antes de que el botón de prueba ejecutara su propio evento (`force = true` ahora ignora estrictamente el debounce).
+  - Aumentada la duración base de vibración (de 7ms-32ms a 30ms-96ms) superando el umbral de inercia de micromotores móviles (ERM y LRA). En pruebas directas se emite un doble tap háptico `[dur, 45, dur]` de alta perceptibilidad.
+  - Excluidos los botones de prueba (`data-haptic-test="true"`) del escucha genérico para evitar interferencias.
+- [x] **Feedback Háptico Acústico Universal ([haptics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/haptics.ts)):**
+  - Incorporada síntesis de micro-golpe táctil mecánico mediante Web Audio API, garantizando retroalimentación inmediata tanto en PCs de escritorio como en dispositivos iOS (Safari/iPhone) donde el motor de vibración web está restringido.
+- [x] **Claridad en Notificaciones de Prueba ([AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [AdminDesignSettingsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx), [PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx)):**
+  - Añadida confirmación en pantalla distinguiendo emisión física en Android vs simulación táctil acústica en ordenadores.
+
 ### Versión 4.19.14 - Cambio de Nomenclatura a "Menú" en PWA de Admin y 60 Frases Nuevas para la Estrellita
 - [x] **Compactación de Botón de Navegación ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [AdminCatalogVisualView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminCatalogVisualView.tsx)):**
   - Sustituida la palabra "Menú Principal" por "Menú" en el botón principal de la cabecera PWA de administración y en los retornos de navegación, optimizando el espacio horizontal en pantallas táctiles y móviles.

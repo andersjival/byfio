@@ -101,8 +101,10 @@ export const App: React.FC = () => {
   const [billingTargetCustomer, setBillingTargetCustomer] = useState<Customer | null>(null);
   const [isEntryGatewayOpen, setIsEntryGatewayOpen] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
-    // Solo permitir que se abra en los módulos PWA de colaboradores; NUNCA en la web pública
+    // Solo permitir que se abra en los módulos PWA de colaboradores; NUNCA en el home ni en la web pública
     if (!isCollaboratorPwaContext()) return false;
+    const initialRoute = parseRouteFromLocation().route;
+    if (initialRoute === 'home') return false;
     try {
       return !sessionStorage.getItem('byfio_entry_gateway_dismissed');
     } catch {
@@ -579,8 +581,8 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Modal de Entrada Dual: Exclusivo para módulos PWA de colaboradores */}
-      {isCollaboratorPwaContext() && (
+      {/* Modal de Entrada Dual: Exclusivo para módulos PWA de colaboradores (NUNCA en el home) */}
+      {isCollaboratorPwaContext() && currentRoute !== 'home' && (
         <AppEntryGatewayModal
           isOpen={isEntryGatewayOpen && !isIntroOpen}
           onSelectStore={() => {

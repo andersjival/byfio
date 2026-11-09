@@ -427,7 +427,7 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
           </div>
         </div>
 
-        {/* Acceso Directo de Entrada */}
+        {/* Acceso Directo de Entrada a la Tienda */}
         <div className="flex items-center justify-center gap-2.5 sm:gap-3 mt-3 px-1">
           <button
             type="button"
@@ -436,26 +436,11 @@ export const WebIntroOverlay: React.FC<WebIntroOverlayProps> = ({
               handleStartExit();
               onSelectStore?.();
             }}
-            className="flex-1 max-w-[200px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
             <ShoppingBag className="w-4 h-4 text-white" />
-            <span>{isCollaboratorPwaContext() ? 'Tienda' : 'Entrar a la Tienda'}</span>
+            <span>Entrar a la Tienda</span>
           </button>
-
-          {isCollaboratorPwaContext() && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleStartExit();
-                onSelectOrders?.();
-              }}
-              className="flex-1 max-w-[210px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-900/90 border border-emerald-400/50 text-emerald-300 font-bubble font-bold text-xs sm:text-sm shadow-lg hover:bg-slate-800 hover:scale-105 active:scale-95 transition-all cursor-pointer"
-            >
-              <PackageCheck className="w-4 h-4 text-emerald-400" />
-              <span>Entrar a pedidos</span>
-            </button>
-          )}
         </div>
 
         {/* Subtítulo bajo el video con acción rápida */}

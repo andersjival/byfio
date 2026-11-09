@@ -15,6 +15,7 @@ import {
   setHapticVibrationIntensity,
   triggerHapticFeedback,
   calculateHapticDuration,
+  isVibrationSupported,
 } from '../../utils/haptics';
 
 interface AdminHubMenuProps {
@@ -69,8 +70,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
 
   const handleTestVibrationHub = () => {
     triggerHapticFeedback(hubVibrationIntensity, true);
-    setHubVibrationNotice(`⚡ Probando vibración suave (Nivel ${hubVibrationIntensity} • ${calculateHapticDuration(hubVibrationIntensity)}ms)`);
-    setTimeout(() => setHubVibrationNotice(null), 2500);
+    const dur = calculateHapticDuration(hubVibrationIntensity);
+    const hasVib = isVibrationSupported();
+    setHubVibrationNotice(
+      hasVib
+        ? `⚡ Vibración física emitida (Nivel ${hubVibrationIntensity} • ${dur}ms)`
+        : `⚡ Vibración táctil emitida (Nivel ${hubVibrationIntensity} • ${dur}ms) • En celulares Android activa el motor físico`
+    );
+    setTimeout(() => setHubVibrationNotice(null), 3000);
   };
 
   useEffect(() => {
@@ -400,6 +407,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               {/* Botón Probar */}
               <button
                 type="button"
+                data-haptic-test="true"
                 onClick={handleTestVibrationHub}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-white font-bubble font-bold text-xs border border-purple-400/40 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
                 title="Probar respuesta táctil en el dispositivo"
