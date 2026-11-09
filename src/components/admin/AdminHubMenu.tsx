@@ -2,12 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
-  QrCode, Receipt, Boxes, Landmark, GraduationCap,
+  QrCode, Receipt, Boxes, Landmark, GraduationCap, Vibrate, Sliders, Zap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
   BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone, Save
 } from 'lucide-react';
 
 import { AppRoute, SupplierOrder } from '../../types';
+import {
+  isHapticVibrationEnabled,
+  setHapticVibrationEnabled,
+  getHapticVibrationIntensity,
+  setHapticVibrationIntensity,
+  triggerHapticFeedback,
+  calculateHapticDuration,
+} from '../../utils/haptics';
 
 interface AdminHubMenuProps {
   onSelectTab: (tab: AdminTabType) => void;
@@ -21,6 +29,49 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
   const [copiedCatalog, setCopiedCatalog] = useState(false);
   const [catalogWebCheck, setCatalogWebCheck] = useState<boolean>(isModuleEnabled('catalogo'));
   const [catalogSaveToast, setCatalogSaveToast] = useState<string | null>(null);
+  const [hubVibrationEnabled, setHubVibrationEnabled] = useState<boolean>(() => isHapticVibrationEnabled());
+  const [hubVibrationIntensity, setHubVibrationIntensity] = useState<number>(() => getHapticVibrationIntensity());
+  const [hubVibrationNotice, setHubVibrationNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleSync = () => {
+      setHubVibrationEnabled(isHapticVibrationEnabled());
+      setHubVibrationIntensity(getHapticVibrationIntensity());
+    };
+    window.addEventListener('byfio-haptics-changed', handleSync);
+    return () => window.removeEventListener('byfio-haptics-changed', handleSync);
+  }, []);
+
+  const handleToggleHubVibration = () => {
+    const next = !hubVibrationEnabled;
+    setHubVibrationEnabled(next);
+    setHapticVibrationEnabled(next);
+    if (next) {
+      triggerHapticFeedback(hubVibrationIntensity, true);
+      setHubVibrationNotice(`✓ Vibración táctil activada (Nivel ${hubVibrationIntensity})`);
+    } else {
+      setHubVibrationNotice('✕ Vibración táctil desactivada');
+    }
+    setTimeout(() => setHubVibrationNotice(null), 2500);
+  };
+
+  const handleIntensityChangeHub = (level: number) => {
+    setHubVibrationIntensity(level);
+    setHapticVibrationIntensity(level);
+    if (!hubVibrationEnabled) {
+      setHubVibrationEnabled(true);
+      setHapticVibrationEnabled(true);
+    }
+    triggerHapticFeedback(level, true);
+    setHubVibrationNotice(`Nivel ${level} seleccionado (${calculateHapticDuration(level)}ms)`);
+    setTimeout(() => setHubVibrationNotice(null), 2500);
+  };
+
+  const handleTestVibrationHub = () => {
+    triggerHapticFeedback(hubVibrationIntensity, true);
+    setHubVibrationNotice(`⚡ Probando vibración suave (Nivel ${hubVibrationIntensity} • ${calculateHapticDuration(hubVibrationIntensity)}ms)`);
+    setTimeout(() => setHubVibrationNotice(null), 2500);
+  };
 
   useEffect(() => {
     setCatalogWebCheck(isModuleEnabled('catalogo'));
@@ -246,36 +297,125 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
 
       
         {/* Tarjeta Ejecutiva del Centro de Aplicaciones PWA (PC & Celular) */}
-        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#200B3B] via-[#3B1161] to-[#170529] border border-purple-500/50 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-fio-pink via-purple-600 to-indigo-700 text-white flex items-center justify-center shadow-md shrink-0">
-              <Smartphone className="w-6 h-6 text-fio-yellow" />
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-bubble font-bold text-sm sm:text-base text-white">
-                  Centro de Aplicaciones PWA (PC &amp; Celular)
-                </h3>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-fio-pink/30 text-pink-200 border border-fio-pink/40 font-bubble font-bold">
-                  ★ Administradora &amp; Colaboradores
-                </span>
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#200B3B] via-[#3B1161] to-[#170529] border border-purple-500/50 text-white shadow-md flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-fio-pink via-purple-600 to-indigo-700 text-white flex items-center justify-center shadow-md shrink-0">
+                <Smartphone className="w-6 h-6 text-fio-yellow" />
               </div>
-              <p className="text-xs text-purple-200/90 font-sans max-w-2xl leading-relaxed">
-                Instala la plataforma en tu computadora de escritorio y en tu celular personal. Genera las aplicaciones táctiles para tus colaboradores (Alisto, Empaque, Mostrador y Agenda) para compartirlas con 1 clic por WhatsApp.
-              </p>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-bubble font-bold text-sm sm:text-base text-white">
+                    Centro de Aplicaciones PWA (PC &amp; Celular)
+                  </h3>
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-fio-pink/30 text-pink-200 border border-fio-pink/40 font-bubble font-bold">
+                    ★ Administradora &amp; Colaboradores
+                  </span>
+                </div>
+                <p className="text-xs text-purple-200/90 font-sans max-w-2xl leading-relaxed">
+                  Instala la plataforma en tu computadora de escritorio y en tu celular personal. Configura la vibración táctil al hacer clic y genera accesos directos para tu equipo.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 w-full md:w-auto shrink-0 flex-wrap sm:flex-nowrap">
+              <button
+                type="button"
+                onClick={onOpenPwaModal}
+                className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-fio-pink to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bubble font-bold shadow-md active:scale-95 transition-all cursor-pointer"
+              >
+                <Smartphone className="w-4 h-4 text-fio-yellow" />
+                <span>Gestionar Aplicaciones PWA</span>
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full md:w-auto shrink-0 flex-wrap sm:flex-nowrap">
-            <button
-              type="button"
-              onClick={onOpenPwaModal}
-              className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-fio-pink to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bubble font-bold shadow-md active:scale-95 transition-all cursor-pointer"
-            >
-              <Smartphone className="w-4 h-4 text-fio-yellow" />
-              <span>Gestionar Aplicaciones PWA</span>
-            </button>
+          {/* Fila Directa de Configuración de Vibración Táctil en PWA */}
+          <div className="p-3.5 rounded-2xl bg-black/35 border border-purple-400/30 backdrop-blur-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-purple-500/30 text-pink-300 flex items-center justify-center shrink-0 border border-purple-400/40">
+                <Vibrate className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bubble font-bold text-white text-xs sm:text-sm">
+                    Vibración Táctil al Clic (PWA y Web)
+                  </span>
+                  <span
+                    className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full border ${
+                      hubVibrationEnabled
+                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                        : 'bg-white/10 text-slate-300 border-white/20'
+                    }`}
+                  >
+                    {hubVibrationEnabled ? `Activa • Nivel ${hubVibrationIntensity}` : 'Desactivada'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-purple-200/80 font-sans mt-0.5">
+                  Vibración corta y suave de {calculateHapticDuration(hubVibrationIntensity)}ms al hacer clic en cualquier botón o enlace.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 w-full md:w-auto flex-wrap sm:flex-nowrap justify-between md:justify-end">
+              {/* Botones numéricos de intensidad 1 a 10 */}
+              <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl border border-white/10 overflow-x-auto max-w-full">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => handleIntensityChangeHub(lvl)}
+                    className={`w-6 h-6 rounded-lg text-[10px] font-bubble font-bold flex items-center justify-center transition-all cursor-pointer ${
+                      hubVibrationIntensity === lvl
+                        ? 'bg-gradient-to-tr from-fio-pink to-purple-500 text-white shadow-xs scale-105'
+                        : hubVibrationEnabled
+                        ? 'text-white/80 hover:bg-white/15'
+                        : 'text-white/30'
+                    }`}
+                    title={`Nivel ${lvl} (${calculateHapticDuration(lvl)}ms)`}
+                  >
+                    {lvl}
+                  </button>
+                ))}
+              </div>
+
+              {/* Botón Switch ON/OFF */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={hubVibrationEnabled}
+                onClick={handleToggleHubVibration}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-inner ${
+                  hubVibrationEnabled ? 'bg-fio-pink' : 'bg-white/20'
+                }`}
+                title={hubVibrationEnabled ? 'Desactivar vibración' : 'Activar vibración'}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    hubVibrationEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+
+              {/* Botón Probar */}
+              <button
+                type="button"
+                onClick={handleTestVibrationHub}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-white font-bubble font-bold text-xs border border-purple-400/40 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                title="Probar respuesta táctil en el dispositivo"
+              >
+                <Zap className="w-3.5 h-3.5 text-fio-yellow" />
+                <span>Probar</span>
+              </button>
+            </div>
           </div>
+
+          {hubVibrationNotice && (
+            <div className="py-1 px-3 rounded-xl bg-purple-400/20 border border-purple-400/30 text-xs font-bubble font-bold text-pink-200 flex items-center gap-2 animate-fadeIn">
+              <Zap className="w-3.5 h-3.5 text-fio-yellow shrink-0 animate-bounce" />
+              <span>{hubVibrationNotice}</span>
+            </div>
+          )}
         </div>
 
       {/* Sección Catálogo Comercial Online (Aparece de abajo hacia arriba) */}

@@ -17,6 +17,11 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.13 - Retiro de Botón Apps PWA en el Dock Flotante Móvil de Administración
+- [x] **Depuración de Barra Flotante Inferior ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx))**:
+  - Eliminado el botón flotante inferior *"Apps PWA"* del menú dock de celular en la PWA del administrador.
+  - Distribución equilibrada de los 4 accesos directos operativos restantes (Hub, Alisto, Cobrar y Agenda), optimizando el espacio y la pulsación táctil.
+
 ### Versión 4.19.12 - Retiro de Indicador LED Verde, Ajuste Ergonómico de Agenda y Solución de Corte en Botón Carrito PWA
 - [x] **Retiro de Indicador LED Verde en Barra Superior ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
   - Eliminado el punto verde pulsante (`bg-emerald-500 animate-pulse`) que simulaba un LED activo en la barra superior del panel administrativo y en la sesión de usuario de la cabecera.
