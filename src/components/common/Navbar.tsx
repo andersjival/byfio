@@ -137,20 +137,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Catálogo
               </button>
             )}
-
-            {isModuleEnabled('pricing') && (
-              <button
-                type="button"
-                onClick={() => handleNav('precios')}
-                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap active:scale-95 ${
-                  currentRoute === 'precios'
-                    ? 'neu-btn-primary text-white'
-                    : 'bg-white/80 text-slate-700 shadow-sm hover:shadow hover:text-fio-pink hover:bg-pink-50/90'
-                }`}
-              >
-                Precios
-              </button>
-            )}
           </nav>
         )}
 
@@ -447,19 +433,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               Catálogo Online
-            </button>
-          )}
-          {isModuleEnabled('pricing') && (
-            <button
-              type="button"
-              onClick={() => handleNav('precios')}
-              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all active:scale-95 ${
-                currentRoute === 'precios'
-                  ? 'neu-btn-primary text-white'
-                  : 'bg-white/85 text-slate-700 shadow-sm hover:shadow hover:text-fio-pink hover:bg-pink-50/90'
-              }`}
-            >
-              Precios Stickers
             </button>
           )}
 
