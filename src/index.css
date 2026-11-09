@@ -126,7 +126,7 @@ body[data-font-theme="hybrid"] .font-bubble {
   background: linear-gradient(135deg, #D4AEFA 0%, #C084FC 100%);
   color: #FFFFFF;
   border-radius: 1rem;
-  box-shadow: 0 8px 20px -3px rgba(192, 132, 252, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 12px -1px rgba(147, 51, 234, 0.35);
   border: none;
   transition: all 0.22s ease-in-out;
   cursor: pointer;
@@ -135,22 +135,22 @@ body[data-font-theme="hybrid"] .font-bubble {
 .neu-btn-primary:hover {
   background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%) !important;
   color: #FFFFFF !important;
-  box-shadow: 0 12px 25px -3px rgba(236, 72, 153, 0.45), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.55);
+  box-shadow: 0 6px 16px -1px rgba(219, 39, 119, 0.45);
   transform: translateY(-1px);
 }
 
 .neu-btn-primary:active {
   background: linear-gradient(135deg, #DB2777 0%, #BE185D 100%) !important;
-  box-shadow: inset 3px 3px 6px rgba(190, 24, 93, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.3) !important;
+  box-shadow: inset 2px 2px 5px rgba(190, 24, 93, 0.4) !important;
   transform: translateY(0px) !important;
 }
 
-/* Botones Neumórficos Pasteles Oficiales con Efecto Redondeado 3D by.fio */
+/* Botones Neumórficos Pasteles Oficiales con Efecto Redondeado 3D by.fio (Limpio y sin halo blanco) */
 .neu-btn-pastel-yellow {
   background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%);
   color: #713F12;
   border-radius: 1rem;
-  box-shadow: 0 8px 20px -3px rgba(250, 204, 21, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px -1px rgba(202, 138, 4, 0.35);
   border: none;
   transition: all 0.22s ease-in-out;
   cursor: pointer;
@@ -159,12 +159,12 @@ body[data-font-theme="hybrid"] .font-bubble {
 .neu-btn-pastel-yellow:hover {
   background: linear-gradient(135deg, #FEF9C3 0%, #FEF08A 100%) !important;
   color: #713F12 !important;
-  box-shadow: 0 12px 25px -3px rgba(250, 204, 21, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 16px -1px rgba(202, 138, 4, 0.45);
   transform: translateY(-1px);
 }
 
 .neu-btn-pastel-yellow:active {
-  box-shadow: inset 3px 3px 6px rgba(180, 83, 9, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.4) !important;
+  box-shadow: inset 2px 2px 5px rgba(180, 83, 9, 0.35) !important;
   transform: translateY(0px) !important;
 }
 
@@ -172,7 +172,7 @@ body[data-font-theme="hybrid"] .font-bubble {
   background: linear-gradient(135deg, #BAE6FD 0%, #7DD3FC 100%);
   color: #082F49;
   border-radius: 1rem;
-  box-shadow: 0 8px 20px -3px rgba(56, 189, 248, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px -1px rgba(2, 132, 199, 0.35);
   border: none;
   transition: all 0.22s ease-in-out;
   cursor: pointer;
@@ -181,12 +181,12 @@ body[data-font-theme="hybrid"] .font-bubble {
 .neu-btn-pastel-sky:hover {
   background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%) !important;
   color: #082F49 !important;
-  box-shadow: 0 12px 25px -3px rgba(56, 189, 248, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 16px -1px rgba(2, 132, 199, 0.45);
   transform: translateY(-1px);
 }
 
 .neu-btn-pastel-sky:active {
-  box-shadow: inset 3px 3px 6px rgba(14, 116, 144, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.4) !important;
+  box-shadow: inset 2px 2px 5px rgba(14, 116, 144, 0.35) !important;
   transform: translateY(0px) !important;
 }
 
@@ -194,7 +194,7 @@ body[data-font-theme="hybrid"] .font-bubble {
   background: linear-gradient(135deg, #E9D5FF 0%, #D8B4FE 100%);
   color: #3B0764;
   border-radius: 1rem;
-  box-shadow: 0 8px 20px -3px rgba(192, 132, 252, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px -1px rgba(147, 51, 234, 0.35);
   border: none;
   transition: all 0.22s ease-in-out;
   cursor: pointer;
@@ -203,12 +203,12 @@ body[data-font-theme="hybrid"] .font-bubble {
 .neu-btn-pastel-purple:hover {
   background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%) !important;
   color: #3B0764 !important;
-  box-shadow: 0 12px 25px -3px rgba(192, 132, 252, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 16px -1px rgba(147, 51, 234, 0.45);
   transform: translateY(-1px);
 }
 
 .neu-btn-pastel-purple:active {
-  box-shadow: inset 3px 3px 6px rgba(126, 34, 206, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.4) !important;
+  box-shadow: inset 2px 2px 5px rgba(126, 34, 206, 0.35) !important;
   transform: translateY(0px) !important;
 }
 
@@ -216,7 +216,7 @@ body[data-font-theme="hybrid"] .font-bubble {
   background: linear-gradient(135deg, #FBCFE8 0%, #F472B6 100%);
   color: #500724;
   border-radius: 1rem;
-  box-shadow: 0 8px 20px -3px rgba(244, 114, 182, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px -1px rgba(219, 39, 119, 0.35);
   border: none;
   transition: all 0.22s ease-in-out;
   cursor: pointer;
@@ -225,12 +225,12 @@ body[data-font-theme="hybrid"] .font-bubble {
 .neu-btn-pastel-pink:hover {
   background: linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%) !important;
   color: #500724 !important;
-  box-shadow: 0 12px 25px -3px rgba(244, 114, 182, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 16px -1px rgba(219, 39, 119, 0.45);
   transform: translateY(-1px);
 }
 
 .neu-btn-pastel-pink:active {
-  box-shadow: inset 3px 3px 6px rgba(190, 24, 93, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.4) !important;
+  box-shadow: inset 2px 2px 5px rgba(190, 24, 93, 0.35) !important;
   transform: translateY(0px) !important;
 }
 

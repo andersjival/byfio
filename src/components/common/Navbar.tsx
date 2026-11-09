@@ -87,10 +87,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('home')}
-              className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+              className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap active:scale-95 ${
                 currentRoute === 'home'
-                  ? 'neu-btn-pastel-yellow shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#FEF9C3] hover:text-amber-900 shadow-neuBtn hover:shadow-neuBtnHover'
+                  ? 'neu-btn-pastel-yellow'
+                  : 'bg-white/80 text-slate-700 shadow-sm hover:shadow hover:bg-[#FEF9C3] hover:text-amber-900'
               }`}
             >
               Inicio
@@ -100,10 +100,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => handleNav('workshops')}
-                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap active:scale-95 ${
                   currentRoute === 'workshops' || currentRoute === 'workshop-detail'
-                    ? 'neu-btn-pastel-sky shadow-neuBtnHover'
-                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#E0F2FE] hover:text-sky-900 shadow-neuBtn hover:shadow-neuBtnHover'
+                    ? 'neu-btn-pastel-sky'
+                    : 'bg-white/80 text-slate-700 shadow-sm hover:shadow hover:bg-[#E0F2FE] hover:text-sky-900'
                 }`}
               >
                 Talleres
@@ -114,10 +114,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => handleNav('store')}
-                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap active:scale-95 ${
                   currentRoute === 'store'
-                    ? 'neu-btn-pastel-purple shadow-neuBtnHover'
-                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#F3E8FF] hover:text-purple-900 shadow-neuBtn hover:shadow-neuBtnHover'
+                    ? 'neu-btn-pastel-purple'
+                    : 'bg-white/80 text-slate-700 shadow-sm hover:shadow hover:bg-[#F3E8FF] hover:text-purple-900'
                 }`}
               >
                 Tienda
@@ -128,10 +128,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => handleNav('catalogo')}
-                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap active:scale-95 ${
                   currentRoute === 'catalogo'
-                    ? 'neu-btn-pastel-pink shadow-neuBtnHover'
-                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#FCE7F3] hover:text-pink-900 shadow-neuBtn hover:shadow-neuBtnHover'
+                    ? 'neu-btn-pastel-pink'
+                    : 'bg-white/80 text-slate-700 shadow-sm hover:shadow hover:bg-[#FCE7F3] hover:text-pink-900'
                 }`}
               >
                 Catálogo
@@ -142,10 +142,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => handleNav('precios')}
-                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
+                className={`px-3 xl:px-4 py-1.5 xl:py-2 rounded-2xl border-0 text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap active:scale-95 ${
                   currentRoute === 'precios'
-                    ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 shadow-neuBtn hover:shadow-neuBtnHover'
+                    ? 'neu-btn-primary text-white'
+                    : 'bg-white/80 text-slate-700 shadow-sm hover:shadow hover:text-fio-pink hover:bg-pink-50/90'
                 }`}
               >
                 Precios
@@ -402,10 +402,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             type="button"
             onClick={() => handleNav('home')}
-            className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all ${
+            className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all active:scale-95 ${
               currentRoute === 'home'
-                ? 'neu-btn-pastel-yellow shadow-neuBtnHover'
-                : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#FEF9C3] hover:text-amber-900 shadow-neuBtn'
+                ? 'neu-btn-pastel-yellow'
+                : 'bg-white/85 text-slate-700 shadow-sm hover:shadow hover:bg-[#FEF9C3] hover:text-amber-900'
             }`}
           >
             Inicio
@@ -414,10 +414,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('workshops')}
-              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all ${
+              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all active:scale-95 ${
                 currentRoute === 'workshops' || currentRoute === 'workshop-detail'
-                  ? 'neu-btn-pastel-sky shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#E0F2FE] hover:text-sky-900 shadow-neuBtn'
+                  ? 'neu-btn-pastel-sky'
+                  : 'bg-white/85 text-slate-700 shadow-sm hover:shadow hover:bg-[#E0F2FE] hover:text-sky-900'
               }`}
             >
               Talleres
@@ -427,10 +427,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('store')}
-              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all ${
+              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all active:scale-95 ${
                 currentRoute === 'store'
-                  ? 'neu-btn-pastel-purple shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#F3E8FF] hover:text-purple-900 shadow-neuBtn'
+                  ? 'neu-btn-pastel-purple'
+                  : 'bg-white/85 text-slate-700 shadow-sm hover:shadow hover:bg-[#F3E8FF] hover:text-purple-900'
               }`}
             >
               Tienda
@@ -440,10 +440,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('catalogo')}
-              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all ${
+              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all active:scale-95 ${
                 currentRoute === 'catalogo'
-                  ? 'neu-btn-pastel-pink shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#FCE7F3] hover:text-pink-900 shadow-neuBtn'
+                  ? 'neu-btn-pastel-pink'
+                  : 'bg-white/85 text-slate-700 shadow-sm hover:shadow hover:bg-[#FCE7F3] hover:text-pink-900'
               }`}
             >
               Catálogo Online
@@ -453,10 +453,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('precios')}
-              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all ${
+              className={`w-full text-left px-4 py-3 rounded-2xl border-0 text-sm font-bubble font-bold transition-all active:scale-95 ${
                 currentRoute === 'precios'
-                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                  : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink shadow-neuBtn'
+                  ? 'neu-btn-primary text-white'
+                  : 'bg-white/85 text-slate-700 shadow-sm hover:shadow hover:text-fio-pink hover:bg-pink-50/90'
               }`}
             >
               Precios Stickers

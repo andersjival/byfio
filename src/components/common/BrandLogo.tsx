@@ -44,34 +44,34 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       case 'sm':
         return {
           text: 'text-xl sm:text-2xl',
-          heartSize: 14,
+          heartSize: 13,
           starSize: 15,
-          starTop: '-9px',
+          starTop: '-3px',
           slogan: 'text-[7.5px] sm:text-[9.5px]',
         };
       case 'lg':
         return {
           text: 'text-3xl sm:text-4xl',
-          heartSize: 22,
+          heartSize: 20,
           starSize: 22,
-          starTop: '-14px',
+          starTop: '-5px',
           slogan: 'text-xs sm:text-sm',
         };
       case 'hero':
         return {
           text: 'text-5xl sm:text-6xl',
-          heartSize: 36,
+          heartSize: 32,
           starSize: 36,
-          starTop: '-24px',
+          starTop: '-9px',
           slogan: 'text-sm sm:text-base',
         };
       case 'md':
       default:
         return {
           text: 'text-2xl sm:text-3xl',
-          heartSize: 17,
+          heartSize: 15,
           starSize: 18,
-          starTop: '-11px',
+          starTop: '-4px',
           slogan: 'text-[9px] sm:text-[10px]',
         };
     }
@@ -99,12 +99,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           by
         </span>
 
-        {/* Corazón celeste interactivo: exacto de la marca by.fio (#9BE4FF) */}
+        {/* Corazón celeste interactivo: exacto de la marca by.fio (#9BE4FF), bien pegado a las letras */}
         <button
           type="button"
           onClick={handleHeartClick}
           aria-label="Tocar corazón by.fio"
-          className="inline-flex items-center justify-center mx-1 sm:mx-1.5 self-center translate-y-[1px] focus:outline-none focus:ring-0 active:scale-125 cursor-pointer"
+          className="inline-flex items-center justify-center -mx-1 sm:-mx-1.5 self-center translate-y-[1px] focus:outline-none focus:ring-0 active:scale-125 cursor-pointer z-10"
           title="¡Tócame!"
         >
           <span
