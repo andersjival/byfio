@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.16 - Eliminación Total de 'Entrar a Pedidos' y Modales de Entrada en el Home Público
+- [x] **Retiro Definitivo del Botón 'Entrar a Pedidos' en el Home ([HeroDual.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx)):**
+  - Suprimido de raíz el botón *"Entrar a pedidos"* del Hero principal del Home, dejando únicamente los botones comerciales de cara al cliente: *"Tienda"* y *"Talleres Creativos"*.
+  - Las herramientas de gestión y alisto de pedidos quedan confinadas de manera exclusiva a la aplicación PWA para colaboradores.
+- [x] **Bloqueo Absoluto de Modales de Acceso en Ruta Home ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [WebIntroOverlay.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - Desactivada la inicialización y el renderizado de `AppEntryGatewayModal` en la ruta `home` (`currentRoute !== 'home'`), garantizando una experiencia limpia y sin ventanas emergentes de picking para los visitantes.
+  - Eliminado el botón redundante de pedidos en la superposición de video de bienvenida del Home.
+
 ### Versión 4.19.15 - Solución Integral a Prueba de Vibración Háptica Táctil
 - [x] **Desbloqueo de Debounce y Calibración Física ([haptics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/haptics.ts)):**
   - Corregido el bloqueo donde el escucha global de clics en fase de captura consumía el debounce antes de que el botón de prueba ejecutara su propio evento (`force = true` ahora ignora estrictamente el debounce).
