@@ -44,8 +44,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       case 'sm':
         return {
           text: 'text-xl sm:text-2xl',
-          heartSize: 10,
-          heartMargin: '-mx-1 sm:-mx-1.5',
+          heartSize: 11,
+          heartMarginPx: -4,
           starSize: 14,
           starTop: '-3px',
           slogan: 'text-[7.5px] sm:text-[9.5px]',
@@ -54,7 +54,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         return {
           text: 'text-3xl sm:text-4xl',
           heartSize: 15,
-          heartMargin: '-mx-1.5 sm:-mx-2',
+          heartMarginPx: -6,
           starSize: 20,
           starTop: '-5px',
           slogan: 'text-xs sm:text-sm',
@@ -63,7 +63,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         return {
           text: 'text-5xl sm:text-6xl',
           heartSize: 22,
-          heartMargin: '-mx-2 sm:-mx-3',
+          heartMarginPx: -8,
           starSize: 32,
           starTop: '-8px',
           slogan: 'text-sm sm:text-base',
@@ -73,7 +73,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         return {
           text: 'text-2xl sm:text-3xl',
           heartSize: 12,
-          heartMargin: '-mx-1 sm:-mx-1.5',
+          heartMarginPx: -4.5,
           starSize: 16,
           starTop: '-4px',
           slogan: 'text-[9px] sm:text-[10px]',
@@ -105,7 +105,11 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           type="button"
           onClick={handleHeartClick}
           aria-label="Tocar corazón by.fio"
-          className={`inline-flex items-center justify-center ${dims.heartMargin} self-baseline translate-y-[2px] focus:outline-none focus:ring-0 active:scale-125 cursor-pointer z-10`}
+          style={{
+            marginLeft: `${dims.heartMarginPx}px`,
+            marginRight: `${dims.heartMarginPx}px`,
+          }}
+          className="inline-flex items-center justify-center self-baseline translate-y-[2px] focus:outline-none focus:ring-0 active:scale-125 cursor-pointer z-10"
           title="¡Tócame!"
         >
           <span
