@@ -26,6 +26,8 @@
   Cache-Control: no-cache, no-store, must-revalidate
 /index.html
   Cache-Control: no-cache, no-store, must-revalidate
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
 
 # 4. Endpoints de API Edge y D1: En vivo, nunca en caché
 /api/*

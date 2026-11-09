@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.8 - Invalidación Forzada de Caché PWA y Auto-Recarga en Tiempo Real
+- [x] **Auto-actualización de PWA y Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js), [main.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx), [_headers](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/_headers)):**
+  - Implementada purga activa de caché en `sw.js` con eliminación de versiones obsoletas en el evento `activate`.
+  - Configurado header `no-cache, no-store, must-revalidate` para `/sw.js` en Cloudflare Pages, forzando a los navegadores a chequear cambios en cada apertura.
+  - Añadido disparador `registration.update()` y listener `controllerchange` en `main.tsx` para recargar automáticamente la app en clientes PWA tan pronto se publique una versión nueva sin requerir borrado manual de datos.
+
 ### Versión 4.19.7 - Estrellita con Mensajes Positivos Centrada en Pantalla para PWA del Admin y PWA del Colaborador
 - [x] **Posicionamiento Central de la Mascota en PWA ([FloatingMascot.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx)):**
   - La estrellita con los mensajes motivacionales (`vid-estrellita.mp4` y colección de 60 frases positivas) ahora se despliega exactamente en el centro de la pantalla (`fixed inset-0 flex items-center justify-center`) tanto en la PWA del Administrador como en la PWA del Colaborador (`/pedidos-mobile`).
