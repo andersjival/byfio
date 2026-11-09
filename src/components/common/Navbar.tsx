@@ -89,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNav('home')}
               className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
                 currentRoute === 'home'
-                  ? 'bg-[#FEF08A] text-amber-950 border border-amber-300 shadow-neuBtnHover'
+                  ? 'neu-btn-pastel-yellow shadow-neuBtnHover'
                   : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#FEF9C3] hover:text-amber-900 hover:border-amber-300/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
               }`}
             >
@@ -102,7 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => handleNav('workshops')}
                 className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
                   currentRoute === 'workshops' || currentRoute === 'workshop-detail'
-                    ? 'bg-[#BAE6FD] text-sky-950 border border-sky-300 shadow-neuBtnHover'
+                    ? 'neu-btn-pastel-sky shadow-neuBtnHover'
                     : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#E0F2FE] hover:text-sky-900 hover:border-sky-300/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
                 }`}
               >
@@ -116,7 +116,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => handleNav('store')}
                 className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
                   currentRoute === 'store'
-                    ? 'bg-[#E9D5FF] text-purple-950 border border-purple-300 shadow-neuBtnHover'
+                    ? 'neu-btn-pastel-purple shadow-neuBtnHover'
                     : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#F3E8FF] hover:text-purple-900 hover:border-purple-300/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
                 }`}
               >
@@ -130,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => handleNav('catalogo')}
                 className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-sm font-bubble font-bold transition-all whitespace-nowrap ${
                   currentRoute === 'catalogo'
-                    ? 'bg-[#FBCFE8] text-pink-950 border border-pink-300 shadow-neuBtnHover'
+                    ? 'neu-btn-pastel-pink shadow-neuBtnHover'
                     : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#FCE7F3] hover:text-pink-900 hover:border-pink-300/80 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
                 }`}
               >
@@ -404,7 +404,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => handleNav('home')}
             className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
               currentRoute === 'home'
-                ? 'bg-[#FEF08A] text-amber-950 border border-amber-300 shadow-neuBtnHover'
+                ? 'neu-btn-pastel-yellow shadow-neuBtnHover'
                 : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#FEF9C3] hover:text-amber-900 hover:border-amber-300/80 border border-white/80 shadow-neuBtn'
             }`}
           >
@@ -416,7 +416,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNav('workshops')}
               className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'workshops' || currentRoute === 'workshop-detail'
-                  ? 'bg-[#BAE6FD] text-sky-950 border border-sky-300 shadow-neuBtnHover'
+                  ? 'neu-btn-pastel-sky shadow-neuBtnHover'
                   : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#E0F2FE] hover:text-sky-900 hover:border-sky-300/80 border border-white/80 shadow-neuBtn'
               }`}
             >
@@ -429,7 +429,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNav('store')}
               className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'store'
-                  ? 'bg-[#E9D5FF] text-purple-950 border border-purple-300 shadow-neuBtnHover'
+                  ? 'neu-btn-pastel-purple shadow-neuBtnHover'
                   : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#F3E8FF] hover:text-purple-900 hover:border-purple-300/80 border border-white/80 shadow-neuBtn'
               }`}
             >
@@ -442,7 +442,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNav('catalogo')}
               className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all ${
                 currentRoute === 'catalogo'
-                  ? 'bg-[#FBCFE8] text-pink-950 border border-pink-300 shadow-neuBtnHover'
+                  ? 'neu-btn-pastel-pink shadow-neuBtnHover'
                   : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:bg-[#FCE7F3] hover:text-pink-900 hover:border-pink-300/80 border border-white/80 shadow-neuBtn'
               }`}
             >

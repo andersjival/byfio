@@ -145,6 +145,95 @@ body[data-font-theme="hybrid"] .font-bubble {
   transform: translateY(0px) !important;
 }
 
+/* Botones Neumórficos Pasteles Oficiales con Efecto Redondeado 3D by.fio */
+.neu-btn-pastel-yellow {
+  background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%);
+  color: #713F12;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px -3px rgba(250, 204, 21, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  transition: all 0.22s ease-in-out;
+  cursor: pointer;
+}
+
+.neu-btn-pastel-yellow:hover {
+  background: linear-gradient(135deg, #FEF9C3 0%, #FEF08A 100%) !important;
+  color: #713F12 !important;
+  box-shadow: 0 12px 25px -3px rgba(250, 204, 21, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+.neu-btn-pastel-yellow:active {
+  box-shadow: inset 3px 3px 6px rgba(180, 83, 9, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(0px) !important;
+}
+
+.neu-btn-pastel-sky {
+  background: linear-gradient(135deg, #BAE6FD 0%, #7DD3FC 100%);
+  color: #082F49;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px -3px rgba(56, 189, 248, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  transition: all 0.22s ease-in-out;
+  cursor: pointer;
+}
+
+.neu-btn-pastel-sky:hover {
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%) !important;
+  color: #082F49 !important;
+  box-shadow: 0 12px 25px -3px rgba(56, 189, 248, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+.neu-btn-pastel-sky:active {
+  box-shadow: inset 3px 3px 6px rgba(14, 116, 144, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(0px) !important;
+}
+
+.neu-btn-pastel-purple {
+  background: linear-gradient(135deg, #E9D5FF 0%, #D8B4FE 100%);
+  color: #3B0764;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px -3px rgba(192, 132, 252, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  transition: all 0.22s ease-in-out;
+  cursor: pointer;
+}
+
+.neu-btn-pastel-purple:hover {
+  background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%) !important;
+  color: #3B0764 !important;
+  box-shadow: 0 12px 25px -3px rgba(192, 132, 252, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+.neu-btn-pastel-purple:active {
+  box-shadow: inset 3px 3px 6px rgba(126, 34, 206, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(0px) !important;
+}
+
+.neu-btn-pastel-pink {
+  background: linear-gradient(135deg, #FBCFE8 0%, #F472B6 100%);
+  color: #500724;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px -3px rgba(244, 114, 182, 0.42), -4px -4px 12px #FFFFFF, inset 0 2px 3px rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  transition: all 0.22s ease-in-out;
+  cursor: pointer;
+}
+
+.neu-btn-pastel-pink:hover {
+  background: linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%) !important;
+  color: #500724 !important;
+  box-shadow: 0 12px 25px -3px rgba(244, 114, 182, 0.52), -6px -6px 16px #FFFFFF, inset 0 2px 4px rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+.neu-btn-pastel-pink:active {
+  box-shadow: inset 3px 3px 6px rgba(190, 24, 93, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(0px) !important;
+}
+
 /* Botón Especial de Carrito & Catálogo (Lila Pastel Suave a Fucsia Suave en Hover - Pill) */
 .neu-btn-cart {
   background: linear-gradient(135deg, #D4AEFA 0%, #C084FC 100%);
