@@ -70,11 +70,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('home')}
-              className="neu-btn bg-[#F1F2F6] flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-700 text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-neuBtn hover:text-fio-pink hover:bg-pink-50/70 hover:shadow-neuBtnHover transition-all active:scale-95 shrink-0"
+              className="neu-btn bg-[#F1F2F6] flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-700 text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-neuBtn hover:text-fio-pink hover:bg-pink-50/70 hover:shadow-neuBtnHover transition-all active:scale-95 shrink-0"
               title="Volver a la tienda pública"
             >
-              <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink" />
-              <span>Volver a Tienda</span>
+              <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink shrink-0" />
+              <span className="hidden sm:inline whitespace-nowrap">Volver a Tienda</span>
+              <span className="sm:hidden whitespace-nowrap">Tienda</span>
             </button>
           )}
         </div>
@@ -327,9 +328,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             </>
           ) : (
             /* EN PANEL DE ADMINISTRACIÓN: Redes sociales retiradas, colocamos Diseño & Letra y Menú Principal */
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               {/* Selector de Tema Claro / Oscuro en Admin */}
-              <div className="flex items-center p-0.5 sm:p-1 rounded-full bg-[#ECEEF2] shadow-neuInset border border-white/60">
+              <div className="flex items-center p-0.5 sm:p-1 rounded-full bg-[#ECEEF2] shadow-neuInset border border-white/60 shrink-0">
                 <button
                   type="button"
                   onClick={() => setColorTheme('vibrant')}
@@ -358,29 +359,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
-
-
-
               {/* Botón Menú Principal */}
               <button
                 type="button"
                 onClick={onSelectAdminHub}
-                className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-neuBtn transition-all active:scale-95 ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-neuBtn transition-all active:scale-95 shrink-0 whitespace-nowrap ${
                   isAdminHub
                     ? 'neu-btn-primary text-white shadow-neuBtnHover'
                     : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:shadow-neuBtnHover'
                 }`}
                 title="Ir al Menú Principal del Panel de Control"
               >
-                <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-yellow" />
-                <span>Menú Principal</span>
+                <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-yellow shrink-0" />
+                <span className="whitespace-nowrap">Menú Principal</span>
               </button>
 
               {/* Indicador de Perfil de Usuario Activo en Admin (Visible en Móvil y Escritorio) */}
               {currentUser && (
-                <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-purple-50/90 border border-purple-200/80 text-[11px] sm:text-xs font-bubble font-bold text-slate-700 shadow-2xs shrink-0">
+                <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-purple-50/90 border border-purple-200/80 text-[11px] sm:text-xs font-bubble font-bold text-slate-700 shadow-2xs shrink-0">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  <span className="truncate max-w-[80px] xs:max-w-[110px] sm:max-w-[140px]">{currentUser.name}</span>
+                  <span className="hidden xs:inline truncate max-w-[65px] sm:max-w-[120px]">{currentUser.name.split(' ')[0]}</span>
                   <span className="px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
                     {currentUser.role === 'admin' ? 'Admin' : 'Staff'}
                   </span>
@@ -392,10 +390,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   type="button"
                   onClick={logoutUser}
-                  className="neu-btn bg-[#F1F2F6] flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-bubble font-bold border border-white/80 shadow-neuBtn transition-all active:scale-95"
+                  className="neu-btn bg-[#F1F2F6] flex items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-bubble font-bold border border-white/80 shadow-neuBtn transition-all active:scale-95 shrink-0"
                   title="Cerrar sesión"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
+                  <LogOut className="w-3.5 h-3.5 shrink-0" />
                   <span className="hidden sm:inline">Salir</span>
                 </button>
               )}

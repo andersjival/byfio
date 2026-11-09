@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.10 - Optimización Móvil y Prevención de Truncamiento en Botón Menú Principal
+- [x] **Ajuste Responsivo del Botón Menú Principal ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
+  - Aplicado `shrink-0 whitespace-nowrap` tanto al botón como al texto interior de *"Menú Principal"* en la barra de navegación de administración, erradicando cualquier corte visual o deformación en pantallas móviles y PWA de celular.
+  - Compactado el botón contiguo *"Volver a Tienda"* a *"Tienda"* en vistas móviles pequeñas (<640px) y condensada la píldora de usuario activo, liberando más de 85px de espacio horizontal en el encabezado.
+- [x] **Blindaje Anti-desbordamiento en Vistas Administrativas ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [AdminCatalogVisualView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminCatalogVisualView.tsx))**:
+  - Asegurada la clase `shrink-0 whitespace-nowrap` en todos los botones de *"Volver al Menú Principal"* en subsecciones de gestión, garantizando legibilidad total e integridad tipográfica en cualquier resolución móvil.
+
 ### Versión 4.19.9 - Retiro Completo de Botón de Corazón e Insignias en PWA de Admin y Colaborador
 - [x] **Supresión de Botón de Me Gusta (Corazón) en PWA ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
   - Eliminado por completo el botón interactivo de corazón "Me Gusta" de la barra superior en el panel administrativo y para perfiles de colaborador.

@@ -70,11 +70,11 @@ export const AdminCatalogVisualView: React.FC<AdminCatalogVisualViewProps> = ({ 
         <button
           type="button"
           onClick={onBackToHub}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#F1F2F6] hover:bg-pink-50 text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover font-bubble font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#F1F2F6] hover:bg-pink-50 text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover font-bubble font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer self-start sm:self-auto shrink-0 whitespace-nowrap"
           title="Regresar al Menú Principal de Administración"
         >
-          <ArrowLeft className="w-4 h-4 text-fio-pink" />
-          <span>Volver al Menú Principal</span>
+          <ArrowLeft className="w-4 h-4 text-fio-pink shrink-0" />
+          <span className="whitespace-nowrap">Volver al Menú Principal</span>
         </button>
       </div>
 
