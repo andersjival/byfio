@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.9 - Retiro Completo de Botón de Corazón e Insignias en PWA de Admin y Colaborador
+- [x] **Supresión de Botón de Me Gusta (Corazón) en PWA ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
+  - Eliminado por completo el botón interactivo de corazón "Me Gusta" de la barra superior en el panel administrativo y para perfiles de colaborador.
+  - En la barra de navegación general, restringido para desplegarse únicamente a clientes en la tienda y web pública.
+- [x] **Limpieza Visual de la Mascota y Logotipo ([FloatingMascot.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx), [BrandLogo.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BrandLogo.tsx), [NewOrderStarAlert.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/NewOrderStarAlert.tsx))**:
+  - Retirada la insignia animada de corazón sobre el botón flotante y sobre el avatar de la mascota en las PWAs de trabajo de admin y colaborador.
+  - El corazón del logotipo oficial en la barra es ahora un elemento decorativo estático sin comportamiento de botón interactivo.
+
 ### Versión 4.19.8 - Invalidación Forzada de Caché PWA y Auto-Recarga en Tiempo Real
 - [x] **Auto-actualización de PWA y Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js), [main.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx), [_headers](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/_headers)):**
   - Implementada purga activa de caché en `sw.js` con eliminación de versiones obsoletas en el evento `activate`.

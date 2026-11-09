@@ -280,10 +280,12 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
               playsInline
               className="w-full h-full object-cover scale-105 pointer-events-none"
             />
-            {/* Insignia de Corazón Animada */}
-            <span className="absolute -top-1 -right-1 w-7 h-7 bg-fio-pink text-white rounded-full flex items-center justify-center shadow-md animate-bounce">
-              <Heart className="w-4 h-4 fill-current" />
-            </span>
+            {/* Insignia de Corazón Animada (Solo visible en web pública para visitantes) */}
+            {!isAdminOrStaff && (
+              <span className="absolute -top-1 -right-1 w-7 h-7 bg-fio-pink text-white rounded-full flex items-center justify-center shadow-md animate-bounce">
+                <Heart className="w-4 h-4 fill-current" />
+              </span>
+            )}
           </div>
 
           {/* Etiqueta superior personalizada */}
@@ -450,9 +452,12 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
           />
         </div>
 
-        <span className="absolute -top-1 -right-1 w-6 h-6 bg-fio-pink text-white rounded-full flex items-center justify-center shadow-md animate-bounce">
-          <Heart className="w-3.5 h-3.5 fill-current" />
-        </span>
+        {/* Insignia de Corazón (Solo visible en web pública para visitantes) */}
+        {!isAdminOrStaff && (
+          <span className="absolute -top-1 -right-1 w-6 h-6 bg-fio-pink text-white rounded-full flex items-center justify-center shadow-md animate-bounce">
+            <Heart className="w-3.5 h-3.5 fill-current" />
+          </span>
+        )}
       </button>
     </div>
   );

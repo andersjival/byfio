@@ -40,6 +40,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     setMobileOpen(false);
   };
 
+  const isPwaOrStaffOrAdmin = Boolean(
+    currentRoute === 'admin' ||
+    currentRoute === 'pedidos-mobile' ||
+    currentRoute === 'superadmin' ||
+    (currentUser && (currentUser.role === 'admin' || currentUser.role === 'staff'))
+  );
+
   return (
     <header className="sticky top-0 z-40 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-white/70 shadow-[0_2px_12px_rgba(180,160,200,0.05)] transition-all">
       <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 min-h-[50px] sm:min-h-[54px] py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 w-full">
@@ -216,17 +223,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
-              {/* Botón Interactivo de Me Gusta a la Web / Sección */}
-              <button
-                type="button"
-                onClick={handlePageLike}
-                className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-pink-50/90 hover:bg-pink-100 text-pink-600 hover:text-pink-700 border border-pink-200/80 shadow-xs transition-all active:scale-95 shrink-0 font-bubble font-bold text-xs cursor-pointer group"
-                title="¡Dar Me Gusta a esta página de by.fio! ❤️"
-                aria-label="Dar Me Gusta a esta página"
-              >
-                <Heart className={`w-3.5 h-3.5 fill-pink-500 text-pink-500 transition-transform ${likePopped ? 'scale-150 animate-bounce' : 'group-hover:scale-125'}`} />
-                <span className="hidden 2xl:inline">{likePopped ? '¡+1 Like!' : 'Me Gusta'}</span>
-              </button>
+              {/* Botón Interactivo de Me Gusta a la Web (Solo en tienda pública para clientes) */}
+              {!isPwaOrStaffOrAdmin && (
+                <button
+                  type="button"
+                  onClick={handlePageLike}
+                  className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-pink-50/90 hover:bg-pink-100 text-pink-600 hover:text-pink-700 border border-pink-200/80 shadow-xs transition-all active:scale-95 shrink-0 font-bubble font-bold text-xs cursor-pointer group"
+                  title="¡Dar Me Gusta a esta página de by.fio! ❤️"
+                  aria-label="Dar Me Gusta a esta página"
+                >
+                  <Heart className={`w-3.5 h-3.5 fill-pink-500 text-pink-500 transition-transform ${likePopped ? 'scale-150 animate-bounce' : 'group-hover:scale-125'}`} />
+                  <span className="hidden 2xl:inline">{likePopped ? '¡+1 Like!' : 'Me Gusta'}</span>
+                </button>
+              )}
 
               {/* Sesión de Usuario o Botón Iniciar Sesión 3D */}
               {currentUser ? (
@@ -349,17 +358,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
-              {/* Botón Interactivo de Me Gusta a la Web / Sección */}
-              <button
-                type="button"
-                onClick={handlePageLike}
-                className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-pink-50/90 hover:bg-pink-100 text-pink-600 hover:text-pink-700 border border-pink-200/80 shadow-xs transition-all active:scale-95 shrink-0 font-bubble font-bold text-xs cursor-pointer group"
-                title="¡Dar Me Gusta a esta página de by.fio! ❤️"
-                aria-label="Dar Me Gusta a esta página"
-              >
-                <Heart className={`w-3.5 h-3.5 fill-pink-500 text-pink-500 transition-transform ${likePopped ? 'scale-150 animate-bounce' : 'group-hover:scale-125'}`} />
-                <span className="hidden sm:inline">{likePopped ? '¡+1 Like!' : 'Me Gusta'}</span>
-              </button>
+
 
 
               {/* Botón Menú Principal */}

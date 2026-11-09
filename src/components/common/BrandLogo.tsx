@@ -87,19 +87,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           by
         </span>
 
-        {/* Corazón celeste interactivo: se agranda al pasar el cursor o al tocarlo */}
-        <button
-          type="button"
-          onClick={handleHeartClick}
-          aria-label="Tocar corazón by.fio"
-          className="inline-flex items-center justify-center mx-1 sm:mx-1.5 focus:outline-none focus:ring-0 active:scale-125"
-          title="¡Tócame!"
+        {/* Corazón celeste decorativo */}
+        <span
+          className="inline-flex items-center justify-center mx-1 sm:mx-1.5 pointer-events-none select-none"
+          aria-hidden="true"
         >
-          <span
-            className={`inline-flex items-center justify-center transform transition-transform duration-300 ease-out active:scale-150 ${
-              isPopped ? 'scale-150 rotate-6' : 'group-hover:scale-130'
-            }`}
-          >
+          <span className="inline-flex items-center justify-center">
             <svg
               className={`${dims.heart} text-[#38BDF8] drop-shadow-sm fill-current`}
               viewBox="0 0 24 24"
@@ -107,7 +100,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
             </svg>
           </span>
-        </button>
+        </span>
 
         {/* Palabra "fio" continua con la estrella posada exactamente sobre la letra i */}
         <span className={`${dims.text} tracking-tight inline-flex items-center`}>
