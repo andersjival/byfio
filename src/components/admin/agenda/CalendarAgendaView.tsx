@@ -35,6 +35,7 @@ const MONTHS_SHORT = [
   'ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'
 ];
 const DAYS_NAMES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const DAYS_NAMES_SHORT = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
 const CATEGORY_COLORS: Record<AgendaCategory, { bg: string; text: string; border: string; icon: any }> = {
   taller: { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-300', icon: GraduationCap },
@@ -146,7 +147,12 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
   onDeleteItem,
 }) => {
   // Estado de vista y filtros
-  const [viewType, setViewType] = useState<CalendarViewType>('weekly');
+  const [viewType, setViewType] = useState<CalendarViewType>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 'daily';
+    }
+    return 'weekly';
+  });
   const [interval, setInterval] = useState<TimeIntervalType>('60');
   const [teamFilter, setTeamFilter] = useState<TeamFilterType>('all');
   const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
@@ -305,16 +311,16 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
 
       {/* 2. Cuadrícula del Calendario */}
       <div className="rounded-3xl border shadow-neuCard overflow-hidden transition-colors" style={{ backgroundColor: themeConfig.bgContainer, borderColor: themeConfig.borderTable }}>
-        <div className="overflow-x-auto min-w-full">
+        <div className="overflow-x-auto min-w-full custom-scrollbar touch-pan-x">
           {viewType === 'weekly' ? (
             /* ============================================================ */
             /* VISTA SEMANAL (7 COLUMNAS: LUNES A DOMINGO)                 */
             /* ============================================================ */
-            <table className="w-full border-collapse min-w-[950px] table-fixed">
+            <table className="w-full border-collapse min-w-[680px] sm:min-w-[800px] lg:min-w-full table-fixed">
               <thead>
-                <tr style={{ backgroundColor: themeConfig.bgHeader, borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
+                <tr className="sticky top-0 z-10 shadow-2xs" style={{ backgroundColor: themeConfig.bgHeader, borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
                   {/* Columna Hora */}
-                  <th className="w-20 sm:w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
+                  <th className="w-16 sm:w-20 p-2 sm:p-3 text-center text-[11px] sm:text-xs font-bubble font-bold text-slate-600" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
                     Hora
                   </th>
 
@@ -351,7 +357,8 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           {/* Nombre del Día y Mes */}
                           <div className="min-w-0">
                             <span className="font-bubble font-bold text-xs sm:text-sm text-slate-900 block truncate">
-                              {dayName}
+                              <span className="inline lg:hidden">{DAYS_NAMES_SHORT[idx]}</span>
+                              <span className="hidden lg:inline">{dayName}</span>
                             </span>
                             <span className="text-[11px] text-slate-400 font-sans block -mt-0.5">
                               {monthName}
@@ -361,8 +368,9 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           {/* Número del Día (Pastilla resaltada en el día de hoy) */}
                           <div className="flex items-center gap-1 shrink-0">
                             {isSunday ? (
-                              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200">
-                                Cerrado {dayNum}
+                              <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200 whitespace-nowrap">
+                                <span className="inline lg:hidden">{dayNum}</span>
+                                <span className="hidden lg:inline">Cerrado {dayNum}</span>
                               </span>
                             ) : (
                               <span

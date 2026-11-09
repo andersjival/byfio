@@ -5,6 +5,7 @@ import { TikTokIcon } from './TikTokIcon';
 import { AppRoute } from '../../types';
 import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, LayoutGrid, LogOut, ShieldCheck, Sun, Moon, Heart, PackageCheck } from 'lucide-react';
 import { metricsTracker } from '../../services/metricsTracker';
+import { isCollaboratorPwaContext } from '../../utils/routeHelpers';
 
 interface NavbarProps {
   currentRoute: AppRoute;
@@ -82,7 +83,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Links de Navegación de Páginas Principales con Estilo Neumórfico Táctil (Solo en Modo Público) */}
         {currentRoute !== 'admin' && currentRoute !== 'superadmin' && (
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 p-1 xl:p-1.5 rounded-2xl bg-[#ECEEF2] shadow-neuInset border border-white/60 shrink">
+          <nav className="hidden xl:flex items-center gap-1 xl:gap-2 p-1 xl:p-1.5 rounded-2xl bg-[#ECEEF2] shadow-neuInset border border-white/60 shrink">
             <button
               type="button"
               onClick={() => handleNav('home')}
@@ -158,41 +159,43 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Si NO es admin: Redes Sociales, Carrito y Login */}
           {currentRoute !== 'admin' ? (
             <>
-              {/* TikTok Oficial (En pantallas grandes) */}
-              <a
-                href="https://www.tiktok.com/@by_fio/"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="TikTok oficial @by_fio"
-                aria-label="TikTok @by_fio"
-                className="hidden 2xl:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-slate-700 hover:text-black hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all shrink-0"
-              >
-                <TikTokIcon className="w-3.5 h-3.5" />
-              </a>
+              {/* Redes Sociales Oficiales (En pantallas grandes para clientes públicos) */}
+              {!isPwaOrStaffOrAdmin && (
+                <>
+                  <a
+                    href="https://www.tiktok.com/@by_fio/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="TikTok oficial @by_fio"
+                    aria-label="TikTok @by_fio"
+                    className="hidden 2xl:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-slate-700 hover:text-black hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all shrink-0"
+                  >
+                    <TikTokIcon className="w-3.5 h-3.5" />
+                  </a>
 
-              {/* Instagram @by_fio10 */}
-              <a
-                href="https://instagram.com/by_fio10"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Instagram @by_fio10"
-                aria-label="Instagram @by_fio10"
-                className="hidden 2xl:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-fio-pink hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all shrink-0"
-              >
-                <Instagram className="w-3.5 h-3.5" />
-              </a>
+                  <a
+                    href="https://instagram.com/by_fio10"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Instagram @by_fio10"
+                    aria-label="Instagram @by_fio10"
+                    className="hidden 2xl:flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/85 text-fio-pink hover:bg-white border border-white/80 shadow-xs hover:scale-105 transition-all shrink-0"
+                  >
+                    <Instagram className="w-3.5 h-3.5" />
+                  </a>
 
-              {/* WhatsApp Directo */}
-              <a
-                href="https://wa.me/50664004640?text=Hola%20Fio!%20Vengo%20de%20la%20página%20web"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="WhatsApp 6400-4640"
-                className="hidden 2xl:flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-50/90 text-emerald-700 hover:bg-emerald-100/90 border border-emerald-200/50 shadow-xs transition-colors text-xs font-semibold shrink-0"
-              >
-                <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                <span>6400-4640</span>
-              </a>
+                  <a
+                    href="https://wa.me/50664004640?text=Hola%20Fio!%20Vengo%20de%20la%20página%20web"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="WhatsApp 6400-4640"
+                    className="hidden 2xl:flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-50/90 text-emerald-700 hover:bg-emerald-100/90 border border-emerald-200/50 shadow-xs transition-colors text-xs font-semibold shrink-0"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>6400-4640</span>
+                  </a>
+                </>
+              )}
 
               {/* Selector de Tema Claro / Oscuro (Botones Sol y Luna) */}
               <div className="flex items-center p-0.5 sm:p-1 rounded-full bg-[#ECEEF2] shadow-neuInset border border-white/60 shrink-0">
@@ -242,7 +245,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {currentUser ? (
                 <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white/90 border border-purple-200/80 rounded-2xl shadow-xs shrink-0">
                   <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 text-xs font-bubble font-bold text-slate-700 max-w-[65px] sm:max-w-[95px] xl:max-w-[120px] 2xl:max-w-[150px]">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                    
                     <span className="truncate">{currentUser.name.split(' ')[0]}</span>
                     {currentUser.role === 'admin' && (
                       <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
@@ -304,7 +307,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="button"
                   onClick={() => setIsCartOpen(true)}
                   aria-label="Abrir Carrito"
-                  className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0 cursor-pointer mr-0.5 sm:mr-1"
+                  className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0 cursor-pointer mr-1 sm:mr-2"
                 >
                   <ShoppingBag className="w-4 h-4 text-white" />
                   <span className="hidden sm:inline">Carrito</span>
@@ -316,11 +319,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               )}
 
-              {/* Botón Hamburguesa Mobile */}
+              {/* Botón Hamburguesa Mobile y Tablets */}
               <button
                 type="button"
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden p-2 rounded-xl neu-btn bg-[#F1F2F6] border border-white/80 text-slate-700 shadow-neuBtn active:scale-95 transition-all shrink-0 cursor-pointer"
+                className="xl:hidden p-2 rounded-xl neu-btn bg-[#F1F2F6] border border-white/80 text-slate-700 shadow-neuBtn active:scale-95 transition-all shrink-0 cursor-pointer"
                 aria-label="Abrir menú"
               >
                 {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -374,16 +377,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="whitespace-nowrap">Menú Principal</span>
               </button>
 
-              {/* Indicador de Perfil de Usuario Activo en Admin (Visible en Móvil y Escritorio) */}
-              {currentUser && (
-                <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-purple-50/90 border border-purple-200/80 text-[11px] sm:text-xs font-bubble font-bold text-slate-700 shadow-2xs shrink-0">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  <span className="hidden xs:inline truncate max-w-[65px] sm:max-w-[120px]">{currentUser.name.split(' ')[0]}</span>
-                  <span className="px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
-                    {currentUser.role === 'admin' ? 'Admin' : 'Staff'}
-                  </span>
-                </div>
-              )}
+              
 
               {/* Botón Cerrar Sesión en Admin */}
               {currentUser && (
@@ -402,9 +396,9 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Menú Desplegable en Móvil (Solo en modo Tienda/Público) */}
+      {/* Menú Desplegable en Móvil y Tablets (Solo en modo Tienda/Público) */}
       {mobileOpen && currentRoute !== 'admin' && (
-        <nav className="lg:hidden border-t border-slate-200/40 bg-[#FAF7F2]/95 backdrop-blur-md px-4 py-3 space-y-2 animate-fadeIn">
+        <nav className="xl:hidden border-t border-slate-200/40 bg-[#FAF7F2]/95 backdrop-blur-md px-4 py-3 space-y-2 animate-fadeIn">
           <button
             type="button"
             onClick={() => handleNav('home')}
@@ -469,17 +463,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={() => handleNav('pedidos-mobile')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn ${
-              currentRoute === 'pedidos-mobile'
-                ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                : 'bg-gradient-to-r from-slate-900 to-purple-950 text-white hover:text-emerald-300 border border-purple-500/30 shadow-neuBtn'
-            }`}
-          >
-            📦 Entrar a pedidos (Móvil)
-          </button>
+          {(currentUser?.role === 'admin' || currentUser?.role === 'staff' || isCollaboratorPwaContext()) && (
+            <button
+              type="button"
+              onClick={() => handleNav('pedidos-mobile')}
+              className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn ${
+                currentRoute === 'pedidos-mobile'
+                  ? 'neu-btn-primary text-white shadow-neuBtnHover'
+                  : 'bg-gradient-to-r from-slate-900 to-purple-950 text-white hover:text-emerald-300 border border-purple-500/30 shadow-neuBtn'
+              }`}
+            >
+              📦 Entrar a pedidos (Móvil)
+            </button>
+          )}
 
           {currentUser ? (
             <div className="p-3 rounded-2xl bg-white/80 border border-purple-200/80 shadow-xs space-y-2">

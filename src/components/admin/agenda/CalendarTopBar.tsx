@@ -54,7 +54,7 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
   onOpenSyncModal,
 }) => {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard">
+    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard">
       {/* Lado Izquierdo: Vistas, Navegación de Fechas y Filtro */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {/* Toggle Vista Diaria vs Semanal */}
@@ -95,7 +95,7 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <span className="px-2 text-xs font-bubble font-bold text-slate-800 select-none min-w-[90px] text-center">
+          <span className="px-1.5 sm:px-2 text-[11px] sm:text-xs font-bubble font-bold text-slate-800 select-none min-w-[75px] sm:min-w-[90px] text-center">
             {dateRangeLabel}
           </span>
 

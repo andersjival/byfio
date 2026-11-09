@@ -1,8 +1,16 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme, StarAlertDuration } from '../../types';
-import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play, GraduationCap, BookOpen, Check } from 'lucide-react';
+import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play, GraduationCap, BookOpen, Check, Vibrate, Sliders, Zap } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound, playNewOrderChimeSound } from '../../utils/soundEffects';
+import {
+  isHapticVibrationEnabled,
+  setHapticVibrationEnabled,
+  getHapticVibrationIntensity,
+  setHapticVibrationIntensity,
+  triggerHapticFeedback,
+  calculateHapticDuration,
+} from '../../utils/haptics';
 
 interface AdminDesignSettingsModalProps {
   isOpen: boolean;
@@ -31,6 +39,49 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
   const isCatalogCurrentlyActive = isModuleEnabled('catalogo');
   const [catalogEnabled, setCatalogEnabled] = React.useState<boolean>(isCatalogCurrentlyActive);
   const [saveSuccessNotice, setSaveSuccessNotice] = React.useState<string | null>(null);
+  const [vibrationEnabled, setVibrationEnabled] = React.useState<boolean>(() => isHapticVibrationEnabled());
+  const [vibrationIntensity, setVibrationIntensity] = React.useState<number>(() => getHapticVibrationIntensity());
+  const [hapticNotice, setHapticNotice] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleSync = () => {
+      setVibrationEnabled(isHapticVibrationEnabled());
+      setVibrationIntensity(getHapticVibrationIntensity());
+    };
+    window.addEventListener('byfio-haptics-changed', handleSync);
+    return () => window.removeEventListener('byfio-haptics-changed', handleSync);
+  }, []);
+
+  const handleToggleVibration = () => {
+    const next = !vibrationEnabled;
+    setVibrationEnabled(next);
+    setHapticVibrationEnabled(next);
+    if (next) {
+      triggerHapticFeedback(vibrationIntensity, true);
+      setHapticNotice(`✓ Vibración activada (Nivel ${vibrationIntensity})`);
+    } else {
+      setHapticNotice('✕ Vibración desactivada');
+    }
+    setTimeout(() => setHapticNotice(null), 2500);
+  };
+
+  const handleIntensityChange = (level: number) => {
+    setVibrationIntensity(level);
+    setHapticVibrationIntensity(level);
+    if (!vibrationEnabled) {
+      setVibrationEnabled(true);
+      setHapticVibrationEnabled(true);
+    }
+    triggerHapticFeedback(level, true);
+    setHapticNotice(`Intensidad nivel ${level} (${calculateHapticDuration(level)}ms)`);
+    setTimeout(() => setHapticNotice(null), 2500);
+  };
+
+  const handleTestHaptic = () => {
+    triggerHapticFeedback(vibrationIntensity, true);
+    setHapticNotice(`⚡ Probando vibración nivel ${vibrationIntensity} (${calculateHapticDuration(vibrationIntensity)}ms)`);
+    setTimeout(() => setHapticNotice(null), 2500);
+  };
 
   React.useEffect(() => {
     setCatalogEnabled(isModuleEnabled('catalogo'));
@@ -414,6 +465,106 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
                   }`}
                 />
               </button>
+            </div>
+
+            {/* Switch 4: Respuesta Táctil / Vibración Háptica */}
+            <div className="p-3.5 rounded-2xl border border-purple-200 bg-gradient-to-r from-purple-50/50 to-pink-50/30 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                      vibrationEnabled ? 'bg-gradient-to-tr from-purple-600 to-fio-pink text-white shadow-xs' : 'bg-slate-100 text-slate-400'
+                    }`}
+                  >
+                    <Vibrate className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-bold text-slate-900">Vibración Táctil en Clics (PWA y Web)</span>
+                      <span
+                        className={`text-[9.5px] font-semibold px-2 py-0.5 rounded-md ${
+                          vibrationEnabled ? 'text-emerald-800 bg-emerald-100' : 'text-slate-500 bg-slate-100'
+                        }`}
+                      >
+                        {vibrationEnabled ? `Nivel ${vibrationIntensity} • Activa` : 'Desactivada'}
+                      </span>
+                    </div>
+                    <p className="text-[10.5px] text-slate-500 leading-tight mt-0.5">
+                      Vibración corta y suave al pulsar cualquier botón o elemento interactivo de la página.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Interruptor Switch */}
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={vibrationEnabled}
+                  onClick={handleToggleVibration}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-inner ${
+                    vibrationEnabled ? 'bg-fio-pink' : 'bg-slate-300'
+                  }`}
+                  title={vibrationEnabled ? 'Desactivar vibración táctil' : 'Activar vibración táctil'}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      vibrationEnabled ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {hapticNotice && (
+                <div className="py-1 px-2.5 rounded-lg bg-white border border-purple-200 text-[10.5px] font-bold text-purple-900 flex items-center gap-1.5 animate-fadeIn">
+                  <Zap className="w-3 h-3 text-fio-pink shrink-0" />
+                  <span>{hapticNotice}</span>
+                </div>
+              )}
+
+              {/* Selector de intensidad 1 a 10 */}
+              <div className="space-y-2 pt-1 border-t border-purple-100/80">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-slate-700 flex items-center gap-1">
+                    <Sliders className="w-3 h-3 text-purple-600" />
+                    <span>Intensidad (1 a 10):</span>
+                    <strong className="text-fio-pink">Nivel {vibrationIntensity}</strong>
+                  </span>
+                  <span className="text-[10.5px] text-slate-400">
+                    {calculateHapticDuration(vibrationIntensity)}ms • Corta y suave
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-5 sm:grid-cols-10 gap-1">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => (
+                    <button
+                      key={lvl}
+                      type="button"
+                      onClick={() => handleIntensityChange(lvl)}
+                      className={`py-1.5 px-0.5 rounded-lg text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+                        vibrationIntensity === lvl
+                          ? 'bg-gradient-to-tr from-fio-pink to-purple-600 text-white shadow-xs scale-105'
+                          : vibrationEnabled
+                          ? 'bg-white hover:bg-purple-100/60 text-slate-700 border border-slate-200/90'
+                          : 'bg-white/60 text-slate-400 border border-slate-100'
+                      }`}
+                    >
+                      {lvl}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  <span className="text-[10px] text-slate-400">1: ~7ms sutil • 10: ~32ms firme</span>
+                  <button
+                    type="button"
+                    onClick={handleTestHaptic}
+                    className="inline-flex items-center gap-1 text-[10.5px] font-bubble font-bold text-white bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-700 px-2.5 py-1 rounded-xl shadow-2xs active:scale-95 transition-all cursor-pointer"
+                  >
+                    <Zap className="w-3 h-3 text-fio-yellow" />
+                    <span>Probar Nivel {vibrationIntensity}</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

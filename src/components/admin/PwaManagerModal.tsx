@@ -4,10 +4,19 @@ import {
   Smartphone, Monitor, Download, Share2, Copy, Check,
   ExternalLink, QrCode, Sparkles, ShieldCheck, Users,
   Boxes, Receipt, Calendar, X, ChevronRight, Info,
-  Laptop, Tablet, CheckCircle2, MessageCircle, AlertCircle, KeyRound
+  Laptop, Tablet, CheckCircle2, MessageCircle, AlertCircle, KeyRound,
+  Vibrate, Sliders, Zap
 } from 'lucide-react';
 import { usePwaInstall } from '../../hooks/usePwaInstall';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
+import {
+  isHapticVibrationEnabled,
+  setHapticVibrationEnabled,
+  getHapticVibrationIntensity,
+  setHapticVibrationIntensity,
+  triggerHapticFeedback,
+  calculateHapticDuration,
+} from '../../utils/haptics';
 
 interface PwaManagerModalProps {
   isOpen: boolean;
@@ -40,6 +49,49 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [selectedQrApp, setSelectedQrApp] = useState<{ title: string; url: string } | null>(null);
   const [installResult, setInstallResult] = useState<string | null>(null);
+  const [vibrationEnabled, setVibrationEnabled] = useState<boolean>(() => isHapticVibrationEnabled());
+  const [vibrationIntensity, setVibrationIntensity] = useState<number>(() => getHapticVibrationIntensity());
+  const [vibrationNotice, setVibrationNotice] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleHapticSync = () => {
+      setVibrationEnabled(isHapticVibrationEnabled());
+      setVibrationIntensity(getHapticVibrationIntensity());
+    };
+    window.addEventListener('byfio-haptics-changed', handleHapticSync);
+    return () => window.removeEventListener('byfio-haptics-changed', handleHapticSync);
+  }, []);
+
+  const handleToggleVibration = () => {
+    const next = !vibrationEnabled;
+    setVibrationEnabled(next);
+    setHapticVibrationEnabled(next);
+    if (next) {
+      triggerHapticFeedback(vibrationIntensity, true);
+      setVibrationNotice(`✓ Vibración táctil activada (Nivel ${vibrationIntensity})`);
+    } else {
+      setVibrationNotice('✕ Vibración táctil desactivada');
+    }
+    setTimeout(() => setVibrationNotice(null), 3000);
+  };
+
+  const handleIntensitySelect = (level: number) => {
+    setVibrationIntensity(level);
+    setHapticVibrationIntensity(level);
+    if (!vibrationEnabled) {
+      setVibrationEnabled(true);
+      setHapticVibrationEnabled(true);
+    }
+    triggerHapticFeedback(level, true);
+    setVibrationNotice(`Nivel ${level} seleccionado (${calculateHapticDuration(level)}ms)`);
+    setTimeout(() => setVibrationNotice(null), 3000);
+  };
+
+  const handleTestVibration = () => {
+    triggerHapticFeedback(vibrationIntensity, true);
+    setVibrationNotice(`⚡ Probando vibración suave (Nivel ${vibrationIntensity} • ${calculateHapticDuration(vibrationIntensity)}ms)`);
+    setTimeout(() => setVibrationNotice(null), 3000);
+  };
 
   if (!isOpen) return null;
 
@@ -379,6 +431,142 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                         <QrCode className="w-4 h-4" />
                       </button>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* PANEL DE CONFIGURACIÓN HÁPTICA Y VIBRACIÓN (PWA ADMINISTRADOR) */}
+              <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#252136] border border-purple-200/90 dark:border-purple-800/80 shadow-sm space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
+                  <div className="flex items-start sm:items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-fio-pink text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Vibrate className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-bubble font-bold text-base text-slate-900 dark:text-white">
+                          Vibración Táctil en Clics (PWA y Web)
+                        </h4>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold border transition-colors ${
+                            vibrationEnabled
+                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                          }`}
+                        >
+                          {vibrationEnabled ? `Activa • Nivel ${vibrationIntensity}` : 'Desactivada'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5">
+                        Respuesta corta y suave en cada botón, enlace y elemento interactivo de la aplicación.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Switch Activar / Desactivar Vibración */}
+                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                    <span className="text-xs font-bubble font-semibold text-slate-600 dark:text-slate-300">
+                      {vibrationEnabled ? 'Vibración ON' : 'Vibración OFF'}
+                    </span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={vibrationEnabled}
+                      onClick={handleToggleVibration}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-inner ${
+                        vibrationEnabled ? 'bg-fio-pink' : 'bg-slate-300 dark:bg-slate-700'
+                      }`}
+                      title={vibrationEnabled ? 'Desactivar vibración en clics' : 'Activar vibración en clics'}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                          vibrationEnabled ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Feedback Toast en línea si se interactúa */}
+                {vibrationNotice && (
+                  <div className="py-1.5 px-3 rounded-xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 text-[11px] font-bubble font-bold text-purple-900 dark:text-purple-200 flex items-center gap-2 animate-fadeIn">
+                    <Zap className="w-3.5 h-3.5 text-fio-pink shrink-0 animate-bounce" />
+                    <span>{vibrationNotice}</span>
+                  </div>
+                )}
+
+                {/* Selector de Intensidad de 1 a 10 */}
+                <div className="space-y-3 pt-1">
+                  <div className="flex items-center justify-between text-xs font-bubble">
+                    <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                      <Sliders className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                      <span>Intensidad de Vibración (1 a 10):</span>
+                      <strong className="text-fio-pink dark:text-pink-400 text-sm">
+                        Nivel {vibrationIntensity}
+                      </strong>
+                    </span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-sans">
+                      {calculateHapticDuration(vibrationIntensity)}ms • Corta y suave
+                    </span>
+                  </div>
+
+                  {/* Fila de 10 Botones Táctiles 1-10 */}
+                  <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => {
+                      const isSelected = vibrationIntensity === lvl;
+                      return (
+                        <button
+                          key={lvl}
+                          type="button"
+                          onClick={() => handleIntensitySelect(lvl)}
+                          className={`py-2 px-1 rounded-xl font-bubble font-bold text-xs flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 ${
+                            isSelected
+                              ? 'bg-gradient-to-tr from-fio-pink to-purple-600 text-white shadow-sm ring-2 ring-purple-300 dark:ring-purple-600 scale-105'
+                              : vibrationEnabled
+                              ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-950/60 border border-slate-200/80 dark:border-slate-700'
+                              : 'bg-slate-50 dark:bg-slate-900/40 text-slate-400 dark:text-slate-600 border border-slate-200/40'
+                          }`}
+                          title={`Seleccionar intensidad nivel ${lvl} (~${calculateHapticDuration(lvl)}ms)`}
+                        >
+                          <span className="text-xs">{lvl}</span>
+                          <span className="text-[9px] opacity-80">{calculateHapticDuration(lvl)}ms</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Slider de rango fino */}
+                  <div className="space-y-1">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      step="1"
+                      value={vibrationIntensity}
+                      onChange={(e) => handleIntensitySelect(parseInt(e.target.value, 10))}
+                      className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-fio-pink"
+                    />
+                    <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500 font-sans px-0.5">
+                      <span>1: Micro-tap (~7ms)</span>
+                      <span>5: Suave estándar (~18ms)</span>
+                      <span>10: Firme corta (~32ms)</span>
+                    </div>
+                  </div>
+
+                  {/* Botón para Probar Vibración */}
+                  <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 font-sans">
+                      💡 <em>Consejo:</em> Puedes sentir la respuesta táctil pulsando cualquier botón de la web o el botón de prueba.
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleTestVibration}
+                      className="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-700 text-white font-bubble font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                      title="Probar pulsación táctil con la intensidad configurada"
+                    >
+                      <Zap className="w-3.5 h-3.5 text-fio-yellow" />
+                      <span>Probar Vibración (Nivel {vibrationIntensity})</span>
+                    </button>
                   </div>
                 </div>
               </div>

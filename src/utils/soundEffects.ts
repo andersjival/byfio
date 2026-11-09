@@ -1,3 +1,4 @@
+import { triggerHapticFeedback, isHapticVibrationEnabled } from './haptics';
 // Utilidad de efectos de sonido sintetizados mediante Web Audio API
 // Cero dependencias externas, cero latencia de red y sonido orgánico fluido
 
@@ -48,11 +49,8 @@ export const playBubblePopSound = (volume = 0.3) => {
     if (!ctx) return;
 
     // Vibración háptica en teléfonos móviles al sonar un nuevo pedido
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      try {
-        navigator.vibrate([350, 150, 350, 150, 600]);
-      } catch {}
-    }
+    // Respuesta háptica táctil corta y suave calibrada
+    triggerHapticFeedback();
 
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -92,11 +90,8 @@ export const playWaterDropSound = (volume = 0.22) => {
     if (!ctx) return;
 
     // Vibración háptica en teléfonos móviles al sonar un nuevo pedido
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      try {
-        navigator.vibrate([350, 150, 350, 150, 600]);
-      } catch {}
-    }
+    // Respuesta háptica táctil corta y suave calibrada
+    triggerHapticFeedback();
 
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -136,11 +131,8 @@ export const playNewOrderChimeSound = (volume = 0.35) => {
     if (!ctx) return;
 
     // Vibración háptica en teléfonos móviles al sonar un nuevo pedido
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      try {
-        navigator.vibrate([350, 150, 350, 150, 600]);
-      } catch {}
-    }
+    // Respuesta háptica táctil corta y suave calibrada
+    triggerHapticFeedback();
 
     // Acorde arpegiado brillante en Mi Mayor (E Major) con timbre tipo marimba / celesta
     const notes = [
@@ -186,11 +178,8 @@ export const playAgendaBellSound = (volume = 0.35) => {
     if (!ctx) return;
 
     // Vibración háptica en teléfonos móviles al sonar un nuevo pedido
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      try {
-        navigator.vibrate([350, 150, 350, 150, 600]);
-      } catch {}
-    }
+    // Respuesta háptica táctil corta y suave calibrada
+    triggerHapticFeedback();
 
     const now = ctx.currentTime;
 

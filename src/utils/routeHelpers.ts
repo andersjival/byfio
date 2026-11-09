@@ -286,3 +286,58 @@ export const parseRouteFromLocation = (): RouteInfo => {
 export const isHomeLocation = (): boolean => {
   return parseRouteFromLocation().route === 'home';
 };
+
+export const isCollaboratorPwaContext = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+
+    // 1. Detección explícita de query params de colaborador / staff
+    const hasCollaboratorParam =
+      urlParams.get('app') === 'colaborador' ||
+      urlParams.get('target') === 'colaborador' ||
+      urlParams.get('role') === 'alisto' ||
+      urlParams.get('role') === 'staff' ||
+      urlParams.get('pwa') === 'colaborador' ||
+      urlParams.get('modulo') === 'colaborador';
+
+    if (hasCollaboratorParam) {
+      try { localStorage.setItem('byfio_collaborator_pwa', 'true'); } catch {}
+      return true;
+    }
+
+    // 2. Detección de rutas exclusivas de pedidos / colaboradores
+    const isCollaboratorPath =
+      path === '/pedidos' || path.startsWith('/pedidos/') ||
+      path === '/pedidos-mobile' || path.startsWith('/pedidos-mobile/') ||
+      path === '/pedidos-movil' || path.startsWith('/pedidos-movil/') ||
+      path === '/alisto' || path.startsWith('/alisto/') ||
+      path === '/picking' || path.startsWith('/picking/') ||
+      path === '/app/pedidos' ||
+      hash.includes('pedidos-mobile') || hash.includes('alisto') || hash.includes('picking');
+
+    if (isCollaboratorPath) return true;
+
+    // 3. Detección de PWA en modo standalone con perfil o sesión de colaborador
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true;
+
+    const isSavedCollaborator = localStorage.getItem('byfio_collaborator_pwa') === 'true';
+
+    let hasStaffRole = false;
+    try {
+      const savedUser = localStorage.getItem('byfio_current_user_profile') || localStorage.getItem('byfio_auth_user');
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        hasStaffRole = parsed && (parsed.role === 'staff' || parsed.role === 'admin');
+      }
+    } catch {}
+
+    return isStandalone && (isSavedCollaborator || hasStaffRole);
+  } catch {
+    return false;
+  }
+};

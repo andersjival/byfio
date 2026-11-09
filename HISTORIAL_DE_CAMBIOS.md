@@ -17,6 +17,43 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.12 - Retiro de Indicador LED Verde, Ajuste Ergonómico de Agenda y Solución de Corte en Botón Carrito PWA
+- [x] **Retiro de Indicador LED Verde en Barra Superior ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
+  - Eliminado el punto verde pulsante (`bg-emerald-500 animate-pulse`) que simulaba un LED activo en la barra superior del panel administrativo y en la sesión de usuario de la cabecera.
+  - Retirada la píldora redundante en la cabecera de administración para mayor limpieza visual y liberación de espacio horizontal.
+- [x] **Ajuste Ergonómico y Anti-Corte de la Agenda en PWA ([CalendarAgendaView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarAgendaView.tsx), [CalendarTopBar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarTopBar.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx))**:
+  - Ampliado el contenedor principal administrativo a `max-w-[1600px]`, evitando que las columnas de días se corten en laptops y ventanas PWA de escritorio.
+  - Cuadrícula semanal fluidamente escalable (`min-w-[680px] sm:min-w-[800px] lg:min-w-full`) con cabecera pegajosa (`sticky top-0 z-10`), nombres de días abreviados adaptativos (`DAYS_NAMES_SHORT`) e insignia dominical compacta.
+  - Vista adaptativa por defecto: vista diaria en teléfonos móviles (<768px) con alternancia directa a vista semanal.
+- [x] **Blindaje Anti-Corte de Botón Carrito en PWA de Computadora ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
+  - Reorganizado el breakpoint de navegación pública a `xl:flex` (y menú hamburguesa a `xl:hidden`), evitando el apiñamiento horizontal en resoluciones de laptop y pantallas escaladas (1024px a 1366px).
+  - Ocultados enlaces sociales externos en entornos PWA y perfiles administrativos/staff, liberando más de 120px de espacio en la barra.
+  - Margen de seguridad derecho ampliado en el botón de Carrito (`mr-1 sm:mr-2`) para evitar cualquier recorte contra la barra de desplazamiento nativa de Windows.
+
+### Versión 4.19.12 - Restricción Exclusiva del Modal Portal de Acceso (Tienda vs Pedidos) a Módulos PWA de Colaboradores
+- [x] **Restricción Estricta del Portal de Acceso a Módulos PWA ([`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`routeHelpers.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts)):**
+  - Implementado helper `isCollaboratorPwaContext` para detectar si el usuario se encuentra dentro de la PWA de colaboradores (modo standalone, rutas operativas `/pedidos-mobile`, `/alisto` o parámetros `?app=colaborador`).
+  - El modal `AppEntryGatewayModal` (*¿Cómo deseas ingresar hoy? Tienda vs Entrar a pedidos*) queda completamente bloqueado en la web pública para clientes y visitantes generales, mostrándose única y exclusivamente en los módulos PWA del personal de trabajo.
+- [x] **Saneamiento de Botones Operativos en Vistas Públicas ([`HeroDual.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HeroDual.tsx), [`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [`WebIntroOverlay.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WebIntroOverlay.tsx)):**
+  - En el Hero de inicio, los visitantes ven *"Tienda"* y *"Talleres Creativos"*, mientras que el botón *"Entrar a pedidos"* se reserva para colaboradores y administradores autenticados.
+  - En la barra de navegación móvil y en la superposición de video de bienvenida, el acceso a pedidos permanece oculto para clientes normales.
+
+### Versión 4.19.11 - Configuración de Vibración PWA Administrador e Intensidad Calibrada 1 a 10 (Corta y Suave)
+- [x] **Panel de Configuración Háptica en PWA Administrador ([PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx), [AdminDesignSettingsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx))**:
+  - Implementado interruptor táctil (ON/OFF) para activar o desactivar la vibración en clics e interacciones de la web.
+  - Añadido selector de intensidad táctil de 1 a 10 con 10 botones numéricos directos y barra slider de calibración fina.
+  - Botón de prueba en vivo *"Probar Vibración (Nivel X)"* para sentir la respuesta física en el dispositivo al instante.
+  - Sincronización bidireccional reactiva mediante eventos personalizados (`byfio-haptics-changed`) entre todos los modales administrativos y almacenamiento seguro en `localStorage` (`byfio_pwa_vibration_enabled_v1`, `byfio_pwa_vibration_intensity_v1`).
+- [x] **Vibración Corta y Suave en Todos los Elementos de la Web ([haptics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/haptics.ts), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx))**:
+  - Registrado escucha global pasivo en el documento para activar el micro-tap táctil al interactuar con botones (`button`), enlaces (`a`), campos de formulario (`input, select, textarea`), selectores (`[role="button"], label, .cursor-pointer`) y atributos específicos (`[data-haptic]`).
+  - Calibración matemática estricta para garantizar una vibración **corta y suave** (`Math.round(4 + intensity * 2.8)` ms):
+    - Nivel 1: ~7ms (micro-tap sutil)
+    - Nivel 5: ~18ms (tap suave estándar tipo smartphone nativo)
+    - Nivel 10: ~32ms (tap firme pero corto, nunca invasivo ni excesivo)
+  - Incorporado micro-debounce de 60ms para evitar doble pulsación en eventos simultáneos.
+- [x] **Depuración de Vibraciones Bruscas en Efectos de Sonido ([soundEffects.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts))**:
+  - Erradicada la vibración pesada de 1.6 segundos (`[350, 150, 350, 150, 600]`) en `playBubblePopSound`, `playWaterDropSound` y `playAgendaBellSound`, redirigiéndola a la respuesta háptica corta y suave gobernada por la configuración del usuario.
+
 ### Versión 4.19.10 - Optimización Móvil y Prevención de Truncamiento en Botón Menú Principal
 - [x] **Ajuste Responsivo del Botón Menú Principal ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
   - Aplicado `shrink-0 whitespace-nowrap` tanto al botón como al texto interior de *"Menú Principal"* en la barra de navegación de administración, erradicando cualquier corte visual o deformación en pantallas móviles y PWA de celular.

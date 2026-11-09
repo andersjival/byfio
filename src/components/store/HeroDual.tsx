@@ -1,4 +1,6 @@
 import React from 'react';
+import { useApp } from '../../context/AppContext';
+import { isCollaboratorPwaContext } from '../../utils/routeHelpers';
 import { AppRoute } from '../../types';
 import { AnimatedByfioLetters } from '../common/AnimatedByfioLetters';
 import { HeroAnimatedSlogan } from './HeroAnimatedSlogan';
@@ -15,6 +17,8 @@ export const HeroDual: React.FC<HeroDualProps> = ({
   onScrollToProducts,
   onNavigate,
 }) => {
+  const { currentUser } = useApp();
+  const isCollaborator = currentUser?.role === 'admin' || currentUser?.role === 'staff' || isCollaboratorPwaContext();
   return (
     <section
       id="hero-section"
@@ -38,7 +42,7 @@ export const HeroDual: React.FC<HeroDualProps> = ({
           Talleres creativos de encuadernación, agendas y sublimación, junto a productos personalizados con amor e insumos en Costa Rica.
         </p>
 
-        {/* Dos Botones de Entrada Mandatorios: "Tienda" y "Entrar a pedidos" */}
+        {/* Botones de Entrada: Para colaboradores muestra "Entrar a pedidos", para público general muestra "Tienda" y "Talleres" */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-lg mx-auto pt-2 pb-1 w-full px-2 sm:px-0">
           <button
             type="button"
@@ -49,14 +53,25 @@ export const HeroDual: React.FC<HeroDualProps> = ({
             <span>Tienda</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => onNavigate?.('pedidos-mobile')}
-            className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 sm:gap-3 px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl neu-btn bg-[#F1F2F6] text-slate-800 border border-white/90 font-bubble font-bold text-sm sm:text-base shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all cursor-pointer group"
-          >
-            <PackageCheck className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
-            <span>Entrar a pedidos</span>
-          </button>
+          {isCollaborator ? (
+            <button
+              type="button"
+              onClick={() => onNavigate?.('pedidos-mobile')}
+              className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 sm:gap-3 px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl neu-btn bg-[#F1F2F6] text-slate-800 border border-white/90 font-bubble font-bold text-sm sm:text-base shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all cursor-pointer group"
+            >
+              <PackageCheck className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
+              <span>Entrar a pedidos</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onScrollToWorkshops}
+              className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 sm:gap-3 px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl neu-btn bg-[#F1F2F6] text-purple-900 border border-white/90 font-bubble font-bold text-sm sm:text-base shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all cursor-pointer group"
+            >
+              <Calendar className="w-5 h-5 text-fio-purple group-hover:scale-110 transition-transform" />
+              <span>Talleres Creativos</span>
+            </button>
+          )}
         </div>
 
         {/* Enlace sutil para ver talleres */}

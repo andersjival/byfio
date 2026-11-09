@@ -58,7 +58,8 @@ const SuperadminSection = React.lazy(() => import('./components/superadmin/Super
 
 import { metricsTracker, appendRefToPath, getActiveCampaignRef } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
-import { parseRouteFromLocation, RouteInfo } from './utils/routeHelpers';
+import { setupGlobalHapticClickListener } from './utils/haptics';
+import { parseRouteFromLocation, RouteInfo, isCollaboratorPwaContext } from './utils/routeHelpers';
 import { MessageCircle, Instagram, LayoutGrid, ArrowLeft, Palette, CreditCard, Clock, MapPin, Film, Shield } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -100,8 +101,8 @@ export const App: React.FC = () => {
   const [billingTargetCustomer, setBillingTargetCustomer] = useState<Customer | null>(null);
   const [isEntryGatewayOpen, setIsEntryGatewayOpen] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
-    const initialRoute = parseRouteFromLocation().route;
-    if (initialRoute !== 'home') return false;
+    // Solo permitir que se abra en los módulos PWA de colaboradores; NUNCA en la web pública
+    if (!isCollaboratorPwaContext()) return false;
     try {
       return !sessionStorage.getItem('byfio_entry_gateway_dismissed');
     } catch {
@@ -261,6 +262,12 @@ export const App: React.FC = () => {
     getActiveCampaignRef();
   }, []);
 
+  // Respuesta háptica táctil y vibración suave y corta en clics e interacciones de la web
+  useEffect(() => {
+    const cleanupHaptics = setupGlobalHapticClickListener();
+    return cleanupHaptics;
+  }, []);
+
   // Sonido háptico/orgánico de gotas de agua al hacer clic en botones
   useEffect(() => {
     const cleanupSounds = initWaterDropButtonSounds();
@@ -328,7 +335,7 @@ export const App: React.FC = () => {
             </ErrorBoundary>
           </main>
         ) : (
-          <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8">
+          <main className={`w-full mx-auto px-2.5 sm:px-4 lg:px-6 pt-2 sm:pt-4 pb-8 ${currentRoute === 'admin' ? 'max-w-[1600px]' : 'max-w-7xl'}`}>
             <ErrorBoundary fallbackTitle="Inconveniente al cargar la sección">
               {currentRoute === 'login' && (
                 <LoginModal
@@ -572,24 +579,26 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Modal de Entrada Dual: Tienda o Entrar a pedidos */}
-      <AppEntryGatewayModal
-        isOpen={isEntryGatewayOpen && !isIntroOpen && currentRoute === 'home'}
-        onSelectStore={() => {
-          try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
-          setIsEntryGatewayOpen(false);
-          navigate('store');
-        }}
-        onSelectOrders={() => {
-          try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
-          setIsEntryGatewayOpen(false);
-          navigate('pedidos-mobile');
-        }}
-        onClose={() => {
-          try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
-          setIsEntryGatewayOpen(false);
-        }}
-      />
+      {/* Modal de Entrada Dual: Exclusivo para módulos PWA de colaboradores */}
+      {isCollaboratorPwaContext() && (
+        <AppEntryGatewayModal
+          isOpen={isEntryGatewayOpen && !isIntroOpen}
+          onSelectStore={() => {
+            try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
+            setIsEntryGatewayOpen(false);
+            navigate('store');
+          }}
+          onSelectOrders={() => {
+            try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
+            setIsEntryGatewayOpen(false);
+            navigate('pedidos-mobile');
+          }}
+          onClose={() => {
+            try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
+            setIsEntryGatewayOpen(false);
+          }}
+        />
+      )}
       <FloatingMascot currentRoute={currentRoute} />
       {isModuleEnabled('store') && isFeatureEnabled('store', 'interactive_cart') && (
         <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
