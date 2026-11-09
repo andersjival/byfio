@@ -44,33 +44,33 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       case 'sm':
         return {
           text: 'text-xl sm:text-2xl',
-          heartSize: 13,
-          starSize: 15,
+          heartSize: 10,
+          starSize: 14,
           starTop: '-3px',
           slogan: 'text-[7.5px] sm:text-[9.5px]',
         };
       case 'lg':
         return {
           text: 'text-3xl sm:text-4xl',
-          heartSize: 20,
-          starSize: 22,
+          heartSize: 15,
+          starSize: 20,
           starTop: '-5px',
           slogan: 'text-xs sm:text-sm',
         };
       case 'hero':
         return {
           text: 'text-5xl sm:text-6xl',
-          heartSize: 32,
-          starSize: 36,
-          starTop: '-9px',
+          heartSize: 22,
+          starSize: 32,
+          starTop: '-8px',
           slogan: 'text-sm sm:text-base',
         };
       case 'md':
       default:
         return {
           text: 'text-2xl sm:text-3xl',
-          heartSize: 15,
-          starSize: 18,
+          heartSize: 12,
+          starSize: 16,
           starTop: '-4px',
           slogan: 'text-[9px] sm:text-[10px]',
         };
@@ -91,20 +91,20 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           : 'pt-0.5'
       }`}
     >
-      {/* Fila Principal: by + corazón interactivo + fio en una sola línea continua */}
+      {/* Fila Principal: by + corazón celeste como un punto en la base + fio */}
       <div
-        className={`flex items-center tracking-tight font-bubble font-bold ${resolvedTextColor} leading-none`}
+        className={`flex items-baseline tracking-tight font-bubble font-bold ${resolvedTextColor} leading-none`}
       >
         <span className={`${dims.text} tracking-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.12)]`}>
           by
         </span>
 
-        {/* Corazón celeste interactivo: exacto de la marca by.fio (#9BE4FF), bien pegado a las letras */}
+        {/* Corazón celeste interactivo: actuando como un punto/dot en la base dividiendo las palabras */}
         <button
           type="button"
           onClick={handleHeartClick}
           aria-label="Tocar corazón by.fio"
-          className="inline-flex items-center justify-center -mx-1 sm:-mx-1.5 self-center translate-y-[1px] focus:outline-none focus:ring-0 active:scale-125 cursor-pointer z-10"
+          className="inline-flex items-center justify-center mx-1 sm:mx-1.5 self-baseline translate-y-[2px] focus:outline-none focus:ring-0 active:scale-125 cursor-pointer z-10"
           title="¡Tócame!"
         >
           <span
@@ -127,9 +127,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         </button>
 
         {/* Palabra "fio" continua con la estrella posada exactamente sobre la letra i */}
-        <span className={`${dims.text} tracking-tight inline-flex items-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.12)]`}>
+        <span className={`${dims.text} tracking-tight inline-flex items-baseline drop-shadow-[0_1px_2px_rgba(0,0,0,0.12)]`}>
           <span>f</span>
-          <span className="relative inline-flex items-center justify-center">
+          <span className="relative inline-flex items-baseline justify-center">
             {/* Estrella colocada justo encima de la letra i (#FFF07C) con rotación e iluminación */}
             <span
               className="absolute pointer-events-none z-10"
