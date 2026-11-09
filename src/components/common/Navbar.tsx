@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { BrandLogo } from './BrandLogo';
 import { TikTokIcon } from './TikTokIcon';
 import { AppRoute } from '../../types';
-import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, Palette, LayoutGrid, LogOut, ShieldCheck, Sun, Moon, Heart, PackageCheck } from 'lucide-react';
+import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, LayoutGrid, LogOut, ShieldCheck, Sun, Moon, Heart, PackageCheck } from 'lucide-react';
 import { metricsTracker } from '../../services/metricsTracker';
 
 interface NavbarProps {
@@ -361,19 +361,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="hidden sm:inline">{likePopped ? '¡+1 Like!' : 'Me Gusta'}</span>
               </button>
 
-              {/* Botón Diseño & Letra */}
-              <button
-                type="button"
-                onClick={onOpenDesignModal}
-                className="neu-btn bg-[#F1F2F6] flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-slate-700 text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-neuBtn hover:text-fio-pink hover:bg-pink-50/70 hover:shadow-neuBtnHover transition-all active:scale-95"
-                title="Ajustar paleta de colores y tipografía de todo el sitio"
-              >
-                <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink" />
-                <span className="hidden xs:inline">Diseño &amp; Letra</span>
-                <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
-                  {colorTheme === 'vibrant' ? 'Morado' : colorTheme === 'dark' ? 'Oscuro' : 'Zen'}
-                </span>
-              </button>
 
               {/* Botón Menú Principal */}
               <button

@@ -24,8 +24,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
     products,
     orders,
     resetToDefaults,
-    colorTheme,
-    typographyTheme,
     isModuleEnabled,
     currentUser,
     logoutUser,
@@ -93,9 +91,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
           >
             <Settings className="w-3.5 h-3.5 text-fio-pink" />
             <span>Configuración</span>
-            <span className="text-[10px] text-fio-600 bg-fio-100 px-1.5 py-0.2 rounded-full font-bold ml-0.5">
-              {colorTheme === 'vibrant' ? 'Morado' : colorTheme === 'dark' ? 'Oscuro' : 'Zen'}
-            </span>
           </button>
 
           {/* Reset Demo */}

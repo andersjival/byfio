@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.6 - Retiro de Botón / Etiqueta de Tema ("Morado") en Encabezados Web y PWA
+- [x] **Limpieza de Barra Superior en Web y PWA ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Removido el botón `Diseño & Letra` con la etiqueta dinámica `Morado / Oscuro / Zen` de la barra de navegación superior.
+- [x] **Ajuste de Botón de Configuración en Admin ([AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
+  - Retirada la píldora indicadora `Morado` del botón `Configuración`, conservando el acceso directo a la personalización sin etiquetas invasivas.
+  - La selección y cambio de tema visual (`Moradito Original`, `Modo Zen`, `Modo Oscuro`) permanece ordenada y accesible exclusivamente en el modal interno de configuración.
+
 ### Versión 4.19.5 - Retiro del Botón de Acceso Rápido a Superadmin en Modal de Inicio de Sesión de la Dueña
 - [x] **Aislamiento de Perfil de Administración ([LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
   - Eliminado el botón `⚡ Entrar como Superadmin (1 Clic directo)` del modal de inicio de sesión de colaboradores y administración.
