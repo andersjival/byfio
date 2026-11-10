@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin, Navigation, RefreshCw, ExternalLink, Sparkles } from 'lucide-react';
+import {
+  MapPin, Navigation, RefreshCw, ExternalLink, Sparkles,
+  Search, Maximize2, Minimize2
+} from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
 export interface MapCoordinates {
@@ -49,7 +52,17 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [addressPreview, setAddressPreview] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const lastGeocodeTimeRef = useRef<number>(0);
+
+  // Mantener referencia estable al callback onChange para no provocar recreaciones del mapa
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
   // Crear icono SVG estilizado de by.fio con pin arrastrable
   const createPinIcon = useCallback(() => {
@@ -88,10 +101,9 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
     });
   }, []);
 
-  // Geocodificación inversa defensiva con OpenStreetMap Nominatim
+  // Geocodificación inversa con OpenStreetMap Nominatim
   const reverseGeocode = useCallback(async (targetLat: number, targetLng: number) => {
     const now = Date.now();
-    // Throttle a 1.2 segundos para respetar límites de uso de OpenStreetMap
     if (now - lastGeocodeTimeRef.current < 1200) return;
     lastGeocodeTimeRef.current = now;
 
@@ -110,15 +122,14 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
         const state = addr.state || 'Costa Rica';
         const formatted = [road, city, state].filter(Boolean).join(', ');
         setAddressPreview(formatted || data.display_name);
-        onChange({ lat: targetLat, lng: targetLng, addressSuggestion: formatted || data.display_name });
+        onChangeRef.current({ lat: targetLat, lng: targetLng, addressSuggestion: formatted || data.display_name });
       }
     } catch {
-      // Si falla o no hay conexión, solo reportamos las coordenadas
-      onChange({ lat: targetLat, lng: targetLng });
+      onChangeRef.current({ lat: targetLat, lng: targetLng });
     } finally {
       setIsGeocoding(false);
     }
-  }, [onChange]);
+  }, []);
 
   // Manejar cambio de ubicación desde arrastre o clic
   const handleLocationUpdate = useCallback((newLat: number, newLng: number, skipGeocode = false) => {
@@ -127,13 +138,18 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
     playWaterDropSound();
 
     if (skipGeocode) {
-      onChange({ lat: cleanLat, lng: cleanLng });
+      onChangeRef.current({ lat: cleanLat, lng: cleanLng });
     } else {
       reverseGeocode(cleanLat, cleanLng);
     }
-  }, [onChange, reverseGeocode]);
+  }, [reverseGeocode]);
 
-  // Inicializar mapa de Leaflet
+  const handleLocationUpdateRef = useRef(handleLocationUpdate);
+  useEffect(() => {
+    handleLocationUpdateRef.current = handleLocationUpdate;
+  }, [handleLocationUpdate]);
+
+  // Inicializar mapa de Leaflet ÚNICAMENTE al montar el componente (previene que el zoom se reinicie o encoja)
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
@@ -142,7 +158,7 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
 
     const map = L.map(mapContainerRef.current, {
       center: [initialLat, initialLng],
-      zoom: 15,
+      zoom: 16,
       zoomControl: true,
       scrollWheelZoom: 'center',
     });
@@ -172,39 +188,94 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
     // Evento de arrastre del pin
     marker.on('dragend', () => {
       const pos = marker.getLatLng();
-      handleLocationUpdate(pos.lat, pos.lng);
+      handleLocationUpdateRef.current(pos.lat, pos.lng);
     });
 
     // Evento de clic en cualquier punto del mapa
     map.on('click', (e: L.LeafletMouseEvent) => {
       marker.setLatLng(e.latlng);
-      handleLocationUpdate(e.latlng.lat, e.latlng.lng);
+      handleLocationUpdateRef.current(e.latlng.lat, e.latlng.lng);
     });
 
     mapInstanceRef.current = map;
     markerRef.current = marker;
 
-    // Redimensionar para asegurar que los tiles carguen al 100% de ancho
     setTimeout(() => {
       map.invalidateSize();
-    }, 250);
+    }, 200);
 
     return () => {
       map.remove();
       mapInstanceRef.current = null;
       markerRef.current = null;
     };
-  }, [createPinIcon, handleLocationUpdate, lat, lng]);
+  }, [createPinIcon]);
 
-  // Sincronizar posición del pin si cambian las coordenadas externamente
+  // Sincronizar posición del pin si cambian las coordenadas externamente SIN alterar el zoom del usuario
   useEffect(() => {
     if (!markerRef.current || !mapInstanceRef.current) return;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) return;
     const currentPos = markerRef.current.getLatLng();
     if (Math.abs(currentPos.lat - lat) > 0.0001 || Math.abs(currentPos.lng - lng) > 0.0001) {
       markerRef.current.setLatLng([lat, lng]);
-      mapInstanceRef.current.panTo([lat, lng], { animate: true, duration: 0.5 });
+      // panTo mueve suavemente la vista conservando intacto el nivel de zoom actual del usuario
+      mapInstanceRef.current.panTo([lat, lng], { animate: true, duration: 0.4 });
     }
   }, [lat, lng]);
+
+  // Redimensionar tiles cuando el usuario amplía o reduce el tamaño del contenedor del mapa
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    }, 220);
+    return () => clearTimeout(timer);
+  }, [isExpanded]);
+
+  // Búsqueda de dirección o cantón en Costa Rica
+  const handleSearchAddress = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const cleanQuery = searchQuery.trim();
+    if (!cleanQuery) return;
+
+    setIsSearching(true);
+    setSearchError(null);
+    playWaterDropSound();
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cleanQuery)}&countrycodes=cr&limit=1&addressdetails=1`,
+        { headers: { 'Accept-Language': 'es-CR,es' } }
+      );
+      if (!res.ok) throw new Error('Search failed');
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const item = data[0];
+        const newLat = Number(parseFloat(item.lat).toFixed(5));
+        const newLng = Number(parseFloat(item.lon).toFixed(5));
+        const suggestion = item.display_name;
+
+        if (markerRef.current && mapInstanceRef.current) {
+          markerRef.current.setLatLng([newLat, newLng]);
+          const currentZoom = mapInstanceRef.current.getZoom();
+          // Conserva el zoom ampliado del usuario o aumenta a 17 para ver calles con claridad
+          const targetZoom = Math.max(currentZoom, 17);
+          mapInstanceRef.current.setView([newLat, newLng], targetZoom, { animate: true });
+        }
+
+        setAddressPreview(suggestion);
+        onChangeRef.current({ lat: newLat, lng: newLng, addressSuggestion: suggestion });
+        playBubblePopSound();
+      } else {
+        setSearchError('No encontramos esa dirección en Costa Rica. Puedes arrastrar el PIN en el mapa.');
+      }
+    } catch {
+      setSearchError('Error al buscar dirección. Puedes mover el PIN directamente.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   // Botón GPS: Obtener ubicación real del usuario
   const handleGetGpsLocation = () => {
@@ -224,7 +295,9 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
 
         if (markerRef.current && mapInstanceRef.current) {
           markerRef.current.setLatLng([newLat, newLng]);
-          mapInstanceRef.current.setView([newLat, newLng], 16, { animate: true });
+          const currentZoom = mapInstanceRef.current.getZoom();
+          const targetZoom = Math.max(currentZoom, 16);
+          mapInstanceRef.current.setView([newLat, newLng], targetZoom, { animate: true });
         }
         handleLocationUpdate(newLat, newLng);
       },
@@ -238,28 +311,76 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
   };
 
   const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+  const effectiveHeight = isExpanded ? '460px' : height;
 
   return (
-    <div className={`space-y-3 ${className}`}>
-      {/* Barra Superior con Selector GPS y Enlace Exterior */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className={`space-y-2.5 ${className}`}>
+      {/* Barra de Búsqueda de Dirección Directa */}
+      <form onSubmit={handleSearchAddress} className="flex items-center gap-1.5">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            placeholder="Buscar calle, barrio o cantón en CR..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-purple-200 text-xs text-slate-800 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-fio-purple/40"
+          />
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+        </div>
+        <button
+          type="submit"
+          disabled={isSearching || !searchQuery.trim()}
+          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white text-xs font-bubble font-bold disabled:opacity-50 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
+        >
+          {isSearching ? 'Buscando...' : 'Buscar'}
+        </button>
+      </form>
+
+      {searchError && (
+        <p className="text-[10px] text-rose-500 font-sans ml-1 leading-tight">
+          {searchError}
+        </p>
+      )}
+
+      {/* Barra Superior con Selector GPS, Ampliar Tamaño y Enlace Exterior */}
+      <div className="flex flex-wrap items-center justify-between gap-1.5">
         <div className="flex items-center gap-1.5 text-xs text-slate-600">
           <MapPin className="w-4 h-4 text-fio-pink shrink-0 animate-bounce" />
-          <span className="font-bubble font-bold text-slate-800">
+          <span className="font-bubble font-bold text-slate-800 text-[11px] sm:text-xs">
             Pin Interactivo en Vivo
           </span>
           <span className="text-[10px] text-slate-400 hidden sm:inline">
-            (Toca el mapa o arrastra la estrella)
+            (Toca o arrastra la estrella)
           </span>
         </div>
 
         <div className="flex items-center gap-1.5">
+          {/* Botón para Ampliar / Reducir Tamaño del Mapa */}
+          <button
+            type="button"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-purple-50 border border-purple-200 text-purple-900 text-xs font-bubble font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+            title={isExpanded ? 'Reducir tamaño del mapa' : 'Hacer grande el mapa'}
+          >
+            {isExpanded ? (
+              <>
+                <Minimize2 className="w-3.5 h-3.5 text-fio-purple" />
+                <span className="hidden sm:inline">Reducir</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 className="w-3.5 h-3.5 text-fio-purple" />
+                <span className="hidden sm:inline">Hacer Grande</span>
+              </>
+            )}
+          </button>
+
           {showGpsButton && (
             <button
               type="button"
               onClick={handleGetGpsLocation}
               disabled={isGpsLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 text-xs font-bubble font-bold transition-all shadow-xs cursor-pointer active:scale-95 disabled:opacity-50"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 text-xs font-bubble font-bold transition-all shadow-xs cursor-pointer active:scale-95 disabled:opacity-50"
               title="Obtener coordenadas desde el sensor GPS de tu celular o computadora"
             >
               {isGpsLoading ? (
@@ -267,7 +388,7 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
               ) : (
                 <Navigation className="w-3.5 h-3.5 text-purple-700" />
               )}
-              <span>{isGpsLoading ? 'Buscando GPS...' : 'Usar mi GPS'}</span>
+              <span>{isGpsLoading ? 'Buscando...' : 'GPS'}</span>
             </button>
           )}
 
@@ -275,10 +396,10 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bubble font-bold transition-all shadow-xs"
+            className="inline-flex items-center gap-1 px-2 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bubble font-bold transition-all shadow-xs"
             title="Abrir coordenadas en Google Maps"
           >
-            <span>Ver en Maps</span>
+            <span>Maps</span>
             <ExternalLink className="w-3 h-3 text-fio-pink" />
           </a>
         </div>
@@ -297,7 +418,10 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
                 onClick={() => {
                   if (markerRef.current && mapInstanceRef.current) {
                     markerRef.current.setLatLng([p.lat, p.lng]);
-                    mapInstanceRef.current.setView([p.lat, p.lng], 15, { animate: true });
+                    const currentZoom = mapInstanceRef.current.getZoom();
+                    // Preserva el zoom grande del usuario si ya lo había ampliado
+                    const targetZoom = Math.max(currentZoom, 15);
+                    mapInstanceRef.current.setView([p.lat, p.lng], targetZoom, { animate: true });
                   }
                   handleLocationUpdate(p.lat, p.lng);
                 }}
@@ -315,11 +439,11 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
       )}
 
       {/* Contenedor del Mapa Real Interactivo */}
-      <div className="relative w-full rounded-2xl overflow-hidden border-2 border-fio-200 shadow-inner bg-slate-100 z-0">
+      <div className="relative w-full rounded-2xl overflow-hidden border-2 border-fio-200 shadow-inner bg-slate-100 z-0 transition-[height] duration-300">
         <div
           ref={mapContainerRef}
-          style={{ height, width: '100%' }}
-          className="w-full relative z-0"
+          style={{ height: effectiveHeight, width: '100%' }}
+          className="w-full relative z-0 transition-[height] duration-300"
         />
 
         {/* Coordenadas en Vivo Flotantes */}
@@ -334,9 +458,10 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
         </div>
 
         {/* Banner Informativo Táctil */}
-        <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-xl text-[10px] font-bubble font-semibold text-slate-700 shadow-sm border border-slate-200 pointer-events-none z-10 flex items-center gap-1">
+        <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl text-[10px] font-bubble font-semibold text-slate-700 shadow-sm border border-slate-200 pointer-events-none z-10 flex items-center gap-1">
           <Sparkles className="w-3 h-3 text-amber-500" />
-          <span>Arrastra el pin o toca donde quieres recibir tu pedido</span>
+          <span className="hidden sm:inline">Arrastra el pin o toca para ubicar tu casa</span>
+          <span className="sm:hidden">Toca o mueve el pin</span>
         </div>
       </div>
 

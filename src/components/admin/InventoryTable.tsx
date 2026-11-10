@@ -4,8 +4,9 @@ import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   QrCode, AlertOctagon, Plus, Minus, Search, MapPin,
-  PlusCircle, Trash2, Pencil, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck
+  PlusCircle, Trash2, Pencil, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck, Barcode
 } from 'lucide-react';
+import { ShelfBarcodeLabelsModal } from './ShelfBarcodeLabelsModal';
 
 export const InventoryTable: React.FC = () => {
   const {
@@ -25,6 +26,9 @@ export const InventoryTable: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable'>('all');
+  const [isShelfBarcodesOpen, setIsShelfBarcodesOpen] = useState(false);
+  const [shelfFilterTarget, setShelfFilterTarget] = useState<string>('Todas');
+  const [categoryFilterTarget, setCategoryFilterTarget] = useState<string>('Todas');
 
   const isStockModeEnabled = isFeatureEnabled('inventory', 'inventory_stock_mode') !== false;
   const isAvailabilityModeEnabled = isFeatureEnabled('inventory', 'product_availability_mode') !== false;
@@ -101,9 +105,22 @@ export const InventoryTable: React.FC = () => {
           </p>
         </div>
 
-        {/* BOTÓN PROMINENTE AGREGAR PRODUCTO NUEVO */}
-        {isFeatureEnabled('inventory', 'product_crud') && (
-          <div className="flex items-center gap-2.5">
+        {/* BOTONES ACCIÓN: CÓDIGOS DE BARRAS & AGREGAR PRODUCTO */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => {
+              setShelfFilterTarget('Todas');
+              setCategoryFilterTarget(selectedCategory);
+              setIsShelfBarcodesOpen(true);
+            }}
+            className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs sm:text-sm shadow-clay transition-all active:scale-95"
+            title="Ver e imprimir códigos de barras para estantes y categorías"
+          >
+            <Barcode className="w-5 h-5 text-fio-yellow" />
+            <span>Imprimir Códigos Estante</span>
+          </button>
+          {isFeatureEnabled('inventory', 'product_crud') && (
             <button
               onClick={() => {
                 setEditingProduct(null);
@@ -114,8 +131,8 @@ export const InventoryTable: React.FC = () => {
               <PlusCircle className="w-5 h-5" />
               <span>+ Agregar Producto al Inventario</span>
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
 {/* Botones de Filtro Rápido por Existencias en Cero y Disponibilidad para Pedidos */}
@@ -583,6 +600,19 @@ export const InventoryTable: React.FC = () => {
                           <span>QR</span>
                         </button>
                       )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShelfFilterTarget(prod.shelfLocation || 'Todas');
+                          setCategoryFilterTarget(prod.category || 'Todas');
+                          setIsShelfBarcodesOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 font-bubble text-xs shadow-2xs active:scale-95 transition-all"
+                        title="Ver código de barras del producto y su estantería"
+                      >
+                        <Barcode className="w-3.5 h-3.5 text-purple-700" />
+                        <span>Barras</span>
+                      </button>
                       {isFeatureEnabled('inventory', 'product_crud') && (
                         <button
                           onClick={async () => {
@@ -632,6 +662,13 @@ export const InventoryTable: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      <ShelfBarcodeLabelsModal
+        isOpen={isShelfBarcodesOpen}
+        onClose={() => setIsShelfBarcodesOpen(false)}
+        initialShelfLocation={shelfFilterTarget}
+        initialCategory={categoryFilterTarget}
+      />
     </div>
   );
 };

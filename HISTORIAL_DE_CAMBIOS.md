@@ -17,6 +17,27 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.49 - Generación Automática de Códigos de Barras e Impresión para Estanterías y Productos
+- [x] **Generador Vectorial Nativo de Código 128 ([Barcode128.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Barcode128.tsx)):**
+  - Implementado algoritmo estándar Code 128 (Subset B) en SVG vectorial puro sin dependencias externas pesadas.
+  - Cálculo estricto de módulo 103 checksum, barras de inicio y parada estándar, resolución nítida para impresión térmica o papel adhesivo.
+- [x] **Etiqueta Universal de Producto ([ProductBarcodeLabel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ProductBarcodeLabel.tsx)):**
+  - Muestra nombre del producto en la parte superior, barras vectoriales legibles por pistola escáner, código SKU interno debajo de las barras, indicador de estantería (📍) y precio formateado en colones con borde punteado de recorte.
+- [x] **Flujo de Creación Inmediata con Código de Barras ([NewProductModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx)):**
+  - Generación reactiva de SKU en tiempo real mientras el usuario escribe el nombre del producto nuevo.
+  - Previsualización dinámica de la etiqueta de barras durante la edición.
+  - Pantalla modal de confirmación y entrega que genera el código de barras con botón directo "Imprimir Etiqueta", "+ Agregar Otro Producto" y "Listo / Finalizar".
+- [x] **Módulo de Impresión por Estantería y Categoría ([ShelfBarcodeLabelsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ShelfBarcodeLabelsModal.tsx)):**
+  - Modal accesible desde la tabla de inventario con filtros por estante, categoría, búsqueda en vivo y ordenamiento (por estantería, nombre o SKU).
+  - Cuadrícula de etiquetas lista para imprimir (`window.print()`) con CSS optimizado para omitir navegación y aprovechar hojas de etiquetas/recorte para estantes.
+- [x] **Integración en Tabla de Inventario ([InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Botón prominente "Imprimir Códigos Estante" en el encabezado superior.
+  - Botón de acción individual "Barras" en cada fila para inspeccionar o imprimir la etiqueta del producto y su estantería de forma instantánea.
+- [x] **Estilos de Impresión Aislados ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Agregadas directivas `@media print` para aislar `#printable-shelf-barcodes` y `#printable-product-barcode`.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.49` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.48 - Dirección con Texto y PIN de Mapa Real en Paso 2 de Registro
 - [x] **Campo de Dirección en Texto y Botón de PIN de Mapa ([ThreeStepRegisterForm.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ThreeStepRegisterForm.tsx)):**
   - Añadido campo de texto de dirección física exacta con icono de `MapPin` en el Paso 2 del registro.

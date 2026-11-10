@@ -9,6 +9,9 @@ import {
   Store, BookOpen, ChevronDown, Plus, RotateCcw, Trash2, Sparkles, Upload, Truck
 } from 'lucide-react';
 import { MultiImageUploadField } from '../common/MultiImageUploadField';
+import { Barcode128 } from '../common/Barcode128';
+import { ProductBarcodeLabel } from './ProductBarcodeLabel';
+import { Printer } from 'lucide-react';
 
 const DEFAULT_PRODUCT_PLACEHOLDER = '/images/placeholder-new-product.jpg';
 
@@ -101,6 +104,12 @@ export const NewProductModal: React.FC = () => {
   const [showInCatalog, setShowInCatalog] = useState(true);
   const [isAvailable, setIsAvailable] = useState(true);
   const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [createdProductBarcode, setCreatedProductBarcode] = useState<{
+    name: string;
+    sku: string;
+    shelfLocation: string;
+    price: number;
+  } | null>(null);
 
   // Categorías disponibles (por defecto + personalizadas + de productos - eliminadas)
   const availableCategories = useMemo(() => {
@@ -627,6 +636,7 @@ export const NewProductModal: React.FC = () => {
 
   const handleClose = () => {
     setEditingProduct(null);
+    setCreatedProductBarcode(null);
     setIsNewProductModalOpen(false);
   };
 
@@ -726,6 +736,12 @@ export const NewProductModal: React.FC = () => {
       });
 
       setSuccessToast('¡Artículo actualizado y guardado correctamente!');
+      setCreatedProductBarcode({
+        name: name.trim(),
+        sku: sku.trim().toUpperCase(),
+        shelfLocation: finalShelfLocation,
+        price: Number(price) || 0,
+      });
     } else {
       // Modo Nuevo Producto
       addProduct({
@@ -750,13 +766,14 @@ export const NewProductModal: React.FC = () => {
         isAvailable: finalIsAvailable,
       });
 
-      setSuccessToast('¡Artículo creado y agregado al inventario!');
+      setSuccessToast('¡Artículo creado y código de barras generado!');
+      setCreatedProductBarcode({
+        name: name.trim(),
+        sku: sku.trim().toUpperCase(),
+        shelfLocation: finalShelfLocation,
+        price: Number(price) || 0,
+      });
     }
-
-    setTimeout(() => {
-      setSuccessToast(null);
-      handleClose();
-    }, 1100);
   };
 
   const marginColones = (Number(price) || 0) - (Number(costPrice) || 0);
@@ -807,7 +824,69 @@ export const NewProductModal: React.FC = () => {
           </div>
         )}
 
-        {/* Formulario Completo de Edición */}
+        {/* Vista Posterior: Código de Barras Generado con Opción de Impresión Inmediata */}
+        {createdProductBarcode ? (
+          <div className="p-6 sm:p-8 flex flex-col items-center text-center space-y-4 max-h-[80vh] overflow-y-auto animate-fadeIn">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shadow-xs">
+              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+            </div>
+
+            <div>
+              <span className="px-3 py-1 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs">
+                🏷️ Código de Barras Listo
+              </span>
+              <h3 className="font-bubble font-bold text-xl text-slate-900 mt-2">
+                ¡Producto Agregado y Código de Barras Generado!
+              </h3>
+              <p className="text-xs text-slate-500 max-w-md mt-1">
+                El sistema generó el código de barras con el nombre del producto, las barras oficiales y su código SKU interno. Puedes imprimirlo de una vez para pegarlo al producto o en su estante.
+              </p>
+            </div>
+
+            {/* Etiqueta Imprimible */}
+            <div id="printable-product-barcode" className="w-full max-w-sm py-2">
+              <ProductBarcodeLabel
+                product={createdProductBarcode}
+                showPrice={true}
+                className="shadow-md"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full max-w-sm pt-2">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="w-full py-3 px-4 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs flex items-center justify-center gap-2 shadow-clayBtn transition-all cursor-pointer"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Imprimir Esta Etiqueta</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClose}
+                className="w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>✓ Listo / Finalizar</span>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setCreatedProductBarcode(null);
+                setEditingProduct(null);
+                setName('');
+                setSku('');
+              }}
+              className="text-xs text-fio-purple font-bubble font-bold hover:underline cursor-pointer pt-2"
+            >
+              + Agregar Otro Producto al Inventario
+            </button>
+          </div>
+        ) : (
+        /* Formulario Completo de Edición */
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-5 text-xs max-h-[80vh] overflow-y-auto">
           {/* Bloque 1: Identidad & Foto */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
@@ -832,7 +911,14 @@ export const NewProductModal: React.FC = () => {
                     type="text"
                     placeholder="Ej: Libreta Cuero Pastel 2027"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setName(val);
+                      if (!editingProduct && (!sku || sku.startsWith('FIO-'))) {
+                        const prefix = val.trim() ? val.trim().substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X') : 'PRD';
+                        setSku(`FIO-${prefix}-${Math.floor(100 + Math.random() * 900)}`);
+                      }
+                    }}
                     className="w-full px-3 py-2 rounded-xl border border-fio-200 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-gray-900"
                   />
                 </div>
@@ -857,6 +943,22 @@ export const NewProductModal: React.FC = () => {
                     onChange={(e) => setSku(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-fio-200 font-mono font-bold focus:ring-2 focus:ring-fio-400 focus:outline-none text-fio-900"
                   />
+                  {sku.trim() && (
+                    <div className="mt-2 p-2 rounded-xl bg-purple-50/70 border border-purple-100 flex flex-col items-center">
+                      <div className="flex items-center justify-between w-full text-[9px] text-slate-500 font-bold uppercase mb-1">
+                        <span className="flex items-center gap-1 text-fio-purple">
+                          <Sparkles className="w-3 h-3 text-fio-pink" /> Código de Barras:
+                        </span>
+                        <span className="font-mono text-fio-purple font-bold">{sku.trim().toUpperCase()}</span>
+                      </div>
+                      <div className="w-full max-w-[210px] bg-white p-1.5 rounded-lg border border-slate-200">
+                        <Barcode128 value={sku.trim().toUpperCase()} height={32} moduleWidth={1.5} />
+                      </div>
+                      <p className="text-[10px] text-slate-500 font-mono font-bold mt-0.5">
+                        {sku.trim().toUpperCase()}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1533,6 +1635,7 @@ export const NewProductModal: React.FC = () => {
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

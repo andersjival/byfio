@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { MapPin, X, CheckCircle2 } from 'lucide-react';
 import { InteractiveMapPicker, MapCoordinates } from './InteractiveMapPicker';
@@ -22,20 +22,25 @@ export const RegisterMapModal: React.FC<RegisterMapModalProps> = ({
   onConfirm,
 }) => {
   const [coords, setCoords] = useState<MapCoordinates>({
-    lat: initialLat ?? 9.9575,
-    lng: initialLng ?? -84.0818,
+    lat: typeof initialLat === 'number' && initialLat !== 0 ? initialLat : 9.9548,
+    lng: typeof initialLng === 'number' && initialLng !== 0 ? initialLng : -84.0815,
     addressSuggestion: initialAddress || undefined,
   });
 
+  // Inicializar estado local únicamente al abrir el modal para evitar reinicios por re-renders del padre
   useEffect(() => {
     if (isOpen) {
       setCoords({
-        lat: initialLat ?? 9.9575,
-        lng: initialLng ?? -84.0818,
+        lat: typeof initialLat === 'number' && initialLat !== 0 ? initialLat : 9.9548,
+        lng: typeof initialLng === 'number' && initialLng !== 0 ? initialLng : -84.0815,
         addressSuggestion: initialAddress || undefined,
       });
     }
-  }, [isOpen, initialLat, initialLng, initialAddress]);
+  }, [isOpen]);
+
+  const handleCoordsChange = useCallback((newCoords: MapCoordinates) => {
+    setCoords(newCoords);
+  }, []);
 
   if (!isOpen || typeof document === 'undefined') return null;
 
@@ -51,7 +56,7 @@ export const RegisterMapModal: React.FC<RegisterMapModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden flex flex-col max-h-[90vh]"
+        className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden flex flex-col max-h-[94vh] transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -65,7 +70,7 @@ export const RegisterMapModal: React.FC<RegisterMapModalProps> = ({
                 Elige tu Ubicación en el Mapa Real
               </h3>
               <p className="text-[11px] text-slate-500 font-sans leading-tight">
-                Arrastra el PIN estrella o usa GPS para entregas exactas
+                Busca tu dirección, arrastra el PIN o presiona 'Hacer Grande'
               </p>
             </div>
           </div>
@@ -84,10 +89,10 @@ export const RegisterMapModal: React.FC<RegisterMapModalProps> = ({
           <InteractiveMapPicker
             lat={coords.lat}
             lng={coords.lng}
-            height="290px"
+            height="300px"
             showPresets={true}
             showGpsButton={true}
-            onChange={(newCoords) => setCoords(newCoords)}
+            onChange={handleCoordsChange}
           />
 
           {coords.addressSuggestion && (
