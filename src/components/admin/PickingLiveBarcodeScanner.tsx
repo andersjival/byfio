@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
-import {
-  Camera, Flashlight, RefreshCw, AlertTriangle, CheckCircle2,
-  Pause, Play, Sparkles, SwitchCamera, XCircle, Sun
-} from 'lucide-react';
-import { playBarcodeSuccessSound, playBarcodeErrorSound, playWaterDropSound } from '../../utils/soundEffects';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { playBarcodeSuccessSound, playBarcodeErrorSound } from '../../utils/soundEffects';
 
 interface PickingLiveBarcodeScannerProps {
   expectedSku: string;
@@ -291,84 +288,11 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
 
   return (
     <div className="relative w-full bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-purple-900/60 shadow-xl flex flex-col select-none">
-      {/* Barra de Controles Superiores del Lector */}
-      <div className="p-2 sm:p-2.5 bg-slate-900/90 border-b border-purple-800/40 flex items-center justify-between text-xs gap-2 shrink-0 z-20">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-              isPaused || cameraError ? 'bg-amber-400' : 'bg-emerald-400'
-            }`} />
-            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-              isPaused || cameraError ? 'bg-amber-500' : 'bg-emerald-500'
-            }`} />
-          </span>
-          <span className="font-bubble font-bold text-[11px] text-white truncate">
-            {isPaused ? 'Lector Pausado' : cameraError ? 'Cámara No Disponible' : 'Pistola Lectora Activa'}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1.5 shrink-0">
-          {hasTorch && (
-            <button
-              type="button"
-              onClick={toggleTorch}
-              className={`p-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1 ${
-                isTorchOn
-                  ? 'bg-fio-yellow text-slate-950 shadow-sm'
-                  : 'bg-slate-800 hover:bg-slate-700 text-yellow-300'
-              }`}
-              title={isTorchOn ? 'Apagar Linterna' : 'Encender Linterna para estantes oscuros'}
-            >
-              <Flashlight className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline text-[10px]">{isTorchOn ? 'Luz ON' : 'Luz'}</span>
-            </button>
-          )}
-
-          {/* Botón de Realce de Claridad / Brillo */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsHighClarity(!isHighClarity);
-              playWaterDropSound();
-            }}
-            className={`p-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1 ${
-              isHighClarity
-                ? 'bg-amber-400 text-slate-950 shadow-sm'
-                : 'bg-slate-800 hover:bg-slate-700 text-amber-300'
-            }`}
-            title={isHighClarity ? 'Desactivar Realce de Claridad' : 'Activar Modo Ultra Claridad (Bodega / Poca Luz)'}
-          >
-            <Sun className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline text-[10px]">{isHighClarity ? 'Ultra Luz' : 'Claridad'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={toggleFacingMode}
-            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white transition-all active:scale-95 flex items-center gap-1"
-            title="Alternar entre cámara trasera y frontal"
-          >
-            <SwitchCamera className="w-3.5 h-3.5" />
-          </button>
-
-          {onTogglePause && (
-            <button
-              type="button"
-              onClick={onTogglePause}
-              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all active:scale-95 flex items-center gap-1"
-              title={isPaused ? 'Reanudar lectura de código de barras' : 'Pausar cámara'}
-            >
-              {isPaused ? <Play className="w-3.5 h-3.5 text-emerald-400" /> : <Pause className="w-3.5 h-3.5" />}
-            </button>
-          )}
-        </div>
-      </div>
-
       {/* Visor de Video en Vivo */}
-      <div className={`relative w-full h-60 sm:h-72 md:h-80 bg-black flex items-center justify-center overflow-hidden ${isHighClarity ? "high-clarity-camera" : ""}`}>
+      <div className={`relative w-full h-64 sm:h-72 md:h-80 bg-black flex items-center justify-center overflow-hidden ${isHighClarity ? "high-clarity-camera" : ""}`}>
         <div id={containerId} className="w-full h-full object-cover" />
 
-        {/* Mira Láser y Encuadre Guiado para Códigos de Barras Centrado Milimétricamente */}
+        {/* Cuadrito de Escaneo Puntiagudo con Esquinas Amarillas */}
         {!cameraError && !isStarting && !isPaused && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-3">
             <div
@@ -380,7 +304,7 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
                   : 'border-fio-pink border-dashed shadow-[0_0_20px_rgba(236,72,153,0.35)]'
               }`}
             >
-              {/* Esquinas Guía Amarillas */}
+              {/* Esquinas Guía Amarillas Puntiagudas */}
               <div className="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-fio-yellow rounded-tl-lg" />
               <div className="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-fio-yellow rounded-tr-lg" />
               <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-fio-yellow rounded-bl-lg" />
@@ -391,13 +315,6 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
 
               {/* Línea Láser Animada en Movimiento Centrada al 50% */}
               <div className="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_10px_#ef4444] animate-pulse top-1/2 -translate-y-1/2" />
-
-              {/* Mensaje de guía flotante dentro de la mira */}
-              <div className="absolute bottom-1.5 inset-x-0 flex justify-center">
-                <span className="text-[10px] bg-slate-950/80 text-fio-yellow font-mono font-bold px-2 py-0.5 rounded-full border border-yellow-500/40">
-                  Centra el código de barras aquí
-                </span>
-              </div>
             </div>
           </div>
         )}
@@ -406,8 +323,6 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
         {isStarting && (
           <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center gap-2 p-4 text-center z-10">
             <RefreshCw className="w-7 h-7 text-fio-pink animate-spin" />
-            <p className="text-xs font-bubble font-bold text-white">Activando lector de código de barras...</p>
-            <p className="text-[10px] text-purple-300">Optimizando enfoque para estanterías</p>
           </div>
         )}
 
@@ -428,50 +343,6 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
             </button>
           </div>
         )}
-
-        {/* Estado Pausado */}
-        {isPaused && !isStarting && (
-          <div className="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center p-4 text-center gap-2 z-10">
-            <Pause className="w-8 h-8 text-purple-400" />
-            <p className="text-xs font-bubble text-slate-300 font-bold">Cámara en Pausa</p>
-            {onTogglePause && (
-              <button
-                type="button"
-                onClick={onTogglePause}
-                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white font-bubble text-xs font-bold shadow-sm"
-              >
-                Reanudar Lector
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Banner de Feedback en Vivo (Éxito o Error) */}
-        {feedback && (
-          <div className={`absolute bottom-2 inset-x-3 p-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg animate-fadeIn z-20 ${
-            feedback.type === 'success'
-              ? 'bg-emerald-950/90 text-emerald-200 border border-emerald-500'
-              : 'bg-rose-950/90 text-rose-200 border border-rose-500'
-          }`}>
-            {feedback.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            ) : (
-              <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
-            )}
-            <span className="text-[11px] leading-tight flex-1">{feedback.message}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Pie con SKU Esperado para Validación Rápida Visual */}
-      <div className="p-2 sm:p-2.5 bg-slate-900 border-t border-purple-900/40 flex items-center justify-between text-xs text-slate-300">
-        <div className="flex items-center gap-1.5 truncate">
-          <span className="text-[10px] text-purple-400 uppercase font-mono font-bold">Esperando SKU:</span>
-          <span className="font-mono font-black text-fio-yellow text-xs bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800">
-            {expectedSku}
-          </span>
-        </div>
-        <span className="text-[10px] text-slate-400 font-bubble">Code 128 / QR / EAN</span>
       </div>
     </div>
   );

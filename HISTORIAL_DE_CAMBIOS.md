@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.61 - Calibración y Centrado Milimétrico del Cuadro de Escaneo con Cámara
+- [x] **Alineación Geométrica Exacta del Stream de Video ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Corregido el desplazamiento vertical donde el video se anclaba en `top: 0` y forzaba al usuario a subir el celular para enfocar.
+  - Aplicado centrado absoluto del elemento `<video>` con `top: 50%; left: 50%; transform: translate(-50%, -50%)`, asegurando que el centro óptico del sensor coincida 1:1 con el centro de la pantalla.
+- [x] **Calibración de qrbox y Marco Guía ([CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx), [PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
+  - Configurado `qrbox` proporcional rectangular y dinámico en el decodificador para enfocar la lectura en el centro exacto del recuadro.
+  - Incorporado punto retículo guía en el centro y línea láser centrada al 50% con indicador `"Centra el código aquí"`.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.61` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.60 - Erradicación de Opacidad y Optimización de Nitidez HD en Cámara de Escáner
 - [x] **Eliminación del Velo Oscuro de Html5Qrcode ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx), [CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx)):**
   - Desactivada la inyección del sombreado opaco `rgba(0,0,0,0.48)` (`#qr-shaded-region`) que oscurecía y empañaba el video de la cámara del celular.
