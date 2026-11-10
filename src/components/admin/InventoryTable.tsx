@@ -4,9 +4,10 @@ import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   QrCode, AlertOctagon, Plus, Minus, Search, MapPin,
-  PlusCircle, Trash2, Pencil, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck, Barcode
+  PlusCircle, Trash2, Pencil, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck, Barcode, ClipboardCheck
 } from 'lucide-react';
 import { ShelfBarcodeLabelsModal } from './ShelfBarcodeLabelsModal';
+import { InventoryChecklistModal } from './InventoryChecklistModal';
 import type { AdminTabType } from './AdminTabs';
 
 interface InventoryTableProps {
@@ -32,6 +33,7 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable'>('all');
   const [isShelfBarcodesOpen, setIsShelfBarcodesOpen] = useState(false);
+  const [isInventoryChecklistOpen, setIsInventoryChecklistOpen] = useState(false);
   const [shelfFilterTarget, setShelfFilterTarget] = useState<string>('Todas');
   const [categoryFilterTarget, setCategoryFilterTarget] = useState<string>('Todas');
 
@@ -124,6 +126,15 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
           >
             <Barcode className="w-5 h-5 text-fio-yellow" />
             <span>Imprimir Códigos Estante</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsInventoryChecklistOpen(true)}
+            className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clay transition-all active:scale-95 cursor-pointer"
+            title="Generar checklist de toma física de inventario e imprimir por estante"
+          >
+            <ClipboardCheck className="w-5 h-5 text-amber-300" />
+            <span>Checklist por Estante</span>
           </button>
           {isFeatureEnabled('inventory', 'product_crud') && (
             <button
@@ -673,6 +684,11 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
         onClose={() => setIsShelfBarcodesOpen(false)}
         initialShelfLocation={shelfFilterTarget}
         initialCategory={categoryFilterTarget}
+      />
+
+      <InventoryChecklistModal
+        isOpen={isInventoryChecklistOpen}
+        onClose={() => setIsInventoryChecklistOpen(false)}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
-import { SupplierOrder, SupplierOrderItem, SupplierOrderStatus, AgendaPriority } from '../../types';
+import { Supplier, SupplierOrder, SupplierOrderItem, SupplierOrderStatus, AgendaPriority } from '../../types';
 import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatters';
 import {
   Truck, Plus, Search, Calendar, Phone, Mail, CheckCircle2, Clock,

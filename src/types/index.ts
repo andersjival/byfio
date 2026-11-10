@@ -416,6 +416,17 @@ export interface SupplierOrderItem {
   shelfLocation?: string;
 }
 
+export interface Supplier {
+  id: string;
+  name: string;
+  phone: string;
+  whatsappPhone?: string;
+  email?: string;
+  address?: string;
+  notes?: string;
+  createdAt?: string;
+}
+
 export interface SupplierOrder {
   id: string;
   orderNumber: string;

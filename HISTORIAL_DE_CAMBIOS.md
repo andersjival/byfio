@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.55 - Checklist de Toma Física de Inventario por Estante con Códigos de Barra y Hojas de Conteo
+- [x] **Generador de Checklist y Hojas de Conteo por Estante ([InventoryChecklistModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryChecklistModal.tsx)):**
+  - Implementado modal y motor de hojas de conteo de inventario físico agrupadas estrictamente por estante (`shelfLocation`).
+  - Configurado salto de página forzado en impresión (`break-after: page !important; min-height: 260mm`) para garantizar exactamente 1 hoja independiente por cada estante.
+  - Encabezado oficial con logo de ByFio, banner destacado de la estantería auditada (`📍 Estantería: [Nombre]`), número de hoja, responsable/auditor y fecha.
+  - Columnas estructuradas: `#`, código SKU con código de barras Code 128 legible por escáner o pistola, descripción y categoría, stock teórico en sistema, casilla de conteo físico real (`[ ___ ]`) para escribir a mano o ingresar en digital, estado/diferencia calculada (`+ / -`) y observaciones.
+  - Pie de página oficial en cada hoja con líneas de firma para el Auditor y el Supervisor de ByFio.
+- [x] **Acceso Directo en Inventario ([InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Añadido botón de acción rápida `📋 Checklist por Estante` junto a los controles de impresión de códigos.
+- [x] **Actualización de Service Worker:**
+  - Versión de caché PWA elevada a `byfio-pwa-v4.19.55` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.54 - Sistema de Lector de Códigos de Barras con la Cámara del Celular en Modo Alisto
 - [x] **Pistola Lectora de Códigos en Vivo ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
   - Desarrollado componente atómico de escáner en tiempo real con activación continua de la cámara trasera del celular.

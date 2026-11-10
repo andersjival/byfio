@@ -5,7 +5,7 @@ import {
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
   SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus,
-  SupplierOrder, SupplierOrderStatus, DailyClosingRecord, ProposalAcceptance
+  Supplier, SupplierOrder, SupplierOrderStatus, DailyClosingRecord, ProposalAcceptance
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -398,6 +398,10 @@ interface AppContextType {
   updateSupplierOrder: (id: string, updates: Partial<SupplierOrder>) => void;
   deleteSupplierOrder: (id: string) => void;
   updateSupplierOrderStatus: (id: string, newStatus: SupplierOrderStatus) => void;
+  suppliers: Supplier[];
+  addSupplier: (supplier: Omit<Supplier, 'id' | 'createdAt'>) => Supplier;
+  updateSupplier: (id: string, updates: Partial<Supplier>) => void;
+  deleteSupplier: (id: string) => void;
   dailyClosings: DailyClosingRecord[];
   saveDailyClosing: (closingData: Omit<DailyClosingRecord, 'id' | 'closedAt'> & { id?: string; closedAt?: string }) => DailyClosingRecord;
   deleteDailyClosing: (id: string) => void;
@@ -442,6 +446,7 @@ const STORAGE_KEYS = {
   SUPERADMIN_MODULES: SUPERADMIN_STORAGE_KEY,
   AGENDA_ITEMS: AGENDA_STORAGE_KEY,
   SUPPLIER_ORDERS: 'byfio_supplier_orders_v1',
+  SUPPLIERS: 'byfio_suppliers_directory_v1',
   DAILY_CLOSINGS: 'byfio_daily_closings_v1',
   PROPOSAL_ACCEPTANCES: 'byfio_proposal_acceptances_v1',
 };
@@ -1146,6 +1151,104 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return ord;
     });
     saveSupplierOrders(updated);
+  };
+
+  // -------------------------------------------------------------
+  // ESTADO Y MÉTODOS DE DIRECTORIO DE PROVEEDORES
+  // -------------------------------------------------------------
+  const DEFAULT_SUPPLIERS_LIST: Supplier[] = [
+    {
+      id: 'supp-1',
+      name: 'Papelera Internacional',
+      phone: '2222-1111',
+      whatsappPhone: '22221111',
+      email: 'ventas@papeleraint.cr',
+      address: 'San José Centro, 200m oeste de La Merced',
+      notes: 'Papelería, cartulinas importadas y sobres especiales',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'supp-2',
+      name: 'Sublimaciones CR',
+      phone: '2440-2222',
+      whatsappPhone: '24402222',
+      email: 'pedidos@sublimacionescr.com',
+      address: 'Alajuela, El Coyol',
+      notes: 'Tazas, botellas térmicas y blanks para sublimar',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'supp-3',
+      name: 'Insumos Creativos',
+      phone: '8888-3333',
+      whatsappPhone: '88883333',
+      email: 'contacto@insumoscreativos.cr',
+      address: 'Heredia Centro',
+      notes: 'Cintas, adhesivos de encuadernación y pegamentos libres de ácido',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'supp-4',
+      name: 'Distribuidora FIO',
+      phone: '6400-4640',
+      whatsappPhone: '64004640',
+      email: 'taller@byfio.com',
+      address: 'Tibás, San José',
+      notes: 'Insumos propios de taller y encuadernación',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'supp-5',
+      name: 'Proveedor Local',
+      phone: '2233-4455',
+      whatsappPhone: '22334455',
+      email: 'local@proveedores.cr',
+      address: 'San José, Tibás',
+      notes: 'Materiales varios y papelería rápida',
+      createdAt: new Date().toISOString(),
+    },
+  ];
+
+  const [suppliers, setSuppliers] = useState<Supplier[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.SUPPLIERS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return deepSanitize(parsed);
+        }
+      }
+    } catch {}
+    return deepSanitize(DEFAULT_SUPPLIERS_LIST);
+  });
+
+  const saveSuppliers = (suppliersList: Supplier[]) => {
+    const sanitized = deepSanitize(suppliersList);
+    setSuppliers(sanitized);
+    try {
+      localStorage.setItem(STORAGE_KEYS.SUPPLIERS, JSON.stringify(sanitized));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', suppliers: sanitized });
+    } catch {}
+  };
+
+  const addSupplier = (supplierData: Omit<Supplier, 'id' | 'createdAt'>): Supplier => {
+    const newSupp: Supplier = {
+      ...supplierData,
+      id: `supp-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      createdAt: new Date().toISOString(),
+    };
+    saveSuppliers([...suppliers, newSupp]);
+    return newSupp;
+  };
+
+  const updateSupplier = (id: string, updates: Partial<Supplier>) => {
+    const updated = suppliers.map((s) => (s.id === id ? { ...s, ...updates } : s));
+    saveSuppliers(updated);
+  };
+
+  const deleteSupplier = (id: string) => {
+    const updated = suppliers.filter((s) => s.id !== id);
+    saveSuppliers(updated);
   };
 
   const [dailyClosings, setDailyClosings] = useState<DailyClosingRecord[]>(() => {
@@ -4259,6 +4362,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateSupplierOrder,
         deleteSupplierOrder,
         updateSupplierOrderStatus,
+        suppliers,
+        addSupplier,
+        updateSupplier,
+        deleteSupplier,
         dailyClosings,
         saveDailyClosing,
         deleteDailyClosing,
