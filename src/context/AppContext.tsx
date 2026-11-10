@@ -2857,11 +2857,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       }
 
-      const cartId = `${item.id}-${item.customText || 'standard'}-${Date.now()}`;
+      const isLayaway = Boolean(item.isLayaway);
+      const cartId = `${item.id}-${isLayaway ? 'layaway' : 'normal'}-${item.customText || 'standard'}-${Date.now()}`;
       setCart((prev) => {
         const safePrev = Array.isArray(prev) ? prev.filter((i) => i && i.id) : [];
         const existing = safePrev.find(
-          (i) => i.id === item.id && (i.customText || '') === (item.customText || '')
+          (i) => i.id === item.id && (i.customText || '') === (item.customText || '') && Boolean(i.isLayaway) === isLayaway
         );
         if (existing) {
           return safePrev.map((i) =>
@@ -2929,6 +2930,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customText: item.customText,
       isPicked: item.type === 'workshop',
       image: item.image,
+      isLayaway: item.isLayaway,
+      layawayMonths: item.layawayMonths,
+      layawayPaymentsCount: item.layawayPaymentsCount,
+      layawayDownPaymentPercent: item.layawayDownPaymentPercent,
+      layawayTotalAmount: item.layawayTotalAmount,
+      layawayDownPaymentAmount: item.layawayDownPaymentAmount,
+      layawayRemainingAmount: item.layawayRemainingAmount,
     }));
 
     const isAllInitiallyPicked = orderItems.length > 0 && orderItems.every((it) => it.isPicked);

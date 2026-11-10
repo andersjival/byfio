@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Workshop, WorkshopBenefitItem } from '../../types';
 import { formatCRC } from '../../utils/formatters';

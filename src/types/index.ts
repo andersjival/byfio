@@ -75,6 +75,7 @@ export type ProductCategory =
   | 'Artículos Sublimados'
   | 'Stickers y Papelería'
   | 'Kits e Insumos'
+  | 'Máquinas y Equipo'
   | string;
 
 export interface Product {
@@ -98,6 +99,10 @@ export interface Product {
   showInStore?: boolean; // Visible en la Tienda Online (por default true)
   showInCatalog?: boolean; // Visible en el Catálogo Online (por default true)
   isAvailable?: boolean; // Activo/Disponible para venta en modo disponibilidad (default true)
+  hasLayaway?: boolean; // Habilitado para Sistema de Apartados
+  layawayMonths?: number; // Plazo del apartado en meses (ej: 1, 2, 3, 4, 6)
+  layawayPaymentsCount?: number; // Cantidad total de cuotas / pagos (ej: 2, 3, 4, 6)
+  layawayDownPaymentPercent?: number; // Porcentaje del pago inicial (ej: 20, 25, 30, 50)
 }
 
 export interface WorkshopBenefitItem {
@@ -147,6 +152,13 @@ export interface OrderItem {
   image?: string;
   isMissing?: boolean; // Marcado como faltante durante el alisto
   missingAt?: string;  // Fecha en que se reportó faltante
+  isLayaway?: boolean; // Pedido bajo modalidad de apartado
+  layawayMonths?: number;
+  layawayPaymentsCount?: number;
+  layawayDownPaymentPercent?: number;
+  layawayTotalAmount?: number;
+  layawayDownPaymentAmount?: number;
+  layawayRemainingAmount?: number;
 }
 
 export interface InventoryMissingReport {
@@ -228,6 +240,13 @@ export interface CartItem {
   images?: string[];
   shelfLocation?: string;
   spotsLeft?: number;
+  isLayaway?: boolean; // Artículo en modalidad de apartado (1ª cuota)
+  layawayMonths?: number;
+  layawayPaymentsCount?: number;
+  layawayDownPaymentPercent?: number;
+  layawayTotalAmount?: number;
+  layawayDownPaymentAmount?: number;
+  layawayRemainingAmount?: number;
 }
 
 export interface UserPermissions {

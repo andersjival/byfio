@@ -1,4 +1,4 @@
-export interface BlockedSpace {
+﻿export interface BlockedSpace {
   id: string;
   title: string;
   date?: string; // YYYY-MM-DD or undefined for daily recurring

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme, StarAlertDuration } from '../../types';
 import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play, GraduationCap, BookOpen, Check, Vibrate, Sliders, Zap } from 'lucide-react';

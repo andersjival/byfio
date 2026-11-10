@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Workshop, AppRoute } from '../../types';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';

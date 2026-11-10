@@ -379,6 +379,11 @@ export const OrdersQueue: React.FC = () => {
                       <CheckCircle2 className="w-3 h-3 text-purple-600" />
                       <span>Pagado por {order.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia'} (Verificado)</span>
                     </span>
+                    {(order.items?.some((it) => it.isLayaway) || (order.notes && order.notes.includes('[APARTADO]'))) && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shadow-xs">
+                        🏷️ Plan de Apartado (1ª Cuota)
+                      </span>
+                    )}
                     {(order.pickedBy || isFinished) && (
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1 shadow-xs">
                         <UserCheck className="w-3 h-3 text-fio-pink" />

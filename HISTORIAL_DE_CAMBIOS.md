@@ -17,6 +17,25 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.58 - Sistema de Apartados para Máquinas y Equipo (Plazo, Cuotas y Pago Inicial en Tienda)
+- [x] **Configuración en Agregar y Editar Producto ([NewProductModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx), [types/index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts)):**
+  - Añadida la categoría oficial `'Máquinas y Equipo'` al listado de categorías predeterminadas.
+  - Creado bloque dedicado e interactivo de **Sistema de Apartados** que se auto-activa al seleccionar "Máquinas y Equipo" o de forma opcional para cualquier producto.
+  - Selectores configurables:
+    1. **Plazo del apartado:** 1 mes (30 días), 2 meses (60 días), 3 meses (90 días), 4 meses (120 días) o 6 meses (180 días).
+    2. **Cantidad total de pagos:** 2 a 6 cuotas.
+    3. **Porcentaje de pago inicial:** 20% a 50% del valor total.
+  - Calculadora financiera en vivo que muestra inmediatamente el monto exacto en colones (₡) de la 1ª cuota que pagará el cliente en tienda, el saldo restante y las cuotas periódicas resultantes.
+- [x] **Tienda y Catálogo Online con Botón de Apartado ([ProductsSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/ProductsSection.tsx), [ProductDetailModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/ProductDetailModal.tsx), [CatalogPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx)):**
+  - Insignia destacada `🔖 Apartado Disponible` en tarjetas y modal de detalle para artículos elegibles.
+  - Desglose financiero transparente: el cliente ve claramente el precio de contado y el monto con el que puede apartar hoy pagando solo su 1ª cuota inicial.
+  - Botón "Apartar" / "Realizar Apartado" que agrega al carrito la 1ª cuota correspondiente para pagar de inmediato vía SINPE Móvil o Transferencia, registrando la reserva y descontando inventario.
+- [x] **Flujo de Carrito, Checkout y Pedidos ([CartDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CartDrawer.tsx), [CheckoutModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx), [OrdersQueue.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [InvoiceModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InvoiceModal.tsx)):**
+  - Carrito y comprobante desglosan el ítem como "1ª Cuota de Apartado", detallando saldo pendiente y plazo.
+  - Notas del pedido y comprobante de alisto documentan el monto pagado hoy y las cuotas restantes para control administrativo.
+- [x] **Caché PWA y Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js)):**
+  - Versión elevada a `byfio-pwa-v4.19.58`.
+
 ### Versión 4.19.57 - Integración del Lector de Alisto Continuo con Cámara en la PWA Móvil de Pedidos
 - [x] **Integración en la PWA de Alisto ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
   - Montado `GuidedPickingModal` en la ruta exclusiva `/pedidos-mobile` (PWA de colaboradores/operarios de alisto) para que el modal de cámara tome toda la pantalla del celular sin importar la ruta de entrada.

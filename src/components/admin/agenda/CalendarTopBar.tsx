@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -174,7 +174,7 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
             {appointmentsCount} citas programadas {viewType === 'weekly' ? 'esta semana' : 'este día'}
           </span>
         </div>
-
+
       </div>
     </div>
   );

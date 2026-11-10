@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ShoppingBag, PackageCheck, Sparkles, X, ArrowRight, ShieldCheck, Heart } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';

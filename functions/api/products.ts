@@ -78,6 +78,10 @@ const mapRowToProduct = (r: ProductDbRow) => {
     isAvailable: effectiveAvail,
     showInStore: effectiveAvail,
     showInCatalog: effectiveAvail,
+    hasLayaway: Boolean((r as any).has_layaway),
+    layawayMonths: (r as any).layaway_months ? Number((r as any).layaway_months) : 3,
+    layawayPaymentsCount: (r as any).layaway_payments_count ? Number((r as any).layaway_payments_count) : 3,
+    layawayDownPaymentPercent: (r as any).layaway_down_payment_percent ? Number((r as any).layaway_down_payment_percent) : 30,
   };
 };
 
@@ -88,6 +92,18 @@ const ensureProductColumns = async (db: any) => {
   } catch {}
   try {
     await db.prepare('ALTER TABLE products ADD COLUMN images_json TEXT').run().catch(() => {});
+  } catch {}
+  try {
+    await db.prepare('ALTER TABLE products ADD COLUMN has_layaway INTEGER DEFAULT 0').run().catch(() => {});
+  } catch {}
+  try {
+    await db.prepare('ALTER TABLE products ADD COLUMN layaway_months INTEGER DEFAULT 3').run().catch(() => {});
+  } catch {}
+  try {
+    await db.prepare('ALTER TABLE products ADD COLUMN layaway_payments_count INTEGER DEFAULT 3').run().catch(() => {});
+  } catch {}
+  try {
+    await db.prepare('ALTER TABLE products ADD COLUMN layaway_down_payment_percent INTEGER DEFAULT 30').run().catch(() => {});
   } catch {}
 };
 
@@ -142,12 +158,18 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       const finalImagesList = userImages.length > 0 ? userImages : ['/images/placeholder-new-product.jpg'];
       const imagesJson = JSON.stringify(finalImagesList);
 
+      const hasLayaway = data.hasLayaway ? 1 : 0;
+      const layawayMonths = data.layawayMonths ? Number(data.layawayMonths) : 3;
+      const layawayPaymentsCount = data.layawayPaymentsCount ? Number(data.layawayPaymentsCount) : 3;
+      const layawayDownPaymentPercent = data.layawayDownPaymentPercent ? Number(data.layawayDownPaymentPercent) : 30;
+
       await context.env.DB.prepare(
         `INSERT OR REPLACE INTO products (
           id, sku, name, category, shelf_location, price, cost_price,
           stock, min_stock, max_stock, image, is_customizable,
-          customization_placeholder, unit, description, is_available, images_json
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          customization_placeholder, unit, description, is_available, images_json,
+          has_layaway, layaway_months, layaway_payments_count, layaway_down_payment_percent
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         id,
         data.sku,
@@ -165,7 +187,11 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         data.unit || 'Unidad',
         data.description || '',
         isAvail,
-        imagesJson
+        imagesJson,
+        hasLayaway,
+        layawayMonths,
+        layawayPaymentsCount,
+        layawayDownPaymentPercent
       ).run();
     }
 
@@ -216,7 +242,8 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
       const {
         id, stock, minStock, maxStock, isAvailable,
         name, sku, category, shelfLocation, price, costPrice,
-        image, images, isCustomizable, customizationPlaceholder, unit, description
+        image, images, isCustomizable, customizationPlaceholder, unit, description,
+        hasLayaway, layawayMonths, layawayPaymentsCount, layawayDownPaymentPercent
       } = body;
 
       const userImages = Array.isArray(images) && images.length > 0
@@ -254,7 +281,11 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
             unit = COALESCE(?, unit),
             description = COALESCE(?, description),
             is_available = CASE WHEN ? IS NOT NULL THEN ? ELSE is_available END,
-            images_json = CASE WHEN ? IS NOT NULL THEN ? ELSE images_json END
+            images_json = CASE WHEN ? IS NOT NULL THEN ? ELSE images_json END,
+            has_layaway = CASE WHEN ? IS NOT NULL THEN ? ELSE has_layaway END,
+            layaway_months = CASE WHEN ? IS NOT NULL THEN ? ELSE layaway_months END,
+            layaway_payments_count = CASE WHEN ? IS NOT NULL THEN ? ELSE layaway_payments_count END,
+            layaway_down_payment_percent = CASE WHEN ? IS NOT NULL THEN ? ELSE layaway_down_payment_percent END
           WHERE id = ?`
         ).bind(
           sku ?? null,
@@ -275,6 +306,14 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           effectiveAvail,
           imagesJson,
           imagesJson,
+          hasLayaway !== undefined ? (hasLayaway ? 1 : 0) : null,
+          hasLayaway !== undefined ? (hasLayaway ? 1 : 0) : null,
+          layawayMonths !== undefined ? Number(layawayMonths) : null,
+          layawayMonths !== undefined ? Number(layawayMonths) : null,
+          layawayPaymentsCount !== undefined ? Number(layawayPaymentsCount) : null,
+          layawayPaymentsCount !== undefined ? Number(layawayPaymentsCount) : null,
+          layawayDownPaymentPercent !== undefined ? Number(layawayDownPaymentPercent) : null,
+          layawayDownPaymentPercent !== undefined ? Number(layawayDownPaymentPercent) : null,
           id
         ).run();
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { metricsTracker } from '../../services/metricsTracker';
 
 interface BrandLogoProps {

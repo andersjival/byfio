@@ -1,4 +1,4 @@
-import { AppRoute } from '../types';
+﻿import { AppRoute } from '../types';
 import type { AdminTabType } from '../components/admin/AdminTabs';
 
 export interface RouteInfo {

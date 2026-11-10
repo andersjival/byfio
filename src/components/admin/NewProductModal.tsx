@@ -6,7 +6,8 @@ import { formatCRC } from '../../utils/formatters';
 import {
   X, PlusCircle, Hash, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
-  Store, BookOpen, ChevronDown, Plus, RotateCcw, Trash2, Sparkles, Upload, Truck
+  Store, BookOpen, ChevronDown, Plus, RotateCcw, Trash2, Sparkles, Upload, Truck,
+  BookmarkCheck, CalendarClock, BadgePercent
 } from 'lucide-react';
 import { MultiImageUploadField } from '../common/MultiImageUploadField';
 import { Barcode128 } from '../common/Barcode128';
@@ -21,6 +22,7 @@ const DEFAULT_CATEGORIES = [
   'Artículos Sublimados',
   'Stickers y Papelería',
   'Kits e Insumos',
+  'Máquinas y Equipo',
 ];
 
 const DEFAULT_SHELF_LOCATIONS = [
@@ -103,6 +105,10 @@ export const NewProductModal: React.FC = () => {
   const [showInStore, setShowInStore] = useState(true);
   const [showInCatalog, setShowInCatalog] = useState(true);
   const [isAvailable, setIsAvailable] = useState(true);
+  const [hasLayaway, setHasLayaway] = useState(false);
+  const [layawayMonths, setLayawayMonths] = useState<number>(3);
+  const [layawayPaymentsCount, setLayawayPaymentsCount] = useState<number>(3);
+  const [layawayDownPaymentPercent, setLayawayDownPaymentPercent] = useState<number>(30);
   const [successToast, setSuccessToast] = useState<string | null>(null);
   const [createdProductBarcode, setCreatedProductBarcode] = useState<{
     name: string;
@@ -602,6 +608,13 @@ export const NewProductModal: React.FC = () => {
       setShowInCatalog(editingProduct.showInCatalog !== false);
       const curStock = Number(editingProduct.stock) || 0;
       setIsAvailable(curStock <= 0 ? false : editingProduct.isAvailable !== false);
+      const isLayEligible = Boolean(editingProduct.hasLayaway) ||
+        (editingProduct.category || '').toLowerCase().includes('maquina') ||
+        (editingProduct.category || '').toLowerCase().includes('equipo');
+      setHasLayaway(editingProduct.hasLayaway !== undefined ? Boolean(editingProduct.hasLayaway) : isLayEligible);
+      setLayawayMonths(editingProduct.layawayMonths ? Number(editingProduct.layawayMonths) : 3);
+      setLayawayPaymentsCount(editingProduct.layawayPaymentsCount ? Number(editingProduct.layawayPaymentsCount) : 3);
+      setLayawayDownPaymentPercent(editingProduct.layawayDownPaymentPercent ? Number(editingProduct.layawayDownPaymentPercent) : 30);
       setIsCreatingNewCat(false);
       setCustomCategory('');
     } else {
@@ -627,6 +640,10 @@ export const NewProductModal: React.FC = () => {
       setShowInStore(true); // Marcado por default
       setShowInCatalog(true); // Marcado por default
       setIsAvailable(true); // Disponible por default
+      setHasLayaway(false);
+      setLayawayMonths(3);
+      setLayawayPaymentsCount(3);
+      setLayawayDownPaymentPercent(30);
       setIsCreatingNewCat(false);
       setCustomCategory('');
     }
@@ -733,6 +750,10 @@ export const NewProductModal: React.FC = () => {
         showInStore: finalIsAvailable ? showInStore : false,
         showInCatalog: finalIsAvailable ? showInCatalog : false,
         isAvailable: finalIsAvailable,
+        hasLayaway,
+        layawayMonths: hasLayaway ? Number(layawayMonths) || 3 : undefined,
+        layawayPaymentsCount: hasLayaway ? Number(layawayPaymentsCount) || 3 : undefined,
+        layawayDownPaymentPercent: hasLayaway ? Number(layawayDownPaymentPercent) || 30 : undefined,
       });
 
       setSuccessToast('¡Artículo actualizado y guardado correctamente!');
@@ -764,6 +785,10 @@ export const NewProductModal: React.FC = () => {
         showInStore: finalIsAvailable ? showInStore : false,
         showInCatalog: finalIsAvailable ? showInCatalog : false,
         isAvailable: finalIsAvailable,
+        hasLayaway,
+        layawayMonths: hasLayaway ? Number(layawayMonths) || 3 : undefined,
+        layawayPaymentsCount: hasLayaway ? Number(layawayPaymentsCount) || 3 : undefined,
+        layawayDownPaymentPercent: hasLayaway ? Number(layawayDownPaymentPercent) || 30 : undefined,
       });
 
       setSuccessToast('¡Artículo creado y código de barras generado!');
@@ -1039,7 +1064,12 @@ export const NewProductModal: React.FC = () => {
                               setIsCreatingNewCat(true);
                               setCustomCategory('');
                             } else {
-                              setCategory(e.target.value as ProductCategory);
+                              const selCat = e.target.value as ProductCategory;
+                              setCategory(selCat);
+                              const lowerCat = (selCat || '').toLowerCase();
+                              if (lowerCat.includes('maquina') || lowerCat.includes('máquina') || lowerCat.includes('equipo')) {
+                                setHasLayaway(true);
+                              }
                             }
                           }}
                           className="w-full px-2.5 pr-6 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-gray-800 focus:ring-2 focus:ring-fio-400 focus:outline-none cursor-pointer text-xs appearance-none truncate"
@@ -1511,6 +1541,130 @@ export const NewProductModal: React.FC = () => {
                   onChange={(e) => setCustomizationPlaceholder(e.target.value)}
                   className="w-full px-3 py-1.5 rounded-xl border border-fio-200 bg-purple-50/40 text-xs focus:ring-2 focus:ring-fio-400 focus:outline-none"
                 />
+              </div>
+            )}
+          </div>
+
+          {/* Bloque Sistema de Apartados (Plazo, Cuotas y Pago Inicial) */}
+          <div className="p-4 bg-gradient-to-r from-amber-50/70 via-white to-pink-50/40 rounded-2xl border border-amber-200/90 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="hasLayaway"
+                  checked={hasLayaway}
+                  onChange={(e) => setHasLayaway(e.target.checked)}
+                  className="w-4 h-4 text-amber-600 rounded border-gray-300 focus:ring-amber-400 cursor-pointer"
+                />
+                <label htmlFor="hasLayaway" className="font-bubble font-bold text-slate-800 cursor-pointer text-xs flex items-center gap-1.5">
+                  <BookmarkCheck className="w-4 h-4 text-amber-600" />
+                  <span>Habilitar Sistema de Apartados para este Producto</span>
+                </label>
+              </div>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                hasLayaway ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-slate-100 text-slate-500'
+              }`}>
+                {hasLayaway ? 'Apartado Activo' : 'Opcional'}
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-500 leading-tight">
+              Permite a los clientes reservar este producto pagando solo la 1ª cuota inicial en la tienda online o catálogo, y saldar las cuotas restantes en el plazo establecido.
+            </p>
+
+            {hasLayaway && (
+              <div className="space-y-3 pt-1 border-t border-amber-100">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* 1. Plazo del Apartado */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
+                      <CalendarClock className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Plazo del Apartado</span>
+                    </label>
+                    <select
+                      value={layawayMonths}
+                      onChange={(e) => setLayawayMonths(Number(e.target.value))}
+                      className="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs text-slate-800 font-semibold focus:ring-2 focus:ring-amber-400 focus:outline-none"
+                    >
+                      <option value={1}>1 Mes (30 días)</option>
+                      <option value={2}>2 Meses (60 días)</option>
+                      <option value={3}>3 Meses (90 días)</option>
+                      <option value={4}>4 Meses (120 días)</option>
+                      <option value={6}>6 Meses (180 días)</option>
+                    </select>
+                  </div>
+
+                  {/* 2. Cantidad de Pagos / Cuotas */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
+                      <Layers className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Cantidad de Pagos</span>
+                    </label>
+                    <select
+                      value={layawayPaymentsCount}
+                      onChange={(e) => setLayawayPaymentsCount(Number(e.target.value))}
+                      className="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs text-slate-800 font-semibold focus:ring-2 focus:ring-amber-400 focus:outline-none"
+                    >
+                      <option value={2}>2 Pagos (Inicial + 1 cuota)</option>
+                      <option value={3}>3 Pagos (Inicial + 2 cuotas)</option>
+                      <option value={4}>4 Pagos (Inicial + 3 cuotas)</option>
+                      <option value={5}>5 Pagos (Inicial + 4 cuotas)</option>
+                      <option value={6}>6 Pagos (Inicial + 5 cuotas)</option>
+                    </select>
+                  </div>
+
+                  {/* 3. Porcentaje del Pago Inicial */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
+                      <BadgePercent className="w-3.5 h-3.5 text-amber-600" />
+                      <span>% Pago Inicial</span>
+                    </label>
+                    <select
+                      value={layawayDownPaymentPercent}
+                      onChange={(e) => setLayawayDownPaymentPercent(Number(e.target.value))}
+                      className="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs text-slate-800 font-semibold focus:ring-2 focus:ring-amber-400 focus:outline-none"
+                    >
+                      <option value={20}>20% del precio total</option>
+                      <option value={25}>25% del precio total</option>
+                      <option value={30}>30% del precio total</option>
+                      <option value={35}>35% del precio total</option>
+                      <option value={40}>40% del precio total</option>
+                      <option value={50}>50% del precio total</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Resumen Calculado en Vivo del Apartado */}
+                {(() => {
+                  const numPrice = Number(price) || 0;
+                  const downPaymentAmt = Math.round(numPrice * (layawayDownPaymentPercent / 100));
+                  const remAmt = Math.max(0, numPrice - downPaymentAmt);
+                  const remPayments = Math.max(1, layawayPaymentsCount - 1);
+                  const installmentAmt = Math.round(remAmt / remPayments);
+
+                  return (
+                    <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-200 text-xs space-y-1.5">
+                      <div className="flex items-center justify-between font-bold text-amber-950">
+                        <span className="flex items-center gap-1">
+                          <span>💰 1ª Cuota (Pago Inicial a pagar en Tienda):</span>
+                        </span>
+                        <span className="text-sm font-bubble text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded-lg">
+                          {formatCRC(downPaymentAmt)}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-600 flex flex-wrap items-center justify-between gap-1 pt-1 border-t border-amber-200/60">
+                        <span>
+                          Saldo restante: <strong>{formatCRC(remAmt)}</strong> dividido en{' '}
+                          <strong>{remPayments} {remPayments === 1 ? 'cuota' : 'cuotas'}</strong> de{' '}
+                          <strong>{formatCRC(installmentAmt)}</strong> c/u.
+                        </span>
+                        <span className="text-amber-800 font-semibold">
+                          Plazo: {layawayMonths} {layawayMonths === 1 ? 'mes' : 'meses'}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             )}
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from './context/AppContext';
 import { AppRoute } from './types';
 import { BackgroundDecor } from './components/common/BackgroundDecor';

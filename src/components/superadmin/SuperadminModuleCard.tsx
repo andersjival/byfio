@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   QrCode, Receipt, Boxes, AlertTriangle, DollarSign, Landmark,
   GraduationCap, Tag, Users, BarChart3, BookOpen, ShoppingBag,

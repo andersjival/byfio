@@ -4,9 +4,10 @@ import { Product, AppRoute } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import { TreeNavigation } from '../common/TreeNavigation';
 import { ProductDetailModal } from './ProductDetailModal';
+import { isProductLayawayEligible, getProductLayawayDetails } from '../../utils/layaway';
 import {
   Search, Plus, Minus, MessageCircle, Pencil, X, Check,
-  ExternalLink, CheckCircle2, ChevronRight, ShoppingBag
+  ExternalLink, CheckCircle2, ChevronRight, ShoppingBag, BookmarkCheck
 } from 'lucide-react';
 
 // Corazoncito azul oficial de by.fio que reemplaza los iconos genéricos de IA
@@ -113,6 +114,34 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
       image: product.image,
       shelfLocation: product.shelfLocation,
       customText: product.isCustomizable ? customText : undefined,
+    });
+
+    setAddedItemAnim(product.id);
+    setTimeout(() => setAddedItemAnim(null), 1200);
+  };
+
+  const handleAddLayaway = (product: Product) => {
+    const qty = getQty(product.id);
+    const customText = customTextInputs[product.id] || '';
+    const lay = getProductLayawayDetails(product);
+
+    addToCart({
+      type: 'product',
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      price: lay.downPaymentAmount, // Paga la 1ª cuota inicial
+      quantity: qty,
+      image: product.image,
+      shelfLocation: product.shelfLocation,
+      customText: product.isCustomizable ? customText : undefined,
+      isLayaway: true,
+      layawayMonths: lay.months,
+      layawayPaymentsCount: lay.paymentsCount,
+      layawayDownPaymentPercent: lay.downPaymentPercent,
+      layawayTotalAmount: product.price * qty,
+      layawayDownPaymentAmount: lay.downPaymentAmount * qty,
+      layawayRemainingAmount: lay.remainingAmount * qty,
     });
 
     setAddedItemAnim(product.id);
@@ -340,6 +369,9 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
               const cartItem = safeCart.find((it) => it && it.id === product.id);
               const isInCart = !!cartItem;
               const cartQty = cartItem ? cartItem.quantity : 0;
+              const isLayaway = isProductLayawayEligible(product);
+              const lay = isLayaway ? getProductLayawayDetails(product) : null;
+              const isLayawayInCart = safeCart.some((it) => it && it.id === product.id && it.isLayaway);
 
               return (
                 <div
@@ -369,13 +401,28 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                         {product.sku}
                       </span>
 
-                      {/* Etiqueta Sin Bordes sobre Foto: Producto Agregado */}
-                      {isInCart && (
-                        <span className="absolute bottom-1.5 left-1.5 right-1.5 px-1 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bubble font-bold shadow-md border-0 flex items-center justify-center gap-0.5 animate-fadeIn z-10">
-                          <Check className="w-2.5 h-2.5 stroke-[2.5]" />
-                          <span className="truncate">Agregado{cartQty > 1 ? ` (${cartQty})` : ''}</span>
+                      {lay && (
+                        <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded bg-amber-500 text-white font-mono font-bold text-[8px] flex items-center gap-0.5 shadow-sm">
+                          <BookmarkCheck className="w-2.5 h-2.5" />
+                          <span>Apartado</span>
                         </span>
                       )}
+
+                      {/* Etiqueta Sin Bordes sobre Foto: Producto Agregado */}
+                      <div className="absolute bottom-1.5 left-1.5 right-1.5 flex flex-col gap-0.5 z-10">
+                        {isLayawayInCart && (
+                          <span className="px-1 py-0.5 rounded-full bg-amber-600 text-white text-[9px] font-bubble font-bold shadow-md border-0 flex items-center justify-center gap-0.5 animate-fadeIn">
+                            <BookmarkCheck className="w-2.5 h-2.5 stroke-[2.5]" />
+                            <span className="truncate">Apartado en Carrito</span>
+                          </span>
+                        )}
+                        {isInCart && (
+                          <span className="px-1 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bubble font-bold shadow-md border-0 flex items-center justify-center gap-0.5 animate-fadeIn">
+                            <Check className="w-2.5 h-2.5 stroke-[2.5]" />
+                            <span className="truncate">Agregado{cartQty > 1 ? ` (${cartQty})` : ''}</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Datos del Producto */}
@@ -420,13 +467,20 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       </button>
 
                       {/* Precio Destacado */}
-                      <div className="pt-0.5 flex items-baseline gap-1.5 flex-wrap">
-                        <span className="font-bubble font-bold text-base sm:text-lg text-fio-900">
-                          {formatCRC(product.price * currentQty)}
-                        </span>
-                        {currentQty > 1 && (
-                          <span className="text-[10px] text-slate-400">
-                            ({formatCRC(product.price)} c/u)
+                      <div className="pt-0.5 flex flex-col">
+                        <div className="flex items-baseline gap-1.5 flex-wrap">
+                          <span className="font-bubble font-bold text-base sm:text-lg text-fio-900">
+                            {formatCRC(product.price * currentQty)}
+                          </span>
+                          {currentQty > 1 && (
+                            <span className="text-[10px] text-slate-400">
+                              ({formatCRC(product.price)} c/u)
+                            </span>
+                          )}
+                        </div>
+                        {lay && (
+                          <span className="text-[10px] font-bold text-amber-700 leading-tight">
+                            Aparta con {formatCRC(lay.downPaymentAmount * currentQty)} ({lay.downPaymentPercent}%)
                           </span>
                         )}
                       </div>
@@ -473,6 +527,19 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       </button>
                     </div>
 
+                    {/* Botón Realizar Apartado si aplica */}
+                    {lay && (
+                      <button
+                        type="button"
+                        onClick={() => handleAddLayaway(product)}
+                        className="py-2 px-2.5 sm:px-3 rounded-full font-bubble font-bold text-xs flex items-center justify-center gap-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-sm active:scale-95 transition-all shrink-0 cursor-pointer"
+                        title={`Apartar este producto pagando solo la 1ª cuota de ${formatCRC(lay.downPaymentAmount * currentQty)}`}
+                      >
+                        <BookmarkCheck className="w-3.5 h-3.5" />
+                        <span>Apartar</span>
+                      </button>
+                    )}
+
                     {/* Botón Agregar al Carrito Responsive */}
                     <button
                       type="button"
@@ -491,12 +558,12 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
                       ) : isInCart ? (
                         <>
                           <ShoppingBag className="w-3.5 h-3.5 text-white shrink-0" />
-                          <span className="truncate">Agregar + ({cartQty})</span>
+                          <span className="truncate">{lay ? 'Contado +' : `Agregar + (${cartQty})`}</span>
                         </>
                       ) : (
                         <>
                           <ShoppingBag className="w-3.5 h-3.5 text-white shrink-0" />
-                          <span className="truncate">Agregar al Carrito</span>
+                          <span className="truncate">{lay ? 'Contado' : 'Agregar al Carrito'}</span>
                         </>
                       )}
                     </button>

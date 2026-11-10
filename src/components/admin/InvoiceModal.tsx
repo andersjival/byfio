@@ -184,6 +184,11 @@ export const InvoiceModal: React.FC = () => {
                     </td>
                     <td className="py-2.5 px-3 border border-slate-300">
                       <p className="font-bold text-slate-900 leading-snug">{item.name}</p>
+                      {item.isLayaway && (
+                        <div className="mt-1 px-2 py-0.5 rounded bg-amber-50 border border-amber-300 text-amber-900 text-[10px] font-semibold block">
+                          🏷️ APARTADO: 1ª cuota inicial pagada ({formatCRC(item.price * item.quantity)}). Saldo pendiente: {formatCRC((item.layawayRemainingAmount || 0) * item.quantity)} en {(item.layawayPaymentsCount || 3) - 1} cuotas (plazo: {item.layawayMonths || 3} meses).
+                        </div>
+                      )}
                       {item.customText && (
                         <div className="mt-1 px-2 py-0.5 rounded bg-purple-50 border border-purple-200 text-fio-800 text-[10px] font-semibold inline-block">
                           ✨ Personalización: "{item.customText}"

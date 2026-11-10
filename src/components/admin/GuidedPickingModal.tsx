@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   X, CheckCircle, AlertTriangle, MapPin, Heart, Scan, QrCode,

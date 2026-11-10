@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+﻿import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Upload, Image as ImageIcon, Link2, Clipboard, Trash2, CheckCircle2,
   Loader2, AlertCircle, Plus, X, Star, Sparkles

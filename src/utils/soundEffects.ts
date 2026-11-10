@@ -1,4 +1,4 @@
-import { triggerHapticFeedback, isHapticVibrationEnabled } from './haptics';
+﻿import { triggerHapticFeedback, isHapticVibrationEnabled } from './haptics';
 // Utilidad de efectos de sonido sintetizados mediante Web Audio API
 // Cero dependencias externas, cero latencia de red y sonido orgánico fluido
 

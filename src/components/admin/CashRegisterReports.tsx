@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { X, Lock, Clock, Users, Calendar, Trash2, Check } from 'lucide-react';
 import { BlockedSpace, TEAM_MEMBERS } from './agendaCalendarTypes';
 

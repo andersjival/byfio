@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Heart, Sparkles, UserCheck } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Heart, Sparkles, UserCheck, BookmarkCheck } from 'lucide-react';
 
 interface CartDrawerProps {
   onOpenCheckout: () => void;
@@ -102,6 +102,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
                       <Heart className="w-3 h-3 text-fio-pink fill-fio-pink shrink-0" />
                       <span>"{item.customText}"</span>
                     </p>
+                  )}
+
+                  {item.isLayaway && (
+                    <div className="mt-1 px-2 py-1 rounded-xl bg-amber-50 border border-amber-200 text-[10px] text-amber-900 space-y-0.5">
+                      <div className="flex items-center gap-1 font-bold">
+                        <BookmarkCheck className="w-3 h-3 text-amber-600" />
+                        <span>1ª Cuota de Apartado (Pago Inicial)</span>
+                      </div>
+                      <div className="text-[10px] text-amber-800 flex justify-between gap-1">
+                        <span>Saldo pendiente: <strong>{formatCRC((item.layawayRemainingAmount || 0) * (item.quantity || 1))}</strong></span>
+                        <span>{(item.layawayPaymentsCount || 3) - 1} cuotas ({item.layawayMonths || 3}m)</span>
+                      </div>
+                    </div>
                   )}
 
                   <div className="flex items-center justify-between mt-2.5">

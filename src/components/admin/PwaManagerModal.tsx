@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Smartphone, Monitor, Download, Share2, Copy, Check,

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Product } from '../../types';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
+import { isProductLayawayEligible, getProductLayawayDetails } from '../../utils/layaway';
 import {
   X, ChevronLeft, ChevronRight, ShoppingBag, MessageCircle,
-  Sparkles, Check, AlertCircle, Plus, Minus, Tag, MapPin
+  Sparkles, Check, AlertCircle, Plus, Minus, Tag, MapPin, BookmarkCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -28,6 +29,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [quantity, setQuantity] = useState(1);
   const [customText, setCustomText] = useState(initialCustomText);
   const [isAddedAnim, setIsAddedAnim] = useState(false);
+  const [isLayawayAddedAnim, setIsLayawayAddedAnim] = useState(false);
 
   // Lista de imágenes: si tiene `images` con elementos las usa, si no hace fallback a `[product.image]`
   const images = useMemo(() => {
@@ -80,6 +82,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const isOutOfStock = inventoryMode === 'availability' ? false : product.stock <= 0;
   const isLowStock = inventoryMode === 'availability' ? false : (product.stock > 0 && product.stock <= product.minStock);
   const maxStockLimit = inventoryMode === 'availability' ? 99 : Math.max(1, product.stock);
+  const isLayaway = isProductLayawayEligible(product);
+  const lay = isLayaway ? getProductLayawayDetails(product) : null;
 
   const handlePrevImage = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -119,6 +123,33 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
     setIsAddedAnim(true);
     setTimeout(() => setIsAddedAnim(false), 2000);
+  };
+
+  const handleAddLayaway = () => {
+    if (isOutOfStock || !product) return;
+    const lay = getProductLayawayDetails(product);
+
+    addToCart({
+      type: 'product',
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      price: lay.downPaymentAmount, // Paga la 1ª cuota inicial
+      quantity,
+      image: images[activeImageIndex] || product.image,
+      shelfLocation: product.shelfLocation,
+      customText: product.isCustomizable ? customText : undefined,
+      isLayaway: true,
+      layawayMonths: lay.months,
+      layawayPaymentsCount: lay.paymentsCount,
+      layawayDownPaymentPercent: lay.downPaymentPercent,
+      layawayTotalAmount: product.price * quantity,
+      layawayDownPaymentAmount: lay.downPaymentAmount * quantity,
+      layawayRemainingAmount: lay.remainingAmount * quantity,
+    });
+
+    setIsLayawayAddedAnim(true);
+    setTimeout(() => setIsLayawayAddedAnim(false), 2000);
   };
 
   const generateWhatsAppInquiryMessage = () => {
@@ -305,6 +336,46 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               )}
             </div>
 
+            {/* Tarjeta Informativa de Sistema de Apartados */}
+            {lay && (
+              <div className="p-3.5 bg-gradient-to-r from-amber-50 via-white to-pink-50/40 rounded-2xl border-2 border-amber-300 shadow-xs space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 font-bubble font-bold text-amber-950 text-xs sm:text-sm">
+                    <BookmarkCheck className="w-4 h-4 text-amber-600" />
+                    <span>Sistema de Apartados Disponible</span>
+                  </div>
+                  <span className="text-[10px] bg-amber-200/90 text-amber-950 px-2.5 py-0.5 rounded-full font-bold">
+                    {lay.downPaymentPercent}% Inicial
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-center pt-0.5">
+                  <div className="p-2 rounded-xl bg-white border border-amber-200 shadow-2xs">
+                    <span className="block text-[10px] text-slate-500 font-bold uppercase">1ª Cuota Hoy</span>
+                    <span className="font-bubble font-bold text-xs sm:text-sm text-amber-900">
+                      {formatCRC(lay.downPaymentAmount * quantity)}
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white border border-amber-200 shadow-2xs">
+                    <span className="block text-[10px] text-slate-500 font-bold uppercase">Cuotas Restantes</span>
+                    <span className="font-bubble font-bold text-xs sm:text-sm text-slate-800">
+                      {lay.remainingPaymentsCount}x {formatCRC(lay.installmentAmount * quantity)}
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white border border-amber-200 shadow-2xs">
+                    <span className="block text-[10px] text-slate-500 font-bold uppercase">Plazo Máximo</span>
+                    <span className="font-bubble font-bold text-xs sm:text-sm text-slate-800">
+                      {lay.months} {lay.months === 1 ? 'mes' : 'meses'}
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-[10px] text-slate-600 text-center leading-tight">
+                  Aparta este equipo abonando la 1ª cuota de <strong className="text-amber-900">{formatCRC(lay.downPaymentAmount * quantity)}</strong> y te reservamos la unidad de inmediato.
+                </p>
+              </div>
+            )}
+
             {/* Input de Personalización si el Producto lo Permite */}
             {product.isCustomizable && (
               <div className="p-3 bg-pink-50/70 rounded-2xl border border-pink-200 space-y-1.5">
@@ -327,7 +398,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
 
           {/* Acciones de Compra y Carrito */}
-          <div className="pt-4 mt-4 border-t border-slate-200 space-y-3 shrink-0">
+          <div className="pt-4 mt-4 border-t border-slate-200 space-y-2.5 shrink-0">
             {/* Selector de Cantidad */}
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-700">Cantidad:</span>
@@ -354,17 +425,47 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
             </div>
 
-            {/* Botón Principal Agregar al Carrito */}
+            {/* BOTÓN REALIZAR APARTADO (si aplica) */}
+            {lay && (
+              <button
+                type="button"
+                disabled={isOutOfStock}
+                onClick={handleAddLayaway}
+                className={`w-full py-3 px-4 rounded-2xl font-bubble font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
+                  isOutOfStock
+                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
+                    : isLayawayAddedAnim
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-amber-500/25'
+                }`}
+              >
+                {isLayawayAddedAnim ? (
+                  <>
+                    <Check className="w-5 h-5 stroke-[3] text-white" />
+                    <span>¡Apartado Agregado al Carrito! 🎉</span>
+                  </>
+                ) : (
+                  <>
+                    <BookmarkCheck className="w-5 h-5 text-amber-100" />
+                    <span>Realizar Apartado (Pagar 1ª Cuota: {formatCRC(lay.downPaymentAmount * quantity)})</span>
+                  </>
+                )}
+              </button>
+            )}
+
+            {/* Botón Comprar de Contado */}
             <button
               type="button"
               disabled={isOutOfStock}
               onClick={handleAdd}
-              className={`w-full py-3 px-4 rounded-2xl font-bubble font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
-                isOutOfStock
-                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
+              className={`w-full py-2.5 px-4 rounded-2xl font-bubble font-bold transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2 ${
+                lay
+                  ? 'border-2 border-slate-300 hover:bg-slate-100 text-slate-700 text-xs'
+                  : isOutOfStock
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none text-sm'
                   : isAddedAnim
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-fio-800 hover:bg-fio-900 text-white'
+                  ? 'bg-emerald-600 text-white text-sm'
+                  : 'bg-fio-800 hover:bg-fio-900 text-white text-sm shadow-md'
               }`}
             >
               {isAddedAnim ? (
@@ -374,8 +475,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 </>
               ) : (
                 <>
-                  <ShoppingBag className="w-5 h-5 text-fio-yellow" />
-                  <span>Agregar {quantity > 1 ? `${quantity} unidades` : ''} al Carrito</span>
+                  <ShoppingBag className="w-4 h-4 text-fio-yellow" />
+                  <span>
+                    {lay
+                      ? `Comprar de Contado (${formatCRC(product.price * quantity)})`
+                      : `Agregar ${quantity > 1 ? `${quantity} unidades ` : ''}al Carrito`}
+                  </span>
                 </>
               )}
             </button>

@@ -255,11 +255,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     }
 
     let orderNotesCombined = notes;
+    const layawayItems = safeCart.filter((it) => it.isLayaway);
+    if (layawayItems.length > 0) {
+      const layDesc = layawayItems
+        .map(
+          (it) =>
+            `[APARTADO] ${it.name}: 1ª cuota inicial pagada hoy (${formatCRC((it.price || 0) * (it.quantity || 1))}). Saldo pendiente: ${formatCRC((it.layawayRemainingAmount || 0) * (it.quantity || 1))} en ${(it.layawayPaymentsCount || 3) - 1} cuotas (plazo: ${it.layawayMonths || 3} meses).`
+        )
+        .join(' | ');
+      orderNotesCombined = `${layDesc}${orderNotesCombined ? ` | ${orderNotesCombined}` : ''}`;
+    }
+
     if (partialPayment && partialPayment.isComplete && partialPayment.secondVoucher) {
-      orderNotesCombined = `Comprobantes SINPE BCR Multi-Pago: #1 ${partialPayment.firstVoucher.ref} (${formatCRC(partialPayment.firstVoucher.amount)}) + #2 ${partialPayment.secondVoucher.ref} (${formatCRC(partialPayment.secondVoucher.amount)}) | Total: ${formatCRC(total)}${notes ? ` | ${notes}` : ''}`;
+      orderNotesCombined = `Comprobantes SINPE BCR Multi-Pago: #1 ${partialPayment.firstVoucher.ref} (${formatCRC(partialPayment.firstVoucher.amount)}) + #2 ${partialPayment.secondVoucher.ref} (${formatCRC(partialPayment.secondVoucher.amount)}) | Total: ${formatCRC(total)}${orderNotesCombined ? ` | ${orderNotesCombined}` : ''}`;
     } else {
       const cleanRef = sinpeReference.trim();
-      orderNotesCombined = `Comprobante ${paymentTab === 'sinpe' ? 'SINPE Móvil' : 'Transferencia BCR'}: #${cleanRef} (${formatCRC(total)})${notes ? ` | ${notes}` : ''}`;
+      orderNotesCombined = `Comprobante ${paymentTab === 'sinpe' ? 'SINPE Móvil' : 'Transferencia BCR'}: #${cleanRef} (${formatCRC(total)})${orderNotesCombined ? ` | ${orderNotesCombined}` : ''}`;
     }
 
     const order = createOrder({
@@ -389,6 +400,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                   <div key={it.id} className="py-2 flex items-center justify-between text-xs gap-2">
                     <div className="min-w-0">
                       <p className="font-bold text-slate-800 truncate">{it.quantity}x {it.name}</p>
+                      {it.isLayaway && (
+                        <span className="inline-block px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-[9px] mt-0.5">
+                          🏷️ Apartado: 1ª cuota pagada. Saldo pendiente: {formatCRC((it.layawayRemainingAmount || 0) * it.quantity)}
+                        </span>
+                      )}
                       {it.customText && (
                         <p className="text-[10px] text-fio-pink font-semibold">✨ "{it.customText}"</p>
                       )}

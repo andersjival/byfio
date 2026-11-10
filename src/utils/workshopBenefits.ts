@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   Coffee, ShieldCheck, Star, Sparkles, Award, Gift, Video, MessageCircle,
   BookOpen, Scissors, Palette, Heart, Clock, Download, Users, Folder,
