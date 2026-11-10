@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { AppProvider } from './context/AppContext';
 import { ConfirmProvider } from './context/ConfirmContext';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import App from './App';
 import './index.css';
 import { safeSessionStorage } from './utils/safeStorage';
@@ -50,10 +51,12 @@ if (typeof window !== 'undefined') {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AppProvider>
-      <ConfirmProvider>
-        <App />
-      </ConfirmProvider>
-    </AppProvider>
+    <ErrorBoundary fallbackTitle="Inconveniente al cargar la aplicación by.fio">
+      <AppProvider>
+        <ConfirmProvider>
+          <App />
+        </ConfirmProvider>
+      </AppProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

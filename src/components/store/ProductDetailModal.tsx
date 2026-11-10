@@ -135,7 +135,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   };
 
   const currentImage = images[activeImageIndex] || product.image;
-  const isAlreadyInCart = cart.some((it) => it.id === product.id);
+  const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+  const isAlreadyInCart = safeCart.some((it) => it && it.id === product.id);
 
   return (
     <div

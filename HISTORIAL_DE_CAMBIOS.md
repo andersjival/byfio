@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.34 - Blindaje Anti-Pantalla Blanca al Agregar Productos al Carrito
+- [x] **Protección Global contra Errores de Renderizado ([main.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Implementado `ErrorBoundary` global de primer nivel en `main.tsx` cubriendo la raíz de la aplicación, evitando que cualquier excepción no capturada deje la pantalla en blanco.
+  - Aislados los componentes globales de carrito (`CartSuccessToast` y `CartDrawer`) dentro de sus propios límites de error (`ErrorBoundary`) independientes.
+- [x] **Persistencia Segura y Almacenamiento a Prueba de Fallos ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Migrada la sincronización de `cart`, `orders` y `workshops` en `useEffect` al almacenamiento seguro `safeLocalStorage` protegido con `try/catch`, blindando la aplicación contra excepciones de cuota excedida (`QuotaExceededError`) y modos de navegación privada.
+  - Inicialización blindada de `cart` desde almacenamiento verificando que el JSON parseado sea estrictamente un array válido con elementos filtrados.
+- [x] **Cálculos e Iteraciones Defensivas en Carrito ([CartSuccessToast.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/CartSuccessToast.tsx), [Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [StorePage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [CatalogPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx), [CartDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CartDrawer.tsx)):**
+  - Protegidas todas las operaciones `.reduce()`, `.find()` y `.map()` sobre el carrito mediante arrays seguros (`safeCart = Array.isArray(cart) ? cart.filter(Boolean) : []`) con comprobación de propiedades numéricas y nulas.
+  - Envolvimiento con `try/catch` en `addToCart` y en el disparador `handleAdd` de la tienda.
+
 ### Versión 4.19.33 - Botón y Flujo de Restablecimiento de Contraseña para Clientes
 - [x] **Botón y Vista de Restablecimiento ([LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
   - Añadido botón interactivo y enlace destacado *"¿Olvidaste tu contraseña? Restablecer"* en el panel de inicio de sesión.

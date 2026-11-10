@@ -135,8 +135,9 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
     window.open(`https://wa.me/50664004640?text=${message}`, '_blank');
   };
 
-  const totalCartCount = cart.reduce((acc, it) => acc + it.quantity, 0);
-  const totalCartPrice = cart.reduce((acc, it) => acc + it.price * it.quantity, 0);
+  const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+  const totalCartCount = safeCart.reduce((acc, it) => acc + (it && it.quantity ? it.quantity : 1), 0);
+  const totalCartPrice = safeCart.reduce((acc, it) => acc + (it && it.price ? Number(it.price) * (it.quantity || 1) : 0), 0);
 
   const breadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },
@@ -334,7 +335,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
               const currentQty = getQty(product.id);
               const customVal = customTextInputs[product.id] || '';
               const isAdded = addedItemAnim === product.id;
-              const cartItem = cart.find((it) => it.id === product.id);
+              const cartItem = safeCart.find((it) => it && it.id === product.id);
               const isInCart = !!cartItem;
               const cartQty = cartItem ? cartItem.quantity : 0;
 

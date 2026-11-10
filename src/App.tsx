@@ -606,7 +606,9 @@ export const App: React.FC = () => {
           }
         }}
       />
-      <CartSuccessToast />
+      <ErrorBoundary fallbackTitle="Inconveniente con la notificación de carrito">
+        <CartSuccessToast />
+      </ErrorBoundary>
       {Boolean(isSuperAdminAuthenticated || currentUser) && (
         <NewOrderStarAlert />
       )}
@@ -648,7 +650,9 @@ export const App: React.FC = () => {
       )}
       <FloatingMascot currentRoute={currentRoute} />
       {isModuleEnabled('store') && isFeatureEnabled('store', 'interactive_cart') && (
-        <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
+        <ErrorBoundary fallbackTitle="Inconveniente con el carrito">
+          <CartDrawer onOpenCheckout={() => setIsCheckoutOpen(true)} />
+        </ErrorBoundary>
       )}
       {/* Centro de Aplicaciones PWA (PC & Celular) */}
       <PwaManagerModal

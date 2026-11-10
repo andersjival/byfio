@@ -62,21 +62,25 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   };
 
   const handleAdd = (product: Product, overrideQty?: number, overrideText?: string) => {
-    const customText = overrideText !== undefined ? overrideText : (customTextInputs[product.id] || '');
-    const qty = overrideQty !== undefined ? overrideQty : getQty(product.id);
-    addToCart({
-      type: 'product',
-      id: product.id,
-      sku: product.sku,
-      name: product.name,
-      price: product.price,
-      quantity: qty,
-      image: product.image,
-      shelfLocation: product.shelfLocation,
-      customText: product.isCustomizable ? customText : undefined,
-    });
-    setAddedAnimationId(product.id);
-    setTimeout(() => setAddedAnimationId(null), 1400);
+    try {
+      const customText = overrideText !== undefined ? overrideText : (customTextInputs[product.id] || '');
+      const qty = overrideQty !== undefined ? overrideQty : getQty(product.id);
+      addToCart({
+        type: 'product',
+        id: product.id,
+        sku: product.sku,
+        name: product.name,
+        price: product.price,
+        quantity: qty,
+        image: product.image,
+        shelfLocation: product.shelfLocation,
+        customText: product.isCustomizable ? customText : undefined,
+      });
+      setAddedAnimationId(product.id);
+      setTimeout(() => setAddedAnimationId(null), 1400);
+    } catch (err) {
+      console.error('Error al agregar al carrito desde StorePage:', err);
+    }
   };
 
   const breadcrumbs = [
@@ -216,7 +220,8 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
             const isOutOfStock = inventoryMode === 'availability' ? false : p.stock <= 0;
             const isLowStock = inventoryMode === 'availability' ? false : (p.stock > 0 && p.stock <= p.minStock);
             const isAdded = addedAnimationId === p.id;
-            const cartItem = cart.find((it) => it.id === p.id);
+            const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+            const cartItem = safeCart.find((it) => it && it.id === p.id);
             const isInCart = !!cartItem;
             const cartQty = cartItem ? cartItem.quantity : 0;
 

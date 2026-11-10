@@ -34,7 +34,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     setTimeout(() => setLikePopped(false), 900);
   };
 
-  const totalCartCount = cart.reduce((acc, it) => acc + it.quantity, 0);
+  const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+  const totalCartCount = safeCart.reduce((acc, it) => acc + (it && it.quantity ? it.quantity : 1), 0);
 
   const handleNav = (route: AppRoute) => {
     onNavigate(route);

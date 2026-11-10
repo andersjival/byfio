@@ -22,7 +22,7 @@ import { sendOrderPushNotification } from '../utils/pushNotifications';
 import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 import { deepSanitize } from '../utils/sanitizeText';
-import { safeSessionStorage } from '../utils/safeStorage';
+import { safeSessionStorage, safeLocalStorage } from '../utils/safeStorage';
 
 // Generador de número de orden secuencial garantizado libre de colisiones
 export const getNextOrderNumber = (ordersList: Order[]): string => {
@@ -538,8 +538,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.CART);
-    return saved ? deepSanitize(JSON.parse(saved)) : [];
+    try {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.CART);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return deepSanitize(parsed).filter((it: any) => it && it.id);
+        }
+      }
+    } catch {}
+    return [];
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -1552,6 +1560,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const mod = superadminModules.find((m) => m.id === normalized);
     if (!mod) return true;
     if (!mod.enabled) return false;
+    if (!Array.isArray(mod.features)) return true;
     const feat = mod.features.find((f) => f.id === featureId);
     if (!feat) return true;
     return feat.enabled;
@@ -2554,51 +2563,64 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [products]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+    try {
+      safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+    } catch {}
   }, [orders]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
+    try {
+      safeLocalStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
+    } catch {}
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(workshops));
+    try {
+      safeLocalStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(workshops));
+    } catch {}
   }, [workshops]);
 
   const addToCart = (item: Omit<CartItem, 'cartId'>) => {
-    // Si el producto está en cero o desactivado, bloquear la adición al carrito
-    if (item.type === 'product') {
-      const prod = products.find((p) => p.id === item.id);
-      if (prod && (prod.stock <= 0 || prod.isAvailable === false || prod.showInStore === false || prod.showInCatalog === false)) {
-        return;
-      }
-    }
-
-    const cartId = `${item.id}-${item.customText || 'standard'}-${Date.now()}`;
-    setCart((prev) => {
-      const existing = prev.find(
-        (i) => i.id === item.id && (i.customText || '') === (item.customText || '')
-      );
-      if (existing) {
-        return prev.map((i) =>
-          i.cartId === existing.cartId ? { ...i, quantity: i.quantity + item.quantity } : i
-        );
-      }
-      return [...prev, { ...item, cartId }];
-    });
-    // No abrir el carrito automáticamente; mostrar cartel de confirmación que auto-desaparece
-    showCartSuccessToast({
-      productName: item.name,
-      quantity: item.quantity,
-      image: item.image,
-      price: item.price,
-    });
-
-    // Registrar en analítica de métricas (global y atribuida al enlace de origen si existe)
     try {
-      metricsTracker.recordCartAddition(item.name, item.quantity, item.price);
-    } catch (e) {
-      console.warn('Error registrando producto en métricas de carrito', e);
+      if (!item || !item.id) return;
+
+      // Si el producto está en cero o desactivado, bloquear la adición al carrito
+      if (item.type === 'product') {
+        const prod = products.find((p) => p && p.id === item.id);
+        if (prod && (prod.stock <= 0 || prod.isAvailable === false || prod.showInStore === false || prod.showInCatalog === false)) {
+          return;
+        }
+      }
+
+      const cartId = `${item.id}-${item.customText || 'standard'}-${Date.now()}`;
+      setCart((prev) => {
+        const safePrev = Array.isArray(prev) ? prev.filter((i) => i && i.id) : [];
+        const existing = safePrev.find(
+          (i) => i.id === item.id && (i.customText || '') === (item.customText || '')
+        );
+        if (existing) {
+          return safePrev.map((i) =>
+            i.cartId === existing.cartId ? { ...i, quantity: (i.quantity || 1) + (item.quantity || 1) } : i
+          );
+        }
+        return [...safePrev, { ...item, cartId, quantity: item.quantity || 1 }];
+      });
+      // No abrir el carrito automáticamente; mostrar cartel de confirmación que auto-desaparece
+      showCartSuccessToast({
+        productName: item.name || 'Producto',
+        quantity: item.quantity || 1,
+        image: item.image,
+        price: Number(item.price) || 0,
+      });
+
+      // Registrar en analítica de métricas (global y atribuida al enlace de origen si existe)
+      try {
+        metricsTracker.recordCartAddition(item.name, item.quantity, item.price);
+      } catch (e) {
+        console.warn('Error registrando producto en métricas de carrito', e);
+      }
+    } catch (err) {
+      console.error('Error al agregar al carrito:', err);
     }
   };
 

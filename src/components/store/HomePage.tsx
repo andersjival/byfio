@@ -158,7 +158,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((p) => {
-            const cartItem = cart.find((it) => it.id === p.id);
+            const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+            const cartItem = safeCart.find((it) => it && it.id === p.id);
             const isInCart = !!cartItem;
             const cartQty = cartItem ? cartItem.quantity : 0;
 

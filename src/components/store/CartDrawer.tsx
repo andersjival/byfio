@@ -12,8 +12,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
 
   if (!isCartOpen) return null;
 
-  const subtotal = cart.reduce((acc, it) => acc + it.price * it.quantity, 0);
-  const totalItems = cart.reduce((acc, it) => acc + it.quantity, 0);
+  const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+  const subtotal = safeCart.reduce((acc, it) => acc + (it && it.price ? Number(it.price) * (it.quantity || 1) : 0), 0);
+  const totalItems = safeCart.reduce((acc, it) => acc + (it && it.quantity ? it.quantity : 1), 0);
 
   return (
     <div

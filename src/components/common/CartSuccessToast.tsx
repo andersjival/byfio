@@ -6,10 +6,14 @@ import { Check, ShoppingBag, X, CheckCircle2 } from 'lucide-react';
 export const CartSuccessToast: React.FC = () => {
   const { cartToast, closeCartToast, setIsCartOpen, cart } = useApp();
 
-  if (!cartToast) return null;
+  if (!cartToast || !cartToast.productName) return null;
 
-  const totalCartCount = cart.reduce((acc, it) => acc + it.quantity, 0);
-  const totalCartPrice = cart.reduce((acc, it) => acc + it.price * it.quantity, 0);
+  const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+  const totalCartCount = safeCart.reduce((acc, it) => acc + (it && it.quantity ? it.quantity : 1), 0);
+  const totalCartPrice = safeCart.reduce(
+    (acc, it) => acc + (it && it.price ? Number(it.price) * (it.quantity || 1) : 0),
+    0
+  );
 
   return (
     <div
