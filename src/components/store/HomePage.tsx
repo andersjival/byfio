@@ -4,7 +4,6 @@ import { AppRoute } from '../../types';
 import { HeroDual } from './HeroDual';
 import { TreeNavigation } from '../common/TreeNavigation';
 import { StudioLocationScheduleCard } from '../common/StudioLocationScheduleCard';
-import { PricingStickersSection } from './PricingStickersSection';
 import { formatCRC } from '../../utils/formatters';
 import { Star, ArrowRight, Calendar, ShoppingBag, Heart, Check } from 'lucide-react';
 
@@ -224,11 +223,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           })}
         </div>
       </section>
-
-      {/* =========================================================================
-          SECCIÓN DE PRECIOS DE STICKERS & CÓMO HACER TU PEDIDO (EDITABLE ADMIN)
-          ========================================================================= */}
-      <PricingStickersSection onNavigate={onNavigate} />
 
       {/* =========================================================================
           UBICACIÓN Y HORARIOS DE ATENCIÓN (TIBÁS, COSTA RICA)

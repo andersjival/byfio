@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.47 - Retiro de Sección de Lista de Precios de Stickers del Home
+- [x] **Limpieza Quirúrgica en Página Principal ([HomePage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
+  - Removida la sección `PricingStickersSection` (*"LISTA DE PRECIOS • STICKERS & PERSONALIZADOS"*) de la página principal (Home), dejando la vista centrada en la Academia Creativa (Talleres), Productos Destacados y Horarios/Ubicación de Tibás.
+  - La sección permanece intacta y disponible para consulta directa en su ruta dedicada `/precios`.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.47` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.46 - Rediseño Visual de Alta Fidelidad del Menú Desplegable de Usuario
 - [x] **Optimización de la Cabecera de Identidad en el Menú ([NavbarUserMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx)):**
   - Rediseñada la sección superior de identidad y nombre dentro del menú desplegable: tarjeta estilizada con avatar gradiente de 40px, inicial destacada, nombre completo en tipografía bubble legible (`text-sm font-bold`), insignia de rol (`Admin`, `Staff`, `Cliente`) y correo electrónico sin cortes antiestéticos.
