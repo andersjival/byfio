@@ -282,3 +282,62 @@ export const initWaterDropButtonSounds = () => {
   };
 };
 
+
+/**
+ * Beep característico de pistola lectora de código de barras industrial (éxito)
+ * Frecuencia aguda de 2450Hz rápida con vibración táctil corta.
+ */
+export const playBarcodeSuccessSound = (volume = 0.35) => {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    triggerHapticFeedback();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(2450, now);
+
+    gain.gain.setValueAtTime(volume * 0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.06);
+  } catch {}
+};
+
+/**
+ * Tono de alerta cuando el código de barras escaneado no corresponde al producto
+ * Doble tono descendente tipo advertencia con vibración táctil larga.
+ */
+export const playBarcodeErrorSound = (volume = 0.35) => {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([180, 80, 180]);
+      } catch {}
+    }
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.setValueAtTime(220, now + 0.12);
+
+    gain.gain.setValueAtTime(volume * 0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.29);
+  } catch {}
+};

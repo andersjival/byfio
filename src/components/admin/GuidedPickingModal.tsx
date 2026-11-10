@@ -3,8 +3,10 @@ import { useApp } from '../../context/AppContext';
 import {
   X, CheckCircle, AlertTriangle, MapPin, Heart, Scan, QrCode,
   ClipboardList, Printer, FileCheck, Check, LogOut, FileText, Package,
-  Edit3, UserCheck
+  Edit3, UserCheck, Camera, Sparkles
 } from 'lucide-react';
+import { PickingLiveBarcodeScanner, checkBarcodeMatch } from './PickingLiveBarcodeScanner';
+import { playBarcodeSuccessSound, playBarcodeErrorSound } from '../../utils/soundEffects';
 import confetti from 'canvas-confetti';
 
 export const GuidedPickingModal: React.FC = () => {
@@ -24,6 +26,7 @@ export const GuidedPickingModal: React.FC = () => {
   } = useApp();
 
   const [manualInput, setManualInput] = useState('');
+  const [isCameraScannerOpen, setIsCameraScannerOpen] = useState(true);
   const [scanFeedback, setScanFeedback] = useState<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null);
   const [showSummaryList, setShowSummaryList] = useState(false);
   const [isEditingQty, setIsEditingQty] = useState(false);
@@ -73,19 +76,52 @@ export const GuidedPickingModal: React.FC = () => {
 
   const handleProcessScan = (scannedSku: string) => {
     setScanFeedback(null);
-    const result = markItemPicked(currentOrder.id, scannedSku.trim(), currentUser?.name);
+    const raw = (scannedSku || '').trim();
+    if (!raw) return;
 
-    if (result.error) {
-      setScanFeedback({ type: 'error', message: result.error });
+    // 1. Coincidencia directa o parcial con el producto actual esperado
+    if (currentItem && checkBarcodeMatch(raw, currentItem.sku)) {
+      const result = markItemPicked(currentOrder.id, currentItem.sku, currentUser?.name);
+      if (result.error) {
+        setScanFeedback({ type: 'error', message: result.error });
+        playBarcodeErrorSound();
+        return;
+      }
+      playBarcodeSuccessSound();
+      setScanFeedback({ type: 'success', message: `¡Correcto! ${currentItem.sku} verificado y alistado.` });
+      setManualInput('');
+      if (result.isComplete) {
+        triggerCompletion();
+      }
       return;
     }
 
-    setScanFeedback({ type: 'success', message: `¡Correcto! ${scannedSku} verificado y guardado.` });
-    setManualInput('');
-
-    if (result.isComplete) {
-      triggerCompletion();
+    // 2. Coincidencia con algún otro producto pendiente en el pedido
+    const matchedPending = items.find(
+      (it) => !it.isPicked && !it.isMissing && checkBarcodeMatch(raw, it.sku)
+    );
+    if (matchedPending) {
+      const result = markItemPicked(currentOrder.id, matchedPending.sku, currentUser?.name);
+      if (result.error) {
+        setScanFeedback({ type: 'error', message: result.error });
+        playBarcodeErrorSound();
+        return;
+      }
+      playBarcodeSuccessSound();
+      setScanFeedback({ type: 'success', message: `¡Alistado! ${matchedPending.name} (${matchedPending.sku}) verificado.` });
+      setManualInput('');
+      if (result.isComplete) {
+        triggerCompletion();
+      }
+      return;
     }
+
+    // 3. No coincide con ningún producto pendiente del pedido
+    playBarcodeErrorSound();
+    setScanFeedback({
+      type: 'error',
+      message: `Código "${raw}" no coincide. Se requiere ${currentItem?.sku || 'el producto'} en estante ${currentItem?.shelfLocation || 'Bodega'}.`,
+    });
   };
 
   const handleMarkItemPickedManual = (itemSku: string) => {
@@ -330,13 +366,64 @@ export const GuidedPickingModal: React.FC = () => {
 
 
 
-                {/* ACCIÓN SEGÚN EL MODO: CÓDIGO vs MANUAL */}
+                {/* ACCIÓN SEGÚN EL MODO: CÓDIGO (CÁMARA CELULAR / USB) vs MANUAL */}
                 {pickingMode === 'barcode' ? (
-                  /* Modo 1: Alisto con Código (Escáner Láser / QR) */
-                  <div className="p-3 sm:p-4 bg-fio-50 rounded-2xl border border-fio-200 space-y-2.5 sm:space-y-3">
-                    <p className="text-xs font-bold text-fio-900">Validar Código con Escáner o Teclado:</p>
+                  /* Modo 1: Alisto con Código (Pistola Lectora con Cámara del Celular) */
+                  <div className="p-3 sm:p-4 bg-fio-50/90 rounded-2xl border-2 border-fio-200 space-y-3">
+                    {/* Selector de Método: Cámara Celular vs USB / Teclado */}
+                    <div className="flex items-center justify-between gap-2 border-b border-fio-200/80 pb-2">
+                      <span className="text-xs font-bold text-fio-900 flex items-center gap-1.5">
+                        <QrCode className="w-4 h-4 text-fio-pink" />
+                        <span>Lector de Códigos:</span>
+                      </span>
+                      <div className="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-fio-200 shadow-2xs">
+                        <button
+                          type="button"
+                          onClick={() => setIsCameraScannerOpen(true)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bubble font-bold transition-all flex items-center gap-1 ${
+                            isCameraScannerOpen
+                              ? 'bg-fio-800 text-white shadow-2xs'
+                              : 'text-slate-600 hover:text-slate-900'
+                          }`}
+                        >
+                          <Camera className="w-3.5 h-3.5 text-fio-yellow" />
+                          <span>Cámara Celular</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsCameraScannerOpen(false)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bubble font-bold transition-all flex items-center gap-1 ${
+                            !isCameraScannerOpen
+                              ? 'bg-fio-800 text-white shadow-2xs'
+                              : 'text-slate-600 hover:text-slate-900'
+                          }`}
+                        >
+                          <Scan className="w-3.5 h-3.5" />
+                          <span>Teclado / USB</span>
+                        </button>
+                      </div>
+                    </div>
 
-                    {/* Feedback de Escaneo (Solo visible si se está usando escáner o código) */}
+                    {/* Visor de Cámara en Vivo: Celular como Pistola Escáner */}
+                    {isCameraScannerOpen && (
+                      <div className="w-full">
+                        <PickingLiveBarcodeScanner
+                          key={`${currentItem.sku}-${currentItemIndex}`}
+                          expectedSku={currentItem.sku}
+                          expectedName={currentItem.name}
+                          expectedShelf={currentItem.shelfLocation || 'Bodega Central'}
+                          onScanSuccess={(code: string) => handleProcessScan(code)}
+                          onScanError={(code: string) => {
+                            setScanFeedback({
+                              type: 'error',
+                              message: `Código leído: ${code}. No coincide con ${currentItem.sku} (${currentItem.name}).`,
+                            });
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Feedback de Escaneo */}
                     {scanFeedback && (
                       <div
                         className={`p-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 ${
@@ -352,44 +439,47 @@ export const GuidedPickingModal: React.FC = () => {
                         ) : (
                           <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
                         )}
-                        <span className="text-xs">{scanFeedback.message}</span>
+                        <span className="text-xs leading-tight">{scanFeedback.message}</span>
                       </div>
                     )}
 
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        if (manualInput) handleProcessScan(manualInput);
-                      }}
-                      className="flex gap-2"
-                    >
-                      <input
-                        type="text"
-                        placeholder="Escanear con lector láser o escribir SKU..."
-                        value={manualInput}
-                        onChange={(e) => setManualInput(e.target.value)}
-                        className="flex-1 px-3.5 py-3 sm:py-2 bg-white rounded-xl border border-fio-300 text-sm sm:text-xs font-mono focus:ring-2 focus:ring-fio-400 focus:outline-none"
-                      />
-                      <button
-                        type="submit"
-                        className="px-5 py-3 sm:py-2 bg-fio-800 text-white rounded-xl text-sm sm:text-xs font-bold hover:bg-fio-900 cursor-pointer"
+                    {/* Modo Manual o Teclado/USB */}
+                    {!isCameraScannerOpen && (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          if (manualInput) handleProcessScan(manualInput);
+                        }}
+                        className="flex gap-2"
                       >
-                        Validar
-                      </button>
-                    </form>
+                        <input
+                          type="text"
+                          placeholder="Escanear con lector láser o escribir SKU..."
+                          value={manualInput}
+                          onChange={(e) => setManualInput(e.target.value)}
+                          className="flex-1 px-3.5 py-2.5 bg-white rounded-xl border border-fio-300 text-xs font-mono focus:ring-2 focus:ring-fio-400 focus:outline-none"
+                        />
+                        <button
+                          type="submit"
+                          className="px-4 py-2 bg-fio-800 text-white rounded-xl text-xs font-bold hover:bg-fio-900 cursor-pointer"
+                        >
+                          Validar
+                        </button>
+                      </form>
+                    )}
 
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={handleSimulateScanCurrent}
-                        className="w-full py-3.5 sm:py-2 px-3 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white rounded-xl text-sm sm:text-xs font-bold flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
+                        className="w-full py-2.5 px-3 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
                       >
-                        <Scan className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+                        <Scan className="w-3.5 h-3.5" />
                         <span>Validar ({currentItem.sku})</span>
                       </button>
                     </div>
 
-                    <div className="pt-1 flex items-center justify-between border-t border-fio-200/60 text-xs sm:text-xs">
+                    <div className="pt-1 flex items-center justify-between border-t border-fio-200/60 text-xs">
                       {isFeatureEnabled('orders', 'missing_reporting') ? (
                         <button
                           type="button"
@@ -413,9 +503,9 @@ export const GuidedPickingModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActivePickingOrder(null)}
-                      className="w-full py-3 sm:py-1.5 px-3 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs sm:text-xs font-bubble font-bold flex items-center justify-center gap-2 cursor-pointer border border-slate-300 transition-all min-h-[44px]"
+                      className="w-full py-2.5 px-3 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bubble font-bold flex items-center justify-center gap-2 cursor-pointer border border-slate-300 transition-all min-h-[40px]"
                     >
-                      <LogOut className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-500" />
+                      <LogOut className="w-3.5 h-3.5 text-slate-500" />
                       <span>Salir a la Cola de Pedidos</span>
                     </button>
                   </div>

@@ -17,6 +17,25 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.53 - Impresión de 21 Códigos de Barras por Hoja con Logo ByFio, Categoría y Filtros Avanzados
+- [x] **Formato Estándar de 21 Códigos por Hoja (3×7) ([ShelfBarcodeLabelsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ShelfBarcodeLabelsModal.tsx)):**
+  - Configurada cuadrícula estricta de 3 columnas × 7 filas para que quepan exactamente 21 etiquetas de códigos de barra por hoja impresa (estándar tipo Avery / adhesivos de 21 unidades).
+  - Paginación automática y salto de página limpio en impresión (`@media print` con `break-after: page`).
+  - Encabezado oficial en cada hoja impresa con:
+    - Logo oficial de ByFio con corazón y estrella.
+    - Categoría de producto destacada (`🏷️ Categoría: [Nombre]`).
+    - Estante, proveedor filtrado, número de hoja (`Hoja X de Y`) y fecha/hora.
+- [x] **Filtros Flexibles y Modos de Impresión:**
+  - **Por Categoría:** Selector desplegable con todas las categorías de producto.
+  - **Por Estante:** Filtro por estantería con accesos rápidos directos para `Estante 1`, `Estante 2`, etc.
+  - **Por Proveedor:** Filtro dinámico por proveedor o distribuidor del producto.
+  - **Por Nombre / SKU:** Buscador en vivo y ordenamiento múltiple (Nombre A-Z, Estantería, Categoría, Proveedor, SKU).
+  - **Modo Llenar Hoja (21 del mismo producto):** Permite seleccionar 1 solo producto y llenar la hoja completa de 21 stickers idénticos para etiquetar lotes nuevos de estante.
+- [x] **Etiquetas Atómicas Optimizadas ([ProductBarcodeLabel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ProductBarcodeLabel.tsx)):**
+  - Cada etiqueta incluye mini logo ByFio, categoría, nombre del producto, código de barras Code 128 nítido, SKU, estante y precio.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.53` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.52 - Página Completa para Realizar Pedidos a Proveedor con Selector Inteligente de Faltantes
 - [x] **Transformación de Modal a Página Completa ([CreateSupplierOrderPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CreateSupplierOrderPage.tsx)):**
   - La sección de realizar pedidos a proveedor dejó de ser un modal emergente / pop-up flotante y se convirtió en una página completa dedicada con sub-ruta propia (`/admin/realizar-pedido`, pestaña `supplier-order-create`).
