@@ -44,7 +44,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
 
   if (!isOpen) return null;
 
-  const subtotal = cart.reduce((acc, it) => acc + it.price * it.quantity, 0);
+  const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+  const subtotal = safeCart.reduce((acc, it) => acc + (Number(it?.price) || 0) * (it?.quantity || 1), 0);
   const shippingFee = deliveryMethod === 'envio' ? 2500 : 0;
   const total = subtotal + shippingFee;
 
@@ -554,7 +555,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
             {/* Resumen Totales y Botón de Confirmación */}
             <div className="pt-2 border-t border-gray-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <div>
-                <p className="text-[11px] text-gray-500">Total a Pagar ({cart.length} ítems)</p>
+                <p className="text-[11px] text-gray-500">Total a Pagar ({(Array.isArray(cart) ? cart.length : 0)} ítems)</p>
                 <p className="text-xl font-bubble font-bold text-fio-900">{formatCRC(total)}</p>
               </div>
 

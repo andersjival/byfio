@@ -697,7 +697,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                   <span>
                     {addedToCartToast
                       ? '¡Agregado con éxito!'
-                      : cart.some((it) => it.id === workshop.id)
+                      : (Array.isArray(cart) && cart.some((it) => it && it.id === workshop.id))
                       ? 'Agregar Más al Carrito'
                       : 'O agregar al Carrito de la Web'}
                   </span>

@@ -1,6 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RotateCcw, Home } from 'lucide-react';
-import { safeSessionStorage } from '../../utils/safeStorage';
+import { safeSessionStorage, safeLocalStorage } from '../../utils/safeStorage';
 
 interface Props {
   children: ReactNode;
@@ -56,6 +56,18 @@ export class ErrorBoundary extends Component<Props, State> {
     window.location.href = window.location.origin + window.location.pathname + '?r=' + Date.now() + window.location.hash;
   };
 
+  private handleResetAndReload = () => {
+    try {
+      safeLocalStorage.removeItem('byfio_cart_v1');
+      safeLocalStorage.removeItem('byfio_products_v1');
+      safeLocalStorage.removeItem('byfio_orders_v1');
+      safeLocalStorage.removeItem('byfio_workshops_v1');
+      safeSessionStorage.removeItem('byfio_chunk_reload_lock');
+    } catch {}
+    this.setState({ hasError: false, error: undefined });
+    window.location.href = window.location.origin + window.location.pathname + '?r=' + Date.now();
+  };
+
   private handleGoHome = () => {
     this.setState({ hasError: false, error: undefined });
     window.location.href = '/';
@@ -79,9 +91,15 @@ export class ErrorBoundary extends Component<Props, State> {
                   ? 'Se actualizó una versión nueva de la plataforma. Recarga para continuar.'
                   : 'Puedes recargar esta vista o regresar al inicio para continuar navegando con normalidad.'}
               </p>
+              {this.state.error && (
+                <div className="mt-2 text-left bg-rose-50/80 p-2.5 rounded-xl border border-rose-200/60 text-[11px] text-rose-800 font-mono overflow-x-auto max-h-24">
+                  <span className="font-bold block text-rose-900 mb-0.5">Diagnóstico:</span>
+                  {this.state.error.message || String(this.state.error)}
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center justify-center gap-2 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
               <button
                 type="button"
                 onClick={this.handleReload}
@@ -89,6 +107,15 @@ export class ErrorBoundary extends Component<Props, State> {
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Recargar</span>
+              </button>
+              <button
+                type="button"
+                onClick={this.handleResetAndReload}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+                title="Restaura datos temporales y recarga"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Restablecer datos</span>
               </button>
               <button
                 type="button"

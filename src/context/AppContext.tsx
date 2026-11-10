@@ -459,13 +459,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
-    const initial = saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
-    const sanitized = deepSanitize(initial);
-    if (saved && JSON.stringify(sanitized) !== JSON.stringify(initial)) {
-      try { localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(sanitized)); } catch {}
+    try {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.PRODUCTS);
+      if (saved) {
+        const initial = JSON.parse(saved);
+        if (Array.isArray(initial) && initial.length > 0) {
+          const sanitized = deepSanitize(initial).filter((p: any) => p && p.id);
+          if (sanitized.length > 0) {
+            return sanitized;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Error al restaurar productos de storage:', e);
     }
-    return sanitized;
+    return deepSanitize(INITIAL_PRODUCTS);
   });
 
   const [workshops, setWorkshops] = useState<Workshop[]>(() => {
@@ -523,18 +531,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const [orders, setOrders] = useState<Order[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
-    const initial = saved ? JSON.parse(saved) : [];
-    const sanitized = sanitizeOrderList(initial);
-    const sorted = Array.isArray(sanitized)
-      ? [...sanitized].sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-      : [];
-    if (saved && JSON.stringify(sorted) !== JSON.stringify(initial)) {
-      try { localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(sorted)); } catch {}
+    try {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.ORDERS);
+      if (saved) {
+        const initial = JSON.parse(saved);
+        if (Array.isArray(initial)) {
+          const sanitized = sanitizeOrderList(initial);
+          return Array.isArray(sanitized)
+            ? [...sanitized].sort(
+                (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+              )
+            : [];
+        }
+      }
+    } catch (e) {
+      console.warn('Error al restaurar pedidos de storage:', e);
     }
-    return sorted;
+    return [];
   });
 
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -595,8 +608,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [pricingData, setPricingData] = useState<PricingSectionData>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.PRICING_DATA);
-    return saved ? JSON.parse(saved) : INITIAL_PRICING_DATA;
+    try {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.PRICING_DATA);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return INITIAL_PRICING_DATA;
   });
 
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
@@ -604,21 +620,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Estados para Redirección y Verificación de Pagos SINPE Móvil Banco BCR
   const [sinpeTransactions, setSinpeTransactions] = useState<SinpeTransaction[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.SINPE_TRANSACTIONS);
-    return saved ? JSON.parse(saved) : INITIAL_SINPE_TRANSACTIONS;
+    try {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.SINPE_TRANSACTIONS);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return INITIAL_SINPE_TRANSACTIONS;
   });
 
   const [sinpeSettings, setSinpeSettings] = useState<SinpeSettings>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.SINPE_SETTINGS);
-    return saved ? JSON.parse(saved) : INITIAL_SINPE_SETTINGS;
+    try {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.SINPE_SETTINGS);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return INITIAL_SINPE_SETTINGS;
   });
 
   const [isSinpeModalOpen, setIsSinpeModalOpen] = useState(false);
 
   // Reportes de Faltantes de Inventario detectados al Alistar Pedido
   const [missingInventoryReports, setMissingInventoryReports] = useState<InventoryMissingReport[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.MISSING_INVENTORY);
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.MISSING_INVENTORY);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [];
   });
 
   // Web Intro Video Overlay state: Solo carga y se reproduce en la portada / home en la primera visita de sesión
@@ -1532,7 +1557,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const normalizeModuleId = (id: string): string => {
-    const clean = id.trim().toLowerCase();
+    const clean = String(id || '').trim().toLowerCase();
     if (clean === 'pedidos' || clean === 'orders') return 'orders';
     if (clean === 'facturacion' || clean === 'billing') return 'billing';
     if (clean === 'inventario' || clean === 'inventory') return 'inventory';

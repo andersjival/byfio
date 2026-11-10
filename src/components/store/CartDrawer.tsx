@@ -72,7 +72,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
               </button>
             </div>
           ) : (
-            cart.map((item) => (
+            safeCart.map((item) => (
               <div
                 key={item.cartId}
                 className="flex gap-3 p-3 bg-white rounded-2xl border border-fio-200/70 shadow-xs hover:border-fio-300 transition-all"
@@ -106,7 +106,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
 
                   <div className="flex items-center justify-between mt-2.5">
                     <span className="font-serif font-bold text-sm text-slate-900">
-                      {formatCRC(item.price * item.quantity)}
+                      {formatCRC((Number(item.price) || 0) * (item.quantity || 1))}
                     </span>
 
                     {/* Control de Cantidad [-] 1 [+] */}

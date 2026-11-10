@@ -17,6 +17,23 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.35 - Corrección Crítica de Pantalla Blanca en Tienda, Blindaje de Almacenamiento y Botón Carrito PWA Desktop
+- [x] **Blindaje Defensivo en Buscador y Catálogo de Tienda ([StorePage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [CatalogPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx), [ProductDetailModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/ProductDetailModal.tsx)):**
+  - Sanitización estricta de propiedades de texto (`name`, `sku`, `description`, `category`) con fallbacks `|| ''` antes de invocar `.toLowerCase()` o `.includes()`, previniendo excepciones fatales de `TypeError: undefined`.
+  - Validación de arrays en `p.images` e imágenes auxiliares para asegurar strings válidos antes de comprobar placeholders.
+  - Validación de cantidad y precio numérico en `handleAdd` para inserciones directas al carrito seguras.
+- [x] **Blindaje Total de Inicializadores y Storage ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Reemplazo de llamadas directas a `localStorage` por `safeLocalStorage` dentro de bloques `try/catch` para `products`, `orders`, `pricingData`, `sinpeTransactions`, `sinpeSettings` y `missingInventoryReports`.
+  - Normalización ultra-segura de identificadores en `normalizeModuleId` con `String(id || '').trim().toLowerCase()`.
+- [x] **Auto-Recuperación y Diagnóstico en Pantalla de Error ([ErrorBoundary.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ErrorBoundary.tsx)):**
+  - Incorporado botón interactivo *"Restablecer datos"* que purga claves corruptas de almacenamiento local (`byfio_cart_v1`, `byfio_products_v1`, etc.) y auto-sana la sesión al recargar.
+  - Añadido panel visual de diagnóstico con el mensaje de error técnico capturado.
+- [x] **Ajuste de Margen y Visibilidad del Botón Carrito en PWA Desktop ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Ajustados márgenes laterales (`mr-0 sm:mr-1`) y flexibilidad de contenedor para erradicar el recorte del botón de Carrito en ventanas PWA de escritorio con barra de desplazamiento lateral.
+  - Asegurada la lectura de nombres de usuario con fallback defensivo `(currentUser?.name || 'Usuario').split(' ')[0]`.
+- [x] **Actualización de Service Worker:**
+  - Caché PWA elevada a `byfio-pwa-v4.19.35` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js) para invalidación inmediata de assets en producción.
+
 ### Versión 4.19.34 - Blindaje Anti-Pantalla Blanca al Agregar Productos al Carrito
 - [x] **Protección Global contra Errores de Renderizado ([main.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/main.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
   - Implementado `ErrorBoundary` global de primer nivel en `main.tsx` cubriendo la raíz de la aplicación, evitando que cualquier excepción no capturada deje la pantalla en blanco.

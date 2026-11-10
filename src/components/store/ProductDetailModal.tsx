@@ -32,8 +32,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   // Lista de imágenes: si tiene `images` con elementos las usa, si no hace fallback a `[product.image]`
   const images = useMemo(() => {
     if (!product) return [];
-    if (product.images && product.images.length > 0) {
-      const real = product.images.filter((img) => !img.includes('placeholder-new-product'));
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      const real = product.images.filter((img) => typeof img === 'string' && !img.includes('placeholder-new-product'));
       if (real.length > 0) return real;
       return product.images;
     }

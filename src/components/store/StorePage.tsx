@@ -44,16 +44,19 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
     });
   };
 
-  const filteredProducts = products.filter((p) => {
+  const safeProducts = Array.isArray(products) ? products.filter(Boolean) : [];
+  const filteredProducts = safeProducts.filter((p) => {
+    if (!p) return false;
     // Si el producto está en cero o se desactiva, desaparece automáticamente de la tienda
-    if (p.stock <= 0 || p.isAvailable === false || p.showInStore === false) return false;
+    if ((p.stock ?? 0) <= 0 || p.isAvailable === false || p.showInStore === false) return false;
 
     const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
+    const q = (searchQuery || '').toLowerCase();
     const matchesSearch =
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCustom = !onlyCustomizable || p.isCustomizable;
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.sku || '').toLowerCase().includes(q) ||
+      (p.description || '').toLowerCase().includes(q);
+    const matchesCustom = !onlyCustomizable || Boolean(p.isCustomizable);
     return matchesCategory && matchesSearch && matchesCustom;
   });
 
@@ -63,16 +66,17 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
 
   const handleAdd = (product: Product, overrideQty?: number, overrideText?: string) => {
     try {
+      if (!product || !product.id) return;
       const customText = overrideText !== undefined ? overrideText : (customTextInputs[product.id] || '');
       const qty = overrideQty !== undefined ? overrideQty : getQty(product.id);
       addToCart({
         type: 'product',
         id: product.id,
-        sku: product.sku,
-        name: product.name,
-        price: product.price,
-        quantity: qty,
-        image: product.image,
+        sku: product.sku || '',
+        name: product.name || 'Producto',
+        price: Number(product.price) || 0,
+        quantity: Math.max(1, Number(qty) || 1),
+        image: product.image || '',
         shelfLocation: product.shelfLocation,
         customText: product.isCustomizable ? customText : undefined,
       });
@@ -277,7 +281,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                     </span>
                   )}
                                   {/* Indicador de múltiples fotos si aplica */}
-                  {Array.isArray(p.images) && p.images.filter(img => !img.includes('placeholder-new-product')).length > 1 && (
+                  {Array.isArray(p.images) && p.images.filter(img => typeof img === 'string' && !img.includes('placeholder-new-product')).length > 1 && (
                     <span className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[10px] font-bubble font-bold shadow-md flex items-center gap-1.5 z-10 border border-white/20 pointer-events-none">
                       <span>📷 {p.images.filter(img => !img.includes('placeholder-new-product')).length} fotos</span>
                     </span>

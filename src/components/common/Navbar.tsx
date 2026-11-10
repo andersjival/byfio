@@ -246,7 +246,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white/90 border border-purple-200/80 rounded-2xl shadow-xs shrink-0">
                   <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 text-xs font-bubble font-bold text-slate-700 max-w-[65px] sm:max-w-[95px] xl:max-w-[120px] 2xl:max-w-[150px]">
                     
-                    <span className="truncate">{currentUser.name.split(' ')[0]}</span>
+                    <span className="truncate">{(currentUser?.name || 'Usuario').split(' ')[0]}</span>
                     {currentUser.role === 'admin' && (
                       <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
                         Admin
@@ -320,7 +320,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="button"
                   onClick={() => setIsCartOpen(true)}
                   aria-label="Abrir Carrito"
-                  className="relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0 cursor-pointer mr-1 sm:mr-2"
+                  className="relative flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs sm:text-sm shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all shrink-0 cursor-pointer mr-0 sm:mr-1"
                 >
                   <ShoppingBag className="w-4 h-4 text-white" />
                   <span className="hidden sm:inline">Carrito</span>
@@ -525,7 +525,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="p-3 rounded-2xl bg-white/80 border border-purple-200/80 shadow-xs space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bubble font-bold text-slate-800">{currentUser.name}</span>
+                  <span className="text-sm font-bubble font-bold text-slate-800">{currentUser?.name || 'Usuario'}</span>
                 </div>
                 {currentUser.role === 'admin' && (
                   <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[10px] text-white font-bold uppercase tracking-wider">

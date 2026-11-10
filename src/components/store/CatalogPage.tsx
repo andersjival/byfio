@@ -86,13 +86,15 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onNavigate }) => {
   // Filtrado de productos
   const filteredProducts = useMemo(() => {
     return catalogProducts.filter((p) => {
+      if (!p) return false;
       const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
+      const q = (searchQuery || '').toLowerCase();
       const matchesSearch =
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCustom = !onlyCustomizable || p.isCustomizable;
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.sku || '').toLowerCase().includes(q) ||
+        (p.description || '').toLowerCase().includes(q) ||
+        (p.category || '').toLowerCase().includes(q);
+      const matchesCustom = !onlyCustomizable || Boolean(p.isCustomizable);
       return matchesCategory && matchesSearch && matchesCustom;
     });
   }, [catalogProducts, selectedCategory, searchQuery, onlyCustomizable]);

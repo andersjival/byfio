@@ -142,7 +142,7 @@ export const ProductsSection: React.FC = () => {
                 )}
 
                 {/* Etiqueta Sin Bordes: Producto Agregado */}
-                {cart.some((it) => it.id === p.id) && (
+                {(Array.isArray(cart) && cart.some((it) => it && it.id === p.id)) && (
                   <span className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-bubble font-bold shadow-md border-0 flex items-center gap-1 z-10 animate-fadeIn">
                     <Check className="w-3 h-3 stroke-[2.5]" />
                     <span>Producto Agregado</span>
