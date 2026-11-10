@@ -181,6 +181,7 @@ export const App: React.FC = () => {
       else if (tab === 'customers') targetPath = '/admin/clientes';
       else if (tab === 'agenda') targetPath = '/admin/agenda';
       else if (tab === 'suppliers') targetPath = '/admin/proveedores';
+      else if (tab === 'supplier-order-create') targetPath = '/admin/realizar-pedido';
       else if (tab === 'sales') targetPath = '/admin/ventas';
       else targetPath = '/admin';
     }
@@ -202,7 +203,7 @@ export const App: React.FC = () => {
   };
 
   const handleSelectAdminTab = (tab: AdminTabType) => {
-    if (tab === 'catalog-view') {
+    if (tab === 'catalog-view' || tab === 'supplier-order-create') {
       navigate('admin', tab);
       return;
     }
@@ -216,7 +217,7 @@ export const App: React.FC = () => {
   // Protección: Si el módulo activo fue desactivado por Superadmin o revocado al colaborador, volver al Hub de inmediato
   useEffect(() => {
     if (currentRoute === 'admin' && adminTab !== 'hub') {
-      if (adminTab === 'catalog-view') {
+      if (adminTab === 'catalog-view' || adminTab === 'supplier-order-create') {
         // catalog-view está disponible dentro del panel admin
       } else if (!isModuleEnabled(adminTab) || !hasPermission(adminTab)) {
         setAdminTab('hub');

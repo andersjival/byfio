@@ -13,6 +13,7 @@ export type AdminTabType =
   | 'customers'
   | 'agenda'
   | 'suppliers'
+  | 'supplier-order-create'
   | 'sales'
   | 'catalog-view';
 

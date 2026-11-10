@@ -100,7 +100,7 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
 
       {/* Menú Desplegado hacia Abajo: Sección Mi Cuenta */}
       {isUserMenuOpen && (
-        <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white/98 backdrop-blur-xl border border-purple-200/90 rounded-2xl shadow-2xl p-2.5 z-[60] animate-in zoom-in-95 duration-150 space-y-1.5">
+        <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-purple-200/90 rounded-2xl shadow-[0_12px_32px_rgba(107,33,168,0.14),0_2px_8px_rgba(0,0,0,0.04)] p-2.5 z-[60] animate-in zoom-in-95 duration-150 space-y-1.5">
           {/* Cabecera del Usuario con Nombre e Identidad */}
           <div className="p-3 rounded-2xl bg-gradient-to-br from-purple-50 via-pink-50/70 to-purple-50/50 border border-purple-100 shadow-2xs">
             <div className="flex items-center gap-3">
@@ -195,9 +195,11 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
               setIsUserMenuOpen(false);
               logoutUser();
             }}
-            className="w-full text-left p-2 rounded-xl hover:bg-rose-50 text-rose-600 transition-colors flex items-center gap-2 text-xs font-bubble font-bold cursor-pointer"
+            className="w-full text-left p-2.5 rounded-xl bg-slate-50/70 hover:bg-rose-50 text-rose-600 border border-slate-100 hover:border-rose-200 transition-colors flex items-center gap-2 text-xs font-bubble font-bold cursor-pointer active:scale-98"
           >
-            <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
+            <div className="w-6 h-6 rounded-lg bg-rose-100 text-rose-500 flex items-center justify-center shrink-0">
+              <LogOut className="w-3.5 h-3.5" />
+            </div>
             <span>Cerrar Sesión</span>
           </button>
         </div>

@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.51 - Corrección Visual de Nitidez y Sombra en Menú de Usuario
+- [x] **Eliminación de Borrosidad y Mancha Oscura ([NavbarUserMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx)):**
+  - Reemplazado el fondo translúcido con blur (`bg-white/98 backdrop-blur-xl`) por blanco sólido puro (`bg-white`), eliminando los artefactos de desenfoque de GPU que provocaban la mancha oscura en la parte inferior del menú.
+  - Sustituida la sombra genérica pesada (`shadow-2xl`) por elevación ambiental lila-púrpura (`shadow-[0_12px_32px_rgba(107,33,168,0.14)]`) acorde al diseño pastel de ByFio.
+  - Estilizado el botón "Cerrar Sesión" con contenedor suave, icono en pastilla rosada y borde definido.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.51` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.50 - Solución a Encogimiento de Zoom y Expansión en Mapa Interactivo
 - [x] **Solución de Raíz al Encogimiento de Zoom ([InteractiveMapPicker.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/InteractiveMapPicker.tsx)):**
   - Desacoplado el ciclo de vida del mapa Leaflet de los cambios de `lat`, `lng` y `onChange`: el mapa ahora se monta únicamente una vez (`useEffect(..., [])`) y no se destruye con `map.remove()` al mover el pin o al recibir la dirección sugerida.

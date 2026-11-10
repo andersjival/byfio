@@ -190,6 +190,19 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'agenda' };
   }
   if (
+    path.includes('/admin/realizar-pedido') ||
+    path.includes('/admin/nuevo-pedido-proveedor') ||
+    path.includes('/admin/pedidos-proveedores/nuevo') ||
+    path.includes('/admin/orden-compra') ||
+    hash.includes('realizar-pedido') ||
+    hash.includes('nuevo-pedido-proveedor') ||
+    seccionParam === 'realizar-pedido' ||
+    seccionParam === 'nuevo-pedido-proveedor' ||
+    seccionParam === 'orden-compra'
+  ) {
+    return { route: 'admin', adminTab: 'supplier-order-create' };
+  }
+  if (
     path.includes('/admin/proveedores') ||
     path.includes('/administracion/proveedores') ||
     hash.includes('admin/proveedores') ||
