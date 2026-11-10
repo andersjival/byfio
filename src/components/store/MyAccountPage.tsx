@@ -213,6 +213,140 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
     }
   };
 
+  const formatCreationDateOnly = (dateStr?: string) => {
+    if (!dateStr) return 'Viernes, 30 de octubre de 2026';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const str = d.toLocaleDateString('es-CR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const formatCreationTimeOnly = (dateStr?: string) => {
+    if (!dateStr) return '10:00 AM';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '10:00 AM';
+      return d.toLocaleTimeString('es-CR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    } catch {
+      return '10:00 AM';
+    }
+  };
+
+  // Detección exclusiva del usuario de ALISTO (perfil operativo creado por el administrador)
+  const isAlistoUser = Boolean(
+    currentUser && (
+      currentUser.role === 'staff' ||
+      currentUser.id === 'prof-alisto' ||
+      currentUser.name?.toUpperCase().includes('ALISTO')
+    )
+  );
+
+  // Si el usuario es de ALISTO, mostrar ÚNICAMENTE nombre, leyenda "Creado por Administrador", fecha y hora de creación.
+  // Cero pestañas de pedidos, promociones, ofertas ni datos de envío.
+  if (isAlistoUser) {
+    const creationIso = currentUser.createdAt || '2026-10-30T10:00:00-06:00';
+    return (
+      <div className="w-full max-w-xl mx-auto space-y-5 pb-12 animate-fadeIn">
+        {/* Botón de Retorno y Cerrar Sesión */}
+        <div className="flex items-center justify-between gap-3 pt-1">
+          <button
+            type="button"
+            onClick={() => {
+              playWaterDropSound();
+              onNavigate('pedidos-mobile');
+            }}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white hover:bg-pink-50 text-slate-700 hover:text-fio-pink border border-slate-200/90 shadow-2xs font-bubble font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer shrink-0"
+          >
+            <ArrowLeft className="w-4 h-4 text-fio-pink" />
+            <span>Ir a Alisto de Pedidos</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              playBubblePopSound(0.3);
+              logoutUser();
+              onNavigate('home');
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bubble font-bold transition-all active:scale-95 cursor-pointer"
+            title="Cerrar sesión de mi cuenta"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+
+        {/* Tarjeta Exclusiva de Alisto */}
+        <div className="bg-white/95 backdrop-blur-md rounded-[32px] p-6 sm:p-10 border border-purple-200/90 shadow-xl text-center space-y-6 animate-in zoom-in-95 duration-200">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-tr from-purple-600 via-pink-500 to-fio-pink text-white flex items-center justify-center font-bubble font-black text-3xl sm:text-4xl shadow-clayBtn mx-auto">
+            {(currentUser.name || 'A').charAt(0).toUpperCase()}
+          </div>
+
+          <div className="space-y-2">
+            <h1 className="font-bubble font-black text-2xl sm:text-3xl text-slate-900 tracking-wide">
+              {currentUser.name}
+            </h1>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-purple-100 border border-purple-200 text-purple-800 text-xs font-bubble font-bold shadow-2xs">
+              <ShieldCheck className="w-4 h-4 text-purple-600" />
+              <span>Creado por Administrador</span>
+            </div>
+          </div>
+
+          {/* Fecha y Hora de Creación */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-left">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50/80 to-pink-50/60 border border-purple-100 space-y-1">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-fio-pink" />
+                <span>Fecha de Creación</span>
+              </span>
+              <p className="font-bubble font-bold text-sm text-slate-800 capitalize">
+                {formatCreationDateOnly(creationIso)}
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50/80 to-pink-50/60 border border-purple-100 space-y-1">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-fio-purple" />
+                <span>Hora de Creación</span>
+              </span>
+              <p className="font-bubble font-bold text-sm text-slate-800 uppercase">
+                {formatCreationTimeOnly(creationIso)}
+              </p>
+            </div>
+          </div>
+
+          {/* Acceso Directo a PWA de Pedidos */}
+          <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                playWaterDropSound();
+                onNavigate('pedidos-mobile');
+              }}
+              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-700 hover:to-pink-600 text-white font-bubble font-bold text-sm shadow-clayBtn active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <PackageCheck className="w-4 h-4" />
+              <span>Ir a Panel de Alisto (PWA)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // URL del mapa OpenStreetMap embed
   const mapEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${(lng - 0.007).toFixed(5)}%2C${(lat - 0.005).toFixed(5)}%2C${(lng + 0.007).toFixed(5)}%2C${(lat + 0.005).toFixed(5)}&layer=mapnik&marker=${lat.toFixed(5)}%2C${lng.toFixed(5)}`;
 

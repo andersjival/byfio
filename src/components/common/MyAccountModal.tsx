@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   X, User, Mail, Phone, MapPin, Calendar, Clock, PackageCheck,
   Tag, Gift, Sparkles, Navigation, ExternalLink, Check, Copy,
-  ShoppingBag, Truck, CheckCircle2, ChevronRight, Printer, AlertCircle, RefreshCw
+  ShoppingBag, Truck, CheckCircle2, ChevronRight, Printer, AlertCircle, RefreshCw,
+  ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
@@ -156,6 +157,134 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
       return dateStr;
     }
   };
+
+  const formatCreationDateOnly = (dateStr?: string) => {
+    if (!dateStr) return 'Viernes, 30 de octubre de 2026';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const str = d.toLocaleDateString('es-CR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const formatCreationTimeOnly = (dateStr?: string) => {
+    if (!dateStr) return '10:00 AM';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '10:00 AM';
+      return d.toLocaleTimeString('es-CR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    } catch {
+      return '10:00 AM';
+    }
+  };
+
+  // Detección exclusiva del usuario de ALISTO (perfil operativo creado por el administrador)
+  const isAlistoUser = Boolean(
+    currentUser && (
+      currentUser.role === 'staff' ||
+      currentUser.id === 'prof-alisto' ||
+      currentUser.name?.toUpperCase().includes('ALISTO')
+    )
+  );
+
+  // Si el usuario es de ALISTO, renderizar ÚNICAMENTE nombre, leyenda "Creado por Administrador", fecha y hora de creación.
+  // Cero pestañas de pedidos, promociones, ofertas ni datos de envío.
+  if (isAlistoUser) {
+    const creationIso = currentUser.createdAt || '2026-10-30T10:00:00-06:00';
+    return (
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Panel Mi Cuenta by.fio"
+        className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fadeIn"
+        onClick={onClose}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-lg bg-[#FAF8F5] rounded-[32px] shadow-2xl border border-white/90 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
+        >
+          {/* Encabezado */}
+          <div className="p-4 sm:p-6 bg-gradient-to-r from-purple-100/90 via-pink-100/70 to-purple-50 border-b border-fio-200/80 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-fio-pink text-white flex items-center justify-center font-bubble font-black text-lg shadow-clayBtn shrink-0">
+                {(currentUser.name || 'A').charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <h2 className="font-bubble font-bold text-lg sm:text-xl text-slate-800 truncate">
+                  {currentUser.name}
+                </h2>
+                <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-full bg-purple-100 border border-purple-200 text-purple-800 text-[10px] font-bold tracking-wider uppercase shadow-2xs">
+                  Creado por Administrador
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-white/80 text-slate-400 hover:text-slate-700 transition-colors shadow-2xs cursor-pointer"
+              aria-label="Cerrar Mi Cuenta"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Contenido: Nombre, Fecha y Hora de Creación */}
+          <div className="p-5 sm:p-6 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+              <div className="p-4 rounded-2xl bg-white border border-purple-100 shadow-xs space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-fio-pink" />
+                  <span>Fecha de Creación</span>
+                </span>
+                <p className="font-bubble font-bold text-sm text-slate-800 capitalize">
+                  {formatCreationDateOnly(creationIso)}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white border border-purple-100 shadow-xs space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-fio-purple" />
+                  <span>Hora de Creación</span>
+                </span>
+                <p className="font-bubble font-bold text-sm text-slate-800 uppercase">
+                  {formatCreationTimeOnly(creationIso)}
+                </p>
+              </div>
+            </div>
+
+            {onNavigate && (
+              <div className="pt-2 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onNavigate('pedidos-mobile');
+                  }}
+                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-700 hover:to-pink-600 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <PackageCheck className="w-4 h-4" />
+                  <span>Ir a Panel de Alisto (PWA)</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // URL del mapa OpenStreetMap embed
   const mapEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${(lng - 0.007).toFixed(5)}%2C${(lat - 0.005).toFixed(5)}%2C${(lng + 0.007).toFixed(5)}%2C${(lat + 0.005).toFixed(5)}&layer=mapnik&marker=${lat.toFixed(5)}%2C${lng.toFixed(5)}`;

@@ -63,6 +63,14 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
     );
   }
 
+  const isAlistoUser = Boolean(
+    currentUser && (
+      currentUser.role === 'staff' ||
+      currentUser.id === 'prof-alisto' ||
+      currentUser.name?.toUpperCase().includes('ALISTO')
+    )
+  );
+
   return (
     <div className="relative shrink-0" ref={userMenuRef}>
       <button
@@ -92,7 +100,7 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
         )}
         {currentUser.role === 'staff' && (
           <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[9px] font-bold uppercase tracking-wider shrink-0">
-            Staff
+            {isAlistoUser ? 'Alisto' : 'Staff'}
           </span>
         )}
         <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-fio-pink transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
@@ -118,15 +126,15 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
                     </span>
                   ) : currentUser.role === 'staff' ? (
                     <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[9px] font-bold uppercase tracking-wider shrink-0">
-                      Staff
+                      {isAlistoUser ? 'Alisto' : 'Staff'}
                     </span>
                   ) : (
                     <span className="px-1.5 py-0.2 rounded-full bg-pink-100 text-fio-pink text-[9px] font-bold uppercase tracking-wider shrink-0">
                       Cliente
                     </span>
                   )}
-                  <span className="text-[11px] text-slate-500 truncate" title={currentUser.email || ''}>
-                    {currentUser.email || 'Perfil activo by.fio'}
+                  <span className="text-[11px] text-slate-500 truncate" title={isAlistoUser ? 'Creado por Administrador' : (currentUser.email || '')}>
+                    {isAlistoUser ? 'Creado por Administrador' : (currentUser.email || 'Perfil activo by.fio')}
                   </span>
                 </div>
               </div>
@@ -152,14 +160,26 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
                   Mi Cuenta
                 </span>
                 <span className="text-[10px] text-slate-400 block">
-                  Envíos, pedidos, promos y mapa
+                  {isAlistoUser ? 'Creado por Administrador' : 'Envíos, pedidos, promos y mapa'}
                 </span>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-fio-pink" />
           </button>
 
-          {(currentUser.role === 'admin' || currentUser.role === 'staff') && (
+          {isAlistoUser ? (
+            <button
+              type="button"
+              onClick={() => {
+                setIsUserMenuOpen(false);
+                onNavigate('pedidos-mobile');
+              }}
+              className="w-full text-left p-2.5 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 transition-colors flex items-center gap-2 text-xs font-bubble font-bold cursor-pointer"
+            >
+              <PackageCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Alisto de Pedidos (PWA)</span>
+            </button>
+          ) : (currentUser.role === 'admin' || currentUser.role === 'staff') && (
             <>
               <button
                 type="button"

@@ -89,7 +89,7 @@ export const DEFAULT_USER_PROFILES: UserProfile[] = [
     pin: '1001',
     role: 'staff',
     isActive: true,
-    createdAt: '2026-10-30T00:00:00.000Z',
+    createdAt: '2026-10-30T10:00:00-06:00',
     note: 'Operario de alisto, picking y empaque de órdenes',
     permissions: {
       orders: true,
@@ -2012,6 +2012,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             suppliers: expected.permissions?.suppliers !== false,
           },
           isMasterAdmin: expected.role === 'admin',
+          createdAt: expected.createdAt || '2026-10-30T10:00:00-06:00',
         };
         setCurrentUser(userObj);
         localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(userObj));
@@ -2031,6 +2032,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           suppliers: matchedProfile.permissions?.suppliers !== false,
         },
         isMasterAdmin: matchedProfile.role === 'admin',
+        createdAt: matchedProfile.createdAt || '2026-10-30T10:00:00-06:00',
       };
       setCurrentUser(userObj);
       localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(userObj));
@@ -2150,6 +2152,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         role: profileMatch.role,
         permissions: profileMatch.permissions,
         isMasterAdmin: profileMatch.role === 'admin',
+        createdAt: profileMatch.createdAt || '2026-10-30T10:00:00-06:00',
       };
       setCurrentUser(staffUser);
       localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(staffUser));
@@ -2322,6 +2325,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         role: matchingProfile.role,
         permissions: matchingProfile.permissions,
         isMasterAdmin: matchingProfile.role === 'admin',
+        createdAt: matchingProfile.createdAt || currentUser.createdAt || '2026-10-30T10:00:00-06:00',
       };
       setCurrentUser(updatedUser);
       try {

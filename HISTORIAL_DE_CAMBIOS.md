@@ -17,6 +17,24 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.66 - Vista Exclusiva y Depurada de "Mi Cuenta" para Perfil de Alisto Creado por Administrador
+- [x] **Depuración Total de Opciones de Cliente en Perfil de Alisto ([MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx) y [MyAccountModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/MyAccountModal.tsx)):**
+  - Identificación estricta del operario de alisto (`isAlistoUser`: rol `staff`, id `prof-alisto` o nombre con `ALISTO`).
+  - Erradicadas todas las pestañas de cliente comercial: "Mis Pedidos", "Promociones", "Ofertas" y los formularios de teléfono, dirección de entrega y mapa interactivo.
+  - Renderizado exclusivo y limpio que expone únicamente:
+    1. Nombre del usuario (`currentUser.name`).
+    2. Insignia `"Creado por Administrador"`.
+    3. Fecha de creación de la cuenta en formato local (`formatCreationDateOnly`).
+    4. Hora de creación de la cuenta en formato local (`formatCreationTimeOnly`).
+    5. Botón de acceso directo a la PWA de Alisto de Pedidos (`/pedidos`) y botón de cerrar sesión.
+- [x] **Sincronización de Timestamps de Perfil ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Preservación y propagación del campo `createdAt` al iniciar sesión mediante PIN o selección de perfil administrativo.
+  - Fecha y hora base local para el perfil maestro de alisto (`2026-10-30T10:00:00-06:00`).
+- [x] **Adaptación en Menú de Navegación ([NavbarUserMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx)):**
+  - Muestra la etiqueta `Alisto` y la leyenda `"Creado por Administrador"` en la opción "Mi Cuenta", en sustitución de la leyenda general de envíos y mapa de clientes.
+- [x] **Actualización de Service Worker:**
+  - Versión de caché PWA elevada a `byfio-pwa-v4.19.66` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.65 - Confirmación Obligatoria de Cantidad tras Escaneo en Alisto Guiado
 - [x] **Flujo de Escaneo con Verificación y Confirmación Manual ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
   - Implementado nuevo estado `scannedVerifiedItem`: al escanear un producto, el sistema valida el código con sonido y check visual, pero **no avanza automáticamente** al siguiente producto.
