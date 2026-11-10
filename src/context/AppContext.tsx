@@ -294,6 +294,7 @@ interface AppContextType {
     phone?: string,
     idCard?: string
   ) => { success: boolean; error?: string; user?: AuthUser };
+  resetPassword: (email: string, newPass: string) => { success: boolean; error?: string };
   logoutUser: () => void;
   isLogoutTransitionOpen: boolean;
   closeLogoutTransition: () => void;
@@ -1981,6 +1982,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true, user: customer };
     } catch {
       return { success: false, error: 'Error al registrar usuario.' };
+    }
+  };
+
+  const resetPassword = (emailInput: string, newPasswordInput: string): { success: boolean; error?: string } => {
+    const cleanEmail = emailInput.trim().toLowerCase();
+    const cleanPass = newPasswordInput.trim();
+
+    if (!cleanEmail || !cleanPass) {
+      return { success: false, error: 'Por favor ingresa tu correo y la nueva contraseña.' };
+    }
+
+    if (cleanPass.length < 6) {
+      return { success: false, error: 'La nueva contraseña debe tener al menos 6 caracteres.' };
+    }
+
+    if (cleanEmail === 'fio@byfiocr.com' || cleanEmail === 'superadmin@byfio.com') {
+      return { success: false, error: 'Para credenciales administrativas, solicita acceso al Superadmin.' };
+    }
+
+    try {
+      const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+      const userIndex = registered.findIndex((u: any) => u.email && u.email.toLowerCase() === cleanEmail);
+
+      if (userIndex === -1) {
+        return { success: false, error: 'No encontramos ninguna cuenta registrada con este correo electrónico.' };
+      }
+
+      registered[userIndex].password = cleanPass;
+      registered[userIndex].updatedAt = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+
+      return { success: true };
+    } catch {
+      return { success: false, error: 'Error al actualizar la contraseña.' };
     }
   };
 
@@ -3945,6 +3980,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         loginUser,
         loginWithPin,
         registerUser,
+        resetPassword,
         logoutUser,
         isLogoutTransitionOpen,
         closeLogoutTransition,

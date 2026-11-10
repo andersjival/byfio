@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.33 - Botón y Flujo de Restablecimiento de Contraseña para Clientes
+- [x] **Botón y Vista de Restablecimiento ([LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx)):**
+  - Añadido botón interactivo y enlace destacado *"¿Olvidaste tu contraseña? Restablecer"* en el panel de inicio de sesión.
+  - Implementada vista interactiva para definir una nueva contraseña con confirmación, validación de longitud (mínimo 6 caracteres), verificación de coincidencia en vivo y botón de confirmación *"Restablecer Contraseña"*.
+  - Enlace de asistencia alternativa por WhatsApp oficial de By.Fio (6400-4640) para soporte humano directo.
+- [x] **Persistencia de Nueva Clave ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Creado método `resetPassword` para actualizar de forma segura y persistente la contraseña del usuario registrado en `localStorage`, con validación de existencia de cuenta.
+
 ### Versión 4.19.32 - Sistema Interactivo de Registro de Usuarios en 3 Pasos con Transición Suave
 - [x] **Asistente Interactivo de Registro en 3 Pasos ([ThreeStepRegisterForm.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ThreeStepRegisterForm.tsx)):**
   - Implementado asistente interactivo con barra de progreso superior de 3 fases y animación fluida con aceleración natural (`animate-step-next` y `animate-step-prev`).

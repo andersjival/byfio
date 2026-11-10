@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2, AlertCircle, LogOut, KeyRound, Shield, UserPlus } from 'lucide-react';
+import { Heart, User, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, X, CheckCircle2, AlertCircle, LogOut, KeyRound, Shield, UserPlus, Mail } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
 import { useAlert } from '../../context/ConfirmContext';
 import { AuthUser } from '../../types';
 import { ThreeStepRegisterForm } from './ThreeStepRegisterForm';
+import { playWaterDropSound } from '../../utils/soundEffects';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ interface LoginModalProps {
   onSuccess?: (user: AuthUser) => void;
   forcedRole?: 'admin' | 'staff' | 'all';
   isLogoutCurtain?: boolean;
-  initialMode?: 'login' | 'register';
+  initialMode?: 'login' | 'register' | 'forgot';
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
@@ -32,6 +33,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     loginWithPin,
     loginSuperAdmin,
     registerUser,
+    resetPassword,
     logoutUser,
     userProfiles,
     loginIntroStage,
@@ -107,15 +109,75 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     }
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [mode, setMode] = useState<'login' | 'register'>(initialMode);
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>(initialMode);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Estado para Restablecimiento de Contraseña
+  const [resetEmail, setResetEmail] = useState(email);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+  const [resetSuccessMessage, setResetSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialMode) {
       setMode(initialMode);
     }
   }, [initialMode]);
+
+  const handleResetPasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    setResetSuccessMessage(null);
+
+    const cleanEmail = resetEmail.trim().toLowerCase();
+    const cleanPass = newPassword.trim();
+
+    if (!cleanEmail) {
+      setErrorMessage('Por favor ingresa tu correo electrónico.');
+      return;
+    }
+
+    if (cleanPass.length < 6) {
+      setErrorMessage('La nueva contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    if (cleanPass !== confirmNewPassword.trim()) {
+      setErrorMessage('Las contraseñas no coinciden. Verifícalas e inténtalo de nuevo.');
+      return;
+    }
+
+    setIsLoading(true);
+    playWaterDropSound();
+
+    setTimeout(() => {
+      const res = resetPassword(cleanEmail, cleanPass);
+      setIsLoading(false);
+
+      if (res.success) {
+        setResetSuccessMessage('✓ ¡Tu contraseña ha sido restablecida con éxito! Ya puedes iniciar sesión.');
+        setEmail(cleanEmail);
+        setPassword('');
+        try {
+          confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.6 },
+          });
+        } catch {}
+        setTimeout(() => {
+          setMode('login');
+          setResetSuccessMessage(null);
+          setErrorMessage(null);
+        }, 1800);
+      } else {
+        setErrorMessage(res.error || 'No se pudo restablecer la contraseña.');
+      }
+    }, 300);
+  };
 
   if (!isOpen && !isStandalonePage) return null;
 
@@ -328,12 +390,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <h1>
             {mode === 'login'
               ? (loginMethod === 'pin' ? 'Acceso con PIN' : 'Bienvenido de nuevo')
-              : 'Registro en 3 Pasos'}
+              : mode === 'register'
+              ? 'Registro en 3 Pasos'
+              : 'Restablecer Contraseña'}
           </h1>
           <p>
             {mode === 'login'
               ? (loginMethod === 'pin' ? 'Ingresa tu perfil y PIN de acceso' : 'Inicia sesión para continuar')
-              : 'Completa tus datos para crear tu cuenta'}
+              : mode === 'register'
+              ? 'Completa tus datos para crear tu cuenta'
+              : 'Ingresa tu correo y define tu nueva contraseña'}
           </p>
         </div>
 
@@ -387,7 +453,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </div>
         )}
 
-        {/* Contenido Dinámico: Registro en 3 Pasos vs Login Tradicional */}
+        {/* Contenido Dinámico: Registro vs Restablecimiento de Contraseña vs Login Tradicional */}
         {mode === 'register' ? (
           <div className="form-panel">
             <ThreeStepRegisterForm
@@ -398,6 +464,157 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               }}
             />
           </div>
+        ) : mode === 'forgot' ? (
+          <form className="form-panel space-y-3 animate-fadeIn" onSubmit={handleResetPasswordSubmit}>
+            {resetSuccessMessage ? (
+              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bubble font-bold text-center space-y-2 animate-fadeIn">
+                <CheckCircle2 className="w-6 h-6 text-emerald-600 mx-auto animate-bounce" />
+                <p>{resetSuccessMessage}</p>
+                <p className="text-[10px] text-emerald-700 font-sans">Redirigiendo a inicio de sesión...</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-1 text-left">
+                  <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                    Correo Electrónico Registrado:
+                  </label>
+                  <div className="input-group">
+                    <div className="icon-badge">
+                      <Mail className="w-4 h-4 text-white" />
+                    </div>
+                    <input
+                      type="email"
+                      placeholder="ejemplo@correo.com"
+                      value={resetEmail}
+                      onChange={(e) => {
+                        setResetEmail(e.target.value);
+                        if (errorMessage) setErrorMessage(null);
+                      }}
+                      required
+                      autoFocus
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      className="normal-case lowercase font-sans text-xs sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1 text-left">
+                  <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                    Nueva Contraseña:
+                  </label>
+                  <div className="input-group">
+                    <div className="icon-badge">
+                      <Lock className="w-4 h-4 text-white" />
+                    </div>
+                    <input
+                      type={showNewPassword ? 'text' : 'password'}
+                      placeholder="Mínimo 6 caracteres"
+                      value={newPassword}
+                      onChange={(e) => {
+                        setNewPassword(e.target.value);
+                        if (errorMessage) setErrorMessage(null);
+                      }}
+                      required
+                      autoComplete="new-password"
+                      className="font-sans text-xs sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="toggle-password focus:outline-none"
+                      title={showNewPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                    >
+                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1 text-left">
+                  <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                    Confirmar Nueva Contraseña:
+                  </label>
+                  <div className="input-group">
+                    <div className="icon-badge">
+                      <CheckCircle2 className="w-4 h-4 text-white" />
+                    </div>
+                    <input
+                      type={showConfirmNewPassword ? 'text' : 'password'}
+                      placeholder="Repite tu nueva contraseña"
+                      value={confirmNewPassword}
+                      onChange={(e) => {
+                        setConfirmNewPassword(e.target.value);
+                        if (errorMessage) setErrorMessage(null);
+                      }}
+                      required
+                      autoComplete="new-password"
+                      className="font-sans text-xs sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                      className="toggle-password focus:outline-none"
+                      title={showConfirmNewPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                    >
+                      {showConfirmNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  {confirmNewPassword.length > 0 && (
+                    <div className="text-[10px] font-bubble ml-1">
+                      {newPassword === confirmNewPassword ? (
+                        <span className="text-emerald-600 font-bold">✓ Las contraseñas coinciden</span>
+                      ) : (
+                        <span className="text-rose-500 font-bold">✕ Las contraseñas no coinciden aún</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('login');
+                      setErrorMessage(null);
+                    }}
+                    disabled={isLoading}
+                    className="py-2.5 px-3.5 rounded-2xl bg-white hover:bg-purple-50 text-slate-700 font-bubble font-bold text-xs border border-purple-200 transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Atrás</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="btn-login flex-1 mt-0 bg-gradient-to-r from-purple-600 via-fio-purple to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  >
+                    {isLoading ? (
+                      <span>Restableciendo...</span>
+                    ) : (
+                      <>
+                        <KeyRound className="w-4 h-4 text-fio-yellow" />
+                        <span className="font-extrabold tracking-wide">Restablecer Contraseña</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="pt-2 text-center border-t border-purple-100">
+                  <a
+                    href="https://wa.me/50664004640?text=Hola%20Fio!%20Necesito%20ayuda%20para%20restablecer%20mi%20contraseña%20en%20byfio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] font-bubble text-purple-700 hover:text-emerald-600 hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>¿Problemas con tu correo? Ayuda por WhatsApp 6400-4640</span>
+                  </a>
+                </div>
+              </>
+            )}
+          </form>
         ) : (
           <form className="form-panel" onSubmit={handleSubmit}>
           {/* Selector de Método: Correo vs PIN (integrado dentro del panel para continuidad visual 3D) */}
@@ -667,20 +884,36 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 </button>
               </div>
 
-              <div className="forgot-wrap">
-                <a
-                  href="#recuperar"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    showAlert('Por favor contactá a Fio al WhatsApp 6400-4640 para restablecer tu contraseña.', {
-                      title: 'Recuperar Contraseña',
-                      variant: 'info',
-                      confirmLabel: 'Entendido',
-                    });
+              {/* Botón de Restablecimiento de Contraseña */}
+              <div className="flex items-center justify-between gap-2 pt-1 pb-2 px-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetEmail(email);
+                    setMode('forgot');
+                    setErrorMessage(null);
+                    setResetSuccessMessage(null);
                   }}
+                  className="inline-flex items-center gap-1.5 text-xs font-bubble font-bold text-fio-purple hover:text-fio-pink transition-colors hover:underline cursor-pointer"
+                  title="¿Olvidaste tu contraseña? Restablécela aquí"
                 >
-                  ¿Olvidaste tu contraseña?
-                </a>
+                  <KeyRound className="w-3.5 h-3.5 text-purple-600" />
+                  <span>¿Olvidaste tu contraseña?</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetEmail(email);
+                    setMode('forgot');
+                    setErrorMessage(null);
+                    setResetSuccessMessage(null);
+                  }}
+                  className="px-2.5 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-purple text-[11px] font-bubble font-bold border border-purple-200/80 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer"
+                  title="Restablecer contraseña"
+                >
+                  Restablecer
+                </button>
               </div>
             </>
           )}
