@@ -1925,6 +1925,37 @@ html.dark .geosoft-copyright-pill:hover {
   pointer-events: none;
 }
 
+/* Animaciones de Transición Suave para Registro en 3 Pasos */
+@keyframes stepSlideNext {
+  0% {
+    opacity: 0;
+    transform: translateX(36px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes stepSlidePrev {
+  0% {
+    opacity: 0;
+    transform: translateX(-36px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-step-next {
+  animation: stepSlideNext 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-step-prev {
+  animation: stepSlidePrev 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* =========================================================================
    REGLAS DE ADAPTACIÓN RESPONSIVA Y ERGONOMÍA MÓVIL (iOS / Android)
    ========================================================================= */

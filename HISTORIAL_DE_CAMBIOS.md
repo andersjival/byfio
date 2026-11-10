@@ -17,6 +17,41 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.32 - Sistema Interactivo de Registro de Usuarios en 3 Pasos con Transición Suave
+- [x] **Asistente Interactivo de Registro en 3 Pasos ([ThreeStepRegisterForm.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ThreeStepRegisterForm.tsx)):**
+  - Implementado asistente interactivo con barra de progreso superior de 3 fases y animación fluida con aceleración natural (`animate-step-next` y `animate-step-prev`).
+  - **Paso 1:** Solicitud de Nombre Completo y Correo Electrónico, estableciendo explícitamente el correo como identificador/usuario para iniciar sesión.
+  - **Paso 2:** Solicitud de Teléfono de Contacto y Número de Cédula de Identidad (física, jurídica o DIMEX).
+  - **Paso 3:** Creación y confirmación de Contraseña con validación en vivo, resumen de la cuenta y botón final de confirmación *"Aceptar"*.
+- [x] **Integración en Modal de Acceso y Navegación ([LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx), [Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Pestañas neumórficas superiores para alternar al instante entre *"Iniciar Sesión"* y *"Registrarse"*.
+  - Botón directo de *"Registrarse"* en la barra de navegación (desktop) y acceso *"Crear Cuenta (Registro 3 Pasos)"* en el menú lateral móvil.
+  - Soporte de rutas directas `/registro` y `#registro` para abrir automáticamente el modal en modo registro.
+- [x] **Persistencia y Perfil de Usuario ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts)):**
+  - Ampliada la interfaz `AuthUser` y el método `registerUser` para almacenar `phone` y `idCard` con guardado persistente en `localStorage`.
+  - Inicio de sesión automático tras el registro exitoso con animación festiva de confeti.
+
+### Versión 4.19.31 - Asignación y Registro Dinámico de Proveedores en Creación de Productos
+- [x] **Selector Dinámico y Registro en el Acto de Proveedores ([NewProductModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx)):**
+  - Incorporado selector inteligente de proveedores que combina proveedores por defecto, órdenes a proveedores existentes y catálogo de productos.
+  - Habilitada creación instantánea *"ahí mismo"* (`+ Nuevo`) con campo en línea para registrar y seleccionar un proveedor nuevo sin salir del modal.
+  - Funcionalidades de edición (renombrado) y desvinculación/eliminación con almacenamiento persistente en `localStorage`.
+- [x] **Tipado y Persistencia de Proveedor ([index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts)):**
+  - Añadido campo `supplier?: string` a la interfaz `Product`, persistido en base de datos D1 y sincronizado en tiempo real por BroadcastChannel.
+- [x] **Búsqueda e Insignia en Inventario ([InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Visualización del proveedor asociado en cada fila de inventario junto a la ubicación en estante y soporte de filtrado en el buscador por nombre de proveedor.
+
+### Versión 4.19.30 - Enrutamiento Independiente y Exclusivo de Superadmin en /admin/superadmin
+- [x] **Enrutamiento Canónico e Independiente en Superadmin ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts)):**
+  - Configurada la URL canónica `/admin/superadmin` en la navegación y manipulación de historial (`window.history.pushState`).
+  - Priorizado el parser de rutas para `/admin/superadmin`, aislándolo de la raíz pública `/` y del hub administrativo `/admin`.
+  - Agregado guard `!path.startsWith('/admin/superadmin')` en las reglas genéricas de administración para evitar colisiones.
+- [x] **Aislamiento de Interfaz y Navegación Limpia ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [SuperadminLogin.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminLogin.tsx)):**
+  - Retirados elementos de tienda (redes sociales, carrito interactivo y menú móvil) en la cabecera cuando se accede a `/admin/superadmin`.
+  - Habilitados accesos directos bidireccionales entre "Panel Admin" (`/admin`) y "Superadmin" (`/admin/superadmin`).
+- [x] **Acceso Directo desde el Menú de Administración ([AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx)):**
+  - Incorporada tarjeta directa de acceso a Superadmin Maestro (`/admin/superadmin`) para administradores.
+
 ### Versión 4.19.29 - Actualización de Título en Cabecera Administrativa
 - [x] **Renombrado del Título Principal ([AdminHeader.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx)):**
   - Modificado el título principal de la cabecera del panel administrativo de *"Panel de Control & Alisto QR"* a *"Panel de control y alisto"*, simplificando la nomenclatura y eliminando el sufijo técnico QR.

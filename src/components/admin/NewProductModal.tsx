@@ -6,7 +6,7 @@ import { formatCRC } from '../../utils/formatters';
 import {
   X, PlusCircle, Hash, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
-  Store, BookOpen, ChevronDown, Plus, RotateCcw, Trash2, Sparkles, Upload
+  Store, BookOpen, ChevronDown, Plus, RotateCcw, Trash2, Sparkles, Upload, Truck
 } from 'lucide-react';
 import { MultiImageUploadField } from '../common/MultiImageUploadField';
 
@@ -38,14 +38,25 @@ const DEFAULT_SHELF_LOCATIONS = [
   'Bodega Central - Pallet 2',
 ];
 
+const DEFAULT_SUPPLIERS = [
+  'Papelera Internacional',
+  'Sublimaciones CR',
+  'Insumos Creativos',
+  'Distribuidora FIO',
+  'Proveedor Local',
+];
+
 const CUSTOM_LOCATIONS_STORAGE_KEY = 'byfio_custom_shelf_locations_v1';
 const DELETED_LOCATIONS_STORAGE_KEY = 'byfio_deleted_shelf_locations_v1';
 const CUSTOM_CATEGORIES_STORAGE_KEY = 'byfio_custom_categories_v1';
 const DELETED_CATEGORIES_STORAGE_KEY = 'byfio_deleted_categories_v1';
+const CUSTOM_SUPPLIERS_STORAGE_KEY = 'byfio_custom_suppliers_v1';
+const DELETED_SUPPLIERS_STORAGE_KEY = 'byfio_deleted_suppliers_v1';
 
 export const NewProductModal: React.FC = () => {
   const {
     products,
+    supplierOrders,
     isNewProductModalOpen,
     setIsNewProductModalOpen,
     addProduct,
@@ -59,8 +70,11 @@ export const NewProductModal: React.FC = () => {
   const [locationEditName, setLocationEditName] = useState('');
   const [isEditingCat, setIsEditingCat] = useState(false);
   const [categoryEditName, setCategoryEditName] = useState('');
+  const [isEditingSupplier, setIsEditingSupplier] = useState(false);
+  const [supplierEditName, setSupplierEditName] = useState('');
   const [locationsVersion, setLocationsVersion] = useState(0);
   const [categoriesVersion, setCategoriesVersion] = useState(0);
+  const [suppliersVersion, setSuppliersVersion] = useState(0);
 
   const [name, setName] = useState('');
   const [sku, setSku] = useState('');
@@ -70,6 +84,9 @@ export const NewProductModal: React.FC = () => {
   const [shelfLocation, setShelfLocation] = useState(DEFAULT_SHELF_LOCATIONS[0]);
   const [customLocation, setCustomLocation] = useState('');
   const [isCreatingNewLocation, setIsCreatingNewLocation] = useState(false);
+  const [supplier, setSupplier] = useState<string>('');
+  const [customSupplier, setCustomSupplier] = useState('');
+  const [isCreatingNewSupplier, setIsCreatingNewSupplier] = useState(false);
   const [price, setPrice] = useState('12000');
   const [costPrice, setCostPrice] = useState('4500');
   const [stock, setStock] = useState('10');
@@ -179,6 +196,61 @@ export const NewProductModal: React.FC = () => {
 
     return list.length > 0 ? list : ['Estante Principal'];
   }, [products, shelfLocation, locationsVersion]);
+
+  // Proveedores disponibles combinados (por defecto + productos existentes + órdenes a proveedor + guardados - eliminados)
+  const availableSuppliers = useMemo(() => {
+    const deletedSet = new Set<string>();
+    try {
+      const delSaved = localStorage.getItem(DELETED_SUPPLIERS_STORAGE_KEY);
+      if (delSaved) {
+        const parsed: string[] = JSON.parse(delSaved);
+        if (Array.isArray(parsed)) parsed.forEach((d) => d && deletedSet.add(d.trim()));
+      }
+    } catch {}
+
+    const suppSet = new Set<string>();
+    DEFAULT_SUPPLIERS.forEach((s) => {
+      if (!deletedSet.has(s.trim())) suppSet.add(s.trim());
+    });
+
+    try {
+      const saved = localStorage.getItem(CUSTOM_SUPPLIERS_STORAGE_KEY);
+      if (saved) {
+        const parsed: string[] = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((s) => {
+            if (s && typeof s === 'string' && s.trim() && !deletedSet.has(s.trim())) {
+              suppSet.add(s.trim());
+            }
+          });
+        }
+      }
+    } catch {}
+
+    if (Array.isArray(products)) {
+      products.forEach((p) => {
+        if (p.supplier && typeof p.supplier === 'string' && p.supplier.trim() && !deletedSet.has(p.supplier.trim())) {
+          suppSet.add(p.supplier.trim());
+        }
+      });
+    }
+
+    if (Array.isArray(supplierOrders)) {
+      supplierOrders.forEach((o) => {
+        if (o.supplierName && typeof o.supplierName === 'string' && o.supplierName.trim() && !deletedSet.has(o.supplierName.trim())) {
+          suppSet.add(o.supplierName.trim());
+        }
+      });
+    }
+
+    if (supplier && supplier.trim() && !deletedSet.has(supplier.trim())) {
+      suppSet.add(supplier.trim());
+    }
+
+    return Array.from(suppSet)
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base', numeric: true }));
+  }, [products, supplierOrders, supplier, suppliersVersion]);
 
   // Handlers de Categoría (Editar y Eliminar)
   const handleStartEditCategory = () => {
@@ -394,6 +466,103 @@ export const NewProductModal: React.FC = () => {
     setSuccessToast(`¡Ubicación "${newLoc}" creada con éxito!`);
   };
 
+  // Handlers de Proveedor (Editar, Eliminar y Agregar nuevo en el acto)
+  const handleStartEditSupplier = () => {
+    setSupplierEditName(supplier);
+    setIsEditingSupplier(true);
+  };
+
+  const handleSaveEditSupplier = () => {
+    const oldSupp = supplier.trim();
+    const newSupp = supplierEditName.trim();
+    if (!newSupp || oldSupp === newSupp) {
+      setIsEditingSupplier(false);
+      return;
+    }
+
+    try {
+      const saved = localStorage.getItem(CUSTOM_SUPPLIERS_STORAGE_KEY);
+      const list: string[] = saved ? JSON.parse(saved) : [];
+      const updatedList = list.filter((s) => s.trim() !== oldSupp);
+      if (!updatedList.includes(newSupp)) updatedList.push(newSupp);
+      localStorage.setItem(CUSTOM_SUPPLIERS_STORAGE_KEY, JSON.stringify(updatedList));
+
+      const delSaved = localStorage.getItem(DELETED_SUPPLIERS_STORAGE_KEY);
+      const delList: string[] = delSaved ? JSON.parse(delSaved) : [];
+      if (!delList.includes(oldSupp)) {
+        delList.push(oldSupp);
+        localStorage.setItem(DELETED_SUPPLIERS_STORAGE_KEY, JSON.stringify(delList));
+      }
+    } catch {}
+
+    if (Array.isArray(products)) {
+      products.forEach((p) => {
+        if (p.supplier === oldSupp) {
+          updateProduct(p.id, { supplier: newSupp });
+        }
+      });
+    }
+
+    setSupplier(newSupp);
+    setIsEditingSupplier(false);
+    setSuppliersVersion((v) => v + 1);
+    setSuccessToast(`¡Proveedor renombrado a "${newSupp}"!`);
+  };
+
+  const handleDeleteSupplier = async () => {
+    const suppToDelete = supplier.trim();
+    if (!suppToDelete) return;
+    const ok = await confirm(
+      `¿Deseas desvincular el proveedor "${suppToDelete}" de la lista rápida?`,
+      {
+        title: 'Eliminar Proveedor',
+        confirmLabel: 'Sí, Eliminar',
+        cancelLabel: 'Cancelar',
+        variant: 'danger',
+      }
+    );
+    if (!ok) return;
+
+    try {
+      const delSaved = localStorage.getItem(DELETED_SUPPLIERS_STORAGE_KEY);
+      const delList: string[] = delSaved ? JSON.parse(delSaved) : [];
+      if (!delList.includes(suppToDelete)) {
+        delList.push(suppToDelete);
+        localStorage.setItem(DELETED_SUPPLIERS_STORAGE_KEY, JSON.stringify(delList));
+      }
+
+      const saved = localStorage.getItem(CUSTOM_SUPPLIERS_STORAGE_KEY);
+      if (saved) {
+        const list: string[] = JSON.parse(saved);
+        const filtered = list.filter((s) => s.trim() !== suppToDelete);
+        localStorage.setItem(CUSTOM_SUPPLIERS_STORAGE_KEY, JSON.stringify(filtered));
+      }
+    } catch {}
+
+    setSupplier('');
+    setIsEditingSupplier(false);
+    setSuppliersVersion((v) => v + 1);
+    setSuccessToast(`¡Proveedor "${suppToDelete}" retirado correctamente!`);
+  };
+
+  const handleAddCustomSupplier = () => {
+    const newSupp = customSupplier.trim();
+    if (!newSupp) return;
+    try {
+      const saved = localStorage.getItem(CUSTOM_SUPPLIERS_STORAGE_KEY);
+      const list: string[] = saved ? JSON.parse(saved) : [];
+      if (!list.includes(newSupp)) {
+        list.push(newSupp);
+        localStorage.setItem(CUSTOM_SUPPLIERS_STORAGE_KEY, JSON.stringify(list));
+      }
+    } catch {}
+    setSupplier(newSupp);
+    setCustomSupplier('');
+    setIsCreatingNewSupplier(false);
+    setSuppliersVersion((v) => v + 1);
+    setSuccessToast(`¡Proveedor "${newSupp}" agregado con éxito!`);
+  };
+
   // Sincronizar formulario según modo edición o creación
   useEffect(() => {
     if (editingProduct) {
@@ -403,6 +572,9 @@ export const NewProductModal: React.FC = () => {
       setShelfLocation(editingProduct.shelfLocation || DEFAULT_SHELF_LOCATIONS[0]);
       setIsCreatingNewLocation(false);
       setCustomLocation('');
+      setSupplier(editingProduct.supplier || '');
+      setIsCreatingNewSupplier(false);
+      setCustomSupplier('');
       setPrice(String(editingProduct.price));
       setCostPrice(String(editingProduct.costPrice));
       setStock(String(editingProduct.stock));
@@ -430,6 +602,9 @@ export const NewProductModal: React.FC = () => {
       setShelfLocation(DEFAULT_SHELF_LOCATIONS[0]);
       setIsCreatingNewLocation(false);
       setCustomLocation('');
+      setSupplier('');
+      setIsCreatingNewSupplier(false);
+      setCustomSupplier('');
       setPrice('12000');
       setCostPrice('4500');
       setStock('10');
@@ -474,6 +649,12 @@ export const NewProductModal: React.FC = () => {
         : shelfLocation.trim() || DEFAULT_SHELF_LOCATIONS[0]
     );
 
+    const finalSupplier = (
+      isCreatingNewSupplier && customSupplier.trim()
+        ? customSupplier.trim()
+        : supplier.trim()
+    );
+
     // Guardar en la lista persistente de ubicaciones personalizadas
     if (isCreatingNewLocation && customLocation.trim()) {
       try {
@@ -484,6 +665,7 @@ export const NewProductModal: React.FC = () => {
           localStorage.setItem(CUSTOM_LOCATIONS_STORAGE_KEY, JSON.stringify(list));
         }
       } catch {}
+    }
 
     // Guardar en la lista persistente de categorías personalizadas
     if (isCreatingNewCat && customCategory.trim()) {
@@ -496,6 +678,17 @@ export const NewProductModal: React.FC = () => {
         }
       } catch {}
     }
+
+    // Guardar en la lista persistente de proveedores personalizados
+    if (isCreatingNewSupplier && customSupplier.trim()) {
+      try {
+        const saved = localStorage.getItem(CUSTOM_SUPPLIERS_STORAGE_KEY);
+        const list: string[] = saved ? JSON.parse(saved) : [];
+        if (!list.includes(customSupplier.trim())) {
+          list.push(customSupplier.trim());
+          localStorage.setItem(CUSTOM_SUPPLIERS_STORAGE_KEY, JSON.stringify(list));
+        }
+      } catch {}
     }
 
     const realPhotos = productPhotos.filter((img) => img && !img.includes('placeholder-new-product'));
@@ -515,6 +708,7 @@ export const NewProductModal: React.FC = () => {
         sku: sku.trim().toUpperCase(),
         category: finalCategory,
         shelfLocation: finalShelfLocation,
+        supplier: finalSupplier || undefined,
         price: Number(price) || 0,
         costPrice: Number(costPrice) || 0,
         stock: numStock,
@@ -539,6 +733,7 @@ export const NewProductModal: React.FC = () => {
         sku: sku.trim().toUpperCase(),
         category: finalCategory,
         shelfLocation: finalShelfLocation,
+        supplier: finalSupplier || undefined,
         price: Number(price) || 0,
         costPrice: Number(costPrice) || 0,
         stock: numStock,
@@ -665,7 +860,7 @@ export const NewProductModal: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {/* Categoría */}
                 <div>
                   <label className="block font-bold text-gray-700 text-xs mb-1.5">Categoría *</label>
@@ -913,6 +1108,161 @@ export const NewProductModal: React.FC = () => {
                         }}
                         className="w-6.5 h-6.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-fio-pink border border-pink-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
                         title="Crear nueva ubicación"
+                      >
+                        <Plus className="w-3 h-3 stroke-[2.5]" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Proveedor del Producto */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="font-bold text-gray-700 text-xs flex items-center gap-1">
+                      <Truck className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Proveedor del Producto</span>
+                    </label>
+                    {!isCreatingNewSupplier && !isEditingSupplier && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCreatingNewSupplier(true);
+                          setCustomSupplier('');
+                        }}
+                        className="text-[10px] text-amber-700 hover:text-amber-900 font-bold flex items-center gap-0.5 cursor-pointer"
+                        title="Agregar proveedor nuevo aquí mismo"
+                      >
+                        <Plus className="w-3 h-3 stroke-[2.5]" /> Nuevo
+                      </button>
+                    )}
+                  </div>
+
+                  {isEditingSupplier ? (
+                    <div className="flex items-center gap-1.5">
+                      <div className="relative flex-1 min-w-0">
+                        <input
+                          type="text"
+                          placeholder="Nombre del proveedor..."
+                          value={supplierEditName}
+                          onChange={(e) => setSupplierEditName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleSaveEditSupplier();
+                            }
+                          }}
+                          className="w-full pl-7 pr-2.5 py-1.5 rounded-xl border-2 border-amber-500 bg-amber-50/50 font-semibold text-amber-950 focus:outline-none text-xs"
+                          autoFocus
+                        />
+                        <Truck className="w-3.5 h-3.5 text-amber-600 absolute left-2 top-1/2 -translate-y-1/2" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleSaveEditSupplier}
+                        className="px-2.5 py-1.5 bg-amber-600 text-white rounded-xl text-xs font-bold hover:bg-amber-700 transition-all cursor-pointer shadow-2xs shrink-0"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingSupplier(false)}
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : isCreatingNewSupplier ? (
+                    <div className="flex items-center gap-1.5">
+                      <div className="relative flex-1 min-w-0">
+                        <input
+                          type="text"
+                          placeholder="Nombre de nuevo proveedor..."
+                          value={customSupplier}
+                          onChange={(e) => setCustomSupplier(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleAddCustomSupplier();
+                            }
+                          }}
+                          className="w-full pl-7 pr-2.5 py-1.5 rounded-xl border-2 border-amber-500 bg-amber-50/40 font-semibold text-amber-950 focus:outline-none text-xs"
+                          autoFocus
+                        />
+                        <Truck className="w-3.5 h-3.5 text-amber-600 absolute left-2 top-1/2 -translate-y-1/2" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleAddCustomSupplier}
+                        className="px-2.5 py-1.5 bg-amber-600 text-white rounded-xl text-xs font-bold hover:bg-amber-700 transition-all cursor-pointer shadow-2xs shrink-0"
+                      >
+                        Agregar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsCreatingNewSupplier(false)}
+                        className="px-2 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <div className="relative flex-1 min-w-0">
+                        <select
+                          value={supplier}
+                          onChange={(e) => {
+                            if (e.target.value === '__new__') {
+                              setIsCreatingNewSupplier(true);
+                              setCustomSupplier('');
+                            } else {
+                              setSupplier(e.target.value);
+                            }
+                          }}
+                          className="w-full pl-7 pr-6 py-2 rounded-xl border border-fio-200 bg-white font-semibold text-amber-950 focus:ring-2 focus:ring-fio-400 focus:outline-none appearance-none cursor-pointer text-xs truncate"
+                        >
+                          <option value="">-- Sin Proveedor --</option>
+                          {availableSuppliers.map((supp) => (
+                            <option key={supp} value={supp}>
+                              {supp}
+                            </option>
+                          ))}
+                          <option value="__new__" className="text-amber-700 font-bold">
+                            ✨ + Agregar nuevo proveedor...
+                          </option>
+                        </select>
+                        <Truck className="w-3.5 h-3.5 text-amber-600 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+
+                      {/* Botones compactos: Lápiz, Basurero y Más */}
+                      {supplier && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleStartEditSupplier}
+                            className="w-6.5 h-6.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                            title={`Editar o renombrar proveedor "${supplier}"`}
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleDeleteSupplier}
+                            className="w-6.5 h-6.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                            title={`Desvincular o retirar proveedor "${supplier}"`}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCreatingNewSupplier(true);
+                          setCustomSupplier('');
+                        }}
+                        className="w-6.5 h-6.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 flex items-center justify-center transition-all shadow-2xs active:scale-95 shrink-0 cursor-pointer"
+                        title="Agregar nuevo proveedor aquí mismo"
                       >
                         <Plus className="w-3 h-3 stroke-[2.5]" />
                       </button>

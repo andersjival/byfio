@@ -67,7 +67,8 @@ export const InventoryTable: React.FC = () => {
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.shelfLocation.toLowerCase().includes(searchQuery.toLowerCase());
+      p.shelfLocation.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.supplier ? p.supplier.toLowerCase().includes(searchQuery.toLowerCase()) : false);
 
     const isZero = p.stock <= 0;
     const isUnavail = p.isAvailable === false || p.showInStore === false || p.showInCatalog === false;
@@ -413,10 +414,18 @@ export const InventoryTable: React.FC = () => {
                   </td>
 
                   <td className="py-3 px-2 whitespace-nowrap">
-                    <span className="inline-flex items-center gap-1 font-semibold text-purple-900 bg-purple-50 px-2 py-1 rounded-xl border border-purple-200">
-                      <MapPin className="w-3 h-3 text-fio-pink shrink-0" />
-                      <span>{prod.shelfLocation}</span>
-                    </span>
+                    <div className="flex flex-col gap-1 items-start">
+                      <span className="inline-flex items-center gap-1 font-semibold text-purple-900 bg-purple-50 px-2 py-0.5 rounded-xl border border-purple-200">
+                        <MapPin className="w-3 h-3 text-fio-pink shrink-0" />
+                        <span>{prod.shelfLocation}</span>
+                      </span>
+                      {prod.supplier && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-900 bg-amber-50 px-1.5 py-0.5 rounded-lg border border-amber-200/80" title={`Proveedor: ${prod.supplier}`}>
+                          <Truck className="w-2.5 h-2.5 text-amber-600 shrink-0" />
+                          <span className="max-w-[120px] truncate">{prod.supplier}</span>
+                        </span>
+                      )}
+                    </div>
                   </td>
 
                   <td className="py-3 px-2 font-bubble font-bold text-gray-800">{formatCRC(prod.price)}</td>

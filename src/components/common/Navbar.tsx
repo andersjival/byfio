@@ -3,14 +3,14 @@ import { useApp } from '../../context/AppContext';
 import { BrandLogo } from './BrandLogo';
 import { TikTokIcon } from './TikTokIcon';
 import { AppRoute } from '../../types';
-import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, LayoutGrid, LogOut, ShieldCheck, Sun, Moon, Heart, PackageCheck } from 'lucide-react';
+import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, User, UserPlus, LayoutGrid, LogOut, ShieldCheck, Sun, Moon, Heart, PackageCheck } from 'lucide-react';
 import { metricsTracker } from '../../services/metricsTracker';
 import { isCollaboratorPwaContext } from '../../utils/routeHelpers';
 
 interface NavbarProps {
   currentRoute: AppRoute;
   onNavigate: (route: AppRoute) => void;
-  onOpenLogin?: () => void;
+  onOpenLogin?: (mode?: 'login' | 'register') => void;
   onOpenDesignModal?: () => void;
   onSelectAdminHub?: () => void;
   isAdminHub?: boolean;
@@ -79,6 +79,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="sm:hidden whitespace-nowrap">Tienda</span>
             </button>
           )}
+
+          {currentRoute === 'superadmin' && (
+            <button
+              type="button"
+              onClick={() => handleNav('admin')}
+              className="neu-btn bg-[#F1F2F6] flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-purple-700 text-xs sm:text-sm font-bubble font-bold border border-purple-200/80 shadow-neuBtn hover:bg-purple-50 transition-all active:scale-95 shrink-0"
+              title="Ir al Panel de Administración"
+            >
+              <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" />
+              <span className="hidden sm:inline whitespace-nowrap">Panel Admin</span>
+              <span className="sm:hidden whitespace-nowrap">Admin</span>
+            </button>
+          )}
         </div>
 
         {/* Links de Navegación de Páginas Principales con Estilo Neumórfico Táctil (Solo en Modo Público) */}
@@ -142,8 +155,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Acciones del Encabezado */}
         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-          {/* Si NO es admin: Redes Sociales, Carrito y Login */}
-          {currentRoute !== 'admin' ? (
+          {/* Si NO es admin ni superadmin: Redes Sociales, Carrito y Login */}
+          {currentRoute !== 'admin' && currentRoute !== 'superadmin' ? (
             <>
               {/* Redes Sociales Oficiales (En pantallas grandes para clientes públicos) */}
               {!isPwaOrStaffOrAdmin && (
@@ -275,16 +288,29 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={onOpenLogin || (() => handleNav('login'))}
-                  aria-label="Iniciar Sesión"
-                  className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95 shrink-0"
-                  title="Iniciar Sesión 3D"
-                >
-                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink" />
-                  <span className="hidden xl:inline">Iniciar Sesión</span>
-                </button>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => (onOpenLogin ? onOpenLogin('login') : handleNav('login'))}
+                    aria-label="Iniciar Sesión"
+                    className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95 shrink-0 cursor-pointer"
+                    title="Iniciar Sesión"
+                  >
+                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink" />
+                    <span className="hidden xl:inline">Iniciar Sesión</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => (onOpenLogin ? onOpenLogin('register') : handleNav('login'))}
+                    aria-label="Registrarse"
+                    className="hidden sm:flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-700 hover:to-pink-600 text-white shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95 shrink-0 cursor-pointer"
+                    title="Crear cuenta nueva en 3 pasos"
+                  >
+                    <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                    <span className="hidden xl:inline">Registrarse</span>
+                  </button>
+                </div>
               )}
 
               {/* Botón Carrito de Compras Neumórfico */}
@@ -315,6 +341,50 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
               </button>
             </>
+          ) : currentRoute === 'superadmin' ? (
+            /* EN PORTAL SUPERADMIN: Acciones exclusivas del Maestro */
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              {/* Selector de Tema Claro / Oscuro en Superadmin */}
+              <div className="flex items-center p-0.5 sm:p-1 rounded-full bg-[#ECEEF2] shadow-neuInset border border-white/60 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setColorTheme('vibrant')}
+                  className={`p-1.5 sm:p-2 rounded-full transition-all ${
+                    colorTheme !== 'dark'
+                      ? 'bg-[#F1F2F6] shadow-neuBtn text-amber-500 scale-105'
+                      : 'text-slate-400 hover:text-amber-500'
+                  }`}
+                  title="Cambiar a tema claro (Sol)"
+                  aria-label="Cambiar a tema claro"
+                >
+                  <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400/20" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setColorTheme('dark')}
+                  className={`p-1.5 sm:p-2 rounded-full transition-all ${
+                    colorTheme === 'dark'
+                      ? 'bg-[#1E1B4B] shadow-neuBtn text-indigo-400 scale-105'
+                      : 'text-slate-400 hover:text-indigo-400'
+                  }`}
+                  title="Cambiar a tema oscuro (Luna)"
+                  aria-label="Cambiar a tema oscuro"
+                >
+                  <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-indigo-400/20" />
+                </button>
+              </div>
+
+              {/* Botón Ir a Admin desde Superadmin */}
+              <button
+                type="button"
+                onClick={() => handleNav('admin')}
+                className="neu-btn bg-[#F1F2F6] flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-purple-700 hover:bg-purple-50 text-xs sm:text-sm font-bubble font-bold border border-purple-200/80 shadow-neuBtn transition-all active:scale-95 shrink-0"
+                title="Ir al Panel de Administración (/admin)"
+              >
+                <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" />
+                <span className="whitespace-nowrap">Panel Admin</span>
+              </button>
+            </div>
           ) : (
             /* EN PANEL DE ADMINISTRACIÓN: Redes sociales retiradas, colocamos Diseño & Letra y Menú Principal */
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
@@ -383,7 +453,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Menú Desplegable en Móvil y Tablets (Solo en modo Tienda/Público) */}
-      {mobileOpen && currentRoute !== 'admin' && (
+      {mobileOpen && currentRoute !== 'admin' && currentRoute !== 'superadmin' && (
         <nav className="xl:hidden border-t border-white/40 bg-gradient-to-b from-[#C99BF9] to-[#E2C0F4] backdrop-blur-md px-4 py-3 space-y-2 animate-fadeIn">
           <button
             type="button"
@@ -501,18 +571,36 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => {
-                setMobileOpen(false);
-                if (onOpenLogin) onOpenLogin();
-                else handleNav('login');
-              }}
-              className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn flex items-center gap-2"
-            >
-              <User className="w-4 h-4 text-fio-pink" />
-              <span>Iniciar Sesión 3D</span>
-            </button>
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  if (onOpenLogin) onOpenLogin('login');
+                  else handleNav('login');
+                }}
+                className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn flex items-center gap-2 cursor-pointer"
+              >
+                <User className="w-4 h-4 text-fio-pink" />
+                <span>Iniciar Sesión</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  if (onOpenLogin) onOpenLogin('register');
+                  else handleNav('login');
+                }}
+                className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-neuBtn flex items-center justify-between cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <UserPlus className="w-4 h-4 text-white" />
+                  <span>Crear Cuenta (Registro 3 Pasos)</span>
+                </div>
+                <span className="text-[10px] bg-white/25 px-2 py-0.5 rounded-full font-bubble font-bold uppercase">Nuevo</span>
+              </button>
+            </div>
           )}
 
           {/* Selector de Tema en Móvil */}

@@ -48,15 +48,21 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'pwa-install', adminTab: 'hub' };
   }
 
-  // 0. Superadmin Portal Maestro Exclusivo (/panel/superadmin o /superadmin)
+  // 0. Superadmin Portal Maestro Exclusivo (/admin/superadmin)
   if (
-    path.includes('/panel/superadmin') ||
-    path.includes('/superadmin') ||
+    path === '/admin/superadmin' ||
+    path.startsWith('/admin/superadmin') ||
     path.includes('/admin/superadmin') ||
+    path === '/superadmin' ||
+    path.startsWith('/superadmin') ||
+    path.includes('/superadmin') ||
+    path.includes('/panel/superadmin') ||
+    hash.includes('admin/superadmin') ||
     hash.includes('panel/superadmin') ||
     hash.includes('superadmin') ||
     seccionParam === 'superadmin' ||
-    seccionParam === 'panel-superadmin'
+    seccionParam === 'panel-superadmin' ||
+    seccionParam === 'admin/superadmin'
   ) {
     return { route: 'superadmin', adminTab: 'hub' };
   }
@@ -204,10 +210,11 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'hub', openDesignModal: true };
   }
   if (
-    path.startsWith('/admin') ||
+    !path.startsWith('/admin/superadmin') &&
+    (path.startsWith('/admin') ||
     path.startsWith('/administracion') ||
     hash.includes('admin') ||
-    seccionParam === 'admin'
+    seccionParam === 'admin')
   ) {
     return { route: 'admin', adminTab: 'hub' };
   }
@@ -223,6 +230,9 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'metricas', adminTab: 'hub' };
   }
   if (path.includes('/login') || hash.includes('login') || seccionParam === 'login') {
+    return { route: 'login', adminTab: 'hub' };
+  }
+  if (path.includes('/registro') || hash.includes('registro') || seccionParam === 'registro') {
     return { route: 'login', adminTab: 'hub' };
   }
   if (

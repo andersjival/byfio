@@ -82,6 +82,7 @@ export interface Product {
   name: string;
   category: ProductCategory;
   shelfLocation: string; // Ej: "Estante A-2", "Gaveta C-1"
+  supplier?: string; // Proveedor o distribuidor del producto
   price: number; // en Colones (₡)
   costPrice: number;
   stock: number;
@@ -296,6 +297,7 @@ export interface AuthUser {
   id?: string;
   email?: string;
   phone?: string;
+  idCard?: string;
   name: string;
   role: 'admin' | 'staff' | 'customer';
   permissions?: UserPermissions;

@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
-import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2, AlertCircle, LogOut, KeyRound, Shield } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Heart, User, Lock, Eye, EyeOff, ArrowRight, X, CheckCircle2, AlertCircle, LogOut, KeyRound, Shield, UserPlus } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
 import { useAlert } from '../../context/ConfirmContext';
 import { AuthUser } from '../../types';
+import { ThreeStepRegisterForm } from './ThreeStepRegisterForm';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface LoginModalProps {
   onSuccess?: (user: AuthUser) => void;
   forcedRole?: 'admin' | 'staff' | 'all';
   isLogoutCurtain?: boolean;
+  initialMode?: 'login' | 'register';
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
@@ -21,6 +23,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   onSuccess,
   isLogoutCurtain = false,
   forcedRole = 'all',
+  initialMode = 'login',
 }) => {
   const showAlert = useAlert();
   const {
@@ -104,9 +107,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     }
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialMode) {
+      setMode(initialMode);
+    }
+  }, [initialMode]);
 
   if (!isOpen && !isStandalonePage) return null;
 
@@ -319,12 +328,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <h1>
             {mode === 'login'
               ? (loginMethod === 'pin' ? 'Acceso con PIN' : 'Bienvenido de nuevo')
-              : 'Crear tu Cuenta'}
+              : 'Registro en 3 Pasos'}
           </h1>
           <p>
             {mode === 'login'
               ? (loginMethod === 'pin' ? 'Ingresa tu perfil y PIN de acceso' : 'Inicia sesión para continuar')
-              : 'Únete a nuestra academia y tienda creativa'}
+              : 'Completa tus datos para crear tu cuenta'}
           </p>
         </div>
 
@@ -339,8 +348,58 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           />
         </div>
 
-        {/* Formulario */}
-        <form className="form-panel" onSubmit={handleSubmit}>
+        {/* Selector de Modo: Iniciar Sesión vs Registrarse (Público) */}
+        {forcedRole !== 'admin' && (
+          <div className="px-3 sm:px-4 mb-2">
+            <div className="flex items-center p-1 rounded-2xl bg-purple-100/70 border border-purple-200/80 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('login');
+                  setErrorMessage(null);
+                }}
+                className={`flex-1 py-1.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  mode === 'login'
+                    ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>Iniciar Sesión</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('register');
+                  setErrorMessage(null);
+                }}
+                className={`flex-1 py-1.5 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  mode === 'register'
+                    ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Registrarse</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Contenido Dinámico: Registro en 3 Pasos vs Login Tradicional */}
+        {mode === 'register' ? (
+          <div className="form-panel">
+            <ThreeStepRegisterForm
+              onSuccess={handleLoginSuccess}
+              onSwitchToLogin={() => {
+                setMode('login');
+                setErrorMessage(null);
+              }}
+            />
+          </div>
+        ) : (
+          <form className="form-panel" onSubmit={handleSubmit}>
           {/* Selector de Método: Correo vs PIN (integrado dentro del panel para continuidad visual 3D) */}
           {mode === 'login' && (
             <div className="mb-2.5">
@@ -559,31 +618,13 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           ) : (
             /* MODO CORREO / CONTRASEÑA */
             <>
-              {mode === 'register' && (
-                <div className="input-group">
-                  <div className="icon-badge">
-                    <User className="w-4 h-4 text-white" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Tu Nombre Completo"
-                    value={name}
-                    onChange={(e) => {
-                      setName(e.target.value);
-                      if (errorMessage) setErrorMessage(null);
-                    }}
-                    required
-                  />
-                </div>
-              )}
-
               <div className="input-group">
                 <div className="icon-badge">
                   <User className="w-4 h-4 text-white" />
                 </div>
                 <input
                   type="email"
-                  placeholder={mode === 'login' ? 'Correo (ej. fio@byfiocr.com)' : 'Correo electrónico'}
+                  placeholder="Correo (ej. fio@byfiocr.com)"
                   value={email}
                   onChange={(e) => {
                     handleEmailChange(e.target.value);
@@ -614,7 +655,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   autoCapitalize="none"
                   autoCorrect="off"
                   spellCheck={false}
-                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
@@ -662,9 +703,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               )
             ) : (
               <>
-                <span>
-                  {mode === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'}
-                </span>
+                <span>Iniciar Sesión</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -672,38 +711,21 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
           {loginMethod === 'email' && forcedRole !== 'admin' && (
             <p className="signup-text mt-3">
-              {mode === 'login' ? (
-                <>
-                  ¿No tienes una cuenta?{' '}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode('register');
-                      setErrorMessage(null);
-                    }}
-                    className="font-bold hover:underline"
-                  >
-                    Regístrate
-                  </button>
-                </>
-              ) : (
-                <>
-                  ¿Ya tienes una cuenta?{' '}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode('login');
-                      setErrorMessage(null);
-                    }}
-                    className="font-bold hover:underline"
-                  >
-                    Inicia Sesión
-                  </button>
-                </>
-              )}
+              ¿No tienes una cuenta?{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('register');
+                  setErrorMessage(null);
+                }}
+                className="font-bold hover:underline"
+              >
+                Regístrate (3 pasos)
+              </button>
             </p>
           )}
         </form>
+      )}
       </div>
 
       {/* Badge de Copyright Animado de GeoSoft (Estilo BOSUNI CR) */}

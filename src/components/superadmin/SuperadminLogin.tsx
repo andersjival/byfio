@@ -166,14 +166,24 @@ export const SuperadminLogin: React.FC<SuperadminLoginProps> = ({ onLogin, onBac
         </form>
 
         {/* Volver */}
-        <div className="mt-5 pt-4 border-t border-purple-800/40 text-center relative z-10">
+        <div className="mt-5 pt-4 border-t border-purple-800/40 flex items-center justify-center gap-4 text-center relative z-10 flex-wrap">
           <button
             type="button"
             onClick={onBackToStore}
-            className="inline-flex items-center gap-1.5 text-xs text-purple-300 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-purple-300 hover:text-white transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Volver a la Tienda Oficial</span>
+            <span>Volver a la Tienda</span>
+          </button>
+          <span className="text-purple-600 hidden sm:inline">•</span>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== 'undefined') window.location.href = '/admin';
+            }}
+            className="inline-flex items-center gap-1.5 text-xs text-purple-300 hover:text-white transition-colors cursor-pointer"
+          >
+            <span>Ir al Panel Admin (/admin)</span>
           </button>
         </div>
       </div>

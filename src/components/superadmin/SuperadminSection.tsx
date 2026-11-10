@@ -152,9 +152,9 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
 
             <button
               type="button"
-              onClick={() => onNavigate('admin', 'suppliers')}
+              onClick={() => onNavigate('admin', 'hub')}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600/50 hover:bg-purple-600 text-white text-xs font-semibold border border-purple-400/40 shadow-xs active:scale-95 transition-all cursor-pointer"
-              title="Abrir panel administrativo estándar"
+              title="Abrir panel administrativo estándar (/admin)"
             >
               <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
               <span>Ver Panel Admin</span>

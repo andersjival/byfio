@@ -287,7 +287,13 @@ interface AppContextType {
   currentUser: AuthUser | null;
   loginUser: (email: string, pass: string) => { success: boolean; error?: string; user?: AuthUser };
   loginWithPin: (pin: string, targetProfileName?: string) => { success: boolean; error?: string; user?: AuthUser };
-  registerUser: (email: string, pass: string, name?: string) => { success: boolean; error?: string; user?: AuthUser };
+  registerUser: (
+    email: string,
+    pass: string,
+    name?: string,
+    phone?: string,
+    idCard?: string
+  ) => { success: boolean; error?: string; user?: AuthUser };
   logoutUser: () => void;
   isLogoutTransitionOpen: boolean;
   closeLogoutTransition: () => void;
@@ -1919,6 +1925,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const normalUser: AuthUser = {
           email: found.email,
           name: found.name || found.email.split('@')[0],
+          phone: found.phone,
+          idCard: found.idCard,
           role: 'customer',
         };
         setCurrentUser(normalUser);
@@ -1930,7 +1938,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return { success: false, error: 'Credenciales incorrectas. Verifica tu correo, contraseña o PIN de 4 dígitos.' };
   };
 
-  const registerUser = (emailInput: string, passwordInput: string, nameInput?: string) => {
+  const registerUser = (
+    emailInput: string,
+    passwordInput: string,
+    nameInput?: string,
+    phoneInput?: string,
+    idCardInput?: string
+  ) => {
     const cleanEmail = emailInput.trim().toLowerCase();
     const cleanPass = passwordInput.trim();
     if (!cleanEmail || !cleanPass) {
@@ -1948,6 +1962,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         email: cleanEmail,
         password: cleanPass,
         name: nameInput?.trim() || cleanEmail.split('@')[0],
+        phone: phoneInput?.trim() || '',
+        idCard: idCardInput?.trim() || '',
         createdAt: new Date().toISOString(),
       };
       registered.push(record);
@@ -1956,6 +1972,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const customer: AuthUser = {
         email: record.email,
         name: record.name,
+        phone: record.phone,
+        idCard: record.idCard,
         role: 'customer',
       };
       setCurrentUser(customer);

@@ -97,6 +97,13 @@ export const App: React.FC = () => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [loginModalMode, setLoginModalMode] = useState<'login' | 'register'>(() => {
+    if (typeof window === 'undefined') return 'login';
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    const search = window.location.search.toLowerCase();
+    return (path.includes('registro') || hash.includes('registro') || search.includes('registro')) ? 'register' : 'login';
+  });
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
   const [billingTargetCustomer, setBillingTargetCustomer] = useState<Customer | null>(null);
   const [isEntryGatewayOpen, setIsEntryGatewayOpen] = useState<boolean>(() => {
@@ -146,7 +153,7 @@ export const App: React.FC = () => {
     setSelectedWorkshopId(wsId);
 
     let targetPath = '/';
-    if (newRoute === 'superadmin') targetPath = '/panel/superadmin';
+    if (newRoute === 'superadmin') targetPath = '/admin/superadmin';
     else if (newRoute === 'propuesta') targetPath = '/propuesta';
     else if (newRoute === 'metricas') targetPath = '/metricas';
     else if (newRoute === 'login') targetPath = '/login';
@@ -393,7 +400,10 @@ export const App: React.FC = () => {
         <Navbar
           currentRoute={currentRoute}
           onNavigate={navigate}
-          onOpenLogin={() => setIsLoginModalOpen(true)}
+          onOpenLogin={(mode) => {
+            setLoginModalMode(mode || 'login');
+            setIsLoginModalOpen(true);
+          }}
           onOpenDesignModal={handleOpenDesignModal}
           onSelectAdminHub={() => handleSelectAdminTab('hub')}
           isAdminHub={adminTab === 'hub'}
@@ -413,6 +423,7 @@ export const App: React.FC = () => {
                   isOpen={true}
                   onClose={() => navigate('home')}
                   isStandalonePage={true}
+                  initialMode={loginModalMode}
                   onSuccess={(user) => {
                     if (user.email === 'superadmin@byfio.com') {
                       navigate('superadmin');
@@ -572,9 +583,10 @@ export const App: React.FC = () => {
 
       {/* Modales y Elementos Flotantes Globales */}
       <LoginModal
-        key={isLogoutTransitionOpen ? 'logout-curtain' : 'standard-login'}
+        key={isLogoutTransitionOpen ? 'logout-curtain' : `login-${loginModalMode}`}
         isOpen={isLoginModalOpen || isLogoutTransitionOpen}
         isLogoutCurtain={isLogoutTransitionOpen}
+        initialMode={loginModalMode}
         onClose={() => {
           setIsLoginModalOpen(false);
           closeLogoutTransition();
