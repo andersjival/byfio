@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.50 - Solución a Encogimiento de Zoom y Expansión en Mapa Interactivo
+- [x] **Solución de Raíz al Encogimiento de Zoom ([InteractiveMapPicker.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/InteractiveMapPicker.tsx)):**
+  - Desacoplado el ciclo de vida del mapa Leaflet de los cambios de `lat`, `lng` y `onChange`: el mapa ahora se monta únicamente una vez (`useEffect(..., [])`) y no se destruye con `map.remove()` al mover el pin o al recibir la dirección sugerida.
+  - Implementado `panTo` para sincronización externa y `Math.max(currentZoom, ...)` para presets y GPS, preservando intacto el nivel de acercamiento detallado (zoom 17-19) elegido por el usuario sin regresar al zoom inicial 15.
+- [x] **Búsqueda de Dirección Directa en el Mapa:**
+  - Añadido buscador en vivo con Nominatim para Costa Rica (`Search`), permitiendo al usuario escribir su cantón, barrio o calle directamente en la cabecera del mapa, centrando el pin y manteniendo la vista ampliada.
+- [x] **Botón 'Hacer Grande' / Reducir:**
+  - Incorporado control interactivo de expansión de altura (`Maximize2` / `Minimize2`) con re-cálculo automático de tiles (`map.invalidateSize()`) para ver el mapa en formato grande sin encogimiento involuntario.
+- [x] **Blindaje en Modal de Registro ([RegisterMapModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/RegisterMapModal.tsx)):**
+  - Memoizado el callback `onChange` y restringido el reinicio de coordenadas a la apertura del modal (`[isOpen]`), evitando reinicios de posición o zoom ante re-renders del componente padre.
+
 ### Versión 4.19.49 - Generación Automática de Códigos de Barras e Impresión para Estanterías y Productos
 - [x] **Generador Vectorial Nativo de Código 128 ([Barcode128.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Barcode128.tsx)):**
   - Implementado algoritmo estándar Code 128 (Subset B) en SVG vectorial puro sin dependencias externas pesadas.
