@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus, OrderItem, AppRoute, UserProfile } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import {
-  PackageCheck, Search, CheckCircle2, Clock, Phone, MapPin,
+  PackageCheck, Camera, Search, CheckCircle2, Clock, Phone, MapPin,
   Bell, BellRing, Volume2, Smartphone,
   CreditCard, Shield, ShieldCheck, KeyRound, LogOut, RefreshCw,
   Store, Boxes, ChevronDown, ChevronUp, Copy, MessageCircle,
@@ -31,6 +31,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
   const {
     orders,
     updateOrderStatus,
+    startPicking,
     markItemPicked,
     unmarkItemPicked,
     markAllItemsPicked,
@@ -521,6 +522,41 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
       </div>
 
       {/* Lista de Pedidos */}
+      {/* Acceso Rápido de Alisto con Cámara en la PWA */}
+      {counts.pending > 0 && (
+        <div className="px-3 pt-2">
+          {(() => {
+            const firstPending = orders.find((o) => !isOrderFullyAlistado(o));
+            if (!firstPending) return null;
+            return (
+              <button
+                type="button"
+                onClick={() => startPicking(firstPending.id, 'barcode')}
+                className="w-full p-3 rounded-2xl bg-gradient-to-r from-fio-800 to-purple-900 text-white flex items-center justify-between gap-3 shadow-clay active:scale-[0.98] transition-all cursor-pointer border border-purple-400/40"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-fio-pink to-purple-500 flex items-center justify-center shrink-0 shadow-xs">
+                    <Camera className="w-4 h-4 text-fio-yellow" />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <p className="text-[10px] text-fio-yellow font-bold uppercase tracking-wider">
+                      Siguiente en Cola de Alisto
+                    </p>
+                    <p className="font-bubble font-bold text-xs truncate">
+                      {firstPending.orderNumber} — {firstPending.customerName}
+                    </p>
+                  </div>
+                </div>
+                <span className="shrink-0 px-3 py-1.5 rounded-xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-black text-xs shadow-xs flex items-center gap-1">
+                  <span>Escanear</span>
+                  <span>📱</span>
+                </span>
+              </button>
+            );
+          })()}
+        </div>
+      )}
+
       <main className="px-3 pt-3 space-y-3 flex-1">
         {filteredOrders.length === 0 ? (
           <div className="py-16 text-center space-y-3 bg-white rounded-3xl border border-purple-200/80 shadow-clay p-6">
@@ -721,6 +757,24 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                         </span>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {/* Botón Principal: Alisto Guiado con Cámara del Celular (PWA) */}
+                {!isFullyAlistado && (
+                  <div className="p-3 bg-gradient-to-r from-purple-100/90 via-pink-100/70 to-purple-50 border-b border-purple-200/80">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startPicking(order.id, 'barcode');
+                      }}
+                      className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-purple-600 via-fio-pink to-purple-600 hover:from-purple-500 hover:to-pink-500 text-white font-bubble font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-clayBtn active:scale-95 transition-all cursor-pointer"
+                      title="Abrir la pistola lectora de códigos de barra con la cámara del celular"
+                    >
+                      <Camera className="w-4 h-4 text-fio-yellow" />
+                      <span>📱 Iniciar Alisto con Lector de Cámara</span>
+                    </button>
                   </div>
                 )}
 

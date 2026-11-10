@@ -324,6 +324,9 @@ export const App: React.FC = () => {
     return (
       <ErrorBoundary fallbackTitle="Inconveniente al cargar la vista de pedidos">
         <MobileOrdersView onNavigate={navigate} />
+        <React.Suspense fallback={null}>
+          {activePickingOrder && <GuidedPickingModal />}
+        </React.Suspense>
       </ErrorBoundary>
     );
   }

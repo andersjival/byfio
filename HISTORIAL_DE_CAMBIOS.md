@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.57 - Integración del Lector de Alisto Continuo con Cámara en la PWA Móvil de Pedidos
+- [x] **Integración en la PWA de Alisto ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Montado `GuidedPickingModal` en la ruta exclusiva `/pedidos-mobile` (PWA de colaboradores/operarios de alisto) para que el modal de cámara tome toda la pantalla del celular sin importar la ruta de entrada.
+- [x] **Acceso Directo en Tarjetas y Cola ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Añadido botón destacado "📱 Iniciar Alisto con Lector de Cámara" en cada pedido con productos pendientes.
+  - Implementado banner de acceso rápido en la cabecera móvil que detecta el siguiente pedido pendiente en cola FIFO con botón de escaneo inmediato a un clic.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.57` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.56 - Directorio de Proveedores, Botón "+ Agregar Proveedor" y Despacho Dual (WhatsApp + Descarga PDF)
 - [x] **Directorio y Modal de Registro de Proveedores ([AddSupplierModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AddSupplierModal.tsx), [AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
   - Creado modal atómico de alta fidelidad para registrar proveedores con campos: Nombre del proveedor, Teléfono de contacto, WhatsApp de pedidos (con interruptor de sincronización "Mismo"), Correo electrónico opcional, Dirección física opcional y Notas.
