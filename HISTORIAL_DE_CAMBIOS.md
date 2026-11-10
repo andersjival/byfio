@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.37 - Ajuste de Pantalla Completa y Altura Dinámica para Alisto de Pedidos en Móviles
+- [x] **Adaptación Nativa a Celulares Android y iPhone ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Implementada altura dinámica completa en celular (`h-[100dvh] sm:h-auto sm:max-h-[92vh]`) eliminando por completo el espacio vacío o filtración de la pantalla de pedidos en la parte inferior.
+  - Diseño responsivo adaptativo: en móviles ocupa el 100% de la pantalla (`rounded-none border-0`) y en computadoras conserva la tarjeta flotante centrada (`sm:rounded-3xl sm:border-4`).
+  - Incorporada protección para Notch y Dynamic Island en la cabecera (`pt-[max(0.75rem,env(safe-area-inset-top))]`) y para la barra de gestos inferior en iPhone/Android (`pb-[max(1.25rem,env(safe-area-inset-bottom))]`).
+  - Distribución vertical fluida (`flex-1 flex flex-col justify-between`) para los botones de acción de alisto y centrado automático en pantalla de confirmación.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.37` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.36 - Blindaje contra QuotaExceededError en Almacenamiento Local de Pedidos
 - [x] **Parche Global contra Cuota Excedida ([safeStorage.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/safeStorage.ts)):**
   - Sobrescritura defensiva global de `window.localStorage.setItem` para interceptar `DOMException: QuotaExceededError`. Si el almacenamiento del navegador (5 MB) se satura, auto-purga claves secundarias y redirige transparentemente a memoria RAM sin quebrar la interfaz.

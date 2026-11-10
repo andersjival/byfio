@@ -148,10 +148,10 @@ export const GuidedPickingModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-sm flex items-start sm:items-center justify-center pt-1.5 sm:pt-4 px-2 sm:px-4 pb-2 sm:pb-5">
-      <div className="relative w-full max-w-3xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border-2 sm:border-4 border-fio-300 overflow-hidden flex flex-col max-h-[96vh] sm:max-h-[90vh]">
-        {/* Header de Alisto Compacto */}
-        <div className="px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-fio-800 to-fio-900 text-white flex items-center justify-between gap-2 shrink-0">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4">
+      <div className="relative w-full h-[100dvh] sm:h-auto sm:max-h-[92vh] max-w-3xl bg-white rounded-none sm:rounded-3xl shadow-2xl border-0 sm:border-4 border-fio-300 overflow-hidden flex flex-col">
+        {/* Header de Alisto Compacto con soporte para Notch / Dynamic Island */}
+        <div className="px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-fio-800 to-fio-900 text-white flex items-center justify-between gap-2 shrink-0 pt-[max(0.75rem,env(safe-area-inset-top))]">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <span className="p-2 sm:p-2 bg-white/10 rounded-xl sm:rounded-2xl shrink-0">
               {pickingMode === 'barcode' ? (
@@ -190,10 +190,10 @@ export const GuidedPickingModal: React.FC = () => {
           </span>
         </div>
 
-        {/* CUERPO GUIADO PRODUCTO POR PRODUCTO (Optimizado para Celular con escala 50% mayor) */}
-        <div className="p-4 sm:p-5 overflow-y-auto flex-1">
+        {/* CUERPO GUIADO PRODUCTO POR PRODUCTO (Adaptado 100% a Pantallas Android e iPhone) */}
+        <div className="p-3.5 sm:p-5 overflow-y-auto flex-1 flex flex-col justify-between pb-[max(1.25rem,env(safe-area-inset-bottom))]">
           {!isCompleted && currentItem ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-6 items-center flex-1">
               {/* Imagen y Ubicación en Estante */}
               <div className="flex flex-row md:flex-col items-center gap-4 md:gap-2">
                 <div className="relative w-36 h-36 sm:w-full sm:h-52 rounded-2xl sm:rounded-3xl overflow-hidden bg-fio-50 border-2 sm:border-2 border-fio-200 shadow-md shrink-0">
@@ -485,7 +485,7 @@ export const GuidedPickingModal: React.FC = () => {
             </div>
           ) : (
             /* Flujo Post-Finalización: Continuar con el siguiente pedido */
-            <div className="py-4 sm:py-6 px-2 sm:px-6 text-center space-y-4">
+            <div className="py-4 sm:py-6 px-2 sm:px-6 text-center space-y-4 my-auto">
               <div className="inline-flex p-3 sm:p-4 rounded-full bg-purple-100 text-purple-700 shadow-sm animate-bounce">
                 <CheckCircle className="w-10 h-10 sm:w-14 sm:h-14" />
               </div>
