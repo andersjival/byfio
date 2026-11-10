@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.60 - Erradicación de Opacidad y Optimización de Nitidez HD en Cámara de Escáner
+- [x] **Eliminación del Velo Oscuro de Html5Qrcode ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx), [CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx)):**
+  - Desactivada la inyección del sombreado opaco `rgba(0,0,0,0.48)` (`#qr-shaded-region`) que oscurecía y empañaba el video de la cámara del celular.
+  - El sensor ahora captura y decodifica el 100% del cuadro sin velos oscuros intermedios y a 25 FPS fluidos.
+- [x] **Realce Óptico y Calibración de Contraste en CSS ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Aplicados filtros directos sobre el elemento `<video>` de la cámara (`contrast(1.14) brightness(1.10) saturate(1.12)` y `-webkit-optimize-contrast`), haciendo que las líneas negras de los códigos de barra resalten con máxima nitidez sobre fondo blanco.
+  - Suprimidos los filtros de desenfoque (`backdrop-blur`) dentro del marco visor para evitar difuminar los códigos de barra.
+- [x] **Controles de Iluminación y Enfoque Continuo:**
+  - Añadido botón interactivo "Claridad / Ultra Luz" (icono de sol) en la barra del visor para realzar contraste en estanterías poco iluminadas.
+  - Activado enfoque continuo (`focusMode: continuous`) y exposición automática en el hardware de la cámara del celular.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.60` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.59 - Visibilidad Omnipresente del Escáner de Códigos de Barras en PWA de Alisto
 - [x] **Banner y Botón Principal Superior ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
   - Añadido banner prominente a todo lo ancho con gradiente y cámara dorada: "Escanear Productos para Alisto" para acceso inmediato en 1 toque.

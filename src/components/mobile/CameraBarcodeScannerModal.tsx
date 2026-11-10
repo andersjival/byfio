@@ -46,15 +46,15 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
         const html5QrCode = new Html5Qrcode(containerId);
         scannerRef.current = html5QrCode;
 
-        // Configuración óptima para teléfonos Android e iPhone
+        // Configuración de escaneo centrada: qrbox rectangular adaptado a códigos de barra y QR
         const config = {
-          fps: 15,
+          fps: 25,
           qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
-            const edge = Math.min(viewfinderWidth, viewfinderHeight);
-            const boxSize = Math.floor(edge * 0.72);
-            return { width: Math.max(220, boxSize), height: Math.max(220, boxSize) };
+            // Marco rectangular centrado que coincide milimétricamente con el marco visual
+            const width = Math.floor(viewfinderWidth * 0.86);
+            const height = Math.floor(Math.min(viewfinderHeight * 0.52, 175));
+            return { width: Math.max(220, width), height: Math.max(120, height) };
           },
-          aspectRatio: 1.0,
         };
 
         await html5QrCode.start(
@@ -226,18 +226,26 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
         <div className="relative aspect-square w-full bg-black overflow-hidden flex items-center justify-center">
           <div id={containerId} className="w-full h-full object-cover" />
 
-          {/* Animación del marco de escaneo */}
+          {/* Animación del marco de escaneo centrado milimétricamente con el sensor */}
           {!cameraError && !isStarting && (
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-              <div className="relative w-64 h-64 border-2 border-dashed border-fio-pink/70 rounded-3xl shadow-[0_0_25px_rgba(236,72,153,0.35)]">
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-3">
+              <div className="relative w-[86%] max-w-[310px] h-36 sm:h-40 border-2 border-dashed border-fio-pink rounded-3xl shadow-[0_0_25px_rgba(236,72,153,0.35)] flex items-center justify-center">
                 {/* Esquinas guía */}
                 <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-fio-yellow rounded-tl-xl" />
                 <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-fio-yellow rounded-tr-xl" />
                 <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-fio-yellow rounded-bl-xl" />
                 <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-fio-yellow rounded-br-xl" />
 
-                {/* Línea láser de escaneo móvil */}
-                <div className="absolute left-2 right-2 h-0.5 bg-gradient-to-r from-transparent via-fio-pink to-transparent animate-pulse" />
+                {/* Retículo / Punto de centrado exacto */}
+                <div className="w-2 h-2 rounded-full bg-fio-yellow/80 shadow-[0_0_8px_#facc15]" />
+
+                {/* Línea láser de escaneo centrada exactamente al 50% */}
+                <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-transparent via-fio-pink to-transparent shadow-[0_0_10px_rgba(236,72,153,0.9)] animate-pulse" />
+
+                {/* Indicador de ayuda */}
+                <span className="absolute -bottom-6 text-[10px] font-mono font-bold text-fio-yellow bg-slate-950/80 px-2 py-0.5 rounded-full border border-fio-yellow/30">
+                  Centra el código aquí
+                </span>
               </div>
             </div>
           )}

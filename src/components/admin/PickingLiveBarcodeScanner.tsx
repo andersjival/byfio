@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import {
   Camera, Flashlight, RefreshCw, AlertTriangle, CheckCircle2,
-  Pause, Play, Sparkles, SwitchCamera, XCircle
+  Pause, Play, Sparkles, SwitchCamera, XCircle, Sun
 } from 'lucide-react';
 import { playBarcodeSuccessSound, playBarcodeErrorSound, playWaterDropSound } from '../../utils/soundEffects';
 
@@ -48,6 +48,7 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
   const [hasTorch, setHasTorch] = useState(false);
   const [isTorchOn, setIsTorchOn] = useState(false);
   const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+  const [isHighClarity, setIsHighClarity] = useState(false);
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
     code: string;
@@ -120,15 +121,19 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
 
       scannerRef.current = html5QrCode;
 
-      // Configuración calibrada para códigos de barra (rectángulo horizontal amplio)
+      // Configuración calibrada con qrbox rectangular centrado con el marco visual
       const config = {
-        fps: 22,
+        fps: 25,
         qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
-          const w = Math.min(420, Math.floor(viewfinderWidth * 0.92));
-          const h = Math.min(180, Math.floor(Math.max(130, viewfinderHeight * 0.52)));
-          return { width: Math.max(240, w), height: h };
+          const width = Math.floor(viewfinderWidth * 0.88);
+          const height = Math.floor(Math.min(viewfinderHeight * 0.55, 160));
+          return { width: Math.max(220, width), height: Math.max(110, height) };
         },
-        aspectRatio: 1.333,
+        videoConstraints: {
+          facingMode: { ideal: facing },
+          width: { min: 720, ideal: 1280, max: 1920 },
+          height: { min: 720, ideal: 720, max: 1080 },
+        },
       };
 
       await html5QrCode.start(
@@ -155,6 +160,13 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
             const capabilities = (track.getCapabilities?.() || {}) as any;
             if (capabilities.torch) {
               setHasTorch(true);
+            }
+            // Activar enfoque continuo y auto-exposición para erradicar desenfoque
+            const adv: any[] = [];
+            if (capabilities.focusMode?.includes('continuous')) adv.push({ focusMode: 'continuous' });
+            if (capabilities.exposureMode?.includes('continuous')) adv.push({ exposureMode: 'continuous' });
+            if (adv.length > 0) {
+              try { await track.applyConstraints({ advanced: adv }); } catch {}
             }
           }
         }
@@ -312,6 +324,24 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
             </button>
           )}
 
+          {/* Botón de Realce de Claridad / Brillo */}
+          <button
+            type="button"
+            onClick={() => {
+              setIsHighClarity(!isHighClarity);
+              playWaterDropSound();
+            }}
+            className={`p-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1 ${
+              isHighClarity
+                ? 'bg-amber-400 text-slate-950 shadow-sm'
+                : 'bg-slate-800 hover:bg-slate-700 text-amber-300'
+            }`}
+            title={isHighClarity ? 'Desactivar Realce de Claridad' : 'Activar Modo Ultra Claridad (Bodega / Poca Luz)'}
+          >
+            <Sun className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline text-[10px]">{isHighClarity ? 'Ultra Luz' : 'Claridad'}</span>
+          </button>
+
           <button
             type="button"
             onClick={toggleFacingMode}
@@ -335,19 +365,19 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
       </div>
 
       {/* Visor de Video en Vivo */}
-      <div className="relative w-full h-48 sm:h-56 md:h-64 bg-black flex items-center justify-center overflow-hidden">
+      <div className={`relative w-full h-60 sm:h-72 md:h-80 bg-black flex items-center justify-center overflow-hidden ${isHighClarity ? "high-clarity-camera" : ""}`}>
         <div id={containerId} className="w-full h-full object-cover" />
 
-        {/* Mira Láser y Encuadre Guiado para Códigos de Barras */}
+        {/* Mira Láser y Encuadre Guiado para Códigos de Barras Centrado Milimétricamente */}
         {!cameraError && !isStarting && !isPaused && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-3">
             <div
-              className={`relative w-[90%] max-w-[360px] h-28 sm:h-32 rounded-2xl border-2 transition-all duration-200 ${
+              className={`relative w-[88%] max-w-[340px] h-32 sm:h-36 rounded-2xl border-2 transition-all duration-200 flex items-center justify-center ${
                 feedback?.type === 'success'
                   ? 'border-emerald-400 bg-emerald-500/15 shadow-[0_0_30px_rgba(16,185,129,0.5)]'
                   : feedback?.type === 'error'
                   ? 'border-rose-500 bg-rose-500/15 shadow-[0_0_30px_rgba(244,63,94,0.5)]'
-                  : 'border-fio-pink/70 border-dashed shadow-[0_0_20px_rgba(236,72,153,0.35)]'
+                  : 'border-fio-pink border-dashed shadow-[0_0_20px_rgba(236,72,153,0.35)]'
               }`}
             >
               {/* Esquinas Guía Amarillas */}
@@ -356,13 +386,16 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
               <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-fio-yellow rounded-bl-lg" />
               <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-fio-yellow rounded-br-lg" />
 
-              {/* Línea Láser Animada en Movimiento Vertical */}
-              <div className="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_8px_#ef4444] animate-pulse top-1/2 -translate-y-1/2" />
+              {/* Retículo central */}
+              <div className="w-2 h-2 rounded-full bg-fio-yellow/80 shadow-[0_0_8px_#facc15]" />
+
+              {/* Línea Láser Animada en Movimiento Centrada al 50% */}
+              <div className="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_10px_#ef4444] animate-pulse top-1/2 -translate-y-1/2" />
 
               {/* Mensaje de guía flotante dentro de la mira */}
-              <div className="absolute bottom-1 inset-x-0 flex justify-center">
-                <span className="text-[10px] bg-slate-950/80 backdrop-blur-sm text-fio-yellow font-mono font-bold px-2 py-0.5 rounded-full border border-yellow-500/40">
-                  Apunta aquí el código de barras
+              <div className="absolute bottom-1.5 inset-x-0 flex justify-center">
+                <span className="text-[10px] bg-slate-950/80 text-fio-yellow font-mono font-bold px-2 py-0.5 rounded-full border border-yellow-500/40">
+                  Centra el código de barras aquí
                 </span>
               </div>
             </div>
