@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.42 - Desacoplamiento y Modularización ARQMODULAR del Navbar
+- [x] **Extracción Atómica del Monolito Navbar ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Aplicada la **Regla del Boy Scout** de ARQMODULAR, reduciendo `Navbar.tsx` de 758 líneas a un orquestador liviano y limpio.
+  - Creado submódulo [`NavbarNavLinks.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarNavLinks.tsx) (75 líneas): Enlaces de navegación desktop con colores oficiales activos y textos blancos.
+  - Creado submódulo [`NavbarThemeToggle.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarThemeToggle.tsx) (44 líneas): Selector neumórfico Sol/Luna.
+  - Creado submódulo [`NavbarUserMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx) (181 líneas): Menú de sesión, "Mi Cuenta", accesos de rol y cierre de sesión.
+  - Creado submódulo [`NavbarMobileDrawer.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx) (252 líneas): Drawer desplegable móvil/tablets independiente.
+- [x] **Cero Efectos Secundarios y Cero Regresiones:**
+  - Todas las rutas, props y listeners preservados al 100%.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.42` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.41 - Corrección de Colores y Erradicación de Borde Oscuro en Botones Principales
 - [x] **Eliminación Total de Borde/Contorno Café Oscuro ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Aplicado `outline-none focus:outline-none focus:ring-0 focus-visible:outline-none` a los 4 botones principales (Inicio, Talleres, Tienda, Catálogo) en desktop y móvil.
