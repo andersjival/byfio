@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
-import { playBarcodeSuccessSound, playBarcodeErrorSound } from '../../utils/soundEffects';
+import { playBarcodeSuccessSound, playBarcodeErrorSound, playWaterDropSound } from '../../utils/soundEffects';
 
 interface PickingLiveBarcodeScannerProps {
   expectedSku: string;

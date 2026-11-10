@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.62 - Limpieza Visual Minimalista del Cuadro del Escáner (Solo Esquinas Puntiagudas Amarillas)
+- [x] **Purificación del Visor del Escáner ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
+  - Removida la barra superior completa de controles que contenía los textos "Pistola Lectora Activa", selector de cámara y botones de luz / claridad.
+  - Removido el pie de página inferior que contenía "Esperando SKU:" y las etiquetas de formato.
+  - Eliminados los textos flotantes internos dentro del encuadre.
+  - Conservado únicamente el recuadro de escaneo con esquinas puntiagudas amarillas, retículo central y línea láser animada centrada, garantizando una interfaz 100% limpia y sin distracciones.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.62` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.61 - Calibración y Centrado Milimétrico del Cuadro de Escaneo con Cámara
 - [x] **Alineación Geométrica Exacta del Stream de Video ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
   - Corregido el desplazamiento vertical donde el video se anclaba en `top: 0` y forzaba al usuario a subir el celular para enfocar.
