@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.43 - Creación del Directorio y Hub de Descarga de Skills (.dev/skills)
+- [x] **Directorio Oficial de Skills ([.dev/skills/](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/.dev/skills/)):**
+  - Creada la carpeta `.dev/skills/` en la raíz con las 13 skills oficiales utilizadas en el proyecto (`arqmodular`, `codigo-eficiente`, `deploy-cloudflare-byfio`, `verificacion-deploy`, `respuesta-concisa`, `polling-inteligente`, `emil-kowalski`, `magic-ui-aceternity`, `shadcn-ui`, `taste`, `uiverse`, `premium-ecommerce-storefront`, `boveda-skills`).
+  - Cada skill cuenta con su archivo normativo `SKILL.md` estructurado y documentado.
+- [x] **Portal Interactivo y Botones de Descarga ([index.html](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/.dev/skills/index.html)):**
+  - Desarrollada interfaz web con tarjetas individuales por skill, nombre, categoría, peso en KB, descripción, botón de descarga directa (`Descargar SKILL.md`), botón de copiado al portapapeles y visor modal de contenido.
+  - Botón masivo **"Descargar Todas (.ZIP)"** que empaqueta todas las skills en un solo archivo con 1 clic.
+  - Replicado en [`public/dev/skills/`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/dev/skills/) para acceso y descarga en vivo desde Cloudflare Pages (`https://byfiocr.pages.dev/dev/skills`).
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.43` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.42 - Desacoplamiento y Modularización ARQMODULAR del Navbar
 - [x] **Extracción Atómica del Monolito Navbar ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Aplicada la **Regla del Boy Scout** de ARQMODULAR, reduciendo `Navbar.tsx` de 758 líneas a un orquestador liviano y limpio.
