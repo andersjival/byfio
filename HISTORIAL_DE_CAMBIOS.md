@@ -17,6 +17,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.56 - Directorio de Proveedores, Botón "+ Agregar Proveedor" y Despacho Dual (WhatsApp + Descarga PDF)
+- [x] **Directorio y Modal de Registro de Proveedores ([AddSupplierModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AddSupplierModal.tsx), [AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Creado modal atómico de alta fidelidad para registrar proveedores con campos: Nombre del proveedor, Teléfono de contacto, WhatsApp de pedidos (con interruptor de sincronización "Mismo"), Correo electrónico opcional, Dirección física opcional y Notas.
+  - Persistencia en almacenamiento local bajo la clave `byfio_suppliers_directory_v1` sincronizada vía BroadcastChannel.
+  - Incorporado botón "+ Agregar Proveedor" en la barra de acción principal de la sección de proveedores ([SuppliersOrdersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SuppliersOrdersSection.tsx)).
+  - Añadida pestaña interactiva "Directorio Proveedores" con tarjetas individuales para llamar, chatear por WhatsApp, ver dirección/correo o generar pedidos de inmediato.
+- [x] **Generación Dual de Pedidos a Proveedor: WhatsApp + Descarga/Impresión PDF ([CreateSupplierOrderPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CreateSupplierOrderPage.tsx)):**
+  - Selector inteligente que agrupa proveedores del directorio con conteo en vivo de artículos agotados.
+  - Detección y auto-completado automático del número de WhatsApp al elegir cualquier proveedor del directorio.
+  - Acceso directo "+ Agregar Proveedor" integrado junto al selector para registrar nuevos contactos al vuelo sin abandonar la requisición.
+  - Doble formato de despacho oficial:
+    1. **Botón WhatsApp:** Envía el pedido completo estructurado con código de referencia, SKU, unidades y totales formateados para confirmar disponibilidad.
+    2. **Botón Descargar / Imprimir (PDF):** Genera la orden de compra oficial membretada con encabezado formal, datos del proveedor, receptor y firmas de autorización para imprimir o guardar como PDF.
+- [x] **Actualización de Service Worker:**
+  - Versión de caché PWA elevada a `byfio-pwa-v4.19.56` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.55 - Checklist de Toma Física de Inventario por Estante con Códigos de Barra y Hojas de Conteo
 - [x] **Generador de Checklist y Hojas de Conteo por Estante ([InventoryChecklistModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryChecklistModal.tsx)):**
   - Implementado modal y motor de hojas de conteo de inventario físico agrupadas estrictamente por estante (`shelfLocation`).

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Product, SupplierOrder, SupplierOrderItem, AgendaPriority } from '../../types';
+import { Product, Supplier, SupplierOrder, SupplierOrderItem, AgendaPriority } from '../../types';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
 import {
   Truck, ArrowLeft, Plus, Minus, Trash2, Search, Printer,
   MessageCircle, Calendar, Clock, CheckCircle2, RefreshCw,
-  FileText, AlertTriangle, Eye, Edit3, X, HelpCircle, Package, UserCheck, ShieldAlert
+  FileText, AlertTriangle, Eye, Edit3, X, HelpCircle, Package, UserCheck, ShieldAlert,
+  UserPlus, Download
 } from 'lucide-react';
+import { AddSupplierModal } from './AddSupplierModal';
 
 interface CreateSupplierOrderPageProps {
   onBackToSuppliers: () => void;
@@ -29,11 +31,17 @@ export const CreateSupplierOrderPage: React.FC<CreateSupplierOrderPageProps> = (
   onBackToInventory,
   initialProductId,
 }) => {
-  const { products, addSupplierOrder, addAgendaItem, agendaItems } = useApp();
+  const { products, addSupplierOrder, addAgendaItem, agendaItems, suppliers } = useApp();
+  const [isAddSupplierModalOpen, setIsAddSupplierModalOpen] = useState(false);
 
   // 1. Detección de Proveedores disponibles en el sistema y productos
   const availableSuppliers = useMemo(() => {
     const suppSet = new Set<string>();
+
+    // Agregar proveedores registrados en el directorio
+    suppliers?.forEach((s) => {
+      if (s.name && s.name.trim()) suppSet.add(s.name.trim());
+    });
 
     // Agregar proveedores de productos existentes
     products.forEach((p) => {
@@ -114,6 +122,12 @@ export const CreateSupplierOrderPage: React.FC<CreateSupplierOrderPageProps> = (
       setCustomSupplierName('');
     } else {
       setCustomSupplierName(selectedSupplierMode);
+      const matched = suppliers?.find(
+        (s) => s.name.trim().toLowerCase() === selectedSupplierMode.trim().toLowerCase()
+      );
+      if (matched) {
+        setSupplierPhone(matched.whatsappPhone || matched.phone || '');
+      }
     }
   }, [selectedSupplierMode]);
 
@@ -477,9 +491,20 @@ export const CreateSupplierOrderPage: React.FC<CreateSupplierOrderPageProps> = (
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
               {/* Selector Principal de Proveedor */}
               <div className="md:col-span-5 space-y-1.5">
-                <label className="block text-xs font-bold text-slate-700">
-                  Elegir Proveedor de la Lista:
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-slate-700">
+                    Elegir Proveedor de la Lista:
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddSupplierModalOpen(true)}
+                    className="text-[11px] font-bubble font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-xl border border-emerald-200 transition-colors shadow-2xs"
+                    title="Registrar nuevo proveedor en el directorio"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>+ Agregar Proveedor</span>
+                  </button>
+                </div>
                 <div className="relative">
                   <select
                     value={selectedSupplierMode}
@@ -490,7 +515,18 @@ export const CreateSupplierOrderPage: React.FC<CreateSupplierOrderPageProps> = (
                       📦 Todos los productos sin existencias ({outOfStockCountsBySupplier.totalZeroCount} agotados)
                     </option>
 
-                    <optgroup label="── Proveedores con Artículos Faltantes ──">
+                    <optgroup label="── Directorio de Proveedores Registrados ──">
+                      {suppliers?.map((supp) => {
+                        const count = outOfStockCountsBySupplier.counts[supp.name] || 0;
+                        return (
+                          <option key={supp.id} value={supp.name}>
+                            🏪 {supp.name} ({count} {count === 1 ? 'agotado' : 'agotados'}) {supp.whatsappPhone ? `• WA: ${supp.whatsappPhone}` : ''}
+                          </option>
+                        );
+                      })}
+                    </optgroup>
+
+                    <optgroup label="── Otros Proveedores con Artículos Faltantes ──">
                       {availableSuppliers.map((supp) => {
                         const count = outOfStockCountsBySupplier.counts[supp] || 0;
                         return (
@@ -809,17 +845,31 @@ export const CreateSupplierOrderPage: React.FC<CreateSupplierOrderPageProps> = (
 
             {/* Botones de Acción */}
             <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto justify-end">
-              {/* Enviar WhatsApp */}
+              {/* 1. Forma 1: Enviar Pedido por WhatsApp */}
               <a
                 href={getWhatsAppLink(supplierPhone || '64004640', generateWhatsAppMessage())}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer text-center"
-                title="Abrir WhatsApp con la orden formateada"
+                title="Abrir WhatsApp para enviar la orden completa directamente al proveedor"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>WhatsApp</span>
+                <span>Enviar Pedido por WhatsApp</span>
               </a>
+
+              {/* 2. Forma 2: Descargar / Imprimir Pedido Oficial (PDF) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setViewMode('document');
+                  setTimeout(() => window.print(), 350);
+                }}
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer text-center"
+                title="Descargar o imprimir la orden de compra oficial en formato PDF"
+              >
+                <Printer className="w-4 h-4 text-purple-300" />
+                <span>Descargar / Imprimir (PDF)</span>
+              </button>
 
               {/* Guardar en Agenda */}
               <button
@@ -990,6 +1040,16 @@ export const CreateSupplierOrderPage: React.FC<CreateSupplierOrderPageProps> = (
           </div>
         </div>
       )}
+      {/* Modal para Registrar Proveedor al Vuelo */}
+      <AddSupplierModal
+        isOpen={isAddSupplierModalOpen}
+        onClose={() => setIsAddSupplierModalOpen(false)}
+        onSupplierCreated={(newSupp) => {
+          setSelectedSupplierMode(newSupp.name);
+          setCustomSupplierName(newSupp.name);
+          setSupplierPhone(newSupp.whatsappPhone || newSupp.phone || '');
+        }}
+      />
     </div>
   );
 };

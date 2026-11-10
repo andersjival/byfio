@@ -6,8 +6,10 @@ import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatt
 import {
   Truck, Plus, Search, Calendar, Phone, Mail, CheckCircle2, Clock,
   Package, ChevronDown, ChevronUp, Printer, Trash2, MessageCircle,
-  FileText, ArrowRight, RefreshCw, AlertCircle, Edit3, X, Check, Eye
+  FileText, ArrowRight, RefreshCw, AlertCircle, Edit3, X, Check, Eye,
+  UserPlus, MapPin
 } from 'lucide-react';
+import { AddSupplierModal } from './AddSupplierModal';
 import type { AdminTabType } from './AdminTabs';
 
 interface SuppliersOrdersSectionProps {
@@ -26,11 +28,14 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
     agendaItems,
     addAgendaItem,
     deleteAgendaItem,
+    suppliers,
+    deleteSupplier,
   } = useApp();
   const confirm = useConfirm();
   const showAlert = useAlert();
 
-  const [activeFilter, setActiveFilter] = useState<'all' | 'draft' | 'ordered' | 'received'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'draft' | 'ordered' | 'received' | 'suppliers'>('all');
+  const [isAddSupplierModalOpen, setIsAddSupplierModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
   const [viewingOrder, setViewingOrder] = useState<SupplierOrder | null>(null);
@@ -369,6 +374,15 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
           <div className="flex items-center gap-2 flex-wrap">
             <button
               type="button"
+              onClick={() => setIsAddSupplierModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95 cursor-pointer"
+              title="Registrar un nuevo proveedor"
+            >
+              <UserPlus className="w-4 h-4 text-white" />
+              <span>+ Agregar Proveedor</span>
+            </button>
+            <button
+              type="button"
               onClick={() => onSelectTab ? onSelectTab('supplier-order-create') : setIsSupplierModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95 cursor-pointer"
               title="Generar orden automática basada en stock crítico y bajo mínimo"
@@ -498,6 +512,26 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
               {receivedCount}
             </span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveFilter('suppliers')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeFilter === 'suppliers'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-700 hover:text-emerald-700'
+            }`}
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Directorio Proveedores</span>
+            <span
+              className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                activeFilter === 'suppliers' ? 'bg-white text-emerald-800' : 'bg-emerald-100 text-emerald-900'
+              }`}
+            >
+              {suppliers?.length || 0}
+            </span>
+          </button>
         </div>
 
         {/* Buscador Rápido */}
@@ -513,8 +547,166 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
         </div>
       </div>
 
-      {/* Lista de Órdenes a Proveedores */}
-      {filteredOrders.length === 0 ? (
+      
+      {/* VISTA DEL DIRECTORIO DE PROVEEDORES */}
+      {activeFilter === 'suppliers' ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between pb-2">
+            <p className="text-xs text-slate-500">
+              Directorio de proveedores registrados para contacto directo por WhatsApp y generación de requisiciones.
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsAddSupplierModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>+ Nuevo Proveedor</span>
+            </button>
+          </div>
+
+          {suppliers.length === 0 ? (
+            <div className="p-8 text-center bg-white rounded-3xl border border-dashed border-slate-300 space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+                <Truck className="w-6 h-6" />
+              </div>
+              <p className="font-bubble font-bold text-sm text-slate-700">No hay proveedores en el directorio</p>
+              <button
+                type="button"
+                onClick={() => setIsAddSupplierModalOpen(true)}
+                className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bubble text-xs font-bold shadow-xs cursor-pointer"
+              >
+                + Registrar Primer Proveedor
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {suppliers
+                .filter((s) => {
+                  if (!searchQuery.trim()) return true;
+                  const q = searchQuery.toLowerCase();
+                  return (
+                    s.name.toLowerCase().includes(q) ||
+                    (s.phone && s.phone.toLowerCase().includes(q)) ||
+                    (s.whatsappPhone && s.whatsappPhone.toLowerCase().includes(q)) ||
+                    (s.email && s.email.toLowerCase().includes(q)) ||
+                    (s.notes && s.notes.toLowerCase().includes(q))
+                  );
+                })
+                .map((supp) => {
+                  const waNumber = supp.whatsappPhone || supp.phone;
+                  return (
+                    <div
+                      key={supp.id}
+                      className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between gap-3"
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className="font-bubble font-black text-base text-slate-900 leading-tight">
+                            {supp.name}
+                          </h4>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200 shrink-0">
+                            Proveedor
+                          </span>
+                        </div>
+
+                        {/* Teléfono */}
+                        <div className="flex items-center gap-2 text-xs text-slate-600">
+                          <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <a href={`tel:${supp.phone}`} className="hover:text-emerald-700 font-mono font-bold">
+                            {supp.phone}
+                          </a>
+                        </div>
+
+                        {/* WhatsApp */}
+                        {waNumber && (
+                          <div className="flex items-center gap-2 text-xs text-emerald-700">
+                            <MessageCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <a
+                              href={getWhatsAppLink(waNumber, `¡Hola ${supp.name}! Te escribimos desde by.fio.`)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:underline font-mono font-bold"
+                            >
+                              WA: {waNumber}
+                            </a>
+                          </div>
+                        )}
+
+                        {/* Correo */}
+                        {supp.email && (
+                          <div className="flex items-center gap-2 text-xs text-slate-600">
+                            <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <a href={`mailto:${supp.email}`} className="hover:underline truncate max-w-[220px]">
+                              {supp.email}
+                            </a>
+                          </div>
+                        )}
+
+                        {/* Dirección */}
+                        {supp.address && (
+                          <div className="flex items-start gap-2 text-xs text-slate-500">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                            <span className="leading-snug">{supp.address}</span>
+                          </div>
+                        )}
+
+                        {/* Notas */}
+                        {supp.notes && (
+                          <p className="text-[11px] text-slate-400 italic bg-slate-50 p-2 rounded-xl">
+                            "{supp.notes}"
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Botones de Acción */}
+                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (onSelectTab) {
+                              onSelectTab('supplier-order-create');
+                            }
+                          }}
+                          className="flex-1 py-2 px-3 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer text-center"
+                        >
+                          + Pedido
+                        </button>
+
+                        {waNumber && (
+                          <a
+                            href={getWhatsAppLink(waNumber, `¡Hola ${supp.name}! Te escribimos desde by.fio.`)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 transition-colors"
+                            title="Chat WhatsApp"
+                          >
+                            <MessageCircle className="w-4 h-4 text-emerald-700" />
+                          </a>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (await confirm(`¿Deseas eliminar a "${supp.name}" del directorio de proveedores?`, { title: 'Eliminar Proveedor', confirmLabel: 'Eliminar' })) {
+                              deleteSupplier(supp.id);
+                            }
+                          }}
+                          className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                          title="Eliminar del directorio"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {filteredOrders.length === 0 ? (
         <div className="text-center py-12 px-4 bg-white rounded-3xl border border-dashed border-slate-300 shadow-sm space-y-3">
           <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
             <Truck className="w-6 h-6" />
@@ -804,6 +996,8 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
             );
           })}
         </div>
+      )}
+        </>
       )}
 
       {/* Modal: Crear Nuevo Pedido a Proveedor Directo */}
@@ -1473,7 +1667,11 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
           </div>
         </div>
       )}
-
+      {/* Modal para Agregar Proveedor */}
+      <AddSupplierModal
+        isOpen={isAddSupplierModalOpen}
+        onClose={() => setIsAddSupplierModalOpen(false)}
+      />
     </div>
   );
 };
