@@ -142,7 +142,7 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
             title="Ver e imprimir códigos de barras para estantes y categorías"
           >
             <Barcode className="w-5 h-5 text-fio-yellow" />
-            <span>Imprimir Códigos Estante</span>
+            <span>Imprimir Etiquetas (Barras / QR)</span>
           </button>
           <button
             type="button"

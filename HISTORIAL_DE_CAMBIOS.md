@@ -17,6 +17,25 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.64 - Códigos de Barras Optimizados de Alta Legibilidad, Soporte Dual Barcode/QR y Etiquetas QR por Producto
+- [x] **Rediseño y Optimización de Códigos de Barras ([Barcode128.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Barcode128.tsx)):**
+  - Erradicado el formato hiperalargado y las líneas delgaditas que dificultaban el escaneo óptico.
+  - Implementado renderizado con `shapeRendering="crispEdges"`, ancho de módulo reforzado (`moduleWidth: 2.4`) y altura vertical generosa (42-56px), eliminando el antialiasing borroso en pantallas e impresoras.
+  - Aspecto proporcionado y centrado con `preserveAspectRatio="xMidYMid meet"`, logrando barras oscuras y gruesas de lectura instantánea para pistolas láser y cámaras de celular.
+- [x] **Selector Dual de Formato (Código de Barras vs Código QR) ([ShelfBarcodeLabelsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ShelfBarcodeLabelsModal.tsx)):**
+  - Añadido selector interactivo de formato en la cabecera de la hoja de 21 etiquetas: `[ 📊 Código de Barras ]` y `[ 📱 Código QR ]`.
+  - El administrador puede alternar con un solo clic qué tipo de código desea utilizar e imprimir en la cuadrícula de 21 etiquetas por página (3 columnas × 7 filas).
+  - Títulos y encabezados de impresión dinámicos según el formato seleccionado.
+- [x] **Etiquetas Dedicadas de Código QR por Producto ([ProductBarcodeLabel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ProductBarcodeLabel.tsx)):**
+  - Nuevo diseño de etiqueta 2D QR que integra: logo oficial ByFio★, categoría, ubicación de estante, nombre del artículo, cápsula con código SKU, precio destacado y código QR vectorial nítido con corrección de error nivel M.
+  - Compatible con la propiedad `qrCode` en el modelo de datos de `Product` ([index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts)) con fallback automático al SKU.
+- [x] **Modal Individual de Etiqueta con Selector Dual ([QrLabelModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QrLabelModal.tsx)):**
+  - Al abrir la etiqueta de cualquier producto individual desde la tabla de inventario, el usuario puede alternar entre Código QR y Código de Barras e imprimir en cualquiera de los dos formatos.
+- [x] **Soporte de Formato Dual en Checklist de Inventario ([InventoryChecklistModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryChecklistModal.tsx)):**
+  - Selector en la barra de control para elegir si la hoja de conteo de inventario por estante se imprime con `Barras 128`, `Código QR 2D` o `Solo Texto`.
+- [x] **Actualización de Service Worker:**
+  - Versión de caché PWA elevada a `byfio-pwa-v4.19.64` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.63 - Botón "Producto sin Proveedor" y Modal Emergente de Asignación Rápida
 - [x] **Botón Dinámico de Asignación Rápida ([InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
   - Implementado botón interactivo `"Producto sin proveedor"` con icono de camión en la columna de Ubicación & Proveedor y como acceso directo bajo el nombre del producto para cualquier artículo sin proveedor asignado.

@@ -110,11 +110,15 @@ export const NewProductModal: React.FC = () => {
   const [layawayPaymentsCount, setLayawayPaymentsCount] = useState<number>(3);
   const [layawayDownPaymentPercent, setLayawayDownPaymentPercent] = useState<number>(30);
   const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [createdLabelFormat, setCreatedLabelFormat] = useState<'barcode' | 'qr'>('barcode');
   const [createdProductBarcode, setCreatedProductBarcode] = useState<{
     name: string;
     sku: string;
     shelfLocation: string;
     price: number;
+    category?: string;
+    supplier?: string;
+    qrCode?: string;
   } | null>(null);
 
   // Categorías disponibles (por defecto + personalizadas + de productos - eliminadas)
@@ -762,6 +766,9 @@ export const NewProductModal: React.FC = () => {
         sku: sku.trim().toUpperCase(),
         shelfLocation: finalShelfLocation,
         price: Number(price) || 0,
+        category: finalCategory,
+        supplier: finalSupplier || undefined,
+        qrCode: sku.trim().toUpperCase(),
       });
     } else {
       // Modo Nuevo Producto
@@ -797,6 +804,9 @@ export const NewProductModal: React.FC = () => {
         sku: sku.trim().toUpperCase(),
         shelfLocation: finalShelfLocation,
         price: Number(price) || 0,
+        category: finalCategory,
+        supplier: finalSupplier || undefined,
+        qrCode: sku.trim().toUpperCase(),
       });
     }
   };
@@ -858,20 +868,49 @@ export const NewProductModal: React.FC = () => {
 
             <div>
               <span className="px-3 py-1 rounded-full bg-purple-100 text-fio-purple font-bubble font-bold text-xs">
-                🏷️ Código de Barras Listo
+                🏷️ Etiquetas Listas ({createdLabelFormat === 'qr' ? 'Código QR' : 'Código de Barras'})
               </span>
               <h3 className="font-bubble font-bold text-xl text-slate-900 mt-2">
-                ¡Producto Agregado y Código de Barras Generado!
+                ¡Producto Guardado y Etiquetas Generadas!
               </h3>
               <p className="text-xs text-slate-500 max-w-md mt-1">
-                El sistema generó el código de barras con el nombre del producto, las barras oficiales y su código SKU interno. Puedes imprimirlo de una vez para pegarlo al producto o en su estante.
+                El sistema generó automáticamente el código de barras y el código QR oficial. Puedes alternar el formato e imprimirlo de inmediato.
               </p>
+            </div>
+
+            {/* Selector de Formato: Código de Barras vs Código QR */}
+            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setCreatedLabelFormat('barcode')}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  createdLabelFormat === 'barcode'
+                    ? 'bg-fio-800 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white'
+                }`}
+              >
+                <Barcode className="w-3.5 h-3.5 text-amber-300" />
+                <span>Código de Barras</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setCreatedLabelFormat('qr')}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  createdLabelFormat === 'qr'
+                    ? 'bg-gradient-to-r from-purple-700 to-fio-pink text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white'
+                }`}
+              >
+                <QrCode className="w-3.5 h-3.5 text-pink-200" />
+                <span>Código QR</span>
+              </button>
             </div>
 
             {/* Etiqueta Imprimible */}
             <div id="printable-product-barcode" className="w-full max-w-sm py-2">
               <ProductBarcodeLabel
                 product={createdProductBarcode}
+                codeFormat={createdLabelFormat}
                 showPrice={true}
                 className="shadow-md"
               />
