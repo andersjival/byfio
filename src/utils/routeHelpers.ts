@@ -232,6 +232,25 @@ export const parseRouteFromLocation = (): RouteInfo => {
   if (path.includes('/login') || hash.includes('login') || seccionParam === 'login') {
     return { route: 'login', adminTab: 'hub' };
   }
+  if (
+    path === '/mi-cuenta' ||
+    path.startsWith('/mi-cuenta') ||
+    path === '/cuenta' ||
+    path.startsWith('/cuenta') ||
+    path === '/perfil' ||
+    path.startsWith('/perfil') ||
+    path.includes('/mi-cuenta') ||
+    hash.includes('mi-cuenta') ||
+    hash.includes('cuenta') ||
+    hash.includes('perfil') ||
+    hash.includes('my-account') ||
+    seccionParam === 'mi-cuenta' ||
+    seccionParam === 'cuenta' ||
+    seccionParam === 'perfil' ||
+    seccionParam === 'my-account'
+  ) {
+    return { route: 'mi-cuenta', adminTab: 'hub' };
+  }
   if (path.includes('/registro') || hash.includes('registro') || seccionParam === 'registro') {
     return { route: 'login', adminTab: 'hub' };
   }

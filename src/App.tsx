@@ -22,7 +22,7 @@ import { PwaInstallPage } from './components/pwa/PwaInstallPage';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { NewOrderStarAlert } from './components/common/NewOrderStarAlert';
 import { WelcomeStarModal } from './components/common/WelcomeStarModal';
-import { MyAccountModal } from './components/common/MyAccountModal';
+import { MyAccountPage } from './components/store/MyAccountPage';
 import { LoginModal } from './components/common/LoginModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { AdminHeader } from './components/admin/AdminHeader';
@@ -161,6 +161,7 @@ export const App: React.FC = () => {
     else if (newRoute === 'propuesta') targetPath = '/propuesta';
     else if (newRoute === 'metricas') targetPath = '/metricas';
     else if (newRoute === 'login') targetPath = '/login';
+    else if (newRoute === 'mi-cuenta') targetPath = '/mi-cuenta';
     else if (newRoute === 'precios') targetPath = '/precios';
     else if (newRoute === 'catalogo') targetPath = '/catalogo';
     else if (newRoute === 'store') targetPath = '/tienda';
@@ -449,6 +450,16 @@ export const App: React.FC = () => {
 
               {currentRoute === 'precios' && isModuleEnabled('pricing') && <PricingStickersSection onNavigate={navigate} />}
 
+              {currentRoute === 'mi-cuenta' && (
+                <MyAccountPage
+                  onNavigate={navigate}
+                  onOpenLogin={(mode) => {
+                    setLoginModalMode(mode || 'login');
+                    setIsLoginModalOpen(true);
+                  }}
+                />
+              )}
+
               {currentRoute === 'workshop-detail' && isModuleEnabled('workshops') && (
                 <WorkshopDetailPage
                   workshopId={selectedWorkshopId}
@@ -675,11 +686,6 @@ export const App: React.FC = () => {
       )}
 
       <WelcomeStarModal />
-      <MyAccountModal
-        isOpen={isMyAccountOpen}
-        onClose={() => setIsMyAccountOpen(false)}
-        onNavigate={navigate}
-      />
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
       <StudioScheduleModal isOpen={isScheduleModalOpen} onClose={() => setIsScheduleModalOpen(false)} />

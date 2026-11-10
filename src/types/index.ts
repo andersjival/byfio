@@ -15,7 +15,8 @@ export type AppRoute =
   | 'propuesta'
   | 'superadmin'
   | 'pedidos-mobile'
-  | 'pwa-install';
+  | 'pwa-install'
+  | 'mi-cuenta';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 

@@ -111,7 +111,7 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
             type="button"
             onClick={() => {
               setIsUserMenuOpen(false);
-              setIsMyAccountOpen(true);
+              onNavigate('mi-cuenta');
               playBubblePopSound(0.3);
             }}
             className="w-full text-left p-2.5 rounded-xl hover:bg-pink-50 text-slate-800 hover:text-fio-pink transition-colors flex items-center justify-between group cursor-pointer border border-transparent hover:border-pink-200"

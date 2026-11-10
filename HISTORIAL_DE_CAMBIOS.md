@@ -17,6 +17,24 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.44 - Sección "Mi Cuenta" como Página Independiente Única (/mi-cuenta)
+- [x] **Transformación de "Mi Cuenta" a Página Standalone ([MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx)):**
+  - La sección "Mi Cuenta" dejó de ser un modal emergente / pop-up flotante y se convirtió en una página interna completa, única para el usuario.
+  - Diseño responsive de alta fidelidad con perfil de usuario (avatar, nombre, rol, email, fecha de registro con formato legible).
+  - Pestañas dinámicas:
+    1. **Mis Datos & Envío:** Formulario editable para número de teléfono/WhatsApp y dirección exacta en texto, sincronizado con visor interactivo de mapa OpenStreetMap, geolocalización GPS real en Costa Rica con presets rápidos (Tibás Estudio, San José Centro, Heredia, Alajuela, Escazú, etc.) y controles direccionales de ajuste fino.
+    2. **Mis Pedidos:** Historial de compras en vivo con barra de progreso de 4 estados (Recibido, Alisto, Empacado & Listo, Entregado), desglose de productos y generación de Factura PDF.
+    3. **Promociones:** Cupones de descuento exclusivos (`BYFIOSTAR`, `ENVIOGRATIS`, `TALLER15`) con copiado en 1 clic.
+    4. **Ofertas Especiales:** Tarjetas de productos en combo y preventas de talleres.
+  - Portal de bienvenida para usuarios no autenticados con llamado a la acción para iniciar sesión o registrarse.
+- [x] **Enrutamiento y Navegación Directa ([routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Añadida ruta oficial `'mi-cuenta'` en `AppRoute`.
+  - Detección automática en URL de `/mi-cuenta`, `/cuenta`, `/perfil`, `#mi-cuenta` y `?seccion=mi-cuenta`.
+  - Retirado el componente de modal emergente (`MyAccountModal`) del render global de modales.
+  - Actualizado el botón "Mi Cuenta" en [`NavbarUserMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx) y [`NavbarMobileDrawer.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx) para navegar directamente a la página `/mi-cuenta`.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.44` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.43 - Creación del Directorio y Hub de Descarga de Skills (.dev/skills)
 - [x] **Directorio Oficial de Skills ([.dev/skills/](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/.dev/skills/)):**
   - Creada la carpeta `.dev/skills/` en la raíz con las 13 skills oficiales utilizadas en el proyecto (`arqmodular`, `codigo-eficiente`, `deploy-cloudflare-byfio`, `verificacion-deploy`, `respuesta-concisa`, `polling-inteligente`, `emil-kowalski`, `magic-ui-aceternity`, `shadcn-ui`, `taste`, `uiverse`, `premium-ecommerce-storefront`, `boveda-skills`).
