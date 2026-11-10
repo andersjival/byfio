@@ -17,6 +17,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.54 - Sistema de Lector de Códigos de Barras con la Cámara del Celular en Modo Alisto
+- [x] **Pistola Lectora de Códigos en Vivo ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
+  - Desarrollado componente atómico de escáner en tiempo real con activación continua de la cámara trasera del celular.
+  - Soporte nativo multiformato (Code 128, QR Code, Code 39, EAN-13, EAN-8, UPC-A, Codabar) con aceleración por `BarcodeDetector` en GPU móvil y respaldo en ZXing.
+  - Visor guiado con mira rectangular para códigos de barra horizontales y línea láser roja animada continua.
+  - Controles móviles táctiles: encendido/apagado de Linterna (Torch) para estanterías oscuras, alternador de cámara trasera/frontal y botón de pausa.
+- [x] **Flujo Continuo de Alisto Guiado ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Al abrir un pedido en "Alisto con Código", el sistema presenta el producto a buscar (foto, estante destacado en grande, cantidad requerida y SKU) y activa de inmediato la cámara lectora.
+  - Validación en vivo con función normalizadora `checkBarcodeMatch`: al enfocar el código de barras, reconoce el SKU en milisegundos, emite sonido industrial de confirmación ("pip"), hace vibrar el celular y avanza automáticamente al siguiente producto de la orden sin detener la cámara.
+  - Detección de error y tolerancia a productos desordenados: si el operario escanea un producto incorrecto, emite advertencia acústica y háptica indicando el código leído y el producto correcto esperado en el estante; si escanea otro producto que también está en el pedido, lo marca y lo avanza de inmediato.
+  - Selector de método para alternar entre "Cámara Celular" y "Teclado / USB" para pistolas láser físicas conectadas a computadoras.
+- [x] **Sintetizador de Sonidos Industriales y Háptica ([soundEffects.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/soundEffects.ts)):**
+  - Creadas funciones `playBarcodeSuccessSound()` (beep agudo de 2450Hz para lectura exitosa) y `playBarcodeErrorSound()` (doble tono grave de advertencia) sintetizadas vía Web Audio API sin latencia ni dependencias externas.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.54` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.53 - Impresión de 21 Códigos de Barras por Hoja con Logo ByFio, Categoría y Filtros Avanzados
 - [x] **Formato Estándar de 21 Códigos por Hoja (3×7) ([ShelfBarcodeLabelsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ShelfBarcodeLabelsModal.tsx)):**
   - Configurada cuadrícula estricta de 3 columnas × 7 filas para que quepan exactamente 21 etiquetas de códigos de barra por hoja impresa (estándar tipo Avery / adhesivos de 21 unidades).
