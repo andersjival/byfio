@@ -36,7 +36,7 @@ import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmen
 import { UserProfilesSection } from './components/admin/UserProfilesSection';
 import { CustomersSection } from './components/admin/CustomersSection';
 import { Customer } from './types';
-import { SupplierOrderModal } from './components/admin/SupplierOrderModal';
+import { CreateSupplierOrderPage } from './components/admin/CreateSupplierOrderPage';
 import { QrLabelModal } from './components/admin/QrLabelModal';
 import { InvoiceModal } from './components/admin/InvoiceModal';
 import { NewProductModal } from './components/admin/NewProductModal';
@@ -537,7 +537,7 @@ export const App: React.FC = () => {
                             />
                           </React.Suspense>
                         )}
-                        {adminTab === 'inventory' && <InventoryTable />}
+                        {adminTab === 'inventory' && <InventoryTable onSelectTab={handleSelectAdminTab} />}
                         {adminTab === 'reports' && (
                           <CashRegisterReports
                             onOpenDailyClosing={(date) => {
@@ -564,7 +564,13 @@ export const App: React.FC = () => {
                             <AgendaSection />
                           </React.Suspense>
                         )}
-                        {adminTab === 'suppliers' && <SuppliersOrdersSection />}
+                        {adminTab === 'suppliers' && <SuppliersOrdersSection onSelectTab={handleSelectAdminTab} />}
+                        {adminTab === 'supplier-order-create' && (
+                          <CreateSupplierOrderPage
+                            onBackToSuppliers={() => handleSelectAdminTab('suppliers')}
+                            onBackToInventory={() => handleSelectAdminTab('inventory')}
+                          />
+                        )}
                         {adminTab === 'sales' && <SalesHistorySection />}
                         {adminTab === 'catalog-view' && (
                           <AdminCatalogVisualView onBackToHub={() => handleSelectAdminTab('hub')} />
@@ -693,7 +699,7 @@ export const App: React.FC = () => {
       {/* Modales Administrativos Diferidos (cargados estrictamente bajo demanda para no ralentizar la web) */}
       <React.Suspense fallback={null}>
         {activePickingOrder && <GuidedPickingModal />}
-        {isSupplierModalOpen && isFeatureEnabled('inventory', 'supplier_list') && <SupplierOrderModal />}
+        {/* Modal de Pedido a Proveedor retirado a favor de la página completa /admin/realizar-pedido */}
         {qrModalProduct && isFeatureEnabled('inventory', 'qr_labels') && <QrLabelModal />}
         {invoiceOrder && <InvoiceModal />}
         {isNewProductModalOpen && <NewProductModal />}

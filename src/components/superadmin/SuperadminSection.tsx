@@ -507,7 +507,7 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
             </div>
           </div>
 
-          <SuppliersOrdersSection />
+          <SuppliersOrdersSection onSelectTab={(tab) => onNavigate('admin', tab)} />
         </div>
       )}
 

@@ -8,8 +8,13 @@ import {
   Package, ChevronDown, ChevronUp, Printer, Trash2, MessageCircle,
   FileText, ArrowRight, RefreshCw, AlertCircle, Edit3, X, Check, Eye
 } from 'lucide-react';
+import type { AdminTabType } from './AdminTabs';
 
-export const SuppliersOrdersSection: React.FC = () => {
+interface SuppliersOrdersSectionProps {
+  onSelectTab?: (tab: AdminTabType) => void;
+}
+
+export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ onSelectTab }) => {
   const {
     supplierOrders,
     addSupplierOrder,
@@ -364,7 +369,7 @@ export const SuppliersOrdersSection: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               type="button"
-              onClick={() => setIsSupplierModalOpen(true)}
+              onClick={() => onSelectTab ? onSelectTab('supplier-order-create') : setIsSupplierModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95 cursor-pointer"
               title="Generar orden automática basada en stock crítico y bajo mínimo"
             >
@@ -377,7 +382,11 @@ export const SuppliersOrdersSection: React.FC = () => {
               onClick={() => {
                 setNewOrderItems([]);
                 setNewOrderNotes('');
-                setIsCreateModalOpen(true);
+                if (onSelectTab) {
+                  onSelectTab('supplier-order-create');
+                } else {
+                  setIsCreateModalOpen(true);
+                }
               }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bubble text-xs font-bold shadow-clayBtn transition-all active:scale-95 cursor-pointer"
             >

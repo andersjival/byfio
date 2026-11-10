@@ -7,8 +7,13 @@ import {
   PlusCircle, Trash2, Pencil, CheckCircle2, Check, EyeOff, Filter, PackageX, Truck, Barcode
 } from 'lucide-react';
 import { ShelfBarcodeLabelsModal } from './ShelfBarcodeLabelsModal';
+import type { AdminTabType } from './AdminTabs';
 
-export const InventoryTable: React.FC = () => {
+interface InventoryTableProps {
+  onSelectTab?: (tab: AdminTabType) => void;
+}
+
+export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) => {
   const {
     products,
     updateProductStock,
@@ -253,7 +258,7 @@ export const InventoryTable: React.FC = () => {
           {isFeatureEnabled('inventory', 'supplier_list') && (
             <button
               type="button"
-              onClick={() => setIsSupplierModalOpen(true)}
+              onClick={() => onSelectTab ? onSelectTab('supplier-order-create') : setIsSupplierModalOpen(true)}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-fio-800 border border-purple-300 font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 shrink-0"
               title="Generar orden de compra y reposición para enviar al proveedor por WhatsApp"
             >
@@ -569,7 +574,7 @@ export const InventoryTable: React.FC = () => {
                       {isZeroStock && isFeatureEnabled('inventory', 'supplier_list') && (
                         <button
                           type="button"
-                          onClick={() => setIsSupplierModalOpen(true)}
+                          onClick={() => onSelectTab ? onSelectTab('supplier-order-create') : setIsSupplierModalOpen(true)}
                           className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bubble text-xs font-bold shadow-sm active:scale-95 transition-all"
                           title="Hacer pedido al proveedor para reabastecer este artículo"
                         >

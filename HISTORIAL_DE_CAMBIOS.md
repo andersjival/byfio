@@ -17,6 +17,24 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.52 - Página Completa para Realizar Pedidos a Proveedor con Selector Inteligente de Faltantes
+- [x] **Transformación de Modal a Página Completa ([CreateSupplierOrderPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CreateSupplierOrderPage.tsx)):**
+  - La sección de realizar pedidos a proveedor dejó de ser un modal emergente / pop-up flotante y se convirtió en una página completa dedicada con sub-ruta propia (`/admin/realizar-pedido`, pestaña `supplier-order-create`).
+  - Eliminado el pop-up residual `SupplierOrderModal` del renderizado global de modales.
+  - Conectados los accesos directos desde la tabla de inventario ("Realizar Pedido a Proveedor" y botones "Pedir" de stock en cero) y la sección de proveedores ("+ Nuevo Pedido" y "Requisición Automática").
+- [x] **Selector Inteligente de Proveedores con Auto-Detección de Faltantes:**
+  - Selector desplegable que lista dinámicamente todos los proveedores disponibles junto con la cantidad exacta de productos sin existencias (`stock <= 0`).
+  - Al seleccionar un proveedor específico, el sistema jala y filtra automáticamente únicamente los productos agotados pertenecientes a dicho proveedor, calculando cantidades sugeridas de reposición (`maxStock - stock`) y costos estimados.
+  - Opción "Sin Proveedor / Compra Particular / Sin Nombre" que permite generar órdenes sin exigir nombre formal de proveedor (ideal para compras ocasionales o a personas particulares).
+  - Opción de ver todos los productos sin existencias consolidados o ingresar nombres de proveedores personalizados libremente.
+- [x] **Herramientas de Pedido y Despacho:**
+  - Buscador integrado para sumar artículos adicionales del inventario.
+  - Generación de mensaje para envío directo por WhatsApp con formato profesional.
+  - Vista previa de documento oficial de Orden de Compra para impresión en papel o PDF con membrete y firmas.
+  - Guardado como Borrador ("Por Pedir"), registro de pedido realizado ("Ordenado") y sincronización con Agenda ByFio.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.52` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.51 - Corrección Visual de Nitidez y Sombra en Menú de Usuario
 - [x] **Eliminación de Borrosidad y Mancha Oscura ([NavbarUserMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx)):**
   - Reemplazado el fondo translúcido con blur (`bg-white/98 backdrop-blur-xl`) por blanco sólido puro (`bg-white`), eliminando los artefactos de desenfoque de GPU que provocaban la mancha oscura en la parte inferior del menú.
