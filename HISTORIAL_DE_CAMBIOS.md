@@ -17,6 +17,20 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.41 - Corrección de Colores y Erradicación de Borde Oscuro en Botones Principales
+- [x] **Eliminación Total de Borde/Contorno Café Oscuro ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Aplicado `outline-none focus:outline-none focus:ring-0 focus-visible:outline-none` a los 4 botones principales (Inicio, Talleres, Tienda, Catálogo) en desktop y móvil.
+  - Regla global `button:focus, button:focus-visible { outline: none !important; }` en CSS base para suprimir definitivamente contornos de foco no deseados del navegador.
+  - Eliminados bordes y sombras cafés/ámbar oscuras (`border-amber-300/80`, `rgba(202,138,4)`, `color: #713F12`, `hover:text-amber-900`).
+- [x] **Color Activo por Defecto con Fondo de Hover Oficial ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Cada botón activo luce de forma predeterminada su color vibrante correspondiente: Inicio (Ámbar solar cálido), Talleres (Celeste creativo), Tienda (Morado ByFio) y Catálogo (Fucsia/Rosa corazón).
+- [x] **Letras Blancas en Botones Activos y Seleccionados ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Los 4 botones en estado activo presentan tipografía en blanco nítido (`text-white font-bold`) garantizando máximo contraste y legibilidad.
+- [x] **Botón Catálogo en Estado Normal en Rosa Pastel Suave ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Cuando Catálogo está en reposo (normal), presenta su tonalidad activa pero en una versión suave tipo pastel (`bg-[#FCE7F3] text-pink-700 border border-pink-200/90 shadow-[0_2px_8px_rgba(219,39,119,0.15)] hover:bg-[#FBCFE8] hover:text-pink-800`).
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.41` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.40 - Color Rosa Corazón en Botón Tienda y Letras Blancas en Botones Activos
 - [x] **Color Oficial Rosa Corazón en Tienda ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Botón de Tienda actualizado con el color rosa/fucsia característico del corazón de la marca (`bg-gradient-to-r from-[#F472B6] to-[#EC4899]`) con sombra suave `shadow-[0_3px_10px_rgba(236,72,153,0.35)]`.
