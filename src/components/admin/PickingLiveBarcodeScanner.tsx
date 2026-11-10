@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
-import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { RefreshCw, AlertTriangle, CheckCircle } from 'lucide-react';
 import { playBarcodeSuccessSound, playBarcodeErrorSound, playWaterDropSound } from '../../utils/soundEffects';
 
 interface PickingLiveBarcodeScannerProps {
@@ -57,6 +57,20 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
   const mediaStreamTrackRef = useRef<MediaStreamTrack | null>(null);
   const isCooldownRef = useRef(false);
   const lastScannedCodeRef = useRef<{ code: string; time: number }>({ code: '', time: 0 });
+  const isPausedRef = useRef(isPaused);
+  const expectedSkuRef = useRef(expectedSku);
+  const expectedNameRef = useRef(expectedName);
+  const expectedShelfRef = useRef(expectedShelf);
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+
+  useEffect(() => {
+    expectedSkuRef.current = expectedSku;
+    expectedNameRef.current = expectedName;
+    expectedShelfRef.current = expectedShelf;
+  }, [expectedSku, expectedName, expectedShelf]);
 
   // Detener el escáner y liberar la cámara
   const stopScanner = useCallback(async () => {
@@ -184,7 +198,7 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
 
   // Manejo de la decodificación en vivo
   const handleDecodedBarcode = (rawCode: string) => {
-    if (!rawCode || isCooldownRef.current || isPaused) return;
+    if (!rawCode || isCooldownRef.current || isPaused || isPausedRef.current) return;
 
     const trimmed = rawCode.trim();
     const now = Date.now();
@@ -195,7 +209,8 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
     }
 
     lastScannedCodeRef.current = { code: trimmed, time: now };
-    const isMatch = checkBarcodeMatch(trimmed, expectedSku);
+    const currentTargetSku = expectedSkuRef.current || expectedSku;
+    const isMatch = checkBarcodeMatch(trimmed, currentTargetSku);
 
     if (isMatch) {
       // ÉXITO: Código coincide con el producto actual
@@ -208,10 +223,10 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
         timestamp: now,
       });
 
-      // Notificar al componente padre para marcar el ítem y avanzar al siguiente
+      // Notificar al componente padre
       onScanSuccess(trimmed);
 
-      // Cooldown de 800ms para permitir transición limpia al siguiente producto
+      // Cooldown de 800ms
       setTimeout(() => {
         isCooldownRef.current = false;
       }, 800);
@@ -221,12 +236,12 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
       setFeedback({
         type: 'error',
         code: trimmed,
-        message: `Código ${trimmed} no coincide. Busca ${expectedSku} (${expectedName}) en ${expectedShelf}.`,
+        message: `Código ${trimmed} no coincide. Busca ${expectedSkuRef.current || expectedSku} (${expectedNameRef.current || expectedName}) en ${expectedShelfRef.current || expectedShelf}.`,
         timestamp: now,
       });
 
       if (onScanError) {
-        onScanError(trimmed, expectedSku);
+        onScanError(trimmed, expectedSkuRef.current || expectedSku);
       }
     }
   };
@@ -268,14 +283,12 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
     };
   }, [facingMode]);
 
-  // Si cambia el estado de pausa
+  // Asegurar que el escáner se inicie si no está corriendo y no está pausado
   useEffect(() => {
-    if (isPaused) {
-      stopScanner();
-    } else if (!scannerRef.current) {
+    if (!isPaused && !scannerRef.current) {
       startScanner(facingMode);
     }
-  }, [isPaused, facingMode, startScanner, stopScanner]);
+  }, [isPaused, facingMode, startScanner]);
 
   // Limpiar feedback tras 3.5 segundos
   useEffect(() => {
@@ -291,6 +304,24 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
       {/* Visor de Video en Vivo */}
       <div className={`relative w-full h-64 sm:h-72 md:h-80 bg-black flex items-center justify-center overflow-hidden ${isHighClarity ? "high-clarity-camera" : ""}`}>
         <div id={containerId} className="w-full h-full object-cover" />
+
+        {/* Overlay cuando el producto ya fue validado y espera confirmación de cantidad */}
+        {isPaused && (
+          <div className="absolute inset-0 bg-emerald-950/75 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center z-10 animate-fadeIn pointer-events-none">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center mb-2 shadow-[0_0_25px_rgba(16,185,129,0.5)]">
+              <CheckCircle className="w-10 h-10 text-emerald-400 animate-pulse" />
+            </div>
+            <span className="text-white font-bubble font-black text-sm uppercase tracking-wider">
+              ¡Código Validado!
+            </span>
+            <span className="text-emerald-200 text-xs mt-0.5 font-mono font-bold">
+              {expectedSku}
+            </span>
+            <span className="text-emerald-300/90 text-[11px] mt-1 font-bubble">
+              Pulsa el botón grande abajo para confirmar cantidad
+            </span>
+          </div>
+        )}
 
         {/* Cuadrito de Escaneo Puntiagudo con Esquinas Amarillas */}
         {!cameraError && !isStarting && !isPaused && (

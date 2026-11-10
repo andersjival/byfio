@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.65 - Confirmación Obligatoria de Cantidad tras Escaneo en Alisto Guiado
+- [x] **Flujo de Escaneo con Verificación y Confirmación Manual ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Implementado nuevo estado `scannedVerifiedItem`: al escanear un producto, el sistema valida el código con sonido y check visual, pero **no avanza automáticamente** al siguiente producto.
+  - Se activa un **botón grande** de confirmación adaptado a la cantidad requerida: `"Aceptar 1 unidad"` si el pedido solicita 1 ud, o `"Confirmar cantidad: N unidades"` si solicita más de una.
+  - Al pulsar el botón grande, el artículo se estampa como alistado (`markItemPicked`), se resetea la verificación y se abre de forma reactiva e inmediata el siguiente producto para escanear.
+  - Opción de re-escaneo rápido (`¿Deseas volver a escanear?`) para corregir escaneos accidentales sin afectar el inventario.
+- [x] **Cámara Persistente sin Reinicios ni Parpadeos ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
+  - Pausa inteligente por ref (`isPausedRef`): la cámara se mantiene activa en vivo en segundo plano sin destruir el stream ni solicitar permisos en cada producto.
+  - Overlay cinemático verde esmeralda en el visor de cámara al validar el código (`¡Código Validado!`), indicando al operario confirmar la cantidad en el botón inferior.
+  - Sincronización continua de referencias del SKU esperado para reanudar el escaneo del siguiente artículo de forma instantánea tras la confirmación.
+- [x] **Actualización de Service Worker:**
+  - Versión de caché PWA elevada a `byfio-pwa-v4.19.65` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.64 - Códigos de Barras Optimizados de Alta Legibilidad, Soporte Dual Barcode/QR y Etiquetas QR por Producto
 - [x] **Rediseño y Optimización de Códigos de Barras ([Barcode128.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Barcode128.tsx)):**
   - Erradicado el formato hiperalargado y las líneas delgaditas que dificultaban el escaneo óptico.

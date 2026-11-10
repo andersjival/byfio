@@ -1,5 +1,5 @@
 // Service Worker oficial By.Fio para PWA, Notificaciones Push y Gestión de Pedidos en Tiempo Real
-const CACHE_VERSION = 'byfio-pwa-v4.19.64';
+const CACHE_VERSION = 'byfio-pwa-v4.19.65';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

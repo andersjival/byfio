@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   X, CheckCircle, AlertTriangle, MapPin, Heart, Scan, QrCode,
@@ -28,6 +28,7 @@ export const GuidedPickingModal: React.FC = () => {
   const [manualInput, setManualInput] = useState('');
   const [isCameraScannerOpen, setIsCameraScannerOpen] = useState(true);
   const [scanFeedback, setScanFeedback] = useState<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null);
+  const [scannedVerifiedItem, setScannedVerifiedItem] = useState<{ sku: string; name: string; quantity: number } | null>(null);
   const [showSummaryList, setShowSummaryList] = useState(false);
   const [isEditingQty, setIsEditingQty] = useState(false);
   const [tempQty, setTempQty] = useState<number>(1);
@@ -40,6 +41,7 @@ export const GuidedPickingModal: React.FC = () => {
   // Limpiar cualquier feedback residual al cambiar de producto, orden o modo
   React.useEffect(() => {
     setScanFeedback(null);
+    setScannedVerifiedItem(null);
   }, [activeOrderId, currentItemSku, pickingMode]);
 
   if (!activePickingOrder) return null;
@@ -81,18 +83,17 @@ export const GuidedPickingModal: React.FC = () => {
 
     // 1. Coincidencia directa o parcial con el producto actual esperado
     if (currentItem && checkBarcodeMatch(raw, currentItem.sku)) {
-      const result = markItemPicked(currentOrder.id, currentItem.sku, currentUser?.name);
-      if (result.error) {
-        setScanFeedback({ type: 'error', message: result.error });
-        playBarcodeErrorSound();
-        return;
-      }
       playBarcodeSuccessSound();
-      setScanFeedback({ type: 'success', message: `¡Correcto! ${currentItem.sku} verificado y alistado.` });
+      setScannedVerifiedItem({
+        sku: currentItem.sku,
+        name: currentItem.name,
+        quantity: currentItem.quantity,
+      });
+      setScanFeedback({
+        type: 'success',
+        message: `¡Código verificado! Presiona confirmar para alistar ${currentItem.quantity} ${currentItem.quantity === 1 ? 'unidad' : 'unidades'}.`,
+      });
       setManualInput('');
-      if (result.isComplete) {
-        triggerCompletion();
-      }
       return;
     }
 
@@ -101,18 +102,17 @@ export const GuidedPickingModal: React.FC = () => {
       (it) => !it.isPicked && !it.isMissing && checkBarcodeMatch(raw, it.sku)
     );
     if (matchedPending) {
-      const result = markItemPicked(currentOrder.id, matchedPending.sku, currentUser?.name);
-      if (result.error) {
-        setScanFeedback({ type: 'error', message: result.error });
-        playBarcodeErrorSound();
-        return;
-      }
       playBarcodeSuccessSound();
-      setScanFeedback({ type: 'success', message: `¡Alistado! ${matchedPending.name} (${matchedPending.sku}) verificado.` });
+      setScannedVerifiedItem({
+        sku: matchedPending.sku,
+        name: matchedPending.name,
+        quantity: matchedPending.quantity,
+      });
+      setScanFeedback({
+        type: 'success',
+        message: `¡Código verificado para ${matchedPending.name}! Confirma la cantidad (${matchedPending.quantity} ${matchedPending.quantity === 1 ? 'unidad' : 'unidades'}).`,
+      });
       setManualInput('');
-      if (result.isComplete) {
-        triggerCompletion();
-      }
       return;
     }
 
@@ -122,6 +122,24 @@ export const GuidedPickingModal: React.FC = () => {
       type: 'error',
       message: `Código "${raw}" no coincide. Se requiere ${currentItem?.sku || 'el producto'} en estante ${currentItem?.shelfLocation || 'Bodega'}.`,
     });
+  };
+
+  const handleConfirmScannedQuantity = () => {
+    if (!scannedVerifiedItem) return;
+    const skuToPick = scannedVerifiedItem.sku;
+    const result = markItemPicked(currentOrder.id, skuToPick, currentUser?.name);
+    if (result.error) {
+      setScanFeedback({ type: 'error', message: result.error });
+      playBarcodeErrorSound();
+      return;
+    }
+    playBarcodeSuccessSound();
+    setScannedVerifiedItem(null);
+    setScanFeedback(null);
+    setManualInput('');
+    if (result.isComplete) {
+      triggerCompletion();
+    }
   };
 
   const handleMarkItemPickedManual = (itemSku: string) => {
@@ -140,6 +158,7 @@ export const GuidedPickingModal: React.FC = () => {
 
   const handleMarkItemMissingManual = (itemSku: string) => {
     setScanFeedback(null);
+    setScannedVerifiedItem(null);
     const result = markItemMissing(currentOrder.id, itemSku);
 
     if (result.error) {
@@ -170,6 +189,9 @@ export const GuidedPickingModal: React.FC = () => {
         type: 'success',
         message: `Cantidad modificada a ${tempQty} unidad(es) correctamente.`,
       });
+      if (scannedVerifiedItem && scannedVerifiedItem.sku === editingItemSku) {
+        setScannedVerifiedItem((prev) => (prev ? { ...prev, quantity: tempQty } : null));
+      }
     }
     setIsEditingQty(false);
     setEditingItemSku(null);
@@ -408,10 +430,11 @@ export const GuidedPickingModal: React.FC = () => {
                     {isCameraScannerOpen && (
                       <div className="w-full">
                         <PickingLiveBarcodeScanner
-                          key={`${currentItem.sku}-${currentItemIndex}`}
+                          key="guided-picking-live-scanner"
                           expectedSku={currentItem.sku}
                           expectedName={currentItem.name}
                           expectedShelf={currentItem.shelfLocation || 'Bodega Central'}
+                          isPaused={Boolean(scannedVerifiedItem)}
                           onScanSuccess={(code: string) => handleProcessScan(code)}
                           onScanError={(code: string) => {
                             setScanFeedback({
@@ -443,8 +466,49 @@ export const GuidedPickingModal: React.FC = () => {
                       </div>
                     )}
 
+                    {/* Botón Principal: Confirmación de Cantidad tras Validación de Escaneo */}
+                    {scannedVerifiedItem ? (
+                      <div className="space-y-2 pt-1 animate-fadeIn">
+                        <button
+                          type="button"
+                          onClick={handleConfirmScannedQuantity}
+                          className="w-full py-4 px-4 bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:to-teal-700 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/30 border-2 border-emerald-300 transition-all cursor-pointer min-h-[58px] ring-4 ring-emerald-400/20"
+                        >
+                          <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white shrink-0" />
+                          <span>
+                            {scannedVerifiedItem.quantity === 1
+                              ? 'Aceptar 1 unidad'
+                              : `Confirmar cantidad: ${scannedVerifiedItem.quantity} unidades`}
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setScannedVerifiedItem(null);
+                            setScanFeedback(null);
+                          }}
+                          className="w-full py-1 text-center text-xs text-slate-500 hover:text-slate-800 underline font-semibold cursor-pointer"
+                        >
+                          ¿Deseas volver a escanear? Haz clic aquí
+                        </button>
+                      </div>
+                    ) : (
+                      /* Botón inactivo antes del escaneo */
+                      <button
+                        type="button"
+                        disabled
+                        className="w-full py-3.5 px-4 bg-slate-100 border-2 border-dashed border-slate-300 text-slate-400 rounded-2xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-not-allowed opacity-75 min-h-[52px]"
+                      >
+                        <Scan className="w-4 h-4 text-slate-400" />
+                        <span>
+                          Escanea el código para confirmar cantidad ({currentItem.quantity} {currentItem.quantity === 1 ? 'ud' : 'uds'})
+                        </span>
+                      </button>
+                    )}
+
                     {/* Modo Manual o Teclado/USB */}
-                    {!isCameraScannerOpen && (
+                    {!isCameraScannerOpen && !scannedVerifiedItem && (
                       <form
                         onSubmit={(e) => {
                           e.preventDefault();
@@ -468,16 +532,18 @@ export const GuidedPickingModal: React.FC = () => {
                       </form>
                     )}
 
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={handleSimulateScanCurrent}
-                        className="w-full py-2.5 px-3 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
-                      >
-                        <Scan className="w-3.5 h-3.5" />
-                        <span>Validar ({currentItem.sku})</span>
-                      </button>
-                    </div>
+                    {!scannedVerifiedItem && (
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={handleSimulateScanCurrent}
+                          className="w-full py-2.5 px-3 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
+                        >
+                          <Scan className="w-3.5 h-3.5" />
+                          <span>Validar ({currentItem.sku})</span>
+                        </button>
+                      </div>
+                    )}
 
                     <div className="pt-1 flex items-center justify-between border-t border-fio-200/60 text-xs">
                       {isFeatureEnabled('orders', 'missing_reporting') ? (
