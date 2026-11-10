@@ -71,14 +71,18 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
           setIsUserMenuOpen((prev) => !prev);
           playWaterDropSound();
         }}
-        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 bg-white/95 hover:bg-white border border-purple-200/90 hover:border-fio-pink rounded-2xl shadow-xs transition-all cursor-pointer group"
+        className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-2xl transition-all cursor-pointer group outline-none select-none active:scale-95 ${
+          isUserMenuOpen
+            ? 'bg-white text-fio-pink border-2 border-fio-pink shadow-[0_4px_14px_rgba(236,72,153,0.3)]'
+            : 'bg-white/95 hover:bg-white text-slate-800 border border-white/80 shadow-[0_2px_8px_rgba(80,30,120,0.18),0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-md hover:border-purple-200'
+        }`}
         title="Abrir menú Mi Cuenta"
         aria-expanded={isUserMenuOpen}
       >
-        <div className="w-6 h-6 rounded-xl bg-gradient-to-tr from-purple-600 to-fio-pink text-white flex items-center justify-center font-bubble font-bold text-xs shadow-2xs shrink-0">
+        <div className="w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-xl bg-gradient-to-tr from-purple-600 to-fio-pink text-white flex items-center justify-center font-bubble font-black text-xs shadow-2xs shrink-0">
           {(currentUser?.name || 'U').charAt(0).toUpperCase()}
         </div>
-        <div className="flex items-center gap-1 text-xs font-bubble font-bold text-slate-700 max-w-[70px] sm:max-w-[100px] xl:max-w-[130px] truncate">
+        <div className="flex items-center gap-1 text-xs sm:text-sm font-bubble font-bold text-slate-800 max-w-[85px] sm:max-w-[120px] xl:max-w-[160px] truncate">
           <span className="truncate">{(currentUser?.name || 'Usuario').split(' ')[0]}</span>
         </div>
         {currentUser.role === 'admin' && (
@@ -96,14 +100,37 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
 
       {/* Menú Desplegado hacia Abajo: Sección Mi Cuenta */}
       {isUserMenuOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white/98 backdrop-blur-xl border border-purple-200/90 rounded-2xl shadow-2xl p-2 z-[60] animate-in zoom-in-95 duration-150 space-y-1">
-          <div className="p-2.5 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50/60 border border-purple-100">
-            <p className="font-bubble font-bold text-xs text-slate-900 truncate">
-              {currentUser.name}
-            </p>
-            <p className="text-[10px] text-slate-500 truncate mt-0.5">
-              {currentUser.email || 'Perfil activo by.fio'}
-            </p>
+        <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white/98 backdrop-blur-xl border border-purple-200/90 rounded-2xl shadow-2xl p-2.5 z-[60] animate-in zoom-in-95 duration-150 space-y-1.5">
+          {/* Cabecera del Usuario con Nombre e Identidad */}
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-purple-50 via-pink-50/70 to-purple-50/50 border border-purple-100 shadow-2xs">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-500 to-fio-pink text-white flex items-center justify-center font-bubble font-black text-base shadow-clayBtn shrink-0">
+                {(currentUser.name || 'U').charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-bubble font-bold text-sm text-slate-900 truncate leading-snug" title={currentUser.name}>
+                  {currentUser.name}
+                </p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  {currentUser.role === 'admin' ? (
+                    <span className="px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shadow-2xs shrink-0">
+                      Admin
+                    </span>
+                  ) : currentUser.role === 'staff' ? (
+                    <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[9px] font-bold uppercase tracking-wider shrink-0">
+                      Staff
+                    </span>
+                  ) : (
+                    <span className="px-1.5 py-0.2 rounded-full bg-pink-100 text-fio-pink text-[9px] font-bold uppercase tracking-wider shrink-0">
+                      Cliente
+                    </span>
+                  )}
+                  <span className="text-[11px] text-slate-500 truncate" title={currentUser.email || ''}>
+                    {currentUser.email || 'Perfil activo by.fio'}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Botón Mandatorio: Mi Cuenta */}

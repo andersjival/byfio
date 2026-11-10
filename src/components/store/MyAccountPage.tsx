@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AppRoute } from '../../types';
+import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
@@ -463,125 +464,33 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
             </div>
           </div>
 
-          {/* Columna Derecha: Mapa Interactivo de Costa Rica con Pin GPS */}
+          {/* Columna Derecha: Mapa Interactivo Real con Pin Arrastrable */}
           <div className="lg:col-span-7 space-y-4">
             <div className="p-5 sm:p-6 rounded-3xl bg-white border border-fio-200/80 shadow-sm space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
-                <div>
-                  <h3 className="font-bubble font-bold text-base text-slate-800 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-fio-pink" />
-                    <span>Ubicación Exacta de Entrega</span>
-                  </h3>
-                  <p className="text-[11px] text-slate-500">
-                    Ubica el pin en el mapa para mensajería y cálculo exacto de ruta.
-                  </p>
-                </div>
-
-                {/* Botón GPS */}
-                <button
-                  type="button"
-                  onClick={handleGetGpsLocation}
-                  disabled={isGpsLoading}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 text-xs font-bubble font-bold transition-all shrink-0 self-start sm:self-auto cursor-pointer"
-                >
-                  {isGpsLoading ? (
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-purple-700" />
-                  ) : (
-                    <Navigation className="w-3.5 h-3.5 text-purple-700" />
-                  )}
-                  <span>{isGpsLoading ? 'Buscando GPS...' : 'Usar mi GPS Actual'}</span>
-                </button>
+              <div className="pb-1 border-b border-slate-100">
+                <h3 className="font-bubble font-bold text-base text-slate-800 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-fio-pink" />
+                  <span>Ubicación Exacta de Entrega en el Mapa</span>
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  Arrastra el pin o toca en el mapa para ubicar tu casa o negocio con precisión milimétrica.
+                </p>
               </div>
 
-              {/* Selector Rápido de Zonas de Costa Rica */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-                <span className="text-[10px] text-slate-400 shrink-0 font-medium">Zonas rápidas:</span>
-                {CR_PRESETS.map((p) => (
-                  <button
-                    key={p.name}
-                    type="button"
-                    onClick={() => {
-                      setLat(p.lat);
-                      setLng(p.lng);
-                      playWaterDropSound();
-                    }}
-                    className={`text-[10px] px-2.5 py-1 rounded-xl border shrink-0 transition-all cursor-pointer ${
-                      Math.abs(lat - p.lat) < 0.001 && Math.abs(lng - p.lng) < 0.001
-                        ? 'bg-fio-pink text-white border-fio-pink font-bold shadow-2xs'
-                        : 'bg-white hover:bg-slate-50 text-slate-600 border-slate-200'
-                    }`}
-                  >
-                    {p.name.split(' ')[0]}
-                  </button>
-                ))}
-              </div>
-
-              {/* Visor de Mapa OpenStreetMap */}
-              <div className="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden border-2 border-fio-200 shadow-inner bg-slate-100">
-                <iframe
-                  title="Mapa de Ubicación de Entrega"
-                  src={mapEmbedUrl}
-                  className="w-full h-full border-0"
-                  loading="lazy"
-                />
-
-                {/* Coordenadas en Vivo */}
-                <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-xl text-[10px] font-mono text-slate-700 shadow-md border border-slate-200 flex items-center gap-2">
-                  <span className="font-bold text-fio-purple">📍 Pin:</span>
-                  <span>Lat: {lat.toFixed(4)} | Lng: {lng.toFixed(4)}</span>
-                </div>
-
-                {/* Enlace a Google Maps */}
-                <a
-                  href={googleMapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute top-2 right-2 bg-white/95 hover:bg-white text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-xl shadow-md border border-slate-200 flex items-center gap-1 transition-all"
-                  title="Abrir en Google Maps"
-                >
-                  <span>Abrir en Maps</span>
-                  <ExternalLink className="w-3 h-3 text-fio-pink" />
-                </a>
-              </div>
-
-              {/* Botones de Ajuste Fino */}
-              <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-                <span>Ajuste fino del pin:</span>
-                <div className="flex items-center gap-1 font-mono">
-                  <button
-                    type="button"
-                    onClick={() => setLat((prev) => Number((prev + 0.002).toFixed(5)))}
-                    className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
-                    title="Mover al Norte"
-                  >
-                    ▲ Norte
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLat((prev) => Number((prev - 0.002).toFixed(5)))}
-                    className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
-                    title="Mover al Sur"
-                  >
-                    ▼ Sur
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLng((prev) => Number((prev - 0.002).toFixed(5)))}
-                    className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
-                    title="Mover al Oeste"
-                  >
-                    ◀ Oeste
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLng((prev) => Number((prev + 0.002).toFixed(5)))}
-                    className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
-                    title="Mover al Este"
-                  >
-                    ▶ Este
-                  </button>
-                </div>
-              </div>
+              <InteractiveMapPicker
+                lat={lat}
+                lng={lng}
+                height="340px"
+                showPresets={true}
+                showGpsButton={true}
+                onChange={(coords) => {
+                  setLat(coords.lat);
+                  setLng(coords.lng);
+                  if (coords.addressSuggestion && (!address.trim() || address.startsWith('Ubicación GPS'))) {
+                    setAddress(coords.addressSuggestion);
+                  }
+                }}
+              />
             </div>
           </div>
         </div>

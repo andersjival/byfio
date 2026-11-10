@@ -107,9 +107,12 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
       )}
 
       {currentUser ? (
-        <div className="p-3 rounded-2xl bg-white/80 border border-purple-200/80 shadow-xs space-y-2">
+        <div className="p-3 rounded-2xl bg-gradient-to-br from-purple-50 via-pink-50/70 to-purple-50/50 border border-purple-200/80 shadow-xs space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 via-pink-500 to-fio-pink text-white flex items-center justify-center font-bubble font-black text-xs shadow-clayBtn shrink-0">
+                {(currentUser.name || 'U').charAt(0).toUpperCase()}
+              </div>
               <span className="text-sm font-bubble font-bold text-slate-800">{currentUser?.name || 'Usuario'}</span>
             </div>
             {currentUser.role === 'admin' && (

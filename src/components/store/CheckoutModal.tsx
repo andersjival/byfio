@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { X, CheckCircle, Truck, Store, ArrowRight, MessageCircle, Printer, AlertTriangle, Hash, Lock, CheckCircle2 } from 'lucide-react';
+import { X, CheckCircle, Truck, Store, ArrowRight, MessageCircle, Printer, AlertTriangle, Hash, Lock, CheckCircle2, MapPin } from 'lucide-react';
 import { PaymentAccountsCard, PartialPaymentInfo } from '../common/PaymentAccountsCard';
+import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 import { playBubblePopSound } from '../../utils/soundEffects';
 import { playAudioBeep } from '../../utils/formatters';
 import confetti from 'canvas-confetti';
@@ -33,6 +34,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   const [customerName, setCustomerName] = useState(() => currentUser?.name || '');
   const [customerPhone, setCustomerPhone] = useState(() => (currentUser as any)?.phone || '');
   const [shippingAddress, setShippingAddress] = useState(() => currentUser?.address || '');
+  const [showAddressMap, setShowAddressMap] = useState(false);
+  const [shippingLat, setShippingLat] = useState<number>(() => (currentUser as any)?.lat || 9.9548);
+  const [shippingLng, setShippingLng] = useState<number>(() => (currentUser as any)?.lng || -84.0815);
 
   // Sincronización automática de datos del usuario registrado al abrir el checkout
   useEffect(() => {
@@ -543,8 +547,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
             </div>
 
             {deliveryMethod === 'envio' && (
-              <div>
-                <label className="block text-[11px] font-bold text-gray-700 mb-1">Dirección de Entrega Exacta *</label>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[11px] font-bold text-gray-700">Dirección de Entrega Exacta *</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddressMap((prev) => !prev)}
+                    className="inline-flex items-center gap-1 text-[11px] font-bubble font-bold text-fio-pink hover:text-purple-700 transition-colors cursor-pointer"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>{showAddressMap ? 'Ocultar mapa' : '📍 Ubicar en mapa interactivo'}</span>
+                  </button>
+                </div>
                 <textarea
                   required
                   rows={2}
@@ -553,6 +567,25 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                   onChange={(e) => setShippingAddress(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-fio-400 focus:outline-none"
                 />
+
+                {showAddressMap && (
+                  <div className="p-3 bg-purple-50/50 rounded-2xl border border-purple-200/80 animate-fadeIn">
+                    <InteractiveMapPicker
+                      lat={shippingLat}
+                      lng={shippingLng}
+                      height="230px"
+                      showPresets={true}
+                      showGpsButton={true}
+                      onChange={(coords) => {
+                        setShippingLat(coords.lat);
+                        setShippingLng(coords.lng);
+                        if (coords.addressSuggestion && (!shippingAddress.trim() || shippingAddress.startsWith('Ubicación GPS'))) {
+                          setShippingAddress(coords.addressSuggestion);
+                        }
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             )}
 

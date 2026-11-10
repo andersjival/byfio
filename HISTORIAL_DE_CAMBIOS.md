@@ -17,6 +17,29 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.46 - Rediseño Visual de Alta Fidelidad del Menú Desplegable de Usuario
+- [x] **Optimización de la Cabecera de Identidad en el Menú ([NavbarUserMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx)):**
+  - Rediseñada la sección superior de identidad y nombre dentro del menú desplegable: tarjeta estilizada con avatar gradiente de 40px, inicial destacada, nombre completo en tipografía bubble legible (`text-sm font-bold`), insignia de rol (`Admin`, `Staff`, `Cliente`) y correo electrónico sin cortes antiestéticos.
+  - Ampliado el ancho del menú de `w-64` a `w-72 sm:w-80` para evitar truncado prematuro en nombres o correos extensos.
+  - Botón disparador del navbar mejorado con sombreado táctil consistente, mayor límite de ancho para el nombre (`max-w-[160px]`), mejor contraste y anillo activo al desplegar.
+  - Cabecera de usuario en drawer móvil ([`NavbarMobileDrawer.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)) sincronizada con avatar e insignias consistentes.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.46` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
+### Versión 4.19.45 - Mapa Real Interactivo con Pin Arrastrable para Dirección de Entrega
+- [x] **Componente Atómico de Mapa Interactivo Real ([InteractiveMapPicker.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/InteractiveMapPicker.tsx)):**
+  - Implementado mapa interactivo real basado en Leaflet y OpenStreetMap (adiós al iframe estático embebido).
+  - Pin personalizado con gradiente ByFio y estrella dorada (`L.divIcon`), con capacidad de arrastre fluido (`draggable: true`).
+  - Al arrastrar el pin o hacer clic en cualquier lugar del mapa, las coordenadas (`lat`, `lng`) se actualizan en tiempo real.
+  - Geocodificación inversa con OpenStreetMap Nominatim que identifica automáticamente la calle, cantón y provincia del punto marcado.
+  - Botón de geolocalización GPS real en Costa Rica y selector de zonas frecuentes (Tibás, San José, Heredia, Alajuela, Cartago, Escazú, etc.).
+- [x] **Integración en Páginas y Modales de Entrega:**
+  - Integrado en [`MyAccountPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx) para la pestaña "Mis Datos & Envío".
+  - Integrado en [`MyAccountModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/MyAccountModal.tsx).
+  - Integrado en el checkout [`CheckoutModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx) mediante botón desplegable para fijar la dirección de envío en vivo antes de pagar.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.45` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.44 - Sección "Mi Cuenta" como Página Independiente Única (/mi-cuenta)
 - [x] **Transformación de "Mi Cuenta" a Página Standalone ([MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx)):**
   - La sección "Mi Cuenta" dejó de ser un modal emergente / pop-up flotante y se convirtió en una página interna completa, única para el usuario.
