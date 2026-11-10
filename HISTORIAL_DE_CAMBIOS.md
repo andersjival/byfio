@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.40 - Color Rosa Corazón en Botón Tienda y Letras Blancas en Botones Activos
+- [x] **Color Oficial Rosa Corazón en Tienda ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Botón de Tienda actualizado con el color rosa/fucsia característico del corazón de la marca (`bg-gradient-to-r from-[#F472B6] to-[#EC4899]`) con sombra suave `shadow-[0_3px_10px_rgba(236,72,153,0.35)]`.
+- [x] **Letras Blancas en los 4 Botones de Navegación Activos ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Inicio, Talleres, Tienda y Catálogo muestran texto blanco nítido (`text-white`) cuando están en estado activo, manteniendo legibilidad y contraste óptimo sobre sus respectivos fondos.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.40` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.39 - Sombra Leve y Resalte Táctil en Botones de Navegación
 - [x] **Elevación Táctil en Botones Principales ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Implementada sombra leve (`shadow-[0_2px_8px_rgba(80,30,120,0.18),0_1px_3px_rgba(0,0,0,0.08)]`) y borde biselado `border-white/80` en los botones de Inicio, Talleres, Tienda y Catálogo.
