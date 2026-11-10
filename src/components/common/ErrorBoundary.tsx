@@ -58,11 +58,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleResetAndReload = () => {
     try {
-      safeLocalStorage.removeItem('byfio_cart_v1');
-      safeLocalStorage.removeItem('byfio_products_v1');
-      safeLocalStorage.removeItem('byfio_orders_v1');
-      safeLocalStorage.removeItem('byfio_workshops_v1');
-      safeSessionStorage.removeItem('byfio_chunk_reload_lock');
+      safeLocalStorage.clear();
+      safeSessionStorage.clear();
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.clear();
+      }
     } catch {}
     this.setState({ hasError: false, error: undefined });
     window.location.href = window.location.origin + window.location.pathname + '?r=' + Date.now();

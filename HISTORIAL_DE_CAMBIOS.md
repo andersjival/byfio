@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.36 - Blindaje contra QuotaExceededError en Almacenamiento Local de Pedidos
+- [x] **Parche Global contra Cuota Excedida ([safeStorage.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/safeStorage.ts)):**
+  - Sobrescritura defensiva global de `window.localStorage.setItem` para interceptar `DOMException: QuotaExceededError`. Si el almacenamiento del navegador (5 MB) se satura, auto-purga claves secundarias y redirige transparentemente a memoria RAM sin quebrar la interfaz.
+  - Implementado método `clear()` seguro tanto en `safeLocalStorage` como en `safeSessionStorage`.
+- [x] **Serialización Ligera de Pedidos ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Creado `serializeOrdersForStorage` que omite imágenes base64 gigantes (`data:image`) y limita el caché local a los 50 pedidos más recientes, reduciendo el consumo de megabytes a solo kilobytes.
+  - Envuelto el almacenamiento de sincronización D1 en `try/catch` con `safeLocalStorage.setItem` erradicando fallos no controlados en `setOrders`.
+- [x] **Auto-Saneamiento Total en Pantalla de Error ([ErrorBoundary.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ErrorBoundary.tsx)):**
+  - El botón *"Restablecer datos"* ejecuta limpieza completa de almacenamiento en navegador y recarga limpia sin rastros de cuota saturada.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.36` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.35 - Corrección Crítica de Pantalla Blanca en Tienda, Blindaje de Almacenamiento y Botón Carrito PWA Desktop
 - [x] **Blindaje Defensivo en Buscador y Catálogo de Tienda ([StorePage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/StorePage.tsx), [CatalogPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CatalogPage.tsx), [ProductDetailModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/ProductDetailModal.tsx)):**
   - Sanitización estricta de propiedades de texto (`name`, `sku`, `description`, `category`) con fallbacks `|| ''` antes de invocar `.toLowerCase()` o `.includes()`, previniendo excepciones fatales de `TypeError: undefined`.

@@ -491,6 +491,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return initial;
   });
 
+  // Serializador ligero para almacenamiento local de pedidos (evita cuota excedida omitiendo base64 gigantes)
+  const serializeOrdersForStorage = (ordersList: Order[]): string => {
+    try {
+      const light = ordersList.slice(0, 50).map((ord) => ({
+        ...ord,
+        items: Array.isArray(ord.items)
+          ? ord.items.map((it) => ({
+              ...it,
+              image: typeof it.image === 'string' && it.image.startsWith('data:') ? undefined : it.image,
+            }))
+          : [],
+      }));
+      return JSON.stringify(light);
+    } catch {
+      return '[]';
+    }
+  };
+
   const sanitizeOrderList = (orderList: any[]): Order[] => {
     return deepSanitize(orderList).map((o: Order) => {
       const hasItems = Array.isArray(o.items) && o.items.length > 0;
@@ -1318,7 +1336,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
     setOrders(updatedOrders);
-    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+    safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
@@ -2350,7 +2368,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
               );
               if (JSON.stringify(sorted) !== JSON.stringify(prev)) {
-                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(sorted));
+                try {
+                  safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(sorted));
+                } catch {}
                 return sorted;
               }
               return prev;
@@ -2393,7 +2413,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               const merged = Array.from(map.values()).sort(
                 (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
               );
-              localStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(merged));
+              safeLocalStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(merged));
               return merged;
             });
           }
@@ -2584,12 +2604,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [viewMode]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
+    safeLocalStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
   }, [products]);
 
   useEffect(() => {
     try {
-      safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+      safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(orders));
     } catch {}
   }, [orders]);
 
@@ -2793,7 +2813,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
     setOrders(updatedOrders);
-    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+    safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
@@ -3155,7 +3175,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return updatedOrder;
       });
 
-      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updated));
+      safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(updated));
 
       try {
         syncChannel?.postMessage({
@@ -3236,7 +3256,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             }
           : o
       );
-      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+      safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(updatedOrders));
       return updatedOrders;
     });
 
@@ -3622,7 +3642,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
     setOrders(updatedOrders);
-    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+    safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
@@ -3938,7 +3958,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const deleteOrder = async (orderId: string) => {
     setOrders((prev) => {
       const updated = prev.filter((o) => o.id !== orderId);
-      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updated));
+      safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(updated));
       return updated;
     });
     knownOrderIdsRef.current.delete(orderId);
@@ -3949,7 +3969,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const clearAllOrders = async () => {
     setOrders([]);
-    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([]));
+    safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, "[]");
     knownOrderIdsRef.current.clear();
     try {
       await fetch('/api/orders?all=true', { method: 'DELETE' });
