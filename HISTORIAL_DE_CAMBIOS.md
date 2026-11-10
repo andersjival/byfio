@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.48 - Dirección con Texto y PIN de Mapa Real en Paso 2 de Registro
+- [x] **Campo de Dirección en Texto y Botón de PIN de Mapa ([ThreeStepRegisterForm.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ThreeStepRegisterForm.tsx)):**
+  - Añadido campo de texto de dirección física exacta con icono de `MapPin` en el Paso 2 del registro.
+  - Implementado selector con botón interactivo de PIN de mapa real que muestra estado dinámico ("Marcar PIN en el Mapa Real" vs "Ubicación seleccionada con PIN").
+- [x] **Componente Atómico de Mapa Modal ([RegisterMapModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/RegisterMapModal.tsx)):**
+  - Creado modal atómico montado en `createPortal` con z-index seguro (`z-[120]`), integrando `InteractiveMapPicker` con OpenStreetMap y Leaflet, arrastre de pin estrella de ByFio, geocodificación inversa con Nominatim, accesos rápidos de Costa Rica y botón GPS.
+  - Botón "Aceptar Ubicación" que guarda coordenadas `lat`/`lng` y autocompleta la sugerencia de dirección en el formulario.
+- [x] **Persistencia en el Sistema ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)):**
+  - Actualizado `registerUser` para recibir y persistir `address`, `lat` y `lng` en `REGISTERED_USERS` y en la sesión activa `currentUser` / `AUTH_USER`.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.48` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.47 - Retiro de Sección de Lista de Precios de Stickers del Home
 - [x] **Limpieza Quirúrgica en Página Principal ([HomePage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx)):**
   - Removida la sección `PricingStickersSection` (*"LISTA DE PRECIOS • STICKERS & PERSONALIZADOS"*) de la página principal (Home), dejando la vista centrada en la Academia Creativa (Talleres), Productos Destacados y Horarios/Ubicación de Tibás.

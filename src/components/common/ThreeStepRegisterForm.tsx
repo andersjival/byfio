@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {
   User, Mail, Phone, CreditCard, Lock, Eye, EyeOff,
-  ArrowRight, ArrowLeft, CheckCircle2, Sparkles, AlertCircle
+  ArrowRight, ArrowLeft, CheckCircle2, Sparkles, AlertCircle, MapPin
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
 import { AuthUser } from '../../types';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
+import { RegisterMapModal } from './RegisterMapModal';
 
 interface ThreeStepRegisterFormProps {
   onSuccess: (user: AuthUser) => void;
@@ -26,9 +27,13 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
-  // Paso 2: Teléfono y Cédula
+  // Paso 2: Teléfono, Cédula y Dirección
   const [phone, setPhone] = useState('');
   const [idCard, setIdCard] = useState('');
+  const [address, setAddress] = useState('');
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   // Paso 3: Contraseña y Repetir
   const [password, setPassword] = useState('');
@@ -113,7 +118,16 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
     playBubblePopSound();
 
     setTimeout(() => {
-      const res = registerUser(email, password, name, phone, idCard);
+      const res = registerUser(
+        email,
+        password,
+        name,
+        phone,
+        idCard,
+        address,
+        lat ?? undefined,
+        lng ?? undefined
+      );
       setIsLoading(false);
 
       if (res.success && res.user) {
@@ -178,7 +192,7 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
                   ? 'bg-gradient-to-tr from-purple-600 to-fio-pink text-white shadow-xs scale-105'
                   : 'bg-white text-slate-400 border border-purple-200'
               }`}
-              title="Paso 2: Teléfono y Cédula"
+              title="Paso 2: Teléfono, Cédula y Dirección"
             >
               2
             </button>
@@ -208,7 +222,7 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
         <div className="text-center">
           <span className="inline-block px-2.5 py-0.5 rounded-full bg-purple-50 border border-purple-200 text-fio-purple font-bubble font-bold text-[11px]">
             {step === 1 && 'Paso 1: Nombre y Correo Electrónico'}
-            {step === 2 && 'Paso 2: Teléfono y Cédula de Identidad'}
+            {step === 2 && 'Paso 2: Teléfono, Cédula y Dirección'}
             {step === 3 && 'Paso 3: Contraseña y Confirmación'}
           </span>
         </div>
@@ -284,13 +298,13 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
               type="submit"
               className="btn-login mt-2"
             >
-              <span>Continuar a Teléfono y Cédula</span>
+              <span>Continuar a Contacto y Dirección</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
         )}
 
-        {/* PASO 2: TELÉFONO Y NÚMERO DE CÉDULA */}
+        {/* PASO 2: TELÉFONO, NÚMERO DE CÉDULA Y DIRECCIÓN */}
         {step === 2 && (
           <form key="step-2" onSubmit={handleNextStep2} className={`space-y-3 ${animationClass}`}>
             <div className="space-y-1 text-left">
@@ -338,9 +352,83 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
                   className="font-sans text-xs sm:text-sm"
                 />
               </div>
-              <p className="text-[10px] text-purple-700 font-bubble ml-1">
-                * Requerido para verificación y facturación de talleres/pedidos.
-              </p>
+            </div>
+
+            {/* Dirección en Texto */}
+            <div className="space-y-1 text-left">
+              <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                Dirección Exacta de Entrega (Texto):
+              </label>
+              <div className="input-group">
+                <div className="icon-badge">
+                  <MapPin className="w-4 h-4 text-white" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="ej. De la iglesia 100m norte, portón blanco..."
+                  value={address}
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                    if (errorMessage) setErrorMessage(null);
+                  }}
+                  autoComplete="street-address"
+                  className="font-sans text-xs sm:text-sm"
+                />
+              </div>
+            </div>
+
+            {/* Ubicación con PIN en Mapa Real */}
+            <div className="space-y-1 text-left">
+              <div className="flex items-center justify-between ml-1">
+                <label className="text-[11px] font-bubble font-bold text-slate-600">
+                  Ubicación con PIN en Mapa:
+                </label>
+                {lat !== null && lng !== null && (
+                  <span className="text-[10px] font-bubble font-bold text-emerald-600 flex items-center gap-0.5">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                    <span>PIN Fijado</span>
+                  </span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  playWaterDropSound();
+                  setIsMapModalOpen(true);
+                }}
+                className={`w-full p-2.5 rounded-2xl border transition-all flex items-center justify-between text-xs cursor-pointer active:scale-[0.99] ${
+                  lat !== null && lng !== null
+                    ? 'bg-emerald-50/90 border-emerald-300 text-emerald-900 shadow-xs hover:bg-emerald-100/70'
+                    : 'bg-purple-50/60 hover:bg-purple-100/70 border-purple-200 text-purple-900'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-xs transition-colors ${
+                      lat !== null && lng !== null
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-gradient-to-tr from-purple-600 to-fio-pink text-white'
+                    }`}
+                  >
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-bubble font-bold leading-tight text-[11px] sm:text-xs">
+                      {lat !== null && lng !== null
+                        ? 'Ubicación seleccionada con PIN'
+                        : 'Elegir Ubicación con PIN en Mapa Real'}
+                    </div>
+                    <div className="text-[10px] text-slate-500 font-sans leading-tight mt-0.5">
+                      {lat !== null && lng !== null
+                        ? `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)} • Clic para mover`
+                        : 'Abre el mapa de Costa Rica para marcar el punto exacto'}
+                    </div>
+                  </div>
+                </div>
+                <span className="text-[11px] font-bubble font-bold text-fio-purple underline shrink-0 ml-1">
+                  {lat !== null && lng !== null ? 'Cambiar' : 'Abrir Mapa'}
+                </span>
+              </button>
             </div>
 
             <div className="flex items-center gap-2 pt-1">
@@ -449,6 +537,15 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
               <div className="truncate text-slate-500 text-[10px]">
                 {name} • Tel: {phone} • Cédula: {idCard}
               </div>
+              {(address || (lat !== null && lng !== null)) && (
+                <div className="truncate text-slate-600 text-[10px] flex items-center gap-1 font-medium">
+                  <MapPin className="w-3 h-3 text-fio-purple shrink-0" />
+                  <span className="truncate">
+                    {address || 'Ubicación seleccionada en mapa'}
+                    {lat !== null && lng !== null ? ` (${lat.toFixed(4)}, ${lng.toFixed(4)})` : ''}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Botones Finales con el Botón Aceptar Mandatorio */}
@@ -495,6 +592,22 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
           </button>
         </p>
       </div>
+
+      {/* Modal Interactivo de Mapa Real con PIN */}
+      <RegisterMapModal
+        isOpen={isMapModalOpen}
+        initialLat={lat}
+        initialLng={lng}
+        initialAddress={address}
+        onClose={() => setIsMapModalOpen(false)}
+        onConfirm={(coords) => {
+          setLat(coords.lat);
+          setLng(coords.lng);
+          if (!address.trim() && coords.addressSuggestion) {
+            setAddress(coords.addressSuggestion);
+          }
+        }}
+      />
     </div>
   );
 };

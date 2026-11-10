@@ -298,7 +298,10 @@ interface AppContextType {
     pass: string,
     name?: string,
     phone?: string,
-    idCard?: string
+    idCard?: string,
+    address?: string,
+    lat?: number,
+    lng?: number
   ) => { success: boolean; error?: string; user?: AuthUser };
   resetPassword: (email: string, newPass: string) => { success: boolean; error?: string };
   logoutUser: () => void;
@@ -2091,7 +2094,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     passwordInput: string,
     nameInput?: string,
     phoneInput?: string,
-    idCardInput?: string
+    idCardInput?: string,
+    addressInput?: string,
+    latInput?: number,
+    lngInput?: number
   ) => {
     const cleanEmail = emailInput.trim().toLowerCase();
     const cleanPass = passwordInput.trim();
@@ -2112,7 +2118,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: nameInput?.trim() || cleanEmail.split('@')[0],
         phone: phoneInput?.trim() || '',
         idCard: idCardInput?.trim() || '',
-        address: '',
+        address: addressInput?.trim() || '',
+        lat: typeof latInput === 'number' ? latInput : undefined,
+        lng: typeof lngInput === 'number' ? lngInput : undefined,
         createdAt: new Date().toISOString(),
         welcomeShown: false,
       };
@@ -2124,7 +2132,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: record.name,
         phone: record.phone,
         idCard: record.idCard,
-        address: '',
+        address: record.address,
+        lat: record.lat,
+        lng: record.lng,
         createdAt: record.createdAt,
         role: 'customer',
         welcomeShown: false,
