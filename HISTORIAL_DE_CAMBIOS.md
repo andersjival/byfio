@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.63 - Botón "Producto sin Proveedor" y Modal Emergente de Asignación Rápida
+- [x] **Botón Dinámico de Asignación Rápida ([InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx)):**
+  - Implementado botón interactivo `"Producto sin proveedor"` con icono de camión en la columna de Ubicación & Proveedor y como acceso directo bajo el nombre del producto para cualquier artículo sin proveedor asignado.
+  - Al hacer clic, abre de inmediato el pop-up emergente de asignación de proveedor.
+  - Para productos con proveedor ya asignado, el badge del proveedor también permite hacer clic para editarlo o reasignarlo fácilmente.
+  - Añadido botón de filtro rápido `"Sin Proveedor"` con conteo numérico en vivo en la barra de filtros superior.
+- [x] **Nuevo Modal Atómico de Asignación ([AssignSupplierModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AssignSupplierModal.tsx)):**
+  - Modal reactivo con cabecera en degradado ámbar, ficha resumen del producto (foto, SKU, categoría, estante).
+  - Menú desplegable unificado con proveedores del sistema, histórico y opción de escribir un nuevo proveedor al vuelo con teléfono/WhatsApp.
+  - Botón "Aceptar y Guardar" con confirmación sonora y persistencia inmediata en estado, almacenamiento local y Cloudflare D1 vía `updateProduct`.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.63` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.62 - Limpieza Visual Minimalista del Cuadro del Escáner (Solo Esquinas Puntiagudas Amarillas)
 - [x] **Purificación del Visor del Escáner ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
   - Removida la barra superior completa de controles que contenía los textos "Pistola Lectora Activa", selector de cámara y botones de luz / claridad.

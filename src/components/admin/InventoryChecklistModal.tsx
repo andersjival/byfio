@@ -3,10 +3,11 @@ import { useApp } from '../../context/AppContext';
 import { Product } from '../../types';
 import { BrandLogo } from '../common/BrandLogo';
 import { Barcode128 } from '../common/Barcode128';
+import { QRCodeSVG } from 'qrcode.react';
 import { formatShortDate } from '../../utils/formatters';
 import {
   X, Printer, ClipboardCheck, MapPin, Search, CheckCircle2,
-  AlertCircle, Barcode, CheckSquare, Square, Layers, Sparkles, Filter
+  AlertCircle, Barcode, QrCode, CheckSquare, Square, Layers, Sparkles, Filter
 } from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
@@ -25,7 +26,7 @@ export const InventoryChecklistModal: React.FC<InventoryChecklistModalProps> = (
 
   const [selectedShelf, setSelectedShelf] = useState<string>(initialShelf);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showBarcodes, setShowBarcodes] = useState(true);
+  const [codeFormat, setCodeFormat] = useState<'barcode' | 'qr' | 'none'>('barcode');
   const [auditorName, setAuditorName] = useState(() => currentUser?.name || 'Administrador ByFio');
   const [countedValues, setCountedValues] = useState<Record<string, string>>({});
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
@@ -275,19 +276,54 @@ export const InventoryChecklistModal: React.FC<InventoryChecklistModalProps> = (
             </div>
           </div>
 
-          {/* Opciones Adicionales de Visualización */}
+          {/* Opciones Adicionales de Visualización: Selector de Formato de Códigos */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs border-t border-slate-100">
-            <div className="flex items-center gap-3">
-              <label className="flex items-center gap-1.5 cursor-pointer font-bold text-slate-700 select-none">
-                <input
-                  type="checkbox"
-                  checked={showBarcodes}
-                  onChange={(e) => setShowBarcodes(e.target.checked)}
-                  className="rounded text-fio-pink focus:ring-fio-400"
-                />
-                <Barcode className="w-3.5 h-3.5 text-fio-pink" />
-                <span>Incluir Código de Barras en cada fila (para pistola o escáner)</span>
-              </label>
+            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
+              <span className="text-[10px] font-bold text-slate-500 px-1">Código en Fila:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setCodeFormat('barcode');
+                  playWaterDropSound();
+                }}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bubble font-bold transition-all cursor-pointer ${
+                  codeFormat === 'barcode'
+                    ? 'bg-fio-800 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white'
+                }`}
+              >
+                <Barcode className="w-3.5 h-3.5 text-amber-300" />
+                <span>Barras 128</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCodeFormat('qr');
+                  playWaterDropSound();
+                }}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bubble font-bold transition-all cursor-pointer ${
+                  codeFormat === 'qr'
+                    ? 'bg-gradient-to-r from-purple-700 to-fio-pink text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-white'
+                }`}
+              >
+                <QrCode className="w-3.5 h-3.5 text-pink-200" />
+                <span>Código QR</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCodeFormat('none');
+                  playWaterDropSound();
+                }}
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  codeFormat === 'none'
+                    ? 'bg-slate-300 text-slate-800 font-black'
+                    : 'text-slate-500 hover:bg-white'
+                }`}
+              >
+                Solo Texto
+              </button>
             </div>
 
             {/* Botones rápidos de estantes */}
@@ -436,19 +472,32 @@ export const InventoryChecklistModal: React.FC<InventoryChecklistModalProps> = (
                                   {pIdx + 1}
                                 </td>
 
-                                {/* Código SKU y Barcode 128 */}
+                                {/* Código SKU y Barcode / QR */}
                                 <td className="py-2 px-2.5 space-y-1">
                                   <div className="font-mono font-black text-xs text-slate-900 print:text-black bg-slate-100 print:bg-transparent px-1.5 py-0.5 rounded inline-block">
                                     {p.sku}
                                   </div>
-                                  {showBarcodes && (
-                                    <div className="pt-0.5 max-w-[130px] overflow-hidden">
+                                  {codeFormat === 'barcode' && (
+                                    <div className="pt-0.5 max-w-[135px] overflow-hidden">
                                       <Barcode128
                                         value={p.sku}
-                                        height={22}
-                                        moduleWidth={1.5}
-                                        className="w-full max-h-6"
+                                        height={28}
+                                        moduleWidth={2.0}
+                                        className="max-w-[135px] h-6.5"
                                       />
+                                    </div>
+                                  )}
+                                  {codeFormat === 'qr' && (
+                                    <div className="pt-0.5 flex items-center gap-1.5">
+                                      <div className="p-0.5 bg-white border border-slate-300 print:border-black rounded shrink-0">
+                                        <QRCodeSVG
+                                          value={(p.qrCode || p.sku).trim()}
+                                          size={32}
+                                          level="M"
+                                          includeMargin={false}
+                                        />
+                                      </div>
+                                      <span className="text-[8px] font-mono font-bold text-slate-400 print:text-black">QR</span>
                                     </div>
                                   )}
                                 </td>

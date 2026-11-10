@@ -7,7 +7,7 @@ import {
   X, PlusCircle, Hash, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
   Store, BookOpen, ChevronDown, Plus, RotateCcw, Trash2, Sparkles, Upload, Truck,
-  BookmarkCheck, CalendarClock, BadgePercent
+  BookmarkCheck, CalendarClock, BadgePercent, Barcode, QrCode
 } from 'lucide-react';
 import { MultiImageUploadField } from '../common/MultiImageUploadField';
 import { Barcode128 } from '../common/Barcode128';

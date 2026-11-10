@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { ShelfBarcodeLabelsModal } from './ShelfBarcodeLabelsModal';
 import { InventoryChecklistModal } from './InventoryChecklistModal';
+import { AssignSupplierModal } from './AssignSupplierModal';
+import { Product } from '../../types';
 import type { AdminTabType } from './AdminTabs';
 
 interface InventoryTableProps {
@@ -18,6 +20,7 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
   const {
     products,
     updateProductStock,
+    updateProduct,
     inventoryMode,
     setInventoryMode,
     toggleProductAvailability,
@@ -31,11 +34,13 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
   const confirm = useConfirm();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'zero_stock' | 'unavailable' | 'zero_or_unavailable' | 'no_supplier'>('all');
   const [isShelfBarcodesOpen, setIsShelfBarcodesOpen] = useState(false);
   const [isInventoryChecklistOpen, setIsInventoryChecklistOpen] = useState(false);
   const [shelfFilterTarget, setShelfFilterTarget] = useState<string>('Todas');
   const [categoryFilterTarget, setCategoryFilterTarget] = useState<string>('Todas');
+  const [supplierModalProduct, setSupplierModalProduct] = useState<Product | null>(null);
+  const [isAssignSupplierModalOpen, setIsAssignSupplierModalOpen] = useState(false);
 
   const isStockModeEnabled = isFeatureEnabled('inventory', 'inventory_stock_mode') !== false;
   const isAvailabilityModeEnabled = isFeatureEnabled('inventory', 'product_availability_mode') !== false;
@@ -49,6 +54,12 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
   }, [isStockModeEnabled, isAvailabilityModeEnabled, inventoryMode, setInventoryMode]);
 
   const showStockColumn = isStockModeEnabled && inventoryMode === 'stock';
+
+  const isUnassignedSupplier = (supplier?: string) => {
+    if (!supplier) return true;
+    const s = supplier.trim().toLowerCase();
+    return s === '' || s === 'sin asignar' || s === 'sin proveedor' || s === 'null' || s === 'undefined';
+  };
 
   const zeroStockCount = useMemo(() => products.filter((p) => p.stock <= 0).length, [products]);
   const unavailableCount = useMemo(
@@ -64,6 +75,10 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
           p.showInStore === false ||
           p.showInCatalog === false
       ).length,
+    [products]
+  );
+  const noSupplierCount = useMemo(
+    () => products.filter((p) => isUnassignedSupplier(p.supplier)).length,
     [products]
   );
 
@@ -91,6 +106,8 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
       matchesStatus = isUnavail;
     } else if (statusFilter === 'zero_or_unavailable') {
       matchesStatus = isZero || isUnavail;
+    } else if (statusFilter === 'no_supplier') {
+      matchesStatus = isUnassignedSupplier(p.supplier);
     }
 
     return matchesCategory && matchesSearch && matchesStatus;
@@ -231,6 +248,26 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
               {zeroOrUnavailableCount}
             </span>
           </button>
+
+          {/* Botón: Sin Proveedor */}
+          <button
+            type="button"
+            onClick={() => setStatusFilter(statusFilter === 'no_supplier' ? 'all' : 'no_supplier')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all ${
+              statusFilter === 'no_supplier'
+                ? 'bg-amber-700 text-white shadow-sm ring-2 ring-amber-400'
+                : 'bg-white text-amber-900 hover:bg-amber-50 border border-amber-300'
+            }`}
+            title="Muestra los productos que no tienen ningún proveedor asignado"
+          >
+            <Truck className="w-3.5 h-3.5 text-amber-600" />
+            <span>Sin Proveedor</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+              statusFilter === 'no_supplier' ? 'bg-amber-800 text-white' : 'bg-amber-100 text-amber-900'
+            }`}>
+              {noSupplierCount}
+            </span>
+          </button>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
@@ -321,7 +358,7 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
             <tr className="border-b border-fio-100 text-gray-500 font-semibold uppercase tracking-wider text-[10px]">
               <th className="pb-3 px-2">SKU & Producto</th>
               <th className="pb-3 px-2">Categoría</th>
-              <th className="pb-3 px-2">Ubicación</th>
+              <th className="pb-3 px-2">Ubicación & Proveedor</th>
               <th className="pb-3 px-2">Precio</th>
               {showStockColumn && (
                 <th className="pb-3 px-2 text-center">Stock Actual</th>
@@ -410,6 +447,21 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
                             <span>EN CERO • HACER PEDIDO</span>
                           </span>
                         )}
+                        {isUnassignedSupplier(prod.supplier) && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSupplierModalProduct(prod);
+                              setIsAssignSupplierModalOpen(true);
+                            }}
+                            className="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-bubble font-bold text-[9px] uppercase tracking-wide transition-all shadow-2xs active:scale-95 cursor-pointer"
+                            title="Asignar un proveedor a este producto"
+                          >
+                            <Truck className="w-2.5 h-2.5 text-amber-700 shrink-0" />
+                            <span>Producto sin proveedor</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -452,11 +504,32 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
                         <MapPin className="w-3 h-3 text-fio-pink shrink-0" />
                         <span>{prod.shelfLocation}</span>
                       </span>
-                      {prod.supplier && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-900 bg-amber-50 px-1.5 py-0.5 rounded-lg border border-amber-200/80" title={`Proveedor: ${prod.supplier}`}>
-                          <Truck className="w-2.5 h-2.5 text-amber-600 shrink-0" />
+                      {!isUnassignedSupplier(prod.supplier) ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSupplierModalProduct(prod);
+                            setIsAssignSupplierModalOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-900 bg-amber-50 hover:bg-amber-100 px-1.5 py-0.5 rounded-lg border border-amber-200/80 transition-all cursor-pointer group"
+                          title={`Proveedor: ${prod.supplier} (Clic para cambiar)`}
+                        >
+                          <Truck className="w-2.5 h-2.5 text-amber-600 group-hover:scale-110 transition-transform shrink-0" />
                           <span className="max-w-[120px] truncate">{prod.supplier}</span>
-                        </span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSupplierModalProduct(prod);
+                            setIsAssignSupplierModalOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1.5 text-[10px] font-bubble font-bold text-amber-900 bg-amber-100/90 hover:bg-amber-200 border border-amber-300 px-2 py-1 rounded-xl transition-all shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer group"
+                          title="Hacer clic para asignar un proveedor a este producto"
+                        >
+                          <Truck className="w-3.5 h-3.5 text-amber-700 group-hover:scale-110 transition-transform shrink-0" />
+                          <span>Producto sin proveedor</span>
+                        </button>
                       )}
                     </div>
                   </td>
@@ -689,6 +762,18 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
       <InventoryChecklistModal
         isOpen={isInventoryChecklistOpen}
         onClose={() => setIsInventoryChecklistOpen(false)}
+      />
+
+      <AssignSupplierModal
+        isOpen={isAssignSupplierModalOpen}
+        product={supplierModalProduct}
+        onClose={() => {
+          setIsAssignSupplierModalOpen(false);
+          setSupplierModalProduct(null);
+        }}
+        onAssign={(productId, supplierName) => {
+          updateProduct(productId, { supplier: supplierName });
+        }}
       />
     </div>
   );

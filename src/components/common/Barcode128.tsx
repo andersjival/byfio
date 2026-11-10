@@ -20,16 +20,21 @@ interface Barcode128Props {
   value: string;
   height?: number;
   moduleWidth?: number;
+  showText?: boolean;
   className?: string;
 }
 
 export const Barcode128: React.FC<Barcode128Props> = ({
   value,
-  height = 48,
-  moduleWidth = 2,
+  height = 56,
+  moduleWidth = 2.4,
+  showText = false,
   className = '',
 }) => {
   const cleanValue = (value || 'SKU-000').trim().toUpperCase();
+
+  const textHeight = showText ? 14 : 0;
+  const barHeight = Math.max(20, height - textHeight);
 
   const { bars, totalWidth } = useMemo(() => {
     // Código de Inicio B (104)
@@ -56,7 +61,7 @@ export const Barcode128: React.FC<Barcode128Props> = ({
 
     // Convertir anchos alternados a barras negras
     const barRects: { x: number; width: number }[] = [];
-    const quietZone = moduleWidth * 10; // Zona de silencio a los lados
+    const quietZone = Math.max(10, Math.round(moduleWidth * 5)); // Zona de silencio optimizada
     let currentX = quietZone;
     let isBlack = true;
 
@@ -77,7 +82,9 @@ export const Barcode128: React.FC<Barcode128Props> = ({
   return (
     <svg
       viewBox={`0 0 ${totalWidth} ${height}`}
-      className={`w-full max-w-full h-auto select-none ${className}`}
+      preserveAspectRatio="xMidYMid meet"
+      shapeRendering="crispEdges"
+      className={`select-none ${className}`}
       style={{ display: 'block' }}
       aria-label={`Código de barras Code 128: ${cleanValue}`}
     >
@@ -88,10 +95,27 @@ export const Barcode128: React.FC<Barcode128Props> = ({
           x={bar.x}
           y="0"
           width={bar.width}
-          height={height}
+          height={barHeight}
           fill="#000000"
+          shapeRendering="crispEdges"
         />
       ))}
+      {showText && (
+        <text
+          x={totalWidth / 2}
+          y={height - 2}
+          textAnchor="middle"
+          fill="#000000"
+          style={{
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+            fontSize: '11px',
+            fontWeight: 800,
+            letterSpacing: '1.5px',
+          }}
+        >
+          {cleanValue}
+        </text>
+      )}
     </svg>
   );
 };

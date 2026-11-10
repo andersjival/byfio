@@ -6,7 +6,7 @@ import { BrandLogo } from '../common/BrandLogo';
 import {
   X, Printer, Search, MapPin, Layers, Tag,
   Building2, ArrowUpDown, FileText, Copy, CheckCircle2,
-  Sparkles, SlidersHorizontal, Eye
+  Sparkles, SlidersHorizontal, Eye, Barcode, QrCode
 } from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
@@ -32,6 +32,7 @@ export const ShelfBarcodeLabelsModal: React.FC<ShelfBarcodeLabelsModalProps> = (
   const [selectedSupplier, setSelectedSupplier] = useState<string>('Todos');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'shelf' | 'name' | 'category' | 'supplier' | 'sku'>('shelf');
+  const [codeFormat, setCodeFormat] = useState<'barcode' | 'qr'>('barcode');
   const [printMode, setPrintMode] = useState<'catalog' | 'single_product'>('catalog');
   const [singleProductId, setSingleProductId] = useState<string>('');
   const [activeSheetIndex, setActiveSheetIndex] = useState<number>(0);
@@ -259,13 +260,15 @@ export const ShelfBarcodeLabelsModal: React.FC<ShelfBarcodeLabelsModalProps> = (
             </div>
             <div>
               <h2 className="font-bubble font-bold text-base sm:text-lg text-slate-800 flex items-center gap-2">
-                <span>Hojas de 21 Códigos de Barras ByFio</span>
+                <span>{codeFormat === 'qr' ? 'Hojas de 21 Códigos QR ByFio' : 'Hojas de 21 Códigos de Barras ByFio'}</span>
                 <span className="text-xs bg-white text-fio-purple font-mono font-bold px-2.5 py-0.5 rounded-full border border-purple-200 shadow-2xs">
                   {filteredProducts.length} etiquetas • {sheets.length} {sheets.length === 1 ? 'hoja' : 'hojas'}
                 </span>
               </h2>
               <p className="text-xs text-slate-500">
-                Formato estándar de 21 etiquetas por hoja (3×7) con logo ByFio y categoría.
+                {codeFormat === 'qr'
+                  ? 'Formato estándar de 21 etiquetas con código QR 2D por hoja (3×7) con logo ByFio y categoría.'
+                  : 'Formato estándar de 21 etiquetas con código de barras Code 128 nítido por hoja (3×7) con logo ByFio y categoría.'}
               </p>
             </div>
           </div>
@@ -278,7 +281,7 @@ export const ShelfBarcodeLabelsModal: React.FC<ShelfBarcodeLabelsModalProps> = (
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all cursor-pointer disabled:opacity-50"
             >
               <Printer className="w-4 h-4" />
-              <span>Imprimir {sheets.length} {sheets.length === 1 ? 'Hoja' : 'Hojas'} (21/hoja)</span>
+              <span>Imprimir {sheets.length} {sheets.length === 1 ? 'Hoja' : 'Hojas'} ({codeFormat === 'qr' ? 'QR' : 'Barras'})</span>
             </button>
             <button
               type="button"
@@ -293,8 +296,46 @@ export const ShelfBarcodeLabelsModal: React.FC<ShelfBarcodeLabelsModalProps> = (
 
         {/* Barra de Filtros Multifuncional: Categoría, Estante, Proveedor, Nombre (Oculto en Impresión) */}
         <div className="p-3 sm:p-4 bg-white/95 border-b border-fio-200/80 shrink-0 space-y-3 print:hidden">
-          {/* Selector de Modo: Imprimir Lote vs Repetir 1 Producto 21 veces */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-100">
+          {/* Fila Superior: Selector de Formato de Código (Barras vs QR) y Modo de Hoja */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
+            {/* 1. Selector de Tipo de Código (Barras vs QR) */}
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200/90 shadow-2xs">
+              <span className="text-[11px] font-bold text-slate-500 px-1.5">Formato:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setCodeFormat('barcode');
+                  playWaterDropSound();
+                }}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  codeFormat === 'barcode'
+                    ? 'bg-fio-800 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                }`}
+                title="Generar etiquetas con Código de Barras Code 128"
+              >
+                <Barcode className="w-3.5 h-3.5 text-amber-300" />
+                <span>Código de Barras</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCodeFormat('qr');
+                  playWaterDropSound();
+                }}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  codeFormat === 'qr'
+                    ? 'bg-gradient-to-r from-purple-700 to-fio-pink text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+                }`}
+                title="Generar etiquetas con Código QR 2D para escaneo por celular"
+              >
+                <QrCode className="w-3.5 h-3.5 text-pink-200" />
+                <span>Código QR</span>
+              </button>
+            </div>
+
+            {/* 2. Selector de Modo: Imprimir Lote vs Repetir 1 Producto 21 veces */}
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-bold text-slate-700">Modo de Hoja:</span>
               <button
@@ -610,12 +651,12 @@ export const ShelfBarcodeLabelsModal: React.FC<ShelfBarcodeLabelsModalProps> = (
                         Hoja {sheetIdx + 1} de {sheets.length}
                       </span>
                       <span className="text-[9px] text-slate-400 print:text-black block mt-0.5">
-                        21 Códigos / Hoja (3×7)
+                        21 {codeFormat === 'qr' ? 'Códigos QR' : 'Códigos de Barras'} / Hoja (3×7)
                       </span>
                     </div>
                   </div>
 
-                  {/* Cuadrícula Estricta de 21 Códigos de Barra (3 Columnas × 7 Filas) */}
+                  {/* Cuadrícula Estricta de 21 Etiquetas (3 Columnas × 7 Filas) */}
                   <div className="byfio-sheet-grid-21 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 print:grid-cols-3 print:gap-1.5 flex-1">
                     {paddedLabels.map((prod, cellIdx) => {
                       if (!prod) {
@@ -633,6 +674,7 @@ export const ShelfBarcodeLabelsModal: React.FC<ShelfBarcodeLabelsModalProps> = (
                         <div key={`${prod.id}-${cellIdx}`} className="byfio-label-cell">
                           <ProductBarcodeLabel
                             product={prod}
+                            codeFormat={codeFormat}
                             compact={true}
                             showPrice={true}
                             className="h-full shadow-2xs hover:shadow-xs transition-shadow"
@@ -651,7 +693,7 @@ export const ShelfBarcodeLabelsModal: React.FC<ShelfBarcodeLabelsModalProps> = (
         <div className="p-3.5 sm:p-4 bg-white/95 border-t border-fio-200/80 flex items-center justify-between shrink-0 text-xs print:hidden">
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-slate-500">
-              📐 Configuración: <strong>21 códigos por hoja (3×7)</strong> • Tamaño Carta / A4 • 100% Escala
+              📐 Configuración: <strong>21 etiquetas por hoja (3×7)</strong> • Formato: <strong>{codeFormat === 'qr' ? 'Código QR 2D' : 'Código de Barras Code 128'}</strong> • Tamaño Carta / A4
             </span>
           </div>
 
@@ -670,7 +712,7 @@ export const ShelfBarcodeLabelsModal: React.FC<ShelfBarcodeLabelsModalProps> = (
               className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all cursor-pointer disabled:opacity-50"
             >
               <Printer className="w-4 h-4" />
-              <span>Imprimir {sheets.length} {sheets.length === 1 ? 'Hoja' : 'Hojas'} ({filteredProducts.length} Etiquetas)</span>
+              <span>Imprimir {sheets.length} {sheets.length === 1 ? 'Hoja' : 'Hojas'} ({filteredProducts.length} Etiquetas {codeFormat === 'qr' ? 'QR' : 'Barras'})</span>
             </button>
           </div>
         </div>
