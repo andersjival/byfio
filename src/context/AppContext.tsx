@@ -284,6 +284,12 @@ interface AppContextType {
   setSoundNewOrderEnabled: (enabled: boolean) => void;
   starAlertDuration: StarAlertDuration;
   setStarAlertDuration: (duration: StarAlertDuration) => void;
+  welcomeStarModal: { isOpen: boolean; userName: string; email: string } | null;
+  triggerWelcomeStarModal: (userName: string, email: string) => void;
+  closeWelcomeStarModal: () => void;
+  isMyAccountOpen: boolean;
+  setIsMyAccountOpen: (open: boolean) => void;
+  updateCurrentUserData: (updates: Partial<AuthUser>) => void;
   currentUser: AuthUser | null;
   loginUser: (email: string, pass: string) => { success: boolean; error?: string; user?: AuthUser };
   loginWithPin: (pin: string, targetProfileName?: string) => { success: boolean; error?: string; user?: AuthUser };
@@ -1682,12 +1688,88 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
   };
 
+  const [welcomeStarModal, setWelcomeStarModal] = useState<{ isOpen: boolean; userName: string; email: string } | null>(null);
+  const [isMyAccountOpen, setIsMyAccountOpen] = useState(false);
+
+  const triggerWelcomeStarModal = (userName: string, email: string) => {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const key = 'byfio_welcome_star_' + cleanEmail;
+    if (!localStorage.getItem(key)) {
+      setWelcomeStarModal({ isOpen: true, userName, email: cleanEmail });
+    }
+  };
+
+  const closeWelcomeStarModal = () => {
+    if (welcomeStarModal?.email) {
+      const cleanEmail = welcomeStarModal.email.toLowerCase();
+      try {
+        localStorage.setItem('byfio_welcome_star_' + cleanEmail, 'true');
+        const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+        const idx = registered.findIndex((u: any) => u.email && u.email.toLowerCase() === cleanEmail);
+        if (idx !== -1) {
+          registered[idx].welcomeShown = true;
+          localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+        }
+      } catch {}
+    }
+    setWelcomeStarModal(null);
+  };
+
+  const updateCurrentUserData = (updates: Partial<AuthUser>) => {
+    if (!currentUser) return;
+    const updated: AuthUser = {
+      ...currentUser,
+      ...updates,
+    };
+    setCurrentUser(updated);
+    try {
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(updated));
+    } catch {}
+    if (updated.email) {
+      try {
+        const cleanEmail = updated.email.toLowerCase();
+        const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+        const idx = registered.findIndex((u: any) => u.email && u.email.toLowerCase() === cleanEmail);
+        if (idx !== -1) {
+          registered[idx] = {
+            ...registered[idx],
+            ...updates,
+            name: updated.name,
+            phone: updated.phone || registered[idx].phone,
+            address: updated.address ?? registered[idx].address,
+            lat: updated.lat ?? registered[idx].lat,
+            lng: updated.lng ?? registered[idx].lng,
+          };
+          localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+        }
+      } catch {}
+    }
+  };
+
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
+          if (parsed.email && parsed.role === 'customer') {
+            try {
+              const regList = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+              const matched = regList.find((u: any) => u.email && u.email.toLowerCase() === parsed.email.toLowerCase());
+              if (matched) {
+                return {
+                  ...parsed,
+                  address: matched.address ?? parsed.address ?? '',
+                  lat: matched.lat ?? parsed.lat,
+                  lng: matched.lng ?? parsed.lng,
+                  createdAt: matched.createdAt ?? parsed.createdAt,
+                  welcomeShown: matched.welcomeShown ?? parsed.welcomeShown,
+                  phone: matched.phone ?? parsed.phone,
+                  name: matched.name ?? parsed.name,
+                };
+              }
+            } catch {}
+          }
           return {
             ...parsed,
             permissions: {
@@ -1978,12 +2060,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const normalUser: AuthUser = {
           email: found.email,
           name: found.name || found.email.split('@')[0],
-          phone: found.phone,
-          idCard: found.idCard,
+          phone: found.phone || '',
+          idCard: found.idCard || '',
           role: 'customer',
+          address: found.address || '',
+          lat: found.lat,
+          lng: found.lng,
+          createdAt: found.createdAt || new Date().toISOString(),
+          welcomeShown: Boolean(found.welcomeShown),
         };
         setCurrentUser(normalUser);
         localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(normalUser));
+        const welcomeKey = 'byfio_welcome_star_' + found.email.toLowerCase();
+        if (!found.welcomeShown && !localStorage.getItem(welcomeKey)) {
+          setWelcomeStarModal({
+            isOpen: true,
+            userName: normalUser.name,
+            email: normalUser.email || '',
+          });
+        }
         return { success: true, user: normalUser };
       }
     } catch {}
@@ -2017,7 +2112,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: nameInput?.trim() || cleanEmail.split('@')[0],
         phone: phoneInput?.trim() || '',
         idCard: idCardInput?.trim() || '',
+        address: '',
         createdAt: new Date().toISOString(),
+        welcomeShown: false,
       };
       registered.push(record);
       localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
@@ -2027,10 +2124,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: record.name,
         phone: record.phone,
         idCard: record.idCard,
+        address: '',
+        createdAt: record.createdAt,
         role: 'customer',
+        welcomeShown: false,
       };
       setCurrentUser(customer);
       localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(customer));
+      setWelcomeStarModal({
+        isOpen: true,
+        userName: customer.name,
+        email: customer.email || '',
+      });
       return { success: true, user: customer };
     } catch {
       return { success: false, error: 'Error al registrar usuario.' };
@@ -2073,6 +2178,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const logoutUser = () => {
     setCurrentUser(null);
+    setIsMyAccountOpen(false);
+    setWelcomeStarModal(null);
     localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
     setIsLogoutTransitionOpen(true);
   };
@@ -4043,6 +4150,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSoundNewOrderEnabled,
         starAlertDuration,
         setStarAlertDuration,
+        welcomeStarModal,
+        triggerWelcomeStarModal,
+        closeWelcomeStarModal,
+        isMyAccountOpen,
+        setIsMyAccountOpen,
+        updateCurrentUserData,
         currentUser,
         loginUser,
         loginWithPin,

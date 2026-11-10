@@ -17,6 +17,33 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.39 - Sombra Leve y Resalte Táctil en Botones de Navegación
+- [x] **Elevación Táctil en Botones Principales ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Implementada sombra leve (`shadow-[0_2px_8px_rgba(80,30,120,0.18),0_1px_3px_rgba(0,0,0,0.08)]`) y borde biselado `border-white/80` en los botones de Inicio, Talleres, Tienda y Catálogo.
+  - Refuerzo en estados activos con borde delimitador y sombra suave en versión desktop y menú móvil.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.39` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
+### Versión 4.19.38 - Bienvenida con Estrellita, Autocompletado Inteligente en Carrito y Menú Desplegable "Mi Cuenta"
+- [x] **Alerta de Bienvenida Única con la Estrellita ([WelcomeStarModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WelcomeStarModal.tsx)):**
+  - Implementado modal de bienvenida festivo activado por única vez tras el registro exitoso del usuario o en su primer inicio de sesión.
+  - Integra video circular en bucle de la mascota oficial (`/assets/vid-estrellita.mp4`), confeti dinámico, sonido pop y mensaje personalizado con su nombre.
+  - Guarda en almacenamiento (`byfio_welcome_star_${email}` y en `REGISTERED_USERS`) para asegurar que solo se muestre una única vez por cuenta.
+- [x] **Detección y Autocompletado de Usuario en Carrito y Checkout ([CartDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CartDrawer.tsx), [CheckoutModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx)):**
+  - En `CartDrawer`: Si el usuario está registrado, se despliega una tarjeta de detección de cuenta con su nombre, correo, teléfono y dirección lista.
+  - En `CheckoutModal`: Sincronización automática de campos (`customerName`, `customerPhone`, `shippingAddress`, `customerEmail`) jalados directamente del perfil registrado, con aviso de confirmación visual.
+  - Al generar el pedido, los datos de envío y teléfono actualizados se sincronizan automáticamente con el perfil guardado del usuario.
+- [x] **Menú Desplegable hacia Abajo y Sección "Mi Cuenta" ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [MyAccountModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/MyAccountModal.tsx)):**
+  - Al hacer clic en el nombre del usuario logeado en la barra superior o móvil, se despliega hacia abajo un menú interactivo con la opción destacada **"Mi Cuenta"**.
+  - **Fecha y Hora de Registro:** Visualización de la fecha y hora exacta en español en que fue creada la cuenta.
+  - **Correo y Teléfono:** Visualización y edición del número de contacto con guardado persistente.
+  - **Dirección en Texto y Mapa Interactivo:** Selector de ubicación en mapa con OpenStreetMap, pin marker 📍 de coordenadas exactas, botón *"Usar mi GPS actual"*, botones direccionales de ajuste fino y enlace directo a Google Maps / Waze.
+  - **Sección de Promociones:** Cupones de descuento activos (2x1 en Stickers, Envío Gratis en CR y 15% OFF en Talleres) con botón para copiar al portapapeles.
+  - **Sección de Ofertas:** Combos y ofertas especiales por tiempo limitado en agendas y talleres.
+  - **Mis Pedidos:** Historial de compras filtrado por el usuario, mostrando fecha y hora del pedido, detalle de productos, total, botón para ver factura PDF, y estados visuales del pedido destacando con insignia verde brillante **"Empacado y listo para envío"**.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.38` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.37 - Ajuste de Pantalla Completa y Altura Dinámica para Alisto de Pedidos en Móviles
 - [x] **Adaptación Nativa a Celulares Android y iPhone ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
   - Implementada altura dinámica completa en celular (`h-[100dvh] sm:h-auto sm:max-h-[92vh]`) eliminando por completo el espacio vacío o filtración de la pantalla de pedidos en la parte inferior.

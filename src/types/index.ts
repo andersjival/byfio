@@ -303,6 +303,11 @@ export interface AuthUser {
   permissions?: UserPermissions;
   isMasterAdmin?: boolean;
   avatar?: string;
+  address?: string;
+  lat?: number;
+  lng?: number;
+  createdAt?: string;
+  welcomeShown?: boolean;
 }
 
 export interface TrackedLink {

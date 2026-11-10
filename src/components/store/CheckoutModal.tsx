@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
@@ -26,12 +26,28 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     simulateBcrEmailNotification,
     isFeatureEnabled,
     currentUser,
+    updateCurrentUserData,
   } = useApp();
 
   const [deliveryMethod, setDeliveryMethod] = useState<'envio' | 'retiro'>('envio');
   const [customerName, setCustomerName] = useState(() => currentUser?.name || '');
   const [customerPhone, setCustomerPhone] = useState(() => (currentUser as any)?.phone || '');
-  const [shippingAddress, setShippingAddress] = useState('');
+  const [shippingAddress, setShippingAddress] = useState(() => currentUser?.address || '');
+
+  // Sincronización automática de datos del usuario registrado al abrir el checkout
+  useEffect(() => {
+    if (isOpen && currentUser) {
+      if (currentUser.name && (!customerName || customerName === '')) {
+        setCustomerName(currentUser.name);
+      }
+      if (currentUser.phone && (!customerPhone || customerPhone === '')) {
+        setCustomerPhone(currentUser.phone);
+      }
+      if (currentUser.address && (!shippingAddress || shippingAddress === '')) {
+        setShippingAddress(currentUser.address);
+      }
+    }
+  }, [isOpen, currentUser]);
   const [paymentTab, setPaymentTab] = useState<'sinpe' | 'transferencia'>('sinpe');
   const [sinpeReference, setSinpeReference] = useState('');
   const [secondSinpeReference, setSecondSinpeReference] = useState('');
@@ -245,11 +261,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     const order = createOrder({
       customerName,
       customerPhone,
+      customerEmail: currentUser?.email,
       deliveryMethod,
       shippingAddress: deliveryMethod === 'envio' ? shippingAddress : 'Retiro en Taller (200 sur del parque de Tibás)',
       paymentMethod: paymentTab,
       notes: orderNotesCombined,
     });
+
+    // Guardar teléfono y dirección actualizados en el perfil registrado
+    if (currentUser) {
+      updateCurrentUserData({
+        phone: customerPhone.trim(),
+        ...(deliveryMethod === 'envio' && shippingAddress.trim() ? { address: shippingAddress.trim() } : {}),
+      });
+    }
 
     // Marcar los comprobantes como utilizados en el sistema inmutablemente
     if (partialPayment && partialPayment.isComplete && partialPayment.secondVoucher) {
@@ -431,6 +456,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="overflow-y-auto p-4 sm:p-6 space-y-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {/* Banner de Autocompletado de Usuario Registrado */}
+            {currentUser && (
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border border-purple-200/90 flex items-center justify-between text-xs font-bubble text-fio-purple animate-fadeIn">
+                <div className="flex items-center gap-2 truncate">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="truncate">
+                    ¡Hola <strong>{(currentUser.name || 'Creativ@').split(' ')[0]}</strong>! Jalamos tus datos automáticamente para facilitar tu pago.
+                  </span>
+                </div>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold shrink-0">
+                  ✓ Cuenta Activa
+                </span>
+              </div>
+            )}
             {/* Método de Entrega */}
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-2">Método de Entrega:</label>

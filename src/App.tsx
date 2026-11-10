@@ -21,6 +21,8 @@ import { MobileOrdersView } from './components/mobile/MobileOrdersView';
 import { PwaInstallPage } from './components/pwa/PwaInstallPage';
 import { CartSuccessToast } from './components/common/CartSuccessToast';
 import { NewOrderStarAlert } from './components/common/NewOrderStarAlert';
+import { WelcomeStarModal } from './components/common/WelcomeStarModal';
+import { MyAccountModal } from './components/common/MyAccountModal';
 import { LoginModal } from './components/common/LoginModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { AdminHeader } from './components/admin/AdminHeader';
@@ -85,6 +87,8 @@ export const App: React.FC = () => {
     isModuleEnabled,
     isFeatureEnabled,
     isSuperAdminAuthenticated,
+    isMyAccountOpen,
+    setIsMyAccountOpen,
   } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
@@ -670,6 +674,12 @@ export const App: React.FC = () => {
         />
       )}
 
+      <WelcomeStarModal />
+      <MyAccountModal
+        isOpen={isMyAccountOpen}
+        onClose={() => setIsMyAccountOpen(false)}
+        onNavigate={navigate}
+      />
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
       <PaymentAccountsModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} />
       <StudioScheduleModal isOpen={isScheduleModalOpen} onClose={() => setIsScheduleModalOpen(false)} />

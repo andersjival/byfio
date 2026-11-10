@@ -1,14 +1,14 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Heart } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Heart, Sparkles, UserCheck } from 'lucide-react';
 
 interface CartDrawerProps {
   onOpenCheckout: () => void;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
-  const { isCartOpen, setIsCartOpen, cart, updateCartQuantity, removeFromCart } = useApp();
+  const { isCartOpen, setIsCartOpen, cart, updateCartQuantity, removeFromCart, currentUser } = useApp();
 
   if (!isCartOpen) return null;
 
@@ -141,6 +141,34 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
         {/* Footer del Carrito con Botón de Seguir Comprando */}
         {cart.length > 0 && (
           <div className="p-4 sm:p-5 border-t border-fio-200/80 bg-white space-y-2.5">
+            {/* Detección y Autocompletado Automático de Usuario Registrado */}
+            {currentUser && (
+              <div className="p-2.5 rounded-2xl bg-gradient-to-r from-purple-50/90 via-pink-50/80 to-purple-50/90 border border-purple-200/90 shadow-2xs space-y-1 animate-fadeIn">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-xs font-bubble font-bold text-fio-purple">
+                    <Sparkles className="w-3.5 h-3.5 text-fio-pink animate-spin-slow" />
+                    <span>Usuario Registrado Detectado</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                    ✓ Datos Listos
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-700 space-y-0.5">
+                  <p className="font-bubble font-semibold text-slate-900 truncate">
+                    👤 {currentUser.name}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-slate-600 text-[10px]">
+                    {currentUser.email && <span>📧 {currentUser.email}</span>}
+                    {currentUser.phone && <span>📞 {currentUser.phone}</span>}
+                  </div>
+                  {currentUser.address ? (
+                    <p className="text-slate-600 truncate text-[10px]">📍 {currentUser.address}</p>
+                  ) : (
+                    <p className="text-fio-pink italic text-[10px]">📍 Dirección lista para autocompletar en el pago</p>
+                  )}
+                </div>
+              </div>
+            )}
             <div className="flex items-baseline justify-between">
               <span className="text-xs text-slate-500 font-semibold">Subtotal estimado</span>
               <span className="font-serif font-bold text-xl text-slate-900">
