@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, PackageCheck, Receipt, Calendar } from 'lucide-react';
+import { Home, PackageCheck, Receipt, Calendar, Camera } from 'lucide-react';
 import { AdminTabType } from './AdminTabs';
 import { playWaterDropSound } from '../../utils/soundEffects';
 import { useApp } from '../../context/AppContext';
@@ -8,11 +8,13 @@ import { isCollaboratorPwaContext } from '../../utils/routeHelpers';
 interface AdminMobileDockProps {
   activeTab: AdminTabType;
   onSelectTab: (tab: AdminTabType) => void;
+  onOpenScanner?: () => void;
 }
 
 export const AdminMobileDock: React.FC<AdminMobileDockProps> = ({
   activeTab,
   onSelectTab,
+  onOpenScanner,
 }) => {
   const { currentUser, isModuleEnabled, hasPermission } = useApp();
 
@@ -58,6 +60,23 @@ export const AdminMobileDock: React.FC<AdminMobileDockProps> = ({
         <PackageCheck className="w-4 h-4 mb-0.5 text-fio-pink" />
         <span className="text-[10px] font-bubble">Pedidos</span>
       </button>
+
+      {onOpenScanner && (
+        <button
+          type="button"
+          onClick={() => {
+            playWaterDropSound();
+            onOpenScanner();
+          }}
+          className="flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-all cursor-pointer touch-manipulation active:scale-95 group text-purple-900"
+          title="Escanear Código de Barras de Alisto"
+        >
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 via-fio-pink to-purple-600 text-white flex items-center justify-center shadow-clayBtn -mt-3 mb-0.5 group-hover:scale-105 transition-transform">
+            <Camera className="w-4 h-4 text-fio-yellow" />
+          </div>
+          <span className="text-[10px] font-bubble font-black text-fio-pink leading-tight">Escanear</span>
+        </button>
+      )}
 
       {showBilling && (
         <button

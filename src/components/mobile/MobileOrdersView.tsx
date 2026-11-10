@@ -417,42 +417,76 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
         </div>
       )}
 
-      {/* Barra de Búsqueda y Escáner */}
+      {/* Banner Principal Prominente: Escanear Códigos para Alisto */}
       <div className="px-3 pt-3">
-        <div className="relative flex items-center">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && searchQuery.trim()) {
-                handleProcessBarcodeScan(searchQuery);
-                setSearchQuery('');
-              }
-            }}
-            placeholder="Buscar o escanear SKU / código de barras..."
-            className="w-full pl-9 pr-16 py-2.5 rounded-2xl bg-white border border-purple-200/90 text-slate-800 placeholder:text-slate-400 text-xs sm:text-sm focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-200/50 shadow-2xs transition-colors"
-          />
-          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-            {searchQuery ? (
+        <button
+          type="button"
+          onClick={() => {
+            playWaterDropSound();
+            setIsCameraScannerOpen(true);
+          }}
+          className="w-full p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-fio-pink to-purple-700 hover:from-purple-500 hover:to-pink-500 text-white font-bubble font-bold text-xs sm:text-sm flex items-center justify-between gap-3 shadow-clayBtn active:scale-[0.98] transition-all cursor-pointer border border-white/40"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0 shadow-xs">
+              <Camera className="w-5 h-5 text-fio-yellow animate-pulse" />
+            </div>
+            <div className="text-left min-w-0">
+              <p className="font-bubble font-black text-sm text-white leading-tight">
+                Escanear Productos para Alisto
+              </p>
+              <p className="text-[10px] text-purple-100 font-sans font-medium leading-tight mt-0.5 truncate">
+                Toca aquí para abrir la cámara y escanear el código de barras o SKU
+              </p>
+            </div>
+          </div>
+          <span className="px-3 py-1.5 rounded-xl bg-white text-purple-900 font-bubble font-black text-xs shadow-2xs shrink-0 flex items-center gap-1">
+            <Scan className="w-3.5 h-3.5 text-fio-pink" />
+            <span>Escanear</span>
+          </span>
+        </button>
+      </div>
+
+      {/* Barra de Búsqueda y Entrada Rápida de SKU */}
+      <div className="px-3 pt-2">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && searchQuery.trim()) {
+                  handleProcessBarcodeScan(searchQuery);
+                  setSearchQuery('');
+                }
+              }}
+              placeholder="Buscar o digitar SKU / código de barras..."
+              className="w-full pl-9 pr-9 py-2.5 rounded-2xl bg-white border border-purple-200/90 text-slate-800 placeholder:text-slate-400 text-xs sm:text-sm focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-200/50 shadow-2xs transition-colors"
+            />
+            {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
-            ) : null}
-            <button
-              type="button"
-              onClick={() => setIsCameraScannerOpen(true)}
-              className="p-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-700 border border-purple-200 shadow-2xs transition-all cursor-pointer active:scale-95"
-              title="Escanear código de barras con la cámara"
-            >
-              <Scan className="w-3.5 h-3.5" />
-            </button>
+            )}
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              playWaterDropSound();
+              setIsCameraScannerOpen(true);
+            }}
+            className="px-3.5 py-2.5 rounded-2xl bg-white hover:bg-purple-50 text-purple-900 border border-purple-200/90 font-bubble font-bold text-xs flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+            title="Abrir cámara lectora"
+          >
+            <Camera className="w-4 h-4 text-fio-pink" />
+            <span className="hidden xs:inline">Cámara</span>
+          </button>
         </div>
       </div>
 
@@ -645,7 +679,22 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {!isFullyAlistado && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startPicking(order.id, 'barcode');
+                        }}
+                        className="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white font-bubble font-bold text-[11px] flex items-center gap-1 shadow-2xs hover:shadow-xs active:scale-95 transition-all cursor-pointer"
+                        title="Escanear productos de este pedido con la cámara"
+                      >
+                        <Camera className="w-3.5 h-3.5 text-fio-yellow" />
+                        <span>Escanear</span>
+                      </button>
+                    )}
+
                     {/* Botón Expansor */}
                     <div className="p-1.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-200/80">
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -850,15 +899,32 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
                           )}
                         </div>
 
-                        {/* Checkbox Táctil Pastel */}
-                        <div
-                          className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 border transition-all ${
-                            item.isPicked
-                              ? 'bg-gradient-to-tr from-purple-500 to-fio-pink border-purple-400 text-white shadow-2xs'
-                              : 'bg-white border-purple-300 text-transparent hover:border-purple-400'
-                          }`}
-                        >
-                          <Check className="w-4 h-4" />
+                        {/* Botón Escanear y Checkbox Táctil Pastel */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {!item.isPicked && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startPicking(order.id, 'barcode');
+                              }}
+                              className="px-2.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200/90 font-bubble font-bold text-[10px] flex items-center gap-1 active:scale-95 transition-all shadow-2xs cursor-pointer"
+                              title={`Escanear código de barras con cámara para ${item.name}`}
+                            >
+                              <Camera className="w-3.5 h-3.5 text-fio-pink" />
+                              <span>Escanear</span>
+                            </button>
+                          )}
+
+                          <div
+                            className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 border transition-all ${
+                              item.isPicked
+                                ? 'bg-gradient-to-tr from-purple-500 to-fio-pink border-purple-400 text-white shadow-2xs'
+                                : 'bg-white border-purple-300 text-transparent hover:border-purple-400'
+                            }`}
+                          >
+                            <Check className="w-4 h-4" />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1094,12 +1160,28 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
         )}
       </React.Suspense>
 
+      {/* Botón Flotante Fijo (FAB) para Escanear en cualquier momento */}
+      <button
+        type="button"
+        onClick={() => {
+          playWaterDropSound();
+          setIsCameraScannerOpen(true);
+        }}
+        className="fixed bottom-[max(5.25rem,calc(env(safe-area-inset-bottom)+4.8rem))] right-3 sm:right-5 z-40 py-2.5 px-4 rounded-full bg-gradient-to-r from-purple-600 via-fio-pink to-purple-600 text-white font-bubble font-black text-xs sm:text-sm shadow-[0_8px_25px_rgba(236,72,153,0.55)] border-2 border-white flex items-center gap-2 active:scale-95 transition-all cursor-pointer"
+        title="Escanear código de barras o SKU con la cámara"
+      >
+        <Camera className="w-4 h-4 text-fio-yellow" />
+        <span>Escanear</span>
+        <Scan className="w-3.5 h-3.5 text-white/90" />
+      </button>
+
       {/* Dock Táctil Inferior para Navegación Móvil */}
       <AdminMobileDock
         activeTab="orders"
         onSelectTab={(tab) => {
           onNavigate('admin', tab);
         }}
+        onOpenScanner={() => setIsCameraScannerOpen(true)}
       />
     </div>
   );

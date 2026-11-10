@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.59 - Visibilidad Omnipresente del Escáner de Códigos de Barras en PWA de Alisto
+- [x] **Banner y Botón Principal Superior ([MobileOrdersView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)):**
+  - Añadido banner prominente a todo lo ancho con gradiente y cámara dorada: "Escanear Productos para Alisto" para acceso inmediato en 1 toque.
+  - Integrado botón dedicado "Cámara" junto a la barra de búsqueda y entrada rápida de SKU.
+- [x] **Acceso Rápido en Cada Pedido e Ítem:**
+  - Incorporado botón "Escanear" en la cabecera de cada tarjeta de pedido sin necesidad de desplegarla.
+  - Añadido botón "Escanear" individual en cada producto pendiente del checklist para alistar el ítem exacto con la cámara.
+- [x] **Botón Flotante Fijo (FAB) y Dock Móvil ([AdminMobileDock.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx)):**
+  - Botón flotante circular permanente `[ 📷 Escanear Producto ]` sobre el margen inferior derecho.
+  - Botón central "Escanear" integrado en la barra de navegación táctil inferior (`AdminMobileDock`) de la PWA.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.59` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.58 - Sistema de Apartados para Máquinas y Equipo (Plazo, Cuotas y Pago Inicial en Tienda)
 - [x] **Configuración en Agregar y Editar Producto ([NewProductModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx), [types/index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts)):**
   - Añadida la categoría oficial `'Máquinas y Equipo'` al listado de categorías predeterminadas.
