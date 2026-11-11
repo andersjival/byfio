@@ -138,7 +138,10 @@ const mapRowToOrder = (r: OrderDbRow) => {
           layawaySourceOrderId: laySaleItem?.layawaySourceOrderId,
           layawaySourceOrderNumber: laySaleItem?.layawaySourceOrderNumber,
         }
-      : {}),
+      : (r.notes && r.notes.includes('Facturación Rápida POS')) ||
+          (r.customer_name === 'Cliente Mostrador' && r.customer_phone === '0000-0000')
+        ? { orderTitle: 'Facturación Rápida POS' }
+        : {}),
     ...(firstLay?.layawayGeneratedSaleOrderId
       ? {
           layawaySaleOrderId: firstLay.layawayGeneratedSaleOrderId,

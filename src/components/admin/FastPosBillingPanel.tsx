@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { Product } from '../../types';
 import { formatCRC } from '../../utils/formatters';
 import { playBubblePopSound } from '../../utils/soundEffects';
+import { FastPosSalesHistoryList } from './FastPosSalesHistoryList';
 
 const CameraBarcodeScannerModal = React.lazy(() =>
   import('../mobile/CameraBarcodeScannerModal').then((m) => ({
@@ -123,10 +124,12 @@ export const FastPosBillingPanel: React.FC<{ focusTick: number }> = ({ focusTick
   const handleQuickPay = (paymentMethod: 'efectivo' | 'sinpe') => {
     if (cart.length === 0) return;
     const order = createDirectInvoiceOrder({
+      orderTitle: 'Facturación Rápida POS',
       customerName: 'Cliente Mostrador',
       customerPhone: '0000-0000',
       deliveryMethod: 'retiro',
       paymentMethod,
+      notes: 'Facturación Rápida POS',
       items: cart.map(({ sku, name, price, quantity, shelfLocation, image }) => ({
         sku, name, price, quantity, shelfLocation, image,
       })),
@@ -145,7 +148,8 @@ export const FastPosBillingPanel: React.FC<{ focusTick: number }> = ({ focusTick
   };
 
   return (
-    <div className="p-4 sm:p-5 rounded-3xl bg-[#ECEEF2] dark:bg-[#1C1830] shadow-neu border border-white/60 dark:border-white/10 space-y-4">
+    <div className="space-y-4">
+      <div className="p-4 sm:p-5 rounded-3xl bg-[#ECEEF2] dark:bg-[#1C1830] shadow-neu border border-white/60 dark:border-white/10 space-y-4">
       <div className="flex flex-col sm:flex-row gap-2.5">
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-fio-purple absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -284,6 +288,9 @@ export const FastPosBillingPanel: React.FC<{ focusTick: number }> = ({ focusTick
           />
         </Suspense>
       )}
+      </div>
+
+      <FastPosSalesHistoryList />
     </div>
   );
 };

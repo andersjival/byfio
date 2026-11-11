@@ -1,3 +1,13 @@
+## [v4.19.112] - 2026-11-11
+
+### 🧾 Historial Diario en Lista para Facturación Rápida POS
+- **Lista de Ventas del Día ([`FastPosSalesHistoryList.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/FastPosSalesHistoryList.tsx), [`FastPosBillingPanel.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/FastPosBillingPanel.tsx), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts))**:
+  - Agregada vista en lista debajo de Facturación Rápida POS mostrando las ventas del día realizadas por POS rápido (con resumen de Efectivo, SINPE, Total del Día, unidades, hora, detalle de productos y acceso directo al comprobante).
+  - Etiquetado persistente `'Facturación Rápida POS'` en SQLite Cloudflare D1 (`notes` / `orderTitle`) y filtro por fecha local con valor predeterminado al día actual (`Hoy`).
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.112`.
+
+---
+
 ## [v4.19.111] - 2026-11-11
 
 ### 🗄️ Conexión Real a Base de Datos D1 para Talleres (Rebaja Atómica de Cupos) y Sincronización Global Web
