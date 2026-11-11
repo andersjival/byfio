@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.75 - Botón Inicio Pastel Suave y Normalización de Catálogo sin Tonos Rojos
+- [x] **Botón Inicio Amarillo Pastel Suave ([NavbarNavLinks.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarNavLinks.tsx), [NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
+  - Sustituido el degradado saturado de ámbar (`from-amber-400 to-amber-500`) por un amarillo pastel suave manteca (`from-[#FEF08A] to-[#FDE047]`) con texto ámbar oscuro de alto contraste y sombra táctil sutil.
+- [x] **Normalización de Botón Catálogo ([NavbarNavLinks.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarNavLinks.tsx), [NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
+  - **Estado no seleccionado:** Erradicado el fondo rosa (`bg-[#FCE7F3]`) y texto rojizo (`text-pink-700`); unificado al fondo blanco translúcido (`bg-white/90`) con tipografía neutra (`text-slate-700`) idéntica a Talleres y Tienda.
+  - **Estado seleccionado:** Fondo lila/morado pastel (`from-purple-500 to-purple-600`) con texto blanco nítido (`text-white`).
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.75` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.74 - Diseño Oficial de Etiqueta QR (1/3 QR con Círculo Lila ByFio y 2/3 Descripción, Ubicación y Código)
 - [x] **Redistribución Proporcional de Etiqueta ([ProductBarcodeLabel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ProductBarcodeLabel.tsx)):**
   - **1/3 del tamaño de la etiqueta:** Dedicado estrictamente al Código QR (`w-[34%]`), optimizado en tamaño y proporción.
