@@ -215,7 +215,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </>
           ) : currentRoute === 'superadmin' ? (
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
               <NavbarThemeToggle colorTheme={colorTheme} setColorTheme={setColorTheme} />
               <button
                 type="button"
@@ -226,9 +226,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" />
                 <span className="whitespace-nowrap">Panel Admin</span>
               </button>
+              <NavbarUserMenu
+                currentUser={currentUser}
+                onNavigate={handleNav}
+                onOpenLogin={onOpenLogin}
+                setIsMyAccountOpen={setIsMyAccountOpen}
+                logoutUser={logoutUser}
+              />
             </div>
           ) : (
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
               <NavbarThemeToggle colorTheme={colorTheme} setColorTheme={setColorTheme} />
               <button
                 type="button"
@@ -243,6 +250,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-yellow shrink-0" />
                 <span className="whitespace-nowrap">Menú</span>
               </button>
+
+              {/* Menú de Usuario Persistente (Avatar + Nombre + Rol) */}
+              <NavbarUserMenu
+                currentUser={currentUser}
+                onNavigate={handleNav}
+                onOpenLogin={onOpenLogin}
+                setIsMyAccountOpen={setIsMyAccountOpen}
+                logoutUser={logoutUser}
+              />
 
               {currentUser && (
                 <button

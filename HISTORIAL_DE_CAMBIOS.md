@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.87 - Persistencia Universal del Botón de Perfil de Administrador en Todas las Pantallas
+- [x] **Persistencia Universal del Menú de Usuario ([Navbar.tsx](file:///C:/Users/Juan/byfio/src/components/common/Navbar.tsx), [NavbarUserMenu.tsx](file:///C:/Users/Juan/byfio/src/components/common/navbar/NavbarUserMenu.tsx)):**
+  - Se corrigió la regla condicional que ocultaba el botón `[F] Fiorella [Admin] ⌄` al ingresar al Panel de Administración o a la Cola de Pedidos de Clientes.
+  - El botón con el avatar, el nombre del administrador y la insignia `Admin` ahora se mantiene **100% persistente en todas las pantallas** (Tienda, Cola de Pedidos, Facturación, Inventario, Panel de Control, Superadmin y Mi Cuenta).
+  - La insignia `Admin` y `Colaborador` ahora se visualizan nítidas y continuas también en pantallas móviles sin ocultarse.
+  - Al hacer clic en cualquier momento sobre el botón de perfil, se despliega el acceso rápido a *Mi cuenta*, *Cola de pedidos de clientes*, *Panel de administración* y *Cerrar sesión*.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.87`.
+
 ### Versión 4.19.86 - Blindaje de Permisos en Tienda, Filtros en Fila Única y Buscador Inferior
 - [x] **Blindaje Estricto de Roles y Permisos en Tienda ([StorePage.tsx](file:///C:/Users/Juan/byfio/src/components/store/StorePage.tsx)):**
   - Conectados `currentUser` y `hasPermission` desde el contexto global (`AppContext`).

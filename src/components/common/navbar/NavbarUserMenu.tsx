@@ -86,12 +86,12 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
           <span className="truncate">{(currentUser?.name || 'Usuario').split(' ')[0]}</span>
         </div>
         {currentUser.role === 'admin' && (
-          <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
+          <span className="inline-block px-1.5 py-0.2 rounded-full bg-gradient-to-r from-purple-500 to-fio-pink text-[9px] text-white font-bold uppercase tracking-wider shrink-0">
             Admin
           </span>
         )}
         {currentUser.role === 'staff' && (
-          <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[9px] font-bold uppercase tracking-wider shrink-0">
+          <span className="inline-block px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[9px] font-bold uppercase tracking-wider shrink-0">
             Colaborador
           </span>
         )}
