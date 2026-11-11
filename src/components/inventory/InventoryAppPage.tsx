@@ -5,9 +5,10 @@ import { InventoryShelvesView } from './InventoryShelvesView';
 import { InventoryCountSession } from './InventoryCountSession';
 import { InventoryAdjustmentsView } from './InventoryAdjustmentsView';
 import { InventoryHistoryReportsView } from './InventoryHistoryReportsView';
+import { InventorySweepView } from './InventorySweepView';
 import {
   ClipboardList, Layers, SlidersHorizontal, FileText, ArrowLeft,
-  Lock, KeyRound, Smartphone, LogOut, User, ShieldAlert, Boxes
+  Lock, KeyRound, Smartphone, LogOut, User, ShieldAlert, Boxes, Scan
 } from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
@@ -15,7 +16,7 @@ interface InventoryAppPageProps {
   onNavigate: (route: AppRoute, tab?: any) => void;
 }
 
-type InventoryModuleTab = 'shelves' | 'adjustments' | 'history';
+type InventoryModuleTab = 'shelves' | 'sweep' | 'adjustments' | 'history';
 
 export const InventoryAppPage: React.FC<InventoryAppPageProps> = ({ onNavigate }) => {
   const {
@@ -26,6 +27,7 @@ export const InventoryAppPage: React.FC<InventoryAppPageProps> = ({ onNavigate }
     collaboratorInventoryEnabled,
     toggleCollaboratorInventoryEnabled,
     inventoryAdjustments,
+    sweepEntries,
   } = useApp();
 
   const [activeModule, setActiveModule] = useState<InventoryModuleTab>('shelves');
@@ -255,7 +257,24 @@ export const InventoryAppPage: React.FC<InventoryAppPageProps> = ({ onNavigate }
         {/* Barra de Navegación Interna de Módulos de Inventario */}
         {!activeShelfCounting && (
           <div className="max-w-6xl mx-auto px-3 sm:px-6 pb-2.5">
-            <div className="grid grid-cols-3 gap-2 bg-purple-50/80 p-1 rounded-2xl border border-purple-100">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-purple-50/80 p-1 rounded-2xl border border-purple-100">
+              <button
+                type="button"
+                onClick={() => {
+                  playWaterDropSound();
+                  setActiveModule('sweep');
+                }}
+                className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+                  activeModule === 'sweep'
+                    ? 'bg-white text-purple-900 shadow-xs border border-purple-200/60'
+                    : 'text-slate-600 hover:text-purple-800'
+                }`}
+              >
+                <Scan className="w-4 h-4 text-fuchsia-600 shrink-0" />
+                <span className="truncate">
+                  Inv. por Barrido ({sweepEntries.filter((e) => e.status === 'guardado').length})
+                </span>
+              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -335,6 +354,7 @@ export const InventoryAppPage: React.FC<InventoryAppPageProps> = ({ onNavigate }
               />
             )}
             {activeModule === 'history' && <InventoryHistoryReportsView />}
+            {activeModule === 'sweep' && <InventorySweepView />}
           </>
         )}
       </main>

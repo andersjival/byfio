@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { Order, Product, PaymentMethod, DeliveryMethod, Customer } from '../../types';
@@ -40,6 +40,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
     addCustomer,
     updateCustomer,
     deleteCustomer,
+    syncRegisteredUsers,
     addCustomerFieldDef,
     deleteCustomerFieldDef,
     createDirectInvoiceOrder,
@@ -118,6 +119,12 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
   const [custModalFields, setCustModalFields] = useState<{ [fieldId: string]: string }>({});
   const [newFieldLabel, setNewFieldLabel] = useState('');
   const [isAddFieldOpen, setIsAddFieldOpen] = useState(false);
+  const [isCustomerSearchOpen, setIsCustomerSearchOpen] = useState(false);
+
+  // Al entrar a Facturación POS, sincronizar clientes registrados desde la web / D1
+  useEffect(() => {
+    syncRegisteredUsers();
+  }, [syncRegisteredUsers]);
 
   // Filtrado de productos para el buscador rápido de Paso 1
   const filteredProducts = useMemo(() => {

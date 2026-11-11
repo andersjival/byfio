@@ -1,6 +1,6 @@
 import { calculateLayawayDaysRemaining, checkAndSendLayawayReminders } from '../services/layawayReminderService';
 import { LAYAWAY_SALE_CATEGORY, isLayawaySaleOrder } from '../utils/layaway';
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus, LayawayPaymentRecord,
   TypographyTheme, ColorTheme, StarAlertDuration, PricingSectionData, AuthUser,
@@ -8,7 +8,8 @@ import {
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
   SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus,
   Supplier, SupplierOrder, SupplierOrderStatus, DailyClosingRecord, ProposalAcceptance,
-  InventoryAdjustmentRecord, ShelfInventoryState, ShelfInventoryStatus
+  InventoryAdjustmentRecord, ShelfInventoryState, ShelfInventoryStatus,
+  SweepLoadMode, SweepEntryStatus, InventorySweepEntry
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -178,6 +179,76 @@ export const INITIAL_CUSTOMERS: Customer[] = [
   },
 ];
 
+const RESERVED_WEB_EMAILS = new Set(['fio@byfiocr.com', 'fio', 'superadmin@byfio.com']);
+
+const mergeRegisteredUsersIntoCustomers = (baseCustomers: Customer[], regUsers: any[]): Customer[] => {
+  if (!Array.isArray(regUsers) || regUsers.length === 0) return baseCustomers;
+
+  let changed = false;
+  const result = baseCustomers.map((c) => ({
+    ...c,
+    customFields: c.customFields ? { ...c.customFields } : undefined,
+  }));
+
+  for (const raw of regUsers) {
+    if (!raw || typeof raw !== 'object' || !raw.email) continue;
+    const cleanEmail = String(raw.email).trim().toLowerCase();
+    if (!cleanEmail || RESERVED_WEB_EMAILS.has(cleanEmail)) continue;
+
+    const webName = String(raw.name || '').trim() || cleanEmail.split('@')[0];
+    const webPhone = String(raw.phone || '').trim();
+    const webAddress = String(raw.address || '').trim();
+    const webIdCard = String(raw.idCard || '').trim();
+    const regId = `reg-${cleanEmail}`;
+
+    const existingIdx = result.findIndex(
+      (c) => c.id === regId || (c.email && c.email.trim().toLowerCase() === cleanEmail)
+    );
+
+    if (existingIdx !== -1) {
+      const curr = result[existingIdx];
+      const nextPhone = curr.phone?.trim() ? curr.phone : webPhone;
+      const nextAddress = curr.address?.trim() ? curr.address : (webAddress || undefined);
+      const nextEmail = curr.email?.trim() ? curr.email : cleanEmail;
+      const currCedula = curr.customFields?.['field-cedula'];
+      const nextCustomFields =
+        webIdCard && !currCedula
+          ? { ...(curr.customFields || {}), 'field-cedula': webIdCard }
+          : curr.customFields;
+
+      if (
+        nextPhone !== curr.phone ||
+        nextAddress !== curr.address ||
+        nextEmail !== curr.email ||
+        nextCustomFields !== curr.customFields
+      ) {
+        result[existingIdx] = {
+          ...curr,
+          email: nextEmail,
+          phone: nextPhone,
+          address: nextAddress,
+          customFields: nextCustomFields,
+        };
+        changed = true;
+      }
+    } else {
+      result.push({
+        id: regId,
+        name: webName,
+        phone: webPhone,
+        email: cleanEmail,
+        address: webAddress || undefined,
+        notes: 'Cliente registrado en la página web',
+        createdAt: typeof raw.createdAt === 'string' && raw.createdAt ? raw.createdAt : new Date().toISOString(),
+        customFields: webIdCard ? { 'field-cedula': webIdCard } : undefined,
+      });
+      changed = true;
+    }
+  }
+
+  return changed ? result : baseCustomers;
+};
+
 export interface CartToastInfo {
   productName: string;
   quantity?: number;
@@ -336,6 +407,7 @@ interface AppContextType {
   addCustomer: (data: Omit<Customer, 'id' | 'createdAt'>) => Customer;
   updateCustomer: (id: string, updates: Partial<Customer>) => void;
   deleteCustomer: (id: string) => void;
+  syncRegisteredUsers: () => Promise<void>;
   addCustomerFieldDef: (label: string) => CustomerFieldDef;
   deleteCustomerFieldDef: (id: string) => void;
   createDirectInvoiceOrder: (orderData: {
@@ -441,6 +513,15 @@ interface AppContextType {
   shelfInventoryStates: Record<string, ShelfInventoryState>;
   updateShelfInventoryStatus: (shelfName: string, status: ShelfInventoryStatus, verifiedCount?: number) => void;
   resetShelvesInventoryStatus: () => void;
+  sweepEntries: InventorySweepEntry[];
+  sweepLoadMode: SweepLoadMode;
+  setSweepLoadMode: (mode: SweepLoadMode) => void;
+  registerSweepEntry: (
+    entryData: Omit<InventorySweepEntry, 'id' | 'createdAt' | 'status' | 'userId' | 'userName'>
+  ) => { entry: InventorySweepEntry; autoLoadedCount: number };
+  loadSweepEntriesToInventory: (entryIds?: string[]) => Promise<number>;
+  updateSweepEntryStatus: (entryId: string, nextStatus: SweepEntryStatus) => void;
+  deleteSweepEntry: (entryId: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -476,6 +557,8 @@ const STORAGE_KEYS = {
   INVENTORY_ADJUSTMENTS: 'byfio_inventory_adjustments_v1',
   COLLABORATOR_INVENTORY_ENABLED: 'byfio_collaborator_inventory_enabled_v1',
   SHELF_INVENTORY_STATES: 'byfio_shelf_inventory_states_v1',
+  SWEEP_ENTRIES: 'byfio_inventory_sweep_entries_v1',
+  SWEEP_LOAD_MODE: 'byfio_sweep_load_mode_v1',
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -999,6 +1082,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const [customers, setCustomers] = useState<Customer[]>(() => {
+    let base: Customer[] = deepSanitize(INITIAL_CUSTOMERS);
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.CUSTOMERS);
       if (saved) {
@@ -1008,11 +1092,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (JSON.stringify(sanitized) !== JSON.stringify(parsed)) {
             try { localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(sanitized)); } catch {}
           }
-          return sanitized;
+          base = sanitized;
         }
       }
     } catch {}
-    return deepSanitize(INITIAL_CUSTOMERS);
+    try {
+      const regRaw = safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS);
+      const regParsed = regRaw ? JSON.parse(regRaw) : [];
+      const merged = mergeRegisteredUsersIntoCustomers(base, regParsed);
+      if (merged !== base) {
+        try { localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(merged)); } catch {}
+      }
+      return merged;
+    } catch {}
+    return base;
   });
 
   const [customerFieldDefs, setCustomerFieldDefs] = useState<CustomerFieldDef[]>(() => {
@@ -1043,6 +1136,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = [newCustomer, ...customers];
     setCustomers(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+    syncChannel?.postMessage({ type: 'SYNC_UPDATE', customers: updated });
     return newCustomer;
   };
 
@@ -1050,13 +1144,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = customers.map((c) => (c.id === id ? { ...c, ...updates } : c));
     setCustomers(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+    syncChannel?.postMessage({ type: 'SYNC_UPDATE', customers: updated });
   };
 
   const deleteCustomer = (id: string) => {
     const updated = customers.filter((c) => c.id !== id);
     setCustomers(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+    syncChannel?.postMessage({ type: 'SYNC_UPDATE', customers: updated });
   };
+
+  const syncWebUsersToCustomers = useCallback((regUsers: any[]) => {
+    if (!Array.isArray(regUsers) || regUsers.length === 0) return;
+    setCustomers((prev) => {
+      const merged = mergeRegisteredUsersIntoCustomers(prev, regUsers);
+      if (merged === prev) return prev;
+      try {
+        localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(merged));
+      } catch {}
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', customers: merged });
+      return merged;
+    });
+  }, []);
+
+  const syncRegisteredUsers = useCallback(async () => {
+    try {
+      const localRaw = JSON.parse(safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+      const map = new Map<string, any>();
+      if (Array.isArray(localRaw)) {
+        for (const u of localRaw) {
+          if (u && u.email) map.set(String(u.email).trim().toLowerCase(), u);
+        }
+      }
+      const res = await fetch('/api/registered-users', { cache: 'no-store' });
+      const data = res.ok ? await res.json() : null;
+      if (data && Array.isArray(data.users)) {
+        for (const u of data.users) {
+          if (u && u.email) {
+            const k = String(u.email).trim().toLowerCase();
+            map.set(k, { ...(map.get(k) || {}), ...u });
+          }
+        }
+      }
+      const mergedUsers = Array.from(map.values());
+      if (mergedUsers.length > 0) {
+        safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(mergedUsers));
+        syncWebUsersToCustomers(mergedUsers);
+      }
+    } catch {}
+  }, [syncWebUsersToCustomers]);
 
   const addCustomerFieldDef = (label: string): CustomerFieldDef => {
     const newDef: CustomerFieldDef = {
@@ -1653,6 +1789,213 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     saveInventoryAdjustmentsList(updated);
   };
 
+  // =========================================================================
+  // SISTEMA DE INVENTARIO POR BARRIDO (LOTES DE 10 AUTO/MANUAL Y HISTORIAL)
+  // =========================================================================
+  const [sweepEntries, setSweepEntries] = useState<InventorySweepEntry[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.SWEEP_ENTRIES);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return deepSanitize(parsed);
+      }
+    } catch {}
+    return [];
+  });
+
+  const [sweepLoadMode, setSweepLoadModeState] = useState<SweepLoadMode>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.SWEEP_LOAD_MODE);
+      if (saved === 'manual' || saved === 'auto') return saved;
+    } catch {}
+    return 'auto';
+  });
+
+  const sweepEntriesRef = useRef<InventorySweepEntry[]>(sweepEntries);
+  sweepEntriesRef.current = sweepEntries;
+  const sweepLoadModeRef = useRef<SweepLoadMode>(sweepLoadMode);
+  sweepLoadModeRef.current = sweepLoadMode;
+
+  const saveSweepEntriesList = (list: InventorySweepEntry[]) => {
+    const sanitized = deepSanitize(list);
+    sweepEntriesRef.current = sanitized;
+    setSweepEntries(sanitized);
+    try {
+      localStorage.setItem(STORAGE_KEYS.SWEEP_ENTRIES, JSON.stringify(sanitized));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', sweepEntries: sanitized });
+    } catch {}
+    try {
+      fetch('/api/inventory-adjustments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sweepEntries: sanitized }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const applySweepStockDeltas = (deltas: Record<string, number>) => {
+    const hasChanges = Object.values(deltas).some((d) => d !== 0);
+    if (!hasChanges) return;
+
+    const stockUpdates: { id: string; stock: number; isAvailable?: boolean }[] = [];
+    let nextSnapshot: Product[] = [];
+
+    setProducts((prev) => {
+      nextSnapshot = prev.map((p) => {
+        const delta = deltas[p.id];
+        if (!delta) return p;
+        lastLocalProductUpdateRef.current.set(p.id, Date.now());
+        const nextStock = Math.max(0, Number(p.stock || 0) + delta);
+        const avail = nextStock > 0;
+        stockUpdates.push({ id: p.id, stock: nextStock, isAvailable: avail });
+        return {
+          ...p,
+          stock: nextStock,
+          isAvailable: avail,
+          showInStore: avail,
+          showInCatalog: avail,
+        };
+      });
+      try {
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(nextSnapshot));
+      } catch {}
+      return nextSnapshot;
+    });
+
+    setTimeout(() => {
+      if (stockUpdates.length > 0) {
+        fetch('/api/products', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(stockUpdates),
+        }).catch(() => {});
+      }
+      try {
+        syncChannel?.postMessage({ type: 'SYNC_UPDATE', products: nextSnapshot });
+      } catch {}
+    }, 250);
+  };
+
+  const loadSweepEntriesToInventory = async (entryIds?: string[]): Promise<number> => {
+    const currentList = sweepEntriesRef.current;
+    const idSet = entryIds ? new Set(entryIds) : null;
+    const pendingToLoad = currentList.filter(
+      (e) => e.status === 'guardado' && (!idSet || idSet.has(e.id))
+    );
+    if (pendingToLoad.length === 0) return 0;
+
+    const deltas: Record<string, number> = {};
+    const loadedIdSet = new Set<string>();
+    pendingToLoad.forEach((e) => {
+      loadedIdSet.add(e.id);
+      deltas[e.productId] = (deltas[e.productId] || 0) + Number(e.quantityAdded || 0);
+    });
+
+    applySweepStockDeltas(deltas);
+
+    const nowIso = new Date().toISOString();
+    const updatedList: InventorySweepEntry[] = currentList.map((e) =>
+      loadedIdSet.has(e.id) ? { ...e, status: 'cargado_inv', loadedAt: nowIso } : e
+    );
+    saveSweepEntriesList(updatedList);
+    return pendingToLoad.length;
+  };
+
+  const setSweepLoadMode = (mode: SweepLoadMode) => {
+    sweepLoadModeRef.current = mode;
+    setSweepLoadModeState(mode);
+    try {
+      localStorage.setItem(STORAGE_KEYS.SWEEP_LOAD_MODE, mode);
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', sweepLoadMode: mode });
+    } catch {}
+    try {
+      fetch('/api/inventory-adjustments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sweepLoadMode: mode }),
+      }).catch(() => {});
+    } catch {}
+    if (mode === 'auto') {
+      const pending = sweepEntriesRef.current.filter((e) => e.status === 'guardado');
+      if (pending.length >= 10) {
+        loadSweepEntriesToInventory(pending.map((e) => e.id));
+      }
+    }
+  };
+
+  const registerSweepEntry = (
+    entryData: Omit<InventorySweepEntry, 'id' | 'createdAt' | 'status' | 'userId' | 'userName'>
+  ): { entry: InventorySweepEntry; autoLoadedCount: number } => {
+    const nowIso = new Date().toISOString();
+    const newEntry: InventorySweepEntry = {
+      ...entryData,
+      id: `SWP-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      createdAt: nowIso,
+      status: 'guardado',
+      userId: currentUser?.id || 'admin-fio',
+      userName: currentUser?.name || 'ADMINISTRACIÓN (FIO)',
+    };
+
+    const nextList: InventorySweepEntry[] = [newEntry, ...sweepEntriesRef.current];
+    const pendingList = nextList.filter((e) => e.status === 'guardado');
+
+    if (sweepLoadModeRef.current === 'auto' && pendingList.length >= 10) {
+      const deltas: Record<string, number> = {};
+      const loadedIdSet = new Set<string>();
+      pendingList.forEach((e) => {
+        loadedIdSet.add(e.id);
+        deltas[e.productId] = (deltas[e.productId] || 0) + Number(e.quantityAdded || 0);
+      });
+      applySweepStockDeltas(deltas);
+
+      const loadedList: InventorySweepEntry[] = nextList.map((e) =>
+        loadedIdSet.has(e.id) ? { ...e, status: 'cargado_inv', loadedAt: nowIso } : e
+      );
+      saveSweepEntriesList(loadedList);
+      return {
+        entry: { ...newEntry, status: 'cargado_inv', loadedAt: nowIso },
+        autoLoadedCount: pendingList.length,
+      };
+    }
+
+    saveSweepEntriesList(nextList);
+    return { entry: newEntry, autoLoadedCount: 0 };
+  };
+
+  const updateSweepEntryStatus = (entryId: string, nextStatus: SweepEntryStatus) => {
+    const currentList = sweepEntriesRef.current;
+    const target = currentList.find((e) => e.id === entryId);
+    if (!target || target.status === nextStatus) return;
+
+    const delta =
+      target.status === 'guardado' && nextStatus === 'cargado_inv'
+        ? Number(target.quantityAdded || 0)
+        : target.status === 'cargado_inv' && nextStatus === 'guardado'
+        ? -Number(target.quantityAdded || 0)
+        : 0;
+
+    if (delta !== 0) {
+      applySweepStockDeltas({ [target.productId]: delta });
+    }
+
+    const nowIso = new Date().toISOString();
+    const updatedList: InventorySweepEntry[] = currentList.map((e) =>
+      e.id === entryId
+        ? {
+            ...e,
+            status: nextStatus,
+            loadedAt: nextStatus === 'cargado_inv' ? nowIso : undefined,
+          }
+        : e
+    );
+    saveSweepEntriesList(updatedList);
+  };
+
+  const deleteSweepEntry = (entryId: string) => {
+    const updated = sweepEntriesRef.current.filter((e) => e.id !== entryId);
+    saveSweepEntriesList(updated);
+  };
+
   const createDirectInvoiceOrder = (orderData: {
     orderTitle?: string;
     customerName: string;
@@ -2107,20 +2450,67 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
     if (updated.email) {
       try {
-        const cleanEmail = updated.email.toLowerCase();
-        const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
-        const idx = registered.findIndex((u: any) => u.email && u.email.toLowerCase() === cleanEmail);
+        const cleanEmail = updated.email.trim().toLowerCase();
+        const registered = JSON.parse(safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+        const idx = registered.findIndex((u: any) => u.email && u.email.trim().toLowerCase() === cleanEmail);
         if (idx !== -1) {
           registered[idx] = {
             ...registered[idx],
             ...updates,
             name: updated.name,
-            phone: updated.phone || registered[idx].phone,
+            phone: updated.phone ?? registered[idx].phone,
+            idCard: updated.idCard ?? registered[idx].idCard,
             address: updated.address ?? registered[idx].address,
             lat: updated.lat ?? registered[idx].lat,
             lng: updated.lng ?? registered[idx].lng,
           };
-          localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+          safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+          fetch('/api/registered-users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user: registered[idx] }),
+          }).catch(() => {});
+        }
+        if (!RESERVED_WEB_EMAILS.has(cleanEmail)) {
+          setCustomers((prev) => {
+            const regId = `reg-${cleanEmail}`;
+            const existingIdx = prev.findIndex(
+              (c) => c.id === regId || (c.email && c.email.trim().toLowerCase() === cleanEmail)
+            );
+            let nextList: Customer[];
+            if (existingIdx !== -1) {
+              nextList = prev.map((c, i) => {
+                if (i !== existingIdx) return c;
+                const nextCedula = updated.idCard ?? c.customFields?.['field-cedula'];
+                return {
+                  ...c,
+                  name: updated.name || c.name,
+                  phone: updated.phone ?? c.phone,
+                  address: updated.address ?? c.address,
+                  customFields: nextCedula ? { ...(c.customFields || {}), 'field-cedula': nextCedula } : c.customFields,
+                };
+              });
+            } else {
+              nextList = [
+                ...prev,
+                {
+                  id: regId,
+                  name: updated.name || cleanEmail.split('@')[0],
+                  phone: updated.phone || '',
+                  email: cleanEmail,
+                  address: updated.address || undefined,
+                  notes: 'Cliente registrado en la página web',
+                  createdAt: updated.createdAt || new Date().toISOString(),
+                  customFields: updated.idCard ? { 'field-cedula': updated.idCard } : undefined,
+                },
+              ];
+            }
+            try {
+              localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(nextList));
+            } catch {}
+            syncChannel?.postMessage({ type: 'SYNC_UPDATE', customers: nextList });
+            return nextList;
+          });
         }
       } catch {}
     }
@@ -2466,6 +2856,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
         setCurrentUser(normalUser);
         safeLocalStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(normalUser));
+        syncWebUsersToCustomers([found]);
         const welcomeKey = 'byfio_welcome_star_' + found.email.toLowerCase();
         if (!found.welcomeShown && !safeLocalStorage.getItem(welcomeKey)) {
           setWelcomeStarModal({
@@ -2518,6 +2909,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
       registered.push(record);
       safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+      syncWebUsersToCustomers([record]);
 
       // Sincronizar de inmediato con Cloudflare D1
       fetch('/api/registered-users', {
@@ -2728,11 +3120,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(event.data.inventoryAdjustments)) {
           setInventoryAdjustments(deepSanitize(event.data.inventoryAdjustments));
         }
+        if (Array.isArray(event.data.customers)) {
+          const syncedCustomers: Customer[] = deepSanitize(event.data.customers);
+          setCustomers(syncedCustomers);
+          try {
+            localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(syncedCustomers));
+          } catch {}
+        }
         if (typeof event.data.collaboratorInventoryEnabled === 'boolean') {
           setCollaboratorInventoryEnabled(event.data.collaboratorInventoryEnabled);
         }
         if (event.data.shelfInventoryStates && typeof event.data.shelfInventoryStates === 'object') {
           setShelfInventoryStates(event.data.shelfInventoryStates);
+        }
+        if (Array.isArray(event.data.sweepEntries)) {
+          const cleanSweep = deepSanitize(event.data.sweepEntries);
+          sweepEntriesRef.current = cleanSweep;
+          setSweepEntries(cleanSweep);
+        }
+        if (event.data.sweepLoadMode === 'auto' || event.data.sweepLoadMode === 'manual') {
+          sweepLoadModeRef.current = event.data.sweepLoadMode;
+          setSweepLoadModeState(event.data.sweepLoadMode);
         }
       }
     };
@@ -3079,6 +3487,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               return prev;
             });
           }
+          if (Array.isArray(data?.sweepEntries)) {
+            setSweepEntries((prev) => {
+              const sanitized = deepSanitize(data.sweepEntries);
+              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+                sweepEntriesRef.current = sanitized;
+                try {
+                  localStorage.setItem(STORAGE_KEYS.SWEEP_ENTRIES, JSON.stringify(sanitized));
+                } catch {}
+                return sanitized;
+              }
+              return prev;
+            });
+          }
+          if (data?.sweepLoadMode === 'auto' || data?.sweepLoadMode === 'manual') {
+            sweepLoadModeRef.current = data.sweepLoadMode;
+            setSweepLoadModeState(data.sweepLoadMode);
+            try {
+              localStorage.setItem(STORAGE_KEYS.SWEEP_LOAD_MODE, data.sweepLoadMode);
+            } catch {}
+          }
         })
         .catch(() => {});
 
@@ -3181,31 +3609,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
   }, [orders]);
 
-  // Sincronizar cuentas registradas desde Cloudflare D1
+  // Sincronizar cuentas registradas desde Cloudflare D1 hacia POS/Clientes
   useEffect(() => {
-    fetch('/api/registered-users', { cache: 'no-store' })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && Array.isArray(data.users) && data.users.length > 0) {
-          try {
-            const local = JSON.parse(safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
-            const map = new Map<string, any>();
-            for (const u of local) {
-              if (u && u.email) map.set(String(u.email).trim().toLowerCase(), u);
-            }
-            for (const u of data.users) {
-              if (u && u.email) {
-                const k = String(u.email).trim().toLowerCase();
-                map.set(k, { ...(map.get(k) || {}), ...u });
-              }
-            }
-            const merged = Array.from(map.values());
-            safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(merged));
-          } catch {}
-        }
-      })
-      .catch(() => {});
-  }, []);
+    syncRegisteredUsers();
+  }, [syncRegisteredUsers]);
 
   // Chequeo proactivo de recordatorios de apartados proximos a vencer (<= 5 dias restantes)
   useEffect(() => {
@@ -4956,6 +5363,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addCustomer,
         updateCustomer,
         deleteCustomer,
+        syncRegisteredUsers,
         addCustomerFieldDef,
         deleteCustomerFieldDef,
         createDirectInvoiceOrder,
@@ -5050,6 +5458,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         shelfInventoryStates,
         updateShelfInventoryStatus,
         resetShelvesInventoryStatus,
+        sweepEntries,
+        sweepLoadMode,
+        setSweepLoadMode,
+        registerSweepEntry,
+        loadSweepEntriesToInventory,
+        updateSweepEntryStatus,
+        deleteSweepEntry,
       }}
     >
       {children}

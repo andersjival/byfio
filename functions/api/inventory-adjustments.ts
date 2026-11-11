@@ -53,6 +53,31 @@ export const onRequestGet = async (context: { env: Env }) => {
       } catch {}
     }
 
+    // 2b. Obtener registros de Inventario por Barrido y modo de carga
+    const rowSweepEntries: any = await context.env.DB.prepare(
+      "SELECT data FROM site_metrics WHERE id = 'app_inventory_sweep_entries' LIMIT 1"
+    ).first();
+
+    let sweepEntries = [];
+    if (rowSweepEntries && rowSweepEntries.data) {
+      try {
+        const parsed = JSON.parse(rowSweepEntries.data);
+        if (Array.isArray(parsed)) sweepEntries = parsed;
+      } catch {}
+    }
+
+    const rowSweepMode: any = await context.env.DB.prepare(
+      "SELECT data FROM site_metrics WHERE id = 'app_sweep_load_mode' LIMIT 1"
+    ).first();
+
+    let sweepLoadMode: 'auto' | 'manual' = 'auto';
+    if (rowSweepMode && rowSweepMode.data) {
+      try {
+        const parsed = JSON.parse(rowSweepMode.data);
+        if (parsed === 'auto' || parsed === 'manual') sweepLoadMode = parsed;
+      } catch {}
+    }
+
     // 3. Obtener estados de estantes si existen
     const rowShelves: any = await context.env.DB.prepare(
       "SELECT data FROM site_metrics WHERE id = 'app_shelf_inventory_states' LIMIT 1"
@@ -66,12 +91,12 @@ export const onRequestGet = async (context: { env: Env }) => {
     }
 
     return new Response(
-      JSON.stringify({ adjustments, collaboratorInventoryEnabled, shelfStates }),
+      JSON.stringify({ adjustments, collaboratorInventoryEnabled, shelfStates, sweepEntries, sweepLoadMode }),
       { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
     );
   } catch (error: any) {
     return new Response(
-      JSON.stringify({ error: error.message || 'Error fetching adjustments', adjustments: [], collaboratorInventoryEnabled: false }),
+      JSON.stringify({ error: error.message || 'Error fetching adjustments', adjustments: [], collaboratorInventoryEnabled: false, sweepEntries: [], sweepLoadMode: 'auto' }),
       { status: 200, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
     );
   }
@@ -86,6 +111,20 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       await context.env.DB.prepare(
         'CREATE TABLE IF NOT EXISTS site_metrics (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at TEXT NOT NULL)'
       ).run().catch(() => {});
+
+      // Guardar entradas de Inventario por Barrido
+      if (body.sweepEntries !== undefined && Array.isArray(body.sweepEntries)) {
+        await context.env.DB.prepare(
+          'INSERT INTO site_metrics (id, data, updated_at) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at'
+        ).bind('app_inventory_sweep_entries', JSON.stringify(body.sweepEntries), nowIso).run();
+      }
+
+      // Guardar modo de carga de Inventario por Barrido (Automático vs Manual)
+      if (body.sweepLoadMode === 'auto' || body.sweepLoadMode === 'manual') {
+        await context.env.DB.prepare(
+          'INSERT INTO site_metrics (id, data, updated_at) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at'
+        ).bind('app_sweep_load_mode', JSON.stringify(body.sweepLoadMode), nowIso).run();
+      }
 
       // Guardar lista o adición de ajustes
       if (body.adjustments !== undefined) {

@@ -27,6 +27,7 @@ interface ProductDbRow {
   unit: string;
   description: string;
   is_available?: number;
+  supplier?: string;
   created_at: string;
 }
 
@@ -88,6 +89,7 @@ const mapRowToProduct = (r: ProductDbRow) => {
     showInStore: effectiveAvail,
     showInCatalog: effectiveAvail,
     hasLayaway: Boolean((r as any).has_layaway),
+    supplier: (r as any).supplier || '',
     layawayMonths: (r as any).layaway_months ? Number((r as any).layaway_months) : 3,
     layawayPaymentsCount: (r as any).layaway_payments_count ? Number((r as any).layaway_payments_count) : 3,
     layawayDownPaymentPercent: (r as any).layaway_down_payment_percent ? Number((r as any).layaway_down_payment_percent) : 30,
@@ -113,6 +115,7 @@ const ensureProductColumns = async (db: any) => {
   } catch {}
   try {
     await db.prepare('ALTER TABLE products ADD COLUMN layaway_down_payment_percent INTEGER DEFAULT 30').run().catch(() => {});
+    await db.prepare('ALTER TABLE products ADD COLUMN supplier TEXT').run().catch(() => {});
   } catch {}
 };
 
@@ -178,17 +181,18 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
       await context.env.DB.prepare(
         `INSERT OR REPLACE INTO products (
-          id, sku, name, category, shelf_location, price, cost_price,
+          id, sku, name, category, shelf_location, supplier, price, cost_price,
           stock, min_stock, max_stock, image, is_customizable,
           customization_placeholder, unit, description, is_available, images_json,
           has_layaway, layaway_months, layaway_payments_count, layaway_down_payment_percent
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         id,
         normalizeProductSku(data.sku),
         data.name,
         data.category,
         data.shelfLocation || 'Estante A-1',
+        data.supplier || '',
         data.price || 0,
         data.costPrice || 0,
         stock,
@@ -251,11 +255,12 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
         });
       }
 
+      await ensureProductColumns(context.env.DB);
       // Actualización individual (estándar, stock o completa)
       const {
         id, stock, minStock, maxStock, isAvailable,
         name, sku, category, shelfLocation, price, costPrice,
-        image, images, isCustomizable, customizationPlaceholder, unit, description,
+        image, images, isCustomizable, customizationPlaceholder, unit, description, supplier,
         hasLayaway, layawayMonths, layawayPaymentsCount, layawayDownPaymentPercent
       } = body;
 
@@ -283,6 +288,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
             name = COALESCE(?, name),
             category = COALESCE(?, category),
             shelf_location = COALESCE(?, shelf_location),
+            supplier = COALESCE(?, supplier),
             price = COALESCE(?, price),
             cost_price = COALESCE(?, cost_price),
             stock = COALESCE(?, stock),
@@ -305,6 +311,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           name ?? null,
           category ?? null,
           shelfLocation ?? null,
+          supplier ?? null,
           price ?? null,
           costPrice ?? null,
           stock ?? null,
@@ -336,13 +343,13 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
           const insertAvail = insertStock <= 0 ? 0 : (effectiveAvail !== null ? effectiveAvail : 1);
           await context.env.DB.prepare(
             `INSERT OR REPLACE INTO products (
-              id, sku, name, category, shelf_location, price, cost_price,
+              id, sku, name, category, shelf_location, supplier, price, cost_price,
               stock, min_stock, max_stock, image, is_customizable,
               customization_placeholder, unit, description, is_available, images_json
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
           ).bind(
             id, sku || 'SKU-NEW', name, category || 'General',
-            shelfLocation || 'Estante A-1', price || 0, costPrice || 0,
+            shelfLocation || 'Estante A-1', supplier || '', price || 0, costPrice || 0,
             insertStock, minStock || 0, maxStock || 0, primaryImgToUpdate || '',
             isCustomizable ? 1 : 0, customizationPlaceholder || null,
             unit || 'Unidad', description || '',

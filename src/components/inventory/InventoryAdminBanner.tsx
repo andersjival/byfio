@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { getOrganizedShelves, getExtraShelves } from '../../utils/inventoryShelves';
-import { ClipboardList, Smartphone, CheckCircle2, ArrowRight, Layers, ShieldCheck, Power } from 'lucide-react';
+import { ClipboardList, Smartphone, CheckCircle2, ArrowRight, Layers, ShieldCheck, Power, Zap, Hand } from 'lucide-react';
 import { playWaterDropSound } from '../../utils/soundEffects';
 
 interface InventoryAdminBannerProps {
@@ -17,6 +17,9 @@ export const InventoryAdminBanner: React.FC<InventoryAdminBannerProps> = ({ onOp
     toggleCollaboratorInventoryEnabled,
     shelfInventoryStates,
     inventoryAdjustments,
+    sweepLoadMode,
+    setSweepLoadMode,
+    sweepEntries,
   } = useApp();
 
   const isAdmin = isSuperAdminAuthenticated || (currentUser?.role === 'admin' || !!currentUser?.isMasterAdmin);
@@ -58,6 +61,31 @@ export const InventoryAdminBanner: React.FC<InventoryAdminBannerProps> = ({ onOp
 
         {/* Derecha: Switch para Colaborador + Botón Principal "Inventario" */}
         <div className="flex flex-wrap items-center gap-3 shrink-0">
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => {
+                playWaterDropSound();
+                setSweepLoadMode(sweepLoadMode === 'auto' ? 'manual' : 'auto');
+              }}
+              className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border text-xs font-bubble font-bold transition-all active:scale-95 cursor-pointer ${
+                sweepLoadMode === 'auto'
+                  ? 'bg-purple-50 border-purple-200 text-purple-900 shadow-xs'
+                  : 'bg-amber-50 border-amber-300 text-amber-900 shadow-xs'
+              }`}
+              title="Alternar carga automática o manual cada 10 productos en Inventario por Barrido"
+            >
+              {sweepLoadMode === 'auto' ? (
+                <Zap className="w-4 h-4 text-purple-600" />
+              ) : (
+                <Hand className="w-4 h-4 text-amber-600" />
+              )}
+              <span>
+                Barrido: {sweepLoadMode === 'auto' ? 'Auto c/10' : 'Manual c/10'} (
+                {sweepEntries.filter((e) => e.status === 'guardado').length} pend.)
+              </span>
+            </button>
+          )}
           {isAdmin && (
             <button
               type="button"

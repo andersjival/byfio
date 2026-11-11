@@ -1,3 +1,17 @@
+## [v4.19.99] - 2026-11-11
+
+### 📦 Módulo de Inventario por Barrido con Carga Automática/Manual y Registro en D1
+- **Nuevo Módulo Inventario por Barrido ([`InventorySweepView.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/inventory/InventorySweepView.tsx), [`InventorySweepProductPanel.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/inventory/InventorySweepProductPanel.tsx), [`InventorySweepHistory.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/inventory/InventorySweepHistory.tsx))**:
+  - Selección inicial de estante (`Estante 1..N`) y espera interactiva por escaneo (cámara QR/Barras o lector USB) o ingreso manual.
+  - Detección automática de productos existentes (ubicación, descripción, categoría, proveedor y cantidad a ingresar, con asignación inmediata de ubicación si faltaba) y creación directa en el barrido cuando el producto aún no existe (ubicación, categoría, proveedor, descripción y cantidad al final).
+- **Lotes cada 10 productos (Automático / Manual), Último Producto e Historial con Selector ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`InventoryAppPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/inventory/InventoryAppPage.tsx), [`InventoryAdminBanner.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/inventory/InventoryAdminBanner.tsx), [`inventory-adjustments.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/inventory-adjustments.ts), [`products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts))**:
+  - Persistencia en D1 (`app_inventory_sweep_entries`, `app_sweep_load_mode` y columna `supplier` en `products`).
+  - Selector de modo **Automático** (carga al inventario real cada 10 productos guardados) o **Manual** (muestra botón destacado `Cargar al Inventario` cada 10 productos).
+  - Banner permanente del último producto registrado e historial detallado por usuario, fecha, hora y selector de estado (`Guardado` / `Cargado Inv`).
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.99`.
+
+---
+
 ## [v4.19.98] - 2026-11-11
 
 ### 🏷️ Registro Automático de "Ventas de apartados" al Completar el Último Pago

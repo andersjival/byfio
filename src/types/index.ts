@@ -506,6 +506,27 @@ export interface SupplierOrder {
   receivedAt?: string;
 }
 
+export type SweepLoadMode = 'auto' | 'manual';
+
+export type SweepEntryStatus = 'guardado' | 'cargado_inv';
+
+export interface InventorySweepEntry {
+  id: string;
+  shelfName: string;
+  productId: string;
+  sku: string;
+  productName: string;
+  category: string;
+  supplier: string;
+  shelfLocation: string;
+  quantityAdded: number;
+  status: SweepEntryStatus;
+  userId: string;
+  userName: string;
+  createdAt: string;
+  loadedAt?: string;
+}
+
 export type ShelfInventoryStatus = 'pending' | 'in_progress' | 'completed';
 
 export interface ShelfInventoryState {
