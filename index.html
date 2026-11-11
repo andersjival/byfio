@@ -53,7 +53,39 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="by.fio Admin" />
+    <meta name="apple-mobile-web-app-title" content="by.fio" />
+    <script>
+      (function () {
+        try {
+          var p = (window.location.pathname || '/').toLowerCase().replace(/\/+$/, '') || '/';
+          var q = new URLSearchParams(window.location.search || '');
+          var app = q.get('app') || q.get('target') || q.get('pwa');
+          var link = document.querySelector('link[rel="manifest"]');
+          var apple = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+          var scope = 'web';
+          if (p.indexOf('/admin') === 0 || p.indexOf('/administracion') === 0 || p.indexOf('/superadmin') === 0 || p.indexOf('/metricas') === 0 || (p.indexOf('/instalar') === 0 && app === 'admin')) {
+            scope = 'admin';
+          } else if (
+            p === '/pedidos' || p.indexOf('/pedidos/') === 0 ||
+            p.indexOf('/pedidos-movil') === 0 || p.indexOf('/pedidos-mobile') === 0 ||
+            p.indexOf('/alisto') === 0 || p.indexOf('/picking') === 0 ||
+            p === '/app' || p.indexOf('/app/') === 0 ||
+            p.indexOf('/inventario-app') === 0 || p.indexOf('/toma-inventario') === 0 || p.indexOf('/conteo-inventario') === 0 ||
+            p.indexOf('/instalar') === 0 || p.indexOf('/colaborador') === 0 ||
+            app === 'colaborador' || app === 'inventario'
+          ) {
+            scope = 'collaborator';
+          }
+          document.documentElement.setAttribute('data-app-scope', scope);
+          if (link) {
+            link.setAttribute('href', scope === 'admin' ? '/manifest-admin.webmanifest' : scope === 'collaborator' ? '/manifest-colaborador.webmanifest' : '/manifest.webmanifest');
+          }
+          if (apple) {
+            apple.setAttribute('content', scope === 'admin' ? 'by.fio Admin' : scope === 'collaborator' ? 'by.fio Equipo' : 'by.fio');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="apple-touch-icon" href="/logo-byfio-192.png" />
     <link rel="apple-touch-icon" sizes="512x512" href="/logo-byfio-512.png" />

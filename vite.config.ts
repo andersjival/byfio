@@ -12,11 +12,46 @@ export default defineConfig({
     minify: 'esbuild',
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-utils': ['canvas-confetti', 'clsx', 'tailwind-merge'],
-          'vendor-qrcode': ['html5-qrcode', 'qrcode.react'],
+        manualChunks(id) {
+          const path = id.replace(/\\/g, '/');
+          if (path.includes('node_modules/react/') || path.includes('node_modules/react-dom/')) return 'vendor-react';
+          if (path.includes('node_modules/lucide-react/')) return 'vendor-icons';
+          if (
+            path.includes('node_modules/canvas-confetti/') ||
+            path.includes('node_modules/clsx/') ||
+            path.includes('node_modules/tailwind-merge/')
+          ) return 'vendor-utils';
+          if (path.includes('node_modules/html5-qrcode/') || path.includes('node_modules/qrcode.react/')) return 'vendor-qrcode';
+
+          if (path.includes('/src/context/') || path.includes('/src/services/') || path.includes('/src/utils/')) {
+            return 'app-data';
+          }
+          if (
+            path.includes('/src/apps/collaborator/') ||
+            path.includes('/src/components/mobile/') ||
+            path.includes('/src/components/pwa/') ||
+            (path.includes('/src/components/inventory/') && !path.includes('InventoryAdminBanner'))
+          ) {
+            return 'app-collaborator';
+          }
+          if (
+            path.includes('/src/apps/admin/') ||
+            (path.includes('/src/components/admin/') &&
+              !path.includes('AdminMobileDock') &&
+              !path.includes('GuidedPickingModal') &&
+              !path.includes('QuickBillingSection') &&
+              !path.includes('AgendaSection') &&
+              !path.includes('MetricsPage'))
+          ) {
+            return 'app-admin';
+          }
+          if (
+            path.includes('/src/apps/web/') ||
+            path.includes('/src/components/propuesta/') ||
+            (path.includes('/src/components/store/') && !path.includes('LayawayOrderCard'))
+          ) {
+            return 'app-web';
+          }
         },
       },
     },

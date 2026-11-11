@@ -325,19 +325,27 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'workshops', adminTab: 'hub' };
   }
 
-    // Persistencia de navegación: Si se recarga en la raíz o ruta base sin sub-rutas, recuperar la última pestaña visitada
+    // Persistencia de navegación acotada: en '/' solo restaurar subrutas públicas de la Web (nunca Admin ni PWA Colaborador)
   try {
     const savedRoute = sessionStorage.getItem('byfio_last_active_route') as AppRoute | null;
-    const savedTab = sessionStorage.getItem('byfio_last_admin_tab') as AdminTabType | null;
     const savedWsId = sessionStorage.getItem('byfio_last_ws_id');
-    const savedModal = sessionStorage.getItem('byfio_design_modal_open') === 'true';
+    const webRestorableRoutes: AppRoute[] = [
+      'store',
+      'catalogo',
+      'workshops',
+      'workshop-detail',
+      'precios',
+      'login',
+      'mi-cuenta',
+      'propuesta',
+    ];
 
-    if (savedRoute && savedRoute !== 'home' && (path === '/' || path === '')) {
+    if (savedRoute && webRestorableRoutes.includes(savedRoute) && (path === '/' || path === '')) {
       return {
         route: savedRoute,
-        adminTab: savedTab || 'hub',
+        adminTab: 'hub',
         workshopId: savedWsId || null,
-        openDesignModal: savedModal,
+        openDesignModal: false,
       };
     }
   } catch {}
@@ -385,22 +393,19 @@ export const isCollaboratorPwaContext = (): boolean => {
     if (isCollaboratorPath) return true;
 
     // 3. Detección de PWA en modo standalone con perfil o sesión de colaborador
-    const isStandalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as any).standalone === true;
+    // Nunca activar contexto de colaborador en '/', '/admin*', '/administracion*', '/superadmin*' ni '/metricas*'
+    const currentPath = (window.location.pathname || '/').toLowerCase().replace(/\/+$/, '') || '/';
+    if (
+      currentPath === '/' ||
+      currentPath.startsWith('/admin') ||
+      currentPath.startsWith('/administracion') ||
+      currentPath.startsWith('/superadmin') ||
+      currentPath.startsWith('/metricas')
+    ) {
+      return false;
+    }
 
-    const isSavedCollaborator = localStorage.getItem('byfio_collaborator_pwa') === 'true';
-
-    let hasStaffRole = false;
-    try {
-      const savedUser = localStorage.getItem('byfio_current_user_profile') || localStorage.getItem('byfio_auth_user');
-      if (savedUser) {
-        const parsed = JSON.parse(savedUser);
-        hasStaffRole = parsed && (parsed.role === 'staff' || parsed.role === 'admin');
-      }
-    } catch {}
-
-    return isStandalone && (isSavedCollaborator || hasStaffRole);
+    return false;
   } catch {
     return false;
   }

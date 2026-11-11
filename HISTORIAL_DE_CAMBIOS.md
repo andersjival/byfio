@@ -1,3 +1,15 @@
+## [v4.19.105] - 2026-11-11
+
+### 🧩 Separación Modular y Aislamiento de Código/Sesión/Tema (Web Pública vs PWA Colaborador vs PWA Admin)
+- **Aislamiento de Scope, Sesión y Tema ([`appScope.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/appScope.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`routeHelpers.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts))**:
+  - Claves de sesión `localStorage` independientes por app (`byfio_auth_user_web_v1`, `byfio_auth_user_admin_v1`, `byfio_auth_user_collab_v1`) con migración segura y cierre de sesión aislado sin cerrar sesión en las demás PWAs.
+  - Restauración de `sessionStorage` en `/` restringida a rutas públicas de la Web; `isCollaboratorPwaContext()` blindado contra activación en `/` y `/admin*`; `viewMode` acotado por scope y tema `.dark`/`data-font-theme` aislado en PWA Colaborador preservando únicamente la sincronización compartida de datos D1/`BroadcastChannel`.
+- **Shells, Bundles y Manifiestos PWA Separados ([`WebShell.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/web/WebShell.tsx), [`AdminPwaShell.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/admin/AdminPwaShell.tsx), [`CollaboratorPwaShell.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/collaborator/CollaboratorPwaShell.tsx), [`App.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx), [`vite.config.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/vite.config.ts))**:
+  - Enrutador raíz liviano (`React.lazy`) y división explícita en chunks (`app-web`, `app-admin`, `app-collaborator`, `app-data`) más 3 manifiestos independientes ([`manifest.webmanifest`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest.webmanifest), [`manifest-admin.webmanifest`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest-admin.webmanifest), [`manifest-colaborador.webmanifest`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/manifest-colaborador.webmanifest)) enlazados dinámicamente desde [`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html).
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.105`.
+
+---
+
 ## [v4.19.102] - 2026-11-11
 
 ### 🏆 Directorio de Clientes: Historial de Compras, Etiquetas VIP y Filtro de Mayores Compradores

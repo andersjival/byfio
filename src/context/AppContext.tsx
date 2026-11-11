@@ -27,6 +27,13 @@ import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 import { deepSanitize } from '../utils/sanitizeText';
 import { safeSessionStorage, safeLocalStorage } from '../utils/safeStorage';
+import {
+  AppScope,
+  detectInitialAppScope,
+  readScopedAuthUser,
+  writeScopedAuthUser,
+  clearScopedAuthUser,
+} from '../utils/appScope';
 
 // Generador de número de orden secuencial garantizado libre de colisiones
 export const getNextOrderNumber = (ordersList: Order[]): string => {
@@ -393,6 +400,8 @@ interface AppContextType {
   resetPassword: (email: string, newPass: string) => { success: boolean; error?: string };
   logoutUser: () => void;
   isLogoutTransitionOpen: boolean;
+  appScope: AppScope;
+  setAppScope: (scope: AppScope) => void;
   closeLogoutTransition: () => void;
   loginIntroStage: number;
   triggerLoginCinematic: (user: AuthUser, onComplete: () => void) => void;
@@ -568,8 +577,12 @@ const syncChannel =
     : null;
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [appScope, setAppScopeState] = useState<AppScope>(() => detectInitialAppScope());
+  const appScopeRef = useRef<AppScope>(appScope);
+  appScopeRef.current = appScope;
+
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
-    return (localStorage.getItem(STORAGE_KEYS.VIEW_MODE) as ViewMode) || 'store';
+    return appScope === 'admin' ? 'admin' : 'store';
   });
 
   const [inventoryMode, setInventoryModeState] = useState<InventoryMode>(() => {
@@ -2392,8 +2405,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
       setCurrentUser(superAdminUser);
       setIsSuperAdminAuthenticated(true);
+      writeScopedAuthUser(appScope, superAdminUser);
+      if (appScope !== 'admin') writeScopedAuthUser('admin', superAdminUser);
       try {
-        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(superAdminUser));
         localStorage.setItem(SUPERADMIN_AUTH_KEY, 'true');
       } catch {}
       return { success: true };
@@ -2484,9 +2498,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ...updates,
     };
     setCurrentUser(updated);
-    try {
-      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(updated));
-    } catch {}
+    writeScopedAuthUser(appScope, updated);
     if (updated.role === 'admin') {
       try {
         const key = updated.id || (updated.name?.toUpperCase().includes('SUPER') ? 'superadmin' : 'admin');
@@ -2565,42 +2577,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object') {
-          if (parsed.email && parsed.role === 'customer') {
-            try {
-              const regList = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
-              const matched = regList.find((u: any) => u.email && u.email.toLowerCase() === parsed.email.toLowerCase());
-              if (matched) {
-                return {
-                  ...parsed,
-                  address: matched.address ?? parsed.address ?? '',
-                  lat: matched.lat ?? parsed.lat,
-                  lng: matched.lng ?? parsed.lng,
-                  createdAt: matched.createdAt ?? parsed.createdAt,
-                  welcomeShown: matched.welcomeShown ?? parsed.welcomeShown,
-                  phone: matched.phone ?? parsed.phone,
-                  name: matched.name ?? parsed.name,
-                };
-              }
-            } catch {}
-          }
-          return {
-            ...parsed,
-            permissions: {
-              suppliers: true,
-              ...(parsed.permissions || {}),
-            },
-          };
+      const parsed = readScopedAuthUser(appScope);
+      if (parsed && typeof parsed === 'object') {
+        if (parsed.email && parsed.role === 'customer') {
+          const emailLower = parsed.email.toLowerCase();
+          try {
+            const regList = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+            const matched = regList.find((u: any) => u.email && u.email.toLowerCase() === emailLower);
+            if (matched) {
+              return {
+                ...parsed,
+                address: matched.address ?? parsed.address ?? '',
+                lat: matched.lat ?? parsed.lat,
+                lng: matched.lng ?? parsed.lng,
+                createdAt: matched.createdAt ?? parsed.createdAt,
+                welcomeShown: matched.welcomeShown ?? parsed.welcomeShown,
+                phone: matched.phone ?? parsed.phone,
+                name: matched.name ?? parsed.name,
+              };
+            }
+          } catch {}
         }
+        return {
+          ...parsed,
+          permissions: parsed.permissions
+            ? ({ suppliers: true, ...parsed.permissions } as UserPermissions)
+            : undefined,
+        };
       }
       return null;
     } catch {
       return null;
     }
   });
+
+  const setAppScope = useCallback((nextScope: AppScope) => {
+    if (appScopeRef.current === nextScope) return;
+    appScopeRef.current = nextScope;
+    setAppScopeState(nextScope);
+    setCurrentUser(readScopedAuthUser(nextScope));
+    setViewMode(nextScope === 'admin' ? 'admin' : 'store');
+  }, []);
 
   const hasPermission = (tab: string) => {
     // Si el módulo está desactivado globalmente por el Superadmin, se oculta para todos en el panel
@@ -2703,8 +2720,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const superAdminUser = buildSuperAdminUser(fullPermissions);
         setCurrentUser(superAdminUser);
         setIsSuperAdminAuthenticated(true);
+        writeScopedAuthUser(appScope, superAdminUser);
+        if (appScope !== 'admin') writeScopedAuthUser('admin', superAdminUser);
         try {
-          localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(superAdminUser));
           localStorage.setItem(SUPERADMIN_AUTH_KEY, 'true');
         } catch {}
         return { success: true, user: superAdminUser };
@@ -2719,7 +2737,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
         const userObj = buildProfileAuthUser(expected);
         setCurrentUser(userObj);
-        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(userObj));
+        writeScopedAuthUser(appScope, userObj);
+        if (userObj.role === 'admin') writeScopedAuthUser('admin', userObj);
+        if (userObj.role === 'staff') writeScopedAuthUser('collaborator', userObj);
         return { success: true, user: userObj };
       }
     }
@@ -2729,7 +2749,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (matchedProfile) {
       const userObj = buildProfileAuthUser(matchedProfile);
       setCurrentUser(userObj);
-      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(userObj));
+      writeScopedAuthUser(appScope, userObj);
+      if (userObj.role === 'admin') writeScopedAuthUser('admin', userObj);
+      if (userObj.role === 'staff') writeScopedAuthUser('collaborator', userObj);
       return { success: true, user: userObj };
     }
 
@@ -2738,8 +2760,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const superAdminUser = buildSuperAdminUser(fullPermissions);
       setCurrentUser(superAdminUser);
       setIsSuperAdminAuthenticated(true);
+      writeScopedAuthUser(appScope, superAdminUser);
+      if (appScope !== 'admin') writeScopedAuthUser('admin', superAdminUser);
       try {
-        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(superAdminUser));
         localStorage.setItem(SUPERADMIN_AUTH_KEY, 'true');
       } catch {}
       return { success: true, user: superAdminUser };
@@ -2787,8 +2810,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const superAdminUser = buildSuperAdminUser(fullPermissions);
       setCurrentUser(superAdminUser);
       setIsSuperAdminAuthenticated(true);
+      writeScopedAuthUser(appScope, superAdminUser);
+      if (appScope !== 'admin') writeScopedAuthUser('admin', superAdminUser);
       try {
-        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(superAdminUser));
         localStorage.setItem(SUPERADMIN_AUTH_KEY, 'true');
       } catch {}
       return { success: true, user: superAdminUser };
@@ -2810,7 +2834,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         permissions: fullPermissions,
       };
       setCurrentUser(adminUser);
-      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(adminUser));
+      writeScopedAuthUser(appScope, adminUser);
+      if (appScope !== 'admin') writeScopedAuthUser('admin', adminUser);
       return { success: true, user: adminUser };
     }
 
@@ -2840,7 +2865,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createdAt: profileMatch.createdAt || '2026-10-30T10:00:00-06:00',
       };
       setCurrentUser(staffUser);
-      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(staffUser));
+      writeScopedAuthUser(appScope, staffUser);
+      if (appScope !== 'collaborator') writeScopedAuthUser('collaborator', staffUser);
       return { success: true, user: staffUser };
     }
 
@@ -2867,7 +2893,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           welcomeShown: Boolean(found.welcomeShown),
         };
         setCurrentUser(normalUser);
-        safeLocalStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(normalUser));
+        writeScopedAuthUser('web', normalUser);
+        if (appScope !== 'web') writeScopedAuthUser(appScope, normalUser);
         syncWebUsersToCustomers([found]);
         const welcomeKey = 'byfio_welcome_star_' + found.email.toLowerCase();
         if (!found.welcomeShown && !safeLocalStorage.getItem(welcomeKey)) {
@@ -2943,7 +2970,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         welcomeShown: false,
       };
       setCurrentUser(customer);
-      safeLocalStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(customer));
+      writeScopedAuthUser('web', customer);
+      if (appScope !== 'web') writeScopedAuthUser(appScope, customer);
       setWelcomeStarModal({
         isOpen: true,
         userName: customer.name,
@@ -2999,7 +3027,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentUser(null);
     setIsMyAccountOpen(false);
     setWelcomeStarModal(null);
-    localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
+    clearScopedAuthUser(appScope);
     setIsLogoutTransitionOpen(true);
   };
 
@@ -3031,9 +3059,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createdAt: matchingProfile.createdAt || currentUser.createdAt || '2026-10-30T10:00:00-06:00',
       };
       setCurrentUser(updatedUser);
-      try {
-        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(updatedUser));
-      } catch {}
+      writeScopedAuthUser(appScope, updatedUser);
     }
   }, [userProfiles, currentUser]);
 
@@ -3059,14 +3085,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.PRICING_DATA, JSON.stringify(INITIAL_PRICING_DATA));
   };
 
-  // Apply typography theme to document body
+  // Apply typography theme to document body (strictly skip Collaborator PWA so Web/Admin themes never alter it)
   useEffect(() => {
+    if (appScope === 'collaborator') {
+      document.body.removeAttribute('data-font-theme');
+      return;
+    }
     document.body.setAttribute('data-font-theme', typographyTheme);
     localStorage.setItem(STORAGE_KEYS.TYPOGRAPHY_THEME, typographyTheme);
-  }, [typographyTheme]);
+  }, [typographyTheme, appScope]);
 
-  // Apply color theme to document body
+  // Apply color theme to document body (strictly skip Collaborator PWA so Web/Admin dark mode never bleeds into Collaborator UI)
   useEffect(() => {
+    if (appScope === 'collaborator') {
+      document.body.removeAttribute('data-color-theme');
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+      return;
+    }
     document.body.setAttribute('data-color-theme', colorTheme);
     if (colorTheme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -3076,7 +3112,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       document.body.classList.remove('dark');
     }
     localStorage.setItem(STORAGE_KEYS.COLOR_THEME, colorTheme);
-  }, [colorTheme]);
+  }, [colorTheme, appScope]);
 
   // Escucha del canal de difusión para sincronización en tiempo real (0ms) entre pestañas
   useEffect(() => {
@@ -3607,9 +3643,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.VIEW_MODE, viewMode);
-  }, [viewMode]);
+  // viewMode ahora depende exclusivamente del scope activo de la app (sin sobreescribir otras pestañas o PWAs vía localStorage)
 
   useEffect(() => {
     safeLocalStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
@@ -5361,6 +5395,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resetPassword,
         logoutUser,
         isLogoutTransitionOpen,
+        appScope,
+        setAppScope,
         closeLogoutTransition,
         loginIntroStage,
         triggerLoginCinematic,

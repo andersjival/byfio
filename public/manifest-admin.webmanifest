@@ -1,0 +1,69 @@
+{
+  "id": "byfio-admin-pwa",
+  "name": "by.fio Admin — Panel Administrativo",
+  "short_name": "by.fio Admin",
+  "description": "PWA Administrativa de Facturación, Inventario y Gestión Comercial By.Fio",
+  "start_url": "/admin",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#120220",
+  "theme_color": "#2A0845",
+  "lang": "es-CR",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/logo-byfio-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-byfio-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-byfio-lila-HD.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-byfio-lila-HD.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/logo-byfio.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Panel Administradora",
+      "short_name": "Admin Fio",
+      "description": "Acceso al panel principal de gestión de By.Fio",
+      "url": "/admin",
+      "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Facturación Rápida POS",
+      "short_name": "Facturación",
+      "description": "Cobro y facturación en mostrador",
+      "url": "/admin?tab=billing",
+      "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Inventario & Catálogo",
+      "short_name": "Inventario",
+      "description": "Gestión de stock y productos",
+      "url": "/admin?tab=inventory",
+      "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

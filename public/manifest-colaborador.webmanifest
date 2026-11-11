@@ -1,0 +1,62 @@
+{
+  "id": "byfio-colaborador-pwa",
+  "name": "by.fio Equipo — Alisto & Escáner",
+  "short_name": "by.fio Equipo",
+  "description": "App operativa para colaboradores en alisto de pedidos y conteo físico de inventario",
+  "start_url": "/pedidos",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F172A",
+  "theme_color": "#5B21B6",
+  "lang": "es-CR",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/logo-byfio-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-byfio-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-byfio-lila-HD.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-byfio-lila-HD.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/logo-byfio.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Alisto de Pedidos",
+      "short_name": "Alisto",
+      "description": "Escaneo y empaque de pedidos en tiempo real",
+      "url": "/pedidos",
+      "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "App de Inventario Físico",
+      "short_name": "Inventario",
+      "description": "Conteo físico por código y ajuste rápido",
+      "url": "/inventario-app",
+      "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

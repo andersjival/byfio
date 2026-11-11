@@ -1,16 +1,16 @@
 {
-  "id": "byfio-ecosystem-app",
-  "name": "by.fio — Gestión & Ecosistema Digital",
-  "short_name": "by.fio Admin",
-  "description": "Plataforma oficial PWA de Gestión Comercial, Taller y Alisto de Pedidos By.Fio",
+  "id": "byfio-web-app",
+  "name": "by.fio — Tienda Online & Talleres",
+  "short_name": "by.fio",
+  "description": "Tienda online, catálogo digital y talleres creativos By.Fio",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#120220",
-  "theme_color": "#2A0845",
+  "background_color": "#FFFFFF",
+  "theme_color": "#C592F9",
   "lang": "es-CR",
-  "categories": ["business", "productivity", "shopping"],
+  "categories": ["shopping", "lifestyle"],
   "icons": [
     {
       "src": "/logo-byfio-512.png",
@@ -45,38 +45,24 @@
   ],
   "shortcuts": [
     {
-      "name": "Panel Administradora",
-      "short_name": "Admin Fio",
-      "description": "Acceso al panel principal de gestión de By.Fio",
-      "url": "/admin",
+      "name": "Tienda Online",
+      "short_name": "Tienda",
+      "description": "Explora productos creativos, máquinas e insumos",
+      "url": "/tienda",
       "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Alisto de Pedidos (Colaboradores)",
-      "short_name": "Alisto",
-      "description": "App operativa para colaboradores en taller y bodega",
-      "url": "/pedidos?role=alisto",
-      "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Facturación Rápida POS",
-      "short_name": "Facturación",
-      "description": "Cobro y facturación en mostrador",
-      "url": "/admin?tab=billing",
-      "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Catálogo Comercial",
+      "name": "Catálogo Digital",
       "short_name": "Catálogo",
       "description": "Catálogo interactivo de productos",
       "url": "/catalogo",
       "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "App de Inventario Físico",
-      "short_name": "Inventarios",
-      "description": "Conteo físico por estanterías y ajustes de inventario",
-      "url": "/inventario-app",
+      "name": "Talleres Creativos",
+      "short_name": "Talleres",
+      "description": "Reserva cupos y fechas en Studio By.Fio",
+      "url": "/talleres",
       "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
     }
   ]
