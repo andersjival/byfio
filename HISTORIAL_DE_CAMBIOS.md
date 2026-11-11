@@ -1,3 +1,12 @@
+## [v4.19.96] - 2026-11-11
+
+### 🎨 Banner de Gestión de Apartados en Lila con Rosado Pastel
+- **Actualización Visual (`AdminLayawaysSection.tsx`):**
+  - Cambiado el gradiente del encabezado principal de `Gestión de Apartados` a tonos lila con rosado pastel (`from-[#E6D4FB] via-[#F3D9FA] to-[#FBD5E8]`) con borde lila suave y tipografía morado oscuro legible (`text-purple-950`).
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.96`.
+
+---
+
 ## [v4.19.95] - 2026-11-11
 
 ### 📦 Aplicación PWA Independiente de Inventario por Estanterías, Ajustes y Reportes

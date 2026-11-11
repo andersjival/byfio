@@ -220,21 +220,21 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
   return (
     <div className="space-y-4 animate-in fade-in duration-200">
       {/* Encabezado Principal Compacto */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#E6D4FB] via-[#F3D9FA] to-[#FBD5E8] border border-purple-200/90 text-purple-950 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-white/75 backdrop-blur-xs border border-purple-200/70 flex items-center justify-center text-fio-pink shrink-0 shadow-2xs">
             <BookmarkCheck className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="font-bubble font-bold text-base sm:text-lg">
+              <h2 className="font-bubble font-bold text-base sm:text-lg text-purple-950">
                 Gestión de Apartados
               </h2>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-amber-900 uppercase">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-purple-900 border border-purple-200/80 uppercase">
                 {metrics.activeCount} Activos
               </span>
             </div>
-            <p className="text-[11px] text-amber-100 font-sans">
+            <p className="text-[11px] text-purple-800/90 font-sans">
               Control de cuotas, saldos pendientes y registro de abonos.
             </p>
           </div>
