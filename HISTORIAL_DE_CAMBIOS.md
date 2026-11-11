@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.80 - Unificación a Moradito Pastel Sólido en Header sin Difuminado a Blanco
+- [x] **Fondo Parejo en Header ([Navbar.tsx](file:///C:/Users/Juan/byfio/src/components/common/Navbar.tsx)):**
+  - Eliminado el degradado horizontal con desvanecimiento a blanco (`from-[#C99BF9] via-[#D4AEFA] to-[#E2C0F4]`).
+  - Fijado fondo sólido en el tono moradito pastel exacto `bg-[#C99BF9]`.
+  - Reemplazado el borde blanco inferior difuminado (`border-white/50`) por un borde sutil tono sobre tono (`border-purple-300/40`) y sombra suave `shadow-sm`, eliminando cualquier difuminado sobre los botones.
+- [x] **Consistencia en Menú Desplegable Móvil ([NavbarMobileDrawer.tsx](file:///C:/Users/Juan/byfio/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
+  - Aplicado fondo uniforme `bg-[#C99BF9]` y borde superior `border-purple-300/40` sin desenfoque ni gradientes hacia blanco.
+
 ### Versión 4.19.79 - Eliminación de Halos y Destellos Neumórficos en Botones de PWA y Header
 - [x] **Eliminación de halos blancos y destellos:**
   - En los botones del encabezado y panel de administración (`Menú`, `Salir`, `Volver a Tienda`, `Panel Admin`, `Hamburguesa móvil` e `Iniciar Sesión`), se reemplazó la sombra neumórfica con destello blanco (`-5px -5px 12px #FFFFFF`) por sombras suaves y limpias (`shadow-sm`, `hover:shadow`).
