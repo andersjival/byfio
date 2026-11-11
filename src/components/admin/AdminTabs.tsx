@@ -3,6 +3,7 @@ import React from 'react';
 export type AdminTabType =
   | 'hub'
   | 'orders'
+  | 'layaways'
   | 'billing'
   | 'inventory'
   | 'reports'

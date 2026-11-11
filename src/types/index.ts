@@ -139,6 +139,16 @@ export interface Workshop {
   benefits?: WorkshopBenefitItem[];
 }
 
+export interface LayawayPaymentRecord {
+  id: string;
+  amount: number;
+  date: string;
+  paymentMethod: 'sinpe' | 'transferencia' | 'tarjeta' | 'efectivo';
+  reference?: string;
+  notes?: string;
+  registeredBy?: string;
+}
+
 export interface OrderItem {
   id: string;
   type: 'product' | 'workshop';
@@ -162,6 +172,7 @@ export interface OrderItem {
   layawayRemainingAmount?: number;
   layawayDueDate?: string;
   layawayDaysTotal?: number;
+  layawayPayments?: LayawayPaymentRecord[];
 }
 
 export interface InventoryMissingReport {
@@ -239,6 +250,7 @@ export interface Order {
   layawayDaysTotal?: number;
   layawayReminderEmailSent?: boolean;
   layawayReminderEmailSentAt?: string;
+  layawayPayments?: LayawayPaymentRecord[];
 }
 
 export interface CartItem {
@@ -263,10 +275,12 @@ export interface CartItem {
   layawayRemainingAmount?: number;
   layawayDueDate?: string;
   layawayDaysTotal?: number;
+  layawayPayments?: LayawayPaymentRecord[];
 }
 
 export interface UserPermissions {
   orders: boolean;     // Cola de Pedidos y Alisto QR
+  layaways?: boolean;  // Gestión de Apartados
   billing: boolean;    // Facturación Rápida
   inventory: boolean;  // Mis Productos
   reports: boolean;    // Caja & Reportería

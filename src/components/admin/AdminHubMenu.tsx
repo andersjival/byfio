@@ -2,7 +2,7 @@
 import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
-  QrCode, Receipt, Boxes, Landmark, GraduationCap, Vibrate, Sliders, Zap,
+  QrCode, BookmarkCheck, Receipt, Boxes, Landmark, GraduationCap, Vibrate, Sliders, Zap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
   BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone, Save,
   ShieldCheck, Shield
@@ -114,8 +114,16 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
   };
 
   const pendingOrders = orders.filter(
-    (o) => !(Array.isArray(o.items) && o.items.length > 0 && o.items.every((it) => it.isPicked || it.isMissing))
+    (o) => !o.isLayaway && !(Array.isArray(o.items) && o.items.some((it) => it.isLayaway)) &&
+           !(Array.isArray(o.items) && o.items.length > 0 && o.items.every((it) => it.isPicked || it.isMissing))
   );
+
+  const activeLayaways = orders.filter((o) => {
+    const isLay = o.isLayaway || (Array.isArray(o.items) && o.items.some((it) => it.isLayaway));
+    if (!isLay) return false;
+    const remaining = o.layawayRemainingAmount !== undefined ? Number(o.layawayRemainingAmount) : 1;
+    return remaining > 0;
+  });
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
   const activeProfiles = userProfiles.filter((p) => p.isActive);
 
@@ -123,9 +131,16 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     {
       id: 'orders' as AdminTabType,
       title: 'Pedidos',
-
       icon: QrCode,
       gradient: 'from-[#A855F7] to-[#6B21A8]',
+      badge: pendingOrders.length > 0 ? pendingOrders.length : undefined,
+    },
+    {
+      id: 'layaways' as AdminTabType,
+      title: 'Apartados',
+      icon: BookmarkCheck,
+      gradient: 'from-[#F59E0B] to-[#D97706]',
+      badge: activeLayaways.length > 0 ? activeLayaways.length : undefined,
     },
     {
       id: 'billing' as AdminTabType,
@@ -239,9 +254,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                 {/* Icono Elegante con Gradiente */}
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div
-                    className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}
+                    className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform relative`}
                   >
                     <Icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+                    {'badge' in item && typeof (item as any).badge === 'number' && (item as any).badge > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-bold shadow-xs">
+                        {(item as any).badge}
+                      </span>
+                    )}
                   </div>
 
                   <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-pink group-hover:translate-x-0.5 transition-all" />

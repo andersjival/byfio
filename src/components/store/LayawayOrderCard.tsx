@@ -3,8 +3,12 @@ import { Order } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { calculateLayawayDaysRemaining } from '../../services/layawayReminderService';
+import { LayawayPaymentModal } from './LayawayPaymentModal';
 import {
   BookmarkCheck,
+  Receipt,
+  Coins,
+  ChevronDown,
   Calendar,
   Clock,
   AlertTriangle,
@@ -28,6 +32,8 @@ interface LayawayOrderCardProps {
 export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPrintInvoice }) => {
   const { products } = useApp();
   const [copiedSinpe, setCopiedSinpe] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
   const countdown = calculateLayawayDaysRemaining(order);
 
   const layawayItem = (order.items && order.items.find((i) => i.isLayaway)) || (order.items && order.items[0]);
@@ -293,6 +299,47 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
         </div>
       </div>
 
+      {/* Historial de Abonos Realizados */}
+      {order.layawayPayments && order.layawayPayments.length > 0 && (
+        <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2 text-xs">
+          <button
+            type="button"
+            onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
+            className="w-full flex items-center justify-between text-slate-700 font-bubble font-bold cursor-pointer hover:text-amber-700 transition-colors"
+          >
+            <span className="flex items-center gap-1.5">
+              <Receipt className="w-3.5 h-3.5 text-amber-600" />
+              <span>Historial de Abonos ({order.layawayPayments.length})</span>
+            </span>
+            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isHistoryExpanded ? 'rotate-180' : ''}`} />
+          </button>
+
+          {isHistoryExpanded && (
+            <div className="space-y-1.5 pt-1.5 border-t border-slate-200/70 animate-in fade-in">
+              {order.layawayPayments.map((p, idx) => (
+                <div
+                  key={p.id || idx}
+                  className="flex items-center justify-between py-1.5 px-2.5 rounded-xl bg-white border border-slate-200/70 text-[11px]"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="font-bubble font-bold text-emerald-700">{formatCRC(p.amount)}</span>
+                    <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 font-mono text-[10px] uppercase">
+                      {p.paymentMethod}
+                    </span>
+                    {p.reference && (
+                      <span className="text-slate-500 font-mono text-[10px]">
+                        Ref: #{p.reference}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-slate-400 font-sans">{formatShortDate(p.date)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Recordatorio del Sistema */}
       <div className="flex items-start gap-2 p-2.5 rounded-xl bg-purple-50/70 border border-purple-100 text-[11px] text-purple-900">
         <Sparkles className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
@@ -324,7 +371,21 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
         </div>
 
         {/* Botones de Acción */}
-        <div className="flex items-center gap-2 justify-end">
+        <div className="flex items-center gap-2 justify-end flex-wrap">
+          {!isFullyPaid && remainingDebt > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                playWaterDropSound();
+                setIsPaymentModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white text-xs font-bubble font-bold shadow-md shadow-orange-500/20 transition-all cursor-pointer"
+            >
+              <Coins className="w-3.5 h-3.5" />
+              <span>Abonar Cuota</span>
+            </button>
+          )}
+
           {onPrintInvoice && (
             <button
               type="button"
@@ -347,6 +408,16 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
           </a>
         </div>
       </div>
+      {/* Modal de Abonos del Cliente */}
+      <LayawayPaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        order={order}
+        totalAmount={totalAmount}
+        downPayment={downPayment}
+        remainingDebt={remainingDebt}
+        cleanOrderNumber={cleanOrderNumber}
+      />
     </div>
   );
 };

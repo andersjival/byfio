@@ -1,7 +1,7 @@
 import { calculateLayawayDaysRemaining, checkAndSendLayawayReminders } from '../services/layawayReminderService';
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
-  ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
+  ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus, LayawayPaymentRecord,
   TypographyTheme, ColorTheme, StarAlertDuration, PricingSectionData, AuthUser,
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
@@ -245,6 +245,16 @@ interface AppContextType {
   resolveMissingReport: (reportId: string) => void;
   deleteMissingReport: (reportId: string) => void;
   updateOrderStatus: (orderId: string, newStatus: OrderStatus, pickerName?: string) => void;
+  addLayawayPayment: (
+    orderId: string,
+    payment: {
+      amount: number;
+      paymentMethod: 'sinpe' | 'transferencia' | 'tarjeta' | 'efectivo';
+      reference?: string;
+      notes?: string;
+      registeredBy?: string;
+    }
+  ) => Promise<boolean>;
   inventoryMode: InventoryMode;
   setInventoryMode: (mode: InventoryMode) => void;
   toggleProductAvailability: (productId: string) => void;
@@ -1966,6 +1976,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (tab === 'catalog-view') {
         return isModuleEnabled('catalogo');
       }
+      if (tab === 'layaways') {
+        return Boolean(livePerms?.layaways ?? livePerms?.orders ?? true);
+      }
       if (tab === 'suppliers' || tab === 'sales') {
         if (currentUser.role === 'staff' && livePerms) {
           return livePerms[tab] !== false;
@@ -3567,6 +3580,110 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  const addLayawayPayment = async (
+    orderId: string,
+    payment: {
+      amount: number;
+      paymentMethod: 'sinpe' | 'transferencia' | 'tarjeta' | 'efectivo';
+      reference?: string;
+      notes?: string;
+      registeredBy?: string;
+    }
+  ): Promise<boolean> => {
+    try {
+      let targetOrder = orders.find((o) => o.id === orderId);
+      if (!targetOrder) {
+        const saved = safeLocalStorage.getItem(STORAGE_KEYS.ORDERS);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            targetOrder = Array.isArray(parsed) ? parsed.find((o: Order) => o.id === orderId) : undefined;
+          } catch {}
+        }
+      }
+
+      if (!targetOrder) return false;
+
+      const layItem = (targetOrder.items && targetOrder.items.find((i) => i.isLayaway)) || (targetOrder.items && targetOrder.items[0]);
+      const currentDown =
+        (targetOrder.layawayDownPaymentAmount && targetOrder.layawayDownPaymentAmount > 0 ? Number(targetOrder.layawayDownPaymentAmount) : 0) ||
+        (layItem?.layawayDownPaymentAmount && layItem.layawayDownPaymentAmount > 0 ? Number(layItem.layawayDownPaymentAmount) : 0) ||
+        Number(targetOrder.total) ||
+        0;
+
+      const currentRemaining =
+        targetOrder.layawayRemainingAmount !== undefined && targetOrder.layawayRemainingAmount !== null
+          ? Number(targetOrder.layawayRemainingAmount)
+          : layItem?.layawayRemainingAmount !== undefined && layItem?.layawayRemainingAmount !== null
+          ? Number(layItem.layawayRemainingAmount)
+          : Math.max(0, (Number(targetOrder.layawayTotalAmount) || Number(targetOrder.total)) - currentDown);
+
+      const payAmount = Number(payment.amount) || 0;
+      if (payAmount <= 0) return false;
+
+      const newDownPayment = currentDown + payAmount;
+      const newRemaining = Math.max(0, currentRemaining - payAmount);
+
+      const newRecord: LayawayPaymentRecord = {
+        id: `laypay-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        amount: payAmount,
+        date: new Date().toISOString(),
+        paymentMethod: payment.paymentMethod,
+        reference: payment.reference ? payment.reference.trim() : undefined,
+        notes: payment.notes ? payment.notes.trim() : undefined,
+        registeredBy: payment.registeredBy || currentUser?.name || 'Cliente',
+      };
+
+      const existingPayments: LayawayPaymentRecord[] = Array.isArray(targetOrder.layawayPayments)
+        ? [...targetOrder.layawayPayments]
+        : (Array.isArray(layItem?.layawayPayments) ? [...layItem.layawayPayments] : []);
+
+      const updatedPayments = [...existingPayments, newRecord];
+
+      const updatedItems = (targetOrder.items || []).map((it) => {
+        if (it.isLayaway || it.id === layItem?.id) {
+          return {
+            ...it,
+            layawayDownPaymentAmount: newDownPayment,
+            layawayRemainingAmount: newRemaining,
+            layawayPayments: updatedPayments,
+          };
+        }
+        return it;
+      });
+
+      const updatedOrder: Order = {
+        ...targetOrder,
+        layawayDownPaymentAmount: newDownPayment,
+        layawayRemainingAmount: newRemaining,
+        layawayPayments: updatedPayments,
+        items: updatedItems,
+      };
+
+      let nextOrders: Order[] = [];
+      setOrders((prev) => {
+        nextOrders = prev.map((o) => (o.id === orderId ? updatedOrder : o));
+        safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(nextOrders));
+        return nextOrders;
+      });
+
+      // Transmitir a Cloudflare D1 en segundo plano
+      fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: orderId,
+          items: updatedItems,
+        }),
+      }).catch((e) => console.warn('[D1 Layaway Payment PUT warn]:', e));
+
+      return true;
+    } catch (err) {
+      console.error('[addLayawayPayment error]:', err);
+      return false;
+    }
+  };
+
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus, customPickerName?: string) => {
     // BLINDAJE ESTRICTO: Un pedido NO puede pasar a packing, packed o delivered si su alisto NO está al 100%
     const currentOrder = orders.find((o) => o.id === orderId);
@@ -4450,6 +4567,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resolveMissingReport,
         deleteMissingReport,
         updateOrderStatus,
+        addLayawayPayment,
         inventoryMode,
         setInventoryMode,
         toggleProductAvailability,

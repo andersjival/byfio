@@ -1,3 +1,34 @@
+## [v4.19.91] - 2026-11-11
+
+### 🏷️ Sistema Completo de Abonos en Línea para Clientes y Sección Exclusiva de Apartados en el Panel Administrativo
+- **Botón y Modal Interactivo de Abono para Clientes (`LayawayPaymentModal.tsx` & `LayawayOrderCard.tsx`):**
+  - Nuevo botón principal **[ 💵 Abonar Cuota ]** en la tarjeta de pedidos del cliente en *Mis Pedidos*.
+  - Ventana modal interactiva que presenta el saldo pendiente actual y permite elegir el monto a pagar:
+    - Botones de selección rápida (₡5 000, ₡10 000, ₡15 000).
+    - Opción de liquidación total directa (**Liquidar Todo**).
+    - Entrada personalizada con simulación en tiempo real del saldo resultante tras el abono.
+  - Pasarela multicanal integrada:
+    - **SINPE Móvil:** Teléfono oficial 64004640 (Fiorella Barahona) con botón de copiado rápido y campo para ingresar el número de comprobante.
+    - **Transferencia Bancaria:** Cuentas IBAN de BCR con copiado en un clic y comprobante.
+    - **Tarjeta de Crédito / Débito:** Con acreditación inmediata.
+  - **Actualización Automática e Instantánea:** Al confirmar el abono, se descuenta de lo adeudado, se suma a lo abonado a la fecha, se emite confeti sonoro y se actualiza en tiempo real en la base de datos remota D1.
+  - **Historial Desplegable de Abonos Realizados:** La tarjeta del cliente ahora muestra el desglose cronológico de cada pago efectuado con fecha, monto, método y comprobante.
+- **Exclusión Estricta de la Cola de Pedidos (`OrdersQueue.tsx`):**
+  - Los apartados quedan **100% excluidos** de la cola de pedidos regulares de alisto, picking y empaque.
+  - Los contadores de la cola de pedidos únicamente contabilizan pedidos regulares de contado listos para despacho.
+- **Nueva Sección Exclusiva de "Apartados" en el Panel de Administración (`AdminLayawaysSection.tsx` & `AdminHubMenu.tsx`):**
+  - Nuevo módulo administrativo con tarjeta de acceso en el Hub principal e insignia con el contador de apartados activos en vivo.
+  - **Métricas Ejecutivas en Tiempo Real:**
+    - Contador de apartados activos.
+    - Total recaudado en abonos a la fecha (₡).
+    - Saldo global pendiente de cobro en la tienda (₡).
+    - Alerta de apartados próximos a vencer (≤ 5 días).
+  - **Buscador y Filtros de Estado:** Activos con saldo, Próximos a vencer, Vencidos, 100% Liquidados y Todos.
+  - **Ficha Integral por Cliente:** Datos de contacto, botón directo para llamar o abrir WhatsApp con mensaje de recordatorio prellenado, barra de progreso del plazo e historial detallado de abonos.
+  - **Registro de Abonos Manuales:** Permite a la administradora o colaboradores ingresar abonos recibidos en efectivo en el taller o transferencias directas, actualizando el saldo de inmediato.
+
+---
+
 ## [v4.19.90] - 2026-11-11
 
 ### 🏷️ Corrección y Reconstrucción Integral de Montos y Saldos de Apartados en Mis Pedidos

@@ -30,6 +30,7 @@ import { AdminTabs, type AdminTabType } from './components/admin/AdminTabs';
 import { AdminHubMenu } from './components/admin/AdminHubMenu';
 import { AdminCatalogVisualView } from './components/admin/AdminCatalogVisualView';
 import { OrdersQueue } from './components/admin/OrdersQueue';
+import { AdminLayawaysSection } from './components/admin/AdminLayawaysSection';
 import { InventoryTable } from './components/admin/InventoryTable';
 import { CashRegisterReports } from './components/admin/CashRegisterReports';
 import { WorkshopEnrollmentsSection } from './components/admin/WorkshopEnrollmentsSection';
@@ -533,6 +534,7 @@ export const App: React.FC = () => {
                         </div>
 
                         {adminTab === 'orders' && <OrdersQueue />}
+                        {adminTab === 'layaways' && <AdminLayawaysSection onNavigate={navigate} />}
                         {adminTab === 'billing' && (
                           <React.Suspense fallback={<div className="py-12 text-center text-slate-400 font-bubble text-sm">Cargando facturación rápida...</div>}>
                             <QuickBillingSection

@@ -121,6 +121,7 @@ const mapRowToOrder = (r: OrderDbRow) => {
     layawayRemainingAmount: isLayaway ? remainingDebt : undefined,
     layawayDueDate: firstLay?.layawayDueDate,
     layawayDaysTotal: firstLay?.layawayDaysTotal,
+    layawayPayments: Array.isArray(firstLay?.layawayPayments) ? firstLay.layawayPayments : [],
   };
 };
 

@@ -51,11 +51,14 @@ export const OrdersQueue: React.FC = () => {
     setRecentlyFinishedIds((prev) => new Set([...prev, orderId]));
   };
 
+  // EXCLUSIÓN ESTRICTA: Los apartados NO forman parte de la cola de pedidos de alisto/empaque.
+  const isLayawayOrder = (o: Order) => Boolean(o.isLayaway || (Array.isArray(o.items) && o.items.some((it) => it.isLayaway)));
+
   // Ordenamiento cronológico descendente estricto (pedidos más recientes arriba, más antiguos abajo)
   const sortedOrders = React.useMemo(() => {
-    return [...orders].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return orders
+      .filter((o) => !isLayawayOrder(o))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [orders]);
 
   // Determina si un pedido ya finalizó el alisto (progreso 100% estricto de todos los items)
@@ -86,8 +89,8 @@ export const OrdersQueue: React.FC = () => {
 
   // 4. Terminados: pedidos con alisto al 100% y marcados como entregados (caen arriba por fecha de entrega)
   const deliveredOrders = React.useMemo(() => {
-    return [...orders]
-      .filter((o) => isOrderFullyAlistado(o) && o.orderStatus === 'delivered')
+    return orders
+      .filter((o) => !isLayawayOrder(o) && isOrderFullyAlistado(o) && o.orderStatus === 'delivered')
       .sort((a, b) => {
         const timeA = new Date(a.deliveredAt || a.packedAt || a.createdAt).getTime();
         const timeB = new Date(b.deliveredAt || b.packedAt || b.createdAt).getTime();
