@@ -81,7 +81,7 @@ export const StudioLocationScheduleCard: React.FC<StudioLocationScheduleCardProp
                 200 sur del parque de Tibás
               </p>
               <p className="text-xs text-slate-600 font-medium">
-                San José, Costa Rica &bull; Ref: MAYO10 / by.fio
+                San José, Costa Rica
               </p>
               <p className="text-[11px] text-slate-500 pt-1">
                 A pasos del parque central de Tibás, fácil acceso y parqueo en zona.

@@ -726,7 +726,7 @@ export const SalesHistorySection: React.FC = () => {
                     ) : (
                       <>
                         <Store className="w-4 h-4 text-purple-600 shrink-0" />
-                        <span>Retiro Personal en Taller (MAYO10)</span>
+                        <span>Retiro Personal en Taller</span>
                       </>
                     )}
                   </div>

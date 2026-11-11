@@ -37,7 +37,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
   }
 
   return (
-    <nav className="xl:hidden border-t border-purple-300/40 bg-[#C99BF9] px-4 py-3 space-y-2 animate-fadeIn pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))]">
+    <nav className="xl:hidden border-t border-purple-300/50 bg-[#C592F9] px-4 py-3 space-y-2 animate-fadeIn pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))]">
       <button
         type="button"
         onClick={() => onNavigate('home')}

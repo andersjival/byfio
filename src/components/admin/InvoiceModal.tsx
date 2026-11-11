@@ -35,7 +35,7 @@ export const InvoiceModal: React.FC = () => {
     });
     msg += `\n*Total:* ${formatCRC(invoiceOrder.total)}\n`;
     msg += `*Entrega:* ${invoiceOrder.deliveryMethod === 'envio' ? 'En ruta con Correos de Costa Rica 🚚' : 'Listo para retiro en taller 🛍️'}\n\n`;
-    msg += `📍 *Ubicación Taller:* 200 sur del parque de Tibás, San José (MAYO10 / by.fio)\n`;
+    msg += `📍 *Ubicación Taller:* 200 sur del parque de Tibás, San José\n`;
     msg += `¡Gracias por apoyar el talento y creatividad costarricense! 🇨🇷✨`;
     return msg;
   };
@@ -103,7 +103,7 @@ export const InvoiceModal: React.FC = () => {
                 <div className="text-[11px] text-fio-200/90 space-y-0.5 pt-1 font-sans">
                   <p className="flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
-                    <span>200 sur del parque de Tibás, San José, CR (MAYO10 / by.fio)</span>
+                    <span>200 sur del parque de Tibás, San José, CR</span>
                   </p>
                   <p className="flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
@@ -154,7 +154,7 @@ export const InvoiceModal: React.FC = () => {
               </p>
               <p className="text-slate-700 text-[11px] leading-relaxed">
                 <strong className="text-slate-800">Dirección:</strong>{' '}
-                {invoiceOrder.shippingAddress || '200 sur del parque de Tibás, San José (MAYO10 / by.fio)'}
+                {invoiceOrder.shippingAddress || '200 sur del parque de Tibás, San José'}
               </p>
               <p className="text-slate-500 text-[11px]">
                 <strong className="text-slate-800">Medio de Pago:</strong>{' '}

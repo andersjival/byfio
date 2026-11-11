@@ -17,6 +17,21 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.81 - Corrección de Status Bar en PWA iOS, Fondo Lila Pastel y Retiro de Referencia MAYO10
+- [x] **Eliminación de Filtro Borroso en iOS PWA ([index.html](file:///C:/Users/Juan/byfio/index.html)):**
+  - Cambiado `apple-mobile-web-app-status-bar-style` de `black-translucent` a `default` para desactivar la capa de cristal esmerilado que desenfocaba los botones en la pantalla de inicio del iPhone.
+  - Sincronizado `<meta name="theme-color" content="#C592F9" />` para que la barra de estado de iOS coincida en nitidez y tono con el header.
+- [x] **Ajuste de Altura y Espaciado de Botones ([Navbar.tsx](file:///C:/Users/Juan/byfio/src/components/common/Navbar.tsx)):**
+  - Incrementado el padding superior a `pt-[calc(env(safe-area-inset-top,0px)+8px)] pb-1.5 sm:pb-2` para que los botones ("Tienda", "Menú", "Salir", "Modo Oscuro") bajen a una posición cómoda, visible y completamente despejada del Notch o Dynamic Island.
+  - Aplicado el color lila pastel característico de la web: `bg-[#C592F9]`.
+- [x] **Retiro Completo de Referencia `MAYO10 / by.fio` en Direcciones:**
+  - Eliminado `(MAYO10 / by.fio)` y `Ref: MAYO10 / by.fio` de todos los puntos de la aplicación:
+    - [StudioLocationScheduleCard.tsx](file:///C:/Users/Juan/byfio/src/components/common/StudioLocationScheduleCard.tsx) (Tarjeta de ubicación en página de inicio).
+    - [InvoiceModal.tsx](file:///C:/Users/Juan/byfio/src/components/admin/InvoiceModal.tsx) (Facturas digitales, mensaje de WhatsApp y comprobante impreso).
+    - [CheckoutModal.tsx](file:///C:/Users/Juan/byfio/src/components/store/CheckoutModal.tsx) (Modal de retiro en tienda).
+    - [SupplierOrderModal.tsx](file:///C:/Users/Juan/byfio/src/components/admin/SupplierOrderModal.tsx) (Órdenes de compra y entrega a proveedores).
+    - [SalesHistorySection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/SalesHistorySection.tsx) (Historial de ventas).
+
 ### Versión 4.19.80 - Unificación a Moradito Pastel Sólido en Header sin Difuminado a Blanco
 - [x] **Fondo Parejo en Header ([Navbar.tsx](file:///C:/Users/Juan/byfio/src/components/common/Navbar.tsx)):**
   - Eliminado el degradado horizontal con desvanecimiento a blanco (`from-[#C99BF9] via-[#D4AEFA] to-[#E2C0F4]`).

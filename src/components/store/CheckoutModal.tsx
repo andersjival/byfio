@@ -527,7 +527,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                     <span>Lugar y Horarios para Retiro en Tibás:</span>
                   </p>
                   <p className="text-[11px] text-slate-700">
-                    📍 <strong>200 sur del parque de Tibás</strong> (Ref: MAYO10 / by.fio).
+                    📍 <strong>200 sur del parque de Tibás</strong>.
                   </p>
                   <p className="text-[10px] text-slate-600">
                     ⏰ <strong>Horarios:</strong> Lun, Mar y Vie 9:00 am - 5:00 pm &bull; Jue 10:00 am - 4:00 pm &bull; Sáb 10:00 am - 3:00 pm (Mié y Dom cerrado).

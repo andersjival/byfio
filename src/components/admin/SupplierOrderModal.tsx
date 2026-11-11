@@ -506,7 +506,7 @@ export const SupplierOrderModal: React.FC = () => {
                       </p>
                       <div className="text-[11px] text-purple-200/95 space-y-0.5 pt-1 font-sans">
                         <p className="flex items-center gap-1.5">
-                          <span>📍 200 sur del parque de Tibás, San José, Costa Rica (MAYO10 / by.fio)</span>
+                          <span>📍 200 sur del parque de Tibás, San José, Costa Rica</span>
                         </p>
                         <p className="flex items-center gap-1.5">
                           <span>📞 WhatsApp Oficial: +506 6400-4640 • Tienda Web: byfiocr.pages.dev</span>
@@ -556,7 +556,7 @@ export const SupplierOrderModal: React.FC = () => {
                       📦 Entrega en Taller Central Tibás
                     </p>
                     <p className="text-slate-700 text-[11px] leading-relaxed">
-                      <strong className="text-slate-800">Dirección:</strong> 200 sur del parque de Tibás, San José (MAYO10 / by.fio)
+                      <strong className="text-slate-800">Dirección:</strong> 200 sur del parque de Tibás, San José
                     </p>
                     <p className="text-slate-500 text-[11px]">
                       <strong className="text-slate-800">Observación:</strong> Favor adjuntar factura electrónica y desglosar por SKU.
