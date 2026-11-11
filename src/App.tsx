@@ -401,7 +401,7 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800 overflow-x-hidden w-full max-w-full">
+    <div className="relative min-h-screen min-h-[100dvh] flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800 overflow-x-hidden w-full max-w-full">
       {/* Fondo Decorativo Sereno Estilo Cerámico / Zen */}
       <BackgroundDecor />
 

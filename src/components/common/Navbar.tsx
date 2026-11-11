@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-gradient-to-r from-[#C99BF9] via-[#D4AEFA] to-[#E2C0F4] border-b border-white/50 shadow-[0_4px_20px_rgba(180,130,220,0.25)] transition-all">
+    <header className="sticky top-0 z-40 bg-gradient-to-r from-[#C99BF9] via-[#D4AEFA] to-[#E2C0F4] border-b border-white/50 shadow-[0_4px_20px_rgba(180,130,220,0.25)] transition-all pt-[max(0px,env(safe-area-inset-top))]">
       <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 min-h-[50px] sm:min-h-[54px] py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 w-full">
         {/* Logo de Marca y Botones de Retorno en Admin/Superadmin */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">

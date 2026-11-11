@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.78 - Soporte Safe Area Notch y Dynamic Island para iPhone en PWA
+- [x] **Ajuste de Área Segura en Header ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
+  - Añadido pt-[max(0px,env(safe-area-inset-top))] al <header> para que en iPhones con Notch o Dynamic Island en modo PWA standalone el fondo moradito cubra estéticamente la barra de estado y el contenido (logo, modo oscuro, iniciar sesión, carrito) se dibuje de forma 100% visible y accesible debajo del Notch.
+- [x] **Protección de Barra Inferior en Menú Móvil ([NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
+  - Añadido pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] para respetar el Home Indicator de iOS.
+- [x] **Contenedor Raíz Adaptativo ([App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx)):**
+  - Integrado min-h-[100dvh] para asegurar la altura dinámica óptima en navegadores móviles.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a yfio-pwa-v4.19.78 en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.77 - Suavizado Imperceptible de Hover en Botón Catálogo
 - [x] **Atenuación de Hover en Catálogo ([NavbarNavLinks.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarNavLinks.tsx), [NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
   - Cambiado `hover:text-pink-600` a `hover:text-slate-800` para que el texto permanezca neutro y casi imperceptible en reposo/hover con un leve fondo pastel rosado blanquecino (`hover:bg-[#FDF2F8]`), igualando el comportamiento sutil de Inicio, Talleres y Tienda.
