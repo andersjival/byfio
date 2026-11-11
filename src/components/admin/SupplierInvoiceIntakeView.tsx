@@ -115,23 +115,23 @@ export const SupplierInvoiceIntakeView: React.FC<SupplierInvoiceIntakeViewProps>
   };
 
   return (
-    <div className="space-y-4 animate-fadeIn pb-8">
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-3xl border border-slate-200 shadow-2xs p-4 sm:p-5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-700 to-fio-pink text-white flex items-center justify-center shadow-md">
-            <Receipt className="w-5 h-5" />
+    <div className="max-w-4xl mx-auto space-y-3 animate-fadeIn pb-6">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-2xs p-3.5 sm:px-5">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-fio-pink text-white flex items-center justify-center shadow-sm">
+            <Receipt className="w-4 h-4" />
           </div>
           <div>
-            <h2 className="font-bubble font-bold text-lg sm:text-xl text-fio-900">Ingresar Pedido / Factura de Proveedor</h2>
-            <p className="text-xs text-slate-500">Paso {step === 'header' ? '1 de 2: Datos del Proveedor y Factura' : step === 'products' ? '2 de 2: Ingresar Productos al Inventario' : 'Completado'}</p>
+            <h2 className="font-bubble font-bold text-base sm:text-lg text-fio-900 leading-tight">Ingresar Pedido de Proveedor</h2>
+            <p className="text-[11px] text-slate-500">Paso {step === 'header' ? '1 de 2: Datos del Proveedor y Factura' : step === 'products' ? '2 de 2: Ingresar Productos al Inventario' : 'Completado'}</p>
           </div>
         </div>
         <button
           type="button"
           onClick={onBackToMenu}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bubble text-xs font-bold cursor-pointer"
+          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bubble text-xs font-bold cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-3.5 h-3.5" />
           <span>Volver a Proveedores</span>
         </button>
       </div>

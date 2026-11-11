@@ -1,3 +1,12 @@
+## [v4.19.107] - 2026-11-11
+
+### 🎯 Selector Compacto de Proveedor y Optimización de Espacio en Ingreso de Pedido
+- **Selector `<select>` y Formulario Compacto ([`SupplierInvoiceHeaderStep.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierInvoiceHeaderStep.tsx), [`SupplierInvoiceIntakeView.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierInvoiceIntakeView.tsx))**:
+  - Reemplazada la grilla de tarjetas grandes de proveedores por un selector desplegable compacto (`<select>`) con botón inline `+ Nuevo proveedor`, y contenido ajustado a ancho compacto (`max-w-4xl`) con campos optimizados.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.107`.
+
+---
+
 ## [v4.19.106] - 2026-11-11
 
 ### 🚚 Botón Pedidos de Clientes & Flujo Dual de Proveedores (Ingreso de Factura y Productos)
