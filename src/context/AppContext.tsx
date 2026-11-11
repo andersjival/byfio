@@ -582,29 +582,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         o.orderNumber = `#${rawNum}`;
       }
 
-      // Reconstrucción e integridad automática de apartados
+      // Reconstrucción e integridad matemática automática de apartados
       const layItem = hasItems ? o.items.find((it) => it.isLayaway) : undefined;
       if (layItem) {
-        const itemDown = Number(layItem.layawayDownPaymentAmount) || Number(o.layawayDownPaymentAmount) || o.total;
-        const explicitRemaining =
-          layItem.layawayRemainingAmount !== undefined && layItem.layawayRemainingAmount !== null && Number(layItem.layawayRemainingAmount) > 0
-            ? Number(layItem.layawayRemainingAmount)
-            : o.layawayRemainingAmount !== undefined && o.layawayRemainingAmount !== null && Number(o.layawayRemainingAmount) > 0
-            ? Number(o.layawayRemainingAmount)
-            : undefined;
+        const paymentsList: LayawayPaymentRecord[] = Array.isArray(o.layawayPayments) && o.layawayPayments.length > 0
+          ? o.layawayPayments
+          : (Array.isArray(layItem.layawayPayments) ? layItem.layawayPayments : []);
+
+        const sumOfAbonos = paymentsList.reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+        const initialPayment = Number(o.total) || 0;
+
+        const totalPaid = paymentsList.length > 0
+          ? initialPayment + sumOfAbonos
+          : (Number(o.layawayDownPaymentAmount) || Number(layItem.layawayDownPaymentAmount) || initialPayment);
 
         let itemTotal =
-          (o.layawayTotalAmount && Number(o.layawayTotalAmount) > itemDown ? Number(o.layawayTotalAmount) : 0) ||
-          (layItem.layawayTotalAmount && Number(layItem.layawayTotalAmount) > itemDown ? Number(layItem.layawayTotalAmount) : 0);
+          (o.layawayTotalAmount && Number(o.layawayTotalAmount) > 0 ? Number(o.layawayTotalAmount) : 0) ||
+          (layItem.layawayTotalAmount && Number(layItem.layawayTotalAmount) > 0 ? Number(layItem.layawayTotalAmount) : 0) ||
+          (Number(layItem.price) > initialPayment ? Number(layItem.price) : 0);
 
-        if (!itemTotal && explicitRemaining !== undefined) {
-          itemTotal = itemDown + explicitRemaining;
-        }
         if (!itemTotal) {
-          itemTotal = Number(layItem.price) > itemDown ? Number(layItem.price) : o.total;
+          itemTotal = totalPaid + (Number(o.layawayRemainingAmount) || Number(layItem.layawayRemainingAmount) || 0);
+        }
+        if (itemTotal < totalPaid) {
+          itemTotal = totalPaid;
         }
 
-        const calculatedRemaining = explicitRemaining !== undefined ? explicitRemaining : Math.max(0, itemTotal - itemDown);
+        const calculatedRemaining = Math.max(0, itemTotal - totalPaid);
 
         o = {
           ...o,
@@ -613,8 +617,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           layawayPaymentsCount: o.layawayPaymentsCount || layItem.layawayPaymentsCount || 3,
           layawayDownPaymentPercent: o.layawayDownPaymentPercent || layItem.layawayDownPaymentPercent || 20,
           layawayTotalAmount: itemTotal,
-          layawayDownPaymentAmount: itemDown,
+          layawayDownPaymentAmount: totalPaid,
           layawayRemainingAmount: calculatedRemaining,
+          layawayPayments: paymentsList,
           layawayDueDate: o.layawayDueDate || layItem.layawayDueDate,
           layawayDaysTotal: o.layawayDaysTotal || layItem.layawayDaysTotal,
         };
@@ -3605,24 +3610,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (!targetOrder) return false;
 
       const layItem = (targetOrder.items && targetOrder.items.find((i) => i.isLayaway)) || (targetOrder.items && targetOrder.items[0]);
-      const currentDown =
-        (targetOrder.layawayDownPaymentAmount && targetOrder.layawayDownPaymentAmount > 0 ? Number(targetOrder.layawayDownPaymentAmount) : 0) ||
-        (layItem?.layawayDownPaymentAmount && layItem.layawayDownPaymentAmount > 0 ? Number(layItem.layawayDownPaymentAmount) : 0) ||
-        Number(targetOrder.total) ||
-        0;
-
-      const currentRemaining =
-        targetOrder.layawayRemainingAmount !== undefined && targetOrder.layawayRemainingAmount !== null
-          ? Number(targetOrder.layawayRemainingAmount)
-          : layItem?.layawayRemainingAmount !== undefined && layItem?.layawayRemainingAmount !== null
-          ? Number(layItem.layawayRemainingAmount)
-          : Math.max(0, (Number(targetOrder.layawayTotalAmount) || Number(targetOrder.total)) - currentDown);
-
       const payAmount = Number(payment.amount) || 0;
       if (payAmount <= 0) return false;
 
-      const newDownPayment = currentDown + payAmount;
-      const newRemaining = Math.max(0, currentRemaining - payAmount);
+      const initialCheckoutPayment = Number(targetOrder.total) || 0;
+      const existingPayments: LayawayPaymentRecord[] = Array.isArray(targetOrder.layawayPayments) && targetOrder.layawayPayments.length > 0
+        ? [...targetOrder.layawayPayments]
+        : (Array.isArray(layItem?.layawayPayments) ? [...layItem.layawayPayments] : []);
 
       const newRecord: LayawayPaymentRecord = {
         id: `laypay-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -3634,18 +3628,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         registeredBy: payment.registeredBy || currentUser?.name || 'Cliente',
       };
 
-      const existingPayments: LayawayPaymentRecord[] = Array.isArray(targetOrder.layawayPayments)
-        ? [...targetOrder.layawayPayments]
-        : (Array.isArray(layItem?.layawayPayments) ? [...layItem.layawayPayments] : []);
-
       const updatedPayments = [...existingPayments, newRecord];
+      const sumOfAllAbonos = updatedPayments.reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+      const totalPaidSoFar = initialCheckoutPayment + sumOfAllAbonos;
+
+      let itemTotal =
+        (targetOrder.layawayTotalAmount && Number(targetOrder.layawayTotalAmount) > 0 ? Number(targetOrder.layawayTotalAmount) : 0) ||
+        (layItem?.layawayTotalAmount && Number(layItem.layawayTotalAmount) > 0 ? Number(layItem.layawayTotalAmount) : 0) ||
+        (Number(layItem?.price) > initialCheckoutPayment ? Number(layItem?.price) : 0);
+
+      if (!itemTotal || itemTotal < totalPaidSoFar) {
+        const prevRemaining = Number(targetOrder.layawayRemainingAmount) || 0;
+        itemTotal = Math.max(totalPaidSoFar, totalPaidSoFar - payAmount + prevRemaining);
+      }
+
+      const newRemainingDebt = Math.max(0, itemTotal - totalPaidSoFar);
 
       const updatedItems = (targetOrder.items || []).map((it) => {
         if (it.isLayaway || it.id === layItem?.id) {
           return {
             ...it,
-            layawayDownPaymentAmount: newDownPayment,
-            layawayRemainingAmount: newRemaining,
+            layawayTotalAmount: itemTotal,
+            layawayDownPaymentAmount: totalPaidSoFar,
+            layawayRemainingAmount: newRemainingDebt,
             layawayPayments: updatedPayments,
           };
         }
@@ -3654,8 +3659,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       const updatedOrder: Order = {
         ...targetOrder,
-        layawayDownPaymentAmount: newDownPayment,
-        layawayRemainingAmount: newRemaining,
+        layawayTotalAmount: itemTotal,
+        layawayDownPaymentAmount: totalPaidSoFar,
+        layawayRemainingAmount: newRemainingDebt,
         layawayPayments: updatedPayments,
         items: updatedItems,
       };

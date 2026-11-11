@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Order, PaymentMethod } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { formatCRC } from '../../utils/formatters';
@@ -53,6 +53,18 @@ export const LayawayPaymentModal: React.FC<LayawayPaymentModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Sincronización reactiva inmediata cada vez que se abre el modal o cambia el saldo
+  useEffect(() => {
+    if (isOpen) {
+      const initial = Math.min(remainingDebt, 5000);
+      setAmount(initial);
+      setCustomAmountText(initial > 0 ? String(initial) : '');
+      setIsSuccess(false);
+      setErrorMessage('');
+      setReference('');
+    }
+  }, [isOpen, remainingDebt]);
 
   if (!isOpen) return null;
 

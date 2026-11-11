@@ -77,19 +77,25 @@ const mapRowToOrder = (r: OrderDbRow) => {
   const firstLay = items.find((it: any) => it.isLayaway);
   const isLayaway = Boolean(firstLay);
 
-  const downPayment = Number(firstLay?.layawayDownPaymentAmount) || r.total;
-  let totalAmount = Number(firstLay?.layawayTotalAmount) || 0;
-  let remainingDebt =
-    firstLay?.layawayRemainingAmount !== undefined && firstLay?.layawayRemainingAmount !== null
-      ? Number(firstLay?.layawayRemainingAmount)
-      : undefined;
+  const payments = Array.isArray(firstLay?.layawayPayments) ? firstLay.layawayPayments : [];
+  const sumOfAbonos = payments.reduce((acc: number, p: any) => acc + (Number(p.amount) || 0), 0);
+  const initialCheckoutPayment = Number(r.total) || 0;
 
-  if (!totalAmount && remainingDebt !== undefined && remainingDebt > 0) {
-    totalAmount = downPayment + remainingDebt;
+  const downPayment = payments.length > 0
+    ? initialCheckoutPayment + sumOfAbonos
+    : (Number(firstLay?.layawayDownPaymentAmount) || initialCheckoutPayment);
+
+  let totalAmount = Number(firstLay?.layawayTotalAmount) || 0;
+  if (!totalAmount) {
+    totalAmount = Number(firstLay?.price) > initialCheckoutPayment
+      ? Number(firstLay.price)
+      : (downPayment + (Number(firstLay?.layawayRemainingAmount) || 0));
   }
-  if (totalAmount > 0 && (remainingDebt === undefined || remainingDebt === null)) {
-    remainingDebt = Math.max(0, totalAmount - downPayment);
+  if (totalAmount < downPayment) {
+    totalAmount = downPayment;
   }
+
+  const remainingDebt = Math.max(0, totalAmount - downPayment);
 
   return {
     id: r.id,

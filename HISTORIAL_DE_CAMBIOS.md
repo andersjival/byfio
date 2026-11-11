@@ -1,3 +1,23 @@
+## [v4.19.92] - 2026-11-11
+
+### 🎯 Corrección Matemática en Abonos y Rediseño Ultra Compacto de Fichas de Apartados
+- **Precisión Matemática en Cálculo de Abonos (`AppContext.tsx`, `orders.ts` & `LayawayPaymentModal.tsx`):**
+  - Se unificó la fórmula matemática de saldos en todo el sistema:
+    - **Total Abonado:** Anticipo inicial de checkout (`order.total`) + suma exacta de cada abono registrado en `order.layawayPayments`.
+    - **Saldo que Debes:** `Total Contado - Total Abonado`.
+  - Se resolvió la discrepancia de cálculo al ingresar montos de abono (ej. deber ₡10 000 y al abonar ₡2 000 el saldo resultante ahora marca con precisión matemática exacta **₡8 000**).
+  - Sincronización reactiva con `useEffect` en el modal de abono para reiniciar el monto al abrir y garantizar que la simulación de saldo posterior sea 100% fiel en todo momento.
+- **Rediseño Ultra Compacto de Apartados en el Panel Administrativo (`AdminLayawaysSection.tsx`):**
+  - **Reducción del 75% del espacio vertical:** Se transformó la tarjeta grande que ocupaba toda la pantalla en una ficha horizontal compacta, moderna y elegante (~75px de alto).
+  - **Toda la información visible a simple vista:**
+    - Miniatura del producto, número de pedido `#FIO-...` e insignia de estado (`Activo • 30d` / `Vencido` / `100% Pagado`).
+    - Nombre del cliente, teléfono con acceso directo a WhatsApp y nombre del artículo.
+    - Píldoras financieras compactas: Total de contado, Total abonado a la fecha y Saldo pendiente.
+    - Botones de acción directos: `[ 💵 Abonar ]`, `[ 📱 WhatsApp ]`, `[ 🖨️ Factura ]`.
+  - **Detalle Desplegable Opcional:** Al tocar la flecha se despliega suavemente la barra de progreso de tiempo y el historial detallado de abonos sin recargar la pantalla.
+
+---
+
 ## [v4.19.91] - 2026-11-11
 
 ### 🏷️ Sistema Completo de Abonos en Línea para Clientes y Sección Exclusiva de Apartados en el Panel Administrativo
