@@ -2438,6 +2438,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setWelcomeStarModal(null);
   };
 
+  const readSavedAdminContact = (key: string): { email?: string; phone?: string } => {
+    try {
+      const all = JSON.parse(localStorage.getItem('byfio_admin_contact_v1') || '{}');
+      return all?.[key] || {};
+    } catch {
+      return {};
+    }
+  };
+
+  const buildProfileAuthUser = (profile: UserProfile): AuthUser => {
+    const isAdmin = profile.role === 'admin';
+    const saved = isAdmin ? readSavedAdminContact(profile.id || 'prof-admin') : {};
+    return {
+      id: profile.id,
+      name: profile.name.toUpperCase(),
+      role: profile.role,
+      permissions: {
+        ...profile.permissions,
+        suppliers: profile.permissions?.suppliers !== false,
+      },
+      isMasterAdmin: isAdmin,
+      createdAt: profile.createdAt || '2026-10-30T10:00:00-06:00',
+      ...(isAdmin ? { email: saved.email || 'fio@byfiocr.com', phone: saved.phone || '6400-4640' } : {}),
+    };
+  };
+
+  const buildSuperAdminUser = (permissions: UserPermissions): AuthUser => {
+    const saved = readSavedAdminContact('superadmin');
+    return {
+      email: saved.email || 'superadmin@byfio.com',
+      phone: saved.phone || '6400-4640',
+      name: 'SUPERADMIN MAESTRO',
+      role: 'admin',
+      isMasterAdmin: true,
+      createdAt: '2026-10-30T10:00:00-06:00',
+      permissions,
+    };
+  };
+
   const updateCurrentUserData = (updates: Partial<AuthUser>) => {
     if (!currentUser) return;
     const updated: AuthUser = {
@@ -2448,6 +2487,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(updated));
     } catch {}
+    if (updated.role === 'admin') {
+      try {
+        const key = updated.id || (updated.name?.toUpperCase().includes('SUPER') ? 'superadmin' : 'admin');
+        const prev = JSON.parse(localStorage.getItem('byfio_admin_contact_v1') || '{}');
+        prev[key] = { email: updated.email || '', phone: updated.phone || '' };
+        localStorage.setItem('byfio_admin_contact_v1', JSON.stringify(prev));
+      } catch {}
+    }
     if (updated.email) {
       try {
         const cleanEmail = updated.email.trim().toLowerCase();
@@ -2471,7 +2518,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             body: JSON.stringify({ user: registered[idx] }),
           }).catch(() => {});
         }
-        if (!RESERVED_WEB_EMAILS.has(cleanEmail)) {
+        if (updated.role !== 'admin' && !RESERVED_WEB_EMAILS.has(cleanEmail)) {
           setCustomers((prev) => {
             const regId = `reg-${cleanEmail}`;
             const existingIdx = prev.findIndex(
@@ -2653,13 +2700,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // 1. Si se especificó un perfil concreto en la pantalla de selección
     if (targetProfileName) {
       if (targetProfileName.toUpperCase().includes('SUPER') && (cleanPin === '7777' || cleanPin === '9999' || cleanPin === '0777')) {
-        const superAdminUser: AuthUser = {
-          email: 'superadmin@byfio.com',
-          name: 'SUPERADMIN MAESTRO',
-          role: 'admin',
-          isMasterAdmin: true,
-          permissions: fullPermissions,
-        };
+        const superAdminUser = buildSuperAdminUser(fullPermissions);
         setCurrentUser(superAdminUser);
         setIsSuperAdminAuthenticated(true);
         try {
@@ -2676,17 +2717,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (expected.pin !== cleanPin && cleanPin !== '7777' && cleanPin !== '9999') {
           return { success: false, error: 'Código PIN incorrecto para este perfil.' };
         }
-        const userObj: AuthUser = {
-          id: expected.id,
-          name: expected.name.toUpperCase(),
-          role: expected.role,
-          permissions: {
-            ...expected.permissions,
-            suppliers: expected.permissions?.suppliers !== false,
-          },
-          isMasterAdmin: expected.role === 'admin',
-          createdAt: expected.createdAt || '2026-10-30T10:00:00-06:00',
-        };
+        const userObj = buildProfileAuthUser(expected);
         setCurrentUser(userObj);
         localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(userObj));
         return { success: true, user: userObj };
@@ -2696,17 +2727,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // 2. Si no se especificó perfil, buscar primero entre los perfiles creados por su PIN exacto
     const matchedProfile = userProfiles.find((p) => p.isActive && p.pin === cleanPin);
     if (matchedProfile) {
-      const userObj: AuthUser = {
-        id: matchedProfile.id,
-        name: matchedProfile.name.toUpperCase(),
-        role: matchedProfile.role,
-        permissions: {
-          ...matchedProfile.permissions,
-          suppliers: matchedProfile.permissions?.suppliers !== false,
-        },
-        isMasterAdmin: matchedProfile.role === 'admin',
-        createdAt: matchedProfile.createdAt || '2026-10-30T10:00:00-06:00',
-      };
+      const userObj = buildProfileAuthUser(matchedProfile);
       setCurrentUser(userObj);
       localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(userObj));
       return { success: true, user: userObj };
@@ -2714,13 +2735,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // 3. Códigos maestros globales de Superadmin (7777, 0777, 9999)
     if (cleanPin === '7777' || cleanPin === '0777' || cleanPin === '9999') {
-      const superAdminUser: AuthUser = {
-        email: 'superadmin@byfio.com',
-        name: 'SUPERADMIN MAESTRO',
-        role: 'admin',
-        isMasterAdmin: true,
-        permissions: fullPermissions,
-      };
+      const superAdminUser = buildSuperAdminUser(fullPermissions);
       setCurrentUser(superAdminUser);
       setIsSuperAdminAuthenticated(true);
       try {
@@ -2769,13 +2784,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cleanPass.toLowerCase() === 'fio777';
 
     if (isSuperUser && isSuperPass) {
-      const superAdminUser: AuthUser = {
-        email: 'superadmin@byfio.com',
-        name: 'SUPERADMIN MAESTRO',
-        role: 'admin',
-        isMasterAdmin: true,
-        permissions: fullPermissions,
-      };
+      const superAdminUser = buildSuperAdminUser(fullPermissions);
       setCurrentUser(superAdminUser);
       setIsSuperAdminAuthenticated(true);
       try {
@@ -2790,11 +2799,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (cleanEmailLower === 'fio@byfiocr.com' || cleanEmailLower === 'fio' || cleanEmailLower === 'fio@byfio.com') &&
       cleanPass.toLowerCase() === 'fio777'
     ) {
+      const savedAdmin = readSavedAdminContact('admin');
       const adminUser: AuthUser = {
-        email: 'fio@byfiocr.com',
+        email: savedAdmin.email || 'fio@byfiocr.com',
+        phone: savedAdmin.phone || '6400-4640',
         name: 'Fiorella (Fio)',
         role: 'admin',
         isMasterAdmin: true,
+        createdAt: '2026-10-30T10:00:00-06:00',
         permissions: fullPermissions,
       };
       setCurrentUser(adminUser);

@@ -182,7 +182,7 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
                       Mi Cuenta
                     </span>
                     <span className="text-[10px] text-slate-400 block">
-                      Envíos, pedidos, promos y mapa
+                      {currentUser.role === 'admin' ? 'Datos de contacto y perfil' : 'Envíos, pedidos, promos y mapa'}
                     </span>
                   </div>
                 </div>

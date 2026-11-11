@@ -1,3 +1,4 @@
+import { AdminAccountView } from './AdminAccountView';
 import { LayawayOrderCard } from './LayawayOrderCard';
 import React, { useState, useEffect } from 'react';
 import {
@@ -350,6 +351,18 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
     );
   }
 
+  // Si el usuario es Administrador, mostrar únicamente Datos de Contacto, Fecha/Día/Hora de creación, Correo y Teléfono.
+  if (currentUser.role === 'admin' || currentUser.isMasterAdmin) {
+    return (
+      <AdminAccountView
+        currentUser={currentUser}
+        onNavigate={onNavigate}
+        updateCurrentUserData={updateCurrentUserData}
+        logoutUser={logoutUser}
+      />
+    );
+  }
+
   // URL del mapa OpenStreetMap embed
   const mapEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${(lng - 0.007).toFixed(5)}%2C${(lat - 0.005).toFixed(5)}%2C${(lng + 0.007).toFixed(5)}%2C${(lat + 0.005).toFixed(5)}&layer=mapnik&marker=${lat.toFixed(5)}%2C${lng.toFixed(5)}`;
 
@@ -402,7 +415,7 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
                   {currentUser.name}
                 </h1>
                 <span className="px-3 py-0.5 rounded-full bg-fio-pink text-white text-[11px] font-bold tracking-wider uppercase shadow-2xs">
-                  {currentUser.role === 'admin' ? 'Administradora' : currentUser.role === 'staff' ? 'Staff Colaborador' : 'Cliente Registrado'}
+                  {currentUser.role === 'staff' ? 'Staff Colaborador' : 'Cliente Registrado'}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 flex items-center gap-1.5">
