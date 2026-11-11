@@ -1,3 +1,21 @@
+## [v4.19.89] - 2026-11-11
+
+### 🔐 Persistencia en Cloudflare D1 y Sincronización Remota de Cuentas de Clientes Registrados
+- **Nueva API de Base de Datos Cloudflare D1 (`functions/api/registered-users.ts`):**
+  - Se creó el endpoint centralizado en D1 para persistir las cuentas de clientes registrados en la tabla `site_metrics` (`app_registered_users`), evitando la pérdida de cuentas cuando el usuario cambia de dispositivo, navegador, modo incógnito o limpia el caché.
+  - Métodos `GET`, `POST` y `PUT` con fusión atómica por correo electrónico normalizado en minúsculas.
+- **Sincronización Automática e Inmediata (`AppContext.tsx`):**
+  - Al cargar la aplicación se consultan las cuentas remotas en D1 y se sincronizan con `safeLocalStorage`.
+  - Al completar el registro (`registerUser`), se guarda localmente y se transmite en segundo plano a Cloudflare D1 sin demoras.
+  - Normalización defensiva de correos y contraseñas (eliminación de espacios en blanco y caracteres de ancho cero invisibles `\u200B-\u200D\uFEFF`).
+- **Verificación Asíncrona Remota en Inicio de Sesión (`LoginModal.tsx`):**
+  - Si un usuario ingresa sus credenciales en un dispositivo nuevo o pestaña incógnita donde aún no se ha descargado el caché local, el modal consulta de inmediato a la base de datos de Cloudflare D1 en tiempo real.
+  - Al validar la cuenta remota, la incorpora a la sesión local y permite el ingreso exitoso instantáneamente sin mostrar *"Credenciales incorrectas"*.
+- **Prellenado Inteligente de Correo (`ThreeStepRegisterForm.tsx`):**
+  - Guarda automáticamente el correo registrado en `byfio_saved_login_email` para facilitar inicios de sesión futuros.
+
+---
+
 ## [v4.19.88] - 2026-11-11
 
 ### ✨ Sistema de Apartados Dinámico, Personalización de Abono y Seguimiento con Cuenta Regresiva

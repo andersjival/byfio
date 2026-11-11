@@ -118,13 +118,19 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
     playBubblePopSound();
 
     setTimeout(() => {
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanPass = password.trim();
+      try {
+        localStorage.setItem('byfio_saved_login_email', cleanEmail);
+      } catch {}
+
       const res = registerUser(
-        email,
-        password,
-        name,
-        phone,
-        idCard,
-        address,
+        cleanEmail,
+        cleanPass,
+        name.trim(),
+        phone.trim(),
+        idCard.trim(),
+        address.trim(),
         lat ?? undefined,
         lng ?? undefined
       );

@@ -259,10 +259,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
     // Flujo de Autenticación por Correo y Contraseña
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-
-      if (mode === 'login') {
+    setTimeout(async () => {
+      try {
+        if (mode === 'login') {
         const cleanEmail = email.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
         const cleanPass = password.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
@@ -301,7 +300,43 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         }
 
         let result = loginUser(cleanEmail, cleanPass);
+
+        // Si no se encuentra en el almacenamiento local, verificar de inmediato en Cloudflare D1
+        if (!result.success && !isSuperadminUser && cleanEmail.includes('@')) {
+          try {
+            const res = await fetch('/api/registered-users', { cache: 'no-store' });
+            if (res.ok) {
+              const data = await res.json();
+              if (data && Array.isArray(data.users)) {
+                const remoteMatch = data.users.find((u: any) => {
+                  if (!u || !u.email) return false;
+                  return (
+                    String(u.email).trim().toLowerCase() === cleanEmail.toLowerCase() &&
+                    String(u.password || '').trim() === cleanPass
+                  );
+                });
+                if (remoteMatch) {
+                  try {
+                    const local = JSON.parse(localStorage.getItem('byfio_registered_users_v1') || '[]');
+                    const exists = local.findIndex(
+                      (l: any) => l && String(l.email).trim().toLowerCase() === cleanEmail.toLowerCase()
+                    );
+                    if (exists !== -1) {
+                      local[exists] = remoteMatch;
+                    } else {
+                      local.push(remoteMatch);
+                    }
+                    localStorage.setItem('byfio_registered_users_v1', JSON.stringify(local));
+                  } catch {}
+                  result = loginUser(cleanEmail, cleanPass);
+                }
+              }
+            }
+          } catch {}
+        }
         
+        setIsLoading(false);
+
         // Respaldo de seguridad directo para Superadmin si el usuario escribe cualquier variante
         if (!result.success && (cleanEmail.toLowerCase().includes('super') || cleanPass.toLowerCase().includes('super'))) {
           const superCheck = loginSuperAdmin(cleanEmail, cleanPass);
@@ -359,6 +394,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         } else {
           setErrorMessage(result.error || 'Error al crear la cuenta.');
         }
+      }
+      } finally {
+        setIsLoading(false);
       }
     }, 200);
   };

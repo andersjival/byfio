@@ -2170,12 +2170,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true, user: staffUser };
     }
 
-    // 4. Cuentas de clientes registradas localmente
+    // 4. Cuentas de clientes registradas (localStorage y Cloudflare D1)
     try {
-      const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
-      const found = registered.find(
-        (u: any) => u.email.toLowerCase() === cleanEmailLower && u.password === cleanPass
-      );
+      const registered = JSON.parse(safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+      const found = registered.find((u: any) => {
+        if (!u || !u.email) return false;
+        const uEmail = String(u.email).trim().toLowerCase();
+        const uPass = String(u.password || '').trim();
+        return uEmail === cleanEmailLower && uPass === cleanPass;
+      });
       if (found) {
         const normalUser: AuthUser = {
           email: found.email,
@@ -2190,9 +2193,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           welcomeShown: Boolean(found.welcomeShown),
         };
         setCurrentUser(normalUser);
-        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(normalUser));
+        safeLocalStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(normalUser));
         const welcomeKey = 'byfio_welcome_star_' + found.email.toLowerCase();
-        if (!found.welcomeShown && !localStorage.getItem(welcomeKey)) {
+        if (!found.welcomeShown && !safeLocalStorage.getItem(welcomeKey)) {
           setWelcomeStarModal({
             isOpen: true,
             userName: normalUser.name,
@@ -2216,17 +2219,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     latInput?: number,
     lngInput?: number
   ) => {
-    const cleanEmail = emailInput.trim().toLowerCase();
-    const cleanPass = passwordInput.trim();
+    const cleanEmail = emailInput.trim().toLowerCase().replace(/[\u200B-\u200D\uFEFF]/g, '');
+    const cleanPass = passwordInput.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
     if (!cleanEmail || !cleanPass) {
       return { success: false, error: 'Por favor completa todos los campos requeridos.' };
     }
-    if (cleanEmail === 'fio@byfiocr.com' || cleanEmail === 'fio') {
+    if (cleanEmail === 'fio@byfiocr.com' || cleanEmail === 'fio' || cleanEmail === 'superadmin@byfio.com') {
       return { success: false, error: 'Este correo está reservado para la administración.' };
     }
     try {
-      const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
-      if (registered.some((u: any) => u.email.toLowerCase() === cleanEmail)) {
+      const registered = JSON.parse(safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+      if (registered.some((u: any) => u && u.email && String(u.email).trim().toLowerCase() === cleanEmail)) {
         return { success: false, error: 'Ya existe una cuenta con este correo electrónico.' };
       }
       const record = {
@@ -2242,7 +2245,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         welcomeShown: false,
       };
       registered.push(record);
-      localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+      safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+
+      // Sincronizar de inmediato con Cloudflare D1
+      fetch('/api/registered-users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user: record }),
+      }).catch(() => {});
 
       const customer: AuthUser = {
         email: record.email,
@@ -2257,7 +2267,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         welcomeShown: false,
       };
       setCurrentUser(customer);
-      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(customer));
+      safeLocalStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(customer));
       setWelcomeStarModal({
         isOpen: true,
         userName: customer.name,
@@ -2270,8 +2280,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const resetPassword = (emailInput: string, newPasswordInput: string): { success: boolean; error?: string } => {
-    const cleanEmail = emailInput.trim().toLowerCase();
-    const cleanPass = newPasswordInput.trim();
+    const cleanEmail = emailInput.trim().toLowerCase().replace(/[\u200B-\u200D\uFEFF]/g, '');
+    const cleanPass = newPasswordInput.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
     if (!cleanEmail || !cleanPass) {
       return { success: false, error: 'Por favor ingresa tu correo y la nueva contraseña.' };
@@ -2286,8 +2296,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     try {
-      const registered = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
-      const userIndex = registered.findIndex((u: any) => u.email && u.email.toLowerCase() === cleanEmail);
+      const registered = JSON.parse(safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+      const userIndex = registered.findIndex((u: any) => u && u.email && String(u.email).trim().toLowerCase() === cleanEmail);
 
       if (userIndex === -1) {
         return { success: false, error: 'No encontramos ninguna cuenta registrada con este correo electrónico.' };
@@ -2295,7 +2305,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       registered[userIndex].password = cleanPass;
       registered[userIndex].updatedAt = new Date().toISOString();
-      localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+      safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
+
+      fetch('/api/registered-users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user: registered[userIndex] }),
+      }).catch(() => {});
 
       return { success: true };
     } catch {
@@ -2847,6 +2863,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(orders));
     } catch {}
   }, [orders]);
+
+  // Sincronizar cuentas registradas desde Cloudflare D1
+  useEffect(() => {
+    fetch('/api/registered-users', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.users) && data.users.length > 0) {
+          try {
+            const local = JSON.parse(safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
+            const map = new Map<string, any>();
+            for (const u of local) {
+              if (u && u.email) map.set(String(u.email).trim().toLowerCase(), u);
+            }
+            for (const u of data.users) {
+              if (u && u.email) {
+                const k = String(u.email).trim().toLowerCase();
+                map.set(k, { ...(map.get(k) || {}), ...u });
+              }
+            }
+            const merged = Array.from(map.values());
+            safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(merged));
+          } catch {}
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Chequeo proactivo de recordatorios de apartados proximos a vencer (<= 5 dias restantes)
   useEffect(() => {
