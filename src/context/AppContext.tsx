@@ -480,6 +480,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(initial) && initial.length > 0) {
           const sanitized = deepSanitize(initial).filter((p: any) => p && p.id);
           if (sanitized.length > 0) {
+            const existingIds = new Set(sanitized.map((p: any) => p.id));
+            const missingSeed = INITIAL_PRODUCTS.filter((ip) => !existingIds.has(ip.id));
+            if (missingSeed.length > 0) {
+              return [...sanitized, ...missingSeed];
+            }
             return sanitized;
           }
         }

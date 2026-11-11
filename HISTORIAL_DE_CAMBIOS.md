@@ -17,6 +17,30 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.84 - Selector Central de Macro-Departamentos con Subfiltros Dinámicos y Buscador Inteligente
+- [x] **Selector Centrado de 4 Macro-Departamentos en Tienda ([StorePage.tsx](file:///C:/Users/Juan/byfio/src/components/store/StorePage.tsx)):**
+  - Ubicado entre el banner ilustrado oficial (`imagen-tienda-online.jpeg`) y la barra de filtros de productos.
+  - Implementación de 4 tarjetas táctiles neumórficas interactivas:
+    1. ✂️ **Papelería e Insumos** (`papeleria`): stickers de vinil, kits de encuadernación, papeles especiales, opalinas y herramientas manuales.
+    2. 🖨️ **DTF** (`dtf`): impresiones DTF textil, láminas DTF UV multisuperficie, transfers por metro y poliamidas adhesivas.
+    3. ✨ **Personalizables** (`personalizables`): agendas fechadas con nombre, libros de vacunas acolchados, artículos sublimados y tazas con diseño personalizado.
+    4. ⚙️ **Maquinaria** (`maquinaria`): prensas térmicas 8 en 1 multifuncionales, plotters de corte digital Silhouette Cameo 5 y repuestos.
+  - Cada departamento cuenta con icono dinámico, conteo de artículos disponibles en tiempo real, descripción de la sección y degradado de activación (`from-purple-600 via-fio-purple to-fio-pink`).
+- [x] **Subfiltros Rápidos Dinámicos por Departamento:**
+  - Al cambiar de departamento, la barra inferior carga exclusivamente los subfiltros correspondientes a esa área de la tienda.
+  - Subcategorías contextuales:
+    - *Papelería e Insumos:* `Todas`, `Stickers y Papelería`, `Kits e Insumos`, `Papeles y Cartulinas`, `Herramientas Manuales`.
+    - *DTF:* `Todas`, `DTF Textil`, `DTF UV`, `Láminas y Transfers`, `Insumos DTF`.
+    - *Personalizables:* `Todas`, `Agendas Personalizadas`, `Libros de Vacunas`, `Artículos Sublimados`, `Detalles con Nombre`.
+    - *Maquinaria:* `Todas`, `Máquinas y Equipo`, `Prensas Térmicas`, `Plotters de Corte`, `Repuestos y Accesorios`.
+- [x] **Buscador Inteligente de Productos con Detección Multi-Departamento:**
+  - Búsqueda en tiempo real por nombre, SKU, descripción y categorías.
+  - Si una búsqueda no tiene resultados en el departamento actual pero sí existen productos coincidentes en otra sección (ej. buscar "prensa" estando en "Papelería"), el sistema muestra un banner inteligente sugiriendo las coincidencias con botón de 1 toque para saltar directamente a ese departamento.
+- [x] **Ampliación de Categorías y Catálogo Base ([seedData.ts](file:///C:/Users/Juan/byfio/src/utils/seedData.ts), [NewProductModal.tsx](file:///C:/Users/Juan/byfio/src/components/admin/NewProductModal.tsx), [AppContext.tsx](file:///C:/Users/Juan/byfio/src/context/AppContext.tsx)):**
+  - Añadidos productos base de DTF (`Metro Lineal DTF Textil`, `Lámina DTF UV Adhesivo`, `Poliamida en Polvo Premium`) para que la sección cuente con existencias y catálogo inicial.
+  - Incorporadas categorías de DTF y maquinaria al modal de creación de productos para el panel de administración.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.84`.
+
 ### Versión 4.19.83 - Ordenamiento Responsivo y Simétrico de Filtros de Cola de Pedidos en la App
 - [x] **Rediseño Simétrico y Ordenado en la App Móvil ([OrdersQueue.tsx](file:///C:/Users/Juan/byfio/src/components/admin/OrdersQueue.tsx)):**
   - Se eliminó el wrapping desordenado de 3 filas asimétricas que dejaba botones huérfanos y espacios en blanco en la versión móvil.

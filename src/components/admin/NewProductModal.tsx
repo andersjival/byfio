@@ -23,6 +23,13 @@ const DEFAULT_CATEGORIES = [
   'Stickers y Papelería',
   'Kits e Insumos',
   'Máquinas y Equipo',
+  'DTF Textil',
+  'DTF UV',
+  'Láminas y Transfers',
+  'Insumos DTF',
+  'Prensas Térmicas',
+  'Plotters de Corte',
+  'Papeles y Cartulinas',
 ];
 
 const DEFAULT_SHELF_LOCATIONS = [

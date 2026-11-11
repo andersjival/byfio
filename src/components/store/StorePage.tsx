@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCategory, Product, AppRoute } from '../../types';
 import { formatCRC } from '../../utils/formatters';
@@ -6,18 +6,221 @@ import { TreeNavigation } from '../common/TreeNavigation';
 import { ProductDetailModal } from './ProductDetailModal';
 import {
   ShoppingBag, Search, Star, Heart,
-  Check, AlertCircle, Flower2, SlidersHorizontal, Plus, Minus,
-  Pencil, PlusCircle
+  Check, AlertCircle, Flower2, Plus, Minus,
+  Pencil, PlusCircle, Sparkles, Layers,
+  Scissors, Cog, X, ArrowRight, Package
 } from 'lucide-react';
 
-const CATEGORIES: ('Todas' | ProductCategory)[] = [
-  'Todas',
-  'Agendas Personalizadas',
-  'Libros de Vacunas',
-  'Artículos Sublimados',
-  'Stickers y Papelería',
-  'Kits e Insumos',
+export type StoreDepartment = 'papeleria' | 'dtf' | 'personalizables' | 'maquinaria';
+
+export interface DepartmentConfig {
+  id: StoreDepartment;
+  title: string;
+  shortTitle: string;
+  badge: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+  subcategories: string[];
+}
+
+export const STORE_DEPARTMENTS: DepartmentConfig[] = [
+  {
+    id: 'papeleria',
+    title: 'Papelería e Insumos',
+    shortTitle: 'Papelería',
+    badge: 'Taller & Creación',
+    icon: Scissors,
+    description: 'Stickers de vinil impermeable, kits de encuadernación, papeles especiales e insumos creativos.',
+    subcategories: [
+      'Todas',
+      'Stickers y Papelería',
+      'Kits e Insumos',
+      'Papeles y Cartulinas',
+      'Herramientas Manuales',
+    ],
+  },
+  {
+    id: 'dtf',
+    title: 'DTF',
+    shortTitle: 'DTF',
+    badge: 'Textil & UV',
+    icon: Layers,
+    description: 'Transfers DTF textil de alta resolución, láminas adhesivas DTF UV y poliamidas de fijación.',
+    subcategories: [
+      'Todas',
+      'DTF Textil',
+      'DTF UV',
+      'Láminas y Transfers',
+      'Insumos DTF',
+    ],
+  },
+  {
+    id: 'personalizables',
+    title: 'Personalizables',
+    shortTitle: 'Personalizados',
+    badge: 'Hecho a tu Gusto',
+    icon: Sparkles,
+    description: 'Agendas artesanales fechadas, libros de vacunas acolchados, tazas sublimadas y detalles con tu nombre.',
+    subcategories: [
+      'Todas',
+      'Agendas Personalizadas',
+      'Libros de Vacunas',
+      'Artículos Sublimados',
+      'Detalles con Nombre',
+    ],
+  },
+  {
+    id: 'maquinaria',
+    title: 'Maquinaria',
+    shortTitle: 'Maquinaria',
+    badge: 'Equipos & Prensas',
+    icon: Cog,
+    description: 'Prensas térmicas multifuncionales, plotters de corte digital, laminadoras y repuestos para producción.',
+    subcategories: [
+      'Todas',
+      'Máquinas y Equipo',
+      'Prensas Térmicas',
+      'Plotters de Corte',
+      'Repuestos y Accesorios',
+    ],
+  },
 ];
+
+export const getProductDepartment = (p: Product): StoreDepartment => {
+  if (!p) return 'papeleria';
+  const cat = (p.category || '').toLowerCase();
+  const name = (p.name || '').toLowerCase();
+  const desc = (p.description || '').toLowerCase();
+  const sku = (p.sku || '').toLowerCase();
+  const fullText = `${cat} ${name} ${desc} ${sku}`;
+
+  // 1. DTF (prioridad para transfer dtf, dtf uv, poliamida, etc)
+  if (
+    cat.includes('dtf') ||
+    fullText.includes('dtf') ||
+    fullText.includes('transfer textil') ||
+    fullText.includes('poliamida') ||
+    fullText.includes('film textil')
+  ) {
+    return 'dtf';
+  }
+
+  // 2. Maquinaria
+  if (
+    cat.includes('máquina') ||
+    cat.includes('maquina') ||
+    cat.includes('equipo') ||
+    fullText.includes('prensa térmica') ||
+    fullText.includes('prensa termica') ||
+    fullText.includes('plotter') ||
+    fullText.includes('cameo') ||
+    fullText.includes('cricut') ||
+    fullText.includes('laminadora')
+  ) {
+    return 'maquinaria';
+  }
+
+  // 3. Personalizables
+  if (
+    p.isCustomizable ||
+    cat.includes('agenda') ||
+    cat.includes('vacuna') ||
+    cat.includes('sublimad') ||
+    fullText.includes('personaliz') ||
+    fullText.includes('libro de vacuna') ||
+    fullText.includes('agenda 202') ||
+    fullText.includes('taza cerámica') ||
+    fullText.includes('tote bag')
+  ) {
+    return 'personalizables';
+  }
+
+  // 4. Default: Papelería e insumos
+  return 'papeleria';
+};
+
+export const isProductInSubcategory = (
+  p: Product,
+  dept: StoreDepartment,
+  subcat: string
+): boolean => {
+  if (subcat === 'Todas') return true;
+  if (p.category === subcat) return true;
+
+  const cat = (p.category || '').toLowerCase();
+  const name = (p.name || '').toLowerCase();
+  const desc = (p.description || '').toLowerCase();
+  const fullText = `${cat} ${name} ${desc}`;
+  const sLower = subcat.toLowerCase();
+
+  switch (dept) {
+    case 'papeleria':
+      if (sLower === 'stickers y papelería') {
+        return fullText.includes('sticker') || fullText.includes('memo pad') || fullText.includes('papeler');
+      }
+      if (sLower === 'kits e insumos') {
+        return fullText.includes('kit') || fullText.includes('insumo') || fullText.includes('tazas blancas');
+      }
+      if (sLower === 'papeles y cartulinas') {
+        return ['papel', 'cartulina', 'opalina', 'resma', 'hojas'].some((k) => fullText.includes(k));
+      }
+      if (sLower === 'herramientas manuales') {
+        return ['plegadera', 'punzón', 'punzon', 'herramienta', 'tijera', 'cúter', 'cuter'].some((k) =>
+          fullText.includes(k)
+        );
+      }
+      break;
+
+    case 'dtf':
+      if (sLower === 'dtf textil') {
+        return fullText.includes('textil') || fullText.includes('ropa') || fullText.includes('prenda');
+      }
+      if (sLower === 'dtf uv') {
+        return fullText.includes('uv') || fullText.includes('rígido') || fullText.includes('rigido');
+      }
+      if (sLower === 'láminas y transfers') {
+        return ['lámina', 'lamina', 'transfer', 'metro'].some((k) => fullText.includes(k));
+      }
+      if (sLower === 'insumos dtf') {
+        return ['poliamida', 'tinta', 'polvo', 'film', 'insumo'].some((k) => fullText.includes(k));
+      }
+      break;
+
+    case 'personalizables':
+      if (sLower === 'agendas personalizadas') {
+        return fullText.includes('agenda');
+      }
+      if (sLower === 'libros de vacunas') {
+        return fullText.includes('vacuna');
+      }
+      if (sLower === 'artículos sublimados') {
+        return ['sublimad', 'taza', 'tote'].some((k) => fullText.includes(k));
+      }
+      if (sLower === 'detalles con nombre') {
+        return Boolean(p.isCustomizable) || ['nombre', 'frase', 'inicial'].some((k) => fullText.includes(k));
+      }
+      break;
+
+    case 'maquinaria':
+      if (sLower === 'máquinas y equipo') {
+        return cat.includes('máquinas y equipo') || cat.includes('equipo');
+      }
+      if (sLower === 'prensas térmicas') {
+        return fullText.includes('prensa') || fullText.includes('sublimadora');
+      }
+      if (sLower === 'plotters de corte') {
+        return ['plotter', 'cameo', 'cricut'].some((k) => fullText.includes(k));
+      }
+      if (sLower === 'repuestos y accesorios') {
+        return ['repuesto', 'accesorio', 'cuchilla', 'teflón', 'teflon', 'tapete'].some((k) =>
+          fullText.includes(k)
+        );
+      }
+      break;
+  }
+
+  return fullText.includes(sLower);
+};
 
 interface StorePageProps {
   onNavigate: (route: AppRoute) => void;
@@ -25,13 +228,18 @@ interface StorePageProps {
 
 export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   const { products, addToCart, cart, setIsCartOpen, setIsNewProductModalOpen, setEditingProduct, inventoryMode } = useApp();
-  const [selectedCategory, setSelectedCategory] = useState<'Todas' | ProductCategory>('Todas');
+  const [activeDepartment, setActiveDepartment] = useState<StoreDepartment>('papeleria');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
   const [onlyCustomizable, setOnlyCustomizable] = useState(false);
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [addedAnimationId, setAddedAnimationId] = useState<string | null>(null);
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
+
+  const currentDeptConfig = useMemo(() => {
+    return STORE_DEPARTMENTS.find((d) => d.id === activeDepartment) || STORE_DEPARTMENTS[0];
+  }, [activeDepartment]);
 
   const getQty = (id: string) => quantities[id] || 1;
 
@@ -44,21 +252,66 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
     });
   };
 
-  const safeProducts = Array.isArray(products) ? products.filter(Boolean) : [];
-  const filteredProducts = safeProducts.filter((p) => {
-    if (!p) return false;
-    // Si el producto está en cero o se desactiva, desaparece automáticamente de la tienda
-    if ((p.stock ?? 0) <= 0 || p.isAvailable === false || p.showInStore === false) return false;
+  const safeProducts = useMemo(() => {
+    return Array.isArray(products) ? products.filter(Boolean) : [];
+  }, [products]);
 
-    const matchesCategory = selectedCategory === 'Todas' || p.category === selectedCategory;
-    const q = (searchQuery || '').toLowerCase();
-    const matchesSearch =
-      (p.name || '').toLowerCase().includes(q) ||
-      (p.sku || '').toLowerCase().includes(q) ||
-      (p.description || '').toLowerCase().includes(q);
-    const matchesCustom = !onlyCustomizable || Boolean(p.isCustomizable);
-    return matchesCategory && matchesSearch && matchesCustom;
-  });
+  // Filtro de productos del departamento activo
+  const filteredProducts = useMemo(() => {
+    return safeProducts.filter((p) => {
+      if (!p) return false;
+      // Si el producto está en cero o se desactiva, desaparece automáticamente de la tienda
+      if ((p.stock ?? 0) <= 0 || p.isAvailable === false || p.showInStore === false) return false;
+
+      // 1. Debe pertenecer al departamento activo
+      if (getProductDepartment(p) !== activeDepartment) return false;
+
+      // 2. Filtro de subcategoría
+      if (!isProductInSubcategory(p, activeDepartment, selectedCategory)) return false;
+
+      // 3. Buscador inteligente
+      const q = (searchQuery || '').toLowerCase().trim();
+      if (q) {
+        const matchesSearch =
+          (p.name || '').toLowerCase().includes(q) ||
+          (p.sku || '').toLowerCase().includes(q) ||
+          (p.description || '').toLowerCase().includes(q) ||
+          (p.category || '').toLowerCase().includes(q);
+        if (!matchesSearch) return false;
+      }
+
+      // 4. Toggle personalizable
+      if (onlyCustomizable && !p.isCustomizable) return false;
+
+      return true;
+    });
+  }, [safeProducts, activeDepartment, selectedCategory, searchQuery, onlyCustomizable]);
+
+  // Coincidencias inteligentes en otros departamentos cuando el usuario busca algo
+  const otherDeptMatches = useMemo(() => {
+    const q = (searchQuery || '').toLowerCase().trim();
+    if (!q) return [];
+
+    return STORE_DEPARTMENTS.filter((d) => d.id !== activeDepartment)
+      .map((d) => {
+        const matches = safeProducts.filter((p) => {
+          if (!p) return false;
+          if ((p.stock ?? 0) <= 0 || p.isAvailable === false || p.showInStore === false) return false;
+          if (getProductDepartment(p) !== d.id) return false;
+          return (
+            (p.name || '').toLowerCase().includes(q) ||
+            (p.sku || '').toLowerCase().includes(q) ||
+            (p.description || '').toLowerCase().includes(q) ||
+            (p.category || '').toLowerCase().includes(q)
+          );
+        });
+        return {
+          department: d,
+          count: matches.length,
+        };
+      })
+      .filter((res) => res.count > 0);
+  }, [searchQuery, activeDepartment, safeProducts]);
 
   const handleCustomTextChange = (prodId: string, val: string) => {
     setCustomTextInputs((prev) => ({ ...prev, [prodId]: val }));
@@ -90,6 +343,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   const breadcrumbs = [
     { label: 'by.fio', route: 'home' as AppRoute },
     { label: 'tienda', route: 'store' as AppRoute },
+    { label: currentDeptConfig.title },
     ...(selectedCategory !== 'Todas' ? [{ label: selectedCategory }] : []),
   ];
 
@@ -97,7 +351,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
     <div className="py-2 sm:py-4 max-w-7xl mx-auto space-y-6 animate-fadeIn">
       {/* Encabezado Editorial con Árbol Integrado */}
       <div className="relative text-center py-6 sm:py-8 px-6 rounded-[36px] bg-[#F1F2F6] border border-white/90 shadow-neuCard overflow-hidden">
-        {/* Glows interiores */}
+        {/* Glows interiores suaves */}
         <div className="absolute top-0 right-1/4 w-64 h-64 bg-[#D4AEFA]/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-[#FFF07C]/15 rounded-full blur-3xl pointer-events-none" />
 
@@ -139,35 +393,108 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
         />
       </div>
 
-      {/* Barra de Filtros Neumórfica (Cajas y Botones Táctiles) */}
-      <div className="p-4 sm:p-5 rounded-[28px] bg-[#F1F2F6] border border-white/90 shadow-neuCard flex flex-col lg:flex-row items-center justify-between gap-4">
-        {/* Categorías como Botones Neumórficos Grandes y Táctiles */}
-        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 w-full lg:w-auto">
-          {CATEGORIES.map((cat) => {
-            const isSelected = selectedCategory === cat;
+      {/* Selector Centrado de Departamentos (Macro-Categorías) */}
+      <div className="p-4 sm:p-6 rounded-[32px] bg-[#F1F2F6] border border-white/90 shadow-neuCard text-center space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-1">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-white/90 text-fio-800 text-[11px] font-bubble font-bold tracking-wider uppercase shadow-neuBtn">
+            <Sparkles className="w-3 h-3 text-fio-pink fill-fio-pink" />
+            <span>Elige un departamento</span>
+          </span>
+          <h2 className="font-bubble text-xl sm:text-2xl text-slate-800 font-bold tracking-tight">
+            Secciones Principales de la Tienda
+          </h2>
+        </div>
+
+        {/* Los 4 Botones de Departamentos */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 max-w-4xl mx-auto">
+          {STORE_DEPARTMENTS.map((dept) => {
+            const isActive = activeDepartment === dept.id;
+            const Icon = dept.icon;
+            const deptCount = safeProducts.filter(
+              (p) =>
+                (p.stock ?? 0) > 0 &&
+                p.isAvailable !== false &&
+                p.showInStore !== false &&
+                getProductDepartment(p) === dept.id
+            ).length;
+
             return (
               <button
-                key={cat}
+                key={dept.id}
                 type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bubble font-bold tracking-wide transition-all duration-200 ${
-                  isSelected
-                    ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.02]'
-                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                onClick={() => {
+                  setActiveDepartment(dept.id);
+                  setSelectedCategory('Todas');
+                }}
+                className={`group relative flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl transition-all duration-200 select-none ${
+                  isActive
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.03] ring-2 ring-fio-purple/30 z-10'
+                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover active:scale-95'
                 }`}
               >
-                {cat}
+                <div
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center mb-2 transition-transform duration-200 group-hover:scale-110 ${
+                    isActive
+                      ? 'bg-white/20 text-white shadow-inner'
+                      : 'bg-white/80 text-fio-700 shadow-neuBtn border border-white/90'
+                  }`}
+                >
+                  <Icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+                </div>
+
+                <span className="font-bubble text-xs sm:text-sm font-bold tracking-wide leading-tight text-center">
+                  {dept.title}
+                </span>
+
+                <span
+                  className={`mt-1.5 text-[10px] sm:text-[11px] font-sans font-medium px-2 py-0.5 rounded-full ${
+                    isActive
+                      ? 'bg-white/25 text-white/95'
+                      : 'bg-[#ECEEF2] text-slate-500 shadow-neuInset'
+                  }`}
+                >
+                  {deptCount} {deptCount === 1 ? 'artículo' : 'artículos'}
+                </span>
               </button>
             );
           })}
         </div>
 
-        {/* Buscador y Toggle de Personalizados */}
+        {/* Breve descripción del departamento activo */}
+        <p className="text-xs text-slate-500 font-sans max-w-lg mx-auto pt-1">
+          {currentDeptConfig.description}
+        </p>
+      </div>
+
+      {/* Barra de Filtros Rápidos Dinámica y Buscador Inteligente */}
+      <div className="p-4 sm:p-5 rounded-[28px] bg-[#F1F2F6] border border-white/90 shadow-neuCard flex flex-col lg:flex-row items-center justify-between gap-4">
+        {/* Subcategorías como Botones Neumórficos Táctiles Dinámicos */}
+        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 w-full lg:w-auto">
+          {currentDeptConfig.subcategories.map((subcat) => {
+            const isSelected = selectedCategory === subcat;
+            return (
+              <button
+                key={subcat}
+                type="button"
+                onClick={() => setSelectedCategory(subcat)}
+                className={`px-3.5 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-bubble font-bold tracking-wide transition-all duration-200 ${
+                  isSelected
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.02]'
+                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
+                }`}
+              >
+                {subcat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Buscador Inteligente, Toggle de Personalizados y Agregar Producto */}
         <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full lg:w-auto shrink-0">
           <button
             type="button"
             onClick={() => setOnlyCustomizable(!onlyCustomizable)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bubble font-bold transition-all ${
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bubble font-bold transition-all ${
               onlyCustomizable
                 ? 'neu-btn-amber text-white shadow-neuBtnHover'
                 : 'neu-btn bg-[#F1F2F6] text-slate-700 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover'
@@ -177,15 +504,26 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
             <span>Personalizables</span>
           </button>
 
+          {/* Buscador Inteligente con botón de limpiar */}
           <div className="relative w-full sm:w-64">
             <input
               type="text"
-              placeholder="Buscar por nombre o SKU…"
+              placeholder={`Buscar en ${currentDeptConfig.shortTitle} o SKU…`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-[#ECEEF2] rounded-2xl text-xs text-slate-800 placeholder-slate-400 border border-white/60 shadow-neuInset focus:outline-none transition-all"
+              className="w-full pl-9 pr-8 py-2 bg-[#ECEEF2] rounded-2xl text-xs text-slate-800 placeholder-slate-400 border border-white/60 shadow-neuInset focus:outline-none transition-all"
             />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-2 p-1 rounded-full text-slate-400 hover:text-slate-700 transition-colors"
+                title="Limpiar búsqueda"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           {/* Botón Admin: Agregar Producto Directo desde Tienda */}
@@ -195,7 +533,7 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
               setEditingProduct(null);
               setIsNewProductModalOpen(true);
             }}
-            className="neu-btn-primary flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bubble font-bold text-white shadow-neuBtn active:scale-95 transition-all shrink-0 w-full sm:w-auto"
+            className="neu-btn-primary flex items-center justify-center gap-1.5 px-4 py-2 rounded-2xl text-xs font-bubble font-bold text-white shadow-neuBtn active:scale-95 transition-all shrink-0 w-full sm:w-auto"
             title="Crear un nuevo producto para la tienda y catálogo"
           >
             <PlusCircle className="w-4 h-4 text-white" />
@@ -204,19 +542,82 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
         </div>
       </div>
 
+      {/* Sugerencia Inteligente Multi-Departamento (Si hay coincidencias en otras secciones) */}
+      {otherDeptMatches.length > 0 && (
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-fio-50 to-pink-50 border border-fio-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn">
+          <div className="flex items-center gap-2.5 text-xs text-slate-700">
+            <span className="p-1.5 rounded-xl bg-white shadow-sm text-fio-600">💡</span>
+            <div>
+              <p className="font-bubble font-bold text-slate-800">
+                ¿Buscabas en otro departamento?
+              </p>
+              <p className="text-slate-600 text-[11px] font-sans">
+                Encontramos coincidencias para <span className="font-semibold text-fio-900">"{searchQuery}"</span> en:{' '}
+                {otherDeptMatches.map((m) => `${m.department.title} (${m.count})`).join(', ')}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {otherDeptMatches.map((m) => (
+              <button
+                key={m.department.id}
+                type="button"
+                onClick={() => {
+                  setActiveDepartment(m.department.id);
+                  setSelectedCategory('Todas');
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-fio-purple hover:text-white text-fio-800 text-xs font-bubble font-bold border border-fio-200 shadow-sm transition-all active:scale-95"
+              >
+                <span>Ir a {m.department.shortTitle} ({m.count})</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Grid de Productos — "Cajitas Bonitas" Estilo Neumórfico Suave */}
       {filteredProducts.length === 0 ? (
-        <div className="text-center py-16 px-4 rounded-[32px] bg-white/60 border border-white/80 shadow-sm space-y-3">
-          <Flower2 className="w-8 h-8 text-fio-300 mx-auto" />
-          <h3 className="font-serif text-xl text-slate-700 tracking-wider">No se encontraron productos</h3>
-          <p className="text-xs text-slate-500">Intenta con otra búsqueda o selecciona otra categoría.</p>
-          <button
-            type="button"
-            onClick={() => { setSelectedCategory('Todas'); setSearchQuery(''); setOnlyCustomizable(false); }}
-            className="mt-2 px-4 py-2 rounded-2xl bg-fio-800 text-white text-xs font-semibold shadow-sm"
-          >
-            Ver todos los productos
-          </button>
+        <div className="text-center py-14 px-6 rounded-[32px] bg-white/70 border border-white/90 shadow-sm space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-[#ECEEF2] text-fio-700 mx-auto flex items-center justify-center shadow-neuInset">
+            <currentDeptConfig.icon className="w-6 h-6" />
+          </div>
+          <h3 className="font-bubble text-xl text-slate-800 font-bold">
+            {searchQuery
+              ? `No encontramos "${searchQuery}" en ${currentDeptConfig.title}`
+              : `Aún no hay productos disponibles en ${currentDeptConfig.title}`}
+          </h3>
+          <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+            {searchQuery
+              ? 'Prueba con otra palabra clave o revisa las sugerencias de otros departamentos arriba.'
+              : 'Los productos nuevos que registres en esta sección aparecerán aquí automáticamente.'}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            {(searchQuery || selectedCategory !== 'Todas' || onlyCustomizable) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('Todas');
+                  setOnlyCustomizable(false);
+                }}
+                className="px-4 py-2 rounded-2xl bg-slate-800 text-white text-xs font-bubble font-bold shadow-sm hover:bg-slate-700 transition-all"
+              >
+                Ver todos en {currentDeptConfig.shortTitle}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setEditingProduct(null);
+                setIsNewProductModalOpen(true);
+              }}
+              className="px-4 py-2 rounded-2xl neu-btn-primary text-white text-xs font-bubble font-bold shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>+ Agregar Producto a {currentDeptConfig.shortTitle}</span>
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7">
@@ -280,7 +681,8 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                       Stock: {p.stock}
                     </span>
                   )}
-                                  {/* Indicador de múltiples fotos si aplica */}
+
+                  {/* Indicador de múltiples fotos si aplica */}
                   {Array.isArray(p.images) && p.images.filter(img => typeof img === 'string' && !img.includes('placeholder-new-product')).length > 1 && (
                     <span className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[10px] font-bubble font-bold shadow-md flex items-center gap-1.5 z-10 border border-white/20 pointer-events-none">
                       <span>📷 {p.images.filter(img => !img.includes('placeholder-new-product')).length} fotos</span>
