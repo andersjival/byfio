@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.76 - Color Rosadito Pastel en Botón Catálogo Seleccionado
+- [x] **Diferenciación de Botón Catálogo en Estado Activo ([NavbarNavLinks.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarNavLinks.tsx), [NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
+  - Aplicado un rosadito pastel suave (`from-[#F9A8D4] to-[#F472B6]`) con texto blanco puro (`text-white`) para diferenciarlo de Tienda (morado pastel), completando la paleta de 4 colores pasteles únicos: Inicio (amarillo), Talleres (celeste), Tienda (morado) y Catálogo (rosado).
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.76` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.75 - Botón Inicio Pastel Suave y Normalización de Catálogo sin Tonos Rojos
 - [x] **Botón Inicio Amarillo Pastel Suave ([NavbarNavLinks.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarNavLinks.tsx), [NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
   - Sustituido el degradado saturado de ámbar (`from-amber-400 to-amber-500`) por un amarillo pastel suave manteca (`from-[#FEF08A] to-[#FDE047]`) con texto ámbar oscuro de alto contraste y sombra táctil sutil.
