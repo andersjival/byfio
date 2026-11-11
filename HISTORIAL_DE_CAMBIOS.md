@@ -17,6 +17,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.73 - Botón de Confirmación "Aceptar 1 unidad" en Color Fucsia con Rosado
+- [x] **Estilo y Paleta de Color en Alisto Guiado ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Actualizado el botón principal de confirmación de cantidad escaneada (`Aceptar 1 unidad` / `Confirmar cantidad`) de verde esmeralda al degradado corporativo fucsia con rosado (`from-fuchsia-600 via-pink-600 to-fio-pink`).
+  - Sombra y anillo de enfoque integrados en tonos rosados (`shadow-pink-500/35`, `ring-pink-400/25`, `border-pink-300`).
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.73` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.72 - Corrección Crítica de Activación de Cámara en Alistar Pedido y Escaneo Robusto Multi-dispositivo
 - [x] **Solución del Fallo de Inicialización de Cámara ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
   - Erradicada la restricción incompatible `{ facingMode: { ideal: facing } }` que provocaba que `html5-qrcode` lanzara una excepción fatal (`facingMode object should have exact key`), bloqueando el encendido del stream de video.

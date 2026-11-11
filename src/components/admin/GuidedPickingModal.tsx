@@ -478,7 +478,7 @@ export const GuidedPickingModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleConfirmScannedQuantity}
-                        className="w-full py-4 px-4 bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:to-teal-700 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/30 border-2 border-emerald-300 transition-all cursor-pointer min-h-[58px] ring-4 ring-emerald-400/20"
+                        className="w-full py-4 px-4 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-fio-pink hover:from-fuchsia-700 hover:via-pink-700 hover:to-pink-600 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-lg shadow-pink-500/35 border-2 border-pink-300 transition-all cursor-pointer min-h-[58px] ring-4 ring-pink-400/25"
                       >
                         <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white shrink-0" />
                         <span>
