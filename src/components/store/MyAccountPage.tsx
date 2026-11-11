@@ -1,3 +1,4 @@
+import { LayawayOrderCard } from './LayawayOrderCard';
 import React, { useState, useEffect } from 'react';
 import {
   User, Mail, Phone, MapPin, Calendar, Clock, PackageCheck,
@@ -668,6 +669,17 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
           ) : (
             <div className="space-y-4">
               {userOrders.map((ord) => {
+                const isLayaway = ord.isLayaway || (Array.isArray(ord.items) && ord.items.some((i) => i.isLayaway));
+                if (isLayaway) {
+                  return (
+                    <LayawayOrderCard
+                      key={ord.id}
+                      order={ord}
+                      onPrintInvoice={setInvoiceOrder}
+                    />
+                  );
+                }
+
                 const isPacked = ord.orderStatus === 'packed';
                 const isDelivered = ord.orderStatus === 'delivered';
                 const isPending = ord.orderStatus === 'pending';

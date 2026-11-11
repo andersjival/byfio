@@ -1,3 +1,32 @@
+## [v4.19.88] - 2026-11-11
+
+### ✨ Sistema de Apartados Dinámico, Personalización de Abono y Seguimiento con Cuenta Regresiva
+- **Botón Dual de Apartado en Tienda (`StorePage.tsx` y `ProductDetailModal.tsx`):**
+  - Los productos configurados para apartado (o categoría Maquinaria) ahora presentan simultáneamente el botón de compra de contado **[ 🛍️ Al Carrito ]** y el botón dorado de reserva **[ 🏷️ Apartar ]**.
+  - Etiqueta indicativa en la tarjeta de producto que resalta la cuota inicial mínima configurada (ej. *Aparta con ₡9 000*).
+- **Modal Interactivo de Personalización de Monto de Apartado (`LayawaySelectionModal.tsx`):**
+  - Precarga de manera reactiva el monto mínimo de abono según la configuración del producto (ej. 20% = ₡9 000 sobre una máquina de ₡45 000).
+  - Permite al comprador ingresar cualquier monto mayor deseado (ej. ₡10 000, ₡15 000, etc.).
+  - Recalcula al instante y en tiempo real:
+    - Monto pagado hoy.
+    - Saldo pendiente que debe (ej. ₡45 000 - ₡10 000 = ₡35 000).
+    - Cuotas restantes y monto por cuota.
+    - Fecha estimada de vencimiento del plazo.
+  - Con un solo clic en *"Apartar y Proceder al Pago"*, redirige directamente a la pasarela de pago (`CheckoutModal.tsx`) con el monto exacto del abono listo para cancelar.
+- **Seguimiento en Vivo en "Mi Cuenta" -> "Mis Pedidos" (`LayawayOrderCard.tsx`, `MyAccountModal.tsx` y `MyAccountPage.tsx`):**
+  - Tarjeta de apartado de alta fidelidad que desglosa:
+    - Valor total del producto (`₡45 000`).
+    - Monto abonado a la fecha (`₡10 000`).
+    - Saldo pendiente que debe (`₡35 000`).
+    - **Reloj y Cuenta Regresiva Diaria:** Calcula dinámicamente los días restantes de plazo (`díasRestantes = dueDate - hoy`). Cada día que el cliente ingrese se descuentan los días transcurridos con barra de progreso visual de vencimiento.
+    - Acciones rápidas para copiar el número SINPE Móvil (`6400-4640 Fiorella Solano`) y reportar abonos adicionales vía WhatsApp con mensaje pre-rellenado.
+- **Sistema de Recordatorio Automatizado por Correo a los 5 Días (`layawayReminderService.ts`):**
+  - Cuando faltan 5 días o menos para el vencimiento del apartado (`daysRemaining <= 5`), el sistema prepara y despacha el correo de recordatorio con la plantilla oficial HTML de by.fio.
+  - Detalla nombre del cliente, número de pedido, artículo, monto pagado, saldo que debe, fecha límite y cuenta SINPE Móvil.
+  - Bandera `layawayReminderEmailSent: true` para evitar envíos duplicados.
+
+---
+
 # 📜 HISTORIAL DE CAMBIOS APROBADOS — BY.FIO TALLERES CREATIVOS & TIENDA
 
 Este archivo es el Registro Universal de Memoria Protegida.

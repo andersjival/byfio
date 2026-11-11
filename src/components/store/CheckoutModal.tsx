@@ -260,7 +260,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
       const layDesc = layawayItems
         .map(
           (it) =>
-            `[APARTADO] ${it.name}: 1ª cuota inicial pagada hoy (${formatCRC((it.price || 0) * (it.quantity || 1))}). Saldo pendiente: ${formatCRC((it.layawayRemainingAmount || 0) * (it.quantity || 1))} en ${(it.layawayPaymentsCount || 3) - 1} cuotas (plazo: ${it.layawayMonths || 3} meses).`
+            `[APARTADO] ${it.name}: Abono inicial pagado hoy (${formatCRC((it.price || 0) * (it.quantity || 1))}). Saldo pendiente: ${formatCRC((it.layawayRemainingAmount || 0) * (it.quantity || 1))} (plazo: ${it.layawayMonths || 1} mes${(it.layawayMonths || 1) > 1 ? 'es' : ''}).`
         )
         .join(' | ');
       orderNotesCombined = `${layDesc}${orderNotesCombined ? ` | ${orderNotesCombined}` : ''}`;

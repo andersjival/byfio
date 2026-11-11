@@ -1,3 +1,7 @@
+import { BookmarkCheck } from 'lucide-react';
+import { isProductLayawayEligible, getProductLayawayDetails } from '../../utils/layaway';
+import { LayawaySelectionModal } from './LayawaySelectionModal';
+import { playWaterDropSound } from '../../utils/soundEffects';
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCategory, Product, AppRoute } from '../../types';
@@ -227,7 +231,7 @@ interface StorePageProps {
 }
 
 export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
-  const { products, addToCart, cart, setIsCartOpen, setIsNewProductModalOpen, setEditingProduct, inventoryMode, currentUser, hasPermission } = useApp();
+  const { products, addToCart, cart, setIsCartOpen, setIsNewProductModalOpen, setEditingProduct, inventoryMode, currentUser, hasPermission, setIsCheckoutOpen } = useApp();
   const [activeDepartment, setActiveDepartment] = useState<StoreDepartment>('papeleria');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
@@ -242,6 +246,42 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
   const [customTextInputs, setCustomTextInputs] = useState<Record<string, string>>({});
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [addedAnimationId, setAddedAnimationId] = useState<string | null>(null);
+  const [layawayProduct, setLayawayProduct] = useState<Product | null>(null);
+
+  const handleOpenLayaway = (p: Product) => {
+    setLayawayProduct(p);
+    playWaterDropSound();
+  };
+
+  const handleConfirmLayaway = (product: Product, downPaymentAmount: number, customText?: string) => {
+    const lay = getProductLayawayDetails(product);
+    const remaining = Math.max(0, product.price - downPaymentAmount);
+    const daysTotal = (lay.months || 1) * 30;
+    const dueDate = new Date(Date.now() + daysTotal * 24 * 60 * 60 * 1000).toISOString();
+
+    addToCart({
+      type: 'product',
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      price: downPaymentAmount,
+      quantity: 1,
+      image: product.image,
+      shelfLocation: product.shelfLocation,
+      customText: customText || undefined,
+      isLayaway: true,
+      layawayMonths: lay.months,
+      layawayPaymentsCount: lay.paymentsCount,
+      layawayDownPaymentPercent: Math.round((downPaymentAmount / product.price) * 100),
+      layawayTotalAmount: product.price,
+      layawayDownPaymentAmount: downPaymentAmount,
+      layawayRemainingAmount: remaining,
+      layawayDueDate: dueDate,
+      layawayDaysTotal: daysTotal,
+    });
+
+    setIsCheckoutOpen(true);
+  };
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
 
   const currentDeptConfig = useMemo(() => {
@@ -742,6 +782,12 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                             <p className="font-bubble text-xl sm:text-2xl font-bold text-slate-900">
                               {formatCRC(currentTotalPrice)}
                             </p>
+                            {isProductLayawayEligible(p) && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full mt-0.5">
+                                <BookmarkCheck className="w-3 h-3 text-amber-600" />
+                                <span>Aparta con {formatCRC(getProductLayawayDetails(p).downPaymentAmount)}</span>
+                              </span>
+                            )}
                           </div>
 
                           {/* Selector de Cantidad: [-] 1 [+] Neumórfico */}
@@ -774,37 +820,83 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                           )}
                         </div>
 
-                        {/* Botón Agregar al Carrito Neumórfico - Estilo Pill Lila a Fucsia Suave */}
-                        <button
-                          type="button"
-                          disabled={isOutOfStock}
-                          onClick={() => handleAdd(p)}
-                          aria-label={`Agregar ${p.name} al carrito`}
-                          className={`w-full relative flex items-center justify-center gap-2 py-3 px-5 rounded-full text-xs sm:text-sm font-bubble font-bold transition-all duration-200 ${
-                            isOutOfStock
-                              ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                              : isAdded
-                              ? 'bg-emerald-600 text-white shadow-neuBtn'
-                              : 'neu-btn-cart text-white shadow-neuBtn active:scale-95'
-                          }`}
-                        >
-                          {isAdded ? (
-                            <>
-                              <Check className="w-4 h-4 stroke-[2.5]" />
-                              <span>¡Agregado con éxito!</span>
-                            </>
-                          ) : isInCart ? (
-                            <>
-                              <ShoppingBag className="w-4 h-4 text-white" />
-                              <span>Agregar Más ({cartQty} en Carrito)</span>
-                            </>
-                          ) : (
-                            <>
-                              <ShoppingBag className="w-4 h-4 text-white" />
-                              <span>Agregar al Carrito {currentQty > 1 ? `(${currentQty})` : ''}</span>
-                            </>
-                          )}
-                        </button>
+                        {/* Botones de Acción: [Apartar] + [Al Carrito] si aplica apartado, o botón único */}
+                        {isProductLayawayEligible(p) ? (
+                          <div className="grid grid-cols-2 gap-2">
+                            <button
+                              type="button"
+                              disabled={isOutOfStock}
+                              onClick={() => handleOpenLayaway(p)}
+                              aria-label={`Apartar ${p.name}`}
+                              className={`relative flex items-center justify-center gap-1.5 py-3 px-3 rounded-full text-xs sm:text-sm font-bubble font-bold transition-all duration-200 shadow-neuBtn active:scale-95 cursor-pointer ${
+                                isOutOfStock
+                                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                                  : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-amber-500/25'
+                              }`}
+                              title={`Aparta con cuota inicial desde ${formatCRC(getProductLayawayDetails(p).downPaymentAmount)}`}
+                            >
+                              <BookmarkCheck className="w-4 h-4 shrink-0" />
+                              <span>Apartar</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={isOutOfStock}
+                              onClick={() => handleAdd(p)}
+                              aria-label={`Agregar ${p.name} al carrito`}
+                              className={`relative flex items-center justify-center gap-1.5 py-3 px-2 rounded-full text-xs sm:text-sm font-bubble font-bold transition-all duration-200 ${
+                                isOutOfStock
+                                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                                  : isAdded
+                                  ? 'bg-emerald-600 text-white shadow-neuBtn'
+                                  : 'neu-btn-cart text-white shadow-neuBtn active:scale-95'
+                              }`}
+                            >
+                              {isAdded ? (
+                                <>
+                                  <Check className="w-4 h-4 stroke-[2.5] shrink-0" />
+                                  <span className="truncate">¡Listo!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <ShoppingBag className="w-4 h-4 text-white shrink-0" />
+                                  <span className="truncate">Al Carrito</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={isOutOfStock}
+                            onClick={() => handleAdd(p)}
+                            aria-label={`Agregar ${p.name} al carrito`}
+                            className={`w-full relative flex items-center justify-center gap-2 py-3 px-5 rounded-full text-xs sm:text-sm font-bubble font-bold transition-all duration-200 ${
+                              isOutOfStock
+                                ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                                : isAdded
+                                ? 'bg-emerald-600 text-white shadow-neuBtn'
+                                : 'neu-btn-cart text-white shadow-neuBtn active:scale-95'
+                            }`}
+                          >
+                            {isAdded ? (
+                              <>
+                                <Check className="w-4 h-4 stroke-[2.5]" />
+                                <span>¡Agregado con éxito!</span>
+                              </>
+                            ) : isInCart ? (
+                              <>
+                                <ShoppingBag className="w-4 h-4 text-white" />
+                                <span>Agregar Más ({cartQty} en Carrito)</span>
+                              </>
+                            ) : (
+                              <>
+                                <ShoppingBag className="w-4 h-4 text-white" />
+                                <span>Agregar al Carrito {currentQty > 1 ? `(${currentQty})` : ''}</span>
+                              </>
+                            )}
+                          </button>
+                        )}
                       </div>
                     );
                   })()}
@@ -835,6 +927,15 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
           handleAdd(prod, qty, text);
           setDetailProduct(null);
         }}
+      />
+
+      {/* Modal Interactivo de Selección de Monto de Apartado */}
+      <LayawaySelectionModal
+        product={layawayProduct}
+        isOpen={Boolean(layawayProduct)}
+        onClose={() => setLayawayProduct(null)}
+        onConfirmLayaway={handleConfirmLayaway}
+        initialCustomText={layawayProduct ? (customTextInputs[layawayProduct.id] || '') : ''}
       />
 
       {/* Frase Calm & Artisanal al Pie */}

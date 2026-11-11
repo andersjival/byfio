@@ -89,11 +89,12 @@ export const App: React.FC = () => {
     isSuperAdminAuthenticated,
     isMyAccountOpen,
     setIsMyAccountOpen,
+    isCheckoutOpen,
+    setIsCheckoutOpen,
   } = useApp();
   const initial = parseRouteFromLocation();
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(initial.workshopId || null);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDailyClosingOpen, setIsDailyClosingOpen] = useState(false);
   const [dailyClosingDate, setDailyClosingDate] = useState<string | undefined>(undefined);
   const [isDesignModalOpen, setIsDesignModalOpen] = useState(Boolean(initial.openDesignModal));

@@ -1,3 +1,4 @@
+import { LayawaySelectionModal } from './LayawaySelectionModal';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Product } from '../../types';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
@@ -23,13 +24,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   initialCustomText = '',
   onCustomTextChange,
 }) => {
-  const { addToCart, cart, inventoryMode } = useApp();
+  const { addToCart, cart, inventoryMode, setIsCheckoutOpen } = useApp();
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [customText, setCustomText] = useState(initialCustomText);
   const [isAddedAnim, setIsAddedAnim] = useState(false);
   const [isLayawayAddedAnim, setIsLayawayAddedAnim] = useState(false);
+  const [isLayawayModalOpen, setIsLayawayModalOpen] = useState(false);
 
   // Lista de imágenes: si tiene `images` con elementos las usa, si no hace fallback a `[product.image]`
   const images = useMemo(() => {
@@ -127,29 +129,39 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
   const handleAddLayaway = () => {
     if (isOutOfStock || !product) return;
-    const lay = getProductLayawayDetails(product);
+    setIsLayawayModalOpen(true);
+  };
+
+  const handleConfirmLayaway = (prod: Product, downPaymentAmount: number, customTxt?: string) => {
+    const lay = getProductLayawayDetails(prod);
+    const remaining = Math.max(0, prod.price - downPaymentAmount);
+    const daysTotal = (lay.months || 1) * 30;
+    const dueDate = new Date(Date.now() + daysTotal * 24 * 60 * 60 * 1000).toISOString();
 
     addToCart({
       type: 'product',
-      id: product.id,
-      sku: product.sku,
-      name: product.name,
-      price: lay.downPaymentAmount, // Paga la 1ª cuota inicial
-      quantity,
-      image: images[activeImageIndex] || product.image,
-      shelfLocation: product.shelfLocation,
-      customText: product.isCustomizable ? customText : undefined,
+      id: prod.id,
+      sku: prod.sku,
+      name: prod.name,
+      price: downPaymentAmount,
+      quantity: 1,
+      image: images[activeImageIndex] || prod.image,
+      shelfLocation: prod.shelfLocation,
+      customText: customTxt || (prod.isCustomizable ? customText : undefined),
       isLayaway: true,
       layawayMonths: lay.months,
       layawayPaymentsCount: lay.paymentsCount,
-      layawayDownPaymentPercent: lay.downPaymentPercent,
-      layawayTotalAmount: product.price * quantity,
-      layawayDownPaymentAmount: lay.downPaymentAmount * quantity,
-      layawayRemainingAmount: lay.remainingAmount * quantity,
+      layawayDownPaymentPercent: Math.round((downPaymentAmount / prod.price) * 100),
+      layawayTotalAmount: prod.price,
+      layawayDownPaymentAmount: downPaymentAmount,
+      layawayRemainingAmount: remaining,
+      layawayDueDate: dueDate,
+      layawayDaysTotal: daysTotal,
     });
 
-    setIsLayawayAddedAnim(true);
-    setTimeout(() => setIsLayawayAddedAnim(false), 2000);
+    setIsLayawayModalOpen(false);
+    onClose();
+    setIsCheckoutOpen(true);
   };
 
   const generateWhatsAppInquiryMessage = () => {
@@ -498,6 +510,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
         </div>
       </div>
+
+
+      {/* Modal Interactivo de Selección de Monto de Apartado */}
+      <LayawaySelectionModal
+        product={product}
+        isOpen={isLayawayModalOpen}
+        onClose={() => setIsLayawayModalOpen(false)}
+        onConfirmLayaway={handleConfirmLayaway}
+        initialCustomText={product?.isCustomizable ? customText : ''}
+      />
     </div>
   );
 };

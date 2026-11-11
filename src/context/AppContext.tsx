@@ -1,3 +1,4 @@
+import { calculateLayawayDaysRemaining, checkAndSendLayawayReminders } from '../services/layawayReminderService';
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus,
@@ -201,6 +202,8 @@ interface AppContextType {
   cart: CartItem[];
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
+  isCheckoutOpen: boolean;
+  setIsCheckoutOpen: (open: boolean) => void;
   cartToast: CartToastInfo | null;
   showCartSuccessToast: (info: CartToastInfo) => void;
   closeCartToast: () => void;
@@ -601,6 +604,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [cartToast, setCartToast] = useState<CartToastInfo | null>(null);
   const cartToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -1412,6 +1416,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     shippingFee: number;
     total: number;
   }): Order => {
+    const firstLayItem = cart.find((i) => i.isLayaway);
+    const isLayawayOrder = Boolean(firstLayItem);
     const orderNumber = getNextOrderNumber(orders);
 
     const orderItems: OrderItem[] = orderData.items.map((item, idx) => ({
@@ -2842,6 +2848,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
   }, [orders]);
 
+  // Chequeo proactivo de recordatorios de apartados proximos a vencer (<= 5 dias restantes)
+  useEffect(() => {
+    if (orders && orders.length > 0) {
+      checkAndSendLayawayReminders(orders, (updatedOrder) => {
+        setOrders((prev) => prev.map((o) => (o.id === updatedOrder.id ? updatedOrder : o)));
+      });
+    }
+  }, [orders]);
+
   useEffect(() => {
     try {
       safeLocalStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
@@ -2926,6 +2941,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const shippingFee = orderInfo.deliveryMethod === 'envio' ? 2500 : 0;
     const total = subtotal + shippingFee;
 
+    const firstLayItem = cart.find((i) => i.isLayaway);
+    const isLayawayOrder = Boolean(firstLayItem);
     const orderNumber = getNextOrderNumber(orders);
 
     const orderItems = cart.map((item, idx) => ({
@@ -2946,6 +2963,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       layawayTotalAmount: item.layawayTotalAmount,
       layawayDownPaymentAmount: item.layawayDownPaymentAmount,
       layawayRemainingAmount: item.layawayRemainingAmount,
+      layawayDueDate: item.layawayDueDate,
+      layawayDaysTotal: item.layawayDaysTotal,
     }));
 
     const isAllInitiallyPicked = orderItems.length > 0 && orderItems.every((it) => it.isPicked);
@@ -2967,6 +2986,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       total,
       createdAt: new Date().toISOString(),
       notes: orderInfo.notes,
+      isLayaway: isLayawayOrder,
+      layawayMonths: firstLayItem?.layawayMonths,
+      layawayPaymentsCount: firstLayItem?.layawayPaymentsCount,
+      layawayDownPaymentPercent: firstLayItem?.layawayDownPaymentPercent,
+      layawayTotalAmount: firstLayItem?.layawayTotalAmount,
+      layawayDownPaymentAmount: firstLayItem?.layawayDownPaymentAmount,
+      layawayRemainingAmount: firstLayItem?.layawayRemainingAmount,
+      layawayDueDate: firstLayItem?.layawayDueDate || (firstLayItem ? new Date(Date.now() + (firstLayItem.layawayMonths || 1) * 30 * 24 * 60 * 60 * 1000).toISOString() : undefined),
+      layawayDaysTotal: firstLayItem?.layawayDaysTotal || (firstLayItem ? (firstLayItem.layawayMonths || 1) * 30 : undefined),
+      layawayReminderEmailSent: false,
     };
 
     // Update D1 Remote Database in background
@@ -4244,6 +4273,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cart,
         isCartOpen,
         setIsCartOpen,
+        isCheckoutOpen,
+        setIsCheckoutOpen,
         activePickingOrder,
         setActivePickingOrder,
         invoiceOrder,

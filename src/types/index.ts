@@ -160,6 +160,8 @@ export interface OrderItem {
   layawayTotalAmount?: number;
   layawayDownPaymentAmount?: number;
   layawayRemainingAmount?: number;
+  layawayDueDate?: string;
+  layawayDaysTotal?: number;
 }
 
 export interface InventoryMissingReport {
@@ -226,6 +228,17 @@ export interface Order {
   pickedAt?: string;
   notes?: string;
   customFields?: { [key: string]: string };
+  isLayaway?: boolean;
+  layawayMonths?: number;
+  layawayPaymentsCount?: number;
+  layawayDownPaymentPercent?: number;
+  layawayTotalAmount?: number;
+  layawayDownPaymentAmount?: number;
+  layawayRemainingAmount?: number;
+  layawayDueDate?: string;
+  layawayDaysTotal?: number;
+  layawayReminderEmailSent?: boolean;
+  layawayReminderEmailSentAt?: string;
 }
 
 export interface CartItem {
@@ -248,6 +261,8 @@ export interface CartItem {
   layawayTotalAmount?: number;
   layawayDownPaymentAmount?: number;
   layawayRemainingAmount?: number;
+  layawayDueDate?: string;
+  layawayDaysTotal?: number;
 }
 
 export interface UserPermissions {
