@@ -189,6 +189,7 @@ export interface NewOrderAlertInfo {
   total?: number;
   isWorkshop?: boolean;
   workshopTitle?: string;
+  isLayaway?: boolean;
 }
 
 interface AppContextType {
@@ -835,9 +836,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const firstNew = newOrders[0];
       const isWorkshop = firstNew.items?.some((it) => it.type === 'workshop') || firstNew.id?.startsWith('ord-ws-') || firstNew.orderNumber?.startsWith('#WS');
       const wsItem = firstNew.items?.find((it) => it.type === 'workshop');
+      const isLayaway = Boolean(firstNew.isLayaway || firstNew.items?.some((it) => it.isLayaway));
 
       // Solo reproducir sonido de campana y desplegar alerta si hay un usuario logueado con permiso adecuado
-      if (canReceiveOrderNotifications(Boolean(isWorkshop))) {
+      if (canReceiveOrderNotifications(Boolean(isWorkshop), isLayaway)) {
         playNewOrderChimeSound(0.85);
         showNewOrderAlert({
           orderNumber: firstNew.orderNumber,
@@ -845,6 +847,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           total: firstNew.total,
           isWorkshop: Boolean(isWorkshop),
           workshopTitle: wsItem?.name,
+          isLayaway,
         });
         sendOrderPushNotification({
           orderNumber: firstNew.orderNumber,
@@ -852,6 +855,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           total: firstNew.total,
           isWorkshop: Boolean(isWorkshop),
           workshopTitle: wsItem?.name,
+          isLayaway,
         });
       }
     }
@@ -1522,7 +1526,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     knownOrderIdsRef.current.add(newOrder.id);
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
-    if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
+    const isLayOrder = Boolean(newOrder.isLayaway || newOrder.items?.some((it) => it.isLayaway));
+    if (canReceiveOrderNotifications(Boolean(isWsOrder), isLayOrder)) {
       playNewOrderChimeSound(0.85);
       showNewOrderAlert({
         orderNumber: newOrder.orderNumber,
@@ -1530,6 +1535,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         total: newOrder.total,
         isWorkshop: Boolean(isWsOrder),
         workshopTitle: wsItemInOrder?.name,
+        isLayaway: isLayOrder,
       });
       sendOrderPushNotification({
         orderNumber: newOrder.orderNumber,
@@ -1537,6 +1543,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         total: newOrder.total,
         isWorkshop: Boolean(isWsOrder),
         workshopTitle: wsItemInOrder?.name,
+        isLayaway: isLayOrder,
       });
     }
 
@@ -2011,20 +2018,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return false;
   };
 
-  const canReceiveOrderNotifications = (isWorkshop?: boolean) => {
+  const canReceiveOrderNotifications = (isWorkshop?: boolean, isLayaway?: boolean) => {
     if (isSuperAdminAuthenticated) return true;
-    if (typeof window !== 'undefined' && (window.location.pathname.includes('/pedidos') || window.location.hash.includes('pedidos'))) {
+    if (
+      typeof window !== 'undefined' &&
+      (window.location.pathname.includes('/pedidos') ||
+       window.location.hash.includes('pedidos') ||
+       window.location.pathname.includes('/apartados') ||
+       window.location.hash.includes('apartados'))
+    ) {
       return true;
     }
     if (!currentUser) return false;
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
-    return hasPermission(isWorkshop ? 'workshops' : 'orders');
+    return hasPermission(isWorkshop ? 'workshops' : 'orders') || (Boolean(isLayaway) && hasPermission('layaways'));
   };
 
   const showNewOrderAlert = (info?: NewOrderAlertInfo) => {
     // Control estricto de visibilidad:
     // NUNCA disparar la alerta ni mostrar la estrellita si no hay usuario logueado con permiso adecuado.
-    if (!canReceiveOrderNotifications(info?.isWorkshop)) {
+    if (!canReceiveOrderNotifications(info?.isWorkshop, info?.isLayaway)) {
       return;
     }
     setNewOrderAlert(info || {});
@@ -3187,7 +3200,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     knownOrderIdsRef.current.add(newOrder.id);
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
-    if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
+    const isLayOrder = Boolean(newOrder.isLayaway || newOrder.items?.some((it) => it.isLayaway));
+    if (canReceiveOrderNotifications(Boolean(isWsOrder), isLayOrder)) {
       playNewOrderChimeSound(0.85);
       showNewOrderAlert({
         orderNumber: newOrder.orderNumber,
@@ -3195,6 +3209,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         total: newOrder.total,
         isWorkshop: Boolean(isWsOrder),
         workshopTitle: wsItemInOrder?.name,
+        isLayaway: isLayOrder,
       });
       sendOrderPushNotification({
         orderNumber: newOrder.orderNumber,
@@ -3202,6 +3217,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         total: newOrder.total,
         isWorkshop: Boolean(isWsOrder),
         workshopTitle: wsItemInOrder?.name,
+        isLayaway: isLayOrder,
       });
     }
 
@@ -4121,7 +4137,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     knownOrderIdsRef.current.add(newOrder.id);
     const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
     const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
-    if (canReceiveOrderNotifications(Boolean(isWsOrder))) {
+    const isLayOrder = Boolean(newOrder.isLayaway || newOrder.items?.some((it) => it.isLayaway));
+    if (canReceiveOrderNotifications(Boolean(isWsOrder), isLayOrder)) {
       playNewOrderChimeSound(0.85);
       showNewOrderAlert({
         orderNumber: newOrder.orderNumber,
@@ -4129,6 +4146,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         total: newOrder.total,
         isWorkshop: Boolean(isWsOrder),
         workshopTitle: wsItemInOrder?.name,
+        isLayaway: isLayOrder,
       });
       sendOrderPushNotification({
         orderNumber: newOrder.orderNumber,
@@ -4136,6 +4154,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         total: newOrder.total,
         isWorkshop: Boolean(isWsOrder),
         workshopTitle: wsItemInOrder?.name,
+        isLayaway: isLayOrder,
       });
     }
 

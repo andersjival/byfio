@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, Heart, Star, ShoppingBag, Clock, Check, GraduationCap } from 'lucide-react';
+import { X, Heart, Star, ShoppingBag, Clock, Check, GraduationCap, BookmarkCheck } from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
 export const NewOrderStarAlert: React.FC = () => {
@@ -30,20 +30,32 @@ export const NewOrderStarAlert: React.FC = () => {
     (newOrderAlert?.orderNumber && newOrderAlert.orderNumber.startsWith('#WS'))
   );
 
+  const isLayaway = Boolean(
+    newOrderAlert?.isLayaway ||
+    matchedOrder?.isLayaway ||
+    matchedOrder?.items?.some((it) => it.isLayaway) ||
+    matchedOrder?.notes?.toLowerCase().includes('apartado') ||
+    (newOrderAlert?.orderNumber && newOrderAlert.orderNumber.toLowerCase().includes('apartado'))
+  );
+
+  const rawNum = (newOrderAlert?.orderNumber || '').replace(/^#+/, '');
+  const cleanOrderNumber = rawNum ? `#${rawNum}` : '#FIO';
+
   const workshopTitle =
     newOrderAlert?.workshopTitle ||
     matchedOrder?.items?.find((it) => it.type === 'workshop')?.name;
 
   // Control estricto de visibilidad:
   // NUNCA mostrar la notificación en la web pública si no hay usuario logueado.
-  // Solo visible para Administrador o Staff con permiso específico ('orders' o 'workshops').
+  // Solo visible para Administrador o Staff con permiso específico ('orders', 'workshops' o 'layaways').
   const canViewAlert =
     Boolean(isSuperAdminAuthenticated) ||
     Boolean(
       currentUser &&
       (currentUser.role === 'admin' ||
        currentUser.isMasterAdmin ||
-       hasPermission(isWorkshop ? 'workshops' : 'orders'))
+       hasPermission(isWorkshop ? 'workshops' : 'orders') ||
+       (isLayaway && hasPermission('layaways')))
     );
 
   useEffect(() => {
@@ -161,27 +173,41 @@ export const NewOrderStarAlert: React.FC = () => {
         {/* Etiqueta superior */}
         <div className="mt-3.5 flex items-center justify-center gap-1.5 text-xs font-bubble font-bold text-fio-pink dark:text-pink-300">
           <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-          <span>{isWorkshop ? 'by.fio Talleres Creativos' : 'by.fio Notificaciones'}</span>
+          <span>
+            {isWorkshop ? 'by.fio Talleres Creativos' : isLayaway ? 'by.fio Apartados' : 'by.fio Notificaciones'}
+          </span>
         </div>
 
         {/* Mensaje Solicitado: Notificación adaptativa según tipo de compra */}
         <h3 className="font-bubble font-black text-xl sm:text-2xl text-fio-900 dark:text-purple-100 tracking-wide mt-1 leading-snug">
           {isWorkshop
             ? 'Hemos recibido una nueva inscripción al taller'
+            : isLayaway
+            ? 'Hemos recibido un nuevo apartado'
             : 'Hemos recibido un nuevo pedido'}
         </h3>
 
         {/* Detalle de la Compra / Inscripción si está disponible */}
         {newOrderAlert.orderNumber && (
-          <div className="mt-2.5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/40 border border-purple-200/80 dark:border-purple-700/50 text-xs sm:text-sm font-bubble font-bold text-purple-900 dark:text-purple-200">
+          <div
+            className={`mt-2.5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs sm:text-sm font-bubble font-bold ${
+              isWorkshop
+                ? 'bg-purple-50 dark:bg-purple-900/40 border-purple-200/80 dark:border-purple-700/50 text-purple-900 dark:text-purple-200'
+                : isLayaway
+                ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200/80 dark:border-amber-700/50 text-amber-900 dark:text-amber-200'
+                : 'bg-purple-50 dark:bg-purple-900/40 border-purple-200/80 dark:border-purple-700/50 text-purple-900 dark:text-purple-200'
+            }`}
+          >
             {isWorkshop ? (
               <GraduationCap className="w-4 h-4 text-purple-600 shrink-0" />
+            ) : isLayaway ? (
+              <BookmarkCheck className="w-4 h-4 text-amber-600 shrink-0" />
             ) : (
               <ShoppingBag className="w-4 h-4 text-fio-pink shrink-0" />
             )}
             <span>
-              {isWorkshop ? 'Inscripción ' : 'Pedido '}
-              {newOrderAlert.orderNumber}
+              {isWorkshop ? 'Inscripción ' : isLayaway ? 'Apartado ' : 'Pedido '}
+              {cleanOrderNumber}
             </span>
           </div>
         )}

@@ -7,6 +7,7 @@ export interface PushOrderNotificationPayload {
   total: number;
   isWorkshop?: boolean;
   workshopTitle?: string;
+  isLayaway?: boolean;
 }
 
 const STORAGE_KEY_PUSH_ENABLED = 'byfio_push_notifications_enabled';
@@ -79,10 +80,14 @@ export const sendOrderPushNotification = (payload: PushOrderNotificationPayload)
 
   const title = payload.isWorkshop
     ? `🎓 ¡Nueva Reserva en Taller ${payload.orderNumber}!`
+    : payload.isLayaway
+    ? `🔖 ¡Nuevo Apartado ${payload.orderNumber}!`
     : `📦 ¡Nuevo Pedido ${payload.orderNumber}!`;
 
   const body = payload.isWorkshop
     ? `Alumno: ${payload.customerName}\n${payload.workshopTitle || 'Taller Creativo'} • ${formatCRC(payload.total)}\nToca para revisar la lista.`
+    : payload.isLayaway
+    ? `Cliente: ${payload.customerName}\nTotal Apartado: ${formatCRC(payload.total)}\nToca para abrir Apartados.`
     : `Cliente: ${payload.customerName}\nTotal: ${formatCRC(payload.total)}\nToca para iniciar el alisto en el móvil.`;
 
   const options: NotificationOptions & Record<string, any> = {
@@ -90,10 +95,11 @@ export const sendOrderPushNotification = (payload: PushOrderNotificationPayload)
     icon: '/logo-byfio-lila-HD.png',
     badge: '/logo-byfio-lila-HD.png',
     tag: `byfio-order-${payload.orderNumber}`,
-    data: { url: '/pedidos' },
+    data: { url: payload.isLayaway ? '/apartados' : '/pedidos' },
     renotify: true,
     requireInteraction: true,
   };
+
 
   try {
     // Si hay Service Worker activo, usar showNotification para mejor compatibilidad en Android / PWA

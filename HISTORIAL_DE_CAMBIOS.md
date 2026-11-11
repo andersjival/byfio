@@ -1,3 +1,20 @@
+## [v4.19.93] - 2026-11-11
+
+### 🔖 Notificaciones Adaptativas de Apartados en Modal de la Estrellita y Push Notifications
+- **Alerta Visual de la Estrellita Adaptativa (`NewOrderStarAlert.tsx`):**
+  - **Título Personalizado para Apartados:** Cuando se genera o sincroniza un apartado, el título del modal ahora dice exactamente: **"Hemos recibido un nuevo apartado"** (en lugar de "Hemos recibido un nuevo pedido").
+  - **Píldora Distintiva de Apartado:** En lugar de "Pedido #FIO-XXXX" con icono de bolsa de compras, muestra la píldora en tono ámbar suave con el icono de marcador `BookmarkCheck` y el texto **"Apartado #FIO-XXXX"**.
+  - **Encabezado Temático:** El subtítulo superior cambia de "by.fio Notificaciones" a **"by.fio Apartados"** con la estrella dorada.
+  - **Limpieza de Prefijo:** Formato limpio y garantizado para evitar dobles `#` (`cleanOrderNumber`).
+- **Notificaciones Push y Sonoras Nativas (`pushNotifications.ts`):**
+  - Título adaptado a: `🔖 ¡Nuevo Apartado #FIO-XXXX!`.
+  - Mensaje detallado: `Cliente: ... \nTotal Apartado: ₡XX XXX\nToca para abrir Apartados.`
+  - Redirección con 1 toque directo a la vista de `/apartados`.
+- **Detección y Permisos en el Contexto (`AppContext.tsx`):**
+  - Propagación de bandera `isLayaway` a través de `NewOrderAlertInfo`, `canReceiveOrderNotifications` y todas las emisiones de alerta tanto en creación local como por sincronización en tiempo real.
+
+---
+
 ## [v4.19.92] - 2026-11-11
 
 ### 🎯 Corrección Matemática en Abonos y Rediseño Ultra Compacto de Fichas de Apartados
