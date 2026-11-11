@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.82 - Eliminación de Sobrescritura CSS Global en Header a Blanco (#FAF5FF)
+- [x] **Corrección de Regla de Sobrescritura Global ([index.css](file:///C:/Users/Juan/byfio/src/index.css)):**
+  - Se detectó y erradicó la regla CSS heredada `body[data-color-theme="vibrant"] header { background-color: rgba(250, 245, 255, 0.92) !important; }` que anulaba cualquier estilo de color en el encabezado y lo forzaba a un tono prácticamente blanco (#FAF5FF).
+  - Se blindó la regla con el tono lila pastel auténtico de by.fio: `header, body[data-color-theme="vibrant"] header { background-color: #C592F9 !important; border-bottom-color: rgba(192, 132, 252, 0.5) !important; }`.
+  - Ahora las letras blancas del logotipo, el corazón celeste (#9BE4FF) y la estrella dorada (#FFF07C) resaltan con contraste y saturación óptimos.
+
 ### Versión 4.19.81 - Corrección de Status Bar en PWA iOS, Fondo Lila Pastel y Retiro de Referencia MAYO10
 - [x] **Eliminación de Filtro Borroso en iOS PWA ([index.html](file:///C:/Users/Juan/byfio/index.html)):**
   - Cambiado `apple-mobile-web-app-status-bar-style` de `black-translucent` a `default` para desactivar la capa de cristal esmerilado que desenfocaba los botones en la pantalla de inicio del iPhone.
