@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.83 - Ordenamiento Responsivo y Simétrico de Filtros de Cola de Pedidos en la App
+- [x] **Rediseño Simétrico y Ordenado en la App Móvil ([OrdersQueue.tsx](file:///C:/Users/Juan/byfio/src/components/admin/OrdersQueue.tsx)):**
+  - Se eliminó el wrapping desordenado de 3 filas asimétricas que dejaba botones huérfanos y espacios en blanco en la versión móvil.
+  - Se implementó una cuadrícula estructurada de 2 columnas exclusiva para pantallas móviles:
+    - Fila 1 (ancho completo): `Todos los Pedidos` con contador destacado en pill.
+    - Fila 2 (50% / 50% simétrico): `Pendientes` y `En Empaque`.
+    - Fila 3 (50% / 50% simétrico): `Empacados` y `Terminados`.
+  - Cada botón cuenta con distribución balanceada `justify-between`, iconografía uniforme y etiquetas legibles.
+  - En la versión web de escritorio (`md:`), se preserva intacta la barra horizontal en línea original (`md:flex md:w-fit md:items-center`), garantizando que la versión de escritorio permanezca 100% igual.
+
 ### Versión 4.19.82 - Eliminación de Sobrescritura CSS Global en Header a Blanco (#FAF5FF)
 - [x] **Corrección de Regla de Sobrescritura Global ([index.css](file:///C:/Users/Juan/byfio/src/index.css)):**
   - Se detectó y erradicó la regla CSS heredada `body[data-color-theme="vibrant"] header { background-color: rgba(250, 245, 255, 0.92) !important; }` que anulaba cualquier estilo de color en el encabezado y lo forzaba a un tono prácticamente blanco (#FAF5FF).

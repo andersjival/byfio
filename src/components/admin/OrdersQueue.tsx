@@ -235,31 +235,46 @@ export const OrdersQueue: React.FC = () => {
       </div>
 
       {/* Pestañas de Filtro Rápido de Cola */}
-      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200/80 mb-4 w-fit flex-wrap">
+      <div className="p-1.5 md:p-1 rounded-2xl bg-slate-100 border border-slate-200/80 mb-4 w-full md:w-fit grid grid-cols-2 gap-1.5 md:flex md:items-center md:gap-1.5 md:flex-wrap">
         <button
           type="button"
           onClick={() => setFilterMode('all')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+          className={`col-span-2 md:col-span-1 flex items-center justify-between md:justify-start gap-2 px-3.5 py-2 md:py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
             filterMode === 'all'
               ? 'bg-white text-fio-900 shadow-xs'
-              : 'text-slate-600 hover:text-fio-900'
+              : 'text-slate-600 hover:text-fio-900 bg-white/70 md:bg-transparent'
           }`}
         >
-          Todos ({orders.length})
+          <div className="flex items-center gap-1.5">
+            <ClipboardList className="w-3.5 h-3.5 text-slate-500 md:hidden" />
+            <span className="md:hidden">Todos los Pedidos</span>
+            <span className="hidden md:inline">Todos ({orders.length})</span>
+          </div>
+          <span
+            className={`md:hidden px-2 py-0.5 rounded-full text-[10px] font-bold ${
+              filterMode === 'all' ? 'bg-fio-pink text-white' : 'bg-slate-200 text-slate-700'
+            }`}
+          >
+            {orders.length}
+          </span>
         </button>
 
         <button
           type="button"
           onClick={() => setFilterMode('pending')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`col-span-1 flex items-center justify-between md:justify-start gap-1.5 px-3 py-2 md:py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
             filterMode === 'pending'
               ? 'bg-fio-pink text-white shadow-xs'
-              : 'text-slate-600 hover:text-fio-pink'
+              : 'text-slate-600 hover:text-fio-pink bg-white/70 md:bg-transparent'
           }`}
         >
-          <span>Pendientes de Alisto</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Clock className="w-3.5 h-3.5 shrink-0 md:hidden" />
+            <span className="truncate hidden md:inline">Pendientes de Alisto</span>
+            <span className="truncate md:hidden">Pendientes</span>
+          </div>
           <span
-            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold shrink-0 ${
               filterMode === 'pending' ? 'bg-white text-fio-pink' : 'bg-pink-100 text-fio-pink'
             }`}
           >
@@ -270,16 +285,18 @@ export const OrdersQueue: React.FC = () => {
         <button
           type="button"
           onClick={() => setFilterMode('packing')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`col-span-1 flex items-center justify-between md:justify-start gap-1.5 px-3 py-2 md:py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
             filterMode === 'packing'
               ? 'bg-amber-500 text-white shadow-xs'
-              : 'text-slate-700 hover:text-amber-800'
+              : 'text-slate-700 hover:text-amber-800 bg-white/70 md:bg-transparent'
           }`}
         >
-          <Package className="w-3.5 h-3.5" />
-          <span>En Empaque</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Package className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">En Empaque</span>
+          </div>
           <span
-            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold shrink-0 ${
               filterMode === 'packing' ? 'bg-white text-amber-800' : 'bg-amber-100 text-amber-900'
             }`}
           >
@@ -290,16 +307,18 @@ export const OrdersQueue: React.FC = () => {
         <button
           type="button"
           onClick={() => setFilterMode('packed')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`col-span-1 flex items-center justify-between md:justify-start gap-1.5 px-3 py-2 md:py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
             filterMode === 'packed'
               ? 'bg-fio-pink text-white shadow-xs'
-              : 'text-slate-700 hover:text-pink-600'
+              : 'text-slate-700 hover:text-pink-600 bg-white/70 md:bg-transparent'
           }`}
         >
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          <span>Empacados</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Empacados</span>
+          </div>
           <span
-            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold shrink-0 ${
               filterMode === 'packed' ? 'bg-white text-pink-700' : 'bg-pink-100 text-pink-800'
             }`}
           >
@@ -310,15 +329,18 @@ export const OrdersQueue: React.FC = () => {
         <button
           type="button"
           onClick={() => setFilterMode('delivered')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`col-span-1 flex items-center justify-between md:justify-start gap-1.5 px-3 py-2 md:py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
             filterMode === 'delivered'
               ? 'bg-purple-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-purple-700'
+              : 'text-slate-600 hover:text-purple-700 bg-white/70 md:bg-transparent'
           }`}
         >
-          <span>Terminados</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <FileCheck className="w-3.5 h-3.5 shrink-0 md:hidden" />
+            <span className="truncate">Terminados</span>
+          </div>
           <span
-            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+            className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold shrink-0 ${
               filterMode === 'delivered' ? 'bg-white text-purple-700' : 'bg-purple-100 text-purple-800'
             }`}
           >
