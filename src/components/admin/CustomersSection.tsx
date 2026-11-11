@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { Customer } from '../../types';
@@ -20,6 +20,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     addCustomer,
     updateCustomer,
     deleteCustomer,
+    syncRegisteredUsers,
     customerFieldDefs,
     orders,
     isFeatureEnabled,
@@ -40,13 +41,17 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
   const [formError, setFormError] = useState<string | null>(null);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
+  useEffect(() => {
+    syncRegisteredUsers();
+  }, [syncRegisteredUsers]);
+
   // Filtrado reactivo en tiempo real
   const filteredCustomers = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     if (!q) return customers;
     return customers.filter((c) => {
       const matchName = c.name.toLowerCase().includes(q);
-      const matchPhone = c.phone.toLowerCase().includes(q);
+      const matchPhone = (c.phone || '').toLowerCase().includes(q);
       const matchEmail = (c.email || '').toLowerCase().includes(q);
       const matchAddress = (c.address || '').toLowerCase().includes(q);
       const matchCedula = (c.customFields?.['field-cedula'] || '').toLowerCase().includes(q);
@@ -71,7 +76,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
   const handleOpenEdit = (customer: Customer) => {
     setEditingCustomer(customer);
     setName(customer.name);
-    setPhone(customer.phone);
+    setPhone(customer.phone || '');
     setEmail(customer.email || '');
     setAddress(customer.address || '');
     setCedula(customer.customFields?.['field-cedula'] || '');
@@ -138,7 +143,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
 
   // Cantidad de pedidos históricos de un cliente
   const getOrderCount = (customer: Customer) => {
-    const cleanP = customer.phone.replace(/\D/g, '');
+    const cleanP = (customer.phone || '').replace(/\D/g, '');
     const cleanN = customer.name.toLowerCase().trim();
     return orders.filter((o) => {
       const oP = (o.customerPhone || '').replace(/\D/g, '');
@@ -246,7 +251,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
           {filteredCustomers.map((cust) => {
             const orderCount = getOrderCount(cust);
             const cedulaVal = cust.customFields?.['field-cedula'];
-            const phoneClean = cust.phone.replace(/\D/g, '');
+            const phoneClean = (cust.phone || '').replace(/\D/g, '');
 
             return (
               <div
@@ -285,7 +290,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                   <div className="space-y-2 text-xs text-slate-600">
                     <div className="flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span className="font-bold font-mono text-slate-900">{cust.phone}</span>
+                      <span className="font-bold font-mono text-slate-900">{cust.phone || 'Sin teléfono'}</span>
                       {phoneClean && (
                         <a
                           href={`https://wa.me/506${phoneClean}`}

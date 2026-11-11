@@ -1,3 +1,23 @@
+## [v4.19.101] - 2026-11-11
+
+### 🗑️ Retiro del Módulo "Precios & Stickers" del Panel Admin
+- **Panel Admin (`AdminHubMenu.tsx`, `AdminTabs.tsx`, `App.tsx`, `routeHelpers.ts`, `UserProfilesSection.tsx`, `MetricsPage.tsx`):**
+  - Eliminada la tarjeta/módulo `Precios & Stickers` (`pricing`) del Menú Principal de Administración (`AdminHubMenu`), de `AdminTabType`, de la ruta `/admin/precios`, de `SECTION_METADATA` (`admin-pricing`) y de la matriz de permisos de perfiles de usuario (`UserProfilesSection.tsx`), ajustando `allChecked` y `grantedCount` al listado visible.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.101`.
+
+---
+
+## [v4.19.100] - 2026-11-11
+
+### 🧾 Clientes Registrados en la Página Integrados a Facturación POS
+- **Sincronización Automática Web / D1 -> Directorio POS ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx))**:
+  - Agregada la fusión deduplicada [`mergeRegisteredUsersIntoCustomers`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) y la acción [`syncRegisteredUsers`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) para integrar cuentas web de `byfio_registered_users_v1` y Cloudflare D1 (`/api/registered-users`) en `customers` (con id `reg-<correo>`, nombre, teléfono, correo, dirección y cédula), sincronizando también registros, inicios de sesión, actualizaciones de perfil y `BroadcastChannel`.
+- **Autocompletado y Ficha de Clientes POS ([`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx), [`CustomersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx))**:
+  - Al abrir Facturación POS o Directorio de Clientes se sincronizan las cuentas registradas en D1; el buscador `"¿Cliente ya registrado?"` despliega clientes web/POS al enfocar y busca por nombre, teléfono (con o sin guiones), cédula y correo con insignia `Web` y tolerancia a teléfono vacío (`Sin teléfono`).
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.100`.
+
+---
+
 ## [v4.19.99] - 2026-11-11
 
 ### 📦 Módulo de Inventario por Barrido con Carga Automática/Manual y Registro en D1

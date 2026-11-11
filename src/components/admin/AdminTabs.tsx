@@ -9,7 +9,6 @@ export type AdminTabType =
   | 'reports'
   | 'sinpe'
   | 'workshops'
-  | 'pricing'
   | 'users'
   | 'customers'
   | 'agenda'

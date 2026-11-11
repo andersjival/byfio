@@ -180,7 +180,6 @@ export const App: React.FC = () => {
       else if (tab === 'reports') targetPath = '/admin/caja';
       else if (tab === 'sinpe') targetPath = '/admin/sinpe';
       else if (tab === 'workshops') targetPath = '/admin/talleres';
-      else if (tab === 'pricing') targetPath = '/admin/precios';
       else if (tab === 'users') targetPath = '/admin/usuarios';
       else if (tab === 'customers') targetPath = '/admin/clientes';
       else if (tab === 'agenda') targetPath = '/admin/agenda';
@@ -572,7 +571,6 @@ export const App: React.FC = () => {
                         )}
                         {adminTab === 'sinpe' && <SinpePaymentsSection />}
                         {adminTab === 'workshops' && <WorkshopEnrollmentsSection onNavigateToSinpe={() => handleSelectAdminTab('sinpe')} />}
-                        {adminTab === 'pricing' && <PricingStickersSection onNavigate={navigate} />}
                         {adminTab === 'users' && <UserProfilesSection />}
                         {adminTab === 'customers' && (
                           <CustomersSection

@@ -164,13 +164,6 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'workshops' };
   }
   if (
-    path.includes('/admin/precios') ||
-    path.includes('/administracion/precios') ||
-    hash.includes('admin/precios')
-  ) {
-    return { route: 'admin', adminTab: 'pricing' };
-  }
-  if (
     path.includes('/admin/usuarios') ||
     path.includes('/admin/perfiles') ||
     path.includes('/administracion/usuarios') ||

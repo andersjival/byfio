@@ -138,17 +138,24 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
     );
   }, [products, productSearch]);
 
-  // Filtrado de clientes para autocompletado en Paso 2
+  // Filtrado de clientes para autocompletado en Paso 2 (incluye clientes registrados en la página web)
   const matchedCustomers = useMemo(() => {
     const q = customerSearch.trim().toLowerCase();
-    if (!q) return [];
-    return customers.filter(
-      (c) =>
+    if (!q) return isCustomerSearchOpen ? customers.slice(0, 12) : [];
+    const qDigits = q.replace(/\D/g, '');
+    return customers.filter((c) => {
+      const phone = (c.phone || '').toLowerCase();
+      const phoneDigits = phone.replace(/\D/g, '');
+      const cedula = (c.customFields?.['field-cedula'] || '').toLowerCase();
+      return (
         c.name.toLowerCase().includes(q) ||
-        c.phone.includes(q) ||
-        (c.email && c.email.toLowerCase().includes(q))
-    );
-  }, [customers, customerSearch]);
+        phone.includes(q) ||
+        (qDigits.length > 0 && phoneDigits.includes(qDigits)) ||
+        (c.email && c.email.toLowerCase().includes(q)) ||
+        cedula.includes(q)
+      );
+    });
+  }, [customers, customerSearch, isCustomerSearchOpen]);
 
   // Cálculos de totales
   const subtotal = invoiceItems.reduce((acc, it) => acc + it.price * it.quantity, 0);
@@ -209,7 +216,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
   const handleSelectCustomer = (customer: Customer) => {
     setSelectedCustomer(customer);
     setCustomerName(customer.name);
-    setCustomerPhone(customer.phone);
+    setCustomerPhone(customer.phone || '');
     setCustomerEmail(customer.email || '');
     if (customer.address) {
       setShippingAddress(customer.address);
@@ -219,6 +226,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
       setCustomFieldValues({ ...customer.customFields });
     }
     setCustomerSearch('');
+    setIsCustomerSearchOpen(false);
     setCreateError(null);
   };
 
@@ -288,9 +296,13 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
           customFields: customFieldValues,
         });
       } else {
+        const cleanDigits = cleanPhone.replace(/\D/g, '');
+        const cleanMail = customerEmail.trim().toLowerCase();
         const existing = customers.find(
-          (c) => c.phone.replace(/\D/g, '') === cleanPhone.replace(/\D/g, '') ||
-                 c.name.toUpperCase() === cleanName.toUpperCase()
+          (c) =>
+            (cleanDigits && (c.phone || '').replace(/\D/g, '') === cleanDigits) ||
+            (cleanMail && c.email && c.email.trim().toLowerCase() === cleanMail) ||
+            c.name.toUpperCase() === cleanName.toUpperCase()
         );
         if (existing) {
           updateCustomer(existing.id, {
@@ -417,7 +429,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
   const handleOpenEditCustomerModal = (customer: Customer) => {
     setEditingCustomerId(customer.id);
     setCustModalName(customer.name);
-    setCustModalPhone(customer.phone);
+    setCustModalPhone(customer.phone || '');
     setCustModalEmail(customer.email || '');
     setCustModalAddress(customer.address || '');
     setCustModalNotes(customer.notes || '');
@@ -845,7 +857,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                       Cliente: {selectedCustomer.name}
                     </span>
                     <span className="text-[11px] text-slate-500 dark:text-slate-300 ml-2">
-                      Tel: {selectedCustomer.phone}
+                      Tel: {selectedCustomer.phone || 'Sin teléfono'}
                     </span>
                   </div>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
@@ -857,9 +869,14 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                   <input
                     type="text"
-                    placeholder="Escribe nombre, teléfono (ej. 8823-9911) o correo..."
+                    placeholder="Buscar cliente web o POS por nombre, teléfono, cédula o correo..."
                     value={customerSearch}
-                    onChange={(e) => setCustomerSearch(e.target.value)}
+                    onFocus={() => setIsCustomerSearchOpen(true)}
+                    onBlur={() => setTimeout(() => setIsCustomerSearchOpen(false), 180)}
+                    onChange={(e) => {
+                      setCustomerSearch(e.target.value);
+                      setIsCustomerSearchOpen(true);
+                    }}
                     className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-[#1E1932] border border-slate-200 dark:border-white/10 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-purple-400"
                   />
 
@@ -873,11 +890,18 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                           className="w-full p-2.5 text-left hover:bg-purple-50 dark:hover:bg-purple-900/40 flex items-center justify-between text-xs transition-colors"
                         >
                           <div>
-                            <span className="font-bubble font-bold text-slate-900 dark:text-white block">
-                              {cust.name}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bubble font-bold text-slate-900 dark:text-white">
+                                {cust.name}
+                              </span>
+                              {cust.id.startsWith('reg-') && (
+                                <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
+                                  Web
+                                </span>
+                              )}
+                            </div>
                             <span className="text-[11px] text-slate-500 dark:text-slate-300 font-mono">
-                              {cust.phone} {cust.email ? `• ${cust.email}` : ''}
+                              {cust.phone || 'Sin teléfono'} {cust.email ? `• ${cust.email}` : ''}
                             </span>
                           </div>
                           <span className="text-[10px] text-fio-purple font-bold">Seleccionar &rarr;</span>
@@ -1387,11 +1411,13 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                 .filter((c) => {
                   const q = directorySearch.trim().toLowerCase();
                   if (!q) return true;
+                  const cedula = (c.customFields?.['field-cedula'] || '').toLowerCase();
                   return (
                     c.name.toLowerCase().includes(q) ||
-                    c.phone.includes(q) ||
+                    (c.phone || '').toLowerCase().includes(q) ||
                     (c.email && c.email.toLowerCase().includes(q)) ||
-                    (c.address && c.address.toLowerCase().includes(q))
+                    (c.address && c.address.toLowerCase().includes(q)) ||
+                    cedula.includes(q)
                   );
                 })
                 .map((cust) => (
@@ -1402,11 +1428,18 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                     <div className="space-y-2">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <h4 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-tight">
-                            {cust.name}
-                          </h4>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <h4 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-tight">
+                              {cust.name}
+                            </h4>
+                            {cust.id.startsWith('reg-') && (
+                              <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
+                                Web
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[11px] font-mono text-fio-purple dark:text-purple-300 font-bold">
-                            Tel: {cust.phone}
+                            Tel: {cust.phone || 'Sin teléfono'}
                           </span>
                         </div>
 

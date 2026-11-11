@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, BookmarkCheck, Receipt, Boxes, Landmark, GraduationCap, Vibrate, Sliders, Zap,
-  ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
+  ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Users,
   BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone, Save,
   ShieldCheck, Shield, ClipboardList
 } from 'lucide-react';
@@ -173,12 +173,6 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       title: 'Talleres & Alumnos',
                         icon: GraduationCap,
       gradient: 'from-[#EC4899] to-[#BE185D]',
-    },
-    {
-      id: 'pricing' as AdminTabType,
-      title: 'Precios & Stickers',
-                        icon: Tag,
-      gradient: 'from-[#F59E0B] to-[#D97706]',
     },
     {
       id: 'users' as AdminTabType,

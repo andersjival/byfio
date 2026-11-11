@@ -200,15 +200,6 @@ const SECTION_METADATA: Record<string, SectionMetadataItem> = {
     routeKey: 'admin',
     adminTabKey: 'workshops',
   },
-  'admin-pricing': {
-    label: 'Panel Admin - Editor de Precios & Stickers',
-    category: 'admin',
-    icon: Tag,
-    routePath: '/admin/precios',
-    color: 'from-amber-500 to-yellow-600',
-    routeKey: 'admin',
-    adminTabKey: 'pricing',
-  },
   'admin-users': {
     label: 'Panel Admin - Perfiles de Usuarios & PINs',
     category: 'admin',

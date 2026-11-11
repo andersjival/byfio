@@ -1,11 +1,11 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { UserProfile, UserPermissions } from '../../types';
 import {
   Users, Plus, KeyRound, Shield, Check, X, Edit3, Trash2,
   CheckCircle2, AlertCircle, Copy, Eye, EyeOff, Star,
-  QrCode, Receipt, Boxes, Landmark, GraduationCap, Tag, UserCheck, Calendar, Truck, ShoppingBag
+  QrCode, Receipt, Boxes, Landmark, GraduationCap, UserCheck, Calendar, Truck, ShoppingBag
 } from 'lucide-react';
 
 export const UserProfilesSection: React.FC = () => {
@@ -201,7 +201,6 @@ export const UserProfilesSection: React.FC = () => {
     { key: 'inventory', label: 'Mis Productos', desc: 'Catálogo de insumos, stock y etiquetas QR', icon: Boxes },
     { key: 'reports', label: 'Caja & Reportería', desc: 'Arqueo diario, balances y cobros del día', icon: Landmark },
     { key: 'workshops', label: 'Talleres & Alumnos', desc: 'Inscripciones, cupos y lista de participantes', icon: GraduationCap },
-    { key: 'pricing', label: 'Precios & Stickers', desc: 'Lista oficial y editor de tarifas de stickers', icon: Tag },
     { key: 'users', label: 'Perfiles de Usuarios', desc: 'Crear, editar o revocar accesos a otros usuarios', icon: Users },
     { key: 'customers', label: 'Directorio de Clientes', desc: 'Registro de clientes y fichas para pedidos', icon: UserCheck },
     { key: 'agenda', label: 'Agenda & Tareas', desc: 'Acceso al organizador del taller y calendario', icon: Calendar },
@@ -209,7 +208,7 @@ export const UserProfilesSection: React.FC = () => {
     { key: 'sales', label: 'Historial de Ventas', desc: 'Consulta de ventas realizadas y órdenes facturadas', icon: ShoppingBag },
   ];
 
-  const allChecked = Object.values(permissions).every((v) => v);
+  const allChecked = permissionModules.every((m) => !!permissions[m.key]);
 
   return (
     <div className="space-y-6 animate-fadeIn pb-8">
@@ -277,7 +276,7 @@ export const UserProfilesSection: React.FC = () => {
           const isCopied = copiedId === prof.id;
 
           const perms = prof.permissions || {} as UserPermissions;
-          const grantedCount = Object.values(perms).filter(Boolean).length;
+          const grantedCount = permissionModules.filter((m) => !!perms[m.key]).length;
           const totalCount = permissionModules.length;
           const isAlistoProfile = prof.id === 'prof-alisto' || prof.name.toUpperCase().includes('ALISTO');
 
