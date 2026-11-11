@@ -6,7 +6,8 @@ import {
   UserProfile, UserPermissions, PaymentMethod, Customer, CustomerFieldDef, OrderItem,
   SinpeTransaction, SinpeSettings, InventoryMissingReport, SinpeCheckoutValidationResult,
   SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus,
-  Supplier, SupplierOrder, SupplierOrderStatus, DailyClosingRecord, ProposalAcceptance
+  Supplier, SupplierOrder, SupplierOrderStatus, DailyClosingRecord, ProposalAcceptance,
+  InventoryAdjustmentRecord, ShelfInventoryState, ShelfInventoryStatus
 } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
@@ -431,6 +432,14 @@ interface AppContextType {
   markProposalAcceptanceAsRead: (id: string) => void;
   updateProposalAcceptanceStatus: (id: string, status: 'pending' | 'contacted' | 'active') => void;
   deleteProposalAcceptance: (id: string) => void;
+  inventoryAdjustments: InventoryAdjustmentRecord[];
+  addInventoryAdjustment: (adj: Omit<InventoryAdjustmentRecord, 'id' | 'createdAt' | 'dateFormatted' | 'timeFormatted'>) => Promise<InventoryAdjustmentRecord>;
+  deleteInventoryAdjustment: (id: string) => void;
+  collaboratorInventoryEnabled: boolean;
+  toggleCollaboratorInventoryEnabled: (enabled?: boolean) => void;
+  shelfInventoryStates: Record<string, ShelfInventoryState>;
+  updateShelfInventoryStatus: (shelfName: string, status: ShelfInventoryStatus, verifiedCount?: number) => void;
+  resetShelvesInventoryStatus: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -463,6 +472,9 @@ const STORAGE_KEYS = {
   SUPPLIERS: 'byfio_suppliers_directory_v1',
   DAILY_CLOSINGS: 'byfio_daily_closings_v1',
   PROPOSAL_ACCEPTANCES: 'byfio_proposal_acceptances_v1',
+  INVENTORY_ADJUSTMENTS: 'byfio_inventory_adjustments_v1',
+  COLLABORATOR_INVENTORY_ENABLED: 'byfio_collaborator_inventory_enabled_v1',
+  SHELF_INVENTORY_STATES: 'byfio_shelf_inventory_states_v1',
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -1454,6 +1466,163 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const deleteProposalAcceptance = (id: string) => {
     const updated = proposalAcceptances.filter((item) => item.id !== id);
     saveProposalAcceptances(updated);
+  };
+
+  // =========================================================================
+  // SISTEMA DE TOMA DE INVENTARIO POR ESTANTES, AJUSTES Y REPORTES
+  // =========================================================================
+  const [inventoryAdjustments, setInventoryAdjustments] = useState<InventoryAdjustmentRecord[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.INVENTORY_ADJUSTMENTS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return deepSanitize(parsed);
+      }
+    } catch {}
+    return [];
+  });
+
+  const [collaboratorInventoryEnabled, setCollaboratorInventoryEnabled] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.COLLABORATOR_INVENTORY_ENABLED);
+      if (saved !== null) return saved === 'true';
+    } catch {}
+    return false;
+  });
+
+  const [shelfInventoryStates, setShelfInventoryStates] = useState<Record<string, ShelfInventoryState>>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.SHELF_INVENTORY_STATES);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {};
+  });
+
+  const saveInventoryAdjustmentsList = (list: InventoryAdjustmentRecord[]) => {
+    const sanitized = deepSanitize(list);
+    setInventoryAdjustments(sanitized);
+    try {
+      localStorage.setItem(STORAGE_KEYS.INVENTORY_ADJUSTMENTS, JSON.stringify(sanitized));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', inventoryAdjustments: sanitized });
+    } catch {}
+    try {
+      fetch('/api/inventory-adjustments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adjustments: sanitized }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const toggleCollaboratorInventoryEnabled = (enabled?: boolean) => {
+    const nextState = enabled !== undefined ? enabled : !collaboratorInventoryEnabled;
+    setCollaboratorInventoryEnabled(nextState);
+    try {
+      localStorage.setItem(STORAGE_KEYS.COLLABORATOR_INVENTORY_ENABLED, String(nextState));
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', collaboratorInventoryEnabled: nextState });
+    } catch {}
+    try {
+      fetch('/api/inventory-adjustments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collaboratorInventoryEnabled: nextState }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const updateShelfInventoryStatus = (shelfName: string, status: ShelfInventoryStatus, verifiedCount?: number) => {
+    setShelfInventoryStates((prev) => {
+      const current = prev[shelfName] || {
+        shelfName,
+        status: 'pending',
+        itemsCount: 0,
+        itemsVerified: 0,
+      };
+      const next: Record<string, ShelfInventoryState> = {
+        ...prev,
+        [shelfName]: {
+          ...current,
+          status,
+          lastCountedAt: new Date().toISOString(),
+          lastCountedBy: currentUser?.name || 'Administración ByFio',
+          itemsVerified: verifiedCount !== undefined ? verifiedCount : current.itemsVerified,
+        },
+      };
+      try {
+        localStorage.setItem(STORAGE_KEYS.SHELF_INVENTORY_STATES, JSON.stringify(next));
+        syncChannel?.postMessage({ type: 'SYNC_UPDATE', shelfInventoryStates: next });
+        fetch('/api/inventory-adjustments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ shelfStates: next }),
+        }).catch(() => {});
+      } catch {}
+      return next;
+    });
+  };
+
+  const resetShelvesInventoryStatus = () => {
+    setShelfInventoryStates({});
+    try {
+      localStorage.removeItem(STORAGE_KEYS.SHELF_INVENTORY_STATES);
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', shelfInventoryStates: {} });
+      fetch('/api/inventory-adjustments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shelfStates: {} }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const addInventoryAdjustment = async (
+    adjData: Omit<InventoryAdjustmentRecord, 'id' | 'createdAt' | 'dateFormatted' | 'timeFormatted'>
+  ): Promise<InventoryAdjustmentRecord> => {
+    const now = new Date();
+    const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const dateFormatted = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+    const timeFormatted = now.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+    const newRecord: InventoryAdjustmentRecord = {
+      ...adjData,
+      id: `ADJ-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      createdAt: now.toISOString(),
+      dateFormatted,
+      timeFormatted,
+      performedBy: adjData.performedBy || currentUser?.name || 'ADMINISTRACIÓN (FIO)',
+    };
+
+    // Actualizar el stock de cada producto en el sistema (local + D1 batch)
+    const stockUpdates: { id: string; stock: number; isAvailable?: boolean }[] = [];
+    adjData.items.forEach((item) => {
+      if (item.productId) {
+        updateProductStock(item.productId, item.countedStock);
+        stockUpdates.push({
+          id: item.productId,
+          stock: item.countedStock,
+          isAvailable: item.countedStock > 0,
+        });
+      }
+    });
+
+    if (stockUpdates.length > 0) {
+      try {
+        fetch('/api/products', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(stockUpdates),
+        }).catch(() => {});
+      } catch {}
+    }
+
+    const nextAdjustments = [newRecord, ...inventoryAdjustments];
+    saveInventoryAdjustmentsList(nextAdjustments);
+    return newRecord;
+  };
+
+  const deleteInventoryAdjustment = (id: string) => {
+    const updated = inventoryAdjustments.filter((item) => item.id !== id);
+    saveInventoryAdjustmentsList(updated);
   };
 
   const createDirectInvoiceOrder = (orderData: {
@@ -2528,6 +2697,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(cleanProfiles));
           } catch {}
         }
+        if (Array.isArray(event.data.inventoryAdjustments)) {
+          setInventoryAdjustments(deepSanitize(event.data.inventoryAdjustments));
+        }
+        if (typeof event.data.collaboratorInventoryEnabled === 'boolean') {
+          setCollaboratorInventoryEnabled(event.data.collaboratorInventoryEnabled);
+        }
+        if (event.data.shelfInventoryStates && typeof event.data.shelfInventoryStates === 'object') {
+          setShelfInventoryStates(event.data.shelfInventoryStates);
+        }
       }
     };
 
@@ -2833,6 +3011,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   localStorage.setItem(STORAGE_KEYS.PROPOSAL_ACCEPTANCES, JSON.stringify(sanitized));
                 } catch {}
                 return sanitized;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+
+      // 5e. Sincronizar ajustes de inventario y configuración de colaboradores en la nube
+      fetch('/api/inventory-adjustments')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data?.adjustments)) {
+            setInventoryAdjustments((prev) => {
+              const sanitized = deepSanitize(data.adjustments);
+              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.INVENTORY_ADJUSTMENTS, JSON.stringify(sanitized));
+                } catch {}
+                return sanitized;
+              }
+              return prev;
+            });
+          }
+          if (typeof data?.collaboratorInventoryEnabled === 'boolean') {
+            setCollaboratorInventoryEnabled(data.collaboratorInventoryEnabled);
+            try {
+              localStorage.setItem(STORAGE_KEYS.COLLABORATOR_INVENTORY_ENABLED, String(data.collaboratorInventoryEnabled));
+            } catch {}
+          }
+          if (data?.shelfStates && typeof data.shelfStates === 'object') {
+            setShelfInventoryStates((prev) => {
+              if (JSON.stringify(prev) !== JSON.stringify(data.shelfStates)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.SHELF_INVENTORY_STATES, JSON.stringify(data.shelfStates));
+                } catch {}
+                return data.shelfStates;
               }
               return prev;
             });
@@ -4652,6 +4866,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         markProposalAcceptanceAsRead,
         updateProposalAcceptanceStatus,
         deleteProposalAcceptance,
+        inventoryAdjustments,
+        addInventoryAdjustment,
+        deleteInventoryAdjustment,
+        collaboratorInventoryEnabled,
+        toggleCollaboratorInventoryEnabled,
+        shelfInventoryStates,
+        updateShelfInventoryStatus,
+        resetShelvesInventoryStatus,
       }}
     >
       {children}

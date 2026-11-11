@@ -9,14 +9,16 @@ import {
 import { ShelfBarcodeLabelsModal } from './ShelfBarcodeLabelsModal';
 import { InventoryChecklistModal } from './InventoryChecklistModal';
 import { AssignSupplierModal } from './AssignSupplierModal';
+import { InventoryAdminBanner } from '../inventory/InventoryAdminBanner';
 import { Product } from '../../types';
 import type { AdminTabType } from './AdminTabs';
 
 interface InventoryTableProps {
   onSelectTab?: (tab: AdminTabType) => void;
+  onOpenInventoryApp?: () => void;
 }
 
-export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) => {
+export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onOpenInventoryApp }) => {
   const {
     products,
     updateProductStock,
@@ -167,6 +169,17 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab }) =
           )}
         </div>
       </div>
+
+      {/* Sección Destacada de Inventario Independiente por Estantes (App PWA) */}
+      <InventoryAdminBanner
+        onOpenInventoryApp={() => {
+          if (onOpenInventoryApp) {
+            onOpenInventoryApp();
+          } else {
+            window.location.href = '/inventario-app';
+          }
+        }}
+      />
 
 {/* Botones de Filtro Rápido por Existencias en Cero y Disponibilidad para Pedidos */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-fio-50/70 rounded-2xl border border-fio-200 mb-4">

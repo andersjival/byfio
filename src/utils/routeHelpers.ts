@@ -1,4 +1,4 @@
-﻿import { AppRoute } from '../types';
+import { AppRoute } from '../types';
 import type { AdminTabType } from '../components/admin/AdminTabs';
 
 export interface RouteInfo {
@@ -89,6 +89,25 @@ export const parseRouteFromLocation = (): RouteInfo => {
     seccionParam === 'picking'
   ) {
     return { route: 'pedidos-mobile', adminTab: 'orders' };
+  }
+
+  // Vista / PWA independiente y aislada de Toma de Inventario por Estantes (/inventario-app, /app/inventario, /toma-inventario)
+  if (
+    (!path.startsWith('/admin') && (
+      path === '/inventario-app' || path.startsWith('/inventario-app/') ||
+      path === '/app/inventario' || path.startsWith('/app/inventario/') ||
+      path === '/toma-inventario' || path.startsWith('/toma-inventario/') ||
+      path === '/conteo-inventario' || path.startsWith('/conteo-inventario/') ||
+      path === '/inventario' || path === '/inventario/'
+    )) ||
+    hash.includes('inventario-app') ||
+    hash.includes('app/inventario') ||
+    hash.includes('toma-inventario') ||
+    seccionParam === 'inventario-app' ||
+    seccionParam === 'toma-inventario' ||
+    (searchParams.get('app') === 'inventario' && !path.startsWith('/admin'))
+  ) {
+    return { route: 'inventario-app', adminTab: 'inventory' };
   }
 
   // Admin sub-rutas independientes (por pathname, hash o query param)
@@ -358,7 +377,7 @@ export const isCollaboratorPwaContext = (): boolean => {
       return true;
     }
 
-    // 2. Detección de rutas exclusivas de pedidos / colaboradores
+    // 2. Detección de rutas exclusivas de pedidos / colaboradores / inventario PWA
     const isCollaboratorPath =
       path === '/pedidos' || path.startsWith('/pedidos/') ||
       path === '/pedidos-mobile' || path.startsWith('/pedidos-mobile/') ||
@@ -366,7 +385,9 @@ export const isCollaboratorPwaContext = (): boolean => {
       path === '/alisto' || path.startsWith('/alisto/') ||
       path === '/picking' || path.startsWith('/picking/') ||
       path === '/app/pedidos' ||
-      hash.includes('pedidos-mobile') || hash.includes('alisto') || hash.includes('picking');
+      path === '/inventario-app' || path.startsWith('/inventario-app/') ||
+      path === '/toma-inventario' || path.startsWith('/toma-inventario/') ||
+      hash.includes('pedidos-mobile') || hash.includes('alisto') || hash.includes('picking') || hash.includes('inventario-app');
 
     if (isCollaboratorPath) return true;
 

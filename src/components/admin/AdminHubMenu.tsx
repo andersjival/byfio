@@ -1,11 +1,11 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
 import {
   QrCode, BookmarkCheck, Receipt, Boxes, Landmark, GraduationCap, Vibrate, Sliders, Zap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Tag, Users,
   BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone, Save,
-  ShieldCheck, Shield
+  ShieldCheck, Shield, ClipboardList
 } from 'lucide-react';
 
 import { AppRoute, SupplierOrder } from '../../types';
@@ -26,7 +26,7 @@ interface AdminHubMenuProps {
 }
 
 export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavigate, onOpenPwaModal }) => {
-  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, toggleSuperadminModule, currentUser, agendaItems, supplierOrders } = useApp();
+  const { orders, products, workshops, userProfiles, customers, hasPermission, sinpeTransactions, isModuleEnabled, toggleSuperadminModule, currentUser, agendaItems, supplierOrders, collaboratorInventoryEnabled } = useApp();
   const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
   const [catalogWebCheck, setCatalogWebCheck] = useState<boolean>(isModuleEnabled('catalogo'));
@@ -276,6 +276,28 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               </button>
             );
           })}
+
+          {collaboratorInventoryEnabled && (
+            <button
+              type="button"
+              onClick={() => onNavigate && onNavigate('inventario-app')}
+              className="group text-left rounded-2xl p-3.5 sm:p-4 bg-gradient-to-br from-purple-50 via-white to-pink-50 hover:bg-pink-50/40 border-2 border-purple-300/80 hover:border-fio-pink shadow-[0_4px_16px_rgba(168,85,247,0.14)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[105px] sm:min-h-[118px]"
+            >
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-purple-700 via-fio-purple to-fio-pink text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                  <ClipboardList className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+                </div>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bubble font-bold">
+                  Activo
+                </span>
+              </div>
+              <div>
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
+                  Inventario Físico (App)
+                </h3>
+              </div>
+            </button>
+          )}
         </div>
       </div>
 

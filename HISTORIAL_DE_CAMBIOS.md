@@ -1,3 +1,21 @@
+## [v4.19.95] - 2026-11-11
+
+### 📦 Aplicación PWA Independiente de Inventario por Estanterías, Ajustes y Reportes
+- **Sección y Botón "Inventario" en Mis Productos (`InventoryAdminBanner.tsx` & `InventoryTable.tsx`):**
+  - Integrado acceso directo al módulo de inventario aislado (`/inventario-app`) y switch administrativo (**PWA Colaborador: Activado / Desactivado**) para habilitar o deshabilitar el acceso en la PWA de los colaboradores en tiempo real.
+- **Aplicación PWA Aislada de Inventarios (`InventoryAppPage.tsx`):**
+  - Acceso independiente mediante PIN para colaboradores/admin y verificación automática de permisos si el administrador desactiva el módulo.
+  - **Realizar Inventario por Estantería (`InventoryShelvesView.tsx` & `InventoryCountSession.tsx`):** Vista visual de estantes ordenados (Estante 1, 2, 3, 4, 5, 6+ y ubicaciones adicionales), selector de estante, indicadores visuales de avance (Pendiente / En Proceso / Inventariado ✅), conteo físico táctil + escáner de cámara y carga al sistema.
+  - **Ajustes de Inventario (`InventoryAdjustmentsView.tsx`):** Ajuste directo de diferencias/mermas con actualización inmediata en sistema y motivo detallado.
+  - **Historial y Reportes (`InventoryHistoryReportsView.tsx`):** Historial cronológico con usuario, día, fecha, hora y detalle completo producto por producto, con impresión/PDF y descarga CSV.
+- **Persistencia en D1 (`functions/api/inventory-adjustments.ts` & `AppContext.tsx`):**
+  - Sincronización en la nube de ajustes, configuración de acceso colaborador y estado visual de estanterías.
+- **Integración PWA Colaboradores (`MobileOrdersView.tsx`, `AdminHubMenu.tsx`, `AdminMobileDock.tsx`, `PwaManagerModal.tsx`):**
+  - Botón dinámico visible únicamente cuando el administrador activa la toma de inventario.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.95`.
+
+---
+
 ## [v4.19.94] - 2026-11-11
 
 ### 🎯 Corrección Definitiva del Cálculo Inmutable en Modal de Abono y Tarjeta de Apartado

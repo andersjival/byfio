@@ -33,6 +33,12 @@ const DEFAULT_CATEGORIES = [
 ];
 
 const DEFAULT_SHELF_LOCATIONS = [
+  'Estante 1',
+  'Estante 2',
+  'Estante 3',
+  'Estante 4',
+  'Estante 5',
+  'Estante 6',
   'Estante A-1 (Nivel 1)',
   'Estante A-1 (Nivel 2)',
   'Estante A-2 (Nivel 1)',

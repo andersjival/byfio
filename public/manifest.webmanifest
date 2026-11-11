@@ -71,6 +71,13 @@
       "description": "Catálogo interactivo de productos",
       "url": "/catalogo",
       "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "App de Inventario Físico",
+      "short_name": "Inventarios",
+      "description": "Conteo físico por estanterías y ajustes de inventario",
+      "url": "/inventario-app",
+      "icons": [{ "src": "/logo-byfio-192.png", "sizes": "192x192" }]
     }
   ]
 }

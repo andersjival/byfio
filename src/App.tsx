@@ -58,6 +58,7 @@ const AgendaSection = React.lazy(() => import('./components/admin/AgendaSection'
 const MetricsPage = React.lazy(() => import('./components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
 const PropuestaPage = React.lazy(() => import('./components/propuesta/PropuestaPage').then((m) => ({ default: m.PropuestaPage })));
 const SuperadminSection = React.lazy(() => import('./components/superadmin/SuperadminSection').then((m) => ({ default: m.SuperadminSection })));
+const InventoryAppPage = React.lazy(() => import('./components/inventory/InventoryAppPage').then((m) => ({ default: m.InventoryAppPage })));
 
 import { metricsTracker, appendRefToPath, getActiveCampaignRef } from './services/metricsTracker';
 import { initWaterDropButtonSounds } from './utils/soundEffects';
@@ -169,6 +170,7 @@ export const App: React.FC = () => {
     else if (newRoute === 'store') targetPath = '/tienda';
     else if (newRoute === 'pedidos-mobile') targetPath = '/pedidos';
     else if (newRoute === 'pwa-install') targetPath = '/instalar-app';
+    else if (newRoute === 'inventario-app') targetPath = '/inventario-app';
     else if (newRoute === 'workshops') targetPath = '/talleres';
     else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
     else if (newRoute === 'admin') {
@@ -337,6 +339,16 @@ export const App: React.FC = () => {
     return (
       <ErrorBoundary fallbackTitle="Inconveniente al cargar el portal de instalación">
         <PwaInstallPage onNavigate={navigate} onSelectAdminTab={setAdminTab} />
+      </ErrorBoundary>
+    );
+  }
+
+  if (currentRoute === 'inventario-app') {
+    return (
+      <ErrorBoundary fallbackTitle="Inconveniente al cargar la aplicación de inventarios">
+        <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bubble text-sm text-purple-700 bg-[#F7F4FC]">Cargando App de Inventarios...</div>}>
+          <InventoryAppPage onNavigate={navigate} />
+        </React.Suspense>
       </ErrorBoundary>
     );
   }
@@ -543,7 +555,12 @@ export const App: React.FC = () => {
                             />
                           </React.Suspense>
                         )}
-                        {adminTab === 'inventory' && <InventoryTable onSelectTab={handleSelectAdminTab} />}
+                        {adminTab === 'inventory' && (
+                          <InventoryTable
+                            onSelectTab={handleSelectAdminTab}
+                            onOpenInventoryApp={() => navigate('inventario-app')}
+                          />
+                        )}
                         {adminTab === 'reports' && (
                           <CashRegisterReports
                             onOpenDailyClosing={(date) => {

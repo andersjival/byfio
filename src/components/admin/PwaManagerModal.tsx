@@ -1,12 +1,13 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Smartphone, Monitor, Download, Share2, Copy, Check,
   ExternalLink, QrCode, Sparkles, ShieldCheck, Users,
   Boxes, Receipt, Calendar, X, ChevronRight, Info,
   Laptop, Tablet, CheckCircle2, MessageCircle, AlertCircle, KeyRound,
-  Vibrate, Sliders, Zap
+  Vibrate, Sliders, Zap, ClipboardList
 } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 import { usePwaInstall } from '../../hooks/usePwaInstall';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 import {
@@ -46,6 +47,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
   onNavigate,
 }) => {
   const { isInstallable, isStandalone, isMobile, isIOS, isAndroid, promptInstall } = usePwaInstall();
+  const { collaboratorInventoryEnabled, toggleCollaboratorInventoryEnabled } = useApp();
   const [activeTab, setActiveTab] = useState<'admin' | 'vibration' | 'collaborators' | 'guide'>('admin');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [selectedQrApp, setSelectedQrApp] = useState<{ title: string; url: string } | null>(null);
@@ -861,6 +863,72 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                     >
                       <KeyRound className="w-3.5 h-3.5 text-fio-pink" />
                       <span>Configurar Permisos &amp; PINs</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Tarjeta Secundaria: App Dedicada de Toma de Inventario */}
+              <div className="p-5 rounded-3xl bg-white dark:bg-[#252136] border-2 border-emerald-200/80 dark:border-emerald-800/60 shadow-sm space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <ClipboardList className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                        App de Inventario Físico por Estantes (PWA)
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Conteo físico por estantes (1 al 6+), ajustes y reportes por usuario.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playWaterDropSound();
+                      toggleCollaboratorInventoryEnabled();
+                    }}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bubble font-bold cursor-pointer transition-all ${
+                      collaboratorInventoryEnabled
+                        ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                        : 'bg-slate-50 border-slate-200 text-slate-600'
+                    }`}
+                  >
+                    <span>Colaborador: {collaboratorInventoryEnabled ? 'ACTIVADO' : 'DESACTIVADO'}</span>
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(`${origin}/inventario-app`, 'app-inventario')}
+                    className="py-2 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bubble font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+                  >
+                    {copiedKey === 'app-inventario' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-purple-600" />}
+                    <span>{copiedKey === 'app-inventario' ? '¡Copiado!' : 'Copiar Link /inventario-app'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedQrApp({ title: 'App Inventario By.Fio', url: `${origin}/inventario-app` })}
+                    className="py-2 px-3.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 font-bubble font-bold text-xs flex items-center gap-1.5 border border-purple-200 cursor-pointer"
+                  >
+                    <QrCode className="w-3.5 h-3.5 text-fio-pink" />
+                    <span>Ver QR Inventario</span>
+                  </button>
+                  {onNavigate && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onNavigate('inventario-app');
+                      }}
+                      className="py-2 px-3.5 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink text-white font-bubble font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Abrir App Ahora</span>
                     </button>
                   )}
                 </div>

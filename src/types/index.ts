@@ -16,6 +16,7 @@ export type AppRoute =
   | 'superadmin'
   | 'pedidos-mobile'
   | 'pwa-install'
+  | 'inventario-app'
   | 'mi-cuenta';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
@@ -490,6 +491,45 @@ export interface SupplierOrder {
   createdAt: string;
   orderedAt?: string;
   receivedAt?: string;
+}
+
+export type ShelfInventoryStatus = 'pending' | 'in_progress' | 'completed';
+
+export interface ShelfInventoryState {
+  shelfName: string;
+  status: ShelfInventoryStatus;
+  lastCountedAt?: string;
+  lastCountedBy?: string;
+  itemsCount: number;
+  itemsVerified: number;
+}
+
+export interface InventoryAdjustmentItem {
+  productId: string;
+  sku: string;
+  name: string;
+  category: string;
+  shelfLocation: string;
+  image?: string;
+  previousStock: number;
+  countedStock: number;
+  difference: number; // countedStock - previousStock (+2, -1, etc.)
+  reason?: string;
+}
+
+export interface InventoryAdjustmentRecord {
+  id: string; // ej: ADJ-1718290000000
+  shelfName: string; // ej: "Estante 1" o "Ajuste Directo"
+  performedBy: string; // Nombre de usuario (ej: MARÍA, ADMINISTRADORA)
+  userRole?: string; // "admin" | "staff"
+  createdAt: string; // ISO 8601
+  dateFormatted: string; // ej: "Miércoles, 11 de Noviembre 2026"
+  timeFormatted: string; // ej: "07:35 AM"
+  totalItemsCounted: number;
+  totalDifferences: number; // cantidad de productos con diferencia !== 0
+  netDifferenceUnits: number; // balance neto de unidades (+2, -3)
+  items: InventoryAdjustmentItem[];
+  notes?: string;
 }
 
 export type { AdminTabType } from '../components/admin/AdminTabs';

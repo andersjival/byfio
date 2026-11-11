@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, PackageCheck, Receipt, Calendar, Camera } from 'lucide-react';
+import { Home, PackageCheck, Receipt, Calendar, Camera, ClipboardList } from 'lucide-react';
 import { AdminTabType } from './AdminTabs';
 import { playWaterDropSound } from '../../utils/soundEffects';
 import { useApp } from '../../context/AppContext';
@@ -9,14 +9,16 @@ interface AdminMobileDockProps {
   activeTab: AdminTabType;
   onSelectTab: (tab: AdminTabType) => void;
   onOpenScanner?: () => void;
+  onOpenInventoryApp?: () => void;
 }
 
 export const AdminMobileDock: React.FC<AdminMobileDockProps> = ({
   activeTab,
   onSelectTab,
   onOpenScanner,
+  onOpenInventoryApp,
 }) => {
-  const { currentUser, isModuleEnabled, hasPermission } = useApp();
+  const { currentUser, isModuleEnabled, hasPermission, collaboratorInventoryEnabled } = useApp();
 
   const isAdmin = Boolean(currentUser && (currentUser.role === 'admin' || currentUser.isMasterAdmin));
   const isCollaborator = !isAdmin && Boolean(currentUser?.role === 'staff' || isCollaboratorPwaContext());
@@ -113,6 +115,26 @@ export const AdminMobileDock: React.FC<AdminMobileDockProps> = ({
         >
           <Calendar className="w-4 h-4 mb-0.5 text-amber-500" />
           <span className="text-[10px] font-bubble">Agenda</span>
+        </button>
+      )}
+
+      {collaboratorInventoryEnabled && (
+        <button
+          type="button"
+          onClick={() => {
+            playWaterDropSound();
+            if (onOpenInventoryApp) {
+              onOpenInventoryApp();
+            } else {
+              window.history.pushState({ route: 'inventario-app' }, '', '/inventario-app');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+            }
+          }}
+          className="flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all cursor-pointer touch-manipulation active:scale-95 text-purple-800 hover:text-fio-pink"
+          title="Realizar Toma de Inventario"
+        >
+          <ClipboardList className="w-4 h-4 mb-0.5 text-purple-700" />
+          <span className="text-[10px] font-bubble font-bold">Inventario</span>
         </button>
       )}
     </div>

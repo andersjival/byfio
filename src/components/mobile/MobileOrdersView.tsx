@@ -8,7 +8,7 @@ import {
   CreditCard, Shield, ShieldCheck, KeyRound, LogOut, RefreshCw,
   Store, Boxes, ChevronDown, ChevronUp, Copy, MessageCircle,
   Check, Truck, Tag, Calendar, AlertCircle, Sparkles, X, User, UserCheck,
-  Scan, Edit3, Home
+  Scan, Edit3, Home, ClipboardList
 } from 'lucide-react';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import {
@@ -40,6 +40,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
     loginWithPin,
     logoutUser,
     userProfiles,
+    collaboratorInventoryEnabled,
   } = useApp();
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'pending' | 'packing' | 'packed' | 'delivered'>('all');
@@ -347,6 +348,28 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
           </button>
         )}
       </div>
+
+      {/* Acceso Rápido al Módulo de Inventario en PWA Colaborador (Solo visible cuando el Admin lo activa) */}
+      {collaboratorInventoryEnabled && (
+        <div className="bg-gradient-to-r from-purple-700 via-fio-purple to-fio-pink px-3 py-2.5 flex items-center justify-between gap-2 text-white shadow-xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <ClipboardList className="w-4 h-4 text-fio-yellow shrink-0" />
+            <span className="text-xs font-bubble font-bold truncate">
+              Toma de Inventario por Estantes Habilitada
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              playWaterDropSound();
+              onNavigate('inventario-app');
+            }}
+            className="px-3.5 py-1.5 rounded-xl bg-white text-purple-900 font-bubble font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer shrink-0"
+          >
+            Abrir Inventario →
+          </button>
+        </div>
+      )}
 
       {/* Barra de Notificaciones Push y Alerta Sonora en Tiempo Real */}
       <div className="bg-purple-50/60 border-b border-purple-100 px-3 py-2 flex items-center justify-between gap-2 flex-wrap">
@@ -1182,6 +1205,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
           onNavigate('admin', tab);
         }}
         onOpenScanner={() => setIsCameraScannerOpen(true)}
+        onOpenInventoryApp={() => onNavigate('inventario-app')}
       />
     </div>
   );
