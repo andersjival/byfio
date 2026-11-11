@@ -96,7 +96,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
         <button
           type="button"
           onClick={() => onNavigate('admin', 'orders')}
-          className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold bg-gradient-to-r from-purple-700 to-fio-pink text-white border border-purple-300/40 shadow-neuBtn active:scale-95 transition-all flex items-center justify-between cursor-pointer"
+          className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold bg-gradient-to-r from-purple-700 to-fio-pink text-white border border-purple-300/40 shadow-sm hover:shadow active:scale-95 transition-all flex items-center justify-between cursor-pointer"
         >
           <span>📋 Cola de Pedidos de Clientes</span>
         </button>
@@ -171,7 +171,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
               if (onOpenLogin) onOpenLogin('login');
               else onNavigate('login');
             }}
-            className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink border border-white/80 shadow-neuBtn flex items-center gap-2 cursor-pointer"
+            className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold bg-white/90 hover:bg-white text-slate-700 hover:text-fio-pink border border-white/80 shadow-sm hover:shadow flex items-center gap-2 cursor-pointer"
           >
             <User className="w-4 h-4 text-fio-pink" />
             <span>Iniciar Sesión</span>
@@ -183,7 +183,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
               if (onOpenLogin) onOpenLogin('register');
               else onNavigate('login');
             }}
-            className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-neuBtn flex items-center justify-between cursor-pointer"
+            className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-sm hover:shadow flex items-center justify-between cursor-pointer"
           >
             <div className="flex items-center gap-2">
               <UserPlus className="w-4 h-4 text-white" />
@@ -195,7 +195,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
       )}
 
       {/* Selector de Tema en Móvil */}
-      <div className="flex items-center justify-between p-3 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset">
+      <div className="flex items-center justify-between p-3 rounded-2xl bg-white/80 border border-white/80 shadow-xs">
         <span className="text-xs font-bubble font-bold text-slate-700">Tema de la Web</span>
         <div className="flex items-center p-1 rounded-full bg-white/70 shadow-xs border border-white/90">
           <button
@@ -203,7 +203,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
             onClick={() => setColorTheme('vibrant')}
             className={`p-1.5 rounded-full transition-all ${
               colorTheme !== 'dark'
-                ? 'bg-[#F1F2F6] shadow-neuBtn text-amber-500 scale-105'
+                ? 'bg-white shadow-xs text-amber-500 scale-105'
                 : 'text-slate-400 hover:text-amber-500'
             }`}
             title="Tema Claro (Sol)"
@@ -215,7 +215,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
             onClick={() => setColorTheme('dark')}
             className={`p-1.5 rounded-full transition-all ${
               colorTheme === 'dark'
-                ? 'bg-[#1E1B4B] shadow-neuBtn text-indigo-400 scale-105'
+                ? 'bg-[#1E1B4B] shadow-xs text-indigo-400 scale-105'
                 : 'text-slate-400 hover:text-indigo-400'
             }`}
             title="Tema Oscuro (Luna)"

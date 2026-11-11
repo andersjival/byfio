@@ -42,7 +42,7 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
           type="button"
           onClick={() => (onOpenLogin ? onOpenLogin('login') : onNavigate('login'))}
           aria-label="Iniciar Sesión"
-          className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95 shrink-0 cursor-pointer"
+          className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-white/90 hover:bg-white text-slate-700 hover:text-fio-pink border border-white/80 shadow-sm hover:shadow transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95 shrink-0 cursor-pointer"
           title="Iniciar Sesión"
         >
           <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink" />
@@ -53,7 +53,7 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
           type="button"
           onClick={() => (onOpenLogin ? onOpenLogin('register') : onNavigate('login'))}
           aria-label="Registrarse"
-          className="hidden sm:flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-700 hover:to-pink-600 text-white shadow-neuBtn hover:shadow-neuBtnHover transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95 shrink-0 cursor-pointer"
+          className="hidden sm:flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-700 hover:to-pink-600 text-white shadow-sm hover:shadow transition-all text-xs sm:text-sm font-bubble font-bold active:scale-95 shrink-0 cursor-pointer"
           title="Crear cuenta nueva en 3 pasos"
         >
           <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />

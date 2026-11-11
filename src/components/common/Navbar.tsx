@@ -85,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('home')}
-              className="neu-btn bg-[#F1F2F6] flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-700 text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-neuBtn hover:text-fio-pink hover:bg-pink-50/70 hover:shadow-neuBtnHover transition-all active:scale-95 shrink-0"
+              className="bg-white/90 hover:bg-white flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-700 text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-sm hover:shadow hover:text-fio-pink transition-all active:scale-95 shrink-0"
               title="Volver a la tienda pública"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink shrink-0" />
@@ -98,7 +98,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('admin')}
-              className="neu-btn bg-[#F1F2F6] flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-purple-700 text-xs sm:text-sm font-bubble font-bold border border-purple-200/80 shadow-neuBtn hover:bg-purple-50 transition-all active:scale-95 shrink-0"
+              className="bg-white/90 hover:bg-white flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-purple-700 text-xs sm:text-sm font-bubble font-bold border border-purple-200/80 shadow-sm hover:shadow transition-all active:scale-95 shrink-0"
               title="Ir al Panel de Administración"
             >
               <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" />
@@ -208,7 +208,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="xl:hidden p-2 rounded-xl neu-btn bg-[#F1F2F6] border border-white/80 text-slate-700 shadow-neuBtn active:scale-95 transition-all shrink-0 cursor-pointer"
+                className="xl:hidden p-2 rounded-xl bg-white/90 hover:bg-white border border-white/80 text-slate-700 shadow-sm hover:shadow active:scale-95 transition-all shrink-0 cursor-pointer"
                 aria-label="Abrir menú"
               >
                 {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -220,7 +220,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => handleNav('admin')}
-                className="neu-btn bg-[#F1F2F6] flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-purple-700 hover:bg-purple-50 text-xs sm:text-sm font-bubble font-bold border border-purple-200/80 shadow-neuBtn transition-all active:scale-95 shrink-0"
+                className="bg-white/90 hover:bg-white flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-purple-700 hover:text-purple-900 text-xs sm:text-sm font-bubble font-bold border border-purple-200/80 shadow-sm hover:shadow transition-all active:scale-95 shrink-0"
                 title="Ir al Panel de Administración (/admin)"
               >
                 <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" />
@@ -233,10 +233,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={onSelectAdminHub}
-                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-neuBtn transition-all active:scale-95 shrink-0 whitespace-nowrap ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-sm hover:shadow transition-all active:scale-95 shrink-0 whitespace-nowrap ${
                   isAdminHub
-                    ? 'neu-btn-primary text-white shadow-neuBtnHover'
-                    : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-fio-pink hover:bg-pink-50/70 hover:shadow-neuBtnHover'
+                    ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-md'
+                    : 'bg-white/90 hover:bg-white text-slate-700 hover:text-fio-pink'
                 }`}
                 title="Ir al Menú del Panel de Control"
               >
@@ -248,7 +248,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   type="button"
                   onClick={logoutUser}
-                  className="neu-btn bg-[#F1F2F6] flex items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-bubble font-bold border border-white/80 shadow-neuBtn transition-all active:scale-95 shrink-0"
+                  className="bg-white/90 hover:bg-white flex items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl text-slate-600 hover:text-rose-600 border border-white/80 shadow-sm hover:shadow text-xs font-bubble font-bold transition-all active:scale-95 shrink-0"
                   title="Cerrar sesión"
                 >
                   <LogOut className="w-3.5 h-3.5 shrink-0" />

@@ -89,7 +89,7 @@ body[data-font-theme="hybrid"] .font-bubble {
 .neu-btn {
   background: #F1F2F6;
   border-radius: 1rem;
-  box-shadow: -5px -5px 12px #FFFFFF, 5px 5px 12px rgba(166, 175, 195, 0.36);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   border: none;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
@@ -97,12 +97,12 @@ body[data-font-theme="hybrid"] .font-bubble {
 }
 
 .neu-btn:hover {
-  box-shadow: -7px -7px 16px #FFFFFF, 7px 7px 16px rgba(166, 175, 195, 0.44);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
   transform: translateY(-1px);
 }
 
 .neu-btn:active, .neu-btn-active {
-  box-shadow: inset 3px 3px 6px rgba(166, 175, 195, 0.45), inset -3px -3px 6px #FFFFFF !important;
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.12) !important;
   transform: translateY(0px) !important;
 }
 

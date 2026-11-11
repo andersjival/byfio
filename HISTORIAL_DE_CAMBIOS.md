@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.79 - Eliminación de Halos y Destellos Neumórficos en Botones de PWA y Header
+- [x] **Eliminación de halos blancos y destellos:**
+  - En los botones del encabezado y panel de administración (`Menú`, `Salir`, `Volver a Tienda`, `Panel Admin`, `Hamburguesa móvil` e `Iniciar Sesión`), se reemplazó la sombra neumórfica con destello blanco (`-5px -5px 12px #FFFFFF`) por sombras suaves y limpias (`shadow-sm`, `hover:shadow`).
+  - Los botones ahora lucen nítidos, sólidos y perfectamente integrados con el fondo lila/morado sin auras ni halos artificiales.
+- [x] **Selector de Modo Oscuro / Claro ([NavbarThemeToggle.tsx](file:///C:/Users/Juan/byfio/src/components/common/navbar/NavbarThemeToggle.tsx)):**
+  - Se eliminó el reborde y halo interior (`shadow-neuInset` con `inset -4px -4px 8px #FFFFFF`) y el destello exterior en los botones de Sol y Luna (`shadow-neuBtn`), adoptando bordes limpios y sutiles (`shadow-xs` / `border-white/80`).
+- [x] **Saneamiento de Clases Globales ([index.css](file:///C:/Users/Juan/byfio/src/index.css) y [tailwind.config.js](file:///C:/Users/Juan/byfio/tailwind.config.js)):**
+  - Se actualizaron las reglas `.neu-btn` y la clave `neuBtn` para usar sombras sutiles sin desplazamientos negativos blancos deslumbrantes.
+
 ### Versión 4.19.78 - Soporte Safe Area Notch y Dynamic Island para iPhone en PWA
 - [x] **Ajuste de Área Segura en Header ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx)):**
   - Añadido pt-[max(0px,env(safe-area-inset-top))] al <header> para que en iPhones con Notch o Dynamic Island en modo PWA standalone el fondo moradito cubra estéticamente la barra de estado y el contenido (logo, modo oscuro, iniciar sesión, carrito) se dibuje de forma 100% visible y accesible debajo del Notch.
