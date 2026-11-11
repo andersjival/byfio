@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
+import { isLayawaySaleOrder } from '../../utils/layaway';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import { InteractiveMapPicker } from './InteractiveMapPicker';
 
@@ -73,6 +74,7 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
   const userName = (currentUser.name || '').toLowerCase().trim();
 
   const userOrders = orders.filter((o) => {
+    if (isLayawaySaleOrder(o)) return false;
     const oEmail = (o.customerEmail || '').toLowerCase().trim();
     const oPhone = (o.customerPhone || '').replace(/\D/g, '');
     const oName = (o.customerName || '').toLowerCase().trim();

@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Order, LayawayPaymentRecord } from '../../types';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { calculateLayawayDaysRemaining } from '../../services/layawayReminderService';
+import { isLayawayReservationOrder } from '../../utils/layaway';
 import {
   BookmarkCheck,
   Search,
@@ -52,7 +53,7 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
   // 1. Filtrar solo pedidos que son apartados
   const layawayOrders = useMemo(() => {
     return orders.filter(
-      (o) => o.isLayaway || (Array.isArray(o.items) && o.items.some((it) => it.isLayaway))
+      (o) => isLayawayReservationOrder(o)
     );
   }, [orders]);
 
@@ -394,9 +395,19 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
                         </span>
 
                         {f.isFullyPaid ? (
+                          <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">
                             ✓ 100% Pagado
                           </span>
+                            {order.layawayCompletedAt && (
+                              <span
+                                className="px-2 py-0.5 rounded-md bg-purple-100 text-purple-900 border border-purple-200 text-[10px] font-bold"
+                                title={`Registrado en ventas del día (${formatShortDate(order.layawayCompletedAt)})`}
+                              >
+                                🏷️ Ventas de apartados • {formatShortDate(order.layawayCompletedAt)}
+                              </span>
+                            )}
+                          </div>
                         ) : f.countdown.isExpired ? (
                           <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[10px] font-bold">
                             Vencido
@@ -600,6 +611,20 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
                 />
                 <span className="text-[10px] text-slate-400 block mt-1">
                   Saldo resultante: <strong>{formatCRC(Math.max(0, getOrderFinancials(selectedOrderForPayment).remainingDebt - paymentAmount))}</strong>
+                  {paymentAmount < getOrderFinancials(selectedOrderForPayment).remainingDebt && (
+                    <button
+                      type="button"
+                      onClick={() => setPaymentAmount(getOrderFinancials(selectedOrderForPayment).remainingDebt)}
+                      className="ml-2 px-2 py-0.5 rounded-md bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold cursor-pointer"
+                    >
+                      Liquidar todo ({formatCRC(getOrderFinancials(selectedOrderForPayment).remainingDebt)})
+                    </button>
+                  )}
+                  {Math.max(0, getOrderFinancials(selectedOrderForPayment).remainingDebt - paymentAmount) === 0 && (
+                    <span className="block text-[10px] text-purple-800 font-semibold mt-1">
+                      ✓ Este último pago generará automáticamente la venta de hoy en <strong>Ventas de apartados</strong>.
+                    </span>
+                  )}
                 </span>
               </div>
 

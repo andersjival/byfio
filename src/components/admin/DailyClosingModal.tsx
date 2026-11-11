@@ -1,9 +1,10 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, getWhatsAppLink, formatShortDate } from '../../utils/formatters';
+import { LAYAWAY_SALE_CATEGORY, isLayawayReservationOrder, isLayawaySaleOrder } from '../../utils/layaway';
 import {
   X, Printer, MessageCircle, FileSpreadsheet, Landmark,
-  ShoppingBag, GraduationCap, CheckCircle2, Save, Calendar,
+  ShoppingBag, GraduationCap, BookmarkCheck, CheckCircle2, Save, Calendar,
   Clock, User, DollarSign, AlertCircle, History, Trash2, ArrowLeft
 } from 'lucide-react';
 import { BrandLogo } from '../common/BrandLogo';
@@ -68,8 +69,9 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
 
   if (!isOpen) return null;
 
-  // Filtrar órdenes de la fecha seleccionada
+  // Filtrar órdenes de la fecha seleccionada (excluyendo reservas de apartados sin liquidar)
   const dateOrders = orders.filter((o) => {
+    if (isLayawayReservationOrder(o)) return false;
     try {
       const d = new Date(o.createdAt);
       return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === selectedDate;
@@ -92,19 +94,24 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
     .filter((tx) => tx.category === 'workshop')
     .reduce((acc, tx) => acc + tx.amount, 0);
 
-  // División de Órdenes Web (Tienda vs Talleres)
+  // División de Órdenes Web (Tienda vs Ventas de Apartados vs Talleres)
+  const layawaySaleOrdersRevenue = dateOrders
+    .filter((o) => isLayawaySaleOrder(o))
+    .reduce((acc, o) => acc + o.total, 0);
+
   const storeOrdersRevenue = dateOrders
-    .filter((o) => o.items.every((it) => it.type !== 'workshop'))
+    .filter((o) => !isLayawaySaleOrder(o) && o.items.every((it) => it.type !== 'workshop'))
     .reduce((acc, o) => acc + o.total, 0);
 
   const workshopOrdersRevenue = dateOrders
-    .filter((o) => o.items.some((it) => it.type === 'workshop'))
+    .filter((o) => !isLayawaySaleOrder(o) && o.items.some((it) => it.type === 'workshop'))
     .reduce((acc, o) => acc + o.total, 0);
 
   // Totales de Caja Calculados
   const totalStoreSales = storeOrdersRevenue + sinpeStoreTotal;
+  const totalLayawaySales = layawaySaleOrdersRevenue;
   const totalWorkshopSales = workshopOrdersRevenue + sinpeWorkshopTotal;
-  const totalCashGrand = totalStoreSales + totalWorkshopSales;
+  const totalCashGrand = totalStoreSales + totalLayawaySales + totalWorkshopSales;
 
   // Costos y ganancia estimada
   const totalCost = dateOrders.reduce((acc, o) => {
@@ -142,6 +149,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
       closedBy,
       totalCashGrand,
       totalStoreSales,
+      totalLayawaySales,
       totalWorkshopSales,
       sinpeTotal,
       otherTotal,
@@ -172,6 +180,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
     const targetClosedBy = record ? record.closedBy : (existingClosing?.closedBy || currentUser?.name || 'Administración');
     const targetCashGrand = record ? record.totalCashGrand : totalCashGrand;
     const targetStoreSales = record ? record.totalStoreSales : totalStoreSales;
+    const targetLayawaySales = record ? (record.totalLayawaySales || 0) : totalLayawaySales;
     const targetWorkshopSales = record ? record.totalWorkshopSales : totalWorkshopSales;
     const targetNetProfit = record ? record.netProfit : netProfit;
     const targetSinpeTotal = record ? record.sinpeTotal : sinpeTotal;
@@ -187,6 +196,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
     msg += `👤 Responsable: ${targetClosedBy}\n\n`;
     msg += `💰 *TOTAL EN CAJA:* ${formatCRC(targetCashGrand)}\n`;
     msg += `  🛍️ *Ventas Tienda & Catálogo:* ${formatCRC(targetStoreSales)}\n`;
+    msg += `  🏷️ *${LAYAWAY_SALE_CATEGORY}:* ${formatCRC(targetLayawaySales)}\n`;
     msg += `  🎨 *Ingresos Talleres Creativos:* ${formatCRC(targetWorkshopSales)}\n`;
     msg += `✨ *Ganancia Neta Est.:* ${formatCRC(targetNetProfit)}\n\n`;
     msg += `📲 *SINPE Móvil Total (BCR + Web):* ${formatCRC(targetSinpeTotal)} (${targetSinpeCount} comprobantes BCR)\n`;
@@ -362,6 +372,13 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                     Ventas Tienda &amp; Catálogo
                   </span>
                   <span className="font-bold text-gray-900">{formatCRC(totalStoreSales)}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-gray-100">
+                  <span className="text-gray-600 flex items-center gap-1.5">
+                    <BookmarkCheck className="w-3.5 h-3.5 text-amber-600" />
+                    {LAYAWAY_SALE_CATEGORY}
+                  </span>
+                  <span className="font-bold text-amber-900">{formatCRC(totalLayawaySales)}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-gray-100">
                   <span className="text-gray-600 flex items-center gap-1.5">
@@ -617,6 +634,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
 
                       <div className="flex items-center gap-3 text-xs text-slate-600 flex-wrap">
                         <span>Tienda: <strong>{formatCRC(item.totalStoreSales)}</strong></span>
+                        <span>• Apartados: <strong className="text-amber-800">{formatCRC(item.totalLayawaySales || 0)}</strong></span>
                         <span>• Talleres: <strong>{formatCRC(item.totalWorkshopSales)}</strong></span>
                         <span>• SINPE: <strong>{formatCRC(item.sinpeTotal)}</strong></span>
                         {item.difference !== undefined && (
@@ -761,6 +779,13 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                     Ventas Tienda &amp; Catálogo
                   </span>
                   <span className="font-bold text-gray-900">{formatCRC(savedSummary.totalStoreSales)}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-gray-100">
+                  <span className="text-gray-600 flex items-center gap-1.5">
+                    <BookmarkCheck className="w-3.5 h-3.5 text-amber-600" />
+                    {LAYAWAY_SALE_CATEGORY}
+                  </span>
+                  <span className="font-bold text-amber-900">{formatCRC(savedSummary.totalLayawaySales || 0)}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-gray-100">
                   <span className="text-gray-600 flex items-center gap-1.5">

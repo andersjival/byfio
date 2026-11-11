@@ -1,4 +1,48 @@
-import { Product } from '../types';
+import { Order, Product } from '../types';
+
+export const LAYAWAY_SALE_CATEGORY = 'Ventas de apartados' as const;
+
+export function isLayawaySaleOrder(order: Partial<Order> | null | undefined): boolean {
+  if (!order) return false;
+  return Boolean(
+    order.isLayawaySale ||
+      order.saleCategory === LAYAWAY_SALE_CATEGORY ||
+      (Array.isArray(order.items) &&
+        order.items.some((it) => it.isLayawaySale || it.saleCategory === LAYAWAY_SALE_CATEGORY))
+  );
+}
+
+export function isLayawayReservationOrder(order: Partial<Order> | null | undefined): boolean {
+  if (!order || isLayawaySaleOrder(order)) return false;
+  return Boolean(
+    order.isLayaway || (Array.isArray(order.items) && order.items.some((it) => it.isLayaway))
+  );
+}
+
+export function getOrderSaleCategory(
+  order: Partial<Order> | null | undefined
+): 'Ventas de apartados' | 'Talleres Creativos' | 'Tienda & Catálogo' {
+  if (isLayawaySaleOrder(order)) return LAYAWAY_SALE_CATEGORY;
+  if (Array.isArray(order?.items) && order!.items.some((it) => it.type === 'workshop')) {
+    return 'Talleres Creativos';
+  }
+  return 'Tienda & Catálogo';
+}
+
+export function formatPaymentMethodLabel(method?: string): string {
+  switch (method) {
+    case 'sinpe':
+      return 'SINPE Móvil';
+    case 'efectivo':
+      return 'Efectivo';
+    case 'tarjeta':
+      return 'Tarjeta';
+    case 'transferencia':
+      return 'Transferencia';
+    default:
+      return 'Transferencia';
+  }
+}
 
 /**
  * Determina si un producto es elegible para el Sistema de Apartados.

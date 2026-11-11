@@ -1,4 +1,5 @@
 import { calculateLayawayDaysRemaining, checkAndSendLayawayReminders } from '../services/layawayReminderService';
+import { LAYAWAY_SALE_CATEGORY, isLayawaySaleOrder } from '../utils/layaway';
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   ViewMode, InventoryMode, Product, Workshop, Order, CartItem, OrderStatus, LayawayPaymentRecord,
@@ -601,8 +602,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         o.orderNumber = `#${rawNum}`;
       }
 
+      // Identidad persistente de ventas generadas por liquidación de apartados
+      const laySaleItem = hasItems
+        ? o.items.find((it) => it.isLayawaySale || it.saleCategory === LAYAWAY_SALE_CATEGORY)
+        : undefined;
+      if (o.isLayawaySale || laySaleItem) {
+        o = {
+          ...o,
+          isLayaway: false,
+          isLayawaySale: true,
+          saleCategory: o.saleCategory || laySaleItem?.saleCategory || LAYAWAY_SALE_CATEGORY,
+          orderTitle: o.orderTitle || LAYAWAY_SALE_CATEGORY,
+          layawaySourceOrderId: o.layawaySourceOrderId || laySaleItem?.layawaySourceOrderId,
+          layawaySourceOrderNumber: o.layawaySourceOrderNumber || laySaleItem?.layawaySourceOrderNumber,
+        };
+      }
+
       // Reconstrucción e integridad matemática automática de apartados
-      const layItem = hasItems ? o.items.find((it) => it.isLayaway) : undefined;
+      const layItem = !o.isLayawaySale && hasItems ? o.items.find((it) => it.isLayaway) : undefined;
       if (layItem) {
         const paymentsList: LayawayPaymentRecord[] = Array.isArray(o.layawayPayments) && o.layawayPayments.length > 0
           ? o.layawayPayments
@@ -641,6 +658,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           layawayPayments: paymentsList,
           layawayDueDate: o.layawayDueDate || layItem.layawayDueDate,
           layawayDaysTotal: o.layawayDaysTotal || layItem.layawayDaysTotal,
+          layawaySaleOrderId: o.layawaySaleOrderId || layItem.layawayGeneratedSaleOrderId,
+          layawayCompletedAt: o.layawayCompletedAt || layItem.layawayGeneratedSaleCreatedAt,
         };
       }
 
@@ -848,6 +867,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
 
+    incomingOrders
+      .filter((o) => isLayawaySaleOrder(o))
+      .forEach((o) => knownOrderIdsRef.current.add(o.id));
     const newOrders = incomingOrders.filter((o) => !knownOrderIdsRef.current.has(o.id));
     if (newOrders.length > 0) {
       newOrders.forEach((o) => knownOrderIdsRef.current.add(o.id));
@@ -3880,6 +3902,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
 
       const newRemainingDebt = Math.max(0, itemTotal - totalPaidSoFar);
+      const sourceCleanNum = `#${(targetOrder.orderNumber || '').replace(/^#+/, '') || 'FIO'}`;
+      let storedOrdersSnapshot: Order[] = [];
+      try {
+        const rawOrders = safeLocalStorage.getItem(STORAGE_KEYS.ORDERS);
+        if (rawOrders) {
+          const parsed = JSON.parse(rawOrders);
+          if (Array.isArray(parsed)) storedOrdersSnapshot = parsed;
+        }
+      } catch {}
+
+      const knownAllOrders = [...orders, ...storedOrdersSnapshot];
+      const hasGeneratedSaleAlready = Boolean(
+        targetOrder.layawaySaleOrderId ||
+          targetOrder.items?.some((it) => Boolean(it.layawayGeneratedSaleOrderId)) ||
+          knownAllOrders.some(
+            (o) =>
+              o.layawaySourceOrderId === orderId ||
+              o.items?.some((it) => it.layawaySourceOrderId === orderId)
+          )
+      );
+
+      const shouldGenerateLayawaySale = newRemainingDebt <= 0 && !hasGeneratedSaleAlready;
+      const completionIso = newRecord.date;
+      const generatedSaleId = shouldGenerateLayawaySale
+        ? `ord-layaway-sale-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`
+        : undefined;
 
       const updatedItems = (targetOrder.items || []).map((it) => {
         if (it.isLayaway || it.id === layItem?.id) {
@@ -3889,6 +3937,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             layawayDownPaymentAmount: totalPaidSoFar,
             layawayRemainingAmount: newRemainingDebt,
             layawayPayments: updatedPayments,
+            ...(shouldGenerateLayawaySale && generatedSaleId
+              ? {
+                  layawayGeneratedSaleOrderId: generatedSaleId,
+                  layawayGeneratedSaleCreatedAt: completionIso,
+                }
+              : {}),
           };
         }
         return it;
@@ -3901,16 +3955,108 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         layawayRemainingAmount: newRemainingDebt,
         layawayPayments: updatedPayments,
         items: updatedItems,
+        ...(shouldGenerateLayawaySale && generatedSaleId
+          ? {
+              layawaySaleOrderId: generatedSaleId,
+              layawayCompletedAt: completionIso,
+            }
+          : {}),
       };
+
+      let generatedSaleOrder: Order | null = null;
+      if (shouldGenerateLayawaySale && generatedSaleId) {
+        const baseItems = targetOrder.items || [];
+        const nonLaySum = baseItems
+          .filter((it) => !it.isLayaway && it.id !== layItem?.id)
+          .reduce((acc, it) => acc + (Number(it.price) || 0) * Math.max(1, Number(it.quantity) || 1), 0);
+        const layTargets = baseItems.filter((it) => it.isLayaway || it.id === layItem?.id);
+        const layTargetTotal = Math.max(0, itemTotal - nonLaySum);
+        const layQtySum = layTargets.reduce((acc, it) => acc + Math.max(1, Number(it.quantity) || 1), 0);
+
+        const saleItems: OrderItem[] = baseItems.map((it, idx) => {
+          const isTargetLay = Boolean(it.isLayaway || it.id === layItem?.id);
+          const qty = Math.max(1, Number(it.quantity) || 1);
+          const fullUnitPrice = isTargetLay
+            ? layTargets.length <= 1
+              ? Math.round(layTargetTotal / qty)
+              : Math.round(layTargetTotal / Math.max(1, layQtySum))
+            : Number(it.price) || 0;
+
+          return {
+            id: `ord-laysale-item-${Date.now()}-${idx}`,
+            type: it.type || 'product',
+            sku: it.sku,
+            name: it.name,
+            price: fullUnitPrice,
+            quantity: qty,
+            shelfLocation: it.shelfLocation,
+            customText: it.customText,
+            image: it.image,
+            isPicked: true,
+            pickedAt: completionIso,
+            isLayaway: false,
+            isLayawaySale: true,
+            saleCategory: LAYAWAY_SALE_CATEGORY,
+            layawaySourceOrderId: targetOrder.id,
+            layawaySourceOrderNumber: sourceCleanNum,
+          };
+        });
+
+        generatedSaleOrder = {
+          id: generatedSaleId,
+          orderNumber: getNextOrderNumber(knownAllOrders),
+          orderTitle: LAYAWAY_SALE_CATEGORY,
+          saleCategory: LAYAWAY_SALE_CATEGORY,
+          isLayaway: false,
+          isLayawaySale: true,
+          layawaySourceOrderId: targetOrder.id,
+          layawaySourceOrderNumber: sourceCleanNum,
+          customerName: targetOrder.customerName,
+          customerPhone: targetOrder.customerPhone,
+          customerEmail: targetOrder.customerEmail,
+          deliveryMethod: targetOrder.deliveryMethod,
+          shippingAddress: targetOrder.shippingAddress,
+          paymentMethod: payment.paymentMethod,
+          paymentStatus: 'paid',
+          orderStatus: 'delivered',
+          items: saleItems,
+          subtotal: itemTotal,
+          shippingFee: 0,
+          total: itemTotal,
+          createdAt: completionIso,
+          packedAt: completionIso,
+          deliveredAt: completionIso,
+          pickedBy: payment.registeredBy || currentUser?.name || 'Administración',
+          pickedAt: completionIso,
+          notes: `[VENTAS DE APARTADOS] Liquidación completa de apartado ${sourceCleanNum} • Último abono: ₡${payAmount.toLocaleString('es-CR')}`,
+        };
+        knownOrderIdsRef.current.add(generatedSaleOrder.id);
+      }
 
       let nextOrders: Order[] = [];
       setOrders((prev) => {
-        nextOrders = prev.map((o) => (o.id === orderId ? updatedOrder : o));
+        const mapped = prev.map((o) => (o.id === orderId ? updatedOrder : o));
+        const hasSaleInPrev = generatedSaleOrder
+          ? mapped.some(
+              (o) =>
+                o.id === generatedSaleOrder!.id ||
+                o.layawaySourceOrderId === orderId ||
+                o.items?.some((it) => it.layawaySourceOrderId === orderId)
+            )
+          : true;
+        nextOrders = generatedSaleOrder && !hasSaleInPrev
+          ? [generatedSaleOrder, ...mapped].sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )
+          : mapped;
         safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(nextOrders));
+        try {
+          syncChannel?.postMessage({ type: 'SYNC_UPDATE', orders: nextOrders });
+        } catch {}
         return nextOrders;
       });
 
-      // Transmitir a Cloudflare D1 en segundo plano
+      // Transmitir actualización del apartado a Cloudflare D1 en segundo plano
       fetch('/api/orders', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -3919,6 +4065,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           items: updatedItems,
         }),
       }).catch((e) => console.warn('[D1 Layaway Payment PUT warn]:', e));
+
+      // Registrar la venta generada ("Ventas de apartados") en Cloudflare D1 el día del último pago
+      if (generatedSaleOrder) {
+        const createdSale = generatedSaleOrder;
+        fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(createdSale),
+        })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => {
+            if (data?.orderNumber && data.orderNumber !== createdSale.orderNumber) {
+              setOrders((prev) => {
+                const updatedWithNum = prev.map((o) =>
+                  o.id === createdSale.id ? { ...o, orderNumber: data.orderNumber } : o
+                );
+                safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(updatedWithNum));
+                return updatedWithNum;
+              });
+            }
+          })
+          .catch((e) => console.warn('[D1 Layaway Sale POST warn]:', e));
+      }
 
       return true;
     } catch (err) {

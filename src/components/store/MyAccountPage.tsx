@@ -10,6 +10,7 @@ import { useApp } from '../../context/AppContext';
 import { AppRoute, AdminTabType } from '../../types';
 import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
+import { isLayawaySaleOrder } from '../../utils/layaway';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
 interface MyAccountPageProps {
@@ -129,6 +130,7 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const userName = (currentUser.name || '').toLowerCase().trim();
 
   const userOrders = orders.filter((o) => {
+    if (isLayawaySaleOrder(o)) return false;
     const oEmail = (o.customerEmail || '').toLowerCase().trim();
     const oPhone = (o.customerPhone || '').replace(/\D/g, '');
     const oName = (o.customerName || '').toLowerCase().trim();

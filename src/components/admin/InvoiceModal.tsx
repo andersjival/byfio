@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatters';
+import { formatPaymentMethodLabel, isLayawaySaleOrder, LAYAWAY_SALE_CATEGORY } from '../../utils/layaway';
 import { X, Printer, MessageCircle, CheckCircle2, Heart, MapPin, Phone, Building2 } from 'lucide-react';
 
 export const InvoiceModal: React.FC = () => {
@@ -158,7 +159,8 @@ export const InvoiceModal: React.FC = () => {
               </p>
               <p className="text-slate-500 text-[11px]">
                 <strong className="text-slate-800">Medio de Pago:</strong>{' '}
-                {invoiceOrder.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia Bancaria / BCR'}
+                {formatPaymentMethodLabel(invoiceOrder.paymentMethod)}
+                {isLayawaySaleOrder(invoiceOrder) ? ` • ${LAYAWAY_SALE_CATEGORY}` : ''}
               </p>
             </div>
           </div>

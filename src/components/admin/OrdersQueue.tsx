@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
+import { isLayawayReservationOrder, isLayawaySaleOrder } from '../../utils/layaway';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star, GraduationCap, Trash2, UserCheck } from 'lucide-react';
 import { playNewOrderChimeSound } from '../../utils/soundEffects';
@@ -52,7 +53,7 @@ export const OrdersQueue: React.FC = () => {
   };
 
   // EXCLUSIÓN ESTRICTA: Los apartados NO forman parte de la cola de pedidos de alisto/empaque.
-  const isLayawayOrder = (o: Order) => Boolean(o.isLayaway || (Array.isArray(o.items) && o.items.some((it) => it.isLayaway)));
+  const isLayawayOrder = (o: Order) => isLayawayReservationOrder(o) || isLayawaySaleOrder(o);
 
   // Ordenamiento cronológico descendente estricto (pedidos más recientes arriba, más antiguos abajo)
   const sortedOrders = React.useMemo(() => {

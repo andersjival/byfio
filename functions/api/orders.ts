@@ -1,4 +1,4 @@
-﻿interface Env {
+interface Env {
   DB?: any;
 }
 
@@ -74,8 +74,10 @@ const mapRowToOrder = (r: OrderDbRow) => {
   const rawOrderNum = (r.order_number || '').replace(/^#+/, '');
   const cleanOrderNum = rawOrderNum ? `#${rawOrderNum}` : '#FIO';
 
-  const firstLay = items.find((it: any) => it.isLayaway);
-  const isLayaway = Boolean(firstLay);
+  const laySaleItem = items.find((it: any) => it.isLayawaySale || it.saleCategory === 'Ventas de apartados');
+  const isLayawaySale = Boolean(laySaleItem);
+  const firstLay = isLayawaySale ? undefined : items.find((it: any) => it.isLayaway);
+  const isLayaway = Boolean(!isLayawaySale && firstLay);
 
   const payments = Array.isArray(firstLay?.layawayPayments) ? firstLay.layawayPayments : [];
   const sumOfAbonos = payments.reduce((acc: number, p: any) => acc + (Number(p.amount) || 0), 0);
@@ -128,6 +130,21 @@ const mapRowToOrder = (r: OrderDbRow) => {
     layawayDueDate: firstLay?.layawayDueDate,
     layawayDaysTotal: firstLay?.layawayDaysTotal,
     layawayPayments: Array.isArray(firstLay?.layawayPayments) ? firstLay.layawayPayments : [],
+    ...(isLayawaySale
+      ? {
+          orderTitle: 'Ventas de apartados',
+          isLayawaySale: true,
+          saleCategory: laySaleItem?.saleCategory || 'Ventas de apartados',
+          layawaySourceOrderId: laySaleItem?.layawaySourceOrderId,
+          layawaySourceOrderNumber: laySaleItem?.layawaySourceOrderNumber,
+        }
+      : {}),
+    ...(firstLay?.layawayGeneratedSaleOrderId
+      ? {
+          layawaySaleOrderId: firstLay.layawayGeneratedSaleOrderId,
+          layawayCompletedAt: firstLay.layawayGeneratedSaleCreatedAt,
+        }
+      : {}),
   };
 };
 

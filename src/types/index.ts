@@ -165,6 +165,12 @@ export interface OrderItem {
   isMissing?: boolean; // Marcado como faltante durante el alisto
   missingAt?: string;  // Fecha en que se reportó faltante
   isLayaway?: boolean; // Pedido bajo modalidad de apartado
+  isLayawaySale?: boolean;
+  saleCategory?: string;
+  layawaySourceOrderId?: string;
+  layawaySourceOrderNumber?: string;
+  layawayGeneratedSaleOrderId?: string;
+  layawayGeneratedSaleCreatedAt?: string;
   layawayMonths?: number;
   layawayPaymentsCount?: number;
   layawayDownPaymentPercent?: number;
@@ -251,6 +257,12 @@ export interface Order {
   layawayDaysTotal?: number;
   layawayReminderEmailSent?: boolean;
   layawayReminderEmailSentAt?: string;
+  isLayawaySale?: boolean; // Venta generada al completar el último pago
+  saleCategory?: string; // ej: 'Ventas de apartados'
+  layawaySourceOrderId?: string;
+  layawaySourceOrderNumber?: string;
+  layawaySaleOrderId?: string;
+  layawayCompletedAt?: string;
   layawayPayments?: LayawayPaymentRecord[];
 }
 
@@ -321,6 +333,7 @@ export interface DailyClosingRecord {
   closedBy: string; // Nombre de la persona o administradora que cerró
   totalCashGrand: number; // Total general recaudado
   totalStoreSales: number; // Ventas tienda y catálogo
+  totalLayawaySales?: number; // Ventas de apartados liquidados
   totalWorkshopSales: number; // Ingresos talleres creativos
   sinpeTotal: number; // Total cobrado por SINPE Móvil (BCR + Web)
   otherTotal: number; // Transferencias y otros medios

@@ -1,9 +1,10 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
+import { LAYAWAY_SALE_CATEGORY, isLayawayReservationOrder, isLayawaySaleOrder } from '../../utils/layaway';
 import {
   DollarSign, TrendingUp, Calendar, CheckCircle2, AlertCircle,
-  FileSpreadsheet, Landmark, ShoppingBag, GraduationCap,
+  FileSpreadsheet, Landmark, ShoppingBag, GraduationCap, BookmarkCheck,
   ExternalLink, ShieldCheck, Mail, History, Trash2, ArrowRight, User
 } from 'lucide-react';
 
@@ -47,8 +48,9 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
     });
   }, [dailyClosings, closingFilterMode, closingFilterCustomDate, todayStr, yesterdayStr, currentMonthStr]);
 
-  // Filtrado de Órdenes por Fecha
+  // Filtrado de Órdenes por Fecha (excluyendo reservas de apartados sin liquidar)
   const filteredOrders = orders.filter((o) => {
+    if (isLayawayReservationOrder(o)) return false;
     const orderDate = new Date(o.createdAt);
     if (timeRange === 'today') {
       return orderDate.toISOString().slice(0, 10) === todayStr;
@@ -66,14 +68,16 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
     return txTime >= oneWeekAgoMs;
   });
 
-  // 1. División: Órdenes de Tienda vs Órdenes de Talleres
-  const storeOrders = filteredOrders.filter((o) =>
-    o.items.every((it) => it.type !== 'workshop')
+  // 1. División: Ventas de Apartados, Tienda y Talleres Creativos
+  const layawaySaleOrders = filteredOrders.filter((o) => isLayawaySaleOrder(o));
+  const storeOrders = filteredOrders.filter(
+    (o) => !isLayawaySaleOrder(o) && o.items.every((it) => it.type !== 'workshop')
   );
-  const workshopOrders = filteredOrders.filter((o) =>
-    o.items.some((it) => it.type === 'workshop')
+  const workshopOrders = filteredOrders.filter(
+    (o) => !isLayawaySaleOrder(o) && o.items.some((it) => it.type === 'workshop')
   );
 
+  const layawaySalesRevenue = layawaySaleOrders.reduce((acc, o) => acc + o.total, 0);
   const storeOrdersRevenue = storeOrders.reduce((acc, o) => acc + o.total, 0);
   const workshopOrdersRevenue = workshopOrders.reduce((acc, o) => acc + o.total, 0);
 
@@ -88,8 +92,9 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
   // 3. Totales Agrupados para la Caja
   const totalStoreSales = storeOrdersRevenue + sinpeStoreTotal;
+  const totalLayawaySales = layawaySalesRevenue;
   const totalWorkshopSales = workshopOrdersRevenue + sinpeWorkshopTotal;
-  const totalCashIn = totalStoreSales + totalWorkshopSales;
+  const totalCashIn = totalStoreSales + totalLayawaySales + totalWorkshopSales;
 
   // Total recaudado vía SINPE (Órdenes pagadas con SINPE + Comprobantes BCR Verificados)
   const ordersSinpeTotal = filteredOrders
@@ -179,8 +184,8 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
         </div>
       </div>
 
-      {/* Grid de Métricas Principales (Total en Caja + División Tienda vs Talleres) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Grid de Métricas Principales (Total en Caja + División Tienda, Ventas de apartados y Talleres) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
         {/* TOTAL EN CAJA */}
         <div className="bg-gradient-to-tr from-purple-50 via-purple-100/40 to-fio-100/50 p-4 rounded-3xl border-2 border-purple-300 shadow-claySm">
           <span className="text-[11px] font-bold text-purple-900 uppercase block">
@@ -190,7 +195,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
             {formatCRC(totalCashIn)}
           </h3>
           <p className="text-[11px] text-purple-800 font-medium mt-0.5">
-            Tienda + Talleres Creativos
+            Tienda + Apartados + Talleres
           </p>
         </div>
 
@@ -206,6 +211,22 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
             </h3>
             <p className="text-[11px] text-blue-700 mt-0.5">
               {storeOrders.length} pedidos + {filteredSinpe.filter((t) => t.category === 'store').length} SINPE BCR
+            </p>
+          </div>
+        )}
+
+        {/* DIVISIÓN 2: VENTAS DE APARTADOS */}
+        {isFeatureEnabled('reports', 'category_breakdown') && (
+          <div className="bg-gradient-to-tr from-amber-50 to-purple-50/60 p-4 rounded-3xl border border-amber-200 shadow-claySm">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-amber-900 uppercase">🏷️ {LAYAWAY_SALE_CATEGORY}</span>
+              <BookmarkCheck className="w-4 h-4 text-amber-600" />
+            </div>
+            <h3 className="text-2xl font-bubble font-bold text-amber-950 mt-1">
+              {formatCRC(totalLayawaySales)}
+            </h3>
+            <p className="text-[11px] text-amber-800 mt-0.5">
+              {layawaySaleOrders.length} {layawaySaleOrders.length === 1 ? 'apartado liquidado' : 'apartados liquidados'}
             </p>
           </div>
         )}
@@ -260,10 +281,10 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
           <div>
             <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              Transferencias / Otros Medios en Cola
+              Efectivo / Tarjeta / Transferencias
             </span>
             <p className="text-xs text-slate-500 mt-0.5">
-              {filteredOrders.filter((o) => o.paymentMethod !== 'sinpe').length} órdenes por transferencia/tarjeta
+              {filteredOrders.filter((o) => o.paymentMethod !== 'sinpe').length} órdenes por efectivo, transferencia o tarjeta
             </p>
           </div>
           <span className="font-bubble font-bold text-lg text-slate-900">
@@ -512,6 +533,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
                     <th className="py-2.5 px-3">Fecha del Cierre</th>
                     <th className="py-2.5 px-3">Responsable</th>
                     <th className="py-2.5 px-3 text-right">Ventas Tienda</th>
+                    <th className="py-2.5 px-3 text-right">Ventas Apartados</th>
                     <th className="py-2.5 px-3 text-right">Ingresos Talleres</th>
                     <th className="py-2.5 px-3 text-right">Total SINPE</th>
                     <th className="py-2.5 px-3 text-right">Total en Caja</th>
@@ -545,6 +567,10 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
                       <td className="py-2.5 px-3 text-right font-medium text-slate-700 whitespace-nowrap">
                         {formatCRC(c.totalStoreSales)}
+                      </td>
+
+                      <td className="py-2.5 px-3 text-right font-medium text-amber-800 whitespace-nowrap">
+                        {formatCRC(c.totalLayawaySales || 0)}
                       </td>
 
                       <td className="py-2.5 px-3 text-right font-medium text-slate-700 whitespace-nowrap">

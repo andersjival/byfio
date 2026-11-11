@@ -3,6 +3,13 @@ import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatters';
 import { Order, OrderStatus } from '../../types';
 import {
+  LAYAWAY_SALE_CATEGORY,
+  isLayawayReservationOrder,
+  isLayawaySaleOrder,
+  getOrderSaleCategory,
+  formatPaymentMethodLabel,
+} from '../../utils/layaway';
+import {
   ShoppingBag, Calendar, Search, Eye, X, Phone,
   Truck, Store, CheckCircle2, Clock, MessageCircle,
   Printer, Package, CreditCard, ChevronRight,
@@ -32,6 +39,7 @@ export const SalesHistorySection: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [paymentFilter, setPaymentFilter] = useState<'all' | 'paid' | 'pending'>('all');
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'store' | 'layaway_sale' | 'workshop'>('all');
 
   // Estado del Pedido Seleccionado para Ver Detalle
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -77,6 +85,11 @@ export const SalesHistorySection: React.FC = () => {
     const prevYearMonth = `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}`;
 
     return orders.filter((order) => {
+      if (isLayawayReservationOrder(order)) return false;
+
+      if (categoryFilter === 'layaway_sale' && !isLayawaySaleOrder(order)) return false;
+      if (categoryFilter === 'workshop' && (isLayawaySaleOrder(order) || !order.items.some((it) => it.type === 'workshop'))) return false;
+      if (categoryFilter === 'store' && (isLayawaySaleOrder(order) || order.items.some((it) => it.type === 'workshop'))) return false;
       const orderDate = parseDate(order.createdAt);
       const orderDateStr = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}`;
       const orderMonthStr = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
@@ -115,7 +128,7 @@ export const SalesHistorySection: React.FC = () => {
 
       return true;
     }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [orders, filterType, daySubFilter, customDay, weekSubFilter, monthSubFilter, customMonth, paymentFilter, orderStatusFilter, searchQuery]);
+  }, [orders, filterType, daySubFilter, customDay, weekSubFilter, monthSubFilter, customMonth, paymentFilter, orderStatusFilter, categoryFilter, searchQuery]);
 
   // Cálculos de métricas del período
   const metrics = useMemo(() => {
@@ -128,7 +141,11 @@ export const SalesHistorySection: React.FC = () => {
     );
     const paidOrdersCount = filteredOrders.filter((o) => o.paymentStatus === 'paid').length;
 
-    return { totalSales, totalOrdersCount, avgTicket, totalItemsCount, paidOrdersCount };
+    const layawaySaleOrders = filteredOrders.filter((o) => isLayawaySaleOrder(o));
+    const layawaySalesTotal = layawaySaleOrders.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
+    const layawaySalesCount = layawaySaleOrders.length;
+
+    return { totalSales, totalOrdersCount, avgTicket, totalItemsCount, paidOrdersCount, layawaySalesTotal, layawaySalesCount };
   }, [filteredOrders]);
 
   const getOrderStatusBadge = (status: OrderStatus) => {
@@ -173,14 +190,15 @@ export const SalesHistorySection: React.FC = () => {
 
   const exportToCSV = () => {
     if (filteredOrders.length === 0) return;
-    const headers = ['Número Orden', 'Fecha', 'Cliente', 'Teléfono', 'Entrega', 'Método Pago', 'Estado Pago', 'Estado Pedido', 'Artículos', 'Total'];
+    const headers = ['Número Orden', 'Categoría', 'Fecha', 'Cliente', 'Teléfono', 'Entrega', 'Método Pago', 'Estado Pago', 'Estado Pedido', 'Artículos', 'Total'];
     const rows = filteredOrders.map((o) => [
       o.orderNumber,
+      `"${getOrderSaleCategory(o)}"`,
       formatShortDate(o.createdAt),
       `"${o.customerName.replace(/"/g, '""')}"`,
       `"${o.customerPhone || ''}"`,
       o.deliveryMethod === 'envio' ? 'Envío' : 'Retiro en Taller',
-      o.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia',
+      formatPaymentMethodLabel(o.paymentMethod),
       o.paymentStatus === 'paid' ? 'Pagado' : 'Pendiente',
       o.orderStatus,
       o.items.reduce((sum, it) => sum + it.quantity, 0),
@@ -426,7 +444,17 @@ export const SalesHistorySection: React.FC = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value as any)}
+              className="px-3 py-2 bg-white rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+            >
+              <option value="all">Categoría: Todas</option>
+              <option value="store">Tienda &amp; Catálogo</option>
+              <option value="layaway_sale">{LAYAWAY_SALE_CATEGORY}</option>
+              <option value="workshop">Talleres Creativos</option>
+            </select>
             <select
               value={paymentFilter}
               onChange={(e) => setPaymentFilter(e.target.value as any)}
@@ -465,6 +493,11 @@ export const SalesHistorySection: React.FC = () => {
           </div>
           <p className="text-[10px] text-emerald-700 mt-0.5 font-sans">
             {metrics.paidOrdersCount} pedidos cobrados
+            {metrics.layawaySalesCount > 0 && (
+              <span className="block text-[10px] font-bold text-purple-800 mt-0.5">
+                Incluye {formatCRC(metrics.layawaySalesTotal)} en {LAYAWAY_SALE_CATEGORY} ({metrics.layawaySalesCount})
+              </span>
+            )}
           </p>
         </div>
 
@@ -568,6 +601,12 @@ export const SalesHistorySection: React.FC = () => {
                           • {formatShortDate(order.createdAt)}
                         </span>
                         {getOrderStatusBadge(order.orderStatus)}
+                        {isLayawaySaleOrder(order) && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-900 border border-purple-300">
+                            🏷️ {LAYAWAY_SALE_CATEGORY}
+                            {order.layawaySourceOrderNumber ? ` (${order.layawaySourceOrderNumber})` : ''}
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex items-center gap-2 flex-wrap text-xs text-slate-700">
@@ -610,7 +649,7 @@ export const SalesHistorySection: React.FC = () => {
                       </div>
                       <div className="flex items-center md:justify-end gap-1.5">
                         <span className="text-[10px] text-slate-500 font-medium">
-                          {order.paymentMethod === 'sinpe' ? 'SINPE' : 'Transferencia'}
+                          {formatPaymentMethodLabel(order.paymentMethod)}
                         </span>
                         <span
                           className={`px-1.5 py-0.2 rounded-full text-[9.5px] font-bold ${
@@ -652,11 +691,17 @@ export const SalesHistorySection: React.FC = () => {
                   <ShoppingBag className="w-5 h-5 text-fio-yellow" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-bubble font-bold text-base sm:text-lg text-fio-900">
                       Pedido {selectedOrder.orderNumber}
                     </h3>
                     {getOrderStatusBadge(selectedOrder.orderStatus)}
+                    {isLayawaySaleOrder(selectedOrder) && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-900 border border-purple-300">
+                        🏷️ {LAYAWAY_SALE_CATEGORY}
+                        {selectedOrder.layawaySourceOrderNumber ? ` (${selectedOrder.layawaySourceOrderNumber})` : ''}
+                      </span>
+                    )}
                   </div>
                   <p className="text-[11px] text-slate-500 font-sans">
                     Realizado el {formatShortDate(selectedOrder.createdAt)}
@@ -823,7 +868,7 @@ export const SalesHistorySection: React.FC = () => {
                       Total Cobrado
                     </span>
                     <span className="text-[11px] text-slate-500 font-medium">
-                      Método: {selectedOrder.paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia Bancaria'}
+                      Método: {formatPaymentMethodLabel(selectedOrder.paymentMethod)}
                     </span>
                   </div>
                   <div className="text-right">

@@ -1,3 +1,16 @@
+## [v4.19.98] - 2026-11-11
+
+### 🏷️ Registro Automático de "Ventas de apartados" al Completar el Último Pago
+- **Generación Automática en Fecha de Liquidación ([`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`types/index.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts))**:
+  - Al registrar el último abono que lleva el saldo pendiente a `₡0`, [`addLayawayPayment`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) genera automáticamente la venta del producto apartado fechada ese mismo día, con categoría **`Ventas de apartados`** e idempotencia anti-duplicados persistida en `localStorage` y D1 (`items_json`).
+- **Exclusión de Reservas Sin Liquidar & Aislamiento ([`layaway.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/layaway.ts), [`OrdersQueue.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx), [`MyAccountPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx), [`MyAccountModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/MyAccountModal.tsx))**:
+  - Las reservas de apartados pendientes/activos no se contabilizan en Caja, Historial de Ventas ni Cierre Diario hasta su liquidación final, y las ventas generadas no ingresan a cola de alisto QR ni duplican tarjetas de cliente.
+- **Desglose en Ventas del Día ([`CashRegisterReports.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx), [`SalesHistorySection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SalesHistorySection.tsx), [`DailyClosingModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx), [`AdminLayawaysSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminLayawaysSection.tsx), [`InvoiceModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InvoiceModal.tsx))**:
+  - Agregada la sección/tarjeta **`Ventas de apartados`** en Caja & Reportería, filtro e insignias en Historial de Ventas + CSV, línea oficial en Acta/WhatsApp/Historial de Cierre Diario y botón de liquidación total en Gestión de Apartados.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.98`.
+
+---
+
 ## [v4.19.97] - 2026-11-11
 
 ### 🏷️ Prefijo Interno `bf-`, QR Más Grande y Emblema Blanco en Etiquetas
