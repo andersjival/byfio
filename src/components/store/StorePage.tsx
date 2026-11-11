@@ -393,20 +393,9 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
         />
       </div>
 
-      {/* Selector Centrado de Departamentos (Macro-Categorías) */}
-      <div className="p-4 sm:p-6 rounded-[32px] bg-[#F1F2F6] border border-white/90 shadow-neuCard text-center space-y-4">
-        <div className="flex flex-col items-center justify-center space-y-1">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-white/90 text-fio-800 text-[11px] font-bubble font-bold tracking-wider uppercase shadow-neuBtn">
-            <Sparkles className="w-3 h-3 text-fio-pink fill-fio-pink" />
-            <span>Elige un departamento</span>
-          </span>
-          <h2 className="font-bubble text-xl sm:text-2xl text-slate-800 font-bold tracking-tight">
-            Secciones Principales de la Tienda
-          </h2>
-        </div>
-
-        {/* Los 4 Botones de Departamentos */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 max-w-4xl mx-auto">
+      {/* Selector Compacto de Departamentos (Macro-Categorías) — Reducido ~60% */}
+      <div className="py-2 sm:py-2.5 px-2.5 sm:px-4 rounded-2xl sm:rounded-[24px] bg-[#F1F2F6] border border-white/90 shadow-neuCard">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 max-w-4xl mx-auto">
           {STORE_DEPARTMENTS.map((dept) => {
             const isActive = activeDepartment === dept.id;
             const Icon = dept.icon;
@@ -426,44 +415,39 @@ export const StorePage: React.FC<StorePageProps> = ({ onNavigate }) => {
                   setActiveDepartment(dept.id);
                   setSelectedCategory('Todas');
                 }}
-                className={`group relative flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl transition-all duration-200 select-none ${
+                className={`group flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-2 sm:px-3 rounded-xl sm:rounded-2xl transition-all duration-200 select-none ${
                   isActive
-                    ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.03] ring-2 ring-fio-purple/30 z-10'
+                    ? 'neu-btn-primary text-white shadow-neuBtnHover scale-[1.01] ring-1 ring-fio-purple/30 z-10'
                     : 'neu-btn bg-[#F1F2F6] text-slate-700 hover:text-slate-900 border border-white/80 shadow-neuBtn hover:shadow-neuBtnHover active:scale-95'
                 }`}
               >
                 <div
-                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center mb-2 transition-transform duration-200 group-hover:scale-110 ${
+                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform ${
                     isActive
                       ? 'bg-white/20 text-white shadow-inner'
-                      : 'bg-white/80 text-fio-700 shadow-neuBtn border border-white/90'
+                      : 'bg-white text-fio-700 shadow-xs border border-white/90'
                   }`}
                 >
-                  <Icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+                  <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
 
-                <span className="font-bubble text-xs sm:text-sm font-bold tracking-wide leading-tight text-center">
+                <span className="font-bubble text-[11px] sm:text-xs font-bold tracking-tight truncate">
                   {dept.title}
                 </span>
 
                 <span
-                  className={`mt-1.5 text-[10px] sm:text-[11px] font-sans font-medium px-2 py-0.5 rounded-full ${
+                  className={`text-[9px] sm:text-[10px] font-sans font-semibold px-1.5 py-0.2 rounded-full shrink-0 ${
                     isActive
-                      ? 'bg-white/25 text-white/95'
+                      ? 'bg-white/25 text-white'
                       : 'bg-[#ECEEF2] text-slate-500 shadow-neuInset'
                   }`}
                 >
-                  {deptCount} {deptCount === 1 ? 'artículo' : 'artículos'}
+                  {deptCount}
                 </span>
               </button>
             );
           })}
         </div>
-
-        {/* Breve descripción del departamento activo */}
-        <p className="text-xs text-slate-500 font-sans max-w-lg mx-auto pt-1">
-          {currentDeptConfig.description}
-        </p>
       </div>
 
       {/* Barra de Filtros Rápidos Dinámica y Buscador Inteligente */}

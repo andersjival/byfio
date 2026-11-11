@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.85 - Reducción Compacta del 60% del Banner de Departamentos en Tienda
+- [x] **Optimización Compacta del Selector de Departamentos ([StorePage.tsx](file:///C:/Users/Juan/byfio/src/components/store/StorePage.tsx)):**
+  - Se redujo el tamaño vertical del banner de departamentos en más de un 65% (pasando de ~240px a ~45px de altura en escritorio y ~70px en móvil).
+  - Eliminación de encabezados redundantes y párrafos explicativos voluminosos que desplazaban el contenido de los productos hacia abajo.
+  - Diseño ultra-estilizado en píldoras horizontales alineadas (`flex items-center gap-1.5 py-1.5 px-3`):
+    - Micro-icono contextual en caja neumórfica compacta (`w-5 h-5` / `w-6 h-6`).
+    - Tipografía en negrita concisa (`text-[11px] sm:text-xs font-bubble`).
+    - Pastilla numérica de stock integrado discreta (`text-[9px] sm:text-[10px]`).
+  - Preserva intacta la interactividad instantánea al tacto, el degradado activo, el cambio dinámico de subfiltros y el buscador inteligente.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.85`.
+
 ### Versión 4.19.84 - Selector Central de Macro-Departamentos con Subfiltros Dinámicos y Buscador Inteligente
 - [x] **Selector Centrado de 4 Macro-Departamentos en Tienda ([StorePage.tsx](file:///C:/Users/Juan/byfio/src/components/store/StorePage.tsx)):**
   - Ubicado entre el banner ilustrado oficial (`imagen-tienda-online.jpeg`) y la barra de filtros de productos.
