@@ -2010,6 +2010,16 @@ html.dark .geosoft-copyright-pill:hover {
   overflow: hidden !important;
 }
 
+#byfio-picking-live-scanner-viewport > div,
+#byfio-qr-camera-viewport > div {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 #byfio-picking-live-scanner-viewport video,
 #byfio-qr-camera-viewport video {
   width: 100% !important;

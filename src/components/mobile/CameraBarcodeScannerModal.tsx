@@ -16,6 +16,7 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
 }) => {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isStarting, setIsStarting] = useState(true);
+  const [retryTrigger, setRetryTrigger] = useState(0);
 
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const isScanningRef = useRef(false);
@@ -49,6 +50,14 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
 
         if (!isMounted) return;
 
+        // Esperar brevemente a que el DOM esté disponible
+        let containerEl = document.getElementById(containerId);
+        if (!containerEl) {
+          await new Promise((res) => setTimeout(res, 150));
+          containerEl = document.getElementById(containerId);
+        }
+        if (!containerEl || !isMounted) return;
+
         const html5QrCode = new Html5Qrcode(containerId);
         scannerRef.current = html5QrCode;
 
@@ -57,28 +66,52 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
           fps: 20,
         };
 
-        await html5QrCode.start(
-          { facingMode: 'environment' }, // Cámara trasera del celular
-          config,
-          (decodedText) => {
-            if (!isScanningRef.current) return;
-            isScanningRef.current = false;
-            playBubblePopSound();
-
-            // Vibración táctil si el hardware lo permite
-            if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-              try {
-                navigator.vibrate([120, 40, 120]);
-              } catch {}
-            }
-
-            onScan(decodedText.trim());
-            onClose();
-          },
-          () => {
-            // Error por frame vacío (comportamiento normal continuo)
+        // Selección ultra-robusta de cámara: buscar trasera en celulares o disponible en laptops
+        let cameraConfig: string | { facingMode: string } = { facingMode: 'environment' };
+        try {
+          const cameras = await Html5Qrcode.getCameras();
+          if (cameras && cameras.length > 0) {
+            const rearCam = cameras.find((c) =>
+              /back|rear|trasera|environment/i.test(c.label)
+            );
+            cameraConfig = rearCam ? rearCam.id : (cameras.length > 1 ? cameras[cameras.length - 1].id : cameras[0].id);
           }
-        );
+        } catch {
+          cameraConfig = { facingMode: 'environment' };
+        }
+
+        const handleSuccess = (decodedText: string) => {
+          if (!isScanningRef.current) return;
+          isScanningRef.current = false;
+          playBubblePopSound();
+
+          // Vibración táctil si el hardware lo permite
+          if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+            try {
+              navigator.vibrate([120, 40, 120]);
+            } catch {}
+          }
+
+          onScan(decodedText.trim());
+          onClose();
+        };
+
+        try {
+          await html5QrCode.start(
+            cameraConfig,
+            config,
+            handleSuccess,
+            () => {}
+          );
+        } catch (firstErr) {
+          console.warn('Primer intento con cámara ID falló en modal, reintentando con facingMode:', firstErr);
+          await html5QrCode.start(
+            { facingMode: 'environment' },
+            config,
+            handleSuccess,
+            () => {}
+          );
+        }
 
         if (!isMounted) {
           await stopScanner();
@@ -113,7 +146,7 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
       clearTimeout(timer);
       stopScanner();
     };
-  }, [isOpen]);
+  }, [isOpen, retryTrigger]);
 
   const stopScanner = async () => {
     isScanningRef.current = false;
@@ -172,6 +205,18 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
             <p className="text-xs text-amber-200 font-bubble leading-relaxed">
               {cameraError}
             </p>
+            <button
+              type="button"
+              onClick={() => {
+                setCameraError(null);
+                setIsStarting(true);
+                setRetryTrigger((r) => r + 1);
+              }}
+              className="mt-1 px-3 py-1 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Reintentar</span>
+            </button>
           </div>
         )}
       </div>

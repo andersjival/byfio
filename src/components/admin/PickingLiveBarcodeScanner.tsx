@@ -163,7 +163,11 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
       await stopScanner();
 
       // Esperar brevemente a que el DOM esté disponible
-      const containerEl = document.getElementById(containerId);
+      let containerEl = document.getElementById(containerId);
+      if (!containerEl) {
+        await new Promise((res) => setTimeout(res, 150));
+        containerEl = document.getElementById(containerId);
+      }
       if (!containerEl) {
         setIsStarting(false);
         isStartingRef.current = false;
@@ -197,16 +201,51 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
         fps: 20,
       };
 
-      await html5QrCode.start(
-        { facingMode: { ideal: facing } },
-        config,
-        (decodedText: string) => {
-          handleDecodedBarcode(decodedText);
-        },
-        () => {
-          // Frame continuo sin código detectado
+      // Selección ultra-robusta de cámara: buscar trasera en celulares o disponible en laptops
+      let cameraConfig: string | { facingMode: string } = { facingMode: facing };
+      try {
+        const cameras = await Html5Qrcode.getCameras();
+        if (cameras && cameras.length > 0) {
+          if (facing === 'environment') {
+            const rearCam = cameras.find((c) =>
+              /back|rear|trasera|environment/i.test(c.label)
+            );
+            cameraConfig = rearCam ? rearCam.id : (cameras.length > 1 ? cameras[cameras.length - 1].id : cameras[0].id);
+          } else {
+            const frontCam = cameras.find((c) =>
+              /front|delantera|user|selfie/i.test(c.label)
+            );
+            cameraConfig = frontCam ? frontCam.id : cameras[0].id;
+          }
         }
-      );
+      } catch {
+        cameraConfig = { facingMode: facing };
+      }
+
+      try {
+        await html5QrCode.start(
+          cameraConfig,
+          config,
+          (decodedText: string) => {
+            handleDecodedBarcode(decodedText);
+          },
+          () => {
+            // Frame continuo sin código detectado
+          }
+        );
+      } catch (firstErr) {
+        console.warn('Primer intento con cámara ID falló, reintentando con facingMode:', firstErr);
+        await html5QrCode.start(
+          { facingMode: facing },
+          config,
+          (decodedText: string) => {
+            handleDecodedBarcode(decodedText);
+          },
+          () => {
+            // Frame continuo sin código detectado
+          }
+        );
+      }
 
       setIsStarting(false);
 

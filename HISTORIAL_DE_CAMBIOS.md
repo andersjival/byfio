@@ -17,6 +17,19 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.72 - Corrección Crítica de Activación de Cámara en Alistar Pedido y Escaneo Robusto Multi-dispositivo
+- [x] **Solución del Fallo de Inicialización de Cámara ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
+  - Erradicada la restricción incompatible `{ facingMode: { ideal: facing } }` que provocaba que `html5-qrcode` lanzara una excepción fatal (`facingMode object should have exact key`), bloqueando el encendido del stream de video.
+  - Implementada selección inteligente de sensor mediante enumeración de dispositivos con `Html5Qrcode.getCameras()`: selecciona prioritariamente la lente trasera de alta definición (`rear / back / environment`) en teléfonos celulares Android e iPhone.
+  - Mecanismo de doble intento (`dual fallback`): si la cámara por ID específico no responde, conmuta de forma transparente e instantánea al `facingMode` estándar.
+- [x] **Blindaje de Montaje en DOM y Botón de Reintento ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx), [CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx)):**
+  - Añadida espera asíncrona de disponibilidad del nodo contenedor en el DOM para evitar carreras de renderizado al abrir el modal de alisto.
+  - Botón táctil `"Reintentar"` añadido en la tarjeta de error si el navegador requirió confirmación manual de permisos de cámara.
+- [x] **Ajuste de Estilos de Contenedor ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Dimensiones forzadas al 100% en elementos intermedios generados por la librería para garantizar que el stream ocupe la totalidad del visor delimitado por las esquinas amarillas.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.72` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.71 - Eliminación de Alisto PWA en Desplegable de Colaborador y Enlace Directo a Cola de Pedidos de Clientes
 - [x] **Purificación del Menú Desplegable de Colaborador ([NavbarUserMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx)):**
   - Removido por completo el botón `"Alisto de pedidos (Pwa)"` y toda la sección interna que enlazaba a la vista móvil aislada.
