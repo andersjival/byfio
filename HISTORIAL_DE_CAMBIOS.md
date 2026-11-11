@@ -17,6 +17,16 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.74 - Diseño Oficial de Etiqueta QR (1/3 QR con Círculo Lila ByFio y 2/3 Descripción, Ubicación y Código)
+- [x] **Redistribución Proporcional de Etiqueta ([ProductBarcodeLabel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ProductBarcodeLabel.tsx)):**
+  - **1/3 del tamaño de la etiqueta:** Dedicado estrictamente al Código QR (`w-[34%]`), optimizado en tamaño y proporción.
+  - **Emblema Central en Círculo Lila:** Creado componente e imagen vectorial (`ByFioQrCenterEmblem` y data URI) con círculo color lila (`#D4AEFA`), nombre `byfio`, corazón rosado y estrella dorada en pequeñito en el centro, con excavación de módulos QR y corrección de error nivel H (30%) para escaneo instantáneo.
+  - **2/3 del tamaño de la etiqueta:** Dedicado al contenido textual con descripción del producto en grande (`line-clamp-2`), ubicación destacada (`📍 Ubicación`), código SKU en badge monospace y precio en colones.
+- [x] **Actualización en Modal Individual ([QrLabelModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QrLabelModal.tsx)):**
+  - Integrado el círculo lila central con `byfio`, corazón y estrella en la vista previa del código QR de 140px.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.74` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.73 - Botón de Confirmación "Aceptar 1 unidad" en Color Fucsia con Rosado
 - [x] **Estilo y Paleta de Color en Alisto Guiado ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
   - Actualizado el botón principal de confirmación de cantidad escaneada (`Aceptar 1 unidad` / `Confirmar cantidad`) de verde esmeralda al degradado corporativo fucsia con rosado (`from-fuchsia-600 via-pink-600 to-fio-pink`).

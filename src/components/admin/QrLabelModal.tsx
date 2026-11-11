@@ -6,6 +6,7 @@ import { Barcode128 } from '../common/Barcode128';
 import { X, Printer, Tag, Barcode, QrCode } from 'lucide-react';
 import { BrandLogo } from '../common/BrandLogo';
 import { playWaterDropSound } from '../../utils/soundEffects';
+import { ByFioQrCenterEmblem, EMBLEM_SVG_DATA_URI } from './ProductBarcodeLabel';
 
 export const QrLabelModal: React.FC = () => {
   const { qrModalProduct, setQrModalProduct } = useApp();
@@ -92,13 +93,22 @@ export const QrLabelModal: React.FC = () => {
 
             {/* Código en el formato seleccionado */}
             {selectedFormat === 'qr' ? (
-              <div className="p-3 bg-white border border-gray-200 rounded-xl shadow-inner mb-2">
+              <div className="relative p-3 bg-white border border-gray-200 rounded-2xl shadow-inner mb-2 flex items-center justify-center">
                 <QRCodeSVG
                   value={cleanQrValue}
                   size={140}
                   level="H"
                   includeMargin={false}
+                  imageSettings={{
+                    src: EMBLEM_SVG_DATA_URI,
+                    width: 44,
+                    height: 44,
+                    excavate: true,
+                  }}
                 />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <ByFioQrCenterEmblem size={44} />
+                </div>
               </div>
             ) : (
               <div className="py-3 px-2 bg-white border border-gray-200 rounded-xl shadow-inner mb-2 w-full flex items-center justify-center">
