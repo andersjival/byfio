@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.68 - Integración de Escaneo de Códigos y Activación de Cámara en "Alistar Pedido"
+- [x] **Unificación Total de Alistar Pedido ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
+  - Erradicada la bifurcación rígida que ocultaba el escáner y la cámara al ingresar por "Alistar Pedido".
+  - Añadido botón interactivo y prominente `📷 Activar Cámara para Escanear` directamente en la sección de Alistar Pedido, junto a selector de estado (`Cámara Activa` / `Teclado / USB`).
+  - Flujo completo de escaneo por cámara de celular o lector USB/láser accesible dentro de Alistar Pedido con validación sonora, check visual y activación del botón grande para confirmar cantidad antes de pasar al siguiente producto.
+  - Opciones completas de soporte manual (`Aceptar y Continuar`, `Simular Escaneo`, `Reportar Faltante`, `Ver Resumen` y `Salir a la Cola`).
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.68` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.67 - Restauración y Estabilización Total de la Cámara de Escaneo de Códigos de Barra
 - [x] **Solución a Bloqueo de Cámara y Eliminación de qrbox Problemático ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx), [CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx)):**
   - Eliminada la restricción de cálculo dinámico de `qrbox` que provocaba la excepción crítica `qrbox dimensions should not be greater than viewfinder dimensions` en dispositivos móviles o durante el inicio del viewport.

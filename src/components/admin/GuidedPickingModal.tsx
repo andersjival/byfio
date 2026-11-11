@@ -384,113 +384,124 @@ export const GuidedPickingModal: React.FC = () => {
 
 
 
-                {/* ACCIÓN SEGÚN EL MODO: CÓDIGO (CÁMARA CELULAR / USB) vs MANUAL */}
-                {pickingMode === 'barcode' ? (
-                  /* Modo 1: Alisto con Código (Pistola Lectora con Cámara del Celular) */
-                  <div className="p-3 sm:p-4 bg-fio-50/90 rounded-2xl border-2 border-fio-200 space-y-3">
-                    {/* Selector de Método: Cámara Celular vs USB / Teclado */}
-                    <div className="flex items-center justify-between gap-2 border-b border-fio-200/80 pb-2">
-                      <span className="text-xs font-bold text-fio-900 flex items-center gap-1.5">
-                        <QrCode className="w-4 h-4 text-fio-pink" />
-                        <span>Lector de Códigos:</span>
-                      </span>
-                      <div className="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-fio-200 shadow-2xs">
-                        <button
-                          type="button"
-                          onClick={() => setIsCameraScannerOpen(true)}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bubble font-bold transition-all flex items-center gap-1 ${
-                            isCameraScannerOpen
-                              ? 'bg-fio-800 text-white shadow-2xs'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          <Camera className="w-3.5 h-3.5 text-fio-yellow" />
-                          <span>Cámara Celular</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setIsCameraScannerOpen(false)}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bubble font-bold transition-all flex items-center gap-1 ${
-                            !isCameraScannerOpen
-                              ? 'bg-fio-800 text-white shadow-2xs'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          <Scan className="w-3.5 h-3.5" />
-                          <span>Teclado / USB</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Visor de Cámara en Vivo: Celular como Pistola Escáner */}
-                    {isCameraScannerOpen && (
-                      <div className="w-full">
-                        <PickingLiveBarcodeScanner
-                          key="guided-picking-live-scanner"
-                          expectedSku={currentItem.sku}
-                          expectedName={currentItem.name}
-                          expectedShelf={currentItem.shelfLocation || 'Bodega Central'}
-                          isPaused={Boolean(scannedVerifiedItem)}
-                          onScanSuccess={(code: string) => handleProcessScan(code)}
-                          onScanError={(code: string) => {
-                            setScanFeedback({
-                              type: 'error',
-                              message: `Código leído: ${code}. No coincide con ${currentItem.sku} (${currentItem.name}).`,
-                            });
-                          }}
-                        />
-                      </div>
-                    )}
-
-                    {/* Feedback de Escaneo */}
-                    {scanFeedback && (
-                      <div
-                        className={`p-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 ${
-                          scanFeedback.type === 'success'
-                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                            : scanFeedback.type === 'warning'
-                            ? 'bg-amber-50 text-amber-900 border-amber-300'
-                            : 'bg-red-50 text-red-800 border-red-300'
+                {/* ACCIÓN DE ALISTAR PEDIDO: ESCANEO DE PRODUCTOS Y ACTIVACIÓN DE CÁMARA */}
+                <div className="p-3.5 sm:p-4 bg-purple-50/70 rounded-2xl border-2 border-purple-200 space-y-3">
+                  {/* Selector y Control de Cámara: Activar Cámara vs Teclado/USB */}
+                  <div className="flex items-center justify-between gap-2 border-b border-purple-200/80 pb-2">
+                    <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <QrCode className="w-4 h-4 text-fio-pink shrink-0" />
+                      <span>Escaneo de Producto:</span>
+                    </span>
+                    <div className="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-purple-200 shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() => setIsCameraScannerOpen(!isCameraScannerOpen)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bubble font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                          isCameraScannerOpen
+                            ? 'bg-fio-800 text-white shadow-2xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-purple-50'
                         }`}
                       >
-                        {scanFeedback.type === 'success' ? (
-                          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                        ) : (
-                          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                        )}
-                        <span className="text-xs leading-tight">{scanFeedback.message}</span>
-                      </div>
-                    )}
+                        <Camera className="w-3.5 h-3.5 text-fio-yellow" />
+                        <span>{isCameraScannerOpen ? 'Cámara Activa' : 'Activar Cámara'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsCameraScannerOpen(false)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bubble font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                          !isCameraScannerOpen
+                            ? 'bg-fio-800 text-white shadow-2xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-purple-50'
+                        }`}
+                      >
+                        <Scan className="w-3.5 h-3.5" />
+                        <span>Teclado / USB</span>
+                      </button>
+                    </div>
+                  </div>
 
-                    {/* Botón Principal: Confirmación de Cantidad tras Validación de Escaneo */}
-                    {scannedVerifiedItem ? (
-                      <div className="space-y-2 pt-1 animate-fadeIn">
-                        <button
-                          type="button"
-                          onClick={handleConfirmScannedQuantity}
-                          className="w-full py-4 px-4 bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:to-teal-700 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/30 border-2 border-emerald-300 transition-all cursor-pointer min-h-[58px] ring-4 ring-emerald-400/20"
-                        >
-                          <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white shrink-0" />
-                          <span>
-                            {scannedVerifiedItem.quantity === 1
-                              ? 'Aceptar 1 unidad'
-                              : `Confirmar cantidad: ${scannedVerifiedItem.quantity} unidades`}
-                          </span>
-                        </button>
+                  {/* Botón Prominente para Activar Cámara cuando no está abierta */}
+                  {!isCameraScannerOpen && (
+                    <button
+                      type="button"
+                      onClick={() => setIsCameraScannerOpen(true)}
+                      className="w-full py-3 px-4 bg-gradient-to-r from-purple-700 via-purple-600 to-fio-pink hover:from-purple-600 hover:to-pink-500 text-white rounded-2xl font-bubble font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-clayBtn transition-all active:scale-95 cursor-pointer min-h-[46px]"
+                    >
+                      <Camera className="w-4 h-4 text-fio-yellow animate-pulse" />
+                      <span>Activar Cámara para Escanear</span>
+                    </button>
+                  )}
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setScannedVerifiedItem(null);
-                            setScanFeedback(null);
-                          }}
-                          className="w-full py-1 text-center text-xs text-slate-500 hover:text-slate-800 underline font-semibold cursor-pointer"
-                        >
-                          ¿Deseas volver a escanear? Haz clic aquí
-                        </button>
-                      </div>
-                    ) : (
-                      /* Botón inactivo antes del escaneo */
+                  {/* Visor de Cámara en Vivo: Celular como Pistola Escáner */}
+                  {isCameraScannerOpen && (
+                    <div className="w-full">
+                      <PickingLiveBarcodeScanner
+                        key="guided-picking-live-scanner"
+                        expectedSku={currentItem.sku}
+                        expectedName={currentItem.name}
+                        expectedShelf={currentItem.shelfLocation || 'Bodega Central'}
+                        isPaused={Boolean(scannedVerifiedItem)}
+                        onScanSuccess={(code: string) => handleProcessScan(code)}
+                        onScanError={(code: string) => {
+                          setScanFeedback({
+                            type: 'error',
+                            message: `Código leído: ${code}. No coincide con ${currentItem.sku} (${currentItem.name}).`,
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Feedback de Escaneo */}
+                  {scanFeedback && (
+                    <div
+                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 ${
+                        scanFeedback.type === 'success'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                          : scanFeedback.type === 'warning'
+                          ? 'bg-amber-50 text-amber-900 border-amber-300'
+                          : 'bg-red-50 text-red-800 border-red-300'
+                      }`}
+                    >
+                      {scanFeedback.type === 'success' ? (
+                        <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                      ) : (
+                        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                      )}
+                      <span className="text-xs leading-tight">{scanFeedback.message}</span>
+                    </div>
+                  )}
+
+                  {/* Botón Principal: Confirmación de Cantidad tras Validación de Escaneo */}
+                  {scannedVerifiedItem ? (
+                    <div className="space-y-2 pt-1 animate-fadeIn">
+                      <button
+                        type="button"
+                        onClick={handleConfirmScannedQuantity}
+                        className="w-full py-4 px-4 bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:to-teal-700 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/30 border-2 border-emerald-300 transition-all cursor-pointer min-h-[58px] ring-4 ring-emerald-400/20"
+                      >
+                        <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white shrink-0" />
+                        <span>
+                          {scannedVerifiedItem.quantity === 1
+                            ? 'Aceptar 1 unidad'
+                            : `Confirmar cantidad: ${scannedVerifiedItem.quantity} unidades`}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setScannedVerifiedItem(null);
+                          setScanFeedback(null);
+                        }}
+                        className="w-full py-1 text-center text-xs text-slate-500 hover:text-slate-800 underline font-semibold cursor-pointer"
+                      >
+                        ¿Deseas volver a escanear? Haz clic aquí
+                      </button>
+                    </div>
+                  ) : (
+                    /* Si la cámara está activa y aún no se escanea el código */
+                    isCameraScannerOpen ? (
                       <button
                         type="button"
                         disabled
@@ -498,50 +509,63 @@ export const GuidedPickingModal: React.FC = () => {
                       >
                         <Scan className="w-4 h-4 text-slate-400" />
                         <span>
-                          Escanea el código para confirmar cantidad ({currentItem.quantity} {currentItem.quantity === 1 ? 'ud' : 'uds'})
+                          Apunta la cámara al código ({currentItem.quantity} {currentItem.quantity === 1 ? 'ud' : 'uds'})
                         </span>
                       </button>
-                    )}
-
-                    {/* Modo Manual o Teclado/USB */}
-                    {!isCameraScannerOpen && !scannedVerifiedItem && (
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          if (manualInput) handleProcessScan(manualInput);
-                        }}
-                        className="flex gap-2"
+                    ) : (
+                      /* Si la cámara no está activa: Botón manual directo de Aceptar */
+                      <button
+                        type="button"
+                        onClick={() => handleMarkItemPickedManual(currentItem.sku)}
+                        className="w-full py-3.5 px-4 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base flex items-center justify-center gap-2.5 shadow-clayBtn transition-all cursor-pointer min-h-[50px]"
                       >
-                        <input
-                          type="text"
-                          placeholder="Escanear con lector láser o escribir SKU..."
-                          value={manualInput}
-                          onChange={(e) => setManualInput(e.target.value)}
-                          className="flex-1 px-3.5 py-2.5 bg-white rounded-xl border border-fio-300 text-xs font-mono focus:ring-2 focus:ring-fio-400 focus:outline-none"
-                        />
-                        <button
-                          type="submit"
-                          className="px-4 py-2 bg-fio-800 text-white rounded-xl text-xs font-bold hover:bg-fio-900 cursor-pointer"
-                        >
-                          Validar
-                        </button>
-                      </form>
-                    )}
+                        <Check className="w-5 h-5 text-white" />
+                        <span>Aceptar y Continuar ({currentItem.quantity} ud)</span>
+                      </button>
+                    )
+                  )}
 
-                    {!scannedVerifiedItem && (
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={handleSimulateScanCurrent}
-                          className="w-full py-2.5 px-3 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer"
-                        >
-                          <Scan className="w-3.5 h-3.5" />
-                          <span>Validar ({currentItem.sku})</span>
-                        </button>
-                      </div>
-                    )}
+                  {/* Modo Manual o Teclado/USB */}
+                  {!isCameraScannerOpen && !scannedVerifiedItem && (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (manualInput) handleProcessScan(manualInput);
+                      }}
+                      className="flex gap-2"
+                    >
+                      <input
+                        type="text"
+                        placeholder="Escanear con lector láser o escribir SKU..."
+                        value={manualInput}
+                        onChange={(e) => setManualInput(e.target.value)}
+                        className="flex-1 px-3.5 py-2.5 bg-white rounded-xl border border-purple-200 text-xs font-mono focus:ring-2 focus:ring-fio-400 focus:outline-none"
+                      />
+                      <button
+                        type="submit"
+                        className="px-4 py-2 bg-fio-800 text-white rounded-xl text-xs font-bold hover:bg-fio-900 cursor-pointer"
+                      >
+                        Validar
+                      </button>
+                    </form>
+                  )}
 
-                    <div className="pt-1 flex items-center justify-between border-t border-fio-200/60 text-xs">
+                  {!scannedVerifiedItem && (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={handleSimulateScanCurrent}
+                        className="w-full py-2.5 px-3 bg-white hover:bg-purple-100/60 border border-purple-200 text-purple-900 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-2xs active:scale-95 cursor-pointer transition-all"
+                      >
+                        <Scan className="w-3.5 h-3.5 text-fio-pink" />
+                        <span>Simular Escaneo ({currentItem.sku})</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Acciones Secundarias: Faltante, Salir y Resumen */}
+                  <div className="pt-2 flex flex-col gap-2 border-t border-purple-200/80">
+                    <div className="flex items-center justify-between gap-2 text-xs">
                       {isFeatureEnabled('orders', 'missing_reporting') ? (
                         <button
                           type="button"
@@ -551,15 +575,15 @@ export const GuidedPickingModal: React.FC = () => {
                           Reportar Faltante
                         </button>
                       ) : <span />}
-                      {isFeatureEnabled('orders', 'manual_picking') && (
-                        <button
-                          type="button"
-                          onClick={() => setPickingMode('manual')}
-                          className="text-fio-pink hover:text-purple-700 font-bold underline cursor-pointer"
-                        >
-                          Cambiar a Alistar Pedido
-                        </button>
-                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => setShowSummaryList(!showSummaryList)}
+                        className="text-fio-800 hover:text-fio-900 flex items-center gap-1 cursor-pointer underline font-bold"
+                      >
+                        <Printer className="w-3.5 h-3.5 text-slate-600" />
+                        <span>{showSummaryList ? 'Ocultar Resumen' : 'Ver Resumen'}</span>
+                      </button>
                     </div>
 
                     <button
@@ -571,68 +595,7 @@ export const GuidedPickingModal: React.FC = () => {
                       <span>Salir a la Cola de Pedidos</span>
                     </button>
                   </div>
-                ) : (
-                  /* Modo 2: Alistar Pedido (Botón de Aceptar/Continuar, Faltante y Salir) */
-                  <div className="p-3.5 sm:p-3.5 bg-purple-50/70 rounded-2xl border-2 border-purple-200 space-y-2.5 sm:space-y-2.5">
-                    <p className="text-xs sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                      <ClipboardList className="w-4 h-4 text-fio-pink" />
-                      <span>Acción de Alisto en Estante:</span>
-                    </p>
-
-                    {/* Botón Principal: ACEPTAR Y CONTINUAR (50% más grande en celular) */}
-                    <button
-                      type="button"
-                      onClick={() => handleMarkItemPickedManual(currentItem.sku)}
-                      className="w-full py-4 sm:py-3.5 px-4 bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-500 hover:to-pink-500 active:scale-[0.98] text-white rounded-2xl font-bubble font-black text-base sm:text-base flex items-center justify-center gap-2.5 shadow-clayBtn transition-all cursor-pointer min-h-[52px]"
-                    >
-                      <Check className="w-6 h-6 sm:w-5 sm:h-5 text-white" />
-                      <span>Aceptar y Continuar ({currentItem.quantity} ud)</span>
-                    </button>
-
-                    {/* Botón de Faltante / Sin Existencias (50% más grande en celular) */}
-                    {isFeatureEnabled('orders', 'missing_reporting') && (
-                      <button
-                        type="button"
-                        onClick={() => handleMarkItemMissingManual(currentItem.sku)}
-                        className="w-full py-3 sm:py-2.5 px-4 bg-amber-50 hover:bg-amber-100 active:scale-[0.98] border-2 border-amber-300 hover:border-amber-400 text-amber-900 rounded-xl sm:rounded-2xl font-bubble font-bold text-xs sm:text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs min-h-[44px]"
-                        title="Reportar que este producto no tiene existencias o falta en el estante"
-                      >
-                        <AlertTriangle className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-amber-600" />
-                        <span>Sin Existencias / Reportar Faltante</span>
-                      </button>
-                    )}
-
-                    {/* Botón de Salir a la Cola de Pedidos (50% más grande en celular) */}
-                    <button
-                      type="button"
-                      onClick={() => setActivePickingOrder(null)}
-                      className="w-full py-3 sm:py-2.5 px-4 bg-white hover:bg-slate-100 active:scale-[0.98] border border-slate-300 text-slate-700 rounded-xl sm:rounded-2xl font-bubble font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs min-h-[44px]"
-                    >
-                      <LogOut className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-500" />
-                      <span>Salir a la Cola de Pedidos</span>
-                    </button>
-
-                    <div className="pt-2 flex items-center justify-between border-t border-purple-200/80 text-xs sm:text-[11px] font-bold">
-                      <button
-                        type="button"
-                        onClick={() => setShowSummaryList(!showSummaryList)}
-                        className="text-fio-800 hover:text-fio-900 flex items-center gap-1 cursor-pointer underline"
-                      >
-                        <Printer className="w-3 h-3 text-slate-600" />
-                        <span>{showSummaryList ? 'Ocultar Resumen' : 'Ver Resumen / Imprimir'}</span>
-                      </button>
-                      {isFeatureEnabled('orders', 'code_picking') && (
-                        <button
-                          type="button"
-                          onClick={() => setPickingMode('barcode')}
-                          className="text-fio-pink hover:text-purple-700 cursor-pointer underline"
-                        >
-                          Cambiar a Alisto con Código
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           ) : (
