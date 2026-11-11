@@ -5,9 +5,17 @@ import { Customer } from '../../types';
 import {
   Users, UserPlus, Search, Phone, Mail, MapPin, FileText, Edit2,
   Trash2, X, Check, ShoppingBag, MessageCircle, CreditCard,
-  Calendar, CheckCircle2, AlertCircle, Building2
+  Calendar, CheckCircle2, AlertCircle, Building2, Crown, Trophy,
+  History, ArrowDownWideNarrow, Minus, Plus
 } from 'lucide-react';
-import { formatShortDate } from '../../utils/formatters';
+import { formatShortDate, formatCRC } from '../../utils/formatters';
+import {
+  CUSTOMER_VIP_THRESHOLD_STORAGE_KEY,
+  DEFAULT_VIP_MIN_PURCHASES,
+  clampVipThreshold,
+  buildCustomerPurchaseMap,
+} from '../../utils/customerPurchases';
+import { CustomerPurchaseHistoryModal } from './CustomerPurchaseHistoryModal';
 
 interface CustomersSectionProps {
   onSelectCustomerForBilling?: (customer: Customer) => void;
@@ -24,9 +32,21 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     customerFieldDefs,
     orders,
     isFeatureEnabled,
+    setInvoiceOrder,
   } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterMode, setFilterMode] = useState<'all' | 'top' | 'vip'>('all');
+  const [sortMode, setSortMode] = useState<'default' | 'most' | 'least'>('default');
+  const [vipMinPurchases, setVipMinPurchases] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem(CUSTOMER_VIP_THRESHOLD_STORAGE_KEY);
+      return saved ? clampVipThreshold(saved) : DEFAULT_VIP_MIN_PURCHASES;
+    } catch {
+      return DEFAULT_VIP_MIN_PURCHASES;
+    }
+  });
+  const [historyCustomer, setHistoryCustomer] = useState<Customer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
 
@@ -45,11 +65,55 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     syncRegisteredUsers();
   }, [syncRegisteredUsers]);
 
-  // Filtrado reactivo en tiempo real
+  useEffect(() => {
+    let active = true;
+    fetch('/api/customer-settings')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (active && data && typeof data.vipMinPurchases === 'number') {
+          const clamped = clampVipThreshold(data.vipMinPurchases);
+          setVipMinPurchases(clamped);
+          try { localStorage.setItem(CUSTOMER_VIP_THRESHOLD_STORAGE_KEY, String(clamped)); } catch {}
+        }
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, []);
+
+  const handleVipThresholdChange = (rawVal: number) => {
+    const clamped = clampVipThreshold(rawVal);
+    setVipMinPurchases(clamped);
+    try { localStorage.setItem(CUSTOMER_VIP_THRESHOLD_STORAGE_KEY, String(clamped)); } catch {}
+    fetch('/api/customer-settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vipMinPurchases: clamped }),
+    }).catch(() => {});
+  };
+
+  const purchaseMap = useMemo(
+    () => buildCustomerPurchaseMap(customers, orders, vipMinPurchases),
+    [customers, orders, vipMinPurchases]
+  );
+
+  const buyersCount = useMemo(
+    () => customers.filter((c) => (purchaseMap.get(c.id)?.count || 0) > 0).length,
+    [customers, purchaseMap]
+  );
+
+  const vipCount = useMemo(
+    () => customers.filter((c) => purchaseMap.get(c.id)?.isVip).length,
+    [customers, purchaseMap]
+  );
+
+  // Filtrado reactivo en tiempo real + filtro de más comprados / VIP + ordenamiento por compras
   const filteredCustomers = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
-    if (!q) return customers;
-    return customers.filter((c) => {
+    const list = customers.filter((c) => {
+      const summary = purchaseMap.get(c.id);
+      if (filterMode === 'top' && (!summary || summary.count === 0)) return false;
+      if (filterMode === 'vip' && !summary?.isVip) return false;
+      if (!q) return true;
       const matchName = c.name.toLowerCase().includes(q);
       const matchPhone = (c.phone || '').toLowerCase().includes(q);
       const matchEmail = (c.email || '').toLowerCase().includes(q);
@@ -58,7 +122,23 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
       const matchNotes = (c.notes || '').toLowerCase().includes(q);
       return matchName || matchPhone || matchEmail || matchAddress || matchCedula || matchNotes;
     });
-  }, [customers, searchTerm]);
+
+    const effectiveSort = filterMode === 'top' && sortMode === 'default' ? 'most' : sortMode;
+    if (effectiveSort === 'default') return list;
+
+    return [...list].sort((a, b) => {
+      const sA = purchaseMap.get(a.id);
+      const sB = purchaseMap.get(b.id);
+      const cA = sA?.count || 0;
+      const cB = sB?.count || 0;
+      const tA = sA?.totalSpent || 0;
+      const tB = sB?.totalSpent || 0;
+      if (effectiveSort === 'most') {
+        return cB !== cA ? cB - cA : tB - tA;
+      }
+      return cA !== cB ? cA - cB : tA - tB;
+    });
+  }, [customers, searchTerm, filterMode, sortMode, purchaseMap]);
 
   const handleOpenCreate = () => {
     setEditingCustomer(null);
@@ -141,17 +221,6 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     }
   };
 
-  // Cantidad de pedidos históricos de un cliente
-  const getOrderCount = (customer: Customer) => {
-    const cleanP = (customer.phone || '').replace(/\D/g, '');
-    const cleanN = customer.name.toLowerCase().trim();
-    return orders.filter((o) => {
-      const oP = (o.customerPhone || '').replace(/\D/g, '');
-      const oN = (o.customerName || '').toLowerCase().trim();
-      return (cleanP && oP === cleanP) || (cleanN && oN === cleanN);
-    }).length;
-  };
-
   const getInitials = (fullName: string) => {
     const parts = fullName.trim().split(/\s+/);
     if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
@@ -224,19 +293,109 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
         )}
       </div>
 
+      {/* Filtros de Compradores, Etiquetas VIP y Ordenamiento por Compras */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3.5 rounded-2xl bg-[#F1F2F6] border border-white/80 shadow-2xs">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setFilterMode('all')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+              filterMode === 'all'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+            }`}
+          >
+            Todos ({customers.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterMode('top')}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+              filterMode === 'top'
+                ? 'bg-fio-purple text-white shadow-xs'
+                : 'bg-white text-purple-800 hover:bg-purple-50 border border-purple-200'
+            }`}
+          >
+            <Trophy className="w-3.5 h-3.5 text-amber-400" />
+            <span>Más han comprado ({buyersCount})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterMode('vip')}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
+              filterMode === 'vip'
+                ? 'bg-amber-500 text-white shadow-xs'
+                : 'bg-white text-amber-800 hover:bg-amber-50 border border-amber-200'
+            }`}
+          >
+            <Crown className="w-3.5 h-3.5" />
+            <span>Solo VIP ({vipCount})</span>
+          </button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-xl border border-slate-200">
+            <ArrowDownWideNarrow className="w-3.5 h-3.5 text-fio-purple shrink-0" />
+            <span className="text-[11px] font-bold text-slate-500">Orden:</span>
+            <select
+              value={sortMode}
+              onChange={(e) => setSortMode(e.target.value as 'default' | 'most' | 'least')}
+              className="text-xs font-bubble font-bold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
+            >
+              <option value="default">Recientes</option>
+              <option value="most">Mayores compras &rarr; Menores</option>
+              <option value="least">Menores compras &rarr; Mayores</option>
+            </select>
+          </div>
+
+          <div
+            className="flex items-center gap-1.5 bg-amber-50/90 px-2.5 py-1 rounded-xl border border-amber-200"
+            title="Elige cuántas compras debe tener un cliente para ser VIP"
+          >
+            <Crown className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            <span className="text-[11px] font-bold text-amber-900 whitespace-nowrap">VIP mín:</span>
+            <button
+              type="button"
+              onClick={() => handleVipThresholdChange(vipMinPurchases - 1)}
+              className="w-5 h-5 rounded-md bg-white hover:bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-800 cursor-pointer"
+              aria-label="Disminuir compras para VIP"
+            >
+              <Minus className="w-3 h-3" />
+            </button>
+            <input
+              type="number"
+              min={1}
+              max={999}
+              value={vipMinPurchases}
+              onChange={(e) => handleVipThresholdChange(parseInt(e.target.value, 10) || 1)}
+              className="w-11 text-center text-xs font-mono font-black text-amber-950 bg-white rounded-md border border-amber-200 py-0.5 focus:outline-none focus:ring-1 focus:ring-amber-400"
+            />
+            <button
+              type="button"
+              onClick={() => handleVipThresholdChange(vipMinPurchases + 1)}
+              className="w-5 h-5 rounded-md bg-white hover:bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-800 cursor-pointer"
+              aria-label="Aumentar compras para VIP"
+            >
+              <Plus className="w-3 h-3" />
+            </button>
+            <span className="text-[10px] font-bold text-amber-800">compras</span>
+          </div>
+        </div>
+      </div>
+
       {/* Grid de Tarjetas de Clientes */}
       {filteredCustomers.length === 0 ? (
         <div className="text-center py-12 px-4 rounded-3xl bg-[#F1F2F6] border border-dashed border-slate-300">
           <Users className="w-12 h-12 text-slate-400 mx-auto mb-3 opacity-60" />
           <h3 className="font-bubble font-bold text-base text-slate-700">
-            {searchTerm ? 'No se encontraron clientes con ese criterio' : 'Aún no hay clientes registrados'}
+            {searchTerm || filterMode !== 'all' ? 'No se encontraron clientes con ese criterio' : 'Aún no hay clientes registrados'}
           </h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-            {searchTerm
-              ? 'Prueba con otro nombre, número telefónico o cédula.'
+            {searchTerm || filterMode !== 'all'
+              ? 'Prueba limpiando los filtros o ajustando la meta mínima VIP.'
               : 'Haz clic en "Registrar Nuevo Cliente" para guardar el primer contacto y reutilizarlo en futuras ventas.'}
           </p>
-          {!searchTerm && isFeatureEnabled('customers', 'customers_create') && (
+          {!searchTerm && filterMode === 'all' && isFeatureEnabled('customers', 'customers_create') && (
             <button
               type="button"
               onClick={handleOpenCreate}
@@ -249,18 +408,20 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCustomers.map((cust) => {
-            const orderCount = getOrderCount(cust);
+            const summary = purchaseMap.get(cust.id) || { orders: [], count: 0, totalSpent: 0, isVip: false };
             const cedulaVal = cust.customFields?.['field-cedula'];
             const phoneClean = (cust.phone || '').replace(/\D/g, '');
 
             return (
               <div
                 key={cust.id}
-                className="rounded-3xl p-5 bg-[#F1F2F6] border border-white/90 shadow-neuCard hover:shadow-neuCardHover transition-all flex flex-col justify-between"
+                className={`rounded-3xl p-5 bg-[#F1F2F6] shadow-neuCard hover:shadow-neuCardHover transition-all flex flex-col justify-between border ${
+                  summary.isVip ? 'border-amber-300 ring-1 ring-amber-200/80' : 'border-white/90'
+                }`}
               >
                 <div className="space-y-3.5">
-                  {/* Fila Superior: Avatar + Nombre + Pedidos */}
-                  <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200/60">
+                  {/* Fila Superior: Avatar + Nombre + Etiquetas + Compras */}
+                  <div className="flex items-start justify-between gap-2 pb-3 border-b border-slate-200/60">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-fio-purple to-fio-pink text-white font-bubble font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
                         {getInitials(cust.name)}
@@ -269,21 +430,45 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                         <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 truncate" title={cust.name}>
                           {cust.name}
                         </h3>
-                        {cedulaVal && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-slate-500 bg-white/70 px-2 py-0.5 rounded-lg border border-slate-200 mt-0.5">
-                            <CreditCard className="w-2.5 h-2.5 text-slate-400" />
-                            <span>Céd: {cedulaVal}</span>
-                          </span>
-                        )}
+                        <div className="flex flex-wrap items-center gap-1 mt-0.5">
+                          {summary.isVip && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bubble font-black bg-amber-400 text-amber-950 shadow-2xs">
+                              <Crown className="w-2.5 h-2.5" /> VIP
+                            </span>
+                          )}
+                          {summary.topRank && (
+                            <span
+                              className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bubble font-bold ${
+                                summary.topRank === 1
+                                  ? 'bg-purple-700 text-fio-yellow'
+                                  : 'bg-pink-100 text-pink-800 border border-pink-200'
+                              }`}
+                            >
+                              <Trophy className="w-2.5 h-2.5" />
+                              {summary.topRank === 1 ? 'Top #1 Más Compras' : `Top #${summary.topRank}`}
+                            </span>
+                          )}
+                          {cedulaVal && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-slate-500 bg-white/70 px-1.5 py-0.5 rounded-lg border border-slate-200">
+                              <CreditCard className="w-2.5 h-2.5 text-slate-400" />
+                              <span>{cedulaVal}</span>
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <span
-                      className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-200 shrink-0"
-                      title="Pedidos asociados en el sistema"
+                    <button
+                      type="button"
+                      onClick={() => setHistoryCustomer(cust)}
+                      className="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200 shrink-0 text-right transition-colors cursor-pointer"
+                      title="Ver historial completo de compras del cliente"
                     >
-                      {orderCount} pedido(s)
-                    </span>
+                      <div>{summary.count} compra(s)</div>
+                      {summary.totalSpent > 0 && (
+                        <div className="text-[9px] font-mono text-emerald-700">{formatCRC(summary.totalSpent)}</div>
+                      )}
+                    </button>
                   </div>
 
                   {/* Datos de Contacto y Envío */}
@@ -340,11 +525,20 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                       title="Abrir facturación rápida con los datos de este cliente cargados"
                     >
                       <ShoppingBag className="w-3.5 h-3.5 text-fio-yellow" />
-                      <span>Facturar / Crear Pedido &rarr;</span>
+                      <span>Facturar &rarr;</span>
                     </button>
                   )}
 
                   <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setHistoryCustomer(cust)}
+                      className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl bg-white hover:bg-purple-50 text-purple-800 border border-purple-200 shadow-2xs text-[11px] font-bubble font-bold transition-colors cursor-pointer"
+                      title="Ver historial de compras del cliente"
+                    >
+                      <History className="w-3.5 h-3.5" />
+                      <span>Historial</span>
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(cust)}
@@ -515,6 +709,15 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
           </div>
         </div>
       )}
+
+      <CustomerPurchaseHistoryModal
+        customer={historyCustomer}
+        summary={historyCustomer ? purchaseMap.get(historyCustomer.id) || { orders: [], count: 0, totalSpent: 0, isVip: false } : null}
+        vipMinPurchases={vipMinPurchases}
+        onClose={() => setHistoryCustomer(null)}
+        onViewInvoice={(order) => setInvoiceOrder(order)}
+        onSelectForBilling={onSelectCustomerForBilling}
+      />
     </div>
   );
 };

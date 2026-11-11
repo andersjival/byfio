@@ -1,3 +1,15 @@
+## [v4.19.102] - 2026-11-11
+
+### 🏆 Directorio de Clientes: Historial de Compras, Etiquetas VIP y Filtro de Mayores Compradores
+- **Lógica & Estadísticas por Cliente ([`customerPurchases.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/customerPurchases.ts), [`customer-settings.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/customer-settings.ts))**:
+  - Cálculo de compras por cliente empatando teléfono/correo/nombre y deduplicando apartados ya liquidados; persistencia del umbral mínimo de compras VIP configurable por administrador en `localStorage` y D1 (`site_metrics`).
+- **Historial Detallado y Ranking Visual ([`CustomerPurchaseHistoryModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomerPurchaseHistoryModal.tsx), [`CustomersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx))**:
+  - Agregado modal de historial completo de compras por cliente (resumen KPI, listado cronológico de pedidos/apartados e ítems, y acceso directo a comprobante/factura).
+  - Agregado selector de meta mínima para **Cliente VIP** (`★ VIP`), etiquetado de mayores compradores (`Top #1..#3`), filtros `Todos` / `Más han comprado` / `Solo VIP` y ordenamiento de **Mayores compras → Menores** y **Menores compras → Mayores**.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.102`.
+
+---
+
 ## [v4.19.101] - 2026-11-11
 
 ### 🗑️ Retiro del Módulo "Precios & Stickers" del Panel Admin
