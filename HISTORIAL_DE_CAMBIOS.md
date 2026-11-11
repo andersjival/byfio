@@ -1,3 +1,15 @@
+## [v4.19.106] - 2026-11-11
+
+### 🚚 Botón Pedidos de Clientes & Flujo Dual de Proveedores (Ingreso de Factura y Productos)
+- **Renombre a "Pedidos de Clientes" ([`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`AdminMobileDock.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx))**:
+  - Actualizado el botón de pedidos del panel y dock móvil de `Pedidos` a `Pedidos de Clientes`.
+- **Menú Dual de Proveedores e Ingreso de Pedido/Factura ([`SuppliersOrdersSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SuppliersOrdersSection.tsx), [`SupplierInvoiceIntakeView.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierInvoiceIntakeView.tsx), [`SupplierInvoiceHeaderStep.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierInvoiceHeaderStep.tsx), [`SupplierInvoiceProductsStep.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierInvoiceProductsStep.tsx))**:
+  - Al ingresar a Proveedores se muestran los dos botones principales: **`Pedidos a Proveedores`** e **`Ingresar pedido de Proveedor`**.
+  - En el ingreso de factura de proveedor: permite crear el proveedor inline (nombre, cédula jurídica opcional, teléfono, correo) o seleccionar uno existente solicitando `# pedido`, `# factura`, `fecha de ingreso` (hoy por defecto editable), `monto de factura`, `descuento`, `IVA`, `subtotal`, `otros` y `total general`, luego presionar **Aceptar** para buscar productos manualmente, indicar cantidades e ingresar stock al inventario y a D1 ([`supplier-orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/supplier-orders.ts), [`types/index.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx)).
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.106`.
+
+---
+
 ## [v4.19.105] - 2026-11-11
 
 ### 🧩 Separación Modular y Aislamiento de Código/Sesión/Tema (Web Pública vs PWA Colaborador vs PWA Admin)

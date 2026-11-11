@@ -130,7 +130,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
   const allMenuItems = [
     {
       id: 'orders' as AdminTabType,
-      title: 'Pedidos',
+      title: 'Pedidos de Clientes',
       icon: QrCode,
       gradient: 'from-[#A855F7] to-[#6B21A8]',
       badge: pendingOrders.length > 0 ? pendingOrders.length : undefined,
@@ -194,7 +194,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     },
     {
       id: 'suppliers' as AdminTabType,
-      title: 'Pedidos a Proveedor',
+      title: 'Proveedores',
                         icon: Truck,
       gradient: 'from-[#F59E0B] to-[#B45309]',
     },

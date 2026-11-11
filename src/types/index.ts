@@ -216,6 +216,7 @@ export interface Customer {
   id: string;
   name: string;
   phone: string;
+
   email?: string;
   address?: string;
   notes?: string;
@@ -483,6 +484,8 @@ export interface Supplier {
   id: string;
   name: string;
   phone: string;
+
+  legalId?: string;
   whatsappPhone?: string;
   email?: string;
   address?: string;
@@ -496,6 +499,16 @@ export interface SupplierOrder {
   supplierName: string;
   supplierPhone?: string;
   supplierEmail?: string;
+  orderType?: 'order' | 'invoice';
+  invoiceNumber?: string;
+  entryDate?: string;
+  supplierId?: string;
+  supplierLegalId?: string;
+  invoiceAmount?: number;
+  discountAmount?: number;
+  taxAmount?: number;
+  subtotalAmount?: number;
+  otherAmount?: number;
   status: SupplierOrderStatus;
   items: SupplierOrderItem[];
   totalUnits: number;

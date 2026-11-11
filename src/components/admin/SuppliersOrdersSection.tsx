@@ -6,10 +6,11 @@ import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatt
 import {
   Truck, Plus, Search, Calendar, Phone, Mail, CheckCircle2, Clock,
   Package, ChevronDown, ChevronUp, Printer, Trash2, MessageCircle,
-  FileText, ArrowRight, RefreshCw, AlertCircle, Edit3, X, Check, Eye,
-  UserPlus, MapPin
+  FileText, ArrowRight, ArrowLeft, RefreshCw, AlertCircle, Edit3, X, Check, Eye,
+  UserPlus, MapPin, Receipt
 } from 'lucide-react';
 import { AddSupplierModal } from './AddSupplierModal';
+import { SupplierInvoiceIntakeView } from './SupplierInvoiceIntakeView';
 import type { AdminTabType } from './AdminTabs';
 
 interface SuppliersOrdersSectionProps {
@@ -34,6 +35,7 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
   const confirm = useConfirm();
   const showAlert = useAlert();
 
+  const [subView, setSubView] = useState<'menu' | 'orders' | 'intake'>('menu');
   const [activeFilter, setActiveFilter] = useState<'all' | 'draft' | 'ordered' | 'received' | 'suppliers'>('all');
   const [isAddSupplierModalOpen, setIsAddSupplierModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -205,7 +207,7 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
       // Filtro por búsqueda
       if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase();
-      const matchNumber = order.orderNumber.toLowerCase().includes(q);
+      const matchNumber = order.orderNumber.toLowerCase().includes(q) || (order.invoiceNumber || '').toLowerCase().includes(q);
       const matchSupplier = order.supplierName.toLowerCase().includes(q);
       const matchNotes = (order.notes || '').toLowerCase().includes(q);
       const matchItem = order.items.some(
@@ -348,6 +350,67 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
     }
   };
 
+  if (subView === 'menu') {
+    return (
+      <div className="bg-white rounded-3xl border border-fio-200 shadow-clay p-6 sm:p-8 space-y-6 animate-fadeIn">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center shadow-md">
+            <Truck className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="font-bubble font-bold text-xl sm:text-2xl text-fio-900">Módulo de Proveedores</h2>
+            <p className="text-xs sm:text-sm text-slate-500">Selecciona una opción para gestionar órdenes o ingresar facturas y productos de proveedores.</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <button
+            type="button"
+            onClick={() => setSubView('orders')}
+            className="group text-left rounded-3xl p-6 bg-amber-50/70 hover:bg-amber-100/80 border-2 border-amber-200 hover:border-amber-400 shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md shrink-0">
+                <Truck className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bubble font-bold text-lg text-slate-900">Pedidos a Proveedores</h3>
+                <p className="text-xs text-slate-600 mt-0.5">Historial, borradores, requisiciones y directorio ({totalCount} registros).</p>
+              </div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-amber-700 group-hover:translate-x-1 transition-transform shrink-0" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSubView('intake')}
+            className="group text-left rounded-3xl p-6 bg-purple-50/70 hover:bg-purple-100/80 border-2 border-purple-200 hover:border-purple-400 shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-700 to-fio-pink text-white flex items-center justify-center shadow-md shrink-0">
+                <Receipt className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bubble font-bold text-lg text-slate-900">Ingresar pedido de Proveedor</h3>
+                <p className="text-xs text-slate-600 mt-0.5">Registrar factura de proveedor, montos e ingresar productos manualmente.</p>
+              </div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-purple-700 group-hover:translate-x-1 transition-transform shrink-0" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (subView === 'intake') {
+    return (
+      <SupplierInvoiceIntakeView
+        onBackToMenu={() => setSubView('menu')}
+        onGoToOrders={() => setSubView('orders')}
+      />
+    );
+  }
+
   return (
     <div className="space-y-5 animate-fadeIn pb-8">
       {/* Encabezado y Estadísticas Clave */}
@@ -355,6 +418,14 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-fio-100 pb-4">
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setSubView('menu')}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bubble text-xs font-bold cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Proveedores</span>
+              </button>
               <div className="w-9 h-9 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md">
                 <Truck className="w-5 h-5" />
               </div>
@@ -587,6 +658,7 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
                   const q = searchQuery.toLowerCase();
                   return (
                     s.name.toLowerCase().includes(q) ||
+                    (s.legalId && s.legalId.toLowerCase().includes(q)) ||
                     (s.phone && s.phone.toLowerCase().includes(q)) ||
                     (s.whatsappPhone && s.whatsappPhone.toLowerCase().includes(q)) ||
                     (s.email && s.email.toLowerCase().includes(q)) ||
@@ -610,12 +682,23 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
                           </span>
                         </div>
 
+                        {/* Cédula Jurídica */}
+                        {supp.legalId && (
+                          <div className="text-[11px] font-mono text-slate-500">
+                            Céd. Jurídica: <strong>{supp.legalId}</strong>
+                          </div>
+                        )}
+
                         {/* Teléfono */}
                         <div className="flex items-center gap-2 text-xs text-slate-600">
                           <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <a href={`tel:${supp.phone}`} className="hover:text-emerald-700 font-mono font-bold">
-                            {supp.phone}
-                          </a>
+                          {supp.phone ? (
+                            <a href={`tel:${supp.phone}`} className="hover:text-emerald-700 font-mono font-bold">
+                              {supp.phone}
+                            </a>
+                          ) : (
+                            <span className="text-slate-400">Sin teléfono</span>
+                          )}
                         </div>
 
                         {/* WhatsApp */}
@@ -747,6 +830,11 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
                       <span className="font-mono font-bold text-sm text-amber-900 bg-amber-100/90 px-2.5 py-0.5 rounded-xl border border-amber-300">
                         {order.orderNumber}
                       </span>
+                      {order.invoiceNumber && (
+                        <span className="font-mono font-bold text-xs text-purple-900 bg-purple-100 px-2.5 py-0.5 rounded-xl border border-purple-200">
+                          Fact: {order.invoiceNumber}
+                        </span>
+                      )}
                       {getStatusBadge(order.status)}
                       <span className="text-xs text-slate-400 flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5" />
@@ -1430,8 +1518,20 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
                 </tbody>
               </table>
 
+              {(viewingOrder.invoiceNumber || viewingOrder.entryDate || viewingOrder.subtotalAmount || viewingOrder.taxAmount || viewingOrder.discountAmount || viewingOrder.otherAmount || viewingOrder.invoiceAmount) && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] font-mono">
+                  {viewingOrder.invoiceNumber && <span>Factura: <strong>{viewingOrder.invoiceNumber}</strong></span>}
+                  {viewingOrder.entryDate && <span>Ingreso: <strong>{viewingOrder.entryDate}</strong></span>}
+                  {viewingOrder.invoiceAmount ? <span>M. Factura: <strong>{formatCRC(viewingOrder.invoiceAmount)}</strong></span> : null}
+                  {viewingOrder.subtotalAmount ? <span>Subtotal: <strong>{formatCRC(viewingOrder.subtotalAmount)}</strong></span> : null}
+                  {viewingOrder.discountAmount ? <span>Descuento: <strong>{formatCRC(viewingOrder.discountAmount)}</strong></span> : null}
+                  {viewingOrder.taxAmount ? <span>IVA: <strong>{formatCRC(viewingOrder.taxAmount)}</strong></span> : null}
+                  {viewingOrder.otherAmount ? <span>Otros: <strong>{formatCRC(viewingOrder.otherAmount)}</strong></span> : null}
+                </div>
+              )}
+
               <div className="flex justify-between items-center pt-3 border-t-2 border-slate-200 font-bold text-sm">
-                <span>Total Estimado ({viewingOrder.totalUnits} unidades):</span>
+                <span>Total {viewingOrder.orderType === 'invoice' ? 'General' : 'Estimado'} ({viewingOrder.totalUnits} unidades):</span>
                 <span className="font-bubble text-base text-fio-900">{formatCRC(viewingOrder.totalCost)}</span>
               </div>
 

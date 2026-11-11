@@ -1490,6 +1490,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem(STORAGE_KEYS.SUPPLIERS, JSON.stringify(sanitized));
       syncChannel?.postMessage({ type: 'SYNC_UPDATE', suppliers: sanitized });
     } catch {}
+    try {
+      fetch('/api/supplier-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ suppliers: sanitized }),
+      }).catch(() => {});
+    } catch {}
   };
 
   const addSupplier = (supplierData: Omit<Supplier, 'id' | 'createdAt'>): Supplier => {
@@ -3446,7 +3453,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         })
         .catch(() => {});
 
-      // 5b. Sincronizar pedidos a proveedor en la nube
+      // 5b. Sincronizar pedidos a proveedor y directorio de proveedores en la nube
       fetch('/api/supplier-orders')
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
@@ -3456,6 +3463,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
                 try {
                   localStorage.setItem(STORAGE_KEYS.SUPPLIER_ORDERS, JSON.stringify(sanitized));
+                } catch {}
+                return sanitized;
+              }
+              return prev;
+            });
+          }
+          if (Array.isArray(data?.suppliers) && data.suppliers.length > 0) {
+            setSuppliers((prev) => {
+              const sanitized = deepSanitize(data.suppliers);
+              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+                try {
+                  localStorage.setItem(STORAGE_KEYS.SUPPLIERS, JSON.stringify(sanitized));
                 } catch {}
                 return sanitized;
               }
@@ -4632,6 +4651,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     lastLocalProductUpdateRef.current.set(productId, Date.now());
 
     const isZero = stock <= 0;
+    const restoredStock = stock > 0 && target.stock <= 0;
     const updatedProduct: Product = {
       ...target,
       stock,
@@ -4639,6 +4659,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       maxStock: maxStock !== undefined ? maxStock : target.maxStock,
       ...(isZero
         ? { isAvailable: false, showInStore: false, showInCatalog: false }
+        : restoredStock
+        ? { isAvailable: true, showInStore: true, showInCatalog: true }
         : {}),
     };
 
