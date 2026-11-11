@@ -17,6 +17,15 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.69 - Purificación Visual del Modal Escáner de Productos (Solo Visor Central)
+- [x] **Eliminación Quirúrgica de Cabecera y Pie Manual ([CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx)):**
+  - Removida la cabecera superior completa que contenía el título "Escáner de Productos", subtítulo, botón de linterna y botón de cerrar.
+  - Removido el contenedor inferior de digitación manual de SKU ("O ingresa SKU manual...").
+  - Conservado de forma exclusiva y limpia el visor central de cámara con el cuadro de escaneo, esquinas puntiagudas amarillas, retículo central y línea láser animada.
+  - Cierre intuitivo mediante toque en el backdrop oscurecido o tecla Escape.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.69` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.68 - Integración de Escaneo de Códigos y Activación de Cámara en "Alistar Pedido"
 - [x] **Unificación Total de Alistar Pedido ([GuidedPickingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/GuidedPickingModal.tsx)):**
   - Erradicada la bifurcación rígida que ocultaba el escáner y la cámara al ingresar por "Alistar Pedido".

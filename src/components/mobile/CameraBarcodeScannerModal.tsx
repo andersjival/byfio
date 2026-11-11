@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { X, Camera, Flashlight, AlertCircle, RefreshCw, KeyRound, Check } from 'lucide-react';
-import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
+import { AlertCircle, RefreshCw } from 'lucide-react';
+import { playBubblePopSound } from '../../utils/soundEffects';
 
 interface CameraBarcodeScannerModalProps {
   isOpen: boolean;
@@ -16,15 +16,21 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
 }) => {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isStarting, setIsStarting] = useState(true);
-  const [manualCode, setManualCode] = useState('');
-  const [hasTorch, setHasTorch] = useState(false);
-  const [isTorchOn, setIsTorchOn] = useState(false);
 
   const scannerRef = useRef<Html5Qrcode | null>(null);
-  const mediaStreamTrackRef = useRef<MediaStreamTrack | null>(null);
   const isScanningRef = useRef(false);
 
   const containerId = 'byfio-qr-camera-viewport';
+
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -81,22 +87,6 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
 
         isScanningRef.current = true;
         setIsStarting(false);
-
-        // Comprobar soporte de linterna / Flash (Torch)
-        try {
-          const videoElement = document.querySelector(`#${containerId} video`) as HTMLVideoElement | null;
-          if (videoElement && videoElement.srcObject) {
-            const stream = videoElement.srcObject as MediaStream;
-            const track = stream.getVideoTracks()[0];
-            if (track) {
-              mediaStreamTrackRef.current = track;
-              const capabilities = (track.getCapabilities?.() || {}) as any;
-              if (capabilities.torch) {
-                setHasTorch(true);
-              }
-            }
-          }
-        } catch {}
       } catch (err: any) {
         if (!isMounted) return;
         console.warn('Inconveniente al iniciar la cámara para escaneo:', err);
@@ -104,7 +94,7 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
 
         const errMsg = String(err?.message || err || '').toLowerCase();
         if (errMsg.includes('permission') || errMsg.includes('denied') || errMsg.includes('notallowed')) {
-          setCameraError('Permiso de cámara denegado. Puedes activarlo en los ajustes de tu navegador o ingresar el código manualmente abajo.');
+          setCameraError('Permiso de cámara denegado. Puedes activarlo en los ajustes de tu navegador para escanear.');
         } else if (errMsg.includes('notfound') || errMsg.includes('device')) {
           setCameraError('No se encontró una cámara compatible en este dispositivo.');
         } else {
@@ -127,15 +117,6 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
 
   const stopScanner = async () => {
     isScanningRef.current = false;
-    if (mediaStreamTrackRef.current) {
-      try {
-        if (isTorchOn) {
-          await (mediaStreamTrackRef.current as any).applyConstraints({ advanced: [{ torch: false }] });
-        }
-      } catch {}
-      mediaStreamTrackRef.current = null;
-    }
-
     if (scannerRef.current) {
       try {
         if (scannerRef.current.isScanning) {
@@ -147,26 +128,6 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
     }
   };
 
-  const toggleTorch = async () => {
-    if (!mediaStreamTrackRef.current || !hasTorch) return;
-    try {
-      const nextTorch = !isTorchOn;
-      await (mediaStreamTrackRef.current as any).applyConstraints({
-        advanced: [{ torch: nextTorch }],
-      });
-      setIsTorchOn(nextTorch);
-      playWaterDropSound();
-    } catch {}
-  };
-
-  const handleManualSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualCode.trim()) return;
-    playBubblePopSound();
-    onScan(manualCode.trim());
-    onClose();
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -175,48 +136,10 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
       onClick={() => onClose()}
     >
       <div
-        className="relative w-full max-w-sm bg-slate-900 border border-purple-800/60 rounded-3xl overflow-hidden shadow-2xl flex flex-col text-slate-100 animate-scaleUp"
+        className="relative w-full max-w-sm bg-slate-950 border-2 border-purple-800/70 rounded-3xl overflow-hidden shadow-2xl flex flex-col text-slate-100 animate-scaleUp select-none"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Cabecera del Escáner */}
-        <div className="p-4 border-b border-purple-900/60 flex items-center justify-between bg-slate-950/80">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-purple-600/30 border border-purple-500/40 text-fio-yellow flex items-center justify-center">
-              <Camera className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="font-bubble font-bold text-sm text-white">Escáner de Productos</h3>
-              <p className="text-[10px] text-purple-300">Enfoca el código de barras o QR de la etiqueta</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            {hasTorch && (
-              <button
-                type="button"
-                onClick={toggleTorch}
-                className={`p-2 rounded-xl transition-all cursor-pointer ${
-                  isTorchOn
-                    ? 'bg-amber-400 text-slate-950 shadow-md'
-                    : 'bg-slate-800 text-slate-300 hover:text-white'
-                }`}
-                title={isTorchOn ? 'Apagar linterna' : 'Encender linterna'}
-              >
-                <Flashlight className="w-4 h-4" />
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Visor de Cámara */}
+        {/* Visor de Cámara: Única sección central activa */}
         <div className="relative aspect-square w-full bg-black overflow-hidden flex items-center justify-center">
           <div id={containerId} className="w-full h-full object-cover" />
 
@@ -260,32 +183,8 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
               <p className="text-xs text-amber-200 font-bubble leading-relaxed">
                 {cameraError}
               </p>
-              <p className="text-[11px] text-slate-400">
-                Puedes digitar el SKU manualmente abajo para continuar con el pedido.
-              </p>
             </div>
           )}
-        </div>
-
-        {/* Input Manual de Emergencia */}
-        <div className="p-3.5 bg-slate-950 border-t border-purple-900/60">
-          <form onSubmit={handleManualSubmit} className="flex items-center gap-2">
-            <input
-              type="text"
-              value={manualCode}
-              onChange={(e) => setManualCode(e.target.value)}
-              placeholder="O ingresa SKU manual (ej. LIB-PED-001)..."
-              className="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-400"
-            />
-            <button
-              type="submit"
-              disabled={!manualCode.trim()}
-              className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-bubble font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
-            >
-              <Check className="w-3.5 h-3.5" />
-              <span>OK</span>
-            </button>
-          </form>
         </div>
       </div>
     </div>
