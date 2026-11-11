@@ -21,12 +21,23 @@ export interface LayawayCountdown {
 export function calculateLayawayDaysRemaining(
   order: Order | CartItem | { createdAt?: string; layawayDueDate?: string; layawayDaysTotal?: number; layawayMonths?: number }
 ): LayawayCountdown {
-  const months = (order as any).layawayMonths && (order as any).layawayMonths > 0 ? Number((order as any).layawayMonths) : 1;
-  const daysTotal = (order as any).layawayDaysTotal && (order as any).layawayDaysTotal > 0 ? Number((order as any).layawayDaysTotal) : months * 30;
+  const layItem = (order as any).items?.find((i: any) => i && i.isLayaway);
+  const months = (order as any).layawayMonths && (order as any).layawayMonths > 0
+    ? Number((order as any).layawayMonths)
+    : layItem?.layawayMonths && layItem.layawayMonths > 0
+    ? Number(layItem.layawayMonths)
+    : 1;
+
+  const daysTotal = (order as any).layawayDaysTotal && (order as any).layawayDaysTotal > 0
+    ? Number((order as any).layawayDaysTotal)
+    : layItem?.layawayDaysTotal && layItem.layawayDaysTotal > 0
+    ? Number(layItem.layawayDaysTotal)
+    : months * 30;
 
   let dueDate: Date;
-  if ((order as any).layawayDueDate) {
-    dueDate = new Date((order as any).layawayDueDate);
+  const dueDateVal = (order as any).layawayDueDate || layItem?.layawayDueDate;
+  if (dueDateVal) {
+    dueDate = new Date(dueDateVal);
   } else {
     const created = ('createdAt' in order && (order as any).createdAt) ? new Date((order as any).createdAt) : new Date();
     dueDate = new Date(created.getTime() + daysTotal * 24 * 60 * 60 * 1000);

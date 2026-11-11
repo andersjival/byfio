@@ -1,3 +1,20 @@
+## [v4.19.90] - 2026-11-11
+
+### 🏷️ Corrección y Reconstrucción Integral de Montos y Saldos de Apartados en Mis Pedidos
+- **Corrección de Montos Financieros en Tarjetas de Apartado (`LayawayOrderCard.tsx`):**
+  - **Valor del Producto (Precio de Contado):** Se resolvió el error que mostraba ₡10 000 en lugar del precio total (₡45 000). Ahora calcula con máxima fidelidad el valor de contado basándose en `layawayTotalAmount`, el catálogo de productos por SKU/ID o la suma del anticipo y saldo adeudado (`downPayment + remainingDebt`).
+  - **Monto Abonado:** Refleja con precisión la cuota o anticipo cancelado a la fecha (₡10 000).
+  - **Saldo que Debes:** Muestra el monto adeudado exacto pendiente de liquidar (₡35 000) en lugar de ₡0.
+  - **Estado del Plazo:** Se eliminó el distintivo erróneo de *"100% Cancelado"* cuando existe saldo adeudado. Ahora muestra claramente *"Apartado Activo (X días restantes)"* con su barra de progreso de tiempo y advertencia preventiva de 5 días.
+  - **Limpieza de Identificador de Pedido:** Se corrigió el prefijo para mostrar `Apartado #FIO-1015` en lugar del duplicado `##FIO-1015`.
+- **Integridad y Mapeo en API Backend Cloudflare D1 (`functions/api/orders.ts`):**
+  - El transformador `mapRowToOrder` ahora extrae y normaliza de forma nativa los atributos de apartados (`layawayTotalAmount`, `layawayDownPaymentAmount`, `layawayRemainingAmount`, `layawayMonths`, `layawayDueDate`, `layawayDaysTotal`) desde el contenido persistido en la base de datos D1.
+  - Sanitización en `onRequestPost` para garantizar que los números de orden siempre almacenen un único carácter `#`.
+- **Autocuración en Arranque (`AppContext.tsx`):**
+  - La función `sanitizeOrderList` reconstruye automáticamente pedidos preexistentes en `localStorage` o memoria, asegurando que cualquier orden de apartado mantenga el total original, saldo adeudado y número de pedido saneado.
+
+---
+
 ## [v4.19.89] - 2026-11-11
 
 ### 🔐 Persistencia en Cloudflare D1 y Sincronización Remota de Cuentas de Clientes Registrados

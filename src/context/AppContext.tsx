@@ -558,11 +558,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // BLINDAJE ESTRICTO: Un pedido NO puede estar en packing, packed o delivered si su alisto NO está al 100%
       if (!isAllAlistado && (o.orderStatus === 'packing' || o.orderStatus === 'packed' || o.orderStatus === 'delivered')) {
         const hasAnyPicked = hasItems && o.items.some((it) => it.isPicked);
-        return {
+        o = {
           ...o,
           orderStatus: (hasAnyPicked ? 'picking' : 'pending') as OrderStatus,
           packedAt: undefined,
           deliveredAt: undefined,
+        };
+      }
+
+      // Sanitización del número de pedido (evitar dobles ##)
+      const rawNum = (o.orderNumber || '').replace(/^#+/, '');
+      if (rawNum) {
+        o.orderNumber = `#${rawNum}`;
+      }
+
+      // Reconstrucción e integridad automática de apartados
+      const layItem = hasItems ? o.items.find((it) => it.isLayaway) : undefined;
+      if (layItem) {
+        const itemDown = Number(layItem.layawayDownPaymentAmount) || Number(o.layawayDownPaymentAmount) || o.total;
+        const explicitRemaining =
+          layItem.layawayRemainingAmount !== undefined && layItem.layawayRemainingAmount !== null && Number(layItem.layawayRemainingAmount) > 0
+            ? Number(layItem.layawayRemainingAmount)
+            : o.layawayRemainingAmount !== undefined && o.layawayRemainingAmount !== null && Number(o.layawayRemainingAmount) > 0
+            ? Number(o.layawayRemainingAmount)
+            : undefined;
+
+        let itemTotal =
+          (o.layawayTotalAmount && Number(o.layawayTotalAmount) > itemDown ? Number(o.layawayTotalAmount) : 0) ||
+          (layItem.layawayTotalAmount && Number(layItem.layawayTotalAmount) > itemDown ? Number(layItem.layawayTotalAmount) : 0);
+
+        if (!itemTotal && explicitRemaining !== undefined) {
+          itemTotal = itemDown + explicitRemaining;
+        }
+        if (!itemTotal) {
+          itemTotal = Number(layItem.price) > itemDown ? Number(layItem.price) : o.total;
+        }
+
+        const calculatedRemaining = explicitRemaining !== undefined ? explicitRemaining : Math.max(0, itemTotal - itemDown);
+
+        o = {
+          ...o,
+          isLayaway: true,
+          layawayMonths: o.layawayMonths || layItem.layawayMonths || 1,
+          layawayPaymentsCount: o.layawayPaymentsCount || layItem.layawayPaymentsCount || 3,
+          layawayDownPaymentPercent: o.layawayDownPaymentPercent || layItem.layawayDownPaymentPercent || 20,
+          layawayTotalAmount: itemTotal,
+          layawayDownPaymentAmount: itemDown,
+          layawayRemainingAmount: calculatedRemaining,
+          layawayDueDate: o.layawayDueDate || layItem.layawayDueDate,
+          layawayDaysTotal: o.layawayDaysTotal || layItem.layawayDaysTotal,
         };
       }
 

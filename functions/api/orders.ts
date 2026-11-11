@@ -71,9 +71,29 @@ const mapRowToOrder = (r: OrderDbRow) => {
     items = [];
   }
 
+  const rawOrderNum = (r.order_number || '').replace(/^#+/, '');
+  const cleanOrderNum = rawOrderNum ? `#${rawOrderNum}` : '#FIO';
+
+  const firstLay = items.find((it: any) => it.isLayaway);
+  const isLayaway = Boolean(firstLay);
+
+  const downPayment = Number(firstLay?.layawayDownPaymentAmount) || r.total;
+  let totalAmount = Number(firstLay?.layawayTotalAmount) || 0;
+  let remainingDebt =
+    firstLay?.layawayRemainingAmount !== undefined && firstLay?.layawayRemainingAmount !== null
+      ? Number(firstLay?.layawayRemainingAmount)
+      : undefined;
+
+  if (!totalAmount && remainingDebt !== undefined && remainingDebt > 0) {
+    totalAmount = downPayment + remainingDebt;
+  }
+  if (totalAmount > 0 && (remainingDebt === undefined || remainingDebt === null)) {
+    remainingDebt = Math.max(0, totalAmount - downPayment);
+  }
+
   return {
     id: r.id,
-    orderNumber: r.order_number,
+    orderNumber: cleanOrderNum,
     customerName: healString(r.customer_name),
     customerPhone: r.customer_phone,
     customerEmail: r.customer_email,
@@ -92,6 +112,15 @@ const mapRowToOrder = (r: OrderDbRow) => {
     packedAt: r.packed_at ? normalizeIsoDate(r.packed_at) : undefined,
     deliveredAt: r.delivered_at ? normalizeIsoDate(r.delivered_at) : undefined,
     createdAt: normalizeIsoDate(r.created_at),
+    isLayaway,
+    layawayMonths: firstLay?.layawayMonths,
+    layawayPaymentsCount: firstLay?.layawayPaymentsCount,
+    layawayDownPaymentPercent: firstLay?.layawayDownPaymentPercent,
+    layawayTotalAmount: totalAmount || undefined,
+    layawayDownPaymentAmount: isLayaway ? downPayment : undefined,
+    layawayRemainingAmount: isLayaway ? remainingDebt : undefined,
+    layawayDueDate: firstLay?.layawayDueDate,
+    layawayDaysTotal: firstLay?.layawayDaysTotal,
   };
 };
 
@@ -152,7 +181,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       }
 
       // Si no viene número de orden o si colisiona con otro pedido preexistente, asignar nuevo correlativo garantizado
-      let safeOrderNumber = order.orderNumber;
+      const rawPostNum = (order.orderNumber || '').replace(/^#+/, '');
+      let safeOrderNumber = rawPostNum ? `#${rawPostNum}` : '';
       if (!safeOrderNumber || hasNumberCollision) {
         safeOrderNumber = `#FIO-${dbMaxNum + 1}`;
       }

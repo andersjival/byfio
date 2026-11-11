@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Order } from '../../types';
+import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { calculateLayawayDaysRemaining } from '../../services/layawayReminderService';
 import {
@@ -25,14 +26,57 @@ interface LayawayOrderCardProps {
 }
 
 export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPrintInvoice }) => {
+  const { products } = useApp();
   const [copiedSinpe, setCopiedSinpe] = useState(false);
   const countdown = calculateLayawayDaysRemaining(order);
 
-  const firstItem = order.items && order.items[0];
-  const totalAmount = order.layawayTotalAmount ?? order.total;
-  const downPayment = order.layawayDownPaymentAmount ?? order.total;
-  const remainingDebt = order.layawayRemainingAmount ?? Math.max(0, totalAmount - downPayment);
+  const layawayItem = (order.items && order.items.find((i) => i.isLayaway)) || (order.items && order.items[0]);
+  const firstItem = layawayItem || (order.items && order.items[0]);
+
+  // Si hace falta recuperar el precio de catálogo de este producto
+  const matchedProduct = firstItem
+    ? products.find((p) => p.id === firstItem.id || (firstItem.sku && p.sku === firstItem.sku))
+    : undefined;
+  const catalogPrice = matchedProduct ? matchedProduct.price * (firstItem?.quantity || 1) : 0;
+
+  // 1. Monto abonado a la fecha (el anticipo o primer pago)
+  const downPayment =
+    (order.layawayDownPaymentAmount && order.layawayDownPaymentAmount > 0 ? Number(order.layawayDownPaymentAmount) : 0) ||
+    (layawayItem?.layawayDownPaymentAmount && layawayItem.layawayDownPaymentAmount > 0 ? Number(layawayItem.layawayDownPaymentAmount) : 0) ||
+    Number(order.total) ||
+    0;
+
+  // 2. Saldo pendiente que debe (extraído de los campos de apartado)
+  const explicitRemaining =
+    order.layawayRemainingAmount !== undefined && order.layawayRemainingAmount !== null && Number(order.layawayRemainingAmount) > 0
+      ? Number(order.layawayRemainingAmount)
+      : layawayItem?.layawayRemainingAmount !== undefined && layawayItem?.layawayRemainingAmount !== null && Number(layawayItem.layawayRemainingAmount) > 0
+      ? Number(layawayItem.layawayRemainingAmount)
+      : undefined;
+
+  // 3. Valor real del producto de contado
+  let totalAmount =
+    (order.layawayTotalAmount && Number(order.layawayTotalAmount) > downPayment ? Number(order.layawayTotalAmount) : 0) ||
+    (layawayItem?.layawayTotalAmount && Number(layawayItem.layawayTotalAmount) > downPayment ? Number(layawayItem.layawayTotalAmount) : 0) ||
+    catalogPrice;
+
+  if (!totalAmount && explicitRemaining !== undefined) {
+    totalAmount = downPayment + explicitRemaining;
+  }
+  if (!totalAmount) {
+    totalAmount = order.total;
+  }
+
+  const remainingDebt =
+    explicitRemaining !== undefined
+      ? explicitRemaining
+      : Math.max(0, totalAmount - downPayment);
+
   const isFullyPaid = remainingDebt <= 0;
+
+  // Formato limpio del número de orden sin dobles '#'
+  const rawNum = (order.orderNumber || '').replace(/^#+/, '');
+  const cleanOrderNumber = rawNum ? `#${rawNum}` : '#FIO';
 
   const handleCopySinpe = () => {
     navigator.clipboard.writeText('64004640');
@@ -42,13 +86,22 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
   };
 
   const whatsappMessage = encodeURIComponent(
-    `¡Hola Fiorella! 🌸 Quiero consultar / realizar un abono de mi apartado en by.fio:\n\n` +
-      `🏷️ *Número de Pedido:* #${order.orderNumber}\n` +
-      `📦 *Artículo:* ${firstItem?.name || 'Artículo Apartado'}\n` +
-      `💰 *Total:* ${formatCRC(totalAmount)}\n` +
-      `✅ *Abonado a la fecha:* ${formatCRC(downPayment)}\n` +
-      `⚠️ *Saldo pendiente:* ${formatCRC(remainingDebt)}\n` +
-      `⏳ *Días restantes:* ${countdown.daysRemaining} días (Vence: ${countdown.dueDateFormatted})\n\n` +
+    `¡Hola Fiorella! 🌸 Quiero consultar / realizar un abono de mi apartado en by.fio:
+
+` +
+      `🏷️ *Número de Pedido:* ${cleanOrderNumber}
+` +
+      `📦 *Artículo:* ${firstItem?.name || 'Artículo Apartado'}
+` +
+      `💰 *Total:* ${formatCRC(totalAmount)}
+` +
+      `✅ *Abonado a la fecha:* ${formatCRC(downPayment)}
+` +
+      `⚠️ *Saldo pendiente:* ${formatCRC(remainingDebt)}
+` +
+      `⏳ *Días restantes:* ${countdown.daysRemaining} días (Vence: ${countdown.dueDateFormatted})
+
+` +
       `¿Me confirmas por favor? ¡Muchas gracias!`
   );
 
@@ -63,7 +116,7 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bubble font-bold text-base sm:text-lg text-slate-800">
-                Apartado #{order.orderNumber}
+                Apartado {cleanOrderNumber}
               </span>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide">
                 Plan en Cuotas
@@ -81,7 +134,7 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
           {isFullyPaid ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bubble font-bold shadow-xs">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>100% Cancelado</span>
+              <span>100% Pagado</span>
             </span>
           ) : countdown.isExpired ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-100 text-red-800 border border-red-300 text-xs font-bubble font-bold shadow-xs">
@@ -96,7 +149,7 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-xs font-bubble font-bold shadow-xs">
               <Clock className="w-4 h-4 text-amber-600" />
-              <span>Apartado Activo ({countdown.daysRemaining} días)</span>
+              <span>Apartado Activo ({countdown.daysRemaining} {countdown.daysRemaining === 1 ? 'día' : 'días'})</span>
             </span>
           )}
         </div>
@@ -139,7 +192,7 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
               <div className="text-right shrink-0">
                 <span className="text-xs text-slate-400 block font-sans">Valor total</span>
                 <span className="font-bubble font-bold text-sm text-slate-800">
-                  {formatCRC(it.layawayTotalAmount || it.price * (it.quantity || 1))}
+                  {formatCRC(it.layawayTotalAmount || (it.price > downPayment ? it.price : 0) || totalAmount)}
                 </span>
               </div>
             </div>
@@ -188,7 +241,7 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
               isFullyPaid ? 'text-purple-700' : 'text-amber-800'
             }`}
           >
-            {isFullyPaid ? '₡0 (Cancelado)' : formatCRC(remainingDebt)}
+            {isFullyPaid ? '₡0 (Pagado)' : formatCRC(remainingDebt)}
           </span>
           <span className="text-[10px] text-slate-500 block mt-0.5">
             {isFullyPaid ? 'Listo para entrega' : 'Pendiente de liquidar'}
@@ -196,105 +249,104 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
         </div>
       </div>
 
-      {/* Reloj y Cuenta Regresiva de Días Restantes */}
-      {!isFullyPaid && (
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50/80 via-orange-50/60 to-purple-50/80 border border-amber-200 space-y-2.5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
-            <div className="flex items-center gap-1.5 font-bubble font-bold text-slate-800 text-sm">
-              <Calendar className="w-4 h-4 text-amber-600" />
-              <span>
-                {countdown.isExpired
-                  ? 'El plazo para cancelar este apartado ya ha vencido'
-                  : `Te quedan ${countdown.daysRemaining} día${countdown.daysRemaining !== 1 ? 's' : ''} de plazo`}
-              </span>
-            </div>
-            <span className="text-slate-500 font-sans text-xs">
-              Fecha límite: <strong className="text-slate-800">{countdown.dueDateFormatted}</strong>
-            </span>
-          </div>
-
-          {/* Barra de Progreso Dinámica de Días */}
-          <div className="space-y-1">
-            <div className="w-full h-3 rounded-full bg-slate-200 overflow-hidden shadow-inner p-0.5">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  countdown.isExpired
-                    ? 'bg-red-500'
-                    : countdown.isNearExpiry
-                    ? 'bg-gradient-to-r from-amber-500 to-red-500 animate-pulse'
-                    : 'bg-gradient-to-r from-emerald-500 via-amber-500 to-amber-600'
-                }`}
-                style={{ width: `${Math.max(5, countdown.progressPercent)}%` }}
-              />
-            </div>
-            <div className="flex justify-between text-[10px] text-slate-400 font-bold px-1">
-              <span>Día 1</span>
-              <span>
-                {countdown.daysElapsed} de {countdown.daysTotal} días transcurridos ({countdown.progressPercent}%)
-              </span>
-              <span>Día {countdown.daysTotal}</span>
-            </div>
-          </div>
-
-          {/* Banner de Urgencia Si Faltan <= 5 Días */}
-          {countdown.isNearExpiry && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs space-y-1 animate-fadeIn">
-              <div className="flex items-center gap-2 font-bubble font-bold text-red-900">
-                <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
-                <span>¡Recordatorio importante! Tu apartado está a punto de vencer</span>
-              </div>
-              <p className="text-[11px] text-red-700 leading-relaxed font-sans">
-                Faltan solo <strong>{countdown.daysRemaining} días</strong> para la fecha límite (
-                {countdown.dueDateFormatted}). Cancela tu saldo de <strong>{formatCRC(remainingDebt)}</strong>{' '}
-                para no perder tu reserva. Te hemos enviado los detalles a tu correo electrónico.
-              </p>
-            </div>
-          )}
+      {/* Barra de Tiempo y Plazo */}
+      <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-200/80 space-y-2">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-bubble font-bold text-slate-700 flex items-center gap-1.5">
+            <Calendar className="w-4 h-4 text-amber-600" />
+            <span>Fecha Límite: <strong>{countdown.dueDateFormatted}</strong></span>
+          </span>
+          <span
+            className={`font-bold ${
+              countdown.isExpired
+                ? 'text-red-700'
+                : countdown.isNearExpiry
+                ? 'text-orange-700 animate-pulse'
+                : 'text-amber-800'
+            }`}
+          >
+            {countdown.isExpired
+              ? 'Plazo expirado'
+              : `${countdown.daysRemaining} ${countdown.daysRemaining === 1 ? 'día restante' : 'días restantes'}`}
+          </span>
         </div>
-      )}
 
-      {/* Acciones de Pago / SINPE / WhatsApp */}
-      {!isFullyPaid && (
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-amber-100">
-          <div className="flex items-center gap-2">
+        {/* Barra de Progreso Visual */}
+        <div className="w-full bg-white/80 rounded-full h-2.5 overflow-hidden p-0.5 border border-amber-200">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${
+              countdown.isExpired
+                ? 'bg-red-500'
+                : countdown.isNearExpiry
+                ? 'bg-gradient-to-r from-amber-500 to-red-500'
+                : 'bg-gradient-to-r from-amber-400 to-orange-400'
+            }`}
+            style={{ width: `${Math.max(5, Math.min(100, countdown.progressPercent))}%` }}
+          />
+        </div>
+
+        <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+          <span>Inició: {formatShortDate(order.createdAt)}</span>
+          <span className="text-amber-700 font-medium">
+            {order.layawayPaymentsCount || 3} cuotas acordadas
+          </span>
+        </div>
+      </div>
+
+      {/* Recordatorio del Sistema */}
+      <div className="flex items-start gap-2 p-2.5 rounded-xl bg-purple-50/70 border border-purple-100 text-[11px] text-purple-900">
+        <Sparkles className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+        <p className="leading-relaxed">
+          <strong>Recordatorio automático:</strong> Te enviaremos un correo preventivo faltando <strong>5 días</strong> para el vencimiento de tu apartado. Puedes liquidar o abonar en cualquier momento.
+        </p>
+      </div>
+
+      {/* Métodos de Abono y Acciones */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2 border-t border-amber-100">
+        {/* Info SINPE Rápida */}
+        <div className="flex items-center gap-2">
+          <div className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-mono font-bold flex items-center gap-2">
+            <span>SINPE: 64004640</span>
             <button
               type="button"
               onClick={handleCopySinpe}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 text-xs font-bubble font-bold transition-all cursor-pointer"
-              title="Copiar número de SINPE Móvil"
+              className="text-purple-600 hover:text-purple-800 p-0.5 transition-colors cursor-pointer"
+              title="Copiar número SINPE Móvil"
             >
-              {copiedSinpe ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-purple-700" />}
-              <span>{copiedSinpe ? '¡Copiado 6400-4640!' : 'SINPE: 6400-4640'}</span>
+              {copiedSinpe ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
-            <span className="text-[11px] text-slate-500 font-sans hidden sm:inline">
-              (Fiorella Solano)
+          </div>
+          {copiedSinpe && (
+            <span className="text-[11px] text-emerald-600 font-bold animate-in fade-in">
+              ¡Copiado!
             </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {onPrintInvoice && (
-              <button
-                type="button"
-                onClick={() => onPrintInvoice(order)}
-                className="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bubble font-bold transition-all cursor-pointer"
-              >
-                Ver Comprobante
-              </button>
-            )}
-
-            <a
-              href={`https://wa.me/50664004640?text=${whatsappMessage}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => playBubblePopSound(0.3)}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bubble font-bold shadow-sm active:scale-95 transition-all cursor-pointer"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>Abonar por WhatsApp</span>
-            </a>
-          </div>
+          )}
         </div>
-      )}
+
+        {/* Botones de Acción */}
+        <div className="flex items-center gap-2 justify-end">
+          {onPrintInvoice && (
+            <button
+              type="button"
+              onClick={() => onPrintInvoice(order)}
+              className="px-3.5 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bubble font-bold transition-all cursor-pointer"
+            >
+              Ver Factura
+            </button>
+          )}
+
+          <a
+            href={`https://wa.me/50664004640?text=${whatsappMessage}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => playBubblePopSound()}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs font-bubble font-bold shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            <span>Reportar Abono</span>
+          </a>
+        </div>
+      </div>
     </div>
   );
 };
