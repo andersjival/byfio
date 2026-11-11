@@ -1,3 +1,14 @@
+## [v4.19.110] - 2026-11-11
+
+### ⚡ Facturación Rápida POS y PWA (Escaneo / Búsqueda + Pago Directo Efectivo / SINPE)
+- **Módulo POS de Facturación Rápida ([`FastPosBillingPanel.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/FastPosBillingPanel.tsx), [`QuickBillingSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx))**:
+  - Agregada pestaña prioritaria `Facturación Rápida` en POS/PWA manteniendo intactos `Crear Factura Directa`, `Facturar Pedido Existente` y `Ficha de Clientes`.
+  - Barra única de búsqueda por nombre o escaneo de código de barras/QR (`CameraBarcodeScannerModal` o lector USB + `Enter`), sin grilla de productos frecuentes ni pasos intermedios.
+  - Carrito ágil multiproducto (`+`/`-`/quitar) con botones directos **`Pago en Efectivo`** y **`Pago SINPE`**.
+  - Actualizado Service Worker a `byfio-pwa-v4.19.110`.
+
+---
+
 ## [v4.19.108] - 2026-11-11
 
 ### ❤️ Botón Me Gusta Exclusivo para Usuarios Registrados, Rótulo Estrellita y Contador Superior Admin

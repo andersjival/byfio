@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Workshop, WorkshopBenefitItem } from '../../types';
 import { formatCRC } from '../../utils/formatters';
@@ -22,13 +22,15 @@ interface WorkshopFormData {
   modality: 'Presencial' | 'Virtual en Vivo';
   location: string;
   price: number;
-  spotsAvailable: number;
+  spotsAvailable: number | '';
   totalSpots: number;
   includes: string[];
   image: string;
   description: string;
   instructorName: string;
   instructorSubtitle: string;
+  waitlistWhatsappNumber: string;
+  waitlistWhatsappLink: string;
   benefits: WorkshopBenefitItem[];
 }
 
@@ -40,7 +42,7 @@ const EMPTY: WorkshopFormData = {
   modality: 'Presencial',
   location: 'Taller Creativo by.fio, 200 sur del parque de Tibás, San José',
   price: 35000,
-  spotsAvailable: 10,
+  spotsAvailable: '',
   totalSpots: 10,
   includes: [
     'Materiales completos incluidos para cada alumno',
@@ -71,6 +73,8 @@ const EMPTY: WorkshopFormData = {
       enabled: true,
     },
   ],
+  waitlistWhatsappNumber: '',
+  waitlistWhatsappLink: '',
 };
 
 const QUICK_INCLUDE_SUGGESTIONS = [
@@ -127,6 +131,8 @@ export const NewWorkshopModal: React.FC = () => {
         description: editingWorkshop.description || '',
         instructorName: editingWorkshop.instructorName || 'Impartido personalmente por Fio (Fiorella Patricia Jara Gutiérrez)',
         instructorSubtitle: editingWorkshop.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+        waitlistWhatsappNumber: editingWorkshop.waitlistWhatsappNumber || '',
+        waitlistWhatsappLink: editingWorkshop.waitlistWhatsappLink || '',
         benefits: getDefaultWorkshopBenefits(editingWorkshop),
       });
     } else {
@@ -241,9 +247,12 @@ export const NewWorkshopModal: React.FC = () => {
       location: form.location.trim(),
       price: Number(form.price),
       totalSpots: Number(form.totalSpots),
-      spotsAvailable: editingWorkshop
-        ? Math.min(Number(form.totalSpots), editingWorkshop.spotsAvailable)
-        : Number(form.totalSpots),
+      spotsAvailable:
+        form.spotsAvailable === ''
+          ? Number(form.totalSpots)
+          : Math.min(Number(form.totalSpots), Math.max(0, Number(form.spotsAvailable))),
+      waitlistWhatsappNumber: form.waitlistWhatsappNumber.trim(),
+      waitlistWhatsappLink: form.waitlistWhatsappLink.trim(),
       includes: form.includes.map((i) => i.trim()).filter(Boolean),
       image: imageUrl,
       description: form.description.trim(),
@@ -489,6 +498,53 @@ export const NewWorkshopModal: React.FC = () => {
                     <p className="text-[11px] text-slate-400 mt-1">
                       Cupos máximos habilitados para este grupo.
                     </p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Cupos Disponibles Ahora (0 = Lista de espera)
+                    </label>
+                    <input
+                      type="number"
+                      value={form.spotsAvailable}
+                      onChange={(e) =>
+                        set('spotsAvailable', e.target.value === '' ? '' : Number(e.target.value))
+                      }
+                      placeholder={String(form.totalSpots || 0)}
+                      min={0}
+                      max={Math.max(1, Number(form.totalSpots) || 100)}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Si ponés 0 se habilita "Ingresar a la lista de espera". Al subir de 0 se notifica a los usuarios en espera.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      WhatsApp Lista de Espera (opcional)
+                    </label>
+                    <input
+                      type="text"
+                      value={form.waitlistWhatsappNumber}
+                      onChange={(e) => set('waitlistWhatsappNumber', e.target.value)}
+                      placeholder="Ej. +506 8888-8888 (usa global si queda vacío)"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Link Grupo de WhatsApp (opcional)
+                    </label>
+                    <input
+                      type="url"
+                      value={form.waitlistWhatsappLink}
+                      onChange={(e) => set('waitlistWhatsappLink', e.target.value)}
+                      placeholder="https://chat.whatsapp.com/..."
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:ring-2 focus:ring-fio-300 focus:outline-none"
+                    />
                   </div>
                 </div>
               </div>

@@ -1,11 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star, Sparkles, X, Heart, ArrowRight, ShoppingBag, Gift } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
+import { metricsTracker } from '../../services/metricsTracker';
 
 export const WelcomeStarModal: React.FC = () => {
   const { welcomeStarModal, closeWelcomeStarModal } = useApp();
+  const [likedPage, setLikedPage] = useState(false);
+
+  const handlePageLike = () => {
+    if (likedPage) return;
+    setLikedPage(true);
+    playBubblePopSound(0.45);
+    metricsTracker.recordLike('home');
+  };
 
   useEffect(() => {
     if (welcomeStarModal?.isOpen) {
@@ -108,6 +117,33 @@ export const WelcomeStarModal: React.FC = () => {
               <strong>Beneficios exclusivos:</strong> Consulta promociones y ofertas en <strong>Mi Cuenta</strong>.
             </p>
           </div>
+        </div>
+
+        {/* Invitación a darle Me Gusta a la página en el primer registro */}
+        <div className="mb-3 rounded-2xl border border-pink-200 bg-gradient-to-r from-pink-50 via-rose-50 to-purple-50 p-3 flex items-center justify-between gap-3 text-left">
+          <div className="min-w-0">
+            <p className="text-xs font-extrabold text-purple-900">
+              ¡Apoyanos en tu primer registro!
+            </p>
+            <p className="text-[11px] text-purple-700/80 leading-tight mt-0.5">
+              {likedPage
+                ? '¡Gracias por darle Me Gusta a nuestra página! 💖'
+                : 'Dale Me Gusta a la página de By.Fio si te encanta crear.'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handlePageLike}
+            disabled={likedPage}
+            className={`shrink-0 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              likedPage
+                ? 'bg-emerald-500 text-white shadow-sm cursor-default'
+                : 'bg-pink-500 hover:bg-pink-600 text-white shadow-sm active:scale-95'
+            }`}
+          >
+            <Heart className={`w-3.5 h-3.5 ${likedPage ? 'fill-white' : ''}`} />
+            <span>{likedPage ? '¡Me Gusta!' : 'Me Gusta'}</span>
+          </button>
         </div>
 
         {/* Botón de Acción Principal */}

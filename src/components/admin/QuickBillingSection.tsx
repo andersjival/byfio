@@ -8,8 +8,9 @@ import {
   Plus, Trash2, User, UserPlus, Phone, Mail, MapPin, Tag,
   ShoppingBag, Star, X, Edit3, Settings, Check, CreditCard,
   DollarSign, ArrowRight, UserCheck, Package, Store, Truck,
-  AlertTriangle, Hash
+  AlertTriangle, Hash, Zap
 } from 'lucide-react';
+import { FastPosBillingPanel } from './FastPosBillingPanel';
 
 interface DirectItem {
   productId: string;
@@ -55,7 +56,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
   const showAlert = useAlert();
 
   // Sub-vistas del módulo
-  const [activeTab, setActiveTab] = useState<'create' | 'search' | 'customers'>('create');
+  const [activeTab, setActiveTab] = useState<'fast' | 'create' | 'search' | 'customers'>('fast');
+  const [fastFocusTick, setFastFocusTick] = useState(0);
 
   // ==========================================
   // ESTADO: CREAR FACTURA DIRECTA (POS ÁGIL)
@@ -502,6 +504,19 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
 
         {/* Botones de Navegación entre Sub-vistas */}
         <div className="flex items-center p-1 rounded-2xl bg-[#ECEEF2] dark:bg-[#1C1830] shadow-neuInset border border-white/60 dark:border-white/10 self-start md:self-auto shrink-0 flex-wrap gap-1">
+          <button
+            type="button"
+            onClick={() => { setActiveTab('fast'); setFastFocusTick((t) => t + 1); }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold transition-all ${
+              activeTab === 'fast'
+                ? 'neu-btn-primary text-white shadow-neuBtnHover scale-102'
+                : 'text-slate-600 dark:text-slate-300 hover:text-fio-purple hover:bg-white/60 dark:hover:bg-white/5'
+            }`}
+          >
+            <Zap className="w-4 h-4 text-fio-yellow shrink-0" />
+            <span>Facturación Rápida</span>
+          </button>
+
           {isFeatureEnabled('billing', 'counter_orders') && (
             <button
               type="button"
@@ -546,6 +561,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
           </button>
         </div>
       </div>
+
+      {activeTab === 'fast' && <FastPosBillingPanel focusTick={fastFocusTick} />}
 
       {/* ========================================================
           PESTAÑA 1: CREAR FACTURA DIRECTA (FLUJO ÁGIL POS)

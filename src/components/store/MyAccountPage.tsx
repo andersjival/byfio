@@ -1,4 +1,5 @@
 import { AdminAccountView } from './AdminAccountView';
+import { MyAccountWaitlistBanner } from './MyAccountWaitlistBanner';
 import { LayawayOrderCard } from './LayawayOrderCard';
 import React, { useState, useEffect } from 'react';
 import {
@@ -15,7 +16,7 @@ import { isLayawaySaleOrder } from '../../utils/layaway';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
 interface MyAccountPageProps {
-  onNavigate: (route: AppRoute, targetTab?: AdminTabType) => void;
+  onNavigate: (route: AppRoute, targetTab?: AdminTabType, wsId?: string) => void;
   onOpenLogin?: (mode?: 'login' | 'register') => void;
 }
 
@@ -441,6 +442,9 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Botón y Alerta en Lista de Espera de Talleres */}
+      <MyAccountWaitlistBanner onNavigate={onNavigate} />
 
       {/* Pestañas de Navegación de la Página */}
       <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/80 shadow-xs overflow-x-auto [scrollbar-width:none]">

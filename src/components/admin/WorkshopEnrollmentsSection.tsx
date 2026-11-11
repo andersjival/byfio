@@ -1,12 +1,13 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import {
   GraduationCap, Users, ChevronDown, ChevronUp, Phone, Hash,
   Calendar, Plus, Link2, Trash2, CheckCircle2, ExternalLink, Pencil,
-  Landmark, ShieldCheck, DollarSign
+  Landmark, ShieldCheck, DollarSign, Clock
 } from 'lucide-react';
+import { WorkshopWaitlistAdminPanel } from './WorkshopWaitlistAdminPanel';
 
 interface WorkshopEnrollmentsSectionProps {
   onNavigateToSinpe?: () => void;
@@ -22,6 +23,7 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
     sinpeTransactions,
     setIsSinpeModalOpen,
     isFeatureEnabled,
+    workshopWaitlist,
   } = useApp();
 
   const confirm = useConfirm();
@@ -29,6 +31,12 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
   const [showPaidSummary, setShowPaidSummary] = useState(false);
+  const [showWaitlistPanel, setShowWaitlistPanel] = useState(false);
+  const [selectedWaitlistWsId, setSelectedWaitlistWsId] = useState<string | null>(null);
+  const totalWaitlistCount = useMemo(
+    () => workshopWaitlist.filter((e) => e.status !== 'cancelled').length,
+    [workshopWaitlist]
+  );
   const [selectedAuditId, setSelectedAuditId] = useState<string>(workshops[0]?.id || '');
 
   // Mapeo de inscripciones provenientes de órdenes web
@@ -158,6 +166,27 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
             </button>
           )}
 
+          {/* Botón Lista de Espera y Configuración de WhatsApp */}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedWaitlistWsId(null);
+              setShowWaitlistPanel((prev) => !prev);
+            }}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-bubble font-bold text-xs border shadow-sm transition-all active:scale-95 cursor-pointer ${
+              showWaitlistPanel
+                ? 'bg-amber-600 text-white border-amber-700'
+                : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 border-amber-400'
+            }`}
+            title="Ver personas en lista de espera en orden de registro y configurar grupo de WhatsApp"
+          >
+            <Clock className="w-4 h-4 text-white" />
+            <span>Lista de Espera</span>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white text-amber-900 ml-0.5">
+              {totalWaitlistCount}
+            </span>
+          </button>
+
           <button
             type="button"
             onClick={copyCatalogLink}
@@ -188,6 +217,11 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
           )}
         </div>
       </div>
+
+      {/* PANEL LISTA DE ESPERA Y CONFIGURACIÓN WHATSAPP */}
+      {showWaitlistPanel && (
+        <WorkshopWaitlistAdminPanel selectedWorkshopId={selectedWaitlistWsId} />
+      )}
 
       {/* PANEL AUDITORÍA DE CUPOS PAGADOS Y CONFIRMADOS (REQUERIMIENTO DEL USUARIO) */}
       {showPaidSummary && isFeatureEnabled('workshops', 'paid_slots_counter') && activeAuditWs && (
@@ -441,6 +475,19 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-pink-700" />
                     <span>Ver Cupos Confirmados ({totalSold}/{ws.totalSpots})</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedWaitlistWsId(ws.id);
+                      setShowWaitlistPanel(true);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 hover:bg-amber-200 transition-all shadow-xs cursor-pointer"
+                  >
+                    <Clock className="w-3.5 h-3.5 text-amber-700" />
+                    <span>Lista de Espera ({workshopWaitlist.filter((w) => w.workshopId === ws.id && w.status !== 'cancelled').length})</span>
                   </button>
 
                   <button
