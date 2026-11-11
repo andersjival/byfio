@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { ProductCategory } from '../../types';
 import { formatCRC, formatInternalProductCode } from '../../utils/formatters';
+import { syncCatalogTaxonomiesToCloud } from '../../utils/storeConfigSync';
 import {
   X, PlusCircle, Hash, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
@@ -93,6 +94,12 @@ export const NewProductModal: React.FC = () => {
   const [locationsVersion, setLocationsVersion] = useState(0);
   const [categoriesVersion, setCategoriesVersion] = useState(0);
   const [suppliersVersion, setSuppliersVersion] = useState(0);
+
+  useEffect(() => {
+    if (locationsVersion + categoriesVersion + suppliersVersion > 0) {
+      syncCatalogTaxonomiesToCloud();
+    }
+  }, [locationsVersion, categoriesVersion, suppliersVersion]);
 
   const [name, setName] = useState('');
   const [sku, setSku] = useState('');
@@ -733,6 +740,10 @@ export const NewProductModal: React.FC = () => {
           localStorage.setItem(CUSTOM_SUPPLIERS_STORAGE_KEY, JSON.stringify(list));
         }
       } catch {}
+    }
+
+    if ((isCreatingNewLocation && customLocation.trim()) || (isCreatingNewCat && customCategory.trim()) || (isCreatingNewSupplier && customSupplier.trim())) {
+      syncCatalogTaxonomiesToCloud();
     }
 
     const realPhotos = productPhotos.filter((img) => img && !img.includes('placeholder-new-product'));

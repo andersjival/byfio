@@ -1,4 +1,5 @@
 import { Product } from '../types';
+import { syncCatalogTaxonomiesToCloud } from './storeConfigSync';
 
 export const STANDARD_SHELVES = [
   'Estante 1',
@@ -48,6 +49,7 @@ export const saveExtraShelf = (shelfName: string) => {
   if (!current.includes(clean)) {
     try {
       localStorage.setItem(CUSTOM_SHELVES_KEY, JSON.stringify([...current, clean]));
+      syncCatalogTaxonomiesToCloud();
     } catch {}
   }
 };

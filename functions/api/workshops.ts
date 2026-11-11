@@ -441,7 +441,93 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
     }
 
     return new Response(JSON.stringify({ success: true }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
+    });
+  } catch (error: any) {
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+  }
+};
+
+export const onRequestPatch = async (context: { request: Request; env: Env }) => {
+  try {
+    const body = (await context.request.json().catch(() => ({}))) as any;
+    const ops: any[] = Array.isArray(body) ? body : [body];
+
+    if (!context.env.DB) {
+      return new Response(JSON.stringify({ success: true, localOnly: true, workshops: [] }), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+        },
+      });
+    }
+
+    await ensureWorkshopsTable(context.env.DB);
+
+    for (const op of ops) {
+      if (!op || (!op.id && !op.sku && !op.title)) continue;
+      const rawId = String(op.id || op.sku || '').trim();
+      const targetId = rawId.replace(/^ws-ws-/i, 'ws-').replace(/^ws-/i, (m) => (rawId.toLowerCase().startsWith('ws-ws-') ? 'ws-' : m));
+      const candidates = Array.from(new Set([
+        op.id ? String(op.id).trim() : '',
+        rawId.replace(/^WS-/i, ''),
+        targetId,
+      ].filter(Boolean)));
+
+      const deductSpots = Number(op.deductSpots);
+      const restoreSpots = Number(op.restoreSpots);
+      const explicitSpots = op.spotsAvailable !== undefined ? Number(op.spotsAvailable) : NaN;
+
+      let changes = 0;
+      for (const cand of candidates) {
+        if (Number.isFinite(deductSpots) && deductSpots > 0) {
+          const res = await context.env.DB.prepare(
+            'UPDATE workshops SET spots_available = MAX(0, spots_available - ?) WHERE LOWER(id) = LOWER(?)'
+          ).bind(Math.floor(deductSpots), cand).run();
+          changes = res?.meta?.changes || 0;
+        } else if (Number.isFinite(restoreSpots) && restoreSpots > 0) {
+          const res = await context.env.DB.prepare(
+            'UPDATE workshops SET spots_available = MIN(total_spots, spots_available + ?) WHERE LOWER(id) = LOWER(?)'
+          ).bind(Math.floor(restoreSpots), cand).run();
+          changes = res?.meta?.changes || 0;
+        } else if (Number.isFinite(explicitSpots)) {
+          const res = await context.env.DB.prepare(
+            'UPDATE workshops SET spots_available = MIN(total_spots, MAX(0, ?)) WHERE LOWER(id) = LOWER(?)'
+          ).bind(Math.floor(explicitSpots), cand).run();
+          changes = res?.meta?.changes || 0;
+        }
+        if (changes > 0) break;
+      }
+
+      if (changes === 0 && op.title) {
+        const cleanTitle = String(op.title).trim();
+        if (Number.isFinite(deductSpots) && deductSpots > 0) {
+          await context.env.DB.prepare(
+            'UPDATE workshops SET spots_available = MAX(0, spots_available - ?) WHERE LOWER(TRIM(title)) = LOWER(TRIM(?))'
+          ).bind(Math.floor(deductSpots), cleanTitle).run();
+        } else if (Number.isFinite(restoreSpots) && restoreSpots > 0) {
+          await context.env.DB.prepare(
+            'UPDATE workshops SET spots_available = MIN(total_spots, spots_available + ?) WHERE LOWER(TRIM(title)) = LOWER(TRIM(?))'
+          ).bind(Math.floor(restoreSpots), cleanTitle).run();
+        } else if (Number.isFinite(explicitSpots)) {
+          await context.env.DB.prepare(
+            'UPDATE workshops SET spots_available = MIN(total_spots, MAX(0, ?)) WHERE LOWER(TRIM(title)) = LOWER(TRIM(?))'
+          ).bind(Math.floor(explicitSpots), cleanTitle).run();
+        }
+      }
+    }
+
+    const { results } = await context.env.DB.prepare('SELECT * FROM workshops').all();
+    const workshops = (results as WorkshopDbRow[]).map(mapRowToWorkshop);
+
+    return new Response(JSON.stringify({ success: true, workshops }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
     });
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });

@@ -18,12 +18,8 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
   const [copiedWsId, setCopiedWsId] = useState<string | null>(null);
   const [copiedCatalog, setCopiedCatalog] = useState(false);
 
-  // Auto-recuperación defensiva si la lista de talleres está vacía
-  useEffect(() => {
-    if (workshops.length === 0) {
-      resetWorkshopsToDefaults();
-    }
-  }, [workshops.length, resetWorkshopsToDefaults]);
+  // Auto-recuperación removida en carga inicial para no sobreescribir el estado real de Cloudflare D1;
+  // si no hay talleres en SQLite, /api/workshops los autosiembra en el backend de forma segura.
 
   // Check ?taller=ID in URL
   useEffect(() => {

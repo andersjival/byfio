@@ -249,6 +249,12 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
       return;
     }
 
+    if (isFull || workshop.spotsAvailable < quantity) {
+      setFormError('Lo sentimos, los cupos disponibles para este taller acaban de agotarse o son insuficientes para la cantidad elegida.');
+      formTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     setFormError(null);
 
     // Armar notas completas con número de comprobante si fue ingresado

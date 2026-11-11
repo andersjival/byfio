@@ -33,6 +33,7 @@ import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 import { deepSanitize } from '../utils/sanitizeText';
 import { safeSessionStorage, safeLocalStorage } from '../utils/safeStorage';
+import { pushStoreConfig, applyCloudCatalogTaxonomies, getLastBlockedPushAt } from '../utils/storeConfigSync';
 import {
   AppScope,
   detectInitialAppScope,
@@ -616,6 +617,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setInventoryMode = (mode: InventoryMode) => {
     setInventoryModeState(mode);
     localStorage.setItem(STORAGE_KEYS.INVENTORY_MODE, mode);
+    lastLocalConfigUpdateRef.current.inventoryMode = Date.now();
+    pushStoreConfig({ inventoryMode: mode });
+    syncChannel?.postMessage({ type: 'SYNC_UPDATE', inventoryMode: mode });
   };
 
   const [products, setProducts] = useState<Product[]>(() => {
@@ -875,11 +879,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isNewWorkshopModalOpen, setIsNewWorkshopModalOpen] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
-  const [typographyTheme, setTypographyTheme] = useState<TypographyTheme>(() => {
+  const [typographyTheme, setTypographyThemeState] = useState<TypographyTheme>(() => {
     return (localStorage.getItem(STORAGE_KEYS.TYPOGRAPHY_THEME) as TypographyTheme) || 'hybrid';
   });
 
-  const [colorTheme, setColorTheme] = useState<ColorTheme>(() => {
+  const [colorTheme, setColorThemeState] = useState<ColorTheme>(() => {
     return (localStorage.getItem(STORAGE_KEYS.COLOR_THEME) as ColorTheme) || 'vibrant';
   });
 
@@ -953,19 +957,62 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved !== null ? saved === 'true' : true;
   });
 
+  const syncSiteDesignToCloud = (overrides: {
+    typographyTheme?: TypographyTheme;
+    colorTheme?: ColorTheme;
+    starAlertDuration?: StarAlertDuration;
+    soundBubbleEnabled?: boolean;
+    soundButtonsEnabled?: boolean;
+    soundNewOrderEnabled?: boolean;
+  }) => {
+    lastLocalConfigUpdateRef.current.siteDesignSettings = Date.now();
+    const payload = {
+      typographyTheme: overrides.typographyTheme ?? typographyTheme,
+      colorTheme: overrides.colorTheme ?? colorTheme,
+      starAlertDuration: overrides.starAlertDuration ?? starAlertDuration,
+      soundBubbleEnabled: overrides.soundBubbleEnabled ?? soundBubbleEnabled,
+      soundButtonsEnabled: overrides.soundButtonsEnabled ?? soundButtonsEnabled,
+      soundNewOrderEnabled: overrides.soundNewOrderEnabled ?? soundNewOrderEnabled,
+      updatedAt: new Date().toISOString(),
+    };
+    pushStoreConfig({ siteDesignSettings: payload });
+    try {
+      syncChannel?.postMessage({ type: 'SYNC_UPDATE', siteDesignSettings: payload });
+    } catch {}
+  };
+
+  const setTypographyTheme = (theme: TypographyTheme) => {
+    setTypographyThemeState(theme);
+    localStorage.setItem(STORAGE_KEYS.TYPOGRAPHY_THEME, theme);
+    syncSiteDesignToCloud({ typographyTheme: theme });
+  };
+
+  const setColorTheme = (theme: ColorTheme) => {
+    setColorThemeState(theme);
+    localStorage.setItem(STORAGE_KEYS.COLOR_THEME, theme);
+    if (appScope === 'admin' || viewMode === 'admin') {
+      syncSiteDesignToCloud({ colorTheme: theme });
+    } else {
+      try { localStorage.setItem('byfio_user_color_override_v1', theme); } catch {}
+    }
+  };
+
   const setSoundBubbleEnabled = (enabled: boolean) => {
     setSoundBubbleEnabledState(enabled);
     localStorage.setItem(STORAGE_KEYS.SOUND_BUBBLE, String(enabled));
+    syncSiteDesignToCloud({ soundBubbleEnabled: enabled });
   };
 
   const setSoundButtonsEnabled = (enabled: boolean) => {
     setSoundButtonsEnabledState(enabled);
     localStorage.setItem(STORAGE_KEYS.SOUND_BUTTONS, String(enabled));
+    syncSiteDesignToCloud({ soundButtonsEnabled: enabled });
   };
 
   const setSoundNewOrderEnabled = (enabled: boolean) => {
     setSoundNewOrderEnabledState(enabled);
     localStorage.setItem(STORAGE_KEYS.SOUND_NEW_ORDER, String(enabled));
+    syncSiteDesignToCloud({ soundNewOrderEnabled: enabled });
   };
 
   // Configuración de duración de la alerta estrellita (manual por defecto, o 5, 10, 15, 20 segundos)
@@ -980,6 +1027,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setStarAlertDuration = (duration: StarAlertDuration) => {
     setStarAlertDurationState(duration);
     localStorage.setItem(STORAGE_KEYS.STAR_ALERT_DURATION, String(duration));
+    syncSiteDesignToCloud({ starAlertDuration: duration });
   };
 
   // Rastreo de pedidos conocidos para emitir campanilla únicamente ante nuevos pedidos reales
@@ -995,8 +1043,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     })())
   );
   const isInitialOrdersLoadRef = useRef(true);
-  // Registro de marcas de tiempo de modificaciones locales de productos para evitar rebote de polling
+  // Registro de marcas de tiempo de modificaciones locales de productos, talleres y config para evitar rebote de polling
   const lastLocalProductUpdateRef = useRef<Map<string, number>>(new Map());
+  const lastLocalWorkshopUpdateRef = useRef<Map<string, number>>(new Map());
+  const lastLocalConfigUpdateRef = useRef<Record<string, number>>({});
+
+  const applyCloudWorkshopUpdates = (updates: { id: string; spotsAvailable: number; totalSpots?: number }[] | undefined) => {
+    if (!Array.isArray(updates) || updates.length === 0) return;
+    const updMap = new Map(updates.map((u) => [String(u.id).toLowerCase(), u]));
+    setWorkshops((prev) => {
+      const next = prev.map((w) => {
+        const matched = updMap.get(String(w.id).toLowerCase());
+        return matched ? { ...w, spotsAvailable: matched.spotsAvailable } : w;
+      });
+      try { localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(next)); } catch {}
+      try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', workshops: next }); } catch {}
+      return next;
+    });
+  };
 
   const checkAndNotifyNewOrders = (incomingOrders: Order[]) => {
     if (isInitialOrdersLoadRef.current) {
@@ -1191,6 +1255,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = [newCustomer, ...customers];
     setCustomers(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+    lastLocalConfigUpdateRef.current.customers = Date.now();
+    pushStoreConfig({ customers: updated });
     syncChannel?.postMessage({ type: 'SYNC_UPDATE', customers: updated });
     return newCustomer;
   };
@@ -1199,6 +1265,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = customers.map((c) => (c.id === id ? { ...c, ...updates } : c));
     setCustomers(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+    lastLocalConfigUpdateRef.current.customers = Date.now();
+    pushStoreConfig({ customers: updated });
     syncChannel?.postMessage({ type: 'SYNC_UPDATE', customers: updated });
   };
 
@@ -1206,6 +1274,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = customers.filter((c) => c.id !== id);
     setCustomers(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(updated));
+    lastLocalConfigUpdateRef.current.customers = Date.now();
+    pushStoreConfig({ customers: updated });
     syncChannel?.postMessage({ type: 'SYNC_UPDATE', customers: updated });
   };
 
@@ -1257,6 +1327,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = [...customerFieldDefs, newDef];
     setCustomerFieldDefs(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(updated));
+    lastLocalConfigUpdateRef.current.customerFields = Date.now();
+    pushStoreConfig({ customerFields: updated });
+    syncChannel?.postMessage({ type: 'SYNC_UPDATE', customerFieldDefs: updated });
     return newDef;
   };
 
@@ -1264,6 +1337,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updated = customerFieldDefs.filter((f) => f.id !== id);
     setCustomerFieldDefs(updated);
     localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(updated));
+    lastLocalConfigUpdateRef.current.customerFields = Date.now();
+    pushStoreConfig({ customerFields: updated });
+    syncChannel?.postMessage({ type: 'SYNC_UPDATE', customerFieldDefs: updated });
   };
 
   // -------------------------------------------------------------
@@ -2160,6 +2236,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setOrders((prev) =>
             prev.map((o) => (o.id === newOrder.id ? { ...o, orderNumber: data.orderNumber } : o))
           );
+        }
+        if (Array.isArray(data?.workshopUpdates) && data.workshopUpdates.length > 0) {
+          applyCloudWorkshopUpdates(data.workshopUpdates);
         }
       })
       .catch(() => {});
@@ -3130,11 +3209,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updatePricingData = (newData: PricingSectionData) => {
     setPricingData(newData);
     localStorage.setItem(STORAGE_KEYS.PRICING_DATA, JSON.stringify(newData));
+    lastLocalConfigUpdateRef.current.pricingData = Date.now();
+    pushStoreConfig({ pricingData: newData });
+    syncChannel?.postMessage({ type: 'SYNC_UPDATE', pricingData: newData });
   };
 
   const resetPricingData = () => {
     setPricingData(INITIAL_PRICING_DATA);
     localStorage.setItem(STORAGE_KEYS.PRICING_DATA, JSON.stringify(INITIAL_PRICING_DATA));
+    lastLocalConfigUpdateRef.current.pricingData = Date.now();
+    pushStoreConfig({ pricingData: INITIAL_PRICING_DATA });
+    syncChannel?.postMessage({ type: 'SYNC_UPDATE', pricingData: INITIAL_PRICING_DATA });
   };
 
   // Apply typography theme to document body (strictly skip Collaborator PWA so Web/Admin themes never alter it)
@@ -3241,6 +3326,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (event.data.sweepLoadMode === 'auto' || event.data.sweepLoadMode === 'manual') {
           sweepLoadModeRef.current = event.data.sweepLoadMode;
           setSweepLoadModeState(event.data.sweepLoadMode);
+        }
+        if (event.data.pricingData) {
+          setPricingData(deepSanitize(event.data.pricingData));
+        }
+        if (event.data.sinpeSettings) {
+          setSinpeSettings(deepSanitize(event.data.sinpeSettings));
+        }
+        if (Array.isArray(event.data.missingInventoryReports)) {
+          setMissingInventoryReports(deepSanitize(event.data.missingInventoryReports));
+        }
+        if (Array.isArray(event.data.customerFieldDefs)) {
+          setCustomerFieldDefs(deepSanitize(event.data.customerFieldDefs));
+        }
+        if (event.data.inventoryMode === 'stock' || event.data.inventoryMode === 'availability') {
+          setInventoryModeState(event.data.inventoryMode);
+        }
+        if (event.data.siteDesignSettings) {
+          const ds = event.data.siteDesignSettings;
+          if (ds.typographyTheme) setTypographyThemeState(ds.typographyTheme);
+          if (ds.starAlertDuration !== undefined) setStarAlertDurationState(ds.starAlertDuration);
         }
       }
     };
@@ -3423,17 +3528,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         });
 
       // 2b. Sincronizar talleres creativos en tiempo real desde D1
-      fetch('/api/workshops')
+      fetch('/api/workshops', { cache: 'no-store' })
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (Array.isArray(data) && data.length > 0) {
             setWorkshops((prev) => {
               const sanitized = deepSanitize(data);
-              if (JSON.stringify(prev) !== JSON.stringify(sanitized)) {
+              const now = Date.now();
+              const prevMap = new Map(prev.map((w) => [w.id, w]));
+              const merged = sanitized.map((cloudWs: Workshop) => {
+                const localWs = prevMap.get(cloudWs.id);
+                const lastLocal = lastLocalWorkshopUpdateRef.current.get(cloudWs.id) || 0;
+                if (localWs && now - lastLocal < 10000) {
+                  return { ...cloudWs, spotsAvailable: localWs.spotsAvailable };
+                }
+                return cloudWs;
+              });
+              if (JSON.stringify(prev) !== JSON.stringify(merged)) {
                 try {
-                  localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(sanitized));
+                  localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(merged));
                 } catch {}
-                return sanitized;
+                return merged;
               }
               return prev;
             });
@@ -3653,6 +3768,146 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               .catch(() => {});
           }
         })
+      // 6b. Sincronizar configuraciones globales, precios, SINPE, clientes y reportes faltantes desde D1
+      fetch('/api/store-config', { cache: 'no-store' })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((cfg) => {
+          if (!cfg || typeof cfg !== 'object') return;
+          const now = Date.now();
+          const recentlyEdited = (key: string) => now - (lastLocalConfigUpdateRef.current[key] || 0) < 10000;
+
+          if (cfg.pricingData && typeof cfg.pricingData === 'object' && !recentlyEdited('pricingData')) {
+            const cleanPricing = deepSanitize(cfg.pricingData);
+            setPricingData((prev) => {
+              if (JSON.stringify(prev) !== JSON.stringify(cleanPricing)) {
+                try { localStorage.setItem(STORAGE_KEYS.PRICING_DATA, JSON.stringify(cleanPricing)); } catch {}
+                return cleanPricing;
+              }
+              return prev;
+            });
+          }
+
+          if (cfg.sinpeSettings && typeof cfg.sinpeSettings === 'object' && !recentlyEdited('sinpeSettings')) {
+            const cleanSinpe = deepSanitize(cfg.sinpeSettings);
+            setSinpeSettings((prev) => {
+              if (JSON.stringify(prev) !== JSON.stringify(cleanSinpe)) {
+                try { localStorage.setItem(STORAGE_KEYS.SINPE_SETTINGS, JSON.stringify(cleanSinpe)); } catch {}
+                return cleanSinpe;
+              }
+              return prev;
+            });
+          }
+
+          if (Array.isArray(cfg.customers) && !recentlyEdited('customers')) {
+            const cleanCustomers = deepSanitize(cfg.customers);
+            setCustomers((prev) => {
+              let mergedCloud = cleanCustomers;
+              try {
+                const regRaw = safeLocalStorage.getItem(STORAGE_KEYS.REGISTERED_USERS);
+                const regParsed = regRaw ? JSON.parse(regRaw) : [];
+                mergedCloud = mergeRegisteredUsersIntoCustomers(cleanCustomers, regParsed);
+              } catch {}
+              if (JSON.stringify(prev) !== JSON.stringify(mergedCloud)) {
+                try { localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(mergedCloud)); } catch {}
+                return mergedCloud;
+              }
+              return prev;
+            });
+          }
+
+          if (Array.isArray(cfg.customerFields) && !recentlyEdited('customerFields')) {
+            const cleanFields = deepSanitize(cfg.customerFields);
+            setCustomerFieldDefs((prev) => {
+              if (JSON.stringify(prev) !== JSON.stringify(cleanFields)) {
+                try { localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(cleanFields)); } catch {}
+                return cleanFields;
+              }
+              return prev;
+            });
+          }
+
+          if (Array.isArray(cfg.missingInventoryReports) && !recentlyEdited('missingInventoryReports')) {
+            const cleanReports = deepSanitize(cfg.missingInventoryReports);
+            setMissingInventoryReports((prev) => {
+              if (JSON.stringify(prev) !== JSON.stringify(cleanReports)) {
+                try { localStorage.setItem(STORAGE_KEYS.MISSING_INVENTORY, JSON.stringify(cleanReports)); } catch {}
+                return cleanReports;
+              }
+              return prev;
+            });
+          }
+
+          if ((cfg.inventoryMode === 'stock' || cfg.inventoryMode === 'availability') && !recentlyEdited('inventoryMode')) {
+            setInventoryModeState((prev) => {
+              if (prev !== cfg.inventoryMode) {
+                try { localStorage.setItem(STORAGE_KEYS.INVENTORY_MODE, cfg.inventoryMode); } catch {}
+                return cfg.inventoryMode;
+              }
+              return prev;
+            });
+          }
+
+          if (cfg.siteDesignSettings && typeof cfg.siteDesignSettings === 'object' && !recentlyEdited('siteDesignSettings')) {
+            const ds = cfg.siteDesignSettings;
+            if (ds.typographyTheme) {
+              setTypographyThemeState((prev) => {
+                if (prev !== ds.typographyTheme) {
+                  try { localStorage.setItem(STORAGE_KEYS.TYPOGRAPHY_THEME, ds.typographyTheme); } catch {}
+                  return ds.typographyTheme;
+                }
+                return prev;
+              });
+            }
+            if (ds.starAlertDuration !== undefined) {
+              setStarAlertDurationState((prev) => {
+                if (prev !== ds.starAlertDuration) {
+                  try { localStorage.setItem(STORAGE_KEYS.STAR_ALERT_DURATION, String(ds.starAlertDuration)); } catch {}
+                  return ds.starAlertDuration;
+                }
+                return prev;
+              });
+            }
+            if (typeof ds.soundBubbleEnabled === 'boolean') {
+              setSoundBubbleEnabledState(ds.soundBubbleEnabled);
+              try { localStorage.setItem(STORAGE_KEYS.SOUND_BUBBLE, String(ds.soundBubbleEnabled)); } catch {}
+            }
+            if (typeof ds.soundButtonsEnabled === 'boolean') {
+              setSoundButtonsEnabledState(ds.soundButtonsEnabled);
+              try { localStorage.setItem(STORAGE_KEYS.SOUND_BUTTONS, String(ds.soundButtonsEnabled)); } catch {}
+            }
+            if (typeof ds.soundNewOrderEnabled === 'boolean') {
+              setSoundNewOrderEnabledState(ds.soundNewOrderEnabled);
+              try { localStorage.setItem(STORAGE_KEYS.SOUND_NEW_ORDER, String(ds.soundNewOrderEnabled)); } catch {}
+            }
+            if (ds.colorTheme) {
+              const hasVisitorOverride = appScope !== 'admin' && Boolean(localStorage.getItem('byfio_user_color_override_v1'));
+              if (!hasVisitorOverride) {
+                setColorThemeState((prev) => {
+                  if (prev !== ds.colorTheme) {
+                    try { localStorage.setItem(STORAGE_KEYS.COLOR_THEME, ds.colorTheme); } catch {}
+                    return ds.colorTheme;
+                  }
+                  return prev;
+                });
+              }
+            }
+          }
+
+          if (cfg.catalogTaxonomies) {
+            applyCloudCatalogTaxonomies(cfg.catalogTaxonomies);
+          }
+
+          if (Array.isArray(cfg.calendarBlockedSpaces) && now - getLastBlockedPushAt() > 10000) {
+            try {
+              const localRaw = localStorage.getItem('byfio_agenda_blocked_spaces_v1');
+              const cloudStr = JSON.stringify(cfg.calendarBlockedSpaces);
+              if (localRaw !== cloudStr) {
+                localStorage.setItem('byfio_agenda_blocked_spaces_v1', cloudStr);
+                window.dispatchEvent(new CustomEvent('byfio_store_config_updated', { detail: { calendarBlockedSpaces: cfg.calendarBlockedSpaces } }));
+              }
+            } catch {}
+          }
+        })
         .catch(() => {});
     };
 
@@ -3841,6 +4096,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const orderItems = cart.map((item, idx) => ({
       id: `ord-item-${Date.now()}-${idx}`,
       type: item.type,
+      ...(item.type === 'workshop' ? { workshopId: item.workshopId || item.id } : {}),
       sku: item.sku,
       name: item.name,
       price: item.price,
@@ -3904,6 +4160,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             prev.map((o) => (o.id === newOrder.id ? { ...o, orderNumber: data.orderNumber } : o))
           );
         }
+        if (Array.isArray(data?.workshopUpdates) && data.workshopUpdates.length > 0) {
+          applyCloudWorkshopUpdates(data.workshopUpdates);
+        }
       })
       .catch(() => {});
 
@@ -3957,14 +4216,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setWorkshops((prev) => {
       updatedWorkshops = prev.map((w) => {
         const inCartWs = cart.find(
-          (c) => c.type === 'workshop' && (c.id === w.id || c.sku === `WS-${w.id.toUpperCase()}`)
+          (c) => c.type === 'workshop' && (c.id === w.id || c.workshopId === w.id || c.sku === `WS-${w.id.toUpperCase()}`)
         );
         if (inCartWs) {
+          lastLocalWorkshopUpdateRef.current.set(w.id, Date.now());
           return { ...w, spotsAvailable: Math.max(0, w.spotsAvailable - inCartWs.quantity) };
         }
         return w;
       });
       localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(updatedWorkshops));
+      if (updatedWorkshops.some((w) => lastLocalWorkshopUpdateRef.current.has(w.id))) {
+        try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', workshops: updatedWorkshops }); } catch {}
+      }
       return updatedWorkshops;
     });
 
@@ -4233,6 +4496,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setMissingInventoryReports((mPrev) => {
             const nextReports = [newReport, ...mPrev];
             localStorage.setItem(STORAGE_KEYS.MISSING_INVENTORY, JSON.stringify(nextReports));
+            lastLocalConfigUpdateRef.current.missingInventoryReports = Date.now();
+            pushStoreConfig({ missingInventoryReports: nextReports });
+            try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', missingInventoryReports: nextReports }); } catch {}
             return nextReports;
           });
         }
@@ -4366,6 +4632,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setMissingInventoryReports((prev) => {
       const next = prev.map((rep) => (rep.id === reportId ? { ...rep, resolved: true, resolvedAt: new Date().toISOString() } : rep));
       localStorage.setItem(STORAGE_KEYS.MISSING_INVENTORY, JSON.stringify(next));
+      lastLocalConfigUpdateRef.current.missingInventoryReports = Date.now();
+      pushStoreConfig({ missingInventoryReports: next });
+      try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', missingInventoryReports: next }); } catch {}
       return next;
     });
   };
@@ -4374,6 +4643,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setMissingInventoryReports((prev) => {
       const next = prev.filter((rep) => rep.id !== reportId);
       localStorage.setItem(STORAGE_KEYS.MISSING_INVENTORY, JSON.stringify(next));
+      lastLocalConfigUpdateRef.current.missingInventoryReports = Date.now();
+      pushStoreConfig({ missingInventoryReports: next });
+      try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', missingInventoryReports: next }); } catch {}
       return next;
     });
   };
@@ -4947,7 +5219,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const addWorkshop = (wsData: Omit<Workshop, 'id'>): Workshop => {
     const newWs: Workshop = { ...wsData, id: `ws-${Date.now()}` };
-    setWorkshops((prev) => [...prev, newWs]);
+    lastLocalWorkshopUpdateRef.current.set(newWs.id, Date.now());
+    setWorkshops((prev) => {
+      const next = [...prev, newWs];
+      try { localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(next)); } catch {}
+      try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', workshops: next }); } catch {}
+      return next;
+    });
     try {
       fetch('/api/workshops', {
         method: 'POST',
@@ -4959,7 +5237,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteWorkshop = (wsId: string) => {
-    setWorkshops((prev) => prev.filter((w) => w.id !== wsId));
+    lastLocalWorkshopUpdateRef.current.set(wsId, Date.now());
+    setWorkshops((prev) => {
+      const next = prev.filter((w) => w.id !== wsId);
+      try { localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(next)); } catch {}
+      try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', workshops: next }); } catch {}
+      return next;
+    });
     try {
       fetch(`/api/workshops?id=${encodeURIComponent(wsId)}`, {
         method: 'DELETE',
@@ -5128,9 +5412,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateWorkshop = (wsId: string, updatedData: Partial<Workshop>) => {
     let spotJustOpened = false;
+    lastLocalWorkshopUpdateRef.current.set(wsId, Date.now());
     setWorkshops((prev) => {
       const previous = prev.find((w) => w.id === wsId);
       const updated = prev.map((w) => (w.id === wsId ? { ...w, ...updatedData } : w));
+      try { localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(updated)); } catch {}
+      try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', workshops: updated }); } catch {}
       const target = updated.find((w) => w.id === wsId);
       if (target) {
         if (previous && previous.spotsAvailable <= 0 && target.spotsAvailable > 0) {
@@ -5182,6 +5469,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         {
           id: `ord-item-${Date.now()}-0`,
           type: 'workshop',
+          workshopId: workshop.id,
           sku: `WS-${workshop.id.toUpperCase()}`,
           name: workshop.title,
           price: workshop.price,
@@ -5209,9 +5497,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             prev.map((o) => (o.id === newOrder.id ? { ...o, orderNumber: data.orderNumber } : o))
           );
         }
+        if (Array.isArray(data?.workshopUpdates) && data.workshopUpdates.length > 0) {
+          applyCloudWorkshopUpdates(data.workshopUpdates);
+        }
       })
       .catch(() => {});
 
+    lastLocalWorkshopUpdateRef.current.set(workshop.id, Date.now());
     let updatedWorkshops: Workshop[] = [];
     setWorkshops((prev) => {
       updatedWorkshops = prev.map((w) =>
@@ -5290,15 +5582,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setSinpeTransactions(nextTxs);
     localStorage.setItem(STORAGE_KEYS.SINPE_TRANSACTIONS, JSON.stringify(nextTxs));
 
-    // Si es para un taller, descontar 1 cupo disponible
+    // Si es para un taller, descontar 1 cupo disponible local y en D1
     if (newTx.category === 'workshop' && newTx.workshopId) {
+      const wsId = newTx.workshopId;
+      lastLocalWorkshopUpdateRef.current.set(wsId, Date.now());
       setWorkshops((prev) => {
         const updated = prev.map((w) =>
-          w.id === newTx.workshopId ? { ...w, spotsAvailable: Math.max(0, w.spotsAvailable - 1) } : w
+          w.id === wsId ? { ...w, spotsAvailable: Math.max(0, w.spotsAvailable - 1) } : w
         );
         localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(updated));
+        try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', workshops: updated }); } catch {}
         return updated;
       });
+      fetch('/api/workshops', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: wsId, title: newTx.workshopTitle, deductSpots: 1 }),
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((resData) => {
+          if (Array.isArray(resData?.workshops)) {
+            applyCloudWorkshopUpdates(resData.workshops);
+          }
+        })
+        .catch(() => {});
     }
 
     // Sincronizar en D1
@@ -5539,6 +5846,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setSinpeSettings((prev) => {
       const next = { ...prev, ...updates };
       localStorage.setItem(STORAGE_KEYS.SINPE_SETTINGS, JSON.stringify(next));
+      lastLocalConfigUpdateRef.current.sinpeSettings = Date.now();
+      pushStoreConfig({ sinpeSettings: next });
+      try { syncChannel?.postMessage({ type: 'SYNC_UPDATE', sinpeSettings: next }); } catch {}
       return next;
     });
   };
@@ -5551,7 +5861,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
     knownOrderIdsRef.current.delete(orderId);
     try {
-      await fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, { method: 'DELETE' });
+      const res = await fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, { method: 'DELETE' });
+      const data = res.ok ? await res.json().catch(() => null) : null;
+      if (Array.isArray(data?.workshopUpdates) && data.workshopUpdates.length > 0) {
+        applyCloudWorkshopUpdates(data.workshopUpdates);
+      }
     } catch {}
   };
 

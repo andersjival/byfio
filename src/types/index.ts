@@ -184,6 +184,7 @@ export interface LayawayPaymentRecord {
 export interface OrderItem {
   id: string;
   type: 'product' | 'workshop';
+  workshopId?: string;
   sku: string;
   name: string;
   price: number;
@@ -301,6 +302,7 @@ export interface Order {
 export interface CartItem {
   cartId: string;
   type: 'product' | 'workshop';
+  workshopId?: string;
   id: string;
   sku: string;
   name: string;

@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Product, ProductCategory, SweepEntryStatus } from '../../types';
 import { formatInternalProductCode, formatCRC } from '../../utils/formatters';
 import { saveExtraShelf } from '../../utils/inventoryShelves';
+import { syncCatalogTaxonomiesToCloud } from '../../utils/storeConfigSync';
 import {
   MapPin, Tag, Building2, PackageCheck, PlusCircle, Plus, Minus,
   Check, AlertTriangle, X, Sparkles
@@ -187,17 +188,23 @@ export const InventorySweepProductPanel: React.FC<InventorySweepProductPanelProp
     saveExtraShelf(finalLocation);
 
     // Guardar categorías/proveedores custom si se escribieron nuevos
+    let taxonomyChanged = false;
     if (newCategory === '__CUSTOM__' && customCategory.trim()) {
       try {
         const prev = JSON.parse(localStorage.getItem('byfio_custom_categories_v1') || '[]');
         localStorage.setItem('byfio_custom_categories_v1', JSON.stringify(Array.from(new Set([...(Array.isArray(prev) ? prev : []), finalCategory]))));
+        taxonomyChanged = true;
       } catch {}
     }
     if (newSupplier === '__CUSTOM__' && customSupplier.trim()) {
       try {
         const prev = JSON.parse(localStorage.getItem('byfio_custom_suppliers_v1') || '[]');
         localStorage.setItem('byfio_custom_suppliers_v1', JSON.stringify(Array.from(new Set([...(Array.isArray(prev) ? prev : []), finalSupplier]))));
+        taxonomyChanged = true;
       } catch {}
+    }
+    if (taxonomyChanged) {
+      syncCatalogTaxonomiesToCloud();
     }
 
     // Se crea en BD real con stock 0; su cantidad del barrido pasa a stock cuando cargue el lote

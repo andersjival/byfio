@@ -211,6 +211,12 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         safeOrderNumber = `#FIO-${dbMaxNum + 1}`;
       }
 
+      // 1b. Verificar si la orden es nueva antes de insertar para descontar cupos de talleres de forma atómica (cero doble cobro)
+      const existingOrderRow = await context.env.DB.prepare(
+        'SELECT id FROM orders WHERE id = ? LIMIT 1'
+      ).bind(order.id).first();
+      const isBrandNewOrder = !existingOrderRow;
+
       // 2. Inserción segura con ON CONFLICT(id) para que NUNCA reemplace ni borre pedidos ajenos
       await context.env.DB.prepare(
         `INSERT INTO orders (
@@ -258,7 +264,53 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         order.createdAt || new Date().toISOString()
       ).run();
 
-      return new Response(JSON.stringify({ success: true, orderNumber: safeOrderNumber }), {
+      let workshopUpdates: { id: string; spotsAvailable: number; totalSpots: number }[] = [];
+      if (isBrandNewOrder && Array.isArray(order.items)) {
+        const wsItems = order.items.filter((it: any) => it && it.type === 'workshop');
+        if (wsItems.length > 0) {
+          for (const it of wsItems) {
+            const qty = Math.max(1, Math.floor(Number(it.quantity) || 1));
+            const rawSkuId = it.sku ? String(it.sku).replace(/^WS-/i, '').trim() : '';
+            const candidates = Array.from(new Set([
+              it.workshopId ? String(it.workshopId).trim() : '',
+              rawSkuId,
+              it.id && !String(it.id).startsWith('ord-item-') ? String(it.id).trim() : '',
+            ].filter(Boolean)));
+
+            let updated = 0;
+            for (const cand of candidates) {
+              try {
+                const res = await context.env.DB.prepare(
+                  'UPDATE workshops SET spots_available = MAX(0, spots_available - ?) WHERE LOWER(id) = LOWER(?)'
+                ).bind(qty, cand).run();
+                updated = res?.meta?.changes || 0;
+                if (updated > 0) break;
+              } catch {}
+            }
+            if (updated === 0 && it.name) {
+              try {
+                await context.env.DB.prepare(
+                  'UPDATE workshops SET spots_available = MAX(0, spots_available - ?) WHERE LOWER(TRIM(title)) = LOWER(TRIM(?))'
+                ).bind(qty, String(it.name).trim()).run();
+              } catch {}
+            }
+          }
+          try {
+            const { results: wsRows } = await context.env.DB.prepare(
+              'SELECT id, spots_available, total_spots FROM workshops'
+            ).all();
+            if (Array.isArray(wsRows)) {
+              workshopUpdates = wsRows.map((w: any) => ({
+                id: w.id,
+                spotsAvailable: Number(w.spots_available) || 0,
+                totalSpots: Number(w.total_spots) || 0,
+              }));
+            }
+          } catch {}
+        }
+      }
+
+      return new Response(JSON.stringify({ success: true, orderNumber: safeOrderNumber, workshopUpdates }), {
         headers: { 'Content-Type': 'application/json' },
         status: 201,
       });
@@ -373,7 +425,60 @@ export const onRequestDelete = async (context: { request: Request; env: Env }) =
     }
 
     if (id) {
+      let workshopUpdates: { id: string; spotsAvailable: number; totalSpots: number }[] = [];
+      if (url.searchParams.get('restoreSpots') !== 'false') {
+        try {
+          const existingOrder: any = await context.env.DB.prepare(
+            'SELECT items_json, order_status FROM orders WHERE id = ? LIMIT 1'
+          ).bind(id).first();
+          if (existingOrder && existingOrder.order_status !== 'delivered') {
+            const parsedItems = JSON.parse(existingOrder.items_json || '[]');
+            const wsItems = Array.isArray(parsedItems)
+              ? parsedItems.filter((it: any) => it && it.type === 'workshop')
+              : [];
+            if (wsItems.length > 0) {
+              for (const it of wsItems) {
+                const qty = Math.max(1, Math.floor(Number(it.quantity) || 1));
+                const rawSkuId = it.sku ? String(it.sku).replace(/^WS-/i, '').trim() : '';
+                const candidates = Array.from(new Set([
+                  it.workshopId ? String(it.workshopId).trim() : '',
+                  rawSkuId,
+                  it.id && !String(it.id).startsWith('ord-item-') ? String(it.id).trim() : '',
+                ].filter(Boolean)));
+                let restored = 0;
+                for (const cand of candidates) {
+                  const res = await context.env.DB.prepare(
+                    'UPDATE workshops SET spots_available = MIN(total_spots, spots_available + ?) WHERE LOWER(id) = LOWER(?)'
+                  ).bind(qty, cand).run();
+                  restored = res?.meta?.changes || 0;
+                  if (restored > 0) break;
+                }
+                if (restored === 0 && it.name) {
+                  await context.env.DB.prepare(
+                    'UPDATE workshops SET spots_available = MIN(total_spots, spots_available + ?) WHERE LOWER(TRIM(title)) = LOWER(TRIM(?))'
+                  ).bind(qty, String(it.name).trim()).run();
+                }
+              }
+              const { results: wsRows } = await context.env.DB.prepare(
+                'SELECT id, spots_available, total_spots FROM workshops'
+              ).all();
+              if (Array.isArray(wsRows)) {
+                workshopUpdates = wsRows.map((w: any) => ({
+                  id: w.id,
+                  spotsAvailable: Number(w.spots_available) || 0,
+                  totalSpots: Number(w.total_spots) || 0,
+                }));
+              }
+            }
+          }
+        } catch {}
+      }
       await context.env.DB.prepare('DELETE FROM orders WHERE id = ?').bind(id).run();
+      if (workshopUpdates.length > 0) {
+        return new Response(JSON.stringify({ success: true, deletedId: id, workshopUpdates }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
       return new Response(JSON.stringify({ success: true, deletedId: id }), {
         headers: { 'Content-Type': 'application/json' },
       });

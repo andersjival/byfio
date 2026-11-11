@@ -13,6 +13,7 @@ import { CalendarTopBar } from './CalendarTopBar';
 import { BlockSpaceModal } from './BlockSpaceModal';
 import { CalendarSyncModal } from './CalendarSyncModal';
 import { AgendaItem, AgendaCategory, Workshop } from '../../../types';
+import { syncCalendarBlockedSpacesToCloud } from '../../../utils/storeConfigSync';
 import {
   Plus,
   Clock,
@@ -194,13 +195,30 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
   const [editingBlockSpace, setEditingBlockSpace] = useState<BlockedSpace | null>(null);
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
 
-  // Persistir bloqueos
+  // Persistir bloqueos en localStorage y Cloudflare D1
   const saveBlockedSpaces = (spaces: BlockedSpace[]) => {
     setBlockedSpaces(spaces);
     try {
       localStorage.setItem(BLOCKED_STORAGE_KEY, JSON.stringify(spaces));
+      syncCalendarBlockedSpacesToCloud(spaces);
     } catch {}
   };
+
+  useEffect(() => {
+    const onConfigSync = () => {
+      try {
+        const saved = localStorage.getItem(BLOCKED_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setBlockedSpaces(parsed.filter((b: BlockedSpace) => b.id !== 'lunch-default' && !b.title?.includes('ALMUERZO')));
+          }
+        }
+      } catch {}
+    };
+    window.addEventListener('byfio_store_config_updated', onConfigSync);
+    return () => window.removeEventListener('byfio_store_config_updated', onConfigSync);
+  }, []);
 
   const handleSaveBlockSpace = (space: BlockedSpace) => {
     const exists = blockedSpaces.some((b) => b.id === space.id);

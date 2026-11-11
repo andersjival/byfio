@@ -1,3 +1,16 @@
+## [v4.19.111] - 2026-11-11
+
+### 🗄️ Conexión Real a Base de Datos D1 para Talleres (Rebaja Atómica de Cupos) y Sincronización Global Web
+- **Talleres Conectados en Tiempo Real a Cloudflare D1 ([`functions/api/workshops.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/workshops.ts), [`functions/api/orders.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/orders.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`WorkshopDetailPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx), [`WorkshopsPage.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopsPage.tsx))**:
+  - Agregado endpoint atómico `PATCH /api/workshops` para descontar o restaurar `spots_available` directo en SQLite (`MAX(0, spots_available - ?)`).
+  - `POST /api/orders` ahora descuenta atómicamente los cupos de talleres nuevos en D1 (con protección anti-doble cobro) y `DELETE /api/orders` restaura cupos si se elimina una orden activa no entregada.
+  - Eliminada la autorecuperación automática en `WorkshopsPage` que podía reiniciar talleres al cargar, agregada validación de cupo antes de reservar en `WorkshopDetailPage`, y blindado `AppContext` (`bookWorkshopDirect`, `createOrder`, `registerSinpeTransaction`, `updateWorkshop`, `deleteOrder`) con protección anti-rebote (`lastLocalWorkshopUpdateRef`).
+- **Sincronización Global Completa vía `/api/store-config` ([`functions/api/store-config.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/store-config.ts), [`storeConfigSync.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/storeConfigSync.ts), [`NewProductModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx), [`InventorySweepProductPanel.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/inventory/InventorySweepProductPanel.tsx), [`AssignSupplierModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AssignSupplierModal.tsx), [`inventoryShelves.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/inventoryShelves.ts), [`CalendarAgendaView.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarAgendaView.tsx))**:
+  - Conectados a D1 (`site_metrics`) los clientes manuales POS/Admin (`customers`), campos personalizados (`customerFields`), precios (`pricingData`), configuración SINPE (`sinpeSettings`), reportes de inventario faltante (`missingInventoryReports`), modo de inventario (`inventoryMode`), diseño global (`siteDesignSettings`), taxonomías personalizadas del catálogo (categorías, ubicaciones, proveedores, estantes extra) y bloqueos de agenda.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.111`.
+
+---
+
 ## [v4.19.110] - 2026-11-11
 
 ### ⚡ Facturación Rápida POS y PWA (Escaneo / Búsqueda + Pago Directo Efectivo / SINPE)

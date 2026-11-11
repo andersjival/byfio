@@ -3,6 +3,7 @@ import { X, Truck, Check, Plus, AlertCircle } from 'lucide-react';
 import { Product, Supplier } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { playBubblePopSound, playBarcodeSuccessSound } from '../../utils/soundEffects';
+import { syncCatalogTaxonomiesToCloud } from '../../utils/storeConfigSync';
 
 interface AssignSupplierModalProps {
   isOpen: boolean;
@@ -113,6 +114,7 @@ export const AssignSupplierModal: React.FC<AssignSupplierModalProps> = ({
         if (!parsed.includes(finalSupplier)) {
           parsed.push(finalSupplier);
           localStorage.setItem(CUSTOM_SUPPLIERS_STORAGE_KEY, JSON.stringify(parsed));
+          syncCatalogTaxonomiesToCloud();
         }
       } catch (err) {
         console.warn('Error guardando proveedor en catálogo:', err);
