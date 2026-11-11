@@ -17,6 +17,22 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.86 - Blindaje de Permisos en Tienda, Filtros en Fila Única y Buscador Inferior
+- [x] **Blindaje Estricto de Roles y Permisos en Tienda ([StorePage.tsx](file:///C:/Users/Juan/byfio/src/components/store/StorePage.tsx)):**
+  - Conectados `currentUser` y `hasPermission` desde el contexto global (`AppContext`).
+  - Se estableció el control de acceso `canManageProducts`: solo administradores (`admin` o `isMasterAdmin`) y colaboradores con permiso explícito de inventario (`currentUser.role === 'staff' && hasPermission('inventory')`) pueden crear o editar artículos.
+  - Para clientes registrados externos (`role === 'customer'`) e invitados, se ocultan por completo:
+    - El botón `+ Agregar Producto` en la barra de filtros.
+    - El botón `+ Agregar Producto a [Departamento]` en los estados sin productos.
+    - El icono de lápiz (`Pencil`) de edición en cada una de las tarjetas de producto.
+- [x] **Eliminación Total del Botón `❤️ Personalizables`:**
+  - Retirado de forma definitiva de la barra de filtros en todas las secciones, eliminando la duplicidad con el departamento de Personalizables.
+- [x] **Filtros Rápidos en Fila Única hacia la Derecha:**
+  - Se alinearon los botones de subcategoría en una sola fila continua hacia la derecha con scroll horizontal táctil suave (`overflow-x-auto no-scrollbar`), evitando que se partan en dos líneas.
+- [x] **Buscador Inteligente Reubicado en la Franja Inferior:**
+  - El buscador ahora ocupa la parte inferior del contenedor, justo por encima de las tarjetas de productos (en la zona indicada por el usuario), con mayor amplitud, icono de lupa y botón rápido de limpiar (`X`).
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.86`.
+
 ### Versión 4.19.85 - Reducción Compacta del 60% del Banner de Departamentos en Tienda
 - [x] **Optimización Compacta del Selector de Departamentos ([StorePage.tsx](file:///C:/Users/Juan/byfio/src/components/store/StorePage.tsx)):**
   - Se redujo el tamaño vertical del banner de departamentos en más de un 65% (pasando de ~240px a ~45px de altura en escritorio y ~70px en móvil).
