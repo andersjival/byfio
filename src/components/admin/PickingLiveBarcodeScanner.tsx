@@ -277,68 +277,61 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
   }, [feedback]);
 
   return (
-    <div className="relative w-full bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-purple-900/60 shadow-xl flex flex-col select-none">
-      {/* Visor de Video en Vivo */}
-      <div className="relative w-full h-64 sm:h-72 md:h-80 bg-black flex items-center justify-center overflow-hidden">
-        <div id={containerId} className="w-full h-full object-cover" />
+    <div className="relative w-full bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-purple-900/60 shadow-xl flex flex-col items-center justify-center p-3 sm:p-5 select-none bg-black">
+      {/* Cuadrito de Escaneo Puntiagudo con Esquinas Amarillas: Único espacio donde se visualiza la cámara */}
+      <div
+        className={`relative w-[92%] max-w-[340px] h-44 sm:h-48 rounded-2xl border-2 transition-all duration-200 flex items-center justify-center bg-black ${
+          feedback?.type === 'success'
+            ? 'border-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.5)]'
+            : feedback?.type === 'error'
+            ? 'border-rose-500 shadow-[0_0_30px_rgba(244,63,94,0.5)]'
+            : 'border-fio-pink border-dashed shadow-[0_0_20px_rgba(236,72,153,0.35)]'
+        }`}
+      >
+        {/* Contenedor de video confinado al recuadro */}
+        <div className="absolute inset-0 overflow-hidden rounded-2xl">
+          <div id={containerId} className="w-full h-full object-cover" />
+        </div>
 
         {/* Overlay cuando el producto ya fue validado y espera confirmación de cantidad */}
         {isPaused && (
-          <div className="absolute inset-0 bg-emerald-950/75 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center z-10 animate-fadeIn pointer-events-none">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center mb-2 shadow-[0_0_25px_rgba(16,185,129,0.5)]">
-              <CheckCircle className="w-10 h-10 text-emerald-400 animate-pulse" />
+          <div className="absolute inset-0 rounded-2xl bg-emerald-950/85 backdrop-blur-xs flex flex-col items-center justify-center p-3 text-center z-20 animate-fadeIn pointer-events-none">
+            <div className="w-12 h-12 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center mb-1 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+              <CheckCircle className="w-7 h-7 text-emerald-400 animate-pulse" />
             </div>
-            <span className="text-white font-bubble font-black text-sm uppercase tracking-wider">
+            <span className="text-white font-bubble font-black text-xs uppercase tracking-wider">
               ¡Código Validado!
             </span>
-            <span className="text-emerald-200 text-xs mt-0.5 font-mono font-bold">
+            <span className="text-emerald-200 text-[11px] font-mono font-bold">
               {expectedSku}
             </span>
-            <span className="text-emerald-300/90 text-[11px] mt-1 font-bubble">
-              Pulsa el botón grande abajo para confirmar cantidad
-            </span>
           </div>
         )}
 
-        {/* Cuadrito de Escaneo Puntiagudo con Esquinas Amarillas */}
-        {!cameraError && !isStarting && !isPaused && (
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-3">
-            <div
-              className={`relative w-[88%] max-w-[340px] h-32 sm:h-36 rounded-2xl border-2 transition-all duration-200 flex items-center justify-center ${
-                feedback?.type === 'success'
-                  ? 'border-emerald-400 bg-emerald-500/15 shadow-[0_0_30px_rgba(16,185,129,0.5)]'
-                  : feedback?.type === 'error'
-                  ? 'border-rose-500 bg-rose-500/15 shadow-[0_0_30px_rgba(244,63,94,0.5)]'
-                  : 'border-fio-pink border-dashed shadow-[0_0_20px_rgba(236,72,153,0.35)]'
-              }`}
-            >
-              {/* Esquinas Guía Amarillas Puntiagudas */}
-              <div className="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-fio-yellow rounded-tl-lg" />
-              <div className="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-fio-yellow rounded-tr-lg" />
-              <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-fio-yellow rounded-bl-lg" />
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-fio-yellow rounded-br-lg" />
+        {/* Esquinas Guía Amarillas Puntiagudas */}
+        <div className="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-fio-yellow rounded-tl-lg pointer-events-none z-10" />
+        <div className="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-fio-yellow rounded-tr-lg pointer-events-none z-10" />
+        <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-fio-yellow rounded-bl-lg pointer-events-none z-10" />
+        <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-fio-yellow rounded-br-lg pointer-events-none z-10" />
 
-              {/* Retículo central */}
-              <div className="w-2 h-2 rounded-full bg-fio-yellow/80 shadow-[0_0_8px_#facc15]" />
+        {/* Retículo central */}
+        <div className="absolute w-2 h-2 rounded-full bg-fio-yellow/80 shadow-[0_0_8px_#facc15] pointer-events-none z-10" />
 
-              {/* Línea Láser Animada en Movimiento Centrada al 50% */}
-              <div className="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_10px_#ef4444] animate-pulse top-1/2 -translate-y-1/2" />
-            </div>
-          </div>
-        )}
+        {/* Línea Láser Animada en Movimiento Centrada al 50% */}
+        <div className="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_10px_#ef4444] animate-pulse top-1/2 -translate-y-1/2 pointer-events-none z-10" />
 
         {/* Pantalla de Carga de Cámara */}
         {isStarting && (
-          <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center gap-2 p-4 text-center z-10">
+          <div className="absolute inset-0 rounded-2xl bg-slate-950 flex flex-col items-center justify-center gap-2 p-3 text-center z-20">
             <RefreshCw className="w-7 h-7 text-fio-pink animate-spin" />
           </div>
         )}
 
         {/* Mensaje de Error de Cámara */}
         {cameraError && (
-          <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-4 text-center gap-2 z-10">
-            <AlertTriangle className="w-8 h-8 text-amber-400" />
-            <p className="text-xs text-amber-200 font-bubble font-medium max-w-xs">
+          <div className="absolute inset-0 rounded-2xl bg-slate-950/95 flex flex-col items-center justify-center p-3 text-center gap-2 z-20">
+            <AlertTriangle className="w-7 h-7 text-amber-400" />
+            <p className="text-xs text-amber-200 font-bubble font-medium max-w-xs leading-tight">
               {cameraError}
             </p>
             <button
@@ -347,10 +340,10 @@ export const PickingLiveBarcodeScanner: React.FC<PickingLiveBarcodeScannerProps>
                 isStartingRef.current = false;
                 startScanner(facingMode);
               }}
-              className="mt-1 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+              className="mt-1 px-3 py-1 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Reintentar Conexión</span>
+              <span>Reintentar</span>
             </button>
           </div>
         )}

@@ -17,6 +17,14 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.70 - Confinamiento Estricto de Visión de Cámara al Recuadro con Esquinas Amarillas
+- [x] **Aislamiento Óptico Total del Sensor ([CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx), [PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
+  - La cámara en vivo ahora se muestra única y exclusivamente dentro del recuadro punteado delimitado por las 4 esquinas amarillas.
+  - Fuera de dicho recuadro, el stream de video queda completamente oculto, dejando visible únicamente el fondo oscuro limpio y sin sangrado de video.
+  - El visor utiliza recorte interno geométrico (`overflow-hidden rounded-2xl / rounded-3xl`) con esquinas amarillas y línea láser perfectamente sincronizadas sobre el recuadro.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.70` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.69 - Purificación Visual del Modal Escáner de Productos (Solo Visor Central)
 - [x] **Eliminación Quirúrgica de Cabecera y Pie Manual ([CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx)):**
   - Removida la cabecera superior completa que contenía el título "Escáner de Productos", subtítulo, botón de linterna y botón de cerrar.
