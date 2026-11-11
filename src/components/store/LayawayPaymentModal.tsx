@@ -53,18 +53,26 @@ export const LayawayPaymentModal: React.FC<LayawayPaymentModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [completedSummary, setCompletedSummary] = useState<{
+    paidAmount: number;
+    totalAbonadoAcumulado: number;
+    saldoPendiente: number;
+    paymentMethod: string;
+    reference?: string;
+  } | null>(null);
 
-  // Sincronización reactiva inmediata cada vez que se abre el modal o cambia el saldo
+  // Inicialización controlada únicamente al abrir el modal (evita descalibrar el resumen al cambiar los props)
   useEffect(() => {
     if (isOpen) {
       const initial = Math.min(remainingDebt, 5000);
       setAmount(initial);
       setCustomAmountText(initial > 0 ? String(initial) : '');
       setIsSuccess(false);
+      setCompletedSummary(null);
       setErrorMessage('');
       setReference('');
     }
-  }, [isOpen, remainingDebt]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -123,10 +131,15 @@ export const LayawayPaymentModal: React.FC<LayawayPaymentModalProps> = ({
       return;
     }
 
+    // Capturar instantánea inmutable del cálculo justo antes de la mutación de estado
+    const paidAmount = amount;
+    const projectedTotalPaid = downPayment + paidAmount;
+    const projectedNewDebt = Math.max(0, remainingDebt - paidAmount);
+
     setIsSubmitting(true);
     try {
       const ok = await addLayawayPayment(order.id, {
-        amount,
+        amount: paidAmount,
         paymentMethod,
         reference: reference.trim(),
         notes: notes.trim(),
@@ -134,6 +147,13 @@ export const LayawayPaymentModal: React.FC<LayawayPaymentModalProps> = ({
       });
 
       if (ok) {
+        setCompletedSummary({
+          paidAmount,
+          totalAbonadoAcumulado: projectedTotalPaid,
+          saldoPendiente: projectedNewDebt,
+          paymentMethod,
+          reference: reference.trim(),
+        });
         setIsSuccess(true);
         playBubblePopSound();
         try {
@@ -153,13 +173,18 @@ export const LayawayPaymentModal: React.FC<LayawayPaymentModalProps> = ({
     }
   };
 
+  const successSaldo = completedSummary ? completedSummary.saldoPendiente : newBalance;
+  const successPaid = completedSummary ? completedSummary.paidAmount : amount;
+  const successMethod = completedSummary ? completedSummary.paymentMethod : paymentMethod;
+  const successRef = completedSummary ? completedSummary.reference : reference;
+
   const whatsappMessage = encodeURIComponent(
     `¡Hola Fiorella! 🌸 Acabo de realizar un abono de mi apartado en by.fio:\n\n` +
       `🏷️ *Número de Pedido:* ${cleanOrderNumber}\n` +
       `📦 *Artículo:* ${layawayItem?.name || 'Artículo Apartado'}\n` +
-      `💵 *Monto Abonado:* ${formatCRC(amount)}\n` +
-      `💳 *Método:* ${paymentMethod.toUpperCase()}${reference ? ` (Comprobante: #${reference})` : ''}\n` +
-      `⚠️ *Nuevo Saldo:* ${formatCRC(newBalance)}\n\n` +
+      `💵 *Monto Abonado:* ${formatCRC(successPaid)}\n` +
+      `💳 *Método:* ${successMethod.toUpperCase()}${successRef ? ` (Comprobante: #${successRef})` : ''}\n` +
+      `⚠️ *Nuevo Saldo:* ${formatCRC(successSaldo)}\n\n` +
       `¿Me confirmas la recepción por favor? ¡Muchas gracias!`
   );
 
@@ -222,11 +247,19 @@ export const LayawayPaymentModal: React.FC<LayawayPaymentModalProps> = ({
                 </div>
                 <div className="flex justify-between text-emerald-700 font-medium">
                   <span>Total abonado acumulado:</span>
-                  <strong>{formatCRC(downPayment + amount)}</strong>
+                  <strong>
+                    {formatCRC(
+                      completedSummary ? completedSummary.totalAbonadoAcumulado : downPayment
+                    )}
+                  </strong>
                 </div>
                 <div className="flex justify-between text-amber-900 font-bubble font-bold text-sm pt-1 border-t border-amber-200">
                   <span>Saldo pendiente:</span>
-                  <span>{newBalance === 0 ? '₡0 (100% Pagado)' : formatCRC(newBalance)}</span>
+                  <span>
+                    {(completedSummary ? completedSummary.saldoPendiente : remainingDebt) === 0
+                      ? '₡0 (100% Pagado)'
+                      : formatCRC(completedSummary ? completedSummary.saldoPendiente : remainingDebt)}
+                  </span>
                 </div>
               </div>
 

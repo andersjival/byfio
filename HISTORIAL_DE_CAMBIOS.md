@@ -1,3 +1,20 @@
+## [v4.19.94] - 2026-11-11
+
+### 🎯 Corrección Definitiva del Cálculo Inmutable en Modal de Abono y Tarjeta de Apartado
+- **Eliminación del Doble Débito/Crédito Reactivo (`LayawayPaymentModal.tsx`):**
+  - **Causa Raíz:** Al confirmar un abono, `AppContext` actualizaba inmediatamente el pedido en la base de datos local y reactiva. Cuando React renderizaba el modal de éxito, los nuevos props ya traían el saldo reducido (ej. ₡10 000 en vez de ₡15 000). El modal volvía a restar y sumar el abono (`remainingDebt - amount` y `downPayment + amount`), duplicando el efecto (mostrando erróneamente ₡5 000 en saldo pendiente y ₡40 000 abonados en vez de ₡10 000 y ₡35 000).
+  - **Solución Robusta con Instantánea Inmutable (`completedSummary`):** Se congela una instantánea inmutable de los saldos (`paidAmount`, `totalAbonadoAcumulado`, `saldoPendiente`) en el momento exacto en que el usuario presiona el botón. La pantalla de confirmación exitosa y el mensaje de WhatsApp utilizan esta instantánea fiel, garantizando 100% de precisión matemática.
+  - **Aislamiento del `useEffect`:** El reseteo del modal ahora depende exclusivamente del evento de apertura (`[isOpen]`), evitando que el cambio de saldo posterior a la transacción descalibre el estado del modal.
+- **Unificación de Fórmulas Matemáticas (`LayawayOrderCard.tsx`):**
+  - Se unificó la lógica de cálculo con la de `AdminLayawaysSection.tsx` y `functions/api/orders.ts`:
+    - `sumOfAbonos = payments.reduce(...)`
+    - `downPayment = payments.length > 0 ? initialCheckoutPayment + sumOfAbonos : ...`
+    - `totalAmount = order.layawayTotalAmount > 0 ? ...` (resuelto el bug donde `> downPayment` podía fallar si se pagaba el 100%).
+    - `remainingDebt = Math.max(0, totalAmount - downPayment)`.
+  - El historial desplegable de abonos ahora toma la lista consolidada `payments` garantizando total visibilidad de cada abono realizado.
+
+---
+
 ## [v4.19.93] - 2026-11-11
 
 ### 🔖 Notificaciones Adaptativas de Apartados en Modal de la Estrellita y Push Notifications

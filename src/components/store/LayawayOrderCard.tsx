@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Order } from '../../types';
+import { Order, LayawayPaymentRecord } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { calculateLayawayDaysRemaining } from '../../services/layawayReminderService';
@@ -45,39 +45,44 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
     : undefined;
   const catalogPrice = matchedProduct ? matchedProduct.price * (firstItem?.quantity || 1) : 0;
 
-  // 1. Monto abonado a la fecha (el anticipo o primer pago)
+  // 1. Pagos y abonos realizados
+  const payments: LayawayPaymentRecord[] =
+    Array.isArray(order.layawayPayments) && order.layawayPayments.length > 0
+      ? order.layawayPayments
+      : Array.isArray(layawayItem?.layawayPayments)
+      ? (layawayItem.layawayPayments as LayawayPaymentRecord[])
+      : [];
+
+  const sumOfAbonos = payments.reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+  const initialCheckoutPayment = Number(order.total) || 0;
+
+  // Monto total abonado a la fecha (anticipo de checkout + suma exacta de cada abono)
   const downPayment =
-    (order.layawayDownPaymentAmount && order.layawayDownPaymentAmount > 0 ? Number(order.layawayDownPaymentAmount) : 0) ||
-    (layawayItem?.layawayDownPaymentAmount && layawayItem.layawayDownPaymentAmount > 0 ? Number(layawayItem.layawayDownPaymentAmount) : 0) ||
-    Number(order.total) ||
-    0;
+    payments.length > 0
+      ? initialCheckoutPayment + sumOfAbonos
+      : ((order.layawayDownPaymentAmount && order.layawayDownPaymentAmount > 0
+          ? Number(order.layawayDownPaymentAmount)
+          : 0) ||
+        (layawayItem?.layawayDownPaymentAmount && layawayItem.layawayDownPaymentAmount > 0
+          ? Number(layawayItem.layawayDownPaymentAmount)
+          : 0) ||
+        initialCheckoutPayment);
 
-  // 2. Saldo pendiente que debe (extraído de los campos de apartado)
-  const explicitRemaining =
-    order.layawayRemainingAmount !== undefined && order.layawayRemainingAmount !== null && Number(order.layawayRemainingAmount) > 0
-      ? Number(order.layawayRemainingAmount)
-      : layawayItem?.layawayRemainingAmount !== undefined && layawayItem?.layawayRemainingAmount !== null && Number(layawayItem.layawayRemainingAmount) > 0
-      ? Number(layawayItem.layawayRemainingAmount)
-      : undefined;
-
-  // 3. Valor real del producto de contado
+  // Valor real del producto de contado
   let totalAmount =
-    (order.layawayTotalAmount && Number(order.layawayTotalAmount) > downPayment ? Number(order.layawayTotalAmount) : 0) ||
-    (layawayItem?.layawayTotalAmount && Number(layawayItem.layawayTotalAmount) > downPayment ? Number(layawayItem.layawayTotalAmount) : 0) ||
-    catalogPrice;
+    (order.layawayTotalAmount && Number(order.layawayTotalAmount) > 0 ? Number(order.layawayTotalAmount) : 0) ||
+    (layawayItem?.layawayTotalAmount && Number(layawayItem.layawayTotalAmount) > 0 ? Number(layawayItem.layawayTotalAmount) : 0) ||
+    catalogPrice ||
+    (Number(firstItem?.price) > initialCheckoutPayment ? Number(firstItem.price) : 0);
 
-  if (!totalAmount && explicitRemaining !== undefined) {
-    totalAmount = downPayment + explicitRemaining;
-  }
   if (!totalAmount) {
-    totalAmount = order.total;
+    totalAmount = downPayment + (Number(order.layawayRemainingAmount) || 0);
+  }
+  if (totalAmount < downPayment) {
+    totalAmount = downPayment;
   }
 
-  const remainingDebt =
-    explicitRemaining !== undefined
-      ? explicitRemaining
-      : Math.max(0, totalAmount - downPayment);
-
+  const remainingDebt = Math.max(0, totalAmount - downPayment);
   const isFullyPaid = remainingDebt <= 0;
 
   // Formato limpio del número de orden sin dobles '#'
@@ -300,7 +305,7 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
       </div>
 
       {/* Historial de Abonos Realizados */}
-      {order.layawayPayments && order.layawayPayments.length > 0 && (
+      {payments.length > 0 && (
         <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2 text-xs">
           <button
             type="button"
@@ -309,14 +314,14 @@ export const LayawayOrderCard: React.FC<LayawayOrderCardProps> = ({ order, onPri
           >
             <span className="flex items-center gap-1.5">
               <Receipt className="w-3.5 h-3.5 text-amber-600" />
-              <span>Historial de Abonos ({order.layawayPayments.length})</span>
+              <span>Historial de Abonos ({payments.length})</span>
             </span>
             <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isHistoryExpanded ? 'rotate-180' : ''}`} />
           </button>
 
           {isHistoryExpanded && (
             <div className="space-y-1.5 pt-1.5 border-t border-slate-200/70 animate-in fade-in">
-              {order.layawayPayments.map((p, idx) => (
+              {payments.map((p, idx) => (
                 <div
                   key={p.id || idx}
                   className="flex items-center justify-between py-1.5 px-2.5 rounded-xl bg-white border border-slate-200/70 text-[11px]"
