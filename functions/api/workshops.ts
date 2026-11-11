@@ -1,4 +1,4 @@
-﻿interface Env {
+interface Env {
   DB?: any;
 }
 
@@ -204,6 +204,8 @@ const mapRowToWorkshop = (r: WorkshopDbRow) => {
     takeHomeText: benefits.takeHomeText !== undefined ? benefits.takeHomeText : 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
     instructorName: benefits.instructorName || 'Fiorella Patricia Jara Gutiérrez (Fio)',
     instructorSubtitle: benefits.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+    waitlistWhatsappNumber: benefits.waitlistWhatsappNumber || '',
+    waitlistWhatsappLink: benefits.waitlistWhatsappLink || '',
     benefits: Array.isArray(benefits.benefits) && benefits.benefits.length > 0 ? benefits.benefits : [
       {
         id: 'ben-coffee',
@@ -341,6 +343,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       takeHomeText: data.takeHomeText || 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
       instructorName: data.instructorName || 'Fiorella Patricia Jara Gutiérrez (Fio)',
       instructorSubtitle: data.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+      waitlistWhatsappNumber: data.waitlistWhatsappNumber || '',
+      waitlistWhatsappLink: data.waitlistWhatsappLink || '',
     };
 
     if (context.env.DB) {
@@ -395,6 +399,8 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
       takeHomeText: data.takeHomeText !== undefined ? data.takeHomeText : 'Te llevás tu proyecto completo y terminado a casa el mismo día.',
       instructorName: data.instructorName || 'Fiorella Patricia Jara Gutiérrez (Fio)',
       instructorSubtitle: data.instructorSubtitle || 'Cupos estrictamente reducidos para garantizar atención personalizada y corrección técnica individual.',
+      waitlistWhatsappNumber: data.waitlistWhatsappNumber || '',
+      waitlistWhatsappLink: data.waitlistWhatsappLink || '',
     };
 
     if (context.env.DB) {

@@ -302,6 +302,14 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'store', adminTab: 'hub' };
   }
 
+  // Subruta limpia de lista de espera de talleres: /lista-espera/:id o /talleres/:id/lista-espera
+  const waitlistMatch = path.match(/^\/(?:talleres|taller)\/([^/?#]+)\/lista-espera/i) || path.match(/^\/lista-espera(?:\/([^/?#]+))?/i);
+  if (waitlistMatch || hash.includes('lista-espera') || seccionParam === 'lista-espera') {
+    const wsFromMatch = waitlistMatch?.[1] && waitlistMatch[1] !== 'undefined' ? decodeURIComponent(waitlistMatch[1]) : null;
+    const wsFromQuery = searchParams.get('taller');
+    return { route: 'workshop-waitlist', adminTab: 'hub', workshopId: wsFromMatch || wsFromQuery || null };
+  }
+
   // Subruta de taller individual: /talleres/:id o /taller/:id o ?taller=:id
   const wsMatch = path.match(/^\/(?:talleres|taller)\/([^/?#]+)/i);
   const tallerQuery = searchParams.get('taller');
@@ -334,6 +342,7 @@ export const parseRouteFromLocation = (): RouteInfo => {
       'catalogo',
       'workshops',
       'workshop-detail',
+      'workshop-waitlist',
       'precios',
       'login',
       'mi-cuenta',

@@ -1,4 +1,11 @@
-import { MetricsState, TrackedLink } from '../types';
+import { MetricsState, TrackedLink, RegisteredUserLike, AuthUser } from '../types';
+
+let lastLocalLikeMutationAt = 0;
+
+const getLikeUserKey = (user?: Pick<AuthUser, 'id' | 'email' | 'name'> | null): string => {
+  if (!user) return '';
+  return String(user.id || user.email || user.name || '').trim().toLowerCase();
+};
 
 const STORAGE_KEY = 'byfio_metrics_tracker_v1';
 
@@ -132,6 +139,7 @@ const INITIAL_METRICS_STATE: MetricsState = {
     },
   ],
   sections: DEFAULT_SECTIONS_INITIAL,
+  registeredLikes: [],
   lastVisitTimestamp: new Date().toISOString(),
 };
 
@@ -227,6 +235,10 @@ export const metricsTracker = {
 
         if (parsed.totalCartAdditions === undefined) {
           parsed.totalCartAdditions = 342;
+        }
+
+        if (!Array.isArray(parsed.registeredLikes)) {
+          parsed.registeredLikes = [];
         }
 
         // Garantizar migración de links antiguos
@@ -336,6 +348,12 @@ export const metricsTracker = {
               mobile: Math.max(remote.devices?.mobile || 0, local.devices?.mobile || 0),
             },
             trackedLinks: [...mergedLinks, ...extraLocalLinks],
+            registeredLikes:
+              Date.now() - lastLocalLikeMutationAt < 3500
+                ? local.registeredLikes || []
+                : Array.isArray(remote.registeredLikes)
+                ? remote.registeredLikes
+                : local.registeredLikes || [],
           };
 
           this.saveMetrics(mergedState);
@@ -573,6 +591,107 @@ export const metricsTracker = {
     }
 
     return state;
+  },
+
+  getRegisteredLikes(): RegisteredUserLike[] {
+    const list = this.getMetrics().registeredLikes;
+    return Array.isArray(list) ? list : [];
+  },
+
+  hasUserLiked(sectionKey: string, user?: Pick<AuthUser, 'id' | 'email' | 'name'> | null): boolean {
+    const userKey = getLikeUserKey(user);
+    if (!userKey) return false;
+    const likeId = `${userKey}::${sectionKey || 'home'}`;
+    return this.getRegisteredLikes().some((l) => l && l.id === likeId);
+  },
+
+  toggleRegisteredLike(
+    sectionKey: string,
+    user?: AuthUser | null
+  ): { liked: boolean; state: MetricsState } {
+    const state = this.getMetrics();
+    const userKey = getLikeUserKey(user);
+    if (!user || !userKey) {
+      return { liked: false, state };
+    }
+
+    const secKey = sectionKey || 'home';
+    const likeId = `${userKey}::${secKey}`;
+    if (!Array.isArray(state.registeredLikes)) state.registeredLikes = [];
+    const existingIdx = state.registeredLikes.findIndex((l) => l && l.id === likeId);
+    const nextLiked = existingIdx === -1;
+
+    if (!state.sections[secKey]) {
+      state.sections[secKey] = { views: 1, likes: 0, timeSpentAvgMinutes: 2.0 };
+    }
+
+    if (nextLiked) {
+      state.registeredLikes.unshift({
+        id: likeId,
+        userId: String(user.id || userKey),
+        userName: user.name || 'Usuario Registrado',
+        userEmail: user.email,
+        userRole: user.role,
+        sectionKey: secKey,
+        createdAt: new Date().toISOString(),
+      });
+      state.sections[secKey].likes = (state.sections[secKey].likes || 0) + 1;
+    } else {
+      state.registeredLikes.splice(existingIdx, 1);
+      state.sections[secKey].likes = Math.max(0, (state.sections[secKey].likes || 1) - 1);
+    }
+
+    state.lastVisitTimestamp = new Date().toISOString();
+    const activeRef = getActiveCampaignRef();
+    if (nextLiked && activeRef) {
+      const link = state.trackedLinks.find((l) => l.slug.toLowerCase() === activeRef);
+      if (link) {
+        if (!link.sectionsVisited) link.sectionsVisited = {};
+        if (!link.sectionsVisited[secKey]) {
+          link.sectionsVisited[secKey] = { views: 1, likes: 1, timeSpentAvgMinutes: 2.0 };
+        } else {
+          link.sectionsVisited[secKey].likes += 1;
+        }
+      }
+    }
+
+    lastLocalLikeMutationAt = Date.now();
+    this.saveMetrics(state);
+    notifyMetricsUpdated();
+
+    if (typeof window !== 'undefined') {
+      fetch('/api/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'toggle_registered_like',
+          route: secKey,
+          liked: nextLiked,
+          slug: activeRef,
+          user: {
+            id: user.id || userKey,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+        }),
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((resData) => {
+          if (resData?.metrics && Date.now() - lastLocalLikeMutationAt > 500) {
+            this.saveMetrics({
+              ...state,
+              registeredLikes: Array.isArray(resData.metrics.registeredLikes)
+                ? resData.metrics.registeredLikes
+                : state.registeredLikes,
+            });
+            notifyMetricsUpdated();
+          }
+        })
+        .catch(() => {});
+    }
+
+    return { liked: nextLiked, state };
   },
 
   createTrackedLink(name: string, targetRoute: string, targetLabel?: string, customSlug?: string): TrackedLink {

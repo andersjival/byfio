@@ -126,6 +126,7 @@ const getInitialMetricsState = () => ({
     },
   ],
   sections: DEFAULT_SECTIONS_INITIAL,
+  registeredLikes: [],
   lastVisitTimestamp: new Date().toISOString(),
 });
 
@@ -200,6 +201,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     if (!currentState.sections) currentState.sections = { ...DEFAULT_SECTIONS_INITIAL };
     if (!currentState.devices) currentState.devices = { pc: 0, mobile: 0 };
     if (!Array.isArray(currentState.trackedLinks)) currentState.trackedLinks = [];
+    if (!Array.isArray(currentState.registeredLikes)) currentState.registeredLikes = [];
 
     if (action === 'record_visit') {
       const { slug, route, isMobile, isNewSession, isFreshClick } = body;
@@ -285,6 +287,55 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
           targetLink.cartAdditions = (targetLink.cartAdditions || 0) + qty;
         }
       }
+    } else if (action === 'toggle_registered_like') {
+      const { route, user, slug, liked } = body;
+      if (!user || (!user.id && !user.email && !user.name)) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Solo usuarios registrados pueden dar Me Gusta' }),
+          { status: 403, headers: CORS_HEADERS }
+        );
+      }
+      const secKey = route || 'home';
+      const userKey = String(user.id || user.email || user.name).trim().toLowerCase();
+      const likeId = `${userKey}::${secKey}`;
+      const existsIdx = currentState.registeredLikes.findIndex((l: any) => l && l.id === likeId);
+      const shouldAdd = typeof liked === 'boolean' ? liked : existsIdx === -1;
+
+      if (!currentState.sections[secKey]) {
+        currentState.sections[secKey] = { views: 1, likes: 0, timeSpentAvgMinutes: 2.0 };
+      }
+
+      if (shouldAdd && existsIdx === -1) {
+        currentState.registeredLikes.unshift({
+          id: likeId,
+          userId: String(user.id || userKey),
+          userName: String(user.name || 'Usuario Registrado'),
+          userEmail: user.email ? String(user.email) : undefined,
+          userRole: user.role || 'customer',
+          sectionKey: secKey,
+          createdAt: new Date().toISOString(),
+        });
+        currentState.sections[secKey].likes = (currentState.sections[secKey].likes || 0) + 1;
+        if (slug) {
+          const cleanSlug = String(slug).toLowerCase().trim();
+          const targetLink = currentState.trackedLinks.find(
+            (l: any) => l.slug && l.slug.toLowerCase() === cleanSlug
+          );
+          if (targetLink) {
+            if (!targetLink.sectionsVisited) targetLink.sectionsVisited = {};
+            if (!targetLink.sectionsVisited[secKey]) {
+              targetLink.sectionsVisited[secKey] = { views: 1, likes: 1, timeSpentAvgMinutes: 2.0 };
+            } else {
+              targetLink.sectionsVisited[secKey].likes = (targetLink.sectionsVisited[secKey].likes || 0) + 1;
+            }
+          }
+        }
+      } else if (!shouldAdd && existsIdx >= 0) {
+        currentState.registeredLikes.splice(existsIdx, 1);
+        currentState.sections[secKey].likes = Math.max(0, (currentState.sections[secKey].likes || 1) - 1);
+      }
+
+      currentState.lastVisitTimestamp = new Date().toISOString();
     } else if (action === 'record_like') {
       const { route, slug } = body;
       const secKey = route || 'home';

@@ -14,6 +14,7 @@ import { StorePage } from '../../components/store/StorePage';
 import { CatalogPage } from '../../components/store/CatalogPage';
 import { WorkshopsPage } from '../../components/store/WorkshopsPage';
 import { WorkshopDetailPage } from '../../components/store/WorkshopDetailPage';
+import { WorkshopWaitlistPage } from '../../components/store/WorkshopWaitlistPage';
 import { PricingStickersSection } from '../../components/store/PricingStickersSection';
 import { MyAccountPage } from '../../components/store/MyAccountPage';
 import { CartDrawer } from '../../components/store/CartDrawer';
@@ -77,6 +78,14 @@ export const WebShell: React.FC<WebShellProps> = ({
       onNavigate('home');
     }
   };
+
+  if (currentRoute === 'workshop-waitlist' && isModuleEnabled('workshops')) {
+    return (
+      <ErrorBoundary fallbackTitle="Inconveniente en la lista de espera">
+        <WorkshopWaitlistPage workshopId={selectedWorkshopId} onNavigate={onNavigate} />
+      </ErrorBoundary>
+    );
+  }
 
   return (
     <div className="relative min-h-screen min-h-[100dvh] flex flex-col justify-between selection:bg-fio-300 selection:text-fio-900 text-slate-800 overflow-x-hidden w-full max-w-full">

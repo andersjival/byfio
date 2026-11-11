@@ -1,5 +1,4 @@
-﻿import React, { useState } from 'react';
-import { metricsTracker } from '../../services/metricsTracker';
+import React, { useState } from 'react';
 
 interface BrandLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'hero';
@@ -29,10 +28,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     e.stopPropagation();
     setIsPopped(true);
     try {
-      const currentRoute = typeof window !== 'undefined'
-        ? (window.location.pathname.replace(/^\//, '').split('/')[0] || 'home')
-        : 'home';
-      metricsTracker.recordLike(currentRoute);
+      window.dispatchEvent(new CustomEvent('byfio_heart_like_click'));
     } catch {
       // Ignorar
     }

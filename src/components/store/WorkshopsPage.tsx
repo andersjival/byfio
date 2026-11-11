@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Workshop, AppRoute } from '../../types';
 import { formatCRC } from '../../utils/formatters';
@@ -270,14 +270,25 @@ export const WorkshopsPage: React.FC<WorkshopsPageProps> = ({ onNavigate }) => {
                       )}
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => onNavigate('workshop-detail', undefined, ws.id)}
-                      className="neu-btn-primary flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold text-white shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
-                    >
-                      <span>Inscribirme</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
+                    {isFull ? (
+                      <button
+                        type="button"
+                        onClick={() => onNavigate('workshop-waitlist', undefined, ws.id)}
+                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bubble font-bold text-white bg-gradient-to-r from-amber-500 to-fio-pink hover:from-amber-600 hover:to-pink-600 shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all cursor-pointer"
+                      >
+                        <span>Ingresar a la lista de espera</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => onNavigate('workshop-detail', undefined, ws.id)}
+                        className="neu-btn-primary flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bubble font-bold text-white shadow-neuBtn hover:shadow-neuBtnHover active:scale-95 transition-all"
+                      >
+                        <span>Inscribirme</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

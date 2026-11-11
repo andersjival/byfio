@@ -8,7 +8,7 @@ import { formatCRC } from '../../utils/formatters';
 import { Star, ArrowRight, Calendar, ShoppingBag, Heart, Check } from 'lucide-react';
 
 interface HomePageProps {
-  onNavigate: (route: AppRoute) => void;
+  onNavigate: (route: AppRoute, targetTab?: any, wsId?: string) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
@@ -82,9 +82,16 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               <div>
                 <div className="relative h-44 rounded-2xl overflow-hidden bg-[#ECEEF2] shadow-neuInset mb-3">
                   <img src={ws.image} alt={ws.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                  <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-slate-700 shadow-neuBtn">
-                    {ws.modality}
-                  </span>
+                  <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
+                    <span className="px-3 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-slate-700 shadow-neuBtn">
+                      {ws.modality}
+                    </span>
+                    {ws.spotsAvailable <= 0 && (
+                      <span className="px-2.5 py-1 rounded-full bg-rose-500 text-white text-[10px] font-bold shadow-neuBtn">
+                        Cupos agotados
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-1.5 text-[11px] text-fio-700 font-semibold mb-1">
                   <Calendar className="w-3.5 h-3.5" />
@@ -102,13 +109,23 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 <span className="font-bubble text-lg font-bold text-slate-900">
                   {formatCRC(ws.price)}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('workshops')}
-                  className="px-4 py-2 rounded-xl neu-btn-primary text-xs font-bubble font-bold active:scale-95 transition-all"
-                >
-                  Ver cupos
-                </button>
+                {ws.spotsAvailable <= 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('workshop-waitlist', undefined, ws.id)}
+                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-fio-pink text-white text-xs font-bubble font-bold active:scale-95 transition-all cursor-pointer"
+                  >
+                    Ingresar a la lista de espera
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('workshops')}
+                    className="px-4 py-2 rounded-xl neu-btn-primary text-xs font-bubble font-bold active:scale-95 transition-all"
+                  >
+                    Ver cupos
+                  </button>
+                )}
               </div>
             </div>
           ))}

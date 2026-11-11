@@ -1,3 +1,16 @@
+## [v4.19.108] - 2026-11-11
+
+### ❤️ Botón Me Gusta Exclusivo para Usuarios Registrados, Rótulo Estrellita y Contador Superior Admin
+- **Me Gusta Verificado y Toggle por Usuario Registrado ([`Navbar.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx), [`BrandLogo.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/BrandLogo.tsx), [`metricsTracker.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/metricsTracker.ts), [`metrics.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/metrics.ts), [`types/index.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts))**:
+  - Solo usuarios registrados/autenticados (`currentUser`) pueden registrar o alternar `Me Gusta` por sección, persistido en D1 (`registeredLikes` en `global_metrics`).
+- **Rótulo de Estrellita para No Registrados ([`LikeRegisterStarModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LikeRegisterStarModal.tsx))**:
+  - Al pulsar `Me Gusta` sin registro/sesión, emerge el rótulo animado con la estrellita invitando a registrarse con el mensaje oficial y acceso directo al registro.
+- **Contador en Parte Superior del Admin y Polling Inteligente ([`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx), [`RegisteredLikesModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredLikesModal.tsx), [`useRegisteredLikes.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/useRegisteredLikes.ts), [`useSmartPolling.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/useSmartPolling.ts))**:
+  - Agregado indicador superior en barra de Admin/Superadmin y tarjeta superior en `AdminHeader` con total de Me Gusta de usuarios registrados y modal de detalle.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.108`.
+
+---
+
 ## [v4.19.107] - 2026-11-11
 
 ### 🎯 Selector Compacto de Proveedor y Optimización de Espacio en Ingreso de Pedido

@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Workshop, AppRoute } from '../../types';
 import { formatCRC, getWhatsAppLink } from '../../utils/formatters';
@@ -525,21 +525,17 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                 <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/60 text-amber-800 text-xs">
                   <p className="font-bold">¡Cupos agotados para esta fecha!</p>
                   <p className="mt-1 text-amber-700">
-                    Escribile a Fio por WhatsApp para anotarte en la lista de espera o consultar la fecha de la próxima edición.
+                    Únete a la lista de espera oficial para recibir notificación automática por correo electrónico y WhatsApp apenas se libere un cupo.
                   </p>
                 </div>
-                <a
-                  href={getWhatsAppLink(
-                    '64004640',
-                    `Hola Fio! Vi que los cupos para "${workshop.title}" están agotados. Me gustaría saber cuándo abrís la próxima fecha.`
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md transition-all"
+                <button
+                  type="button"
+                  onClick={() => onNavigate('workshop-waitlist', undefined, workshop.id)}
+                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-fio-pink hover:from-amber-600 hover:to-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg active:scale-95 transition-all cursor-pointer"
                 >
-                  <Phone className="w-4 h-4" />
-                  <span>Avisarme para la Próxima Fecha</span>
-                </a>
+                  <Users className="w-4 h-4" />
+                  <span>Ingresar a la lista de espera</span>
+                </button>
               </div>
             ) : (
               /* Caso: Cupos Disponibles - Formulario Directo */

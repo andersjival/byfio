@@ -3,9 +3,11 @@ import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
 import { AdminDesignSettingsModal } from './AdminDesignSettingsModal';
+import { RegisteredLikesModal } from './RegisteredLikesModal';
+import { useRegisteredLikes } from '../../hooks/useRegisteredLikes';
 import {
   Package, AlertTriangle, ShoppingCart, RefreshCw,
-  FileText, Palette, DollarSign, Settings, Smartphone
+  FileText, Palette, DollarSign, Settings, Smartphone, Heart
 } from 'lucide-react';
 
 import { AppRoute } from '../../types';
@@ -29,6 +31,8 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
     logoutUser,
   } = useApp();
   const [internalDesignModalOpen, setInternalDesignModalOpen] = useState(false);
+  const [showLikesModal, setShowLikesModal] = useState(false);
+  const { registeredLikes, totalRegisteredLikes, refreshRemote } = useRegisteredLikes({ syncRemote: true });
 
   const isAdminOrSuperadmin = !!currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin);
 
@@ -128,7 +132,26 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
       )}
 
       {/* KPI Cards Compactas */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        {isAdminOrSuperadmin && (
+          <button
+            type="button"
+            onClick={() => setShowLikesModal(true)}
+            className="bg-gradient-to-br from-pink-50/90 to-white hover:from-pink-100/80 hover:to-pink-50/40 rounded-2xl p-3 border border-pink-200/90 shadow-xs flex items-center gap-2.5 text-left transition-all active:scale-95 cursor-pointer"
+            title="Ver Me Gusta de usuarios registrados"
+          >
+            <div className="p-2 rounded-xl bg-pink-100 text-fio-pink shrink-0">
+              <Heart className="w-4 h-4 fill-fio-pink text-fio-pink" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold text-pink-700 truncate">Me Gusta Web</p>
+              <div className="flex items-baseline gap-1.5">
+                <h3 className="text-lg font-bubble font-bold text-purple-950">{totalRegisteredLikes}</h3>
+                <span className="text-[9px] text-pink-600 font-bold">registrados</span>
+              </div>
+            </div>
+          </button>
+        )}
         {/* Pedidos en Cola */}
         <div className="bg-white rounded-2xl p-3 border border-fio-200/70 shadow-xs flex items-center gap-2.5">
           <div className="p-2 rounded-xl bg-purple-100 text-fio-700 shrink-0">
@@ -194,6 +217,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
           onClose={() => setInternalDesignModalOpen(false)}
         />
       )}
+      <RegisteredLikesModal
+        isOpen={showLikesModal}
+        onClose={() => setShowLikesModal(false)}
+        registeredLikes={registeredLikes}
+        onRefresh={refreshRemote}
+      />
     </div>
   );
 };

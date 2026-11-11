@@ -9,8 +9,14 @@ import {
   SuperadminModuleConfig, SuperadminSubFeature, AgendaItem, AgendaStatus,
   Supplier, SupplierOrder, SupplierOrderStatus, DailyClosingRecord, ProposalAcceptance,
   InventoryAdjustmentRecord, ShelfInventoryState, ShelfInventoryStatus,
-  SweepLoadMode, SweepEntryStatus, InventorySweepEntry
+  SweepLoadMode, SweepEntryStatus, InventorySweepEntry,
+  WorkshopWaitlistEntry, WorkshopWaitlistSettings
 } from '../types';
+import {
+  DEFAULT_WAITLIST_SETTINGS,
+  resolveWaitlistWhatsappTarget,
+  sortWaitlistFifo,
+} from '../utils/workshopWaitlist';
 import { INITIAL_PRODUCTS, INITIAL_WORKSHOPS, INITIAL_ORDERS, INITIAL_SINPE_TRANSACTIONS, INITIAL_SINPE_SETTINGS } from '../utils/seedData';
 import { INITIAL_PRICING_DATA } from '../utils/pricingSeedData';
 import { INITIAL_AGENDA_ITEMS, AGENDA_STORAGE_KEY } from '../utils/agendaData';
@@ -349,6 +355,20 @@ interface AppContextType {
   updateWorkshop: (wsId: string, updatedData: Partial<Workshop>) => void;
   deleteWorkshop: (wsId: string) => void;
   resetWorkshopsToDefaults: () => Promise<void>;
+  workshopWaitlist: WorkshopWaitlistEntry[];
+  workshopWaitlistSettings: WorkshopWaitlistSettings;
+  joinWorkshopWaitlist: (payload: {
+    workshop: Workshop;
+    name: string;
+    email: string;
+    phone: string;
+    idCard?: string;
+    address?: string;
+  }) => Promise<{ entry: WorkshopWaitlistEntry; position: number; emailDispatch?: { sent: boolean; provider: string; error?: string } }>;
+  saveWorkshopWaitlistSettings: (settings: WorkshopWaitlistSettings) => Promise<void>;
+  notifyWorkshopWaitlistSpotOpened: (workshopId: string, entryId?: string) => Promise<{ notifiedCount: number; emailSentCount: number }>;
+  removeWorkshopWaitlistEntry: (entryId: string) => void;
+  refreshWorkshopWaitlist: () => Promise<void>;
   editingWorkshop: Workshop | null;
   setEditingWorkshop: (ws: Workshop | null) => void;
   bookWorkshopDirect: (
@@ -395,7 +415,8 @@ interface AppContextType {
     idCard?: string,
     address?: string,
     lat?: number,
-    lng?: number
+    lng?: number,
+    options?: { skipWelcomeModal?: boolean }
   ) => { success: boolean; error?: string; user?: AuthUser };
   resetPassword: (email: string, newPass: string) => { success: boolean; error?: string };
   logoutUser: () => void;
@@ -568,6 +589,8 @@ const STORAGE_KEYS = {
   SHELF_INVENTORY_STATES: 'byfio_shelf_inventory_states_v1',
   SWEEP_ENTRIES: 'byfio_inventory_sweep_entries_v1',
   SWEEP_LOAD_MODE: 'byfio_sweep_load_mode_v1',
+  WORKSHOP_WAITLIST: 'byfio_workshop_waitlist_v1',
+  WORKSHOP_WAITLIST_SETTINGS: 'byfio_workshop_waitlist_settings_v1',
 };
 
 // Canal de difusión en tiempo real entre pestañas del navegador (0ms latencia para inventario y pedidos)
@@ -637,6 +660,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const initial = deepSanitize(INITIAL_WORKSHOPS);
     try { localStorage.setItem(STORAGE_KEYS.WORKSHOPS, JSON.stringify(initial)); } catch {}
     return initial;
+  });
+
+  const [workshopWaitlist, setWorkshopWaitlist] = useState<WorkshopWaitlistEntry[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.WORKSHOP_WAITLIST);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return sortWaitlistFifo(deepSanitize(parsed));
+      }
+    } catch {}
+    return [];
+  });
+
+  const [workshopWaitlistSettings, setWorkshopWaitlistSettings] = useState<WorkshopWaitlistSettings>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.WORKSHOP_WAITLIST_SETTINGS);
+      if (saved) return { ...DEFAULT_WAITLIST_SETTINGS, ...JSON.parse(saved) };
+    } catch {}
+    return { ...DEFAULT_WAITLIST_SETTINGS };
   });
 
   // Serializador ligero para almacenamiento local de pedidos (evita cuota excedida omitiendo base64 gigantes)
@@ -2926,7 +2968,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     idCardInput?: string,
     addressInput?: string,
     latInput?: number,
-    lngInput?: number
+    lngInput?: number,
+    options?: { skipWelcomeModal?: boolean }
   ) => {
     const cleanEmail = emailInput.trim().toLowerCase().replace(/[\u200B-\u200D\uFEFF]/g, '');
     const cleanPass = passwordInput.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
@@ -2979,11 +3022,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentUser(customer);
       writeScopedAuthUser('web', customer);
       if (appScope !== 'web') writeScopedAuthUser(appScope, customer);
-      setWelcomeStarModal({
-        isOpen: true,
-        userName: customer.name,
-        email: customer.email || '',
-      });
+      if (!options?.skipWelcomeModal) {
+        setWelcomeStarModal({
+          isOpen: true,
+          userName: customer.name,
+          email: customer.email || '',
+        });
+      }
       return { success: true, user: customer };
     } catch {
       return { success: false, error: 'Error al registrar usuario.' };
@@ -3392,6 +3437,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               }
               return prev;
             });
+          }
+        })
+        .catch(() => {});
+
+      // 2c. Sincronizar lista de espera y configuración de WhatsApp desde D1
+      fetch('/api/workshop-waitlist')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data?.entries)) {
+            const ordered = sortWaitlistFifo(deepSanitize(data.entries));
+            setWorkshopWaitlist(ordered);
+            try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST, JSON.stringify(ordered)); } catch {}
+          }
+          if (data?.settings) {
+            const merged = { ...DEFAULT_WAITLIST_SETTINGS, ...deepSanitize(data.settings) };
+            setWorkshopWaitlistSettings(merged);
+            try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST_SETTINGS, JSON.stringify(merged)); } catch {}
           }
         })
         .catch(() => {});
@@ -4905,11 +4967,175 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
   };
 
+  const notifyWorkshopWaitlistSpotOpened = async (workshopId: string, entryId?: string) => {
+    const ws = workshops.find((w) => w.id === workshopId);
+    const whatsappTarget = resolveWaitlistWhatsappTarget(ws, workshopWaitlistSettings);
+    const nowIso = new Date().toISOString();
+
+    setWorkshopWaitlist((prev) => {
+      const next = prev.map((entry) => {
+        if (entryId ? entry.id === entryId : entry.workshopId === workshopId && entry.status === 'waiting') {
+          return { ...entry, status: 'notified' as const, notifiedAt: nowIso, spotNotificationSent: true };
+        }
+        return entry;
+      });
+      try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST, JSON.stringify(next)); } catch {}
+      return next;
+    });
+
+    try {
+      const res = await fetch('/api/workshop-waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'notify_spot_opened',
+          workshopId,
+          entryId,
+          workshopTitle: ws?.title,
+          workshopDate: ws?.date,
+          whatsappUrl: whatsappTarget.url,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          notifiedCount: Number(data?.notifiedCount) || 0,
+          emailSentCount: Number(data?.emailSentCount) || 0,
+        };
+      }
+    } catch {}
+    return { notifiedCount: 0, emailSentCount: 0 };
+  };
+
+  const refreshWorkshopWaitlist = useCallback(async () => {
+    try {
+      const res = await fetch('/api/workshop-waitlist');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data?.entries)) {
+        const ordered = sortWaitlistFifo(deepSanitize(data.entries));
+        setWorkshopWaitlist(ordered);
+        try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST, JSON.stringify(ordered)); } catch {}
+      }
+      if (data?.settings) {
+        const merged = { ...DEFAULT_WAITLIST_SETTINGS, ...deepSanitize(data.settings) };
+        setWorkshopWaitlistSettings(merged);
+        try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST_SETTINGS, JSON.stringify(merged)); } catch {}
+      }
+    } catch {}
+  }, []);
+
+  const joinWorkshopWaitlist = async (payload: {
+    workshop: Workshop;
+    name: string;
+    email: string;
+    phone: string;
+    idCard?: string;
+    address?: string;
+  }) => {
+    const cleanEmail = payload.email.trim().toLowerCase();
+    const whatsappTarget = resolveWaitlistWhatsappTarget(payload.workshop, workshopWaitlistSettings);
+    const localEntry: WorkshopWaitlistEntry = {
+      id: `wl-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      workshopId: payload.workshop.id,
+      workshopTitle: payload.workshop.title,
+      workshopDate: payload.workshop.date,
+      name: payload.name.trim(),
+      email: cleanEmail,
+      phone: payload.phone.trim(),
+      idCard: payload.idCard?.trim() || '',
+      address: payload.address?.trim() || '',
+      createdAt: new Date().toISOString(),
+      status: 'waiting',
+      emailSent: false,
+      spotNotificationSent: false,
+    };
+
+    try {
+      const res = await fetch('/api/workshop-waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'join',
+          ...localEntry,
+          whatsappUrl: whatsappTarget.url,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const finalEntry: WorkshopWaitlistEntry = deepSanitize(data?.entry || localEntry);
+        const position = Number(data?.position) || 1;
+        setWorkshopWaitlist((prev) => {
+          const deduped = prev.filter(
+            (e) =>
+              e.id !== finalEntry.id &&
+              !(e.workshopId === finalEntry.workshopId && e.email.toLowerCase() === finalEntry.email.toLowerCase())
+          );
+          const next = sortWaitlistFifo([...deduped, finalEntry]);
+          try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST, JSON.stringify(next)); } catch {}
+          return next;
+        });
+        if (data?.settings) {
+          const merged = { ...DEFAULT_WAITLIST_SETTINGS, ...deepSanitize(data.settings) };
+          setWorkshopWaitlistSettings(merged);
+          try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST_SETTINGS, JSON.stringify(merged)); } catch {}
+        }
+        return { entry: finalEntry, position, emailDispatch: data?.emailDispatch };
+      }
+    } catch {}
+
+    const activeList = sortWaitlistFifo(
+      workshopWaitlist.filter((e) => e.workshopId === localEntry.workshopId && e.status !== 'cancelled')
+    );
+    const exists = activeList.find((e) => e.email.toLowerCase() === cleanEmail);
+    if (exists) {
+      const pos = Math.max(1, activeList.findIndex((e) => e.id === exists.id) + 1);
+      return { entry: exists, position: pos };
+    }
+    const next = sortWaitlistFifo([...workshopWaitlist, localEntry]);
+    setWorkshopWaitlist(next);
+    try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST, JSON.stringify(next)); } catch {}
+    return { entry: localEntry, position: activeList.length + 1 };
+  };
+
+  const saveWorkshopWaitlistSettings = async (settings: WorkshopWaitlistSettings) => {
+    const clean: WorkshopWaitlistSettings = {
+      whatsappNumber: (settings.whatsappNumber || DEFAULT_WAITLIST_SETTINGS.whatsappNumber).trim(),
+      whatsappGroupLink: (settings.whatsappGroupLink || '').trim(),
+      updatedAt: new Date().toISOString(),
+    };
+    setWorkshopWaitlistSettings(clean);
+    try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST_SETTINGS, JSON.stringify(clean)); } catch {}
+    try {
+      await fetch('/api/workshop-waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'save_settings', ...clean }),
+      });
+    } catch {}
+  };
+
+  const removeWorkshopWaitlistEntry = (entryId: string) => {
+    setWorkshopWaitlist((prev) => {
+      const next = prev.filter((e) => e.id !== entryId);
+      try { localStorage.setItem(STORAGE_KEYS.WORKSHOP_WAITLIST, JSON.stringify(next)); } catch {}
+      return next;
+    });
+    try {
+      fetch(`/api/workshop-waitlist?id=${encodeURIComponent(entryId)}`, { method: 'DELETE' }).catch(() => {});
+    } catch {}
+  };
+
   const updateWorkshop = (wsId: string, updatedData: Partial<Workshop>) => {
+    let spotJustOpened = false;
     setWorkshops((prev) => {
+      const previous = prev.find((w) => w.id === wsId);
       const updated = prev.map((w) => (w.id === wsId ? { ...w, ...updatedData } : w));
       const target = updated.find((w) => w.id === wsId);
       if (target) {
+        if (previous && previous.spotsAvailable <= 0 && target.spotsAvailable > 0) {
+          spotJustOpened = true;
+        }
         try {
           fetch('/api/workshops', {
             method: 'PUT',
@@ -4920,6 +5146,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       return updated;
     });
+    if (spotJustOpened) {
+      setTimeout(() => { notifyWorkshopWaitlistSpotOpened(wsId); }, 100);
+    }
   };
 
   const resetWorkshopsToDefaults = async () => {
@@ -5472,6 +5701,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateWorkshop,
         deleteWorkshop,
         resetWorkshopsToDefaults,
+        workshopWaitlist,
+        workshopWaitlistSettings,
+        joinWorkshopWaitlist,
+        saveWorkshopWaitlistSettings,
+        notifyWorkshopWaitlistSpotOpened,
+        removeWorkshopWaitlistEntry,
+        refreshWorkshopWaitlist,
         bookWorkshopDirect,
         resetToDefaults,
         sinpeTransactions,

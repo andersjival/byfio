@@ -8,6 +8,7 @@ export type AppRoute =
   | 'catalogo'
   | 'workshops'
   | 'workshop-detail'
+  | 'workshop-waitlist'
   | 'precios'
   | 'admin'
   | 'login'
@@ -138,6 +139,36 @@ export interface Workshop {
   instructorName?: string;
   instructorSubtitle?: string;
   benefits?: WorkshopBenefitItem[];
+  waitlistWhatsappNumber?: string;
+  waitlistWhatsappLink?: string;
+}
+
+export type WorkshopWaitlistStatus = 'waiting' | 'notified' | 'enrolled' | 'cancelled';
+
+export interface WorkshopWaitlistEntry {
+  id: string;
+  workshopId: string;
+  workshopTitle: string;
+  workshopDate: string;
+  name: string;
+  email: string;
+  phone: string;
+  idCard?: string;
+  address?: string;
+  createdAt: string;
+  position?: number;
+  status: WorkshopWaitlistStatus;
+  emailSent: boolean;
+  emailProvider?: string;
+  emailSentAt?: string;
+  notifiedAt?: string;
+  spotNotificationSent?: boolean;
+}
+
+export interface WorkshopWaitlistSettings {
+  whatsappNumber: string;
+  whatsappGroupLink: string;
+  updatedAt?: string;
 }
 
 export interface LayawayPaymentRecord {
@@ -401,6 +432,16 @@ export interface SectionMetricData {
   timeSpentAvgMinutes: number;
 }
 
+export interface RegisteredUserLike {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail?: string;
+  userRole?: 'admin' | 'staff' | 'customer';
+  sectionKey: string;
+  createdAt: string;
+}
+
 export interface MetricsState {
   totalPageLoads: number;
   uniqueSessions: number;
@@ -411,6 +452,7 @@ export interface MetricsState {
   };
   trackedLinks: TrackedLink[];
   sections: Record<string, { views: number; likes: number; timeSpentAvgMinutes: number }>;
+  registeredLikes?: RegisteredUserLike[];
   lastVisitTimestamp?: string;
 }
 

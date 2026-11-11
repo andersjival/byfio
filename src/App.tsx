@@ -71,6 +71,7 @@ export const App: React.FC = () => {
     else if (newRoute === 'inventario-app') targetPath = '/inventario-app';
     else if (newRoute === 'workshops') targetPath = '/talleres';
     else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
+    else if (newRoute === 'workshop-waitlist') targetPath = wsId ? `/lista-espera/${wsId}` : '/lista-espera';
     else if (newRoute === 'admin') {
       const adminPathMap: Partial<Record<AdminTabType, string>> = {
         orders: '/admin/pedidos',
@@ -142,7 +143,7 @@ export const App: React.FC = () => {
       if (adminTab !== 'catalog-view' && adminTab !== 'supplier-order-create' && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
         setAdminTab('hub');
       }
-    } else if ((currentRoute === 'workshops' || currentRoute === 'workshop-detail') && !isModuleEnabled('workshops')) {
+    } else if ((currentRoute === 'workshops' || currentRoute === 'workshop-detail' || currentRoute === 'workshop-waitlist') && !isModuleEnabled('workshops')) {
       navigate('home');
     } else if (currentRoute === 'store' && !isModuleEnabled('store')) {
       navigate('home');
