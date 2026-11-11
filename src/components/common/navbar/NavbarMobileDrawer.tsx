@@ -85,7 +85,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
           className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold transition-all active:scale-95 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${
             currentRoute === 'catalogo'
               ? 'bg-gradient-to-r from-[#F9A8D4] to-[#F472B6] text-white [text-shadow:_0_1px_2px_rgba(190,24,93,0.25)] border border-pink-200/80 shadow-[0_3px_10px_rgba(244,114,182,0.3)]'
-              : 'bg-white/90 text-slate-700 border border-white/80 shadow-[0_2px_8px_rgba(80,30,120,0.18),0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-md hover:bg-[#FDF2F8] hover:text-pink-600'
+              : 'bg-white/90 text-slate-700 border border-white/80 shadow-[0_2px_8px_rgba(80,30,120,0.18),0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-md hover:bg-[#FDF2F8] hover:text-slate-800'
           }`}
         >
           Catálogo

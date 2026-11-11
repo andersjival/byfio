@@ -17,6 +17,12 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.77 - Suavizado Imperceptible de Hover en Botón Catálogo
+- [x] **Atenuación de Hover en Catálogo ([NavbarNavLinks.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarNavLinks.tsx), [NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
+  - Cambiado `hover:text-pink-600` a `hover:text-slate-800` para que el texto permanezca neutro y casi imperceptible en reposo/hover con un leve fondo pastel rosado blanquecino (`hover:bg-[#FDF2F8]`), igualando el comportamiento sutil de Inicio, Talleres y Tienda.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.77` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.76 - Color Rosadito Pastel en Botón Catálogo Seleccionado
 - [x] **Diferenciación de Botón Catálogo en Estado Activo ([NavbarNavLinks.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarNavLinks.tsx), [NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx)):**
   - Aplicado un rosadito pastel suave (`from-[#F9A8D4] to-[#F472B6]`) con texto blanco puro (`text-white`) para diferenciarlo de Tienda (morado pastel), completando la paleta de 4 colores pasteles únicos: Inicio (amarillo), Talleres (celeste), Tienda (morado) y Catálogo (rosado).
