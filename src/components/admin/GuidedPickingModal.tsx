@@ -212,15 +212,11 @@ export const GuidedPickingModal: React.FC = () => {
         <div className="px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-fio-800 to-fio-900 text-white flex items-center justify-between gap-2 shrink-0 pt-[max(0.75rem,env(safe-area-inset-top))]">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <span className="p-2 sm:p-2 bg-white/10 rounded-xl sm:rounded-2xl shrink-0">
-              {pickingMode === 'barcode' ? (
-                <QrCode className="w-5 h-5 sm:w-5 sm:h-5 text-fio-yellow animate-pulse" />
-              ) : (
-                <ClipboardList className="w-5 h-5 sm:w-5 sm:h-5 text-fio-pink animate-pulse" />
-              )}
+              <ClipboardList className="w-5 h-5 sm:w-5 sm:h-5 text-fio-pink animate-pulse" />
             </span>
             <div className="min-w-0">
               <span className="text-xs sm:text-[10px] text-fio-300 uppercase tracking-widest font-bold block truncate">
-                {pickingMode === 'barcode' ? 'Alisto con Código' : 'Alistar Pedido'}
+                Alistar Pedido
               </span>
               <h2 className="font-bubble font-bold text-base sm:text-base truncate">
                 Pedido {currentOrder.orderNumber} — {currentOrder.customerName}

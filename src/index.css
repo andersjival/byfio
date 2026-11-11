@@ -2008,28 +2008,17 @@ html.dark .geosoft-copyright-pill:hover {
   position: relative !important;
   background: #000000 !important;
   overflow: hidden !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }
 
-/* Envoltorios internos inyectados por html5-qrcode: forzar centrado absoluto y tamaño completo */
-#byfio-picking-live-scanner-viewport > div,
-#byfio-qr-camera-viewport > div {
+#byfio-picking-live-scanner-viewport video,
+#byfio-qr-camera-viewport video {
   width: 100% !important;
   height: 100% !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  overflow: hidden !important;
+  object-fit: cover !important;
+  display: block !important;
 }
 
-/* Erradicar el marco sombreado opaco inyectado por html5-qrcode */
+/* Erradicar el marco sombreado opaco si se generase */
 #byfio-picking-live-scanner-viewport #qr-shaded-region,
 #byfio-qr-camera-viewport #qr-shaded-region {
   display: none !important;
@@ -2039,34 +2028,8 @@ html.dark .geosoft-copyright-pill:hover {
   pointer-events: none !important;
 }
 
-/* Ocultar canvas secundario si html5-qrcode lo inyecta visible */
-#byfio-picking-live-scanner-viewport canvas,
-#byfio-qr-camera-viewport canvas {
+/* Ocultar canvas secundario visible de depuración sin tocar el canvas interno */
+#byfio-picking-live-scanner-viewport canvas#qr-canvas-visible,
+#byfio-qr-camera-viewport canvas#qr-canvas-visible {
   display: none !important;
-}
-
-/* Video de cámara en vivo: 100% centrado geométrico con top 50% y transform */
-#byfio-picking-live-scanner-viewport video,
-#byfio-qr-camera-viewport video {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  -webkit-transform: translate(-50%, -50%) !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
-  object-fit: cover !important;
-  object-position: center center !important;
-  opacity: 1 !important;
-  filter: contrast(1.16) brightness(1.10) saturate(1.12) !important;
-  -webkit-filter: contrast(1.16) brightness(1.10) saturate(1.12) !important;
-  image-rendering: -webkit-optimize-contrast !important;
-}
-
-/* Modo Ultra-Claridad cuando el usuario activa el botón de luz/claridad */
-.high-clarity-camera video {
-  filter: contrast(1.24) brightness(1.22) saturate(1.14) !important;
-  -webkit-filter: contrast(1.24) brightness(1.22) saturate(1.14) !important;
 }

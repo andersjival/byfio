@@ -46,15 +46,9 @@ export const CameraBarcodeScannerModal: React.FC<CameraBarcodeScannerModalProps>
         const html5QrCode = new Html5Qrcode(containerId);
         scannerRef.current = html5QrCode;
 
-        // Configuración de escaneo centrada: qrbox rectangular adaptado a códigos de barra y QR
+        // Configuración de escaneo robusta sin qrbox para abarcar todo el sensor
         const config = {
-          fps: 25,
-          qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
-            // Marco rectangular centrado que coincide milimétricamente con el marco visual
-            const width = Math.floor(viewfinderWidth * 0.86);
-            const height = Math.floor(Math.min(viewfinderHeight * 0.52, 175));
-            return { width: Math.max(220, width), height: Math.max(120, height) };
-          },
+          fps: 20,
         };
 
         await html5QrCode.start(

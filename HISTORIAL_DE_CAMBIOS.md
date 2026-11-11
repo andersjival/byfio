@@ -17,6 +17,18 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.67 - Restauración y Estabilización Total de la Cámara de Escaneo de Códigos de Barra
+- [x] **Solución a Bloqueo de Cámara y Eliminación de qrbox Problemático ([PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx), [CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx)):**
+  - Eliminada la restricción de cálculo dinámico de `qrbox` que provocaba la excepción crítica `qrbox dimensions should not be greater than viewfinder dimensions` en dispositivos móviles o durante el inicio del viewport.
+  - El escáner ahora abarca el 100% del sensor de la cámara sin recortes erróneos, capturando códigos de barra 1D (Code 128, EAN, UPC) y QR con máxima velocidad y sensibilidad óptica.
+  - Erradicado el constraint rígido `min: 720` que disparaba `OverconstrainedError` en cámaras de celulares en orientación vertical (portrait).
+  - Implementada protección contra doble inicialización concurrente (`isStartingRef`) y limpieza previa del contenedor DOM (`containerEl.innerHTML = ''`).
+- [x] **Restauración de Canvas y Eliminación de Bloqueos en CSS ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css)):**
+  - Removida la regla `canvas { display: none !important; }` que impedía al decodificador de `html5-qrcode` procesar los fotogramas del video en navegadores basados en WebKit/Safari y Chromium.
+  - Eliminados los filtros GPU agresivos que provocaban pantalla negra en WebRTC.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.67` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.66 - Vista Exclusiva y Depurada de "Mi Cuenta" para Perfil de Alisto Creado por Administrador
 - [x] **Depuración Total de Opciones de Cliente en Perfil de Alisto ([MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx) y [MyAccountModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/MyAccountModal.tsx)):**
   - Identificación estricta del operario de alisto (`isAlistoUser`: rol `staff`, id `prof-alisto` o nombre con `ALISTO`).
