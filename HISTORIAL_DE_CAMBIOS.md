@@ -1,3 +1,15 @@
+## [v4.19.97] - 2026-11-11
+
+### 🏷️ Prefijo Interno `bf-`, QR Más Grande y Emblema Blanco en Etiquetas
+- **Código Interno de Producto (`formatInternalProductCode`, D1 y Escáneres):**
+  - Cambiado el prefijo de código interno para barras y QR de `FIO-` a `bf-` (en minúscula, compatible con Code 128 Set B) en [`formatters.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/formatters.ts), [`Barcode128.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Barcode128.tsx), [`NewProductModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/NewProductModal.tsx), [`seedData.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/seedData.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx) y [`functions/api/products.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/products.ts) (auto-migración SQL en D1 y compatibilidad retroactiva de escaneo en [`PickingLiveBarcodeScanner.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx), [`InventoryCountSession.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/inventory/InventoryCountSession.tsx) y [`MobileOrdersView.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/MobileOrdersView.tsx)).
+- **QR Más Grande y Letras Blancas (`ProductBarcodeLabel.tsx`, `QrLabelModal.tsx`, `InventoryChecklistModal.tsx`):**
+  - Cambiadas las letras `byfio` dentro del círculo lila central del código QR a color blanco (`#FFFFFF`) manteniendo alto contraste sobre lila (`#C084FC`).
+  - Ampliado el tamaño del código QR en etiquetas (`88px` en hoja, `108px` en tarjeta, `200px` en modal QR y `44px` en checklist de inventario).
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.97`.
+
+---
+
 ## [v4.19.96] - 2026-11-11
 
 ### 🎨 Banner de Gestión de Apartados en Lila con Rosado Pastel

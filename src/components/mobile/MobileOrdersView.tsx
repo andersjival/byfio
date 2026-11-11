@@ -64,14 +64,16 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
     const rawSku = scannedText.trim();
     if (!rawSku) return;
 
+    const normSku = (v: string) => v.trim().toLowerCase().replace(/^fio-/, 'bf-');
+    const scannedNorm = normSku(rawSku);
     // Buscar primero en el pedido actualmente abierto o en pedidos pendientes
     let targetOrder = orders.find(
-      (o) => o.id === expandedOrderId && o.items?.some((it) => it.sku.toLowerCase() === rawSku.toLowerCase() && !it.isPicked)
+      (o) => o.id === expandedOrderId && o.items?.some((it) => normSku(it.sku) === scannedNorm && !it.isPicked)
     );
 
     if (!targetOrder) {
       targetOrder = orders.find(
-        (o) => !isOrderFullyAlistado(o) && o.items?.some((it) => it.sku.toLowerCase() === rawSku.toLowerCase() && !it.isPicked)
+        (o) => !isOrderFullyAlistado(o) && o.items?.some((it) => normSku(it.sku) === scannedNorm && !it.isPicked)
       );
     }
 
@@ -85,7 +87,7 @@ export const MobileOrdersView: React.FC<MobileOrdersViewProps> = ({ onNavigate }
         setExpandedOrderId(targetOrder.id);
       }
     } else {
-      const alreadyPickedOrder = orders.find((o) => o.items?.some((it) => it.sku.toLowerCase() === rawSku.toLowerCase() && it.isPicked));
+      const alreadyPickedOrder = orders.find((o) => o.items?.some((it) => normSku(it.sku) === scannedNorm && it.isPicked));
       if (alreadyPickedOrder) {
         setScanNotification({ message: `El producto ${rawSku} ya fue alistado previamente.`, type: 'error' });
       } else {

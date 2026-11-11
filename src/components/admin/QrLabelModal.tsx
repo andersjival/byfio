@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { formatCRC } from '../../utils/formatters';
+import { formatCRC, formatInternalProductCode } from '../../utils/formatters';
 import { QRCodeSVG } from 'qrcode.react';
 import { Barcode128 } from '../common/Barcode128';
 import { X, Printer, Tag, Barcode, QrCode } from 'lucide-react';
@@ -18,7 +18,8 @@ export const QrLabelModal: React.FC = () => {
     window.print();
   };
 
-  const cleanQrValue = (qrModalProduct.qrCode || qrModalProduct.sku || 'FIO-PRD-000').trim();
+  const cleanSku = formatInternalProductCode(qrModalProduct.sku, 'bf-PRD-000');
+  const cleanQrValue = formatInternalProductCode(qrModalProduct.qrCode || qrModalProduct.sku, 'bf-PRD-000');
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
@@ -88,7 +89,7 @@ export const QrLabelModal: React.FC = () => {
             </p>
 
             <span className="font-mono font-black text-xs bg-fio-100 text-fio-800 px-2 py-0.5 rounded-md my-2">
-              {qrModalProduct.sku}
+              {cleanSku}
             </span>
 
             {/* Código en el formato seleccionado */}
@@ -96,24 +97,24 @@ export const QrLabelModal: React.FC = () => {
               <div className="relative p-3 bg-white border border-gray-200 rounded-2xl shadow-inner mb-2 flex items-center justify-center">
                 <QRCodeSVG
                   value={cleanQrValue}
-                  size={140}
+                  size={200}
                   level="H"
                   includeMargin={false}
                   imageSettings={{
                     src: EMBLEM_SVG_DATA_URI,
-                    width: 44,
-                    height: 44,
+                    width: 60,
+                    height: 60,
                     excavate: true,
                   }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <ByFioQrCenterEmblem size={44} />
+                  <ByFioQrCenterEmblem size={60} />
                 </div>
               </div>
             ) : (
               <div className="py-3 px-2 bg-white border border-gray-200 rounded-xl shadow-inner mb-2 w-full flex items-center justify-center">
                 <Barcode128
-                  value={qrModalProduct.sku}
+                  value={cleanSku}
                   height={64}
                   moduleWidth={2.4}
                   showText={true}

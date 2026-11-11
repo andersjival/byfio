@@ -18,8 +18,9 @@ interface PickingLiveBarcodeScannerProps {
  */
 export const checkBarcodeMatch = (scannedRaw: string, expectedSkuRaw: string): boolean => {
   if (!scannedRaw || !expectedSkuRaw) return false;
-  const s = scannedRaw.trim().toUpperCase().replace(/\s+/g, '');
-  const exp = expectedSkuRaw.trim().toUpperCase().replace(/\s+/g, '');
+  const norm = (val: string) => val.trim().toUpperCase().replace(/\s+/g, '').replace(/(^|[\/=:])FIO-/g, '$1BF-');
+  const s = norm(scannedRaw);
+  const exp = norm(expectedSkuRaw);
 
   if (s === exp) return true;
   if (exp.length >= 4 && s.includes(exp)) return true;

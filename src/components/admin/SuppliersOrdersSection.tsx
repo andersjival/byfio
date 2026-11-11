@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { Supplier, SupplierOrder, SupplierOrderItem, SupplierOrderStatus, AgendaPriority } from '../../types';
@@ -1124,7 +1124,7 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
                             setIsProductSearchOpen(true);
                           }}
                           onFocus={() => setIsProductSearchOpen(true)}
-                          placeholder="🔍 Busca por nombre, código SKU (ej: FIO-AG), estante o categoría..."
+                          placeholder="🔍 Busca por nombre, código SKU (ej: bf-AG), estante o categoría..."
                           className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-sans text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-2xs"
                         />
                         <Search className="w-4 h-4 text-amber-600 absolute left-3 top-3 pointer-events-none" />

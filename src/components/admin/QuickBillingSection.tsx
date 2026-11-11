@@ -572,7 +572,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
-                  placeholder="Escribe el nombre del producto, SKU (ej. FIO-AG-01) o categoría..."
+                  placeholder="Escribe el nombre del producto, SKU (ej. bf-AG-01) o categoría..."
                   value={productSearch}
                   onChange={(e) => setProductSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white dark:bg-[#2A2444] border border-slate-300/80 dark:border-white/15 text-xs sm:text-sm font-bubble font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-2xs"

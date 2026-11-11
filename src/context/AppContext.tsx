@@ -18,7 +18,7 @@ import {
   SUPERADMIN_AUTH_KEY,
   INITIAL_SUPERADMIN_MODULES
 } from '../utils/superadminModulesData';
-import { playAudioBeep } from '../utils/formatters';
+import { playAudioBeep, formatInternalProductCode } from '../utils/formatters';
 import { playNewOrderChimeSound } from '../utils/soundEffects';
 import { sendOrderPushNotification } from '../utils/pushNotifications';
 import { isHomeLocation } from '../utils/routeHelpers';
@@ -504,7 +504,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (saved) {
         const initial = JSON.parse(saved);
         if (Array.isArray(initial) && initial.length > 0) {
-          const sanitized = deepSanitize(initial).filter((p: any) => p && p.id);
+          const sanitized = deepSanitize(initial)
+            .filter((p: any) => p && p.id)
+            .map((p: any) => ({
+              ...p,
+              sku: formatInternalProductCode(p.sku, p.sku),
+              qrCode: p.qrCode ? formatInternalProductCode(p.qrCode, p.qrCode) : p.qrCode,
+            }));
           if (sanitized.length > 0) {
             const existingIds = new Set(sanitized.map((p: any) => p.id));
             const missingSeed = INITIAL_PRODUCTS.filter((ip) => !existingIds.has(ip.id));
@@ -3477,10 +3483,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (order.id !== orderId) return order;
 
         const updatedItems = [...order.items];
-        const cleanSku = (itemSku || '').trim().toUpperCase();
+        const normPickSku = (v: string) => (v || '').trim().toUpperCase().replace(/^FIO-/, 'BF-');
+        const cleanSku = normPickSku(itemSku);
         let unpickedIdx = updatedItems.findIndex(
           (it) => !it.isPicked && !it.isMissing && (
-            (it.sku && it.sku.trim().toUpperCase() === cleanSku) ||
+            (it.sku && normPickSku(it.sku) === cleanSku) ||
             (it.id && it.id === itemSku)
           )
         );

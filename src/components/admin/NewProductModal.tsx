@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { ProductCategory } from '../../types';
-import { formatCRC } from '../../utils/formatters';
+import { formatCRC, formatInternalProductCode } from '../../utils/formatters';
 import {
   X, PlusCircle, Hash, Image as ImageIcon,
   CheckCircle2, Package, MapPin, DollarSign, Layers, Pencil,
@@ -599,7 +599,7 @@ export const NewProductModal: React.FC = () => {
   useEffect(() => {
     if (editingProduct) {
       setName(editingProduct.name);
-      setSku(editingProduct.sku);
+      setSku(formatInternalProductCode(editingProduct.sku, editingProduct.sku));
       setCategory(editingProduct.category);
       setShelfLocation(editingProduct.shelfLocation || DEFAULT_SHELF_LOCATIONS[0]);
       setIsCreatingNewLocation(false);
@@ -676,7 +676,7 @@ export const NewProductModal: React.FC = () => {
 
   const handleAutoGenerateSku = () => {
     const prefix = name ? name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X') : 'PRD';
-    setSku(`FIO-${prefix}-${Math.floor(100 + Math.random() * 900)}`);
+    setSku(`bf-${prefix}-${Math.floor(100 + Math.random() * 900)}`);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -746,10 +746,11 @@ export const NewProductModal: React.FC = () => {
     const finalIsAvailable = isZero ? false : isAvailable;
 
     if (editingProduct) {
+      const normalizedSku = formatInternalProductCode(sku);
       // Modo Edición Completa
       updateProduct(editingProduct.id, {
         name: name.trim(),
-        sku: sku.trim().toUpperCase(),
+        sku: normalizedSku,
         category: finalCategory,
         shelfLocation: finalShelfLocation,
         supplier: finalSupplier || undefined,
@@ -773,21 +774,22 @@ export const NewProductModal: React.FC = () => {
         layawayDownPaymentPercent: hasLayaway ? Number(layawayDownPaymentPercent) || 30 : undefined,
       });
 
+      const savedSku = formatInternalProductCode(sku);
       setSuccessToast('¡Artículo actualizado y guardado correctamente!');
       setCreatedProductBarcode({
         name: name.trim(),
-        sku: sku.trim().toUpperCase(),
+        sku: savedSku,
         shelfLocation: finalShelfLocation,
         price: Number(price) || 0,
         category: finalCategory,
         supplier: finalSupplier || undefined,
-        qrCode: sku.trim().toUpperCase(),
+        qrCode: savedSku,
       });
     } else {
       // Modo Nuevo Producto
       addProduct({
         name: name.trim(),
-        sku: sku.trim().toUpperCase(),
+        sku: formatInternalProductCode(sku),
         category: finalCategory,
         shelfLocation: finalShelfLocation,
         supplier: finalSupplier || undefined,
@@ -811,15 +813,16 @@ export const NewProductModal: React.FC = () => {
         layawayDownPaymentPercent: hasLayaway ? Number(layawayDownPaymentPercent) || 30 : undefined,
       });
 
+      const savedSku = formatInternalProductCode(sku);
       setSuccessToast('¡Artículo creado y código de barras generado!');
       setCreatedProductBarcode({
         name: name.trim(),
-        sku: sku.trim().toUpperCase(),
+        sku: savedSku,
         shelfLocation: finalShelfLocation,
         price: Number(price) || 0,
         category: finalCategory,
         supplier: finalSupplier || undefined,
-        qrCode: sku.trim().toUpperCase(),
+        qrCode: savedSku,
       });
     }
   };
@@ -991,9 +994,9 @@ export const NewProductModal: React.FC = () => {
                     onChange={(e) => {
                       const val = e.target.value;
                       setName(val);
-                      if (!editingProduct && (!sku || sku.startsWith('FIO-'))) {
+                      if (!editingProduct && (!sku || /^fio-/i.test(sku) || /^bf-/i.test(sku))) {
                         const prefix = val.trim() ? val.trim().substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X') : 'PRD';
-                        setSku(`FIO-${prefix}-${Math.floor(100 + Math.random() * 900)}`);
+                        setSku(`bf-${prefix}-${Math.floor(100 + Math.random() * 900)}`);
                       }
                     }}
                     className="w-full px-3 py-2 rounded-xl border border-fio-200 focus:ring-2 focus:ring-fio-400 focus:outline-none font-semibold text-gray-900"
@@ -1015,7 +1018,7 @@ export const NewProductModal: React.FC = () => {
                   <input
                     required
                     type="text"
-                    placeholder="Ej: FIO-LIB-10"
+                    placeholder="Ej: bf-LIB-10"
                     value={sku}
                     onChange={(e) => setSku(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-fio-200 font-mono font-bold focus:ring-2 focus:ring-fio-400 focus:outline-none text-fio-900"
@@ -1026,13 +1029,13 @@ export const NewProductModal: React.FC = () => {
                         <span className="flex items-center gap-1 text-fio-purple">
                           <Sparkles className="w-3 h-3 text-fio-pink" /> Código de Barras:
                         </span>
-                        <span className="font-mono text-fio-purple font-bold">{sku.trim().toUpperCase()}</span>
+                        <span className="font-mono text-fio-purple font-bold">{formatInternalProductCode(sku)}</span>
                       </div>
                       <div className="w-full max-w-[210px] bg-white p-1.5 rounded-lg border border-slate-200">
-                        <Barcode128 value={sku.trim().toUpperCase()} height={32} moduleWidth={1.5} />
+                        <Barcode128 value={formatInternalProductCode(sku)} height={32} moduleWidth={1.5} />
                       </div>
                       <p className="text-[10px] text-slate-500 font-mono font-bold mt-0.5">
-                        {sku.trim().toUpperCase()}
+                        {formatInternalProductCode(sku)}
                       </p>
                     </div>
                   )}

@@ -1,17 +1,17 @@
 import React from 'react';
 import { Barcode128 } from '../common/Barcode128';
 import { QRCodeSVG } from 'qrcode.react';
-import { formatCRC } from '../../utils/formatters';
+import { formatCRC, formatInternalProductCode } from '../../utils/formatters';
 
 export type CodeLabelFormat = 'barcode' | 'qr';
 
 /**
- * Emblema oficial en círculo lila con el nombre 'byfio', corazón y estrella en pequeñito
+ * Emblema oficial en círculo lila con el nombre 'byfio' en blanco, corazón y estrella en pequeñito
  */
 export const EMBLEM_SVG_DATA_URI =
   'data:image/svg+xml;utf8,' +
   encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48"><circle cx="24" cy="24" r="23" fill="#FFFFFF"/><circle cx="24" cy="24" r="21" fill="#D4AEFA" stroke="#C084FC" stroke-width="1.2"/><g transform="translate(24, 15)"><path d="M-4.5 -3.5 C-4.5 -5.5 -2 -5.5 -1 -4 C0 -5.5 2.5 -5.5 2.5 -3.5 C2.5 -1.5 -1 0.5 -1 0.5 C-1 0.5 -4.5 -1.5 -4.5 -3.5 Z" fill="#EC4899"/><path d="M4 -5.5 L4.7 -3.5 L6.8 -3.5 L5.1 -2.2 L5.7 -0.2 L4 -1.4 L2.3 -0.2 L2.9 -2.2 L1.2 -3.5 L3.3 -3.5 Z" fill="#FACC15" stroke="#CA8A04" stroke-width="0.4"/></g><text x="24" y="32" text-anchor="middle" fill="#4A0E78" font-family="'Bubblegum Sans', -apple-system, sans-serif" font-size="11" font-weight="900" letter-spacing="-0.3">byfio</text></svg>`
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48"><circle cx="24" cy="24" r="23" fill="#FFFFFF"/><circle cx="24" cy="24" r="21" fill="#C084FC" stroke="#A855F7" stroke-width="1.2"/><g transform="translate(24, 15)"><path d="M-4.5 -3.5 C-4.5 -5.5 -2 -5.5 -1 -4 C0 -5.5 2.5 -5.5 2.5 -3.5 C2.5 -1.5 -1 0.5 -1 0.5 C-1 0.5 -4.5 -1.5 -4.5 -3.5 Z" fill="#EC4899"/><path d="M4 -5.5 L4.7 -3.5 L6.8 -3.5 L5.1 -2.2 L5.7 -0.2 L4 -1.4 L2.3 -0.2 L2.9 -2.2 L1.2 -3.5 L3.3 -3.5 Z" fill="#FACC15" stroke="#CA8A04" stroke-width="0.4"/></g><text x="24" y="32.5" text-anchor="middle" fill="#FFFFFF" stroke="#7E22CE" stroke-width="0.7" paint-order="stroke" font-family="'Bubblegum Sans', -apple-system, sans-serif" font-size="11.5" font-weight="900" letter-spacing="-0.2">byfio</text></svg>`
   );
 
 export const ByFioQrCenterEmblem: React.FC<{ size?: number }> = ({ size = 26 }) => (
@@ -23,7 +23,7 @@ export const ByFioQrCenterEmblem: React.FC<{ size?: number }> = ({ size = 26 }) 
     style={{ display: 'block' }}
   >
     <circle cx="24" cy="24" r="23" fill="#FFFFFF" />
-    <circle cx="24" cy="24" r="21" fill="#D4AEFA" stroke="#C084FC" strokeWidth="1.2" />
+    <circle cx="24" cy="24" r="21" fill="#C084FC" stroke="#A855F7" strokeWidth="1.2" />
     <g transform="translate(24, 15)">
       <path
         d="M-4.5 -3.5 C-4.5 -5.5 -2 -5.5 -1 -4 C0 -5.5 2.5 -5.5 2.5 -3.5 C2.5 -1.5 -1 0.5 -1 0.5 C-1 0.5 -4.5 -1.5 -4.5 -3.5 Z"
@@ -38,14 +38,17 @@ export const ByFioQrCenterEmblem: React.FC<{ size?: number }> = ({ size = 26 }) 
     </g>
     <text
       x="24"
-      y="32"
+      y="32.5"
       textAnchor="middle"
-      fill="#4A0E78"
+      fill="#FFFFFF"
+      stroke="#7E22CE"
+      strokeWidth="0.7"
+      paintOrder="stroke"
       style={{
         fontFamily: "'Bubblegum Sans', 'Comfortaa', system-ui, sans-serif",
-        fontSize: '11px',
+        fontSize: '11.5px',
         fontWeight: 900,
-        letterSpacing: '-0.3px',
+        letterSpacing: '-0.2px',
       }}
     >
       byfio
@@ -76,46 +79,47 @@ export const ProductBarcodeLabel: React.FC<ProductBarcodeLabelProps> = ({
   showPrice = true,
   className = '',
 }) => {
-  const cleanSku = (product.sku || 'FIO-PRD-000').toUpperCase().trim();
+  const cleanSku = formatInternalProductCode(product.sku, 'bf-PRD-000');
   const cleanName = product.name || 'Producto by.fio';
   const cleanLocation = product.shelfLocation || 'Estante General';
   const cleanCategory = product.category || 'General';
-  const cleanQrValue = (product.qrCode || product.sku || 'FIO-PRD-000').trim();
+  const cleanQrValue = formatInternalProductCode(product.qrCode || product.sku, 'bf-PRD-000');
 
   return (
     <div
-      className={`bg-white rounded-xl border border-dashed border-slate-300 p-2 sm:p-2.5 flex flex-col justify-between text-center relative print:border-black print:rounded-none print:shadow-none break-inside-avoid print:p-1.5 ${className}`}
+      className={`bg-white rounded-xl border border-dashed border-slate-300 p-2 sm:p-2.5 flex flex-col justify-between text-center relative print:border-black print:rounded-none print:shadow-none break-inside-avoid print:p-1 ${className}`}
       style={{
         boxSizing: 'border-box',
         pageBreakInside: 'avoid',
       }}
     >
       {codeFormat === 'qr' ? (
-        /* FORMATO A: ETIQUETA QR OFICIAL (1/3 QR con Círculo Lila ByFio y 2/3 Descripción en grande, Ubicación con Código) */
+        /* FORMATO A: ETIQUETA QR OFICIAL (QR ampliado con Círculo Lila ByFio en letras blancas y Descripción/Ubicación) */
         <div className="flex items-center gap-2 h-full w-full py-0.5 text-left">
-          {/* LADO 1 (1/3 DEL TAMAÑO DE LA ETIQUETA): CÓDIGO QR */}
-          <div className="w-[34%] shrink-0 flex items-center justify-center">
-            <div className="relative p-1 bg-white rounded-xl border border-slate-300 print:border-black flex items-center justify-center shadow-2xs">
+          {/* LADO 1: CÓDIGO QR GRANDE */}
+          <div className="w-[40%] shrink-0 flex items-center justify-center">
+            <div className="relative p-0.5 bg-white rounded-xl border border-slate-300 print:border-black flex items-center justify-center shadow-2xs">
               <QRCodeSVG
                 value={cleanQrValue}
-                size={compact ? 66 : 74}
+                size={compact ? 88 : 108}
                 level="H"
                 includeMargin={false}
+                className="max-w-full h-auto"
                 imageSettings={{
                   src: EMBLEM_SVG_DATA_URI,
-                  width: compact ? 22 : 25,
-                  height: compact ? 22 : 25,
+                  width: compact ? 26 : 33,
+                  height: compact ? 26 : 33,
                   excavate: true,
                 }}
               />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <ByFioQrCenterEmblem size={compact ? 22 : 25} />
+                <ByFioQrCenterEmblem size={compact ? 26 : 33} />
               </div>
             </div>
           </div>
 
-          {/* LADO 2 (2/3 DEL TAMAÑO DE LA ETIQUETA): DESCRIPCIÓN EN GRANDE Y UBICACIÓN CON EL CÓDIGO */}
-          <div className="w-[66%] flex-1 min-w-0 flex flex-col justify-between h-full py-0.5 pr-0.5">
+          {/* LADO 2: DESCRIPCIÓN EN GRANDE Y UBICACIÓN CON EL CÓDIGO */}
+          <div className="w-[60%] flex-1 min-w-0 flex flex-col justify-between h-full py-0.5 pr-0.5">
             {/* Cabecera compacta: by.fio★ y Categoría */}
             <div className="flex items-center justify-between text-[8px] uppercase font-bold text-slate-500 print:text-black border-b border-slate-100 print:border-black/30 pb-0.5 mb-1 gap-1">
               <span className="font-bubble text-fio-pink print:text-black text-[9px]">

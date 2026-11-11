@@ -106,7 +106,7 @@ export const INITIAL_WORKSHOPS: Workshop[] = [
 export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'prod-1',
-    sku: 'FIO-AG-01',
+    sku: 'bf-AG-01',
     name: 'Agenda Personalizada 2027 Tapa Dura',
     category: 'Agendas Personalizadas',
     shelfLocation: 'Estante A-1 (Nivel 2)',
@@ -126,7 +126,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-2',
-    sku: 'FIO-VAC-02',
+    sku: 'bf-VAC-02',
     name: 'Libro de Vacunas Pediátrico Acolchado',
     category: 'Libros de Vacunas',
     shelfLocation: 'Estante A-2 (Nivel 1)',
@@ -146,7 +146,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-3',
-    sku: 'FIO-TAZ-03',
+    sku: 'bf-TAZ-03',
     name: 'Taza Cerámica Sublimada con Inicial & Flores',
     category: 'Artículos Sublimados',
     shelfLocation: 'Estante B-1 (Nivel 3)',
@@ -174,7 +174,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-4',
-    sku: 'FIO-TOTE-04',
+    sku: 'bf-TOTE-04',
     name: 'Tote Bag Lienzo "Crear es mi Terapia"',
     category: 'Artículos Sublimados',
     shelfLocation: 'Estante B-2 (Nivel 2)',
@@ -193,7 +193,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-5',
-    sku: 'FIO-STK-05',
+    sku: 'bf-STK-05',
     name: 'Pack 40 Stickers Holográficos Kawaii & Flores',
     category: 'Stickers y Papelería',
     shelfLocation: 'Gaveta C-1 (Mostrador)',
@@ -212,7 +212,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-6',
-    sku: 'FIO-KIT-06',
+    sku: 'bf-KIT-06',
     name: 'Kit Principiante de Encuadernación',
     category: 'Kits e Insumos',
     shelfLocation: 'Estante D-1 (Insumos)',
@@ -231,7 +231,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-7',
-    sku: 'FIO-INS-07',
+    sku: 'bf-INS-07',
     name: 'Caja 36 Tazas Blancas AAA 11oz para Sublimar',
     category: 'Kits e Insumos',
     shelfLocation: 'Bodega Central - Pallet 2',
@@ -250,7 +250,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-8',
-    sku: 'FIO-PAP-08',
+    sku: 'bf-PAP-08',
     name: 'Resma Papel Opalina Telada 220g (100 Hojas)',
     category: 'Kits e Insumos',
     shelfLocation: 'Estante D-2 (Papeles)',
@@ -269,7 +269,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-9',
-    sku: 'FIO-NOT-09',
+    sku: 'bf-NOT-09',
     name: 'Block Memo Pad Pastel con Imán de Nevera',
     category: 'Stickers y Papelería',
     shelfLocation: 'Gaveta C-2 (Mostrador)',
@@ -288,7 +288,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-10',
-    sku: 'FIO-MAQ-10',
+    sku: 'bf-MAQ-10',
     name: 'Prensa Térmica & Sublimadora 8 en 1 Multifuncional',
     category: 'Máquinas y Equipo',
     shelfLocation: 'Bodega Central - Pallet 1',
@@ -311,7 +311,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-11',
-    sku: 'FIO-MAQ-11',
+    sku: 'bf-MAQ-11',
     name: 'Plotter de Corte Digital Silhouette Cameo 5',
     category: 'Máquinas y Equipo',
     shelfLocation: 'Bodega Central - Pallet 1',
@@ -334,7 +334,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-12',
-    sku: 'FIO-DTF-12',
+    sku: 'bf-DTF-12',
     name: 'Metro Lineal DTF Textil Impreso Premium (58cm x 100cm)',
     category: 'DTF Textil',
     shelfLocation: 'Bodega Central - Estante D-1',
@@ -354,7 +354,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-13',
-    sku: 'FIO-DTF-13',
+    sku: 'bf-DTF-13',
     name: 'Lámina DTF UV Adhesivo Multisuperficie A3 (Curado UV)',
     category: 'DTF UV',
     shelfLocation: 'Bodega Central - Estante D-1',
@@ -374,7 +374,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-14',
-    sku: 'FIO-INS-14',
+    sku: 'bf-INS-14',
     name: 'Poliamida en Polvo Premium para DTF (1 Kg)',
     category: 'Insumos DTF',
     shelfLocation: 'Bodega Central - Estante D-2',

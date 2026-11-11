@@ -4,7 +4,7 @@ import { Product } from '../../types';
 import { BrandLogo } from '../common/BrandLogo';
 import { Barcode128 } from '../common/Barcode128';
 import { QRCodeSVG } from 'qrcode.react';
-import { formatShortDate } from '../../utils/formatters';
+import { formatShortDate, formatInternalProductCode } from '../../utils/formatters';
 import {
   X, Printer, ClipboardCheck, MapPin, Search, CheckCircle2,
   AlertCircle, Barcode, QrCode, CheckSquare, Square, Layers, Sparkles, Filter
@@ -475,12 +475,12 @@ export const InventoryChecklistModal: React.FC<InventoryChecklistModalProps> = (
                                 {/* Código SKU y Barcode / QR */}
                                 <td className="py-2 px-2.5 space-y-1">
                                   <div className="font-mono font-black text-xs text-slate-900 print:text-black bg-slate-100 print:bg-transparent px-1.5 py-0.5 rounded inline-block">
-                                    {p.sku}
+                                    {formatInternalProductCode(p.sku, p.sku)}
                                   </div>
                                   {codeFormat === 'barcode' && (
                                     <div className="pt-0.5 max-w-[135px] overflow-hidden">
                                       <Barcode128
-                                        value={p.sku}
+                                        value={formatInternalProductCode(p.sku, p.sku)}
                                         height={28}
                                         moduleWidth={2.0}
                                         className="max-w-[135px] h-6.5"
@@ -491,8 +491,8 @@ export const InventoryChecklistModal: React.FC<InventoryChecklistModalProps> = (
                                     <div className="pt-0.5 flex items-center gap-1.5">
                                       <div className="p-0.5 bg-white border border-slate-300 print:border-black rounded shrink-0">
                                         <QRCodeSVG
-                                          value={(p.qrCode || p.sku).trim()}
-                                          size={32}
+                                          value={formatInternalProductCode(p.qrCode || p.sku, p.sku)}
+                                          size={44}
                                           level="M"
                                           includeMargin={false}
                                         />

@@ -41,7 +41,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       if (real.length > 0) return real;
       return product.images;
     }
-    if (product.sku === 'FIO-TAZ-03' || product.id === 'prod-3') {
+    const skuLower = (product.sku || '').toLowerCase();
+    if (skuLower === 'bf-taz-03' || skuLower === 'fio-taz-03' || product.id === 'prod-3') {
       return [
         '/images/products/taza-stitch-ohana.jpg',
         '/images/products/taza-dragonball-super.jpg',

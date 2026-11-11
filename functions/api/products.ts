@@ -2,6 +2,14 @@ interface Env {
   DB?: any;
 }
 
+const normalizeProductSku = (sku?: string | null): string => {
+  const clean = String(sku || '').trim();
+  if (!clean) return '';
+  if (/^fio-/i.test(clean)) return `bf-${clean.slice(4)}`;
+  if (/^bf-/i.test(clean)) return `bf-${clean.slice(3)}`;
+  return clean;
+};
+
 interface ProductDbRow {
   id: string;
   sku: string;
@@ -41,7 +49,8 @@ const mapRowToProduct = (r: ProductDbRow) => {
       }
     } catch {}
   }
-  if (productImages.length === 0 && r.sku === 'FIO-TAZ-03') {
+  const normalizedSku = normalizeProductSku(r.sku);
+  if (productImages.length === 0 && normalizedSku.toLowerCase() === 'bf-taz-03') {
     productImages = [
       '/images/products/taza-stitch-ohana.jpg',
       '/images/products/taza-dragonball-super.jpg',
@@ -54,13 +63,13 @@ const mapRowToProduct = (r: ProductDbRow) => {
     productImages = [r.image];
   }
 
-  const primaryImage = (r.sku === 'FIO-TAZ-03' && (!r.image || r.image.includes('unsplash')))
+  const primaryImage = (normalizedSku.toLowerCase() === 'bf-taz-03' && (!r.image || r.image.includes('unsplash')))
     ? '/images/products/taza-stitch-ohana.jpg'
     : (productImages.length > 0 && productImages[0] ? productImages[0] : r.image);
 
   return {
     id: r.id,
-    sku: r.sku,
+    sku: normalizedSku,
     name: r.name,
     category: r.category,
     shelfLocation: r.shelf_location,
@@ -115,6 +124,10 @@ export const onRequestGet = async (context: { env: Env }) => {
 
     // Auto-migración defensiva: asegurar columnas is_available e images_json y reparar nulos a 1
     await ensureProductColumns(context.env.DB);
+
+    await context.env.DB.prepare(
+      "UPDATE products SET sku = 'bf-' || SUBSTR(sku, 5) WHERE UPPER(sku) LIKE 'FIO-%'"
+    ).run().catch(() => {});
 
     await context.env.DB.prepare(
       'UPDATE products SET is_available = 1 WHERE is_available IS NULL'
@@ -172,7 +185,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         id,
-        data.sku,
+        normalizeProductSku(data.sku),
         data.name,
         data.category,
         data.shelfLocation || 'Estante A-1',
@@ -288,7 +301,7 @@ export const onRequestPut = async (context: { request: Request; env: Env }) => {
             layaway_down_payment_percent = CASE WHEN ? IS NOT NULL THEN ? ELSE layaway_down_payment_percent END
           WHERE id = ?`
         ).bind(
-          sku ?? null,
+          sku !== undefined && sku !== null ? normalizeProductSku(sku) : null,
           name ?? null,
           category ?? null,
           shelfLocation ?? null,

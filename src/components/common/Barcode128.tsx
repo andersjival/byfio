@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { formatInternalProductCode } from '../../utils/formatters';
 
 // Tabla oficial de 107 patrones Code 128 (B)
 // Cada dígito representa el grosor alternado de barras y espacios
@@ -31,7 +32,7 @@ export const Barcode128: React.FC<Barcode128Props> = ({
   showText = false,
   className = '',
 }) => {
-  const cleanValue = (value || 'SKU-000').trim().toUpperCase();
+  const cleanValue = formatInternalProductCode(value, 'bf-000');
 
   const textHeight = showText ? 14 : 0;
   const barHeight = Math.max(20, height - textHeight);

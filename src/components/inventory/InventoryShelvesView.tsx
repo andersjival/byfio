@@ -226,7 +226,7 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar estante o producto (ej: Estante 1, Agenda, FIO-...)..."
+              placeholder="Buscar estante o producto (ej: Estante 1, Agenda, bf-...)..."
               className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-slate-50/60 focus:bg-white focus:border-purple-400 focus:outline-none text-xs font-sans"
             />
           </div>

@@ -7,6 +7,18 @@ export const formatCRC = (amount: number): string => {
   }).format(safe).replace('CRC', '₡');
 };
 
+/**
+ * Normaliza el prefijo interno de códigos de barras y QR de productos de 'FIO-' a 'bf-'
+ * conservando exactamente 'bf-' en minúscula.
+ */
+export const formatInternalProductCode = (code?: string | null, fallback = 'bf-PRD-000'): string => {
+  const trimmed = (code || '').trim();
+  if (!trimmed) return fallback;
+  if (/^fio-/i.test(trimmed)) return `bf-${trimmed.slice(4)}`;
+  if (/^bf-/i.test(trimmed)) return `bf-${trimmed.slice(3)}`;
+  return trimmed;
+};
+
 export const formatShortDate = (isoString: string): string => {
   try {
     if (!isoString) return '';

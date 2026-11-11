@@ -86,9 +86,10 @@ export const InventoryCountSession: React.FC<InventoryCountSessionProps> = ({
   };
 
   const handleBarcodeScanned = (code: string) => {
-    const clean = code.trim().toLowerCase();
+    const normCode = (v: string) => v.trim().toLowerCase().replace(/^fio-/, 'bf-');
+    const clean = normCode(code);
     const match = shelfProducts.find(
-      (p) => p.sku.toLowerCase() === clean || (p.qrCode && p.qrCode.toLowerCase() === clean)
+      (p) => normCode(p.sku) === clean || (p.qrCode && normCode(p.qrCode) === clean)
     );
     if (match) {
       playBubblePopSound();
