@@ -463,3 +463,5 @@ export interface SupplierOrder {
   receivedAt?: string;
 }
 
+export type { AdminTabType } from '../components/admin/AdminTabs';
+

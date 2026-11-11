@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { BrandLogo } from './BrandLogo';
 import { TikTokIcon } from './TikTokIcon';
-import { AppRoute } from '../../types';
+import { AppRoute, AdminTabType } from '../../types';
 import { ShoppingBag, Instagram, MessageCircle, Menu, X, ArrowLeft, LayoutGrid, LogOut, Heart } from 'lucide-react';
 import { metricsTracker } from '../../services/metricsTracker';
 import { NavbarNavLinks } from './navbar/NavbarNavLinks';
@@ -12,7 +12,7 @@ import { NavbarMobileDrawer } from './navbar/NavbarMobileDrawer';
 
 interface NavbarProps {
   currentRoute: AppRoute;
-  onNavigate: (route: AppRoute) => void;
+  onNavigate: (route: AppRoute, targetTab?: AdminTabType) => void;
   onOpenLogin?: (mode?: 'login' | 'register') => void;
   onOpenDesignModal?: () => void;
   onSelectAdminHub?: () => void;
@@ -50,8 +50,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
   const totalCartCount = safeCart.reduce((acc, it) => acc + (it && it.quantity ? it.quantity : 1), 0);
 
-  const handleNav = (route: AppRoute) => {
-    onNavigate(route);
+  const handleNav = (route: AppRoute, targetTab?: AdminTabType) => {
+    onNavigate(route, targetTab);
     setMobileOpen(false);
   };
 

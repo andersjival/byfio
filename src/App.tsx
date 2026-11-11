@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from './context/AppContext';
 import { AppRoute } from './types';
 import { BackgroundDecor } from './components/common/BackgroundDecor';
@@ -648,7 +648,7 @@ export const App: React.FC = () => {
           }}
           onSelectOrders={() => {
             closeWebIntro();
-            navigate('pedidos-mobile');
+            navigate('admin', 'orders');
           }}
         />
       )}
@@ -665,7 +665,7 @@ export const App: React.FC = () => {
           onSelectOrders={() => {
             try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}
             setIsEntryGatewayOpen(false);
-            navigate('pedidos-mobile');
+            navigate('admin', 'orders');
           }}
           onClose={() => {
             try { sessionStorage.setItem('byfio_entry_gateway_dismissed', '1'); } catch {}

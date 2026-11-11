@@ -1,14 +1,14 @@
 import React from 'react';
 import { User, UserPlus, LogOut, ShieldCheck, Sun, Moon, Instagram } from 'lucide-react';
 import { TikTokIcon } from '../TikTokIcon';
-import { AppRoute, AuthUser } from '../../../types';
+import { AppRoute, AuthUser, AdminTabType } from '../../../types';
 import { isCollaboratorPwaContext } from '../../../utils/routeHelpers';
 import { playBubblePopSound } from '../../../utils/soundEffects';
 
 interface NavbarMobileDrawerProps {
   isOpen: boolean;
   currentRoute: AppRoute;
-  onNavigate: (route: AppRoute) => void;
+  onNavigate: (route: AppRoute, targetTab?: AdminTabType) => void;
   currentUser: AuthUser | null;
   onOpenLogin?: (mode?: 'login' | 'register') => void;
   setIsMyAccountOpen: (open: boolean) => void;
@@ -95,14 +95,10 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
       {(currentUser?.role === 'admin' || currentUser?.role === 'staff' || isCollaboratorPwaContext()) && (
         <button
           type="button"
-          onClick={() => onNavigate('pedidos-mobile')}
-          className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold neu-btn ${
-            currentRoute === 'pedidos-mobile'
-              ? 'neu-btn-primary text-white shadow-neuBtnHover'
-              : 'bg-gradient-to-r from-slate-900 to-purple-950 text-white hover:text-emerald-300 border border-purple-500/30 shadow-neuBtn'
-          }`}
+          onClick={() => onNavigate('admin', 'orders')}
+          className="w-full text-left px-4 py-3 rounded-2xl text-sm font-bubble font-bold bg-gradient-to-r from-purple-700 to-fio-pink text-white border border-purple-300/40 shadow-neuBtn active:scale-95 transition-all flex items-center justify-between cursor-pointer"
         >
-          📦 Entrar a pedidos (Móvil)
+          <span>📋 Cola de Pedidos de Clientes</span>
         </button>
       )}
 

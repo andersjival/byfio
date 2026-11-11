@@ -6,13 +6,13 @@ import {
   ArrowLeft, LogOut, ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { AppRoute } from '../../types';
+import { AppRoute, AdminTabType } from '../../types';
 import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
 interface MyAccountPageProps {
-  onNavigate: (route: AppRoute) => void;
+  onNavigate: (route: AppRoute, targetTab?: AdminTabType) => void;
   onOpenLogin?: (mode?: 'login' | 'register') => void;
 }
 
@@ -266,12 +266,12 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
             type="button"
             onClick={() => {
               playWaterDropSound();
-              onNavigate('pedidos-mobile');
+              onNavigate('admin', 'orders');
             }}
             className="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white hover:bg-pink-50 text-slate-700 hover:text-fio-pink border border-slate-200/90 shadow-2xs font-bubble font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer shrink-0"
           >
             <ArrowLeft className="w-4 h-4 text-fio-pink" />
-            <span>Ir a Alisto de Pedidos</span>
+            <span>Ir a Cola de Pedidos</span>
           </button>
 
           <button
@@ -328,18 +328,18 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
             </div>
           </div>
 
-          {/* Acceso Directo a PWA de Pedidos */}
+          {/* Acceso Directo a Cola de Pedidos de Clientes */}
           <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               type="button"
               onClick={() => {
                 playWaterDropSound();
-                onNavigate('pedidos-mobile');
+                onNavigate('admin', 'orders');
               }}
               className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-fio-pink hover:from-purple-700 hover:to-pink-600 text-white font-bubble font-bold text-sm shadow-clayBtn active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <PackageCheck className="w-4 h-4" />
-              <span>Ir a Panel de Alisto (PWA)</span>
+              <span>Ir a Cola de Pedidos de Clientes</span>
             </button>
           </div>
         </div>

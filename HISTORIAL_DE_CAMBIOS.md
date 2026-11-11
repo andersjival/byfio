@@ -17,6 +17,17 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 
 ## 📦 REGISTRO DE ENTREGAS Y MÓDULOS
 
+### Versión 4.19.71 - Eliminación de Alisto PWA en Desplegable de Colaborador y Enlace Directo a Cola de Pedidos de Clientes
+- [x] **Purificación del Menú Desplegable de Colaborador ([NavbarUserMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarUserMenu.tsx)):**
+  - Removido por completo el botón `"Alisto de pedidos (Pwa)"` y toda la sección interna que enlazaba a la vista móvil aislada.
+  - Para perfiles de colaborador (`role: 'staff'`), se eliminaron botones no operativos dejando única y exclusivamente el acceso directo `"Cola de Pedidos"` con subtítulo `"Cola de pedidos de clientes"` y el botón de cerrar sesión.
+  - La navegación redirige directamente a la **Cola de Pedidos de Clientes** oficial del sistema ([OrdersQueue.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/OrdersQueue.tsx) en `/admin` con pestaña `orders`), con alisto guiado, escáner en tiempo real y empaque.
+- [x] **Sincronización en Drawer y Mi Cuenta ([NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx), [MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx)):**
+  - Actualizado el botón móvil a `"📋 Cola de Pedidos de Clientes"` navegando a `onNavigate('admin', 'orders')`.
+  - Re-exportado el tipo `AdminTabType` desde [index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts) para tipado estricto en toda la navegación del sistema.
+- [x] **Actualización de Service Worker:**
+  - Versión elevada a `byfio-pwa-v4.19.71` en [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js).
+
 ### Versión 4.19.70 - Confinamiento Estricto de Visión de Cámara al Recuadro con Esquinas Amarillas
 - [x] **Aislamiento Óptico Total del Sensor ([CameraBarcodeScannerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/mobile/CameraBarcodeScannerModal.tsx), [PickingLiveBarcodeScanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PickingLiveBarcodeScanner.tsx)):**
   - La cámara en vivo ahora se muestra única y exclusivamente dentro del recuadro punteado delimitado por las 4 esquinas amarillas.

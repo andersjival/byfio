@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User, UserPlus, LayoutGrid, LogOut, PackageCheck, ChevronDown, ChevronRight } from 'lucide-react';
-import { AppRoute, AuthUser } from '../../../types';
+import { User, UserPlus, LayoutGrid, LogOut, ClipboardList, ChevronDown, ChevronRight } from 'lucide-react';
+import { AppRoute, AuthUser, AdminTabType } from '../../../types';
 import { playWaterDropSound, playBubblePopSound } from '../../../utils/soundEffects';
 
 interface NavbarUserMenuProps {
   currentUser: AuthUser | null;
-  onNavigate: (route: AppRoute) => void;
+  onNavigate: (route: AppRoute, targetTab?: AdminTabType) => void;
   onOpenLogin?: (mode?: 'login' | 'register') => void;
   setIsMyAccountOpen: (open: boolean) => void;
   logoutUser: () => void;
@@ -63,14 +63,6 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
     );
   }
 
-  const isAlistoUser = Boolean(
-    currentUser && (
-      currentUser.role === 'staff' ||
-      currentUser.id === 'prof-alisto' ||
-      currentUser.name?.toUpperCase().includes('ALISTO')
-    )
-  );
-
   return (
     <div className="relative shrink-0" ref={userMenuRef}>
       <button
@@ -100,13 +92,13 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
         )}
         {currentUser.role === 'staff' && (
           <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[9px] font-bold uppercase tracking-wider shrink-0">
-            {isAlistoUser ? 'Alisto' : 'Staff'}
+            Colaborador
           </span>
         )}
         <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-fio-pink transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Menú Desplegado hacia Abajo: Sección Mi Cuenta */}
+      {/* Menú Desplegado hacia Abajo: Sección Mi Cuenta / Colaborador */}
       {isUserMenuOpen && (
         <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-purple-200/90 rounded-2xl shadow-[0_12px_32px_rgba(107,33,168,0.14),0_2px_8px_rgba(0,0,0,0.04)] p-2.5 z-[60] animate-in zoom-in-95 duration-150 space-y-1.5">
           {/* Cabecera del Usuario con Nombre e Identidad */}
@@ -126,84 +118,105 @@ export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({
                     </span>
                   ) : currentUser.role === 'staff' ? (
                     <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[9px] font-bold uppercase tracking-wider shrink-0">
-                      {isAlistoUser ? 'Alisto' : 'Staff'}
+                      Colaborador
                     </span>
                   ) : (
                     <span className="px-1.5 py-0.2 rounded-full bg-pink-100 text-fio-pink text-[9px] font-bold uppercase tracking-wider shrink-0">
                       Cliente
                     </span>
                   )}
-                  <span className="text-[11px] text-slate-500 truncate" title={isAlistoUser ? 'Creado por Administrador' : (currentUser.email || '')}>
-                    {isAlistoUser ? 'Creado por Administrador' : (currentUser.email || 'Perfil activo by.fio')}
+                  <span className="text-[11px] text-slate-500 truncate" title={currentUser.role === 'staff' ? 'Acceso a Cola de Pedidos' : (currentUser.email || '')}>
+                    {currentUser.role === 'staff' ? 'Acceso a Cola de Pedidos' : (currentUser.email || 'Perfil activo by.fio')}
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Botón Mandatorio: Mi Cuenta */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsUserMenuOpen(false);
-              onNavigate('mi-cuenta');
-              playBubblePopSound(0.3);
-            }}
-            className="w-full text-left p-2.5 rounded-xl hover:bg-pink-50 text-slate-800 hover:text-fio-pink transition-colors flex items-center justify-between group cursor-pointer border border-transparent hover:border-pink-200"
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-pink-100 text-fio-pink flex items-center justify-center shrink-0">
-                <User className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="font-bubble font-bold text-xs block text-slate-900 group-hover:text-fio-pink">
-                  Mi Cuenta
-                </span>
-                <span className="text-[10px] text-slate-400 block">
-                  {isAlistoUser ? 'Creado por Administrador' : 'Envíos, pedidos, promos y mapa'}
-                </span>
-              </div>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-fio-pink" />
-          </button>
-
-          {isAlistoUser ? (
+          {currentUser.role === 'staff' ? (
+            /* USUARIO COLABORADOR: Exclusivamente Botón de Cola de Pedidos hacia 'Cola de Pedidos de Clientes' */
             <button
               type="button"
               onClick={() => {
                 setIsUserMenuOpen(false);
-                onNavigate('pedidos-mobile');
+                onNavigate('admin', 'orders');
+                playBubblePopSound(0.3);
               }}
-              className="w-full text-left p-2.5 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 transition-colors flex items-center gap-2 text-xs font-bubble font-bold cursor-pointer"
+              className="w-full text-left p-3 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50/70 to-purple-50 hover:from-purple-100 hover:to-pink-100 text-slate-800 hover:text-purple-900 border border-purple-200/90 shadow-2xs transition-all flex items-center justify-between group cursor-pointer active:scale-98"
+              title="Ir directo a Cola de Pedidos de Clientes"
             >
-              <PackageCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Alisto de Pedidos (PWA)</span>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-fio-pink text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <ClipboardList className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <span className="font-bubble font-bold text-xs sm:text-sm block text-slate-900 group-hover:text-purple-900 leading-snug">
+                    Cola de Pedidos
+                  </span>
+                  <span className="text-[10px] text-fio-pink font-semibold block">
+                    Cola de pedidos de clientes
+                  </span>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-purple-400 group-hover:text-purple-700 transition-transform group-hover:translate-x-0.5" />
             </button>
-          ) : (currentUser.role === 'admin' || currentUser.role === 'staff') && (
+          ) : (
+            /* OTROS ROLES (CLIENTE Y ADMIN) */
             <>
+              {/* Botón: Mi Cuenta */}
               <button
                 type="button"
                 onClick={() => {
                   setIsUserMenuOpen(false);
-                  onNavigate('pedidos-mobile');
+                  onNavigate('mi-cuenta');
+                  playBubblePopSound(0.3);
                 }}
-                className="w-full text-left p-2 rounded-xl hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 transition-colors flex items-center gap-2 text-xs font-bubble font-bold cursor-pointer"
+                className="w-full text-left p-2.5 rounded-xl hover:bg-pink-50 text-slate-800 hover:text-fio-pink transition-colors flex items-center justify-between group cursor-pointer border border-transparent hover:border-pink-200"
               >
-                <PackageCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Gestión de Pedidos (Móvil)</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-pink-100 text-fio-pink flex items-center justify-center shrink-0">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bubble font-bold text-xs block text-slate-900 group-hover:text-fio-pink">
+                      Mi Cuenta
+                    </span>
+                    <span className="text-[10px] text-slate-400 block">
+                      Envíos, pedidos, promos y mapa
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-fio-pink" />
               </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setIsUserMenuOpen(false);
-                  onNavigate('admin');
-                }}
-                className="w-full text-left p-2 rounded-xl hover:bg-purple-50 text-slate-700 hover:text-purple-900 transition-colors flex items-center gap-2 text-xs font-bubble font-bold cursor-pointer"
-              >
-                <LayoutGrid className="w-4 h-4 text-purple-600 shrink-0" />
-                <span>Panel de Administración</span>
-              </button>
+              {currentUser.role === 'admin' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      onNavigate('admin', 'orders');
+                      playBubblePopSound(0.3);
+                    }}
+                    className="w-full text-left p-2 rounded-xl hover:bg-purple-50 text-slate-700 hover:text-purple-900 transition-colors flex items-center gap-2 text-xs font-bubble font-bold cursor-pointer"
+                  >
+                    <ClipboardList className="w-4 h-4 text-fio-pink shrink-0" />
+                    <span>Cola de Pedidos de Clientes</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      onNavigate('admin');
+                    }}
+                    className="w-full text-left p-2 rounded-xl hover:bg-purple-50 text-slate-700 hover:text-purple-900 transition-colors flex items-center gap-2 text-xs font-bubble font-bold cursor-pointer"
+                  >
+                    <LayoutGrid className="w-4 h-4 text-purple-600 shrink-0" />
+                    <span>Panel de Administración</span>
+                  </button>
+                </>
+              )}
             </>
           )}
 
