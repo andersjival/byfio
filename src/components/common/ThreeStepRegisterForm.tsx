@@ -30,6 +30,7 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
   // Paso 2: Teléfono, Cédula y Dirección
   const [phone, setPhone] = useState('');
   const [idCard, setIdCard] = useState('');
+  const [province, setProvince] = useState('San José');
   const [address, setAddress] = useState('');
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
@@ -132,7 +133,8 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
         idCard.trim(),
         address.trim(),
         lat ?? undefined,
-        lng ?? undefined
+        lng ?? undefined,
+        { province }
       );
       setIsLoading(false);
 
@@ -357,6 +359,31 @@ export const ThreeStepRegisterForm: React.FC<ThreeStepRegisterFormProps> = ({
                   autoComplete="off"
                   className="font-sans text-xs sm:text-sm"
                 />
+              </div>
+            </div>
+
+            {/* Provincia de Costa Rica */}
+            <div className="space-y-1 text-left">
+              <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                Provincia de Costa Rica:
+              </label>
+              <div className="input-group">
+                <div className="icon-badge">
+                  <MapPin className="w-4 h-4 text-white" />
+                </div>
+                <select
+                  value={province}
+                  onChange={(e) => setProvince(e.target.value)}
+                  className="font-sans text-xs sm:text-sm bg-transparent w-full text-slate-800 focus:outline-none"
+                >
+                  <option value="San José">San José</option>
+                  <option value="Alajuela">Alajuela</option>
+                  <option value="Cartago">Cartago</option>
+                  <option value="Heredia">Heredia</option>
+                  <option value="Guanacaste">Guanacaste</option>
+                  <option value="Puntarenas">Puntarenas</option>
+                  <option value="Limón">Limón</option>
+                </select>
               </div>
             </div>
 

@@ -55,7 +55,38 @@ export const onRequestGet = async (context: { env: Env }) => {
 export const onRequestPost = async (context: { request: Request; env: Env }) => {
   try {
     const body: any = await context.request.json().catch(() => ({}));
-    
+
+    // Capturar IP real desde cabeceras Cloudflare
+    const clientIp = context.request.headers.get('cf-connecting-ip') ||
+                     context.request.headers.get('x-real-ip') ||
+                     context.request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+                     'Desconocida';
+
+    // Parsear User-Agent para respaldo de dispositivo
+    const ua = context.request.headers.get('user-agent') || '';
+    let serverDeviceType: 'pc' | 'mobile' | 'tablet' = 'pc';
+    let serverDeviceModel = 'Computadora';
+    if (/(ipad|tablet)/i.test(ua)) {
+      serverDeviceType = 'tablet';
+      serverDeviceModel = 'Tablet';
+    } else if (/iPhone/i.test(ua)) {
+      serverDeviceType = 'mobile';
+      serverDeviceModel = 'Apple iPhone';
+    } else if (/Android/i.test(ua)) {
+      serverDeviceType = 'mobile';
+      const match = ua.match(/;\s*([^;]+?)\s*Build\//i) || ua.match(/Android[^;]*;\s*([^;)]+)/i);
+      serverDeviceModel = match && match[1] ? `Android (${match[1].trim()})` : 'Celular Android';
+    } else if (/Macintosh|Mac OS X/i.test(ua)) {
+      serverDeviceType = 'pc';
+      serverDeviceModel = 'Apple Mac';
+    } else if (/Windows/i.test(ua)) {
+      serverDeviceType = 'pc';
+      serverDeviceModel = 'PC Windows';
+    } else if (/Linux/i.test(ua)) {
+      serverDeviceType = 'pc';
+      serverDeviceModel = 'PC Linux';
+    }
+
     // Obtener lista existente en D1
     let existingUsers: any[] = [];
     if (context.env.DB) {
@@ -100,6 +131,9 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         usersMap.set(cleanEmail, {
           ...prev,
           ...u,
+          ipAddress: u.ipAddress && u.ipAddress !== 'Desconocida' ? u.ipAddress : (prev.ipAddress || clientIp),
+          deviceType: u.deviceType || prev.deviceType || serverDeviceType,
+          deviceModel: u.deviceModel || prev.deviceModel || serverDeviceModel,
           email: cleanEmail,
           updatedAt: new Date().toISOString(),
         });

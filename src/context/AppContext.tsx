@@ -33,6 +33,7 @@ import { isHomeLocation } from '../utils/routeHelpers';
 import { metricsTracker } from '../services/metricsTracker';
 import { deepSanitize } from '../utils/sanitizeText';
 import { safeSessionStorage, safeLocalStorage } from '../utils/safeStorage';
+import { getClientDeviceInfo } from '../utils/deviceDetection';
 import { pushStoreConfig, applyCloudCatalogTaxonomies, getLastBlockedPushAt } from '../utils/storeConfigSync';
 import {
   AppScope,
@@ -418,7 +419,7 @@ interface AppContextType {
     address?: string,
     lat?: number,
     lng?: number,
-    options?: { skipWelcomeModal?: boolean }
+    options?: { skipWelcomeModal?: boolean; province?: string; deviceType?: 'pc' | 'mobile' | 'tablet'; deviceModel?: string }
   ) => { success: boolean; error?: string; user?: AuthUser };
   resetPassword: (email: string, newPass: string) => { success: boolean; error?: string };
   logoutUser: () => void;
@@ -3037,7 +3038,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     addressInput?: string,
     latInput?: number,
     lngInput?: number,
-    options?: { skipWelcomeModal?: boolean }
+    options?: { skipWelcomeModal?: boolean; province?: string; deviceType?: 'pc' | 'mobile' | 'tablet'; deviceModel?: string }
   ) => {
     const cleanEmail = emailInput.trim().toLowerCase().replace(/[\u200B-\u200D\uFEFF]/g, '');
     const cleanPass = passwordInput.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
@@ -3052,6 +3053,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (registered.some((u: any) => u && u.email && String(u.email).trim().toLowerCase() === cleanEmail)) {
         return { success: false, error: 'Ya existe una cuenta con este correo electrónico.' };
       }
+      const clientDevice = getClientDeviceInfo();
       const record = {
         email: cleanEmail,
         password: cleanPass,
@@ -3059,6 +3061,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         phone: phoneInput?.trim() || '',
         idCard: idCardInput?.trim() || '',
         address: addressInput?.trim() || '',
+        province: options?.province || '',
+        deviceType: options?.deviceType || clientDevice.deviceType,
+        deviceModel: options?.deviceModel || clientDevice.deviceModel,
         lat: typeof latInput === 'number' ? latInput : undefined,
         lng: typeof lngInput === 'number' ? lngInput : undefined,
         createdAt: new Date().toISOString(),
@@ -3068,12 +3073,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(registered));
       syncWebUsersToCustomers([record]);
 
-      // Sincronizar de inmediato con Cloudflare D1
+      // Sincronizar de inmediato con Cloudflare D1 y guardar IP devuelta
       fetch('/api/registered-users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user: record }),
-      }).catch(() => {});
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data && Array.isArray(data.users)) {
+            safeLocalStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(data.users));
+          }
+        })
+        .catch(() => {});
 
       const customer: AuthUser = {
         email: record.email,
