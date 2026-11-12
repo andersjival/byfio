@@ -172,27 +172,17 @@ export const ProductBarcodeLabel: React.FC<ProductBarcodeLabelProps> = ({
       ) : (
         /* FORMATO B: ETIQUETA DE CÓDIGO DE BARRAS CODE 128 (Barras gruesas de alta legibilidad, no alargadas) */
         <>
-          {/* 1. Encabezado de Etiqueta: Logo ByFio + Categoría & Estante */}
+          {/* 1. Encabezado de Etiqueta: Categoría & Estante */}
           <div className="flex items-center justify-between text-[8px] sm:text-[9px] uppercase font-bold text-slate-500 print:text-black border-b border-slate-100 print:border-black/30 pb-0.5 mb-1 gap-1">
-            <div className="flex items-center gap-1 shrink-0">
-              <span className="font-bubble text-fio-pink print:text-black text-[9px] sm:text-[10px]">
-                by.fio★
-              </span>
-              <span className="text-[7.5px] text-slate-400 print:text-black">
-                128
-              </span>
-            </div>
+            <span className="text-[8px] sm:text-[8.5px] px-1 py-0.2 bg-purple-50 print:bg-transparent text-purple-700 print:text-black rounded truncate font-medium max-w-[110px] sm:max-w-[130px]">
+              {cleanCategory}
+            </span>
 
-            <div className="flex items-center gap-1 truncate text-right">
-              <span className="text-[8px] sm:text-[8.5px] px-1 py-0.2 bg-purple-50 print:bg-transparent text-purple-700 print:text-black rounded truncate font-medium max-w-[90px] sm:max-w-[110px]">
-                {cleanCategory}
+            {cleanLocation && (
+              <span className="font-semibold text-slate-600 print:text-black truncate max-w-[90px] sm:max-w-[110px] text-right">
+                📍 {cleanLocation.split('(')[0].trim()}
               </span>
-              {cleanLocation && (
-                <span className="font-semibold text-slate-600 print:text-black truncate max-w-[70px] sm:max-w-[85px]">
-                  📍 {cleanLocation.split('(')[0].trim()}
-                </span>
-              )}
-            </div>
+            )}
           </div>
 
           {/* Nombre del Producto */}
@@ -202,20 +192,23 @@ export const ProductBarcodeLabel: React.FC<ProductBarcodeLabelProps> = ({
             </h4>
           </div>
 
-          {/* Código de Barras 128 (Barras gruesas, proporcionadas y con crispEdges) */}
-          <div className="py-0.5 bg-white flex items-center justify-center overflow-hidden w-full">
+          {/* Código de Barras con Código Interno centrado */}
+          <div className="py-0.5 bg-white flex flex-col items-center justify-center overflow-hidden w-full">
             <Barcode128
               value={cleanSku}
-              height={compact ? 42 : 48}
+              height={compact ? 36 : 42}
               moduleWidth={2.4}
-              className="h-8.5 sm:h-9.5 w-auto max-w-[170px] sm:max-w-[185px] mx-auto"
+              className="h-7.5 sm:h-8.5 w-auto max-w-[170px] sm:max-w-[185px] mx-auto"
             />
+            <span className="font-mono font-black text-slate-900 print:text-black bg-slate-100 print:bg-transparent px-1.5 py-0.2 rounded tracking-wider text-[8.5px] sm:text-[9.5px] text-center mt-0.5">
+              {cleanSku}
+            </span>
           </div>
 
-          {/* SKU + Proveedor + Precio */}
+          {/* Pie: by.fio★ (donde estaba el código interno) + Proveedor + Precio */}
           <div className="mt-0.5 pt-0.5 border-t border-slate-100 print:border-black/30 flex items-center justify-between px-0.5 text-[9px] sm:text-[10px]">
-            <span className="font-mono font-black text-slate-900 print:text-black bg-slate-100 print:bg-transparent px-1.5 py-0.2 rounded tracking-wider">
-              {cleanSku}
+            <span className="font-bubble font-bold text-fio-pink print:text-black text-[9.5px] sm:text-[10.5px] shrink-0">
+              by.fio★
             </span>
 
             {product.supplier && (

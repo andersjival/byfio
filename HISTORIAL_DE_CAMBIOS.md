@@ -1,4 +1,17 @@
-<<<<<<< HEAD
+## [v4.19.124] - 2026-11-12
+
+### 📱 Detección de Dispositivo, Modelo, IP y Mini Dashboard de Métricas por Provincia
+- **Auditoría de Registro Real en Cloudflare D1 ([`registered-users.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/registered-users.ts), [`deviceDetection.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/deviceDetection.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx))**:
+  - Detección automática en registro web de tipo de dispositivo (`pc` vs `mobile` / `tablet`), modelo exacto del equipo (iPhone, Android, Windows, Mac) e IP de conexión real (`cf-connecting-ip` / `x-real-ip`) guardados directamente en Cloudflare D1 (`site_metrics` id `app_registered_users`).
+  - Incorporado selector de las 7 provincias de Costa Rica en el formulario de registro en 3 pasos ([`ThreeStepRegisterForm.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ThreeStepRegisterForm.tsx)).
+- **Segmentación por Provincias y Mini Dashboard ([`RegisteredClientsList.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx), [`UserMetricsDashboardModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserMetricsDashboardModal.tsx))**:
+  - Agregado filtro horizontal por las 7 provincias (San José, Alajuela, Cartago, Heredia, Guanacaste, Puntarenas, Limón) con insignias dinámicas del total de usuarios registrados en cada una.
+  - Indicador numérico principal: `Total de usuarios: X`.
+  - Nuevo botón interactivo **Métricas de usuarios** que abre un mini dashboard con gráficos de barras porcentuales por provincia, desglose de Celulares vs Computadoras, modelos más frecuentes e IPs registradas.
+  - Actualizado Service Worker a `byfio-pwa-v4.19.124`.
+
+---
+
 ## [v4.19.123] - 2026-11-12
 
 ### 🌐 Actualización Integral al Nuevo Dominio Oficial `https://byfiocr.com`
@@ -15,28 +28,6 @@
 - **Skills y Protocolos de Despliegue ([SKILL.md](file:///C:/Users/Juan/byfio/.agents/skills/deploy-cloudflare-byfio/SKILL.md), [GEMINI.md](file:///C:/Users/Juan/byfio/GEMINI.md))**:
   - Protocolo oficial de verificación apuntando al dominio en producción `https://byfiocr.com`.
   - Actualizado el Service Worker a `byfio-pwa-v4.19.123`.
-=======
-## [v4.19.124] - 2026-11-12
-
-### 🧹 Limpieza del Menú de Administración (Removidas Secciones Propuesta y Superadmin)
-- **Desacoplamiento Visual en Panel Admin ([`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`AdminHeader.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHeader.tsx))**:
-  - Eliminada la tarjeta `Propuesta Integral & Ficha Técnica Oficial (/propuesta)` del menú administrativo y su botón de acceso directo en la cabecera del panel.
-  - Eliminada la tarjeta `Gestor Maestro Superadmin (/admin/superadmin)` del menú administrativo para una navegación más limpia, manteniendo accesible el panel de métricas.
-
----
-
-## [v4.19.123] - 2026-11-12
-
-### 📱 Detección de Dispositivo, Modelo, IP y Mini Dashboard de Métricas por Provincia
-- **Auditoría de Registro Real en Cloudflare D1 ([`registered-users.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/registered-users.ts), [`deviceDetection.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/deviceDetection.ts), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx))**:
-  - Detección automática en registro web de tipo de dispositivo (`pc` vs `mobile` / `tablet`), modelo exacto del equipo (iPhone, Android, Windows, Mac) e IP de conexión real (`cf-connecting-ip` / `x-real-ip`) guardados directamente en Cloudflare D1 (`site_metrics` id `app_registered_users`).
-  - Incorporado selector de las 7 provincias de Costa Rica en el formulario de registro en 3 pasos ([`ThreeStepRegisterForm.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/ThreeStepRegisterForm.tsx)).
-- **Segmentación por Provincias y Mini Dashboard ([`RegisteredClientsList.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx), [`UserMetricsDashboardModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserMetricsDashboardModal.tsx))**:
-  - Agregado filtro horizontal por las 7 provincias (San José, Alajuela, Cartago, Heredia, Guanacaste, Puntarenas, Limón) con insignias dinámicas del total de usuarios registrados en cada una.
-  - Indicador numérico principal: `Total de usuarios: X`.
-  - Nuevo botón interactivo **Métricas de usuarios** que abre un mini dashboard con gráficos de barras porcentuales por provincia, desglose de Celulares vs Computadoras, modelos más frecuentes e IPs registradas.
-  - Actualizado Service Worker a `byfio-pwa-v4.19.123`.
->>>>>>> 393bfaa (feat(users): captura de dispositivo, modelo, IP, filtro de 7 provincias y dashboard metricas v4.19.123)
 
 ---
 
