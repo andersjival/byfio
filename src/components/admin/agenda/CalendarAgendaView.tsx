@@ -331,16 +331,23 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
 
       {/* 2. Cuadrícula del Calendario */}
       <div className="rounded-3xl border shadow-neuCard overflow-hidden transition-colors" style={{ backgroundColor: themeConfig.bgContainer, borderColor: themeConfig.borderTable }}>
-        <div className="overflow-x-auto min-w-full custom-scrollbar touch-pan-x">
+        <div className="overflow-auto max-h-[75vh] sm:max-h-[80vh] min-w-full custom-scrollbar touch-auto overscroll-contain">
           {viewType === 'weekly' ? (
             /* ============================================================ */
             /* VISTA SEMANAL (7 COLUMNAS: LUNES A DOMINGO)                 */
             /* ============================================================ */
-            <table className="w-full border-collapse min-w-[680px] sm:min-w-[800px] lg:min-w-full table-fixed">
+            <table className="w-full border-separate border-spacing-0 min-w-[700px] sm:min-w-[800px] lg:min-w-full table-fixed">
               <thead>
-                <tr className="sticky top-0 z-10 shadow-2xs" style={{ backgroundColor: themeConfig.bgHeader, borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
+                <tr>
                   {/* Columna Hora */}
-                  <th className="w-16 sm:w-20 p-2 sm:p-3 text-center text-[11px] sm:text-xs font-bubble font-bold text-slate-600" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
+                  <th
+                    className="sticky top-0 left-0 z-30 w-16 sm:w-20 p-2 sm:p-3 text-center text-[11px] sm:text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
+                    style={{
+                      backgroundColor: themeConfig.bgHeader,
+                      borderRight: `1px solid ${themeConfig.borderDiv}`,
+                      borderBottom: `1px solid ${themeConfig.borderDiv}`,
+                    }}
+                  >
                     Hora
                   </th>
 
@@ -359,13 +366,14 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     return (
                       <th
                         key={dayKey}
-                        className={`p-2.5 sm:p-3 text-left transition-all ${
+                        className={`sticky top-0 z-20 p-2.5 sm:p-3 text-left transition-all shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${
                           isToday
                             ? 'border-b-2 border-b-blue-500 ring-2 ring-blue-400/40'
                             : ''
                         }`}
                         style={{
                           borderRight: idx === 6 ? 'none' : `1px solid ${themeConfig.borderDiv}`,
+                          borderBottom: `1px solid ${themeConfig.borderDiv}`,
                           backgroundColor: isToday
                             ? 'rgba(59, 130, 246, 0.12)'
                             : isSunday
@@ -414,9 +422,16 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
               <tbody>
                 {timeRows.map((hourLabel) => {
                   return (
-                    <tr key={hourLabel} className="transition-colors hover:bg-black/[0.015]" style={{ borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
+                    <tr key={hourLabel} className="transition-colors hover:bg-black/[0.015]">
                       {/* Columna Hora */}
-                      <td className="p-3 text-center text-xs font-mono font-bold text-slate-600 align-top" style={{ borderRight: `1px solid ${themeConfig.borderDiv}`, backgroundColor: themeConfig.bgHourCol }}>
+                      <td
+                        className="sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
+                        style={{
+                          borderRight: `1px solid ${themeConfig.borderDiv}`,
+                          borderBottom: `1px solid ${themeConfig.borderDiv}`,
+                          backgroundColor: themeConfig.bgHourCol,
+                        }}
+                      >
                         {hourLabel}
                       </td>
 
@@ -447,6 +462,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                             className="p-1.5 sm:p-2 align-top relative group min-h-[64px] transition-colors"
                             style={{
                               borderRight: dayIdx === 6 ? 'none' : `1px solid ${themeConfig.borderDiv}`,
+                              borderBottom: `1px solid ${themeConfig.borderDiv}`,
                               backgroundColor: isToday
                                 ? 'rgba(59, 130, 246, 0.06)'
                                 : isSunday
@@ -599,23 +615,49 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
               </div>
 
               {/* Grid Horario Detallado para Vista Diaria */}
-              <table className="w-full border-collapse table-fixed">
+              <table className="w-full border-separate border-spacing-0 table-fixed">
                 <thead>
-                  <tr style={{ backgroundColor: themeConfig.bgHeader, borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
-                    <th className="w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
+                  <tr>
+                    <th
+                      className="sticky top-0 left-0 z-30 w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
+                      style={{
+                        backgroundColor: themeConfig.bgHeader,
+                        borderRight: `1px solid ${themeConfig.borderDiv}`,
+                        borderBottom: `1px solid ${themeConfig.borderDiv}`,
+                      }}
+                    >
                       Hora
                     </th>
                     {teamFilter === 'all' ? (
                       <>
-                        <th className="p-3 text-left text-xs font-bubble font-bold text-purple-900 bg-purple-50/40" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
+                        <th
+                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-purple-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                          style={{
+                            backgroundColor: '#FAF5FF',
+                            borderRight: `1px solid ${themeConfig.borderDiv}`,
+                            borderBottom: `1px solid ${themeConfig.borderDiv}`,
+                          }}
+                        >
                           Fiorella Brenes (Diseño &amp; Admin)
                         </th>
-                        <th className="p-3 text-left text-xs font-bubble font-bold text-sky-900 bg-sky-50/40">
+                        <th
+                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-sky-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                          style={{
+                            backgroundColor: '#F0F9FF',
+                            borderBottom: `1px solid ${themeConfig.borderDiv}`,
+                          }}
+                        >
                           Taller Creativo &amp; Envíos
                         </th>
                       </>
                     ) : (
-                      <th className="p-3 text-left text-xs font-bubble font-bold text-slate-800">
+                      <th
+                        className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-slate-800 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                        style={{
+                          backgroundColor: themeConfig.bgHeader,
+                          borderBottom: `1px solid ${themeConfig.borderDiv}`,
+                        }}
+                      >
                         {TEAM_MEMBERS.find((m) => m.id === teamFilter)?.name || 'Agenda del Día'}
                       </th>
                     )}
@@ -631,15 +673,22 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     });
 
                     return (
-                      <tr key={`daily-${hourLabel}`} className="hover:bg-black/[0.015] transition-colors" style={{ borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
-                        <td className="p-3 text-center text-xs font-mono font-bold text-slate-600 align-top" style={{ borderRight: `1px solid ${themeConfig.borderDiv}`, backgroundColor: themeConfig.bgHourCol }}>
+                      <tr key={`daily-${hourLabel}`} className="hover:bg-black/[0.015] transition-colors">
+                        <td
+                        className="sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
+                        style={{
+                          borderRight: `1px solid ${themeConfig.borderDiv}`,
+                          borderBottom: `1px solid ${themeConfig.borderDiv}`,
+                          backgroundColor: themeConfig.bgHourCol,
+                        }}
+                      >
                           {hourLabel}
                         </td>
 
                         {teamFilter === 'all' ? (
                           <>
                             {/* Columna Fiorella */}
-                            <td className="p-2 align-top" style={{ borderRight: `1px solid ${themeConfig.borderDiv}` }}>
+                            <td className="p-2 align-top" style={{ borderRight: `1px solid ${themeConfig.borderDiv}`, borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
                               <div className="space-y-1.5">
                                 {hourItems
                                   .filter((i) => i.category === 'recordatorio' || i.category === 'proveedor')
@@ -664,7 +713,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                             </td>
 
                             {/* Columna Taller & Envíos */}
-                            <td className="p-2 align-top">
+                            <td className="p-2 align-top" style={{ borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
                               <div className="space-y-1.5">
                                 {hourItems
                                   .filter((i) => i.category === 'taller' || i.category === 'entrega' || i.category === 'produccion')
@@ -690,7 +739,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           </>
                         ) : (
                           /* Columna Única Amplia */
-                          <td className="p-2 align-top">
+                          <td className="p-2 align-top" style={{ borderBottom: `1px solid ${themeConfig.borderDiv}` }}>
                             <div className="space-y-1.5">
                               {hourItems.map((item) => (
                                 <div
