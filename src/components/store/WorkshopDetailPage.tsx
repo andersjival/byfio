@@ -537,7 +537,7 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
                 <button
                   type="button"
                   onClick={() => onNavigate('workshop-waitlist', undefined, workshop.id)}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-fio-pink hover:from-amber-600 hover:to-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-lg active:scale-95 transition-all cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn hover:shadow-lg active:scale-95 transition-all cursor-pointer"
                 >
                   <Users className="w-4 h-4" />
                   <span>Ingresar a la lista de espera</span>
