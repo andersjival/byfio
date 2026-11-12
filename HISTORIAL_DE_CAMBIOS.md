@@ -1,4 +1,28 @@
-﻿## [v4.19.121] - 2026-11-12
+## [v4.19.122] - 2026-11-12
+
+### 👤 Fecha, Hora y Usuario Creador en Ficha de Clientes
+- **Registro y Auditoría de Clientes ([CustomersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx), [QuickBillingSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/QuickBillingSection.tsx), [AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [types/index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts))**:
+  - Incorporada la visualización obligatoria de Fecha y Hora de Creación (`createdAt`) y Usuario Creador (`createdBy`) en la ficha de registrar nuevo cliente y editar cliente existente.
+  - El campo "Creado por" se pre-rellena automáticamente con el perfil del usuario activo en sesión (`currentUser?.name || 'Administración'`) y permite asignación o ajuste cuando sea necesario.
+  - Agregados los metadatos de creación al pie de cada tarjeta en el Directorio de Clientes y en el directorio de Facturación Rápida POS.
+  - Sincronización automática de registros web con etiqueta `Registro Web (Cliente)`.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.122`.
+
+---
+
+## [v4.19.122] - 2026-11-12
+
+### 👥 Pestañas Duales en Perfiles de Usuario: Colaboradores y Clientes Registrados
+- **Selector Dual y Directorio de Clientes Web ([`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx), [`RegisteredClientsList.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx))**:
+  - Incorporado selector superior de pestañas con dos botones interactivos: **Usuarios Colaboradores** y **Usuarios Clientes** con badges dinámicos de cantidad de usuarios.
+  - La sección 'Usuarios Colaboradores' mantiene el panel de perfiles con código PIN de 4 dígitos y matriz de permisos por módulos.
+  - La sección 'Usuarios Clientes' despliega el directorio de clientes registrados en la plataforma web, detallando fecha y hora de registro, nombre completo, correo, teléfono con enlace directo a WhatsApp, cédula/identificación, provincia detectada, dirección exacta y enlace a Google Maps cuando hay coordenadas registradas.
+  - Agregado buscador en tiempo real por nombre, correo, cédula, teléfono o provincia, y botón de actualización/sincronización con Cloudflare D1 (`/api/registered-users`).
+  - Actualizado Service Worker a `byfio-pwa-v4.19.122`.
+
+---
+
+## [v4.19.121] - 2026-11-12
 
 ### 🌐 Vinculación y Activación del Dominio Personalizado `byfiocr.com`
 - **Conexión de Dominio Real y Enrutamiento Cloudflare ([`GEMINI.md`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/GEMINI.md), [`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html))**:

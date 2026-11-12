@@ -3,12 +3,12 @@ import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { Customer } from '../../types';
 import {
-  Users, UserPlus, Search, Phone, Mail, MapPin, FileText, Edit2,
+  Users, UserPlus, Search, Phone, Mail, MapPin, FileText, Edit2, User, Clock,
   Trash2, X, Check, ShoppingBag, MessageCircle, CreditCard,
   Calendar, CheckCircle2, AlertCircle, Building2, Crown, Trophy,
   History, ArrowDownWideNarrow, Minus, Plus
 } from 'lucide-react';
-import { formatShortDate, formatCRC } from '../../utils/formatters';
+import { formatShortDate, formatCRC, formatDateTime } from '../../utils/formatters';
 import {
   CUSTOMER_VIP_THRESHOLD_STORAGE_KEY,
   DEFAULT_VIP_MIN_PURCHASES,
@@ -33,6 +33,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     orders,
     isFeatureEnabled,
     setInvoiceOrder,
+    currentUser,
   } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,6 +58,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
   const [address, setAddress] = useState('');
   const [cedula, setCedula] = useState('');
   const [notes, setNotes] = useState('');
+  const [createdBy, setCreatedBy] = useState('');
+  const [createdAtDisplay, setCreatedAtDisplay] = useState('');
   const [customFieldValues, setCustomFieldValues] = useState<{ [id: string]: string }>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [successToast, setSuccessToast] = useState<string | null>(null);
@@ -148,6 +151,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     setAddress('');
     setCedula('');
     setNotes('');
+    setCreatedBy(currentUser?.name || 'Administración (Fio)');
+    setCreatedAtDisplay(new Date().toISOString());
     setCustomFieldValues({});
     setFormError(null);
     setIsModalOpen(true);
@@ -161,6 +166,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     setAddress(customer.address || '');
     setCedula(customer.customFields?.['field-cedula'] || '');
     setNotes(customer.notes || '');
+    setCreatedBy(customer.createdBy || currentUser?.name || 'Administración (Fio)');
+    setCreatedAtDisplay(customer.createdAt || '');
     setCustomFieldValues(customer.customFields ? { ...customer.customFields } : {});
     setFormError(null);
     setIsModalOpen(true);
@@ -194,6 +201,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
         email: email.trim() || undefined,
         address: address.trim() || undefined,
         notes: notes.trim() || undefined,
+        createdBy: createdBy.trim() || editingCustomer.createdBy || currentUser?.name || 'Administración',
         customFields: Object.keys(mergedCustomFields).length > 0 ? mergedCustomFields : undefined,
       });
       setSuccessToast(`Cliente "${cleanName}" actualizado con éxito.`);
@@ -204,6 +212,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
         email: email.trim() || undefined,
         address: address.trim() || undefined,
         notes: notes.trim() || undefined,
+        createdAt: createdAtDisplay || new Date().toISOString(),
+        createdBy: createdBy.trim() || currentUser?.name || 'Administración (Fio)',
         customFields: Object.keys(mergedCustomFields).length > 0 ? mergedCustomFields : undefined,
       });
       setSuccessToast(`¡Cliente "${cleanName}" guardado con éxito para futuros pedidos!`);
@@ -512,6 +522,18 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                         <p className="mt-0.5 text-amber-950 font-sans italic">{cust.notes}</p>
                       </div>
                     )}
+
+                    {/* Metadatos de Registro: Fecha/Hora y Creado por */}
+                    <div className="pt-2 mt-2 border-t border-slate-200/70 flex flex-wrap items-center justify-between gap-1.5 text-[10px] text-slate-500">
+                      <span className="inline-flex items-center gap-1" title="Fecha y hora de registro del cliente">
+                        <Calendar className="w-3 h-3 text-emerald-600 shrink-0" />
+                        <span>{formatDateTime(cust.createdAt)}</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1 font-medium text-slate-600" title="Usuario o colaborador que registró a este cliente">
+                        <User className="w-3 h-3 text-purple-600 shrink-0" />
+                        <span>Creado por: <strong className="text-slate-800 font-bold">{cust.createdBy || 'Administración'}</strong></span>
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -600,6 +622,53 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                     <span>{formError}</span>
                   </div>
                 )}
+
+                {/* Bloque Informativo de Auditoría: Fecha/Hora y Creado por */}
+                <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50/80 via-teal-50/50 to-slate-50 border border-emerald-200/70 shadow-2xs space-y-2.5">
+                  <div className="flex items-center justify-between gap-2 border-b border-emerald-100/80 pb-2">
+                    <span className="text-[11px] font-bubble font-bold text-emerald-950 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>{editingCustomer ? 'Detalles de Creación de la Ficha' : 'Registro de Nueva Ficha'}</span>
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
+                      {editingCustomer ? 'Cliente Registrado' : 'Nuevo Ingreso'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {/* Fecha y Hora de Creación */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Fecha y Hora de Creación</span>
+                      </label>
+                      <div className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-mono font-medium text-slate-700 shadow-2xs flex items-center justify-between">
+                        <span className="truncate">{formatDateTime(editingCustomer ? editingCustomer.createdAt : createdAtDisplay)}</span>
+                        {!editingCustomer && (
+                          <span className="text-[9px] text-emerald-700 font-sans font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 shrink-0 ml-1">
+                            En vivo
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Usuario Creador (Creado por) */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
+                        <User className="w-3.5 h-3.5 text-purple-600" />
+                        <span>Creado por</span> <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={createdBy}
+                        onChange={(e) => setCreatedBy(e.target.value)}
+                        placeholder="Usuario responsable"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-sans font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 {/* Nombre Completo */}
                 <div>

@@ -254,6 +254,7 @@ const mergeRegisteredUsersIntoCustomers = (baseCustomers: Customer[], regUsers: 
         address: webAddress || undefined,
         notes: 'Cliente registrado en la página web',
         createdAt: typeof raw.createdAt === 'string' && raw.createdAt ? raw.createdAt : new Date().toISOString(),
+        createdBy: 'Registro Web (Cliente)',
         customFields: webIdCard ? { 'field-cedula': webIdCard } : undefined,
       });
       changed = true;
@@ -435,7 +436,7 @@ interface AppContextType {
   hasPermission: (tab: string) => boolean;
   customers: Customer[];
   customerFieldDefs: CustomerFieldDef[];
-  addCustomer: (data: Omit<Customer, 'id' | 'createdAt'>) => Customer;
+  addCustomer: (data: Omit<Customer, 'id' | 'createdAt'> & { createdAt?: string; createdBy?: string }) => Customer;
   updateCustomer: (id: string, updates: Partial<Customer>) => void;
   deleteCustomer: (id: string) => void;
   syncRegisteredUsers: () => Promise<void>;
@@ -1250,13 +1251,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return deepSanitize(DEFAULT_CUSTOMER_FIELDS);
   });
 
-  const addCustomer = (customerData: Omit<Customer, 'id' | 'createdAt'>): Customer => {
+  const addCustomer = (customerData: Omit<Customer, 'id' | 'createdAt'> & { createdAt?: string; createdBy?: string }): Customer => {
     const newCustomer: Customer = {
       ...customerData,
       id: `cust-${Date.now()}`,
       name: customerData.name.trim(),
       phone: customerData.phone.trim(),
-      createdAt: new Date().toISOString(),
+      createdAt: customerData.createdAt || new Date().toISOString(),
+      createdBy: customerData.createdBy?.trim() || currentUser?.name || 'Administración (Fio)',
     };
     const updated = [newCustomer, ...customers];
     setCustomers(updated);

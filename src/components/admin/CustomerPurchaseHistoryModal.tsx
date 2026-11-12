@@ -55,6 +55,8 @@ export const CustomerPurchaseHistoryModal: React.FC<CustomerPurchaseHistoryModal
             </div>
             <p className="text-[11px] text-purple-100 font-sans mt-0.5">
               {customer.phone || 'Sin teléfono'}{customer.email ? ` • ${customer.email}` : ''}
+              {customer.createdAt ? ` • Registrado: ${formatShortDate(customer.createdAt)}` : ''}
+              {customer.createdBy ? ` (Por: ${customer.createdBy})` : ''}
             </p>
           </div>
           <button

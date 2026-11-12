@@ -2,13 +2,13 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { Order, Product, PaymentMethod, DeliveryMethod, Customer } from '../../types';
-import { formatCRC, formatShortDate, getWhatsAppLink } from '../../utils/formatters';
+import { formatCRC, formatShortDate, formatDateTime, getWhatsAppLink } from '../../utils/formatters';
 import {
   Search, FileText, Printer, MessageCircle, CheckCircle2, Clock,
   Plus, Trash2, User, UserPlus, Phone, Mail, MapPin, Tag,
   ShoppingBag, Star, X, Edit3, Settings, Check, CreditCard,
   DollarSign, ArrowRight, UserCheck, Package, Store, Truck,
-  AlertTriangle, Hash, Zap
+  AlertTriangle, Hash, Zap, Calendar
 } from 'lucide-react';
 import { FastPosBillingPanel } from './FastPosBillingPanel';
 
@@ -118,6 +118,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
   const [custModalEmail, setCustModalEmail] = useState('');
   const [custModalAddress, setCustModalAddress] = useState('');
   const [custModalNotes, setCustModalNotes] = useState('');
+  const [custModalCreatedBy, setCustModalCreatedBy] = useState('');
+  const [custModalCreatedAt, setCustModalCreatedAt] = useState('');
   const [custModalFields, setCustModalFields] = useState<{ [fieldId: string]: string }>({});
   const [newFieldLabel, setNewFieldLabel] = useState('');
   const [isAddFieldOpen, setIsAddFieldOpen] = useState(false);
@@ -321,6 +323,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
             email: customerEmail.trim() || undefined,
             address: shippingAddress.trim() || undefined,
             notes: orderNotes.trim() || undefined,
+            createdBy: currentUser?.name || 'Facturación Rápida',
             customFields: customFieldValues,
           });
         }
@@ -424,6 +427,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
     setCustModalEmail('');
     setCustModalAddress('');
     setCustModalNotes('');
+    setCustModalCreatedBy(currentUser?.name || 'Administración');
+    setCustModalCreatedAt(new Date().toISOString());
     setCustModalFields({});
     setIsCustomerModalOpen(true);
   };
@@ -435,6 +440,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
     setCustModalEmail(customer.email || '');
     setCustModalAddress(customer.address || '');
     setCustModalNotes(customer.notes || '');
+    setCustModalCreatedBy(customer.createdBy || currentUser?.name || 'Administración');
+    setCustModalCreatedAt(customer.createdAt || '');
     setCustModalFields(customer.customFields ? { ...customer.customFields } : {});
     setIsCustomerModalOpen(true);
   };
@@ -453,6 +460,7 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
         email: custModalEmail.trim() || undefined,
         address: custModalAddress.trim() || undefined,
         notes: custModalNotes.trim() || undefined,
+        createdBy: custModalCreatedBy.trim() || currentUser?.name || 'Administración',
         customFields: custModalFields,
       });
     } else {
@@ -462,6 +470,8 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
         email: custModalEmail.trim() || undefined,
         address: custModalAddress.trim() || undefined,
         notes: custModalNotes.trim() || undefined,
+        createdAt: custModalCreatedAt || new Date().toISOString(),
+        createdBy: custModalCreatedBy.trim() || currentUser?.name || 'Administración',
         customFields: custModalFields,
       });
     }
@@ -1515,6 +1525,18 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
                       )}
                     </div>
 
+                    {/* Metadatos de Registro: Fecha/Hora y Creado por */}
+                    <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex flex-wrap items-center justify-between gap-1 text-[10px] text-slate-500 dark:text-slate-400">
+                      <span className="inline-flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <span>{formatDateTime(cust.createdAt)}</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1 font-medium">
+                        <User className="w-3 h-3 text-purple-400 shrink-0" />
+                        <span>Por: <strong className="text-slate-700 dark:text-slate-200 font-bold">{cust.createdBy || 'Administración'}</strong></span>
+                      </span>
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => handleBillToCustomerDirect(cust)}
@@ -1554,6 +1576,49 @@ export const QuickBillingSection: React.FC<QuickBillingSectionProps> = ({
 
             <form onSubmit={handleSaveCustomerModal} className="flex flex-col flex-1 overflow-hidden">
               <div className="p-4 sm:p-5 space-y-3 overflow-y-auto flex-1">
+                {/* Bloque Informativo de Auditoría: Fecha/Hora y Creado por */}
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 space-y-2">
+                  <div className="flex items-center justify-between gap-2 border-b border-slate-200 dark:border-white/10 pb-1.5">
+                    <span className="text-[11px] font-bubble font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-purple-500" />
+                      <span>{editingCustomerId ? 'Detalles de Registro' : 'Registro de Nuevo Cliente'}</span>
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 font-bold">
+                      {editingCustomerId ? 'Existente' : 'Nuevo'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>Fecha y Hora</span>
+                      </label>
+                      <div className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-[#151022] border border-slate-200 dark:border-white/10 text-xs font-mono text-slate-700 dark:text-slate-200 flex items-center justify-between">
+                        <span className="truncate">{formatDateTime(editingCustomerId ? custModalCreatedAt : custModalCreatedAt || new Date().toISOString())}</span>
+                        {!editingCustomerId && (
+                          <span className="text-[9px] text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1 rounded ml-1 shrink-0">En vivo</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1">
+                        <User className="w-3.5 h-3.5 text-purple-500" />
+                        <span>Creado por</span> <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={custModalCreatedBy}
+                        onChange={(e) => setCustModalCreatedBy(e.target.value)}
+                        placeholder="Usuario"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-[#151022] border border-slate-300 dark:border-white/10 text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-xs font-bubble font-bold text-slate-700 dark:text-slate-300 block mb-1">
                     Nombre Completo: <span className="text-rose-500">*</span>

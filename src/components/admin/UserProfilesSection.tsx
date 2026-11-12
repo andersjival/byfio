@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { UserProfile, UserPermissions } from '../../types';
+import { RegisteredClientsList } from './RegisteredClientsList';
 import {
   Users, Plus, KeyRound, Shield, Check, X, Edit3, Trash2,
   CheckCircle2, AlertCircle, Copy, Eye, EyeOff, Star,
@@ -13,6 +14,7 @@ export const UserProfilesSection: React.FC = () => {
   const confirm = useConfirm();
   const showAlert = useAlert();
 
+  const [subTab, setSubTab] = useState<'collaborators' | 'clients'>('collaborators');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
 
@@ -210,6 +212,17 @@ export const UserProfilesSection: React.FC = () => {
 
   const allChecked = permissionModules.every((m) => !!permissions[m.key]);
 
+  const registeredClientsCount = useMemo(() => {
+    try {
+      const raw = localStorage.getItem('byfio_registered_users_v1');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed.length;
+      }
+    } catch {}
+    return 0;
+  }, [subTab]);
+
   return (
     <div className="space-y-6 animate-fadeIn pb-8">
       {/* Toast de Éxito Flotante */}
@@ -220,7 +233,52 @@ export const UserProfilesSection: React.FC = () => {
         </div>
       )}
 
-      {/* Encabezado Principal */}
+      {/* Selector Dual: Usuarios Colaboradores vs Usuarios Clientes */}
+      <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-[#E8EBF0] border border-white/80 shadow-neuInset max-w-lg">
+        <button
+          type="button"
+          onClick={() => setSubTab('collaborators')}
+          className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-bubble font-bold text-xs sm:text-sm transition-all ${
+            subTab === 'collaborators'
+              ? 'bg-gradient-to-r from-fio-purple to-purple-600 text-white shadow-md'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          <span>Usuarios Colaboradores</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] ${
+            subTab === 'collaborators' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+          }`}>
+            {userProfiles.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSubTab('clients')}
+          className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-bubble font-bold text-xs sm:text-sm transition-all ${
+            subTab === 'clients'
+              ? 'bg-gradient-to-r from-fio-purple to-purple-600 text-white shadow-md'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+          }`}
+        >
+          <UserCheck className="w-4 h-4" />
+          <span>Usuarios Clientes</span>
+          {registeredClientsCount > 0 && (
+            <span className={`px-2 py-0.5 rounded-full text-[10px] ${
+              subTab === 'clients' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+            }`}>
+              {registeredClientsCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {subTab === 'clients' ? (
+        <RegisteredClientsList />
+      ) : (
+        <>
+          {/* Encabezado Principal */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#8B5CF6] to-[#6D28D9] text-white flex items-center justify-center shadow-xs shrink-0">
@@ -449,6 +507,8 @@ export const UserProfilesSection: React.FC = () => {
           );
         })}
       </div>
+      </>
+      )}
 
       {/* Modal Neumórfico para Crear o Editar Perfil */}
       {isModalOpen && (
