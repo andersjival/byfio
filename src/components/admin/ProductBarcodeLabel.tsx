@@ -96,30 +96,34 @@ export const ProductBarcodeLabel: React.FC<ProductBarcodeLabelProps> = ({
       {codeFormat === 'qr' ? (
         /* FORMATO A: ETIQUETA QR OFICIAL (QR ampliado con Círculo Lila ByFio en letras blancas y Descripción/Ubicación) */
         <div className="flex items-center gap-2 h-full w-full py-0.5 text-left">
-          {/* LADO 1: CÓDIGO QR GRANDE */}
-          <div className="w-[40%] shrink-0 flex items-center justify-center">
+          {/* LADO 1: CÓDIGO QR GRANDE + CÓDIGO DEL PRODUCTO ABAJO */}
+          <div className="w-[42%] shrink-0 flex flex-col items-center justify-center">
             <div className="relative p-0.5 bg-white rounded-xl border border-slate-300 print:border-black flex items-center justify-center shadow-2xs">
               <QRCodeSVG
                 value={cleanQrValue}
-                size={compact ? 88 : 108}
+                size={compact ? 76 : 94}
                 level="H"
                 includeMargin={false}
                 className="max-w-full h-auto"
                 imageSettings={{
                   src: EMBLEM_SVG_DATA_URI,
-                  width: compact ? 26 : 33,
-                  height: compact ? 26 : 33,
+                  width: compact ? 24 : 30,
+                  height: compact ? 24 : 30,
                   excavate: true,
                 }}
               />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <ByFioQrCenterEmblem size={compact ? 26 : 33} />
+                <ByFioQrCenterEmblem size={compact ? 24 : 30} />
               </div>
             </div>
+            {/* Código del producto abajo del QR sin la palabra Código */}
+            <span className="font-mono font-black text-slate-900 print:text-black bg-slate-100 print:bg-transparent px-1.5 py-0.2 rounded tracking-wider text-[8px] sm:text-[9px] text-center mt-1 border border-slate-200 print:border-none max-w-full truncate">
+              {cleanSku}
+            </span>
           </div>
 
-          {/* LADO 2: DESCRIPCIÓN EN GRANDE Y UBICACIÓN CON EL CÓDIGO */}
-          <div className="w-[60%] flex-1 min-w-0 flex flex-col justify-between h-full py-0.5 pr-0.5">
+          {/* LADO 2: DESCRIPCIÓN (MISMO TAMAÑO QUE BARRAS) Y UBICACIÓN / PRECIO */}
+          <div className="w-[58%] flex-1 min-w-0 flex flex-col justify-between h-full py-0.5 pr-0.5">
             {/* Cabecera compacta: by.fio★ y Categoría */}
             <div className="flex items-center justify-between text-[8px] uppercase font-bold text-slate-500 print:text-black border-b border-slate-100 print:border-black/30 pb-0.5 mb-1 gap-1">
               <span className="font-bubble text-fio-pink print:text-black text-[9px]">
@@ -130,42 +134,28 @@ export const ProductBarcodeLabel: React.FC<ProductBarcodeLabelProps> = ({
               </span>
             </div>
 
-            {/* Descripción en grande */}
+            {/* Descripción / Nombre del Producto (mismo tamaño del código de barras: 10px sm:11px) */}
             <div className="flex-1 min-h-0 flex items-center">
-              <h3 className="font-bubble font-black text-xs sm:text-[13px] print:text-xs text-slate-900 print:text-black leading-tight line-clamp-2">
+              <h4 className="font-bubble font-bold text-[10px] sm:text-[11px] text-slate-900 print:text-black leading-tight line-clamp-2">
                 {cleanName}
-              </h3>
+              </h4>
             </div>
 
-            {/* Ubicación con el Código y Precio */}
-            <div className="mt-1 pt-0.5 border-t border-slate-100 print:border-black/30 space-y-0.5">
-              {/* Ubicación */}
-              <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-slate-700 print:text-black">
-                <span className="font-bold uppercase text-[8px] text-slate-400 print:text-black shrink-0">
-                  Ubicación:
+            {/* Ubicación y Precio (sin palabras Ubicación: ni Código:) */}
+            <div className="mt-1 pt-0.5 border-t border-slate-100 print:border-black/30 flex items-center justify-between gap-1 text-[9px] sm:text-[10px]">
+              {cleanLocation ? (
+                <span className="font-bubble font-bold text-purple-900 print:text-black truncate max-w-[95px] sm:max-w-[115px]">
+                  📍 {cleanLocation.split('(')[0].trim()}
                 </span>
-                <span className="font-bubble font-bold text-purple-900 print:text-black truncate">
-                  📍 {cleanLocation}
+              ) : (
+                <span />
+              )}
+
+              {showPrice && typeof product.price === 'number' && product.price > 0 && (
+                <span className="font-bubble font-black text-fio-800 print:text-black text-[10px] sm:text-[11px] shrink-0 ml-auto">
+                  {formatCRC(product.price)}
                 </span>
-              </div>
-
-              {/* Código y Precio */}
-              <div className="flex items-center justify-between gap-1 text-[9px] sm:text-[10px]">
-                <div className="flex items-center gap-1">
-                  <span className="font-bold uppercase text-[8px] text-slate-400 print:text-black shrink-0">
-                    Código:
-                  </span>
-                  <span className="font-mono font-black text-slate-900 print:text-black bg-slate-100 print:bg-transparent px-1.5 py-0.2 rounded tracking-wider border border-slate-200 print:border-black/40">
-                    {cleanSku}
-                  </span>
-                </div>
-
-                {showPrice && typeof product.price === 'number' && product.price > 0 && (
-                  <span className="font-bubble font-black text-fio-800 print:text-black text-[10.5px] sm:text-xs shrink-0">
-                    {formatCRC(product.price)}
-                  </span>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>
