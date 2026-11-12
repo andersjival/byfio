@@ -1,3 +1,14 @@
+## [v4.19.116] - 2026-11-12
+
+### 🔔 Alertas y Notificaciones Exclusivas para Pedidos en Línea (Silenciada Facturación Rápida POS)
+- **Silenciamiento de Ventas Presenciales POS ([AppContext.tsx](file:///C:/Users/Juan/byfio/src/context/AppContext.tsx), [NewOrderStarAlert.tsx](file:///C:/Users/Juan/byfio/src/components/common/NewOrderStarAlert.tsx), [orders.ts](file:///C:/Users/Juan/byfio/functions/api/orders.ts), [index.ts](file:///C:/Users/Juan/byfio/src/types/index.ts))**:
+  - En createDirectInvoiceOrder, se suprimió la activación de showNewOrderAlert (modal de la estrellita) y el sonido chime de nuevo pedido al cobrar ventas presenciales en mostrador por Facturación Rápida POS (efectivo o SINPE).
+  - Se añadió la propiedad isDirectInvoice: true a las órdenes de mostrador para que el proceso de sincronización en segundo plano (checkAndNotifyNewOrders) no dispare alertas en otras pantallas del panel.
+  - Las compras de clientes en línea (tienda online, talleres y apartados) mantienen al 100% sus alertas visuales, animaciones de estrellita y sonidos chime habituales.
+  - Actualizado el Service Worker a yfio-pwa-v4.19.116.
+
+---
+
 ## [v4.19.112] - 2026-11-11
 
 ### 🧾 Historial Diario en Lista para Facturación Rápida POS

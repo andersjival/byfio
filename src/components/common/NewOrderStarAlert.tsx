@@ -38,6 +38,14 @@ export const NewOrderStarAlert: React.FC = () => {
     (newOrderAlert?.orderNumber && newOrderAlert.orderNumber.toLowerCase().includes('apartado'))
   );
 
+  // Las ventas presenciales en mostrador por Facturación Rápida POS no deben mostrar la alerta de nuevo pedido
+  const isDirectInvoice = Boolean(
+    matchedOrder?.isDirectInvoice ||
+    matchedOrder?.orderTitle?.includes('Facturación Rápida') ||
+    matchedOrder?.orderTitle?.includes('Factura Directa') ||
+    matchedOrder?.notes?.includes('Facturación Rápida POS')
+  );
+
   const rawNum = (newOrderAlert?.orderNumber || '').replace(/^#+/, '');
   const cleanOrderNumber = rawNum ? `#${rawNum}` : '#FIO';
 
@@ -90,7 +98,7 @@ export const NewOrderStarAlert: React.FC = () => {
     }
   }, [elapsedSeconds, starAlertDuration, newOrderAlert, isExiting, canViewAlert]);
 
-  if (!canViewAlert || !newOrderAlert) return null;
+  if (!canViewAlert || !newOrderAlert || isDirectInvoice) return null;
 
   const handleDismiss = () => {
     if (intervalRef.current) {

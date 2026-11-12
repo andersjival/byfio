@@ -138,10 +138,14 @@ const mapRowToOrder = (r: OrderDbRow) => {
           layawaySourceOrderId: laySaleItem?.layawaySourceOrderId,
           layawaySourceOrderNumber: laySaleItem?.layawaySourceOrderNumber,
         }
-      : (r.notes && r.notes.includes('Facturación Rápida POS')) ||
-          (r.customer_name === 'Cliente Mostrador' && r.customer_phone === '0000-0000')
-        ? { orderTitle: 'Facturación Rápida POS' }
+      : (r.notes && (r.notes.includes('Facturación Rápida POS') || r.notes.includes('Factura Directa')))
+          || (r.customer_name === 'Cliente Mostrador' && r.customer_phone === '0000-0000')
+        ? { orderTitle: 'Facturación Rápida POS', isDirectInvoice: true }
         : {}),
+    isDirectInvoice: Boolean(
+      (r.notes && (r.notes.includes('Facturación Rápida POS') || r.notes.includes('Factura Directa')))
+      || (r.customer_name === 'Cliente Mostrador' && r.customer_phone === '0000-0000')
+    ),
     ...(firstLay?.layawayGeneratedSaleOrderId
       ? {
           layawaySaleOrderId: firstLay.layawayGeneratedSaleOrderId,

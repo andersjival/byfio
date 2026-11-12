@@ -1070,7 +1070,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     incomingOrders
-      .filter((o) => isLayawaySaleOrder(o))
+      .filter((o) =>
+        isLayawaySaleOrder(o) ||
+        Boolean(o.isDirectInvoice) ||
+        Boolean(o.orderTitle?.includes('Facturación Rápida')) ||
+        Boolean(o.orderTitle?.includes('Factura Directa')) ||
+        Boolean(o.notes?.includes('Facturación Rápida POS'))
+      )
       .forEach((o) => knownOrderIdsRef.current.add(o.id));
     const newOrders = incomingOrders.filter((o) => !knownOrderIdsRef.current.has(o.id));
     if (newOrders.length > 0) {
@@ -2194,6 +2200,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       packedAt: new Date().toISOString(),
       notes: orderData.notes,
       customFields: orderData.customFields,
+      isDirectInvoice: true,
     };
 
     const updatedOrders = [newOrder, ...orders.filter((o) => o.id !== newOrder.id)].sort(
@@ -2202,28 +2209,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setOrders(updatedOrders);
     safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, serializeOrdersForStorage(updatedOrders));
     knownOrderIdsRef.current.add(newOrder.id);
-    const isWsOrder = newOrder.items?.some((it) => it.type === 'workshop') || newOrder.id?.startsWith('ord-ws-') || newOrder.orderNumber?.startsWith('#WS');
-    const wsItemInOrder = newOrder.items?.find((it) => it.type === 'workshop');
-    const isLayOrder = Boolean(newOrder.isLayaway || newOrder.items?.some((it) => it.isLayaway));
-    if (canReceiveOrderNotifications(Boolean(isWsOrder), isLayOrder)) {
-      playNewOrderChimeSound(0.85);
-      showNewOrderAlert({
-        orderNumber: newOrder.orderNumber,
-        customerName: newOrder.customerName,
-        total: newOrder.total,
-        isWorkshop: Boolean(isWsOrder),
-        workshopTitle: wsItemInOrder?.name,
-        isLayaway: isLayOrder,
-      });
-      sendOrderPushNotification({
-        orderNumber: newOrder.orderNumber,
-        customerName: newOrder.customerName,
-        total: newOrder.total,
-        isWorkshop: Boolean(isWsOrder),
-        workshopTitle: wsItemInOrder?.name,
-        isLayaway: isLayOrder,
-      });
-    }
+    // Nota: Facturación Rápida POS y Factura Directa no disparan alerta visual ni sonido chime;
+    // son ventas presenciales en mostrador que se liquidan al instante.
 
     fetch('/api/orders', {
       method: 'POST',

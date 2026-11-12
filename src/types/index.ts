@@ -260,6 +260,7 @@ export interface Order {
   id: string;
   orderNumber: string; // ej: #FIO-1001
   orderTitle?: string;
+  isDirectInvoice?: boolean;
   customerName: string;
   customerPhone: string;
   customerEmail?: string;
