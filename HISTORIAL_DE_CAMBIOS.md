@@ -1,3 +1,13 @@
+## [v4.19.118] - 2026-11-12
+
+### 🧹 Limpieza de Barra Superior (Eliminado Botón Menú Redundante)
+- **Remoción de Botón Menú en Navbar ([Navbar.tsx](file:///C:/Users/Juan/byfio/src/components/common/Navbar.tsx))**:
+  - Se eliminó el botón 'Menú' con degradado morado/rosa ubicado en la barra superior entre el selector de tema y el avatar de usuario.
+  - Mejora la limpieza visual en dispositivos móviles y de escritorio, optimizando el espacio del encabezado.
+  - Actualizado el Service Worker a yfio-pwa-v4.19.118.
+
+---
+
 ## [v4.19.117] - 2026-11-12
 
 ### 📱 Persistencia Total de Barra Inferior PWA y Visibilidad de Botones en Inventario

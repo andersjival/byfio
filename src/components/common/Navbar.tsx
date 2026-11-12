@@ -307,19 +307,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               )}
               <NavbarThemeToggle colorTheme={colorTheme} setColorTheme={setColorTheme} />
-              <button
-                type="button"
-                onClick={onSelectAdminHub}
-                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bubble font-bold border border-white/80 shadow-sm hover:shadow transition-all active:scale-95 shrink-0 whitespace-nowrap ${
-                  isAdminHub
-                    ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-md'
-                    : 'bg-white/90 hover:bg-white text-slate-700 hover:text-fio-pink'
-                }`}
-                title="Ir al Menú del Panel de Control"
-              >
-                <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-yellow shrink-0" />
-                <span className="whitespace-nowrap">Menú</span>
-              </button>
 
               {/* Menú de Usuario Persistente (Avatar + Nombre + Rol) */}
               <NavbarUserMenu
