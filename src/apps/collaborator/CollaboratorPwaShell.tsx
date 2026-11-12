@@ -27,6 +27,10 @@ export const CollaboratorPwaShell: React.FC<CollaboratorPwaShellProps> = ({
   onSelectAdminTab,
 }) => {
   const { activePickingOrder, currentUser, isSuperAdminAuthenticated } = useApp();
+  const isPrivilegedUser = Boolean(
+    isSuperAdminAuthenticated ||
+    (currentUser && (currentUser.role === 'admin' || !!currentUser.isMasterAdmin || currentUser.role === 'staff'))
+  );
   const [isEntryGatewayOpen, setIsEntryGatewayOpen] = useState<boolean>(() => {
     if (typeof window === 'undefined' || !isCollaboratorPwaContext()) return false;
     try {
@@ -73,7 +77,7 @@ export const CollaboratorPwaShell: React.FC<CollaboratorPwaShellProps> = ({
 
       {Boolean(isSuperAdminAuthenticated || currentUser) && <NewOrderStarAlert />}
 
-      {isCollaboratorPwaContext() && isEntryGatewayOpen && (
+      {isCollaboratorPwaContext() && isEntryGatewayOpen && !isPrivilegedUser && (
         <AppEntryGatewayModal
           isOpen={isEntryGatewayOpen}
           onSelectStore={() => {

@@ -11,6 +11,7 @@ import {
   Lock, KeyRound, Smartphone, LogOut, User, ShieldAlert, Boxes, Scan
 } from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
+import { AdminMobileDock } from '../admin/AdminMobileDock';
 
 interface InventoryAppPageProps {
   onNavigate: (route: AppRoute, tab?: any) => void;
@@ -190,17 +191,18 @@ export const InventoryAppPage: React.FC<InventoryAppPageProps> = ({ onNavigate }
 
   return (
     <div className="min-h-[100dvh] w-full bg-[#F7F4FC] flex flex-col text-slate-800">
-      {/* Header Independiente de la App PWA de Inventario */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-purple-100 shadow-2xs">
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2.5">
+      {/* Header Independiente de la App PWA de Inventario con espaciado seguro para notch/difuminado superior */}
+      <header className="sticky top-0 z-30 bg-white border-b border-purple-200 shadow-xs pt-[max(0.85rem,calc(env(safe-area-inset-top)+0.65rem))] pb-2.5 sm:pb-3 transition-all">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 flex flex-wrap items-center justify-between gap-2.5">
           <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={handleBackNavigation}
-              className="p-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 transition-all active:scale-95 cursor-pointer"
-              title={isAdmin ? 'Volver a Mis Productos' : 'Volver a Pedidos'}
+              className="px-3 py-2 rounded-xl bg-purple-100/90 hover:bg-purple-200 text-purple-900 border border-purple-300/80 shadow-2xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+              title={isAdmin ? 'Volver a Administración' : 'Volver a Pedidos'}
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 text-purple-900" />
+              <span className="text-xs font-bubble font-bold">Atrás</span>
             </button>
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-700 via-fio-purple to-fio-pink text-white flex items-center justify-center shadow-xs">
@@ -246,10 +248,11 @@ export const InventoryAppPage: React.FC<InventoryAppPageProps> = ({ onNavigate }
                 playWaterDropSound();
                 logoutUser();
               }}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition-colors cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
               title="Cerrar sesión / Cambiar PIN"
             >
               <LogOut className="w-4 h-4" />
+              <span className="text-xs font-bubble font-bold">Salir</span>
             </button>
           </div>
         </div>
@@ -330,7 +333,7 @@ export const InventoryAppPage: React.FC<InventoryAppPageProps> = ({ onNavigate }
       </header>
 
       {/* Área Principal del Módulo Activo */}
-      <main className="flex-1 w-full max-w-6xl mx-auto p-3 sm:p-6">
+      <main className="flex-1 w-full max-w-6xl mx-auto p-3 sm:p-6 pb-24 sm:pb-8">
         {activeShelfCounting ? (
           <InventoryCountSession
             shelfName={activeShelfCounting}
@@ -358,6 +361,17 @@ export const InventoryAppPage: React.FC<InventoryAppPageProps> = ({ onNavigate }
           </>
         )}
       </main>
+      {/* Dock Táctil Inferior Persistente en App de Inventario */}
+      <AdminMobileDock
+        activeTab="inventory"
+        onSelectTab={(tab) => {
+          if (tab === 'inventory') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            onNavigate('admin', tab);
+          }
+        }}
+      />
     </div>
   );
 };

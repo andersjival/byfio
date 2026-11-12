@@ -1,3 +1,19 @@
+## [v4.19.117] - 2026-11-12
+
+### 📱 Persistencia Total de Barra Inferior PWA y Visibilidad de Botones en Inventario
+- **Barra Inferior Persistente de 5 Botones ([AdminMobileDock.tsx](file:///C:/Users/Juan/byfio/src/components/admin/AdminMobileDock.tsx), [InventoryAppPage.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryAppPage.tsx), [MobileOrdersView.tsx](file:///C:/Users/Juan/byfio/src/components/mobile/MobileOrdersView.tsx))**:
+  - La barra táctil inferior ahora mantiene fijos, uniformes y consistentes los 5 botones principales: Inicio, Pedidos, Cobrar, Agenda e Inventario en todas las pantallas de la PWA.
+  - El botón Inventario navega de forma directa a la pestaña de administración (dminTab = 'inventory'), manteniéndose dentro de la experiencia PWA sin redirecciones ni pérdidas de navegación.
+  - Integrada la barra táctil fija inferior dentro de InventoryAppPage para que nunca desaparezca al gestionar inventarios.
+- **Ajuste de Cabecera Superior y Botones Atrás / Salir ([InventoryAppPage.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryAppPage.tsx))**:
+  - Añadido espaciado seguro safe-area-inset-top con margen extra de holgura y fondo blanco nítido sólido a la cabecera de inventario.
+  - Los botones de Atrás (arriba a la izquierda) y Salir (arriba a la derecha) ahora descienden por debajo del notch y la barra de estado con etiquetas de texto visibles y bordes nítidos sin perderse en difuminados.
+- **Supresión de la Compuerta de Entrada para Administradores ([CollaboratorPwaShell.tsx](file:///C:/Users/Juan/byfio/src/apps/collaborator/CollaboratorPwaShell.tsx))**:
+  - Bloqueada la aparición de la ventana modal 'Tienda vs Entrar a pedidos' cuando el usuario es administrador o colaborador logueado, garantizando navegación fluida.
+  - Actualizado el Service Worker a yfio-pwa-v4.19.117.
+
+---
+
 ## [v4.19.116] - 2026-11-12
 
 ### 🔔 Alertas y Notificaciones Exclusivas para Pedidos en Línea (Silenciada Facturación Rápida POS)
