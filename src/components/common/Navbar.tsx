@@ -121,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </button>
 
-          {(currentRoute === 'admin' || currentRoute === 'superadmin') && (
+          {currentRoute === 'superadmin' && (
             <button
               type="button"
               onClick={() => handleNav('home')}
