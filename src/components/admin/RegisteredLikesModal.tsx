@@ -55,7 +55,7 @@ export const RegisteredLikesModal: React.FC<RegisteredLikesModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg bg-white rounded-3xl border border-pink-200 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150"
+        className="w-full max-w-lg bg-white dark:bg-[#25203D] rounded-3xl border border-pink-200 dark:border-white/10 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150"
       >
         <div className="bg-gradient-to-r from-purple-700 via-fio-purple to-fio-pink px-5 py-4 flex items-center justify-between text-white">
           <div className="flex items-center gap-2.5">
@@ -107,14 +107,14 @@ export const RegisteredLikesModal: React.FC<RegisteredLikesModalProps> = ({
             registeredLikes.map((like) => (
               <div
                 key={like.id}
-                className="p-3 rounded-2xl bg-pink-50/50 border border-pink-100 flex items-center justify-between gap-3"
+                className="p-3 rounded-2xl bg-pink-50/50 dark:bg-white/5 border border-pink-100 dark:border-white/10 flex items-center justify-between gap-3"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-fio-pink text-white flex items-center justify-center font-bubble font-black text-xs shrink-0">
                     {(like.userName || 'U').charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-extrabold text-slate-800 truncate flex items-center gap-1.5">
+                    <p className="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-white truncate flex items-center gap-1.5">
                       <User className="w-3 h-3 text-purple-500 shrink-0" />
                       <span>{like.userName}</span>
                     </p>

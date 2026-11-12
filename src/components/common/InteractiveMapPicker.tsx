@@ -113,7 +113,7 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
     });
   }, []);
 
-  // Geocodificación Inversa Profesional con Mapbox v5
+  // Geocodificación Inversa con Mapbox v5 y respaldo en Nominatim OpenStreetMap
   const reverseGeocode = useCallback(async (targetLat: number, targetLng: number) => {
     const now = Date.now();
     if (now - lastGeocodeTimeRef.current < 600) return;
@@ -121,16 +121,46 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
 
     try {
       setIsGeocoding(true);
-      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${targetLng},${targetLat}.json?access_token=${mapboxToken}&country=cr&types=address,neighborhood,locality,place,poi&language=es`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Geocoding error');
-      const data = await res.json();
+      let formattedAddress: string | null = null;
 
-      if (data && data.features && data.features.length > 0) {
-        const bestFeature = data.features[0];
-        const formatted = bestFeature.place_name || bestFeature.text;
-        setAddressPreview(formatted);
-        onChangeRef.current({ lat: targetLat, lng: targetLng, addressSuggestion: formatted });
+      // 1. Intentar con Mapbox si hay token
+      if (mapboxToken) {
+        try {
+          const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${targetLng},${targetLat}.json?access_token=${mapboxToken}&country=cr&types=address,neighborhood,locality,place,poi&language=es`;
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.features && data.features.length > 0) {
+              const bestFeature = data.features[0];
+              formattedAddress = bestFeature.place_name || bestFeature.text;
+            }
+          }
+        } catch {
+          // Continuar al respaldo
+        }
+      }
+
+      // 2. Respaldo transparente en OpenStreetMap (Nominatim)
+      if (!formattedAddress) {
+        try {
+          const osmUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18&addressdetails=1`;
+          const res = await fetch(osmUrl, {
+            headers: { 'Accept-Language': 'es' }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.display_name) {
+              formattedAddress = data.display_name;
+            }
+          }
+        } catch {
+          // Continuar sin dirección
+        }
+      }
+
+      if (formattedAddress) {
+        setAddressPreview(formattedAddress);
+        onChangeRef.current({ lat: targetLat, lng: targetLng, addressSuggestion: formattedAddress });
       } else {
         onChangeRef.current({ lat: targetLat, lng: targetLng });
       }
@@ -264,7 +294,7 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
     return () => clearTimeout(timer);
   }, [isExpanded]);
 
-  // Buscar lugares en Costa Rica con Mapbox Geocoding v5
+  // Buscar lugares en Costa Rica con Mapbox Geocoding v5 + Respaldo en OpenStreetMap Nominatim
   const fetchMapboxSuggestions = useCallback(async (query: string) => {
     const cleanQuery = query.trim();
     if (!cleanQuery || cleanQuery.length < 2) {
@@ -276,15 +306,52 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
     setSearchError(null);
 
     try {
-      // Bounding box Costa Rica: [-85.95, 8.03, -82.55, 11.22]
-      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(cleanQuery)}.json?access_token=${mapboxToken}&country=cr&bbox=-85.95,8.03,-82.55,11.22&types=poi,address,neighborhood,locality,place&language=es&limit=6`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Search failed');
-      const data = await res.json();
+      let foundSuggestions: MapboxSuggestion[] = [];
 
-      if (data && data.features && data.features.length > 0) {
-        setSuggestions(data.features);
+      // 1. Intentar primero con Mapbox si hay token disponible
+      if (mapboxToken) {
+        try {
+          // Bounding box Costa Rica: [-85.95, 8.03, -82.55, 11.22]
+          const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(cleanQuery)}.json?access_token=${mapboxToken}&country=cr&bbox=-85.95,8.03,-82.55,11.22&types=poi,address,neighborhood,locality,place&language=es&limit=6`;
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.features && data.features.length > 0) {
+              foundSuggestions = data.features;
+            }
+          }
+        } catch {
+          // Si Mapbox da error o CORS, pasamos al respaldo sin interrumpir
+        }
+      }
+
+      // 2. Respaldo transparente en OpenStreetMap Nominatim si Mapbox falló o no devolvió resultados
+      if (foundSuggestions.length === 0) {
+        try {
+          const osmUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cleanQuery)}&countrycodes=cr&limit=6&addressdetails=1`;
+          const res = await fetch(osmUrl, {
+            headers: { 'Accept-Language': 'es' }
+          });
+          if (res.ok) {
+            const list = await res.json();
+            if (Array.isArray(list) && list.length > 0) {
+              foundSuggestions = list.map((item: any) => ({
+                id: `osm-${item.place_id}`,
+                place_name: item.display_name,
+                text: item.name || item.display_name.split(',')[0],
+                center: [parseFloat(item.lon), parseFloat(item.lat)]
+              }));
+            }
+          }
+        } catch {
+          // Si ambos fallaran
+        }
+      }
+
+      if (foundSuggestions.length > 0) {
+        setSuggestions(foundSuggestions);
         setShowSuggestions(true);
+        setSearchError(null);
       } else {
         setSuggestions([]);
         setSearchError('No encontramos coincidencias exactas en Costa Rica. Puedes arrastrar el PIN en el mapa.');

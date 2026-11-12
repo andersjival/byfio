@@ -239,14 +239,14 @@ export const OrdersQueue: React.FC = () => {
       </div>
 
       {/* Pestañas de Filtro Rápido de Cola */}
-      <div className="p-1.5 md:p-1 rounded-2xl bg-slate-100 border border-slate-200/80 mb-4 w-full md:w-fit grid grid-cols-2 gap-1.5 md:flex md:items-center md:gap-1.5 md:flex-wrap">
+      <div className="p-1.5 md:p-1 rounded-2xl bg-slate-100 dark:bg-[#1E1A30] border border-slate-200/80 dark:border-white/10 mb-4 w-full md:w-fit grid grid-cols-2 gap-1.5 md:flex md:items-center md:gap-1.5 md:flex-wrap">
         <button
           type="button"
           onClick={() => setFilterMode('all')}
           className={`col-span-2 md:col-span-1 flex items-center justify-between md:justify-start gap-2 px-3.5 py-2 md:py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
             filterMode === 'all'
-              ? 'bg-white text-fio-900 shadow-xs'
-              : 'text-slate-600 hover:text-fio-900 bg-white/70 md:bg-transparent'
+              ? 'bg-white dark:bg-[#352F54] text-fio-900 dark:text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-300 hover:text-fio-900 dark:hover:text-white bg-white/70 dark:bg-white/5 md:bg-transparent'
           }`}
         >
           <div className="flex items-center gap-1.5">

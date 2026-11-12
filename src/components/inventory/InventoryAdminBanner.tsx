@@ -30,7 +30,7 @@ export const InventoryAdminBanner: React.FC<InventoryAdminBannerProps> = ({ onOp
   ).length;
 
   return (
-    <div className="mb-5 rounded-2xl border border-purple-200/90 bg-gradient-to-r from-purple-50/90 via-white to-pink-50/90 p-4 sm:p-5 shadow-xs">
+    <div className="mb-5 rounded-2xl border border-purple-200/90 dark:border-purple-500/30 bg-gradient-to-r from-purple-50/90 via-white to-pink-50/90 dark:from-[#282245] dark:via-[#211D35] dark:to-[#2D244A] p-4 sm:p-5 shadow-xs">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Izquierda: Título y Estado de Estanterías */}
         <div className="flex items-start gap-3.5">

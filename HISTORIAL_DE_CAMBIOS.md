@@ -1,3 +1,41 @@
+## [v4.19.126] - 2026-11-12
+
+### 🌙 Corrección Integral y Contraste Total del Modo Oscuro en Toda la Web y PWA
+- **Sistema Global de Gradientes Adaptativos en Modo Oscuro ([index.css](file:///C:/Users/Juan/byfio/src/index.css))**:
+  - Resuelto el problema de tarjetas con fondo blanco/claro y lavado provocados por gradientes lineales de Tailwind (`from-purple-50`, `from-pink-50`, `from-amber-50`, `from-blue-50`, `from-emerald-50`, `via-white`, `to-white`, etc.). Ahora se transforman automáticamente en gradientes oscuros translúcidos, profundos y elegantes que se funden de manera armónica con el fondo violeta ciruela de la web.
+- **Superficies Secundarias y Píldoras ([index.css](file:///C:/Users/Juan/byfio/src/index.css))**:
+  - Incorporadas reglas globales para `bg-slate-50`, `bg-slate-100`, `bg-gray-50`, `bg-gray-100`, `bg-fio-50`, `bg-fio-100`, insignias de categorías y contenedores de pestañas, erradicando cajas claras y bordes desentonados.
+  - Insignias de colores (`bg-amber-100`, `bg-emerald-100`, `bg-purple-100`, `bg-pink-100`, `bg-blue-100`, `bg-rose-100`) adaptadas con fondos oscuros translúcidos y textos brillantes legibles (`#FDE68A`, `#A7F3D0`, `#E9D5FF`, etc.).
+  - Estados `hover` protegidos contra destellos blancos accidentales.
+- **Botón 'Inventario Físico (App)' y 'Catálogo Comercial' ([AdminHubMenu.tsx](file:///C:/Users/Juan/byfio/src/components/admin/AdminHubMenu.tsx))**:
+  - El botón de 'Inventario Físico (App)' ahora se integra perfectamente al diseño oscuro con el mismo fondo y borde temático del resto de módulos del menú.
+  - El recuadro del Catálogo Comercial Online adopta fondo oscuro y textos claros sin pérdida de legibilidad.
+- **Tarjeta 'Me Gusta Web' ([AdminHeader.tsx](file:///C:/Users/Juan/byfio/src/components/admin/AdminHeader.tsx))**:
+  - Erradicado el fondo blanco de la tarjeta de Me Gusta Web en modo oscuro; ahora luce el mismo fondo oscuro ejecutivo que el resto de métricas de cabecera.
+- **Pestañas de la Cola de Pedidos ([OrdersQueue.tsx](file:///C:/Users/Juan/byfio/src/components/admin/OrdersQueue.tsx))**:
+  - La barra contenedora de filtros rápidos (Todos, Pendientes, En Empaque, Empacados, Terminados) y los botones de prueba y sonido ahora lucen tonos oscuros con contraste total.
+- **Módulo de Inventario y Tabla de Productos ([InventoryAdminBanner.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryAdminBanner.tsx), [InventoryTable.tsx](file:///C:/Users/Juan/byfio/src/components/admin/InventoryTable.tsx))**:
+  - Banner superior de estanterías adaptado al modo oscuro.
+  - Píldoras de categorías, visibilidad en Tienda/Catálogo, "Producto sin proveedor" y controles de incremento/decremento de stock corregidos con alto contraste.
+- **Módulo de Registro de Caja ([CashRegisterReports.tsx](file:///C:/Users/Juan/byfio/src/components/admin/CashRegisterReports.tsx))**:
+  - Las 5 tarjetas de desglose financiero (Total en Caja, Tienda & Catálogo, Ventas de Apartados, Talleres Creativos y Ganancia Neta) ahora exhiben fondos oscuros saturados con tipografía nítida y legible.
+- **Pestañas Duales en Perfiles de Usuario ([UserProfilesSection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/UserProfilesSection.tsx), [RegisteredLikesModal.tsx](file:///C:/Users/Juan/byfio/src/components/admin/RegisteredLikesModal.tsx))**:
+  - Contenedor de pestañas Colaboradores vs Clientes adaptado a modo oscuro sin bordes blancos.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.126`.
+
+---
+
+## [v4.19.125] - 2026-11-12
+
+### 🏷️ Optimización y Limpieza de Etiquetas de Código de Barras y QR
+- **Estandarización de Etiquetas ([ProductBarcodeLabel.tsx](file:///C:/Users/Juan/byfio/src/components/admin/ProductBarcodeLabel.tsx))**:
+  - Ajustado el tamaño de la descripción del producto para que coincida armoniosamente con el código de barras.
+  - El código de producto se posiciona inmediatamente debajo del QR sin prefijos innecesarios.
+  - Eliminadas las etiquetas textuales redundantes 'Ubicación' y 'Código' para una presentación ultra limpia y legible en impresión física.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.125`.
+
+---
+
 ## [v4.19.124] - 2026-11-12
 
 ### 📱 Detección de Dispositivo, Modelo, IP y Mini Dashboard de Métricas por Provincia

@@ -121,17 +121,17 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
           <button
             type="button"
             onClick={() => setShowLikesModal(true)}
-            className="bg-gradient-to-br from-pink-50/90 to-white hover:from-pink-100/80 hover:to-pink-50/40 rounded-2xl p-3 border border-pink-200/90 shadow-xs flex items-center gap-2.5 text-left transition-all active:scale-95 cursor-pointer"
+            className="bg-gradient-to-br from-pink-50/90 to-white dark:from-[#2C2746] dark:to-[#211D35] hover:from-pink-100/80 hover:to-pink-50/40 dark:hover:from-[#352F54] dark:hover:to-[#2C2746] rounded-2xl p-3 border border-pink-200/90 dark:border-white/10 shadow-xs flex items-center gap-2.5 text-left transition-all active:scale-95 cursor-pointer"
             title="Ver Me Gusta de usuarios registrados"
           >
             <div className="p-2 rounded-xl bg-pink-100 text-fio-pink shrink-0">
               <Heart className="w-4 h-4 fill-fio-pink text-fio-pink" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold text-pink-700 truncate">Me Gusta Web</p>
+              <p className="text-[11px] font-semibold text-pink-700 dark:text-pink-300 truncate">Me Gusta Web</p>
               <div className="flex items-baseline gap-1.5">
-                <h3 className="text-lg font-bubble font-bold text-purple-950">{totalRegisteredLikes}</h3>
-                <span className="text-[9px] text-pink-600 font-bold">registrados</span>
+                <h3 className="text-lg font-bubble font-bold text-purple-950 dark:text-white">{totalRegisteredLikes}</h3>
+                <span className="text-[9px] text-pink-600 dark:text-pink-400 font-bold">registrados</span>
               </div>
             </div>
           </button>

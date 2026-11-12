@@ -187,7 +187,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
       {/* Grid de Métricas Principales (Total en Caja + División Tienda, Ventas de apartados y Talleres) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
         {/* TOTAL EN CAJA */}
-        <div className="bg-gradient-to-tr from-purple-50 via-purple-100/40 to-fio-100/50 p-4 rounded-3xl border-2 border-purple-300 shadow-claySm">
+        <div className="bg-gradient-to-tr from-purple-50 via-purple-100/40 to-fio-100/50 dark:from-purple-950/60 dark:via-[#2C2746] dark:to-pink-950/40 p-4 rounded-3xl border-2 border-purple-300 dark:border-purple-500/40 shadow-claySm">
           <span className="text-[11px] font-bold text-purple-900 uppercase block">
             {timeRange === 'today' ? 'Total en Caja (Hoy)' : 'Total en Caja (Semana)'}
           </span>
@@ -201,7 +201,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
         {/* DIVISIÓN 1: TIENDA & CATÁLOGO */}
         {isFeatureEnabled('reports', 'category_breakdown') && (
-          <div className="bg-gradient-to-tr from-blue-50 to-blue-100/40 p-4 rounded-3xl border border-blue-200 shadow-claySm">
+          <div className="bg-gradient-to-tr from-blue-50 to-blue-100/40 dark:from-blue-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-blue-200 dark:border-blue-500/40 shadow-claySm">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-blue-900 uppercase">🛍️ Tienda &amp; Catálogo</span>
               <ShoppingBag className="w-4 h-4 text-blue-600" />
@@ -217,7 +217,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
         {/* DIVISIÓN 2: VENTAS DE APARTADOS */}
         {isFeatureEnabled('reports', 'category_breakdown') && (
-          <div className="bg-gradient-to-tr from-amber-50 to-purple-50/60 p-4 rounded-3xl border border-amber-200 shadow-claySm">
+          <div className="bg-gradient-to-tr from-amber-50 to-purple-50/60 dark:from-amber-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-amber-200 dark:border-amber-500/40 shadow-claySm">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-amber-900 uppercase">🏷️ {LAYAWAY_SALE_CATEGORY}</span>
               <BookmarkCheck className="w-4 h-4 text-amber-600" />
@@ -233,7 +233,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
         {/* DIVISIÓN 2: TALLERES CREATIVOS */}
         {isFeatureEnabled('reports', 'category_breakdown') && (
-          <div className="bg-gradient-to-tr from-pink-50 to-pink-100/40 p-4 rounded-3xl border border-pink-200 shadow-claySm">
+          <div className="bg-gradient-to-tr from-pink-50 to-pink-100/40 dark:from-pink-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-pink-200 dark:border-pink-500/40 shadow-claySm">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-pink-900 uppercase">🎨 Talleres Creativos</span>
               <GraduationCap className="w-4 h-4 text-pink-600" />
@@ -248,7 +248,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
         )}
 
         {/* GANANCIA ESTIMADA */}
-        <div className="bg-gradient-to-tr from-emerald-50 to-emerald-100/40 p-4 rounded-3xl border border-emerald-200 shadow-claySm">
+        <div className="bg-gradient-to-tr from-emerald-50 to-emerald-100/40 dark:from-emerald-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-emerald-200 dark:border-emerald-500/40 shadow-claySm">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-emerald-900 uppercase">Ganancia Neta Est.</span>
             <TrendingUp className="w-4 h-4 text-emerald-600" />
@@ -261,7 +261,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
       </div>
 
       {/* Desglose de Canales de Cobro (SINPE BCR Verificado vs Otros) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-fio-50/50 p-4 rounded-3xl border border-fio-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-fio-50/50 dark:bg-white/5 p-4 rounded-3xl border border-fio-200 dark:border-white/10">
         <div className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-fio-100 shadow-sm">
           <div>
             <span className="text-xs font-bold text-purple-900 flex items-center gap-1.5">
@@ -294,7 +294,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
       </div>
 
       {/* SECCIÓN DEDICADA: HISTORIAL EN TIEMPO REAL DE PAGOS SINPE BCR VERIFICADOS */}
-      <div className="border border-slate-200 rounded-3xl p-4 sm:p-5 bg-white space-y-3">
+      <div className="border border-slate-200 dark:border-white/10 rounded-3xl p-4 sm:p-5 bg-white dark:bg-[#2C2746] space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center font-bold">

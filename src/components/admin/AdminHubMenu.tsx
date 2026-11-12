@@ -275,18 +275,18 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
             <button
               type="button"
               onClick={() => onNavigate && onNavigate('inventario-app')}
-              className="group text-left rounded-2xl p-3.5 sm:p-4 bg-gradient-to-br from-purple-50 via-white to-pink-50 hover:bg-pink-50/40 border-2 border-purple-300/80 hover:border-fio-pink shadow-[0_4px_16px_rgba(168,85,247,0.14)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[105px] sm:min-h-[118px]"
+              className="group text-left rounded-2xl p-3.5 sm:p-4 bg-[#FDFBF9] dark:bg-[#2C2746] hover:bg-pink-50/40 dark:hover:bg-[#352F54] border-2 border-purple-300/80 dark:border-purple-500/50 hover:border-fio-pink shadow-[0_4px_16px_rgba(168,85,247,0.14)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 flex flex-col justify-between min-h-[105px] sm:min-h-[118px]"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-purple-700 via-fio-purple to-fio-pink text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
                   <ClipboardList className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
                 </div>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bubble font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-[9px] font-bubble font-bold border border-emerald-200 dark:border-emerald-500/30">
                   Activo
                 </span>
               </div>
               <div>
-                <h3 className="font-bubble font-bold text-sm sm:text-base text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-fio-900 dark:text-white group-hover:text-fio-pink transition-colors leading-snug">
                   Inventario Físico (App)
                 </h3>
               </div>
@@ -421,7 +421,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
 
       {/* Sección Catálogo Comercial Online (Aparece de abajo hacia arriba) */}
       <div className="pt-2 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200/80 shadow-2xs flex flex-col gap-3">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 dark:from-[#282245] dark:via-[#211D35] dark:to-[#2D244A] border border-purple-200/80 dark:border-purple-500/30 shadow-2xs flex flex-col gap-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-fio-800 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
@@ -448,7 +448,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
 
             <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
               {/* Checkbox y Botón Guardar para Activar / Desactivar Catálogo en la Web */}
-              <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-xl border border-purple-200 shadow-2xs">
+              <div className="flex items-center gap-2 bg-white/90 dark:bg-[#1E1A30] px-3 py-1.5 rounded-xl border border-purple-200 dark:border-white/15 shadow-2xs">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
                     type="checkbox"
@@ -456,7 +456,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                     onChange={(e) => setCatalogWebCheck(e.target.checked)}
                     className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 border-slate-300 cursor-pointer accent-purple-600"
                   />
-                  <span className="text-xs font-bubble font-bold text-slate-800">
+                  <span className="text-xs font-bubble font-bold text-slate-800 dark:text-white">
                     {catalogWebCheck ? 'Visible en Web' : 'Oculto en Web'}
                   </span>
                 </label>
