@@ -171,6 +171,7 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
       zoom: 16,
       zoomControl: true,
       scrollWheelZoom: 'center',
+      attributionControl: false,
     });
 
     // Capa de tiles: Mapbox Streets v12 en Alta Definición Retina (@2x) con fallback a OSM
