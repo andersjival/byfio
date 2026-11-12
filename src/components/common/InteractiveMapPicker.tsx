@@ -3,7 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
   MapPin, Navigation, RefreshCw, ExternalLink, Sparkles,
-  Search, Maximize2, Minimize2
+  Search, Maximize2, Minimize2, X, Check
 } from 'lucide-react';
 import { playWaterDropSound, playBubblePopSound } from '../../utils/soundEffects';
 
@@ -23,113 +23,123 @@ interface InteractiveMapPickerProps {
   className?: string;
 }
 
-// Zonas frecuentes de Costa Rica para salto rápido
-const CR_PRESETS = [
-  { name: 'Tibás (Taller by.fio)', lat: 9.9548, lng: -84.0815 },
-  { name: 'San José Centro', lat: 9.9333, lng: -84.0833 },
-  { name: 'Heredia Centro', lat: 9.9984, lng: -84.1165 },
-  { name: 'Alajuela Centro', lat: 10.0163, lng: -84.2116 },
-  { name: 'Cartago Centro', lat: 9.8644, lng: -83.9194 },
-  { name: 'Escazú', lat: 9.9192, lng: -84.1397 },
-  { name: 'Curridabat', lat: 9.9156, lng: -84.0354 },
-  { name: 'San Pedro', lat: 9.9281, lng: -84.0507 },
-  { name: 'Moravia', lat: 9.9608, lng: -84.0483 },
-  { name: 'Santa Ana', lat: 9.9326, lng: -84.1825 },
-];
+interface MapboxSuggestion {
+  id: string;
+  place_name: string;
+  text: string;
+  center: [number, number]; // [lng, lat]
+  context?: Array<{ id: string; text: string }>;
+}
 
 export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
   lat,
   lng,
   onChange,
   height = '320px',
-  showPresets = true,
   showGpsButton = true,
   className = '',
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [addressPreview, setAddressPreview] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Búsqueda y Autocompletado con Mapbox
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<MapboxSuggestion[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+
+  const mapboxToken = (import.meta as any).env?.VITE_MAPBOX_TOKEN || '';
   const lastGeocodeTimeRef = useRef<number>(0);
 
-  // Mantener referencia estable al callback onChange para no provocar recreaciones del mapa
+  // Mantener referencia estable al callback onChange
   const onChangeRef = useRef(onChange);
   useEffect(() => {
     onChangeRef.current = onChange;
   }, [onChange]);
+
+  // Cerrar sugerencias al hacer clic fuera del buscador
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Crear icono SVG estilizado de by.fio con pin arrastrable
   const createPinIcon = useCallback(() => {
     return L.divIcon({
       className: 'byfio-custom-map-pin',
       html: `
-        <div style="position: relative; width: 38px; height: 48px; display: flex; flex-direction: column; align-items: center; cursor: grab;">
+        <div style="position: relative; width: 40px; height: 50px; display: flex; flex-direction: column; align-items: center; cursor: grab;">
           <div style="
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #9333EA 0%, #EC4899 100%);
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
             border-radius: 50% 50% 50% 0;
             transform: rotate(-45deg);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 14px rgba(236,72,153,0.55), 0 2px 4px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 16px rgba(236,72,153,0.6), 0 2px 4px rgba(0,0,0,0.2);
             border: 2.5px solid #ffffff;
             transition: transform 0.2s ease;
           ">
-            <span style="transform: rotate(45deg); color: #ffffff; font-size: 15px; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">⭐</span>
+            <span style="transform: rotate(45deg); color: #FFF07C; font-size: 16px; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.4);">⭐</span>
           </div>
           <div style="
             width: 14px;
             height: 5px;
-            background: rgba(15, 23, 42, 0.35);
+            background: rgba(15, 23, 42, 0.4);
             border-radius: 50%;
             margin-top: 3px;
             filter: blur(1px);
           "></div>
         </div>
       `,
-      iconSize: [38, 48],
-      iconAnchor: [19, 46],
-      popupAnchor: [0, -46],
+      iconSize: [40, 50],
+      iconAnchor: [20, 48],
+      popupAnchor: [0, -48],
     });
   }, []);
 
-  // Geocodificación inversa con OpenStreetMap Nominatim
+  // Geocodificación Inversa Profesional con Mapbox v5
   const reverseGeocode = useCallback(async (targetLat: number, targetLng: number) => {
     const now = Date.now();
-    if (now - lastGeocodeTimeRef.current < 1200) return;
+    if (now - lastGeocodeTimeRef.current < 600) return;
     lastGeocodeTimeRef.current = now;
 
     try {
       setIsGeocoding(true);
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${targetLat}&lon=${targetLng}&zoom=18&addressdetails=1`,
-        { headers: { 'Accept-Language': 'es-CR,es' } }
-      );
+      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${targetLng},${targetLat}.json?access_token=${mapboxToken}&country=cr&types=address,neighborhood,locality,place,poi&language=es`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Geocoding error');
       const data = await res.json();
-      if (data && data.display_name) {
-        const addr = data.address || {};
-        const road = addr.road || addr.neighbourhood || addr.suburb || '';
-        const city = addr.city || addr.town || addr.county || '';
-        const state = addr.state || 'Costa Rica';
-        const formatted = [road, city, state].filter(Boolean).join(', ');
-        setAddressPreview(formatted || data.display_name);
-        onChangeRef.current({ lat: targetLat, lng: targetLng, addressSuggestion: formatted || data.display_name });
+
+      if (data && data.features && data.features.length > 0) {
+        const bestFeature = data.features[0];
+        const formatted = bestFeature.place_name || bestFeature.text;
+        setAddressPreview(formatted);
+        onChangeRef.current({ lat: targetLat, lng: targetLng, addressSuggestion: formatted });
+      } else {
+        onChangeRef.current({ lat: targetLat, lng: targetLng });
       }
     } catch {
       onChangeRef.current({ lat: targetLat, lng: targetLng });
     } finally {
       setIsGeocoding(false);
     }
-  }, []);
+  }, [mapboxToken]);
 
   // Manejar cambio de ubicación desde arrastre o clic
   const handleLocationUpdate = useCallback((newLat: number, newLng: number, skipGeocode = false) => {
@@ -149,12 +159,12 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
     handleLocationUpdateRef.current = handleLocationUpdate;
   }, [handleLocationUpdate]);
 
-  // Inicializar mapa de Leaflet ÚNICAMENTE al montar el componente (previene que el zoom se reinicie o encoja)
+  // Inicializar mapa de Leaflet con Tiles de Mapbox HD Streets
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-    const initialLat = Number.isFinite(lat) && lat !== 0 ? lat : 9.9548;
-    const initialLng = Number.isFinite(lng) && lng !== 0 ? lng : -84.0815;
+    const initialLat = Number.isFinite(lat) && lat !== 0 ? lat : 9.9984; // Heredia / GAM por defecto
+    const initialLng = Number.isFinite(lng) && lng !== 0 ? lng : -84.1165;
 
     const map = L.map(mapContainerRef.current, {
       center: [initialLat, initialLng],
@@ -163,13 +173,34 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
       scrollWheelZoom: 'center',
     });
 
-    // Capa de tiles oficiales de OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap contributors',
-    }).addTo(map);
+    // Capa de tiles: Mapbox Streets v12 en Alta Definición Retina (@2x) con fallback a OSM
+    const mapboxTileLayer = mapboxToken
+      ? L.tileLayer(
+          `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${mapboxToken}`,
+          {
+            maxZoom: 20,
+            tileSize: 512,
+            zoomOffset: -1,
+            attribution: '© <a href="https://www.mapbox.com/">Mapbox</a> © <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+          }
+        )
+      : L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap contributors',
+        });
 
-    // Marcador arrastrable (Pin)
+    // Fallback a OpenStreetMap si la conexión de Mapbox fallara
+    mapboxTileLayer.on('tileerror', () => {
+      console.warn('Mapbox tile error, fallback to OSM');
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors',
+      }).addTo(map);
+    });
+
+    mapboxTileLayer.addTo(map);
+
+    // Marcador interactivo by.fio con pin arrastrable
     const marker = L.marker([initialLat, initialLng], {
       icon: createPinIcon(),
       draggable: true,
@@ -179,8 +210,8 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
 
     marker.bindPopup(
       `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; text-align: center; padding: 2px;">
-        <strong style="color: #9333EA; display: block; font-size: 12px; margin-bottom: 2px;">📍 Pin de Entrega by.fio</strong>
-        <span>Mueve el pin o haz clic en el mapa para ubicar tu casa o negocio.</span>
+        <strong style="color: #7C3AED; display: block; font-size: 12px; margin-bottom: 2px;">📍 Pin de Entrega by.fio</strong>
+        <span>Mueve el pin o toca el mapa para fijar tu ubicación exacta de entrega.</span>
       </div>`,
       { closeButton: false }
     );
@@ -209,21 +240,20 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
       mapInstanceRef.current = null;
       markerRef.current = null;
     };
-  }, [createPinIcon]);
+  }, [createPinIcon, mapboxToken]);
 
-  // Sincronizar posición del pin si cambian las coordenadas externamente SIN alterar el zoom del usuario
+  // Sincronizar posición del pin si cambian las coordenadas externamente
   useEffect(() => {
     if (!markerRef.current || !mapInstanceRef.current) return;
     if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) return;
     const currentPos = markerRef.current.getLatLng();
     if (Math.abs(currentPos.lat - lat) > 0.0001 || Math.abs(currentPos.lng - lng) > 0.0001) {
       markerRef.current.setLatLng([lat, lng]);
-      // panTo mueve suavemente la vista conservando intacto el nivel de zoom actual del usuario
       mapInstanceRef.current.panTo([lat, lng], { animate: true, duration: 0.4 });
     }
   }, [lat, lng]);
 
-  // Redimensionar tiles cuando el usuario amplía o reduce el tamaño del contenedor del mapa
+  // Redimensionar tiles cuando se amplía el mapa
   useEffect(() => {
     const timer = setTimeout(() => {
       if (mapInstanceRef.current) {
@@ -233,54 +263,77 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
     return () => clearTimeout(timer);
   }, [isExpanded]);
 
-  // Búsqueda de dirección o cantón en Costa Rica
-  const handleSearchAddress = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const cleanQuery = searchQuery.trim();
-    if (!cleanQuery) return;
+  // Buscar lugares en Costa Rica con Mapbox Geocoding v5
+  const fetchMapboxSuggestions = useCallback(async (query: string) => {
+    const cleanQuery = query.trim();
+    if (!cleanQuery || cleanQuery.length < 2) {
+      setSuggestions([]);
+      return;
+    }
 
     setIsSearching(true);
     setSearchError(null);
-    playWaterDropSound();
 
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cleanQuery)}&countrycodes=cr&limit=1&addressdetails=1`,
-        { headers: { 'Accept-Language': 'es-CR,es' } }
-      );
+      // Bounding box Costa Rica: [-85.95, 8.03, -82.55, 11.22]
+      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(cleanQuery)}.json?access_token=${mapboxToken}&country=cr&bbox=-85.95,8.03,-82.55,11.22&types=poi,address,neighborhood,locality,place&language=es&limit=6`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Search failed');
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        const item = data[0];
-        const newLat = Number(parseFloat(item.lat).toFixed(5));
-        const newLng = Number(parseFloat(item.lon).toFixed(5));
-        const suggestion = item.display_name;
 
-        if (markerRef.current && mapInstanceRef.current) {
-          markerRef.current.setLatLng([newLat, newLng]);
-          const currentZoom = mapInstanceRef.current.getZoom();
-          // Conserva el zoom ampliado del usuario o aumenta a 17 para ver calles con claridad
-          const targetZoom = Math.max(currentZoom, 17);
-          mapInstanceRef.current.setView([newLat, newLng], targetZoom, { animate: true });
-        }
-
-        setAddressPreview(suggestion);
-        onChangeRef.current({ lat: newLat, lng: newLng, addressSuggestion: suggestion });
-        playBubblePopSound();
+      if (data && data.features && data.features.length > 0) {
+        setSuggestions(data.features);
+        setShowSuggestions(true);
       } else {
-        setSearchError('No encontramos esa dirección en Costa Rica. Puedes arrastrar el PIN en el mapa.');
+        setSuggestions([]);
+        setSearchError('No encontramos coincidencias exactas en Costa Rica. Puedes arrastrar el PIN en el mapa.');
       }
     } catch {
-      setSearchError('Error al buscar dirección. Puedes mover el PIN directamente.');
+      setSuggestions([]);
+      setSearchError('Error de conexión al buscar. Puedes mover el PIN directamente en el mapa.');
     } finally {
       setIsSearching(false);
     }
+  }, [mapboxToken]);
+
+  // Selección de una sugerencia de búsqueda
+  const handleSelectSuggestion = (item: MapboxSuggestion) => {
+    const [itemLng, itemLat] = item.center;
+    const cleanLat = Number(itemLat.toFixed(5));
+    const cleanLng = Number(itemLng.toFixed(5));
+
+    if (markerRef.current && mapInstanceRef.current) {
+      markerRef.current.setLatLng([cleanLat, cleanLng]);
+      // Zoom de alta precisión (nivel 17-18)
+      mapInstanceRef.current.setView([cleanLat, cleanLng], 17, { animate: true });
+    }
+
+    setSearchQuery(item.text || item.place_name);
+    setAddressPreview(item.place_name);
+    setShowSuggestions(false);
+    playBubblePopSound();
+
+    onChangeRef.current({
+      lat: cleanLat,
+      lng: cleanLng,
+      addressSuggestion: item.place_name,
+    });
   };
 
-  // Botón GPS: Obtener ubicación real del usuario
+  // Enviar formulario de búsqueda manual
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (suggestions.length > 0) {
+      handleSelectSuggestion(suggestions[0]);
+    } else {
+      fetchMapboxSuggestions(searchQuery);
+    }
+  };
+
+  // Botón GPS de Alta Precisión
   const handleGetGpsLocation = () => {
     if (!navigator.geolocation) {
-      alert('Tu navegador o dispositivo no soporta geolocalización GPS.');
+      alert('Tu dispositivo no soporta geolocalización GPS.');
       return;
     }
     setIsGpsLoading(true);
@@ -295,8 +348,7 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
 
         if (markerRef.current && mapInstanceRef.current) {
           markerRef.current.setLatLng([newLat, newLng]);
-          const currentZoom = mapInstanceRef.current.getZoom();
-          const targetZoom = Math.max(currentZoom, 16);
+          const targetZoom = Math.max(mapInstanceRef.current.getZoom(), 17);
           mapInstanceRef.current.setView([newLat, newLng], targetZoom, { animate: true });
         }
         handleLocationUpdate(newLat, newLng);
@@ -304,45 +356,96 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
       (err) => {
         console.warn('GPS Error:', err);
         setIsGpsLoading(false);
-        alert('No pudimos acceder a tu ubicación GPS. Asegúrate de permitir los permisos de ubicación o toca el mapa directamente.');
+        alert('No pudimos acceder a tu GPS. Asegúrate de otorgar permisos de ubicación en tu navegador o mueve el pin en el mapa.');
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
   const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-  const effectiveHeight = isExpanded ? '460px' : height;
+  const effectiveHeight = isExpanded ? '480px' : height;
 
   return (
     <div className={`space-y-2.5 ${className}`}>
-      {/* Barra de Búsqueda de Dirección Directa */}
-      <form onSubmit={handleSearchAddress} className="flex items-center gap-1.5">
-        <div className="relative flex-1">
-          <input
-            type="text"
-            placeholder="Buscar calle, barrio o cantón en CR..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-purple-200 text-xs text-slate-800 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-fio-purple/40"
-          />
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-        </div>
-        <button
-          type="submit"
-          disabled={isSearching || !searchQuery.trim()}
-          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white text-xs font-bubble font-bold disabled:opacity-50 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
-        >
-          {isSearching ? 'Buscando...' : 'Buscar'}
-        </button>
-      </form>
+      {/* Buscador de Direcciones en Tiempo Real con Mapbox */}
+      <div ref={searchContainerRef} className="relative z-20">
+        <form onSubmit={handleSearchSubmit} className="flex items-center gap-1.5">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Buscar barrio, cantón, comercio o calle en Costa Rica..."
+              value={searchQuery}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchQuery(val);
+                if (val.trim().length >= 2) {
+                  fetchMapboxSuggestions(val);
+                } else {
+                  setSuggestions([]);
+                  setShowSuggestions(false);
+                }
+              }}
+              onFocus={() => {
+                if (suggestions.length > 0) setShowSuggestions(true);
+              }}
+              className="w-full pl-9 pr-8 py-2 rounded-xl border border-purple-200/80 text-xs text-slate-800 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-fio-purple/40 shadow-xs"
+            />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSuggestions([]);
+                  setShowSuggestions(false);
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+          <button
+            type="submit"
+            disabled={isSearching || !searchQuery.trim()}
+            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white text-xs font-bubble font-bold disabled:opacity-50 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
+          >
+            {isSearching ? 'Buscando...' : 'Buscar'}
+          </button>
+        </form>
 
-      {searchError && (
-        <p className="text-[10px] text-rose-500 font-sans ml-1 leading-tight">
-          {searchError}
-        </p>
-      )}
+        {/* Lista Desplegable de Sugerencias en Tiempo Real */}
+        {showSuggestions && suggestions.length > 0 && (
+          <div className="absolute left-0 right-0 top-full mt-1.5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-purple-200 overflow-hidden z-50 animate-fadeIn divide-y divide-purple-100/60 max-h-60 overflow-y-auto">
+            {suggestions.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleSelectSuggestion(item)}
+                className="w-full text-left px-3.5 py-2.5 hover:bg-purple-50/80 transition-colors flex items-start gap-2.5 text-xs group cursor-pointer"
+              >
+                <MapPin className="w-4 h-4 text-fio-pink mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
+                <div className="flex-1 min-w-0">
+                  <div className="font-bubble font-bold text-slate-800 truncate">
+                    {item.text}
+                  </div>
+                  <div className="text-[10px] text-slate-500 truncate">
+                    {item.place_name}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
 
-      {/* Barra Superior con Selector GPS, Ampliar Tamaño y Enlace Exterior */}
+        {searchError && (
+          <p className="text-[10px] text-rose-500 font-sans mt-1 ml-1 leading-tight">
+            {searchError}
+          </p>
+        )}
+      </div>
+
+      {/* Barra de Controles: Pin en Vivo, Botón GPS, Ampliar y Maps */}
       <div className="flex flex-wrap items-center justify-between gap-1.5">
         <div className="flex items-center gap-1.5 text-xs text-slate-600">
           <MapPin className="w-4 h-4 text-fio-pink shrink-0 animate-bounce" />
@@ -405,40 +508,7 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
         </div>
       </div>
 
-      {/* Presets Rápidos de Costa Rica */}
-      {showPresets && (
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-          <span className="text-[10px] text-slate-400 shrink-0 font-medium">Zonas rápidas:</span>
-          {CR_PRESETS.map((p) => {
-            const isSelected = Math.abs(lat - p.lat) < 0.001 && Math.abs(lng - p.lng) < 0.001;
-            return (
-              <button
-                key={p.name}
-                type="button"
-                onClick={() => {
-                  if (markerRef.current && mapInstanceRef.current) {
-                    markerRef.current.setLatLng([p.lat, p.lng]);
-                    const currentZoom = mapInstanceRef.current.getZoom();
-                    // Preserva el zoom grande del usuario si ya lo había ampliado
-                    const targetZoom = Math.max(currentZoom, 15);
-                    mapInstanceRef.current.setView([p.lat, p.lng], targetZoom, { animate: true });
-                  }
-                  handleLocationUpdate(p.lat, p.lng);
-                }}
-                className={`text-[10px] px-2.5 py-1 rounded-xl border shrink-0 transition-all cursor-pointer whitespace-nowrap ${
-                  isSelected
-                    ? 'bg-fio-pink text-white border-fio-pink font-bold shadow-xs'
-                    : 'bg-white hover:bg-slate-50 text-slate-600 border-slate-200'
-                }`}
-              >
-                {p.name.split(' ')[0]}
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Contenedor del Mapa Real Interactivo */}
+      {/* Contenedor del Mapa Interactivo con Mapbox */}
       <div className="relative w-full rounded-2xl overflow-hidden border-2 border-fio-200 shadow-inner bg-slate-100 z-0 transition-[height] duration-300">
         <div
           ref={mapContainerRef}
@@ -452,7 +522,7 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
           <span>Lat: {lat.toFixed(4)} | Lng: {lng.toFixed(4)}</span>
           {isGeocoding && (
             <span className="text-[9px] text-fio-pink font-sans animate-pulse">
-              Identificando zona...
+              Identificando dirección...
             </span>
           )}
         </div>
@@ -460,19 +530,23 @@ export const InteractiveMapPicker: React.FC<InteractiveMapPickerProps> = ({
         {/* Banner Informativo Táctil */}
         <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl text-[10px] font-bubble font-semibold text-slate-700 shadow-sm border border-slate-200 pointer-events-none z-10 flex items-center gap-1">
           <Sparkles className="w-3 h-3 text-amber-500" />
-          <span className="hidden sm:inline">Arrastra el pin o toca para ubicar tu casa</span>
-          <span className="sm:hidden">Toca o mueve el pin</span>
+          <span className="hidden sm:inline">Arrastra la estrella o toca para fijar tu entrega</span>
+          <span className="sm:hidden">Toca o mueve la estrella</span>
         </div>
       </div>
 
-      {/* Sugerencia de Dirección Detectada por el Mapa */}
+      {/* Zona o Dirección Detectada por el Pin */}
       {addressPreview && (
-        <div className="p-2.5 rounded-xl bg-purple-50/70 border border-purple-200/80 text-[11px] text-purple-900 flex items-start gap-1.5">
+        <div className="p-2.5 rounded-xl bg-purple-50/80 border border-purple-200/90 text-[11px] text-purple-900 flex items-start gap-2 shadow-2xs">
           <MapPin className="w-3.5 h-3.5 text-fio-pink mt-0.5 shrink-0" />
-          <div className="leading-tight">
-            <span className="font-bold text-slate-800">Zona detectada por el pin: </span>
-            <span className="text-slate-600">{addressPreview}</span>
+          <div className="leading-tight flex-1">
+            <span className="font-bold text-slate-800">Dirección fijada en el mapa: </span>
+            <span className="text-slate-700">{addressPreview}</span>
           </div>
+          <span className="text-[10px] font-bubble font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-200/60 shrink-0 flex items-center gap-0.5">
+            <Check className="w-3 h-3" />
+            <span>Sincronizada</span>
+          </span>
         </div>
       )}
     </div>

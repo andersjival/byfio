@@ -506,12 +506,11 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
                     lat={lat}
                     lng={lng}
                     height="260px"
-                    showPresets={true}
                     showGpsButton={true}
                     onChange={(coords) => {
                       setLat(coords.lat);
                       setLng(coords.lng);
-                      if (coords.addressSuggestion && (!address.trim() || address.startsWith('Ubicación GPS'))) {
+                      if (coords.addressSuggestion) {
                         setAddress(coords.addressSuggestion);
                       }
                     }}

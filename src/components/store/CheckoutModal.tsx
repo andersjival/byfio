@@ -590,12 +590,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                       lat={shippingLat}
                       lng={shippingLng}
                       height="230px"
-                      showPresets={true}
                       showGpsButton={true}
                       onChange={(coords) => {
                         setShippingLat(coords.lat);
                         setShippingLng(coords.lng);
-                        if (coords.addressSuggestion && (!shippingAddress.trim() || shippingAddress.startsWith('Ubicación GPS'))) {
+                        if (coords.addressSuggestion) {
                           setShippingAddress(coords.addressSuggestion);
                         }
                       }}

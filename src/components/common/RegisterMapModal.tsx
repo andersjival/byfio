@@ -90,7 +90,6 @@ export const RegisterMapModal: React.FC<RegisterMapModalProps> = ({
             lat={coords.lat}
             lng={coords.lng}
             height="300px"
-            showPresets={true}
             showGpsButton={true}
             onChange={handleCoordsChange}
           />
