@@ -43,6 +43,29 @@ export const formatShortDate = (isoString: string): string => {
   }
 };
 
+export const formatDateTime = (isoString?: string | null): string => {
+  if (!isoString) return '';
+  try {
+    let clean = String(isoString).trim();
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(clean)) {
+      clean = clean.replace(' ', 'T') + 'Z';
+    }
+    const d = new Date(clean);
+    if (isNaN(d.getTime())) return isoString;
+
+    return d.toLocaleString('es-CR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  } catch {
+    return isoString;
+  }
+};
+
 export const getWhatsAppLink = (phone: string, text: string): string => {
   const cleanPhone = phone ? String(phone).replace(/\D/g, '') : '';
   const prefix = cleanPhone.startsWith('506') ? cleanPhone : `506${cleanPhone}`;

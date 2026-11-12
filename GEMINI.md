@@ -6,7 +6,8 @@
    - Todas las credenciales, ID de cuenta y token de API de Cloudflare están guardados en el archivo local [`CLAVES ANDERSJIVAL.txt`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/CLAVES%20ANDERSJIVAL.txt) en la raíz del proyecto.
    - El agente debe leer `CLAVES ANDERSJIVAL.txt` para obtener el `Tu token de API` y el `ID de cuenta`.
    - **Proyecto Cloudflare Pages:** `byfiocr`
-   - **URL Producción:** `https://byfiocr.pages.dev`
+   - **URL Producción:** `https://byfiocr.com` (y `https://byfiocr.pages.dev`)
+   - **Dominio Conectado:** `byfiocr.com` / `www.byfiocr.com` (Zona DNS en cuenta `GEORGEANDERSMAIL`: `01514e27c0cdd221efd91900be83fb16`)
    - **Database D1:** `byfiocr-db` (ID: `60326015-d917-4a7b-baac-ab90d972ae57`)
 
 ## 🚀 Comando Universal de Despliegue en Vivo

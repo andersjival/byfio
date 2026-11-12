@@ -253,6 +253,7 @@ export interface Customer {
   address?: string;
   notes?: string;
   createdAt: string;
+  createdBy?: string;
   customFields?: { [fieldId: string]: string };
 }
 
