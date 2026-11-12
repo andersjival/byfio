@@ -88,7 +88,7 @@ export function useRegisteredLikes({
 
   return {
     registeredLikes,
-    totalRegisteredLikes: registeredLikes.length,
+    totalRegisteredLikes: new Set(registeredLikes.map((l) => (l.userId || l.userEmail || l.userName || '').toLowerCase().trim()).filter(Boolean)).size,
     hasLikedSection,
     toggleLike,
     refreshRemote,

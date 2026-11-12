@@ -595,18 +595,37 @@ export const metricsTracker = {
 
   getRegisteredLikes(): RegisteredUserLike[] {
     const list = this.getMetrics().registeredLikes;
-    return Array.isArray(list) ? list : [];
+    if (!Array.isArray(list)) return [];
+    const seen = new Set<string>();
+    const unique: RegisteredUserLike[] = [];
+    for (const l of list) {
+      if (!l) continue;
+      const key = (l.userId || l.userEmail || l.userName || '').toLowerCase().trim();
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        unique.push(l);
+      }
+    }
+    return unique;
   },
 
-  hasUserLiked(sectionKey: string, user?: Pick<AuthUser, 'id' | 'email' | 'name'> | null): boolean {
+  hasUserLiked(_sectionKey?: string, user?: Pick<AuthUser, 'id' | 'email' | 'name'> | null): boolean {
     const userKey = getLikeUserKey(user);
     if (!userKey) return false;
-    const likeId = `${userKey}::${sectionKey || 'home'}`;
-    return this.getRegisteredLikes().some((l) => l && l.id === likeId);
+    const likes = this.getRegisteredLikes();
+    return likes.some((l) => {
+      if (!l) return false;
+      const lKey = getLikeUserKey({ id: l.userId, email: l.userEmail, name: l.userName });
+      return (
+        lKey === userKey ||
+        (user?.id && String(l.userId) === String(user.id)) ||
+        (user?.email && l.userEmail && l.userEmail.toLowerCase() === user.email.toLowerCase())
+      );
+    });
   },
 
   toggleRegisteredLike(
-    sectionKey: string,
+    _sectionKey?: string,
     user?: AuthUser | null
   ): { liked: boolean; state: MetricsState } {
     const state = this.getMetrics();
@@ -615,15 +634,33 @@ export const metricsTracker = {
       return { liked: false, state };
     }
 
-    const secKey = sectionKey || 'home';
-    const likeId = `${userKey}::${secKey}`;
+    const likeId = `${userKey}::site`;
     if (!Array.isArray(state.registeredLikes)) state.registeredLikes = [];
-    const existingIdx = state.registeredLikes.findIndex((l) => l && l.id === likeId);
+
+    // Buscar si este usuario ya tiene algún like registrado en cualquier sección o global
+    const existingIdx = state.registeredLikes.findIndex((l) => {
+      if (!l) return false;
+      const lKey = getLikeUserKey({ id: l.userId, email: l.userEmail, name: l.userName });
+      return (
+        lKey === userKey ||
+        l.id === likeId ||
+        (user.id && String(l.userId) === String(user.id)) ||
+        (user.email && l.userEmail && l.userEmail.toLowerCase() === user.email.toLowerCase())
+      );
+    });
     const nextLiked = existingIdx === -1;
 
-    if (!state.sections[secKey]) {
-      state.sections[secKey] = { views: 1, likes: 0, timeSpentAvgMinutes: 2.0 };
-    }
+    // Limpiar cualquier entrada previa de este usuario para asegurar exactamente 1 like por persona
+    state.registeredLikes = state.registeredLikes.filter((l) => {
+      if (!l) return false;
+      const lKey = getLikeUserKey({ id: l.userId, email: l.userEmail, name: l.userName });
+      return (
+        lKey !== userKey &&
+        l.id !== likeId &&
+        (!user.id || String(l.userId) !== String(user.id)) &&
+        (!user.email || !l.userEmail || l.userEmail.toLowerCase() !== user.email.toLowerCase())
+      );
+    });
 
     if (nextLiked) {
       state.registeredLikes.unshift({
@@ -632,28 +669,21 @@ export const metricsTracker = {
         userName: user.name || 'Usuario Registrado',
         userEmail: user.email,
         userRole: user.role,
-        sectionKey: secKey,
+        sectionKey: 'site',
         createdAt: new Date().toISOString(),
       });
-      state.sections[secKey].likes = (state.sections[secKey].likes || 0) + 1;
+      if (!state.sections['site']) {
+        state.sections['site'] = { views: 1, likes: 0, timeSpentAvgMinutes: 2.0 };
+      }
+      state.sections['site'].likes = (state.sections['site'].likes || 0) + 1;
     } else {
-      state.registeredLikes.splice(existingIdx, 1);
-      state.sections[secKey].likes = Math.max(0, (state.sections[secKey].likes || 1) - 1);
+      if (state.sections['site']) {
+        state.sections['site'].likes = Math.max(0, (state.sections['site'].likes || 1) - 1);
+      }
     }
 
     state.lastVisitTimestamp = new Date().toISOString();
     const activeRef = getActiveCampaignRef();
-    if (nextLiked && activeRef) {
-      const link = state.trackedLinks.find((l) => l.slug.toLowerCase() === activeRef);
-      if (link) {
-        if (!link.sectionsVisited) link.sectionsVisited = {};
-        if (!link.sectionsVisited[secKey]) {
-          link.sectionsVisited[secKey] = { views: 1, likes: 1, timeSpentAvgMinutes: 2.0 };
-        } else {
-          link.sectionsVisited[secKey].likes += 1;
-        }
-      }
-    }
 
     lastLocalLikeMutationAt = Date.now();
     this.saveMetrics(state);
@@ -665,7 +695,7 @@ export const metricsTracker = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'toggle_registered_like',
-          route: secKey,
+          route: 'site',
           liked: nextLiked,
           slug: activeRef,
           user: {
@@ -679,11 +709,22 @@ export const metricsTracker = {
         .then((res) => (res.ok ? res.json() : null))
         .then((resData) => {
           if (resData?.metrics && Date.now() - lastLocalLikeMutationAt > 500) {
+            const remoteLikes = Array.isArray(resData.metrics.registeredLikes)
+              ? resData.metrics.registeredLikes
+              : state.registeredLikes;
+            const seen = new Set<string>();
+            const deduped: RegisteredUserLike[] = [];
+            for (const l of remoteLikes) {
+              if (!l) continue;
+              const k = (l.userId || l.userEmail || l.userName || '').toLowerCase().trim();
+              if (k && !seen.has(k)) {
+                seen.add(k);
+                deduped.push(l);
+              }
+            }
             this.saveMetrics({
               ...state,
-              registeredLikes: Array.isArray(resData.metrics.registeredLikes)
-                ? resData.metrics.registeredLikes
-                : state.registeredLikes,
+              registeredLikes: deduped,
             });
             notifyMetricsUpdated();
           }

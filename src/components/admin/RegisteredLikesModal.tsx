@@ -4,6 +4,7 @@ import { RegisteredUserLike } from '../../types';
 import { formatShortDate } from '../../utils/formatters';
 
 const SECTION_LABELS: Record<string, string> = {
+  site: 'Tienda by.fio (General)',
   home: 'Portada / Inicio',
   store: 'Tienda Online',
   catalogo: 'Catálogo Digital',
@@ -66,7 +67,7 @@ export const RegisteredLikesModal: React.FC<RegisteredLikesModalProps> = ({
                 Me Gusta de Usuarios Registrados
               </h3>
               <p className="text-[11px] text-pink-100">
-                {registeredLikes.length} me gusta totales · {uniqueUsers} usuario(s) registrado(s)
+                {uniqueUsers} usuario(s) registrado(s) han dado Me Gusta
               </p>
             </div>
           </div>

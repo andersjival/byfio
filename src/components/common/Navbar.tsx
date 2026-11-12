@@ -61,7 +61,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     refreshRemote,
   } = useRegisteredLikes({ syncRemote: isAdminUser || currentRoute === 'admin' });
 
-  const isLikedByUser = hasLikedSection(currentRoute, currentUser);
+  // Me Gusta Unificado para toda la página de by.fio
+  const isLikedByUser = hasLikedSection('site', currentUser);
 
   const handlePageLike = () => {
     if (!currentUser) {
@@ -69,11 +70,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       setShowLikeRegisterStar(true);
       return;
     }
-    const { liked } = toggleLike(currentRoute, currentUser);
+    const { liked } = toggleLike('site', currentUser);
     playBubblePopSound(liked ? 0.55 : 0.3);
     setLikeToast(
       liked
-        ? `¡Gracias por tu Me Gusta, ${(currentUser.name || 'amig@').split(' ')[0]}! ❤️`
+        ? `¡Gracias por tu Me Gusta a by.fio, ${(currentUser.name || 'amig@').split(' ')[0]}! ❤️`
         : 'Me Gusta quitado de esta sección'
     );
     setTimeout(() => setLikeToast(null), 2600);
@@ -208,8 +209,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="button"
                   onClick={handlePageLike}
                   className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl border shadow-xs transition-all active:scale-95 shrink-0 font-bubble font-bold text-xs cursor-pointer group ${isLikedByUser ? 'bg-gradient-to-r from-rose-500 to-fio-pink text-white border-pink-400 shadow-sm' : 'bg-pink-50/90 hover:bg-pink-100 text-pink-600 hover:text-pink-700 border-pink-200/80'}`}
-                  title="¡Dar Me Gusta a esta página de by.fio! ❤️"
-                  aria-label="Dar Me Gusta a esta página"
+                  title="¡Dar Me Gusta a by.fio! ❤️"
+                  aria-label="Dar Me Gusta a by.fio"
                 >
                   <Heart className={`w-3.5 h-3.5 transition-transform ${isLikedByUser ? 'fill-white text-white' : 'fill-pink-500/20 text-pink-500 group-hover:fill-pink-500'} ${likePopped ? 'scale-150 animate-bounce' : 'group-hover:scale-125'}`} />
                   <span className="hidden md:inline">{likePopped ? (isLikedByUser ? '¡+1 Like!' : 'Quitado') : isLikedByUser ? '¡Te gusta!' : 'Me Gusta'}</span>
