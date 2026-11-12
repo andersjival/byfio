@@ -61,12 +61,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onOpenDesignModal, onO
           {onOpenPwaModal && (
             <button
               type="button"
-              onClick={onOpenPwaModal}
+              onClick={() => onSelectTab ? onSelectTab('apps') : onOpenPwaModal && onOpenPwaModal()}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-700 via-fio-purple to-pink-600 hover:from-purple-800 hover:to-pink-700 text-white text-xs font-bubble font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
-              title="Centro de Aplicaciones PWA para Computadora, Celular y Colaboradores"
+              title="Centro de Aplicaciones para Computadora, Celular y Colaboradores"
             >
               <Smartphone className="w-3.5 h-3.5 text-fio-yellow" />
-              <span>Apps PWA</span>
+              <span>Aplicaciones</span>
             </button>
           )}
 

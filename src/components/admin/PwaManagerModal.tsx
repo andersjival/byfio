@@ -185,7 +185,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-base sm:text-lg font-bubble font-bold text-slate-900 dark:text-white leading-tight">
-                  Centro de Aplicaciones PWA (PC &amp; Celular)
+                  Centro de Aplicaciones (PC &amp; Celular)
                 </h3>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-purple-100 dark:bg-purple-900/60 text-purple-900 dark:text-purple-200 border border-purple-300/60">
                   {isMobile ? '📱 Estás en Celular' : '💻 Estás en Computadora'}
@@ -193,7 +193,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                 {isStandalone && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                     <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                    PWA Activa
+                    Aplicación Activa
                   </span>
                 )}
               </div>
@@ -232,7 +232,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
             }`}
           >
             <ShieldCheck className="w-4 h-4 shrink-0" />
-            <span className="truncate">👑 PWA Admin</span>
+            <span className="truncate">👑 App Admin</span>
           </button>
 
           <button
@@ -308,7 +308,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
 
                     <div>
                       <h4 className="font-bubble font-bold text-base text-slate-900 dark:text-white">
-                        PWA Versión Escritorio
+                        Versión Escritorio (PC)
                       </h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5">
                         Funciona en ventana independiente sin pestañas del navegador, barra de título ejecutiva, diseño ancho con vista completa de inventario y pedidos.
@@ -388,7 +388,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
 
                     <div>
                       <h4 className="font-bubble font-bold text-base text-slate-900 dark:text-white">
-                        PWA Versión Móvil Táctil
+                        Versión Celular Táctil
                       </h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5">
                         Convertida 100% en aplicación táctil: botones grandes de 48px para el pulgar, campanilla sonora de compras y teclado de PIN instantáneo.
@@ -453,7 +453,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
 
                       <button
                         type="button"
-                        onClick={() => setSelectedQrApp({ title: 'PWA Administradora (Fio)', url: adminMobileUrl })}
+                        onClick={() => setSelectedQrApp({ title: 'App Administradora (Fio)', url: adminMobileUrl })}
                         className="p-2 rounded-xl bg-purple-100 dark:bg-purple-900/60 hover:bg-purple-200 text-purple-900 dark:text-purple-200 transition-all cursor-pointer"
                         title="Ver Código QR para escanear con la cámara del celular"
                       >
@@ -474,7 +474,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <h4 className="font-bubble font-bold text-base text-slate-900 dark:text-white">
-                          Vibración Táctil en Clics (PWA y Web)
+                          Vibración Táctil en Clics (Celular y PC)
                         </h4>
                         <span
                           className={`px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold border transition-colors ${
@@ -612,7 +612,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                 </div>
                 <div>
                   <span className="font-bubble font-bold text-fio-purple dark:text-fio-pink block mb-0.5 text-sm">
-                    ★ Configuración de Respuesta Táctil &amp; Vibración (PWA y Web)
+                    ★ Configuración de Respuesta Táctil &amp; Vibración (Celular y PC)
                   </span>
                   Aquí puedes activar o desactivar la respuesta física háptica de la plataforma y calibrar su intensidad del 1 al 10. La vibración está programada matemáticamente para ser <strong>corta y suave</strong> ({calculateHapticDuration(vibrationIntensity)}ms), simulando un micro-tap agradable en botones y controles sin agotar la batería ni generar zumbidos molestos.
                 </div>
@@ -877,7 +877,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
                     </div>
                     <div>
                       <h4 className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                        App de Inventario Físico por Estantes (PWA)
+                        App de Inventario Físico por Estantes
                       </h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         Conteo físico por estantes (1 al 6+), ajustes y reportes por usuario.
@@ -1003,7 +1003,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
         {/* Footer Fijo con Botón de Cierre */}
         <div className="p-3.5 sm:p-4 border-t border-purple-100 dark:border-purple-900/50 bg-slate-50/70 dark:bg-slate-900/60 flex items-center justify-between gap-3 shrink-0">
           <div className="text-[11px] text-slate-500 font-sans hidden sm:block">
-            PWA Multi-dispositivo By.Fio • Soporte para PC, Móvil y Tablet
+            Aplicaciones Multi-dispositivo By.Fio • Soporte para PC, Móvil y Tablet
           </div>
           <button
             type="button"

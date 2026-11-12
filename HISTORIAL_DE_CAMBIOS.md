@@ -1,3 +1,16 @@
+## [v4.19.127] - 2026-11-12
+
+### 📱 Nuevo Módulo: Aplicaciones PC / Celular y Gestor de Permisos para Colaboradores
+- **Módulo Independiente "Aplicaciones PC / Celular" ([`AppsManagementSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AppsManagementSection.tsx), [`AdminTabs.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminTabs.tsx), [`AdminHubMenu.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [`AdminPwaShell.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/admin/AdminPwaShell.tsx))**:
+  - Creado nuevo módulo oficial en el panel de administración titulado **`Aplicaciones PC / Celular`** (sin menciones de la palabra PWA).
+  - Incluye pestaña de **Centro de Aplicaciones** para instalación en PC/Escritorio, aplicación móvil del Administrador con QR y aplicaciones de celulares para Colaboradores (Alisto de pedidos e Inventario).
+  - Incluye pestaña de **Permisos para Celulares de Colaboradores**: panel administrativo que permite otorgar o revocar permisos granulares por colaborador (Alisto, Facturación rápida, Stock, Apartados, Clientes, Agenda, Proveedores), con interruptor maestro de acceso a toma de inventario y PINs de seguridad.
+  - Erradicada la terminología "PWA" de todos los títulos visibles en la interfaz.
+  - Separación de código y aislamiento modular garantizado entre la web pública (`app-web`), la aplicación de administración (`app-admin`) y las aplicaciones de colaboradores (`app-collaborator`) en [`vite.config.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/vite.config.ts).
+  - Actualizado Service Worker a `byfio-pwa-v4.19.127`.
+
+---
+
 ## [v4.19.126] - 2026-11-12
 
 ### 🌙 Corrección Integral y Contraste Total del Modo Oscuro en Toda la Web y PWA

@@ -15,7 +15,8 @@ export type AdminTabType =
   | 'suppliers'
   | 'supplier-order-create'
   | 'sales'
-  | 'catalog-view';
+  | 'catalog-view'
+  | 'apps';
 
 export interface AdminTabsProps {
   activeTab?: AdminTabType;

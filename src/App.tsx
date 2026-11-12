@@ -86,6 +86,7 @@ export const App: React.FC = () => {
         suppliers: '/admin/proveedores',
         'supplier-order-create': '/admin/realizar-pedido',
         sales: '/admin/ventas',
+        apps: '/admin/aplicaciones',
       };
       targetPath = adminPathMap[tab] || '/admin';
     }
@@ -109,7 +110,7 @@ export const App: React.FC = () => {
   };
 
   const handleSelectAdminTab = (tab: AdminTabType) => {
-    if (tab === 'catalog-view' || tab === 'supplier-order-create') {
+    if (tab === 'catalog-view' || tab === 'supplier-order-create' || tab === 'apps') {
       navigate('admin', tab);
       return;
     }
@@ -140,7 +141,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (currentRoute === 'admin' && adminTab !== 'hub') {
-      if (adminTab !== 'catalog-view' && adminTab !== 'supplier-order-create' && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
+      if (adminTab !== 'catalog-view' && adminTab !== 'supplier-order-create' && adminTab !== 'apps' && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
         setAdminTab('hub');
       }
     } else if ((currentRoute === 'workshops' || currentRoute === 'workshop-detail' || currentRoute === 'workshop-waitlist') && !isModuleEnabled('workshops')) {

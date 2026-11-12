@@ -215,6 +215,17 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'supplier-order-create' };
   }
   if (
+    path.includes('/admin/aplicaciones') ||
+    path.includes('/admin/apps') ||
+    path.includes('/administracion/aplicaciones') ||
+    hash.includes('admin/aplicaciones') ||
+    hash.includes('admin/apps') ||
+    seccionParam === 'aplicaciones' ||
+    seccionParam === 'apps'
+  ) {
+    return { route: 'admin', adminTab: 'apps' };
+  }
+  if (
     path.includes('/admin/proveedores') ||
     path.includes('/administracion/proveedores') ||
     hash.includes('admin/proveedores') ||

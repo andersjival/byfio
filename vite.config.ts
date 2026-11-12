@@ -23,7 +23,12 @@ export default defineConfig({
           ) return 'vendor-utils';
           if (path.includes('node_modules/html5-qrcode/') || path.includes('node_modules/qrcode.react/')) return 'vendor-qrcode';
 
-          if (path.includes('/src/context/') || path.includes('/src/services/') || path.includes('/src/utils/')) {
+          if (
+            path.includes('/src/context/') ||
+            path.includes('/src/services/') ||
+            path.includes('/src/utils/') ||
+            path.includes('RegisteredLikesModal')
+          ) {
             return 'app-data';
           }
           if (
@@ -41,7 +46,9 @@ export default defineConfig({
               !path.includes('GuidedPickingModal') &&
               !path.includes('QuickBillingSection') &&
               !path.includes('AgendaSection') &&
-              !path.includes('MetricsPage'))
+              !path.includes('MetricsPage') &&
+              !path.includes('RegisteredLikesModal') &&
+              !path.includes('AppsManagementSection'))
           ) {
             return 'app-admin';
           }

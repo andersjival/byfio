@@ -35,6 +35,7 @@ const QuickBillingSection = React.lazy(() => import('../../components/admin/Quic
 const GuidedPickingModal = React.lazy(() => import('../../components/admin/GuidedPickingModal').then((m) => ({ default: m.GuidedPickingModal })));
 const AgendaSection = React.lazy(() => import('../../components/admin/AgendaSection').then((m) => ({ default: m.AgendaSection })));
 const MetricsPage = React.lazy(() => import('../../components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
+const AppsManagementSection = React.lazy(() => import('../../components/admin/AppsManagementSection').then((m) => ({ default: m.AppsManagementSection })));
 const SuperadminSection = React.lazy(() => import('../../components/superadmin/SuperadminSection').then((m) => ({ default: m.SuperadminSection })));
 
 interface AdminPwaShellProps {
@@ -224,6 +225,11 @@ export const AdminPwaShell: React.FC<AdminPwaShellProps> = ({
                     {adminTab === 'supplier-order-create' && <CreateSupplierOrderPage onBackToSuppliers={() => onSelectAdminTab('suppliers')} onBackToInventory={() => onSelectAdminTab('inventory')} />}
                     {adminTab === 'sales' && <SalesHistorySection />}
                     {adminTab === 'catalog-view' && <AdminCatalogVisualView onBackToHub={() => onSelectAdminTab('hub')} />}
+                    {adminTab === 'apps' && (
+                      <React.Suspense fallback={<div className="py-12 text-center text-slate-400 font-bubble text-sm">Cargando aplicaciones...</div>}>
+                        <AppsManagementSection onSelectAdminTab={onSelectAdminTab} onNavigate={onNavigate} />
+                      </React.Suspense>
+                    )}
                   </>
                 )}
               </div>
