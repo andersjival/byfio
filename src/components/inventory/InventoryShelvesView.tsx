@@ -122,7 +122,7 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                   playWaterDropSound();
                   setIsShelfPickerOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-700 to-fio-pink text-white font-bubble font-bold text-xs sm:text-sm shadow-sm hover:opacity-95 active:scale-95 transition-all cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#F472B6] hover:bg-[#EC4899] text-white font-bubble font-bold text-xs sm:text-sm shadow-xs hover:opacity-95 active:scale-95 transition-all cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-current text-fio-yellow" />
                 <span>Seleccionar Estante</span>
@@ -286,8 +286,8 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                         isCompleted
                           ? 'bg-emerald-500 text-white'
                           : isInProgress
-                          ? 'bg-amber-500 text-white'
-                          : 'bg-gradient-to-br from-purple-600 to-fio-pink text-white'
+                          ? 'bg-amber-400 text-white'
+                          : 'bg-[#C084FC] text-white'
                       }`}
                     >
                       {shelf.shelfNumber !== null ? `#${shelf.shelfNumber}` : <Layers className="w-5 h-5" />}
@@ -390,12 +390,20 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                   }}
                   className={`w-full py-2.5 px-4 rounded-2xl font-bubble font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer ${
                     isCompleted
-                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs'
-                      : 'bg-gradient-to-r from-purple-700 via-fio-purple to-fio-pink hover:opacity-95 text-white shadow-sm'
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-xs'
+                      : isInProgress
+                      ? 'bg-amber-400 hover:bg-amber-500 text-white shadow-xs'
+                      : 'bg-[#F472B6] hover:bg-[#EC4899] text-white shadow-xs'
                   }`}
                 >
                   <Play className="w-4 h-4 fill-current" />
-                  <span>{isCompleted ? 'Ver / Recontar Estante' : 'Empezar Inventario'}</span>
+                  <span>
+                    {isCompleted
+                      ? 'Ver / Recontar Estante'
+                      : isInProgress
+                      ? 'Continuar Inventario'
+                      : 'Empezar Inventario'}
+                  </span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

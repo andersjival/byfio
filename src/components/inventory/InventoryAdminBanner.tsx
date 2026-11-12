@@ -125,7 +125,7 @@ export const InventoryAdminBanner: React.FC<InventoryAdminBannerProps> = ({ onOp
               playWaterDropSound();
               onOpenInventoryApp();
             }}
-            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-700 via-fio-purple to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white font-bubble font-bold text-sm shadow-clay transition-all active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#F472B6] hover:bg-[#EC4899] text-white font-bubble font-bold text-sm shadow-xs transition-all active:scale-95 cursor-pointer"
             title="Abrir aplicación independiente de Inventario por Estantes"
           >
             <ClipboardList className="w-5 h-5 text-fio-yellow" />

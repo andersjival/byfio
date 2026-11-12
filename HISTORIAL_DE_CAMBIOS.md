@@ -1,3 +1,14 @@
+## [v4.19.119] - 2026-11-12
+
+### 🎨 Botones de Inventario en Colores Pastel Temáticos (Sin Degradado)
+- **Estilos Pastel en Toma de Inventario ([InventoryShelvesView.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryShelvesView.tsx), [InventoryAdminBanner.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryAdminBanner.tsx), [InventoryAdjustmentsView.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryAdjustmentsView.tsx))**:
+  - Sustituidos los degradados morado/fucsia oscuros de los botones de acción por colores pastel sólidos acordes a la temática de by.fio.
+  - El botón 'Empezar Inventario' ahora utiliza el color rosa pastel sólido de la página (#F472B6), limpio y sin degradado.
+  - Cuando el estante está 'En Proceso', el botón muestra 'Continuar Inventario' en ámbar pastel suave (#FBBF24), y cuando está completado muestra verde esmeralda pastel suave (#10B981).
+  - Actualizado el Service Worker a yfio-pwa-v4.19.119.
+
+---
+
 ## [v4.19.118] - 2026-11-12
 
 ### 🧹 Limpieza de Barra Superior (Eliminado Botón Menú Redundante)
