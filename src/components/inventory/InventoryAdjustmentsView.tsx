@@ -352,7 +352,7 @@ export const InventoryAdjustmentsView: React.FC<{ onSaved?: () => void }> = ({ o
                 type="button"
                 disabled={changedItems.length === 0 || isSaving}
                 onClick={handleApplyAdjustments}
-                className="w-full py-3 rounded-2xl bg-[#F472B6] hover:bg-[#EC4899] disabled:opacity-40 text-white font-bubble font-bold text-sm shadow-xs flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-[#C084FC] hover:bg-[#A855F7] disabled:opacity-40 text-white font-bubble font-bold text-sm shadow-xs flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>

@@ -1,3 +1,14 @@
+## [v4.19.120] - 2026-11-12
+
+### 🎨 Paleta Celeste y Lila Pastel para Botones de Inventario
+- **Diferenciación Visual en Toma de Inventario ([InventoryShelvesView.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryShelvesView.tsx), [InventoryAdminBanner.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryAdminBanner.tsx), [InventoryAdjustmentsView.tsx](file:///C:/Users/Juan/byfio/src/components/inventory/InventoryAdjustmentsView.tsx))**:
+  - El botón 'Empezar Inventario' (estantes pendientes) ahora luce un suave y elegante **Lila Pastel** sólido (#C084FC).
+  - El botón 'Continuar Inventario' (estantes en proceso) ahora luce un fresco y visible **Celeste Pastel** sólido (#38BDF8).
+  - Erradicados completamente el rosado y amarillo de estos botones e insignias.
+  - Actualizado el Service Worker a yfio-pwa-v4.19.120.
+
+---
+
 ## [v4.19.119] - 2026-11-12
 
 ### 🎨 Botones de Inventario en Colores Pastel Temáticos (Sin Degradado)

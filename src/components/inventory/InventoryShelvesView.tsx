@@ -122,7 +122,7 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                   playWaterDropSound();
                   setIsShelfPickerOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#F472B6] hover:bg-[#EC4899] text-white font-bubble font-bold text-xs sm:text-sm shadow-xs hover:opacity-95 active:scale-95 transition-all cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#C084FC] hover:bg-[#A855F7] text-white font-bubble font-bold text-xs sm:text-sm shadow-xs hover:opacity-95 active:scale-95 transition-all cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-current text-fio-yellow" />
                 <span>Seleccionar Estante</span>
@@ -273,7 +273,7 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                 isCompleted
                   ? 'border-emerald-300 bg-emerald-50/20'
                   : isInProgress
-                  ? 'border-amber-300 bg-amber-50/20'
+                  ? 'border-sky-300 bg-sky-50/20'
                   : 'border-purple-100 hover:border-purple-300'
               }`}
             >
@@ -286,7 +286,7 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                         isCompleted
                           ? 'bg-emerald-500 text-white'
                           : isInProgress
-                          ? 'bg-amber-400 text-white'
+                          ? 'bg-[#38BDF8] text-white'
                           : 'bg-[#C084FC] text-white'
                       }`}
                     >
@@ -313,7 +313,7 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                       isCompleted
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                         : isInProgress
-                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                        ? 'bg-sky-100 text-sky-800 border border-sky-200'
                         : 'bg-slate-100 text-slate-600 border border-slate-200'
                     }`}
                   >
@@ -324,7 +324,7 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                       </>
                     ) : isInProgress ? (
                       <>
-                        <Clock className="w-3 h-3 text-amber-600" />
+                        <Clock className="w-3 h-3 text-sky-600" />
                         <span>En Proceso</span>
                       </>
                     ) : (
@@ -392,8 +392,8 @@ export const InventoryShelvesView: React.FC<InventoryShelvesViewProps> = ({ onSt
                     isCompleted
                       ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-xs'
                       : isInProgress
-                      ? 'bg-amber-400 hover:bg-amber-500 text-white shadow-xs'
-                      : 'bg-[#F472B6] hover:bg-[#EC4899] text-white shadow-xs'
+                      ? 'bg-[#38BDF8] hover:bg-[#0EA5E9] text-white shadow-xs'
+                      : 'bg-[#C084FC] hover:bg-[#A855F7] text-white shadow-xs'
                   }`}
                 >
                   <Play className="w-4 h-4 fill-current" />
