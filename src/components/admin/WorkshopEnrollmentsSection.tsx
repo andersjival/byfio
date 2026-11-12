@@ -153,14 +153,14 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
               onClick={() => setShowPaidSummary((prev) => !prev)}
               className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-bubble font-bold text-xs border shadow-sm transition-all active:scale-95 ${
                 showPaidSummary
-                  ? 'bg-purple-900 text-white border-purple-950'
-                  : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 border-pink-400'
+                  ? 'bg-purple-200 text-purple-950 border-purple-300 ring-2 ring-purple-300/60'
+                  : 'bg-purple-100 hover:bg-purple-200/80 text-purple-800 border-purple-200'
               }`}
               title="Ver desglose detallado de cupos vendidos y confirmados por taller"
             >
-              <ShieldCheck className="w-4 h-4 text-amber-300" />
+              <ShieldCheck className="w-4 h-4 text-purple-600" />
               <span>Talleres Pagados &amp; Confirmados</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white text-purple-950 ml-0.5">
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-purple-900 border border-purple-200 ml-0.5 shadow-2xs">
                 {totalGlobalSold} cupos
               </span>
             </button>
@@ -175,14 +175,14 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
             }}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-bubble font-bold text-xs border shadow-sm transition-all active:scale-95 cursor-pointer ${
               showWaitlistPanel
-                ? 'bg-amber-600 text-white border-amber-700'
-                : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 border-amber-400'
+                ? 'bg-amber-200 text-amber-950 border-amber-300 ring-2 ring-amber-300/60'
+                : 'bg-amber-100 hover:bg-amber-200/80 text-amber-800 border-amber-200'
             }`}
             title="Ver personas en lista de espera en orden de registro y configurar grupo de WhatsApp"
           >
-            <Clock className="w-4 h-4 text-white" />
+            <Clock className="w-4 h-4 text-amber-600" />
             <span>Lista de Espera</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white text-amber-900 ml-0.5">
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-amber-900 border border-amber-200 ml-0.5 shadow-2xs">
               {totalWaitlistCount}
             </span>
           </button>
@@ -210,9 +210,9 @@ export const WorkshopEnrollmentsSection: React.FC<WorkshopEnrollmentsSectionProp
                 setEditingWorkshop(null);
                 setIsNewWorkshopModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs shadow-clayBtn active:scale-95 transition-all"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-pink-100 hover:bg-pink-200 text-pink-700 border border-pink-200 font-bubble font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
             >
-              <Plus className="w-4 h-4" /> Crear Taller
+              <Plus className="w-4 h-4 text-pink-600" /> Crear Taller
             </button>
           )}
         </div>

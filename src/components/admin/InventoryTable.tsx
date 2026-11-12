@@ -140,19 +140,19 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
               setCategoryFilterTarget(selectedCategory);
               setIsShelfBarcodesOpen(true);
             }}
-            className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-fio-800 hover:bg-fio-900 text-white font-bubble font-bold text-xs sm:text-sm shadow-clay transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-purple-100 hover:bg-purple-200 text-purple-800 border border-purple-200 font-bubble font-bold text-xs sm:text-sm shadow-xs transition-all active:scale-95 cursor-pointer"
             title="Ver e imprimir códigos de barras para estantes y categorías"
           >
-            <Barcode className="w-5 h-5 text-fio-yellow" />
+            <Barcode className="w-5 h-5 text-purple-600" />
             <span>Imprimir Etiquetas (Barras / QR)</span>
           </button>
           <button
             type="button"
             onClick={() => setIsInventoryChecklistOpen(true)}
-            className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clay transition-all active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-sky-100 hover:bg-sky-200 text-sky-800 border border-sky-200 font-bubble font-bold text-xs sm:text-sm shadow-xs transition-all active:scale-95 cursor-pointer"
             title="Generar checklist de toma física de inventario e imprimir por estante"
           >
-            <ClipboardCheck className="w-5 h-5 text-amber-300" />
+            <ClipboardCheck className="w-5 h-5 text-sky-600" />
             <span>Checklist por Estante</span>
           </button>
           {isFeatureEnabled('inventory', 'product_crud') && (
@@ -161,9 +161,9 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                 setEditingProduct(null);
                 setIsNewProductModalOpen(true);
               }}
-              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayPink transition-all active:scale-95 animate-pulse-subtle"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-pink-100 hover:bg-pink-200 text-pink-700 border border-pink-200 font-bubble font-bold text-xs sm:text-sm shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <PlusCircle className="w-5 h-5" />
+              <PlusCircle className="w-5 h-5 text-pink-600" />
               <span>+ Agregar Producto al Inventario</span>
             </button>
           )}
@@ -695,10 +695,10 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                       {isFeatureEnabled('inventory', 'qr_labels') && (
                         <button
                           onClick={() => setQrModalProduct(prod)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white font-bubble text-xs shadow-sm active:scale-95 transition-all"
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-700 border border-purple-200 font-bubble text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
                           title="Generar etiqueta QR"
                         >
-                          <QrCode className="w-3.5 h-3.5 text-fio-yellow" />
+                          <QrCode className="w-3.5 h-3.5 text-purple-600" />
                           <span>QR</span>
                         </button>
                       )}
