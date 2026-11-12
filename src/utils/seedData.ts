@@ -470,7 +470,7 @@ export const INITIAL_SINPE_TRANSACTIONS: SinpeTransaction[] = [
 export const INITIAL_SINPE_SETTINGS: SinpeSettings = {
   forwardingEmail: 'mensajero@bancobcr.com',
   isLinked: true,
-  webhookUrl: 'https://byfiocr.pages.dev/api/sinpe-webhook',
+  webhookUrl: 'https://byfiocr.com/api/sinpe-webhook',
   autoVerify: true,
 };
 

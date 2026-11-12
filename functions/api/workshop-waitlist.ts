@@ -244,7 +244,7 @@ const dispatchEmail = async (
         },
         body: JSON.stringify({
           personalizations: [{ to: [{ email: to }] }],
-          from: { email: 'notificaciones@byfiocr.pages.dev', name: 'by.fio Talleres' },
+          from: { email: 'notificaciones@byfiocr.com', name: 'by.fio Talleres' },
           subject: email.subject,
           content: [
             { type: 'text/plain', value: email.text },

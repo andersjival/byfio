@@ -110,7 +110,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
     window.location.hostname.startsWith('192.168.') ||
     window.location.hostname.endsWith('.local')
   );
-  const publicOrigin = 'https://byfiocr.pages.dev';
+  const publicOrigin = 'https://byfiocr.com';
   const origin = isLocalHost ? publicOrigin : (typeof window !== 'undefined' ? window.location.origin : publicOrigin);
 
   const adminPcUrl = `${origin}/admin`;

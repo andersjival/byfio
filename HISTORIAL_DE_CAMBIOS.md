@@ -1,3 +1,22 @@
+## [v4.19.123] - 2026-11-12
+
+### 🌐 Actualización Integral al Nuevo Dominio Oficial `https://byfiocr.com`
+- **Migración de Dominio en Metadatos y Redes Sociales ([index.html](file:///C:/Users/Juan/byfio/index.html))**:
+  - Actualizadas las etiquetas Open Graph (`og:url`, `og:image`, `og:image:secure_url`) y Twitter Card (`twitter:image`) para que al compartir en WhatsApp, Facebook, Instagram y Telegram aparezca el nuevo dominio oficial con marca propia `https://byfiocr.com` junto con su imagen de portada.
+- **Documentos Comerciales y Facturación ([InvoiceModal.tsx](file:///C:/Users/Juan/byfio/src/components/admin/InvoiceModal.tsx), [SupplierOrderModal.tsx](file:///C:/Users/Juan/byfio/src/components/admin/SupplierOrderModal.tsx))**:
+  - En las facturas para clientes y requisiciones para proveedores se muestra ahora `Tienda: byfiocr.com`.
+- **PWA Manager y Códigos QR ([PwaManagerModal.tsx](file:///C:/Users/Juan/byfio/src/components/admin/PwaManagerModal.tsx))**:
+  - El generador de enlaces de instalación y códigos QR para colaboradores y clientes ahora apunta a `https://byfiocr.com`.
+- **Métricas y Enlaces de Campaña ([MetricsPage.tsx](file:///C:/Users/Juan/byfio/src/components/admin/MetricsPage.tsx))**:
+  - Generación de links de referidos y campañas formateados como `https://byfiocr.com/?ref=codigo`.
+- **Recordatorios, Notificaciones y Webhooks ([workshop-waitlist.ts](file:///C:/Users/Juan/byfio/functions/api/workshop-waitlist.ts), [layawayReminderService.ts](file:///C:/Users/Juan/byfio/src/services/layawayReminderService.ts), [seedData.ts](file:///C:/Users/Juan/byfio/src/utils/seedData.ts))**:
+  - Correos de lista de espera emitidos con remitente `@byfiocr.com` y webhook SINPE enrutado a `https://byfiocr.com/api/sinpe-webhook`.
+- **Skills y Protocolos de Despliegue ([SKILL.md](file:///C:/Users/Juan/byfio/.agents/skills/deploy-cloudflare-byfio/SKILL.md), [GEMINI.md](file:///C:/Users/Juan/byfio/GEMINI.md))**:
+  - Protocolo oficial de verificación apuntando al dominio en producción `https://byfiocr.com`.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.123`.
+
+---
+
 ## [v4.19.122] - 2026-11-12
 
 ### 👤 Fecha, Hora y Usuario Creador en Ficha de Clientes
@@ -13,7 +32,7 @@
 ## [v4.19.122] - 2026-11-12
 
 ### 👥 Pestañas Duales en Perfiles de Usuario: Colaboradores y Clientes Registrados
-- **Selector Dual y Directorio de Clientes Web ([`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx), [`RegisteredClientsList.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx))**:
+- **Selector Dual y Directorio de Clientes Web ([UserProfilesSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx), [RegisteredClientsList.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx))**:
   - Incorporado selector superior de pestañas con dos botones interactivos: **Usuarios Colaboradores** y **Usuarios Clientes** con badges dinámicos de cantidad de usuarios.
   - La sección 'Usuarios Colaboradores' mantiene el panel de perfiles con código PIN de 4 dígitos y matriz de permisos por módulos.
   - La sección 'Usuarios Clientes' despliega el directorio de clientes registrados en la plataforma web, detallando fecha y hora de registro, nombre completo, correo, teléfono con enlace directo a WhatsApp, cédula/identificación, provincia detectada, dirección exacta y enlace a Google Maps cuando hay coordenadas registradas.
@@ -25,7 +44,7 @@
 ## [v4.19.121] - 2026-11-12
 
 ### 🌐 Vinculación y Activación del Dominio Personalizado `byfiocr.com`
-- **Conexión de Dominio Real y Enrutamiento Cloudflare ([`GEMINI.md`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/GEMINI.md), [`index.html`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html))**:
+- **Conexión de Dominio Real y Enrutamiento Cloudflare ([GEMINI.md](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/GEMINI.md), [index.html](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/index.html))**:
   - Asociado el dominio personalizado `byfiocr.com` y su subdominio `www.byfiocr.com` al proyecto de Cloudflare Pages `byfiocr`.
   - Creados y propagados los registros CNAME en la zona DNS `byfiocr.com` de la cuenta Cloudflare correspondiente con proxy activo y certificado SSL automático emitido por Google Trust Services.
   - Actualizados los metadatos de Open Graph y Twitter Cards en `index.html` hacia el dominio canónico de producción `https://byfiocr.com`.

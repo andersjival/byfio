@@ -1,5 +1,5 @@
 // Service Worker oficial By.Fio para PWA, Notificaciones Push y Gestión de Pedidos en Tiempo Real
-const CACHE_VERSION = 'byfio-pwa-v4.19.122';
+const CACHE_VERSION = 'byfio-pwa-v4.19.123';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -24,52 +24,39 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
-  // NUNCA interceptar APIs, peticiones multimedia (.mp4/.webm/.mp3) o con cabecera Range para no romper video en Safari
+  // Ignorar peticiones a APIs externas, autenticación, base de datos y Cloudflare Pages
   if (
     url.pathname.startsWith('/api/') ||
-    url.pathname.endsWith('.mp4') ||
-    url.pathname.endsWith('.webm') ||
-    url.pathname.endsWith('.mp3') ||
-    event.request.headers.get('range')
+    url.pathname.startsWith('/auth/') ||
+    url.pathname.startsWith('/_app/') ||
+    url.hostname.includes('supabase') ||
+    url.hostname.includes('google') ||
+    url.hostname.includes('gstatic')
   ) {
     return;
   }
 
-  // Dejar que las peticiones se sirvan directamente por red
+  // Network First con fallback a Cache para máxima frescura en actualizaciones
   event.respondWith(
-    fetch(event.request).catch(async () => {
-      const cached = await caches.match(event.request);
-      if (cached) return cached;
-      if (event.request.mode === 'navigate') {
-        const indexFallback = await caches.match('/index.html');
-        if (indexFallback) return indexFallback;
-      }
-      return new Response('Contenido no disponible sin conexión.', {
-        status: 503,
-        statusText: 'Service Unavailable',
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-      });
-    })
-  );
-});
-
-// Manejo de clic en la notificación push
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  const targetUrl = event.notification.data?.url || '/pedidos';
-
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // Si la ventana ya está abierta, enfocarla
-      for (const client of clientList) {
-        if (client.url && client.url.includes('/pedidos') && 'focus' in client) {
-          return client.focus();
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_VERSION).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
         }
-      }
-      // Si no, abrir una nueva ventana con la vista de pedidos
-      if (self.clients.openWindow) {
-        return self.clients.openWindow(targetUrl);
-      }
-    })
+        return networkResponse;
+      })
+      .catch(async () => {
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        // Fallback para navegación offline si se solicita HTML
+        if (event.request.mode === 'navigate') {
+          return caches.match('/');
+        }
+      })
   );
 });

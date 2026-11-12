@@ -509,7 +509,7 @@ export const SupplierOrderModal: React.FC = () => {
                           <span>📍 200 sur del parque de Tibás, San José, Costa Rica</span>
                         </p>
                         <p className="flex items-center gap-1.5">
-                          <span>📞 WhatsApp Oficial: +506 6400-4640 • Tienda Web: byfiocr.pages.dev</span>
+                          <span>📞 WhatsApp Oficial: +506 6400-4640 • Tienda Web: byfiocr.com</span>
                         </p>
                       </div>
                     </div>

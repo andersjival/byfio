@@ -108,7 +108,7 @@ export const InvoiceModal: React.FC = () => {
                   </p>
                   <p className="flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
-                    <span>WhatsApp Oficial: +506 6400-4640 • Tienda: byfiocr.pages.dev</span>
+                    <span>WhatsApp Oficial: +506 6400-4640 • Tienda: byfiocr.com</span>
                   </p>
                 </div>
               </div>

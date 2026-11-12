@@ -15,7 +15,7 @@ Este proyecto **NO utiliza servidores locales** de desarrollo en producción. To
 
 Las credenciales y tokens de acceso oficiales se encuentran en el archivo local [`CLAVES ANDERSJIVAL.txt`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/CLAVES%20ANDERSJIVAL.txt) en la raíz del proyecto.
 - **Proyecto Cloudflare Pages:** `byfiocr`
-- **URL Producción:** `https://byfiocr.pages.dev`
+- **URL Producción:** `https://byfiocr.com`
 - **D1 Database ID:** `60326015-d917-4a7b-baac-ab90d972ae57`
 
 ---
@@ -48,4 +48,4 @@ Las credenciales y tokens de acceso oficiales se encuentran en el archivo local 
    ```
 
 5. **Verificar Producción:**
-   Consultar `https://byfiocr.pages.dev` para confirmar el nuevo bundle desplegado.
+   Consultar `https://byfiocr.com` para confirmar el nuevo bundle desplegado.

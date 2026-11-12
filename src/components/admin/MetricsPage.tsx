@@ -430,7 +430,7 @@ export const MetricsPage: React.FC<MetricsPageProps> = ({ onNavigate }) => {
 
   // Construir URL completa con parámetro ref
   const getFullTrackedUrl = (link: TrackedLink) => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://byfiocr.pages.dev';
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://byfiocr.com';
     const cleanRoute = link.targetRoute === '/' ? '' : link.targetRoute;
     return `${origin}${cleanRoute}?ref=${link.slug}`;
   };
@@ -2113,7 +2113,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
             <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
               <Info className="w-3.5 h-3.5 text-fio-purple" />
               <span>
-                Formato resultante: <code>https://byfiocr.pages.dev{targetSectionId === 'all' ? '' : `/${targetSectionId}`}?ref=tu-codigo</code>
+                Formato resultante: <code>https://byfiocr.com{targetSectionId === 'all' ? '' : `/${targetSectionId}`}?ref=tu-codigo</code>
               </span>
             </div>
 

@@ -102,7 +102,7 @@ export function generateLayawayReminderEmail(order: Order): {
   const countdown = calculateLayawayDaysRemaining(order);
   const firstItem = order.items && order.items[0];
   const productName = firstItem?.name || order.orderTitle || 'Tu artículo apartado';
-  const productImage = firstItem?.image || 'https://byfiocr.pages.dev/assets/imagen-tienda-online.jpeg';
+  const productImage = firstItem?.image || 'https://byfiocr.com/assets/imagen-tienda-online.jpeg';
   const paidAmount = order.layawayDownPaymentAmount || order.total;
   const remainingAmount = order.layawayRemainingAmount || 0;
   const totalAmount = order.layawayTotalAmount || (paidAmount + remainingAmount);
