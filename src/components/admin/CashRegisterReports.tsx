@@ -201,15 +201,15 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
         {/* DIVISIÓN 1: TIENDA & CATÁLOGO */}
         {isFeatureEnabled('reports', 'category_breakdown') && (
-          <div className="bg-gradient-to-tr from-sky-100/80 via-sky-50 to-white dark:from-sky-950/90 dark:via-[#1e324d] dark:to-[#2C2746] p-4 rounded-3xl border-2 border-sky-400 dark:border-sky-400 shadow-claySm dark:shadow-[0_0_15px_rgba(56,189,248,0.25)]">
+          <div className="bg-gradient-to-tr from-sky-50 to-sky-100/40 dark:from-sky-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-sky-200 dark:border-sky-500/40 shadow-claySm">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-sky-900 dark:text-sky-300 uppercase">🛍️ Tienda &amp; Catálogo</span>
-              <ShoppingBag className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+              <span className="text-[11px] font-bold text-sky-900 uppercase">🛍️ Tienda &amp; Catálogo</span>
+              <ShoppingBag className="w-4 h-4 text-sky-600" />
             </div>
             <h3 className="text-2xl font-bubble font-bold text-sky-900 mt-1">
               {formatCRC(totalStoreSales)}
             </h3>
-            <p className="text-[11px] text-sky-700 dark:text-sky-300 font-medium mt-0.5">
+            <p className="text-[11px] text-sky-700 mt-0.5">
               {storeOrders.length} pedidos + {filteredSinpe.filter((t) => t.category === 'store').length} SINPE BCR
             </p>
           </div>
@@ -248,15 +248,15 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
         )}
 
         {/* GANANCIA ESTIMADA */}
-        <div className="bg-gradient-to-tr from-teal-100/80 via-teal-50 to-white dark:from-teal-950/90 dark:via-[#1a3838] dark:to-[#2C2746] p-4 rounded-3xl border-2 border-teal-400 dark:border-teal-400 shadow-claySm dark:shadow-[0_0_15px_rgba(45,212,191,0.25)]">
+        <div className="bg-gradient-to-tr from-teal-50 to-teal-100/40 dark:from-teal-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-teal-200 dark:border-teal-500/40 shadow-claySm">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-teal-900 dark:text-teal-300 uppercase">Ganancia Neta Est.</span>
-            <TrendingUp className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <span className="text-[11px] font-bold text-teal-900 uppercase">Ganancia Neta Est.</span>
+            <TrendingUp className="w-4 h-4 text-teal-600" />
           </div>
           <h3 className="text-2xl font-bubble font-bold text-teal-900 mt-1">
             {formatCRC(estimatedProfit)}
           </h3>
-          <p className="text-[11px] text-teal-700 dark:text-teal-300 font-medium mt-0.5">Descontando costo insumos</p>
+          <p className="text-[11px] text-teal-700 mt-0.5">Descontando costo insumos</p>
         </div>
       </div>
 
