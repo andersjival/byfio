@@ -7,7 +7,7 @@ interface Env {
 const DEFAULT_COMPOSIO_API_KEY = 'ak_AiRbOjfO_jCuUfBfQHUc';
 const DEFAULT_ADMIN_EMAIL = 'tienda@byfiocr.com';
 const AUTH_CONFIG_GOOGLEDRIVE = 'ac_-eEGEgrbguQR';
-const AUTH_CONFIG_GMAIL = 'ac_gw1GUuwE0GfP';
+const AUTH_CONFIG_GMAIL = 'ac_o_y08fCzNR_O'; // Managed Auth Solo Lectura (GMAIL_FETCH_EMAILS)
 
 const extractDriveFileOrFolderId = (url?: string): string | null => {
   if (!url) return null;
@@ -356,12 +356,9 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     if (action === 'test_composio_gmail') {
       const activeApiKey = (body.composioApiKey || env.COMPOSIO_API_KEY || DEFAULT_COMPOSIO_API_KEY).trim();
       const adminEmail = (body.adminEmail || DEFAULT_ADMIN_EMAIL).trim();
-      const recipientEmail = (body.recipientEmail || adminEmail).trim();
-      const subject = body.subject || 'Prueba de Conexión Composio & Gmail - By.Fio';
-      const emailContent = body.body || `¡Hola! Esta es una prueba de envío exitosa desde la cuenta del administrador (${adminEmail}) de By.Fio usando la API de Composio.`;
 
       try {
-        const execRes = await fetch('https://backend.composio.dev/api/v3.1/tools/execute/GMAIL_SEND_EMAIL', {
+        const execRes = await fetch('https://backend.composio.dev/api/v3.1/tools/execute/GMAIL_FETCH_EMAILS', {
           method: 'POST',
           headers: {
             'x-api-key': activeApiKey,
@@ -371,17 +368,15 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
             user_id: adminEmail,
             entity_id: adminEmail,
             arguments: {
-              recipient_email: recipientEmail,
-              subject,
-              body: emailContent,
-              is_html: false,
+              max_results: 2,
+              query: 'is:unread',
             },
           }),
         });
 
         const execData: any = await execRes.json();
         if (!execRes.ok) {
-          const errMsg = execData.error?.message || 'Error al enviar correo por Gmail';
+          const errMsg = execData.error?.message || 'Error al consultar correos con Gmail';
           return new Response(JSON.stringify({ success: false, message: errMsg }), {
             status: 400,
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -390,7 +385,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
         return new Response(JSON.stringify({
           success: true,
-          message: `¡Correo de prueba enviado con éxito a ${recipientEmail}!`,
+          message: `¡Permiso de solo lectura verificado con éxito en Gmail (${adminEmail})!`,
           data: execData,
         }), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -620,51 +615,6 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         } catch (e) {
           console.warn('Error otorgando acceso en Drive:', e);
         }
-      }
-
-      // 1.B. Enviar correo oficial de bienvenida por Gmail del Administrador
-      try {
-        const emailHtml = `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #f3e8ff; border-radius: 20px; background-color: #ffffff;">
-            <div style="text-align: center; margin-bottom: 20px;">
-              <h1 style="color: #6b21a8; margin: 0; font-size: 24px;">¡Felicidades por tu compra en by.fio!</h1>
-              <p style="color: #9333ea; font-size: 14px; margin-top: 4px;">Acceso digital inmediato a tu curso</p>
-            </div>
-            <p style="color: #334155; font-size: 15px; line-height: 1.6;">Hola <strong>${customerName}</strong>,</p>
-            <p style="color: #334155; font-size: 15px; line-height: 1.6;">Hemos confirmado tu comprobante de pago exitosamente. Ya tienes acceso habilitado a tu material de estudio en Google Drive:</p>
-            <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 14px; padding: 18px; margin: 20px 0; text-align: center;">
-              <h2 style="color: #581c87; font-size: 18px; margin: 0 0 10px 0;">${courseTitle}</h2>
-              ${driveFolderUrl ? `<a href="${driveFolderUrl}" target="_blank" style="background-color: #7e22ce; color: #ffffff; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">Abrir Carpeta en Google Drive</a>` : ''}
-            </div>
-            <p style="color: #64748b; font-size: 13px; line-height: 1.5;">El permiso se otorgó al correo: <strong>${customerEmail}</strong>. Si ingresas con una cuenta de Google distinta, asegúrate de cambiar a esta cuenta para visualizar los archivos.</p>
-            <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 24px 0;" />
-            <div style="text-align: center; color: #94a3b8; font-size: 12px;">
-              <p style="margin: 0;">by.fio Costa Rica — Cursos Digitales & Papelería Creativa</p>
-              <p style="margin: 4px 0 0 0;">WhatsApp de Asistencia: +506 6000-0000 • tienda@byfiocr.com</p>
-            </div>
-          </div>
-        `;
-
-        const gmailRes = await fetch('https://backend.composio.dev/api/v3.1/tools/execute/GMAIL_SEND_EMAIL', {
-          method: 'POST',
-          headers: {
-            'x-api-key': apiKey,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user_id: adminEmail,
-            entity_id: adminEmail,
-            arguments: {
-              recipient_email: customerEmail.trim().toLowerCase(),
-              subject: `¡Acceso concedido a tu curso: ${courseTitle}! - by.fio`,
-              body: emailHtml,
-              is_html: true,
-            },
-          }),
-        });
-        if (gmailRes.ok) composioSent = true;
-      } catch (e) {
-        console.warn('Error enviando correo por Gmail:', e);
       }
     }
 

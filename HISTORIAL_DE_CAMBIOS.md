@@ -1,3 +1,16 @@
+## [v4.19.176] - 2026-11-13
+
+### 🔒 Composio Managed Auth: Permisos Estrictos de Solo Lectura para Gmail
+- **Configuración de Solo Lectura en Gmail ([drive-courses.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/drive-courses.ts), [DriveCoursesAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DriveCoursesAdminSection.tsx))**:
+  - Restringido el Auth Config de Gmail (`ac_o_y08fCzNR_O`) exclusivamente al conjunto de herramientas de consulta y lectura: `GMAIL_FETCH_EMAILS`, `GMAIL_FETCH_MESSAGE_BY_MESSAGE_ID`, `GMAIL_LIST_THREADS`.
+  - Scopes de Google OAuth limitados a `gmail.readonly` y `userinfo.email` sin permisos de escritura ni envío.
+  - Eliminada cualquier ejecución de envío de correos, preservando el foco en la consulta de notificaciones y comprobantes bancarios.
+  - Actualizada la interfaz administrativa con indicador de "Modo Solo Lectura" y botón de diagnóstico de lectura.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.176`.
+
+---
+
 ## [v4.19.175] - 2026-11-13
 
 ### 🎨 Módulo ETF: Panel Exclusivo de Compras ETF, Requerimientos, Fotos y Descarga para Taller

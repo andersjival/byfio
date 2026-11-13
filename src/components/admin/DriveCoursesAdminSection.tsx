@@ -715,7 +715,7 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
               </div>
             </div>
 
-            {/* 2. Tarjeta Gmail */}
+            {/* 2. Tarjeta Gmail (Solo Lectura) */}
             <div className="bg-white rounded-3xl p-5 border border-purple-100/90 shadow-xs flex flex-col justify-between space-y-4 hover:border-purple-300 transition-all">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -724,15 +724,15 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
                       <Mail className="w-5 h-5" />
                     </span>
                     <div>
-                      <h3 className="font-bubble font-bold text-sm text-slate-900">Gmail Oficial</h3>
-                      <span className="text-[11px] font-sans text-slate-400">Correos y Bienvenida</span>
+                      <h3 className="font-bubble font-bold text-sm text-slate-900">Gmail (Solo Lectura)</h3>
+                      <span className="text-[11px] font-sans text-slate-400">Lectura de Correos & Comprobantes</span>
                     </div>
                   </div>
 
                   {composioStatus.gmail?.status === 'ACTIVE' ? (
                     <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bubble text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Conectado</span>
+                      <span>Conectado (Lectura)</span>
                     </span>
                   ) : composioStatus.gmail?.status === 'INITIALIZING' ? (
                     <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bubble text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
@@ -748,11 +748,11 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
                 </div>
 
                 <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                  Envía el correo de bienvenida con diseño oficial de By.Fio directamente desde <strong className="text-slate-800 font-mono">{adminEmail}</strong> con el enlace a los materiales.
+                  Permiso restringido exclusivamente a lectura (<code className="font-mono bg-purple-50 text-purple-700 px-1 py-0.5 rounded text-[11px]">GMAIL_FETCH_EMAILS</code>). Permite consultar bandejas para comprobar pagos SINPE BCR y notificaciones, sin permisos de envío ni edición.
                 </p>
 
                 <div className="bg-purple-50/60 rounded-xl p-2.5 text-[11px] font-mono text-purple-900 truncate">
-                  Remitente oficial: {adminEmail}
+                  Bandeja de consulta: {adminEmail}
                 </div>
               </div>
 
@@ -768,8 +768,8 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
                     {isConnectingGmail
                       ? 'Abriendo conexión...'
                       : composioStatus.gmail?.status === 'ACTIVE'
-                      ? 'Reconectar Gmail'
-                      : 'Conectar Gmail'}
+                      ? 'Reconectar Gmail (Solo Lectura)'
+                      : 'Conectar Gmail (Solo Lectura)'}
                   </span>
                 </button>
 
@@ -778,9 +778,9 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
                   onClick={handleTestGmail}
                   disabled={isTestingGmail}
                   className="px-3.5 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-800 font-bubble text-xs font-bold transition-all disabled:opacity-50"
-                  title="Enviar correo de prueba"
+                  title="Probar lectura de correos recibidos"
                 >
-                  {isTestingGmail ? 'Enviando...' : 'Probar Gmail'}
+                  {isTestingGmail ? 'Consultando...' : 'Probar Lectura'}
                 </button>
               </div>
             </div>
