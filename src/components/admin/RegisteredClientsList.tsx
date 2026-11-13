@@ -332,7 +332,7 @@ export const RegisteredClientsList: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Botones de Pestaña Arriba + Badge Provincia */}
+                  {/* Botones de Pestaña Arriba */}
                   <div className="flex items-center gap-1.5 shrink-0 flex-wrap sm:flex-nowrap">
                     <div className="inline-flex items-center gap-1 p-0.5 rounded-xl bg-slate-100 border border-slate-200/80">
                       <button
@@ -361,118 +361,89 @@ export const RegisteredClientsList: React.FC = () => {
                         <span>Dispositivo &amp; Red</span>
                       </button>
                     </div>
-
-                    <span className="px-2 py-0.5 rounded-xl text-[10px] font-bubble font-bold bg-purple-50 text-fio-purple border border-purple-100 shrink-0">
-                      {province}
-                    </span>
                   </div>
                 </div>
 
                 {/* Contenido Dinámico según la Pestaña Activa */}
                 {activeTab === 'info' ? (
                   /* PESTAÑA: INFO DE USUARIO */
-                  <div className="space-y-2 text-xs font-sans animate-fadeIn">
-                    {/* Fecha y Hora de Creación */}
-                    <div className="p-2.5 rounded-xl bg-purple-50/70 border border-purple-100 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-fio-purple shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <span className="text-[10px] text-purple-700 font-bold uppercase block">Fecha y Hora de Creación</span>
-                        <span className="font-sans font-bold text-purple-950 text-xs">
-                          {date} {time && <span className="text-purple-800 font-medium">a las {time}</span>}
-                        </span>
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100 font-sans animate-fadeIn">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <User className="w-3.5 h-3.5 text-fio-purple shrink-0" />
+                      <span className="truncate">Nombre: <strong className="text-slate-800 font-bubble">{client.name || 'Sin nombre registrado'}</strong></span>
                     </div>
 
-                    {/* Nombre del Usuario */}
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <User className="w-4 h-4 text-fio-purple shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase block">Nombre del usuario</span>
-                        <span className="font-bubble font-bold text-slate-900 text-sm truncate block">
-                          {client.name || 'Sin nombre registrado'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Teléfono */}
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <Phone className="w-4 h-4 text-emerald-600 shrink-0" />
-                        <div className="min-w-0">
-                          <span className="text-[10px] text-slate-400 font-bold uppercase block">Teléfono</span>
-                          {client.phone ? (
-                            <a href={`https://wa.me/${waPhone}`} target="_blank" rel="noopener noreferrer" className="font-bold text-emerald-700 hover:underline">
-                              {client.phone}
-                            </a>
-                          ) : (
-                            <span className="text-slate-400">Sin teléfono</span>
-                          )}
-                        </div>
+                    <div className="flex items-center justify-between gap-1.5 min-w-0">
+                      <div className="flex items-center gap-1.5 truncate">
+                        <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span className="truncate">Tel: {client.phone ? (
+                          <a href={`https://wa.me/${waPhone}`} target="_blank" rel="noopener noreferrer" className="font-bold text-emerald-700 hover:underline">
+                            {client.phone}
+                          </a>
+                        ) : (
+                          <strong className="text-slate-400">Sin teléfono</strong>
+                        )}</span>
                       </div>
                       {client.phone && (
                         <a
                           href={`https://wa.me/${waPhone}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bubble font-bold flex items-center gap-1 hover:bg-emerald-100 cursor-pointer shrink-0"
+                          className="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bubble font-bold flex items-center gap-0.5 hover:bg-emerald-200 shrink-0"
                         >
-                          <span>WhatsApp</span>
-                          <ExternalLink className="w-2.5 h-2.5" />
+                          <span>WA</span>
+                          <ExternalLink className="w-2 h-2" />
                         </a>
                       )}
                     </div>
 
-                    {/* Dirección */}
-                    <div className="p-2.5 rounded-xl bg-purple-50/40 border border-purple-100 space-y-2">
-                      <div className="flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-fio-purple shrink-0 mt-0.5" />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="text-[10px] text-slate-400 font-bold uppercase block">Dirección</span>
-                            <span className="px-2 py-0.2 rounded-md bg-purple-100 text-fio-purple text-[10px] font-bubble font-bold">
-                              {province}
-                            </span>
-                          </div>
-                          <p className="text-slate-800 text-xs mt-0.5 font-medium leading-relaxed">
-                            {client.address || 'Ubicación seleccionada en mapa'}
-                          </p>
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Calendar className="w-3.5 h-3.5 text-fio-purple shrink-0" />
+                      <span className="truncate">Creado: <strong className="text-slate-800">{date}</strong> {time && <span>a las {time}</span>}</span>
+                    </div>
 
-                      {/* Botones de Navegación: Waze + Copiar Link + Google Maps */}
-                      <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-purple-100/60 pl-6">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <MapPin className="w-3.5 h-3.5 text-fio-purple shrink-0" />
+                      <span className="truncate">Provincia: <strong className="text-slate-800">{province}</strong></span>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5 col-span-1 sm:col-span-2 pt-1 border-t border-slate-100">
+                      <div className="flex items-start gap-1.5 min-w-0">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                        <span className="truncate flex-1 text-slate-700">
+                          Dir: <strong className="text-slate-800 font-medium">{client.address || 'Ubicación seleccionada en mapa'}</strong>
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 pl-5">
                         <a
                           href={getWazeUrlForClient(client)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#33CCFF] hover:bg-[#1EBEF5] text-slate-950 font-bubble font-bold text-[11px] shadow-2xs active:scale-95 transition-all cursor-pointer"
-                          title="Abrir ubicación en Waze directamente en el navegador"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#33CCFF] hover:bg-[#1EBEF5] text-slate-950 font-bubble font-bold text-[10px] shadow-2xs active:scale-95 transition-all"
+                          title="Abrir en Waze"
                         >
-                          <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19.34 10.04C18.67 6.59 15.64 4 12 4c-4.41 0-8 3.59-8 8 0 1.25.29 2.43.8 3.49L3.5 19.5l4.31-1.15c1.23.64 2.64 1.01 4.19 1.01 4.41 0 8-3.59 8-8 0-.45-.04-.89-.11-1.32h-.55zM9 13a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm6 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
-                          </svg>
                           <span>Waze</span>
-                          <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+                          <ExternalLink className="w-2 h-2" />
                         </a>
 
                         <button
                           type="button"
                           onClick={() => handleCopyClientWaze(client)}
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold border transition-all active:scale-95 cursor-pointer shadow-2xs ${
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bubble font-bold border transition-all active:scale-95 cursor-pointer shadow-2xs ${
                             copiedWazeClientId === clientKey
                               ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
                               : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
                           }`}
-                          title="Copiar link de Waze para enviárselo a un mensajero"
+                          title="Copiar link de Waze"
                         >
                           {copiedWazeClientId === clientKey ? (
                             <>
-                              <Check className="w-3 h-3 text-emerald-600" />
+                              <Check className="w-2.5 h-2.5 text-emerald-600" />
                               <span className="text-emerald-700">¡Copiado!</span>
                             </>
                           ) : (
                             <>
-                              <Copy className="w-3 h-3 text-slate-500" />
+                              <Copy className="w-2.5 h-2.5 text-slate-500" />
                               <span>Copiar link</span>
                             </>
                           )}
@@ -483,10 +454,10 @@ export const RegisteredClientsList: React.FC = () => {
                             href={`https://www.google.com/maps?q=${client.lat},${client.lng}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[10px] text-fio-purple hover:underline font-bold ml-auto"
+                            className="inline-flex items-center gap-0.5 text-[10px] text-fio-purple hover:underline font-bold ml-auto"
                           >
                             <span>Google Maps</span>
-                            <ExternalLink className="w-2.5 h-2.5" />
+                            <ExternalLink className="w-2 h-2" />
                           </a>
                         )}
                       </div>

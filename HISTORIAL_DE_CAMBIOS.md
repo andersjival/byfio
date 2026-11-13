@@ -1,3 +1,28 @@
+## [v4.19.138] - 2026-11-12
+
+### 📱 Unificación Total de Módulos y Permisos de Colaboradores (PC / Celular)
+- **Catálogo Unificado de Módulos ([`permissionModules.ts`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/permissionModules.ts))**:
+  - Centralizada la lista oficial de todos los 11 módulos del administrador en `COLLABORATOR_PERMISSION_MODULES` con nombres, descripciones e iconos idénticos:
+    - **Cola de Pedidos** (`orders`)
+    - **Apartados** (`layaways`)
+    - **Facturación Rápida** (`billing`)
+    - **Mis Productos** (`inventory`)
+    - **Caja & Reportería** (`reports`)
+    - **Talleres & Alumnos** (`workshops`)
+    - **Perfiles de Usuarios** (`users`)
+    - **Directorio de Clientes** (`customers`)
+    - **Agenda & Tareas** (`agenda`)
+    - **Pedidos a Proveedor** (`suppliers`)
+    - **Historial de Ventas** (`sales`)
+- **Asignación en Aplicaciones PC / Celular ([`AppsManagementSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AppsManagementSection.tsx))**:
+  - Reemplazados los 6 botones parciales anteriores con la lista completa y oficial de los 11 módulos administrativos, manteniendo exactamente los mismos nombres que en el gestor de perfiles de colaboradores.
+- **Sincronización Automática en Tiempo Real ([`UserProfilesSection.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx), [`AppContext.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [`AdminMobileDock.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminMobileDock.tsx))**:
+  - Cualquier permiso asignado o revocado en los perfiles de colaboradores se propaga automáticamente al instante al app de celular del colaborador vía D1, sincronización de estado y `writeScopedAuthUser('collaborator', updatedUser)`.
+  - La barra táctil inferior (`AdminMobileDock`) ahora valida `hasPermission` reactivamente, ocultando o mostrando los accesos según los permisos activos.
+  - Actualizado Service Worker a `byfio-pwa-v4.19.138`.
+
+---
+
 ## [v4.19.137] - 2026-11-12
 
 ### 📐 Reubicación Superior de Botones de Ficha y Eliminación de Espacios en Blanco
