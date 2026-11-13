@@ -1,3 +1,20 @@
+## [v4.19.182] - 2026-11-13
+
+### 🌟 Asistente Estrellita en Vivo: Infraestructura de IA en Edge con Audio y Base de Datos Dedicada
+- **Infraestructura Cloudflare Workers AI & Subdominio ([wrangler.toml](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/wrangler.toml), [chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [transcribe.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/transcribe.ts))**:
+  - Configurado y propagado el subdominio HTTPS activo [`ai.byfiocr.com`](https://ai.byfiocr.com) con certificado SSL automático de Google Trust Services y proxy activo en Cloudflare.
+  - Creada la base de datos independiente D1 `byfio-agent-db` (`56c38379-4579-41c5-a189-abb580893175`) con tablas `agent_conversations`, `agent_messages` y `agent_query_metrics` para aislamiento total de la memoria del agente.
+  - Conexión en modo estrictamente de solo lectura (`SELECT`) a la base principal `byfiocr-db` (`60326015-d917-4a7b-baac-ab90d972ae57`) para verificar stock y talleres en tiempo real.
+  - Implementado motor de transcripción de voz a texto con Whisper para procesar audios enviados por colaboradoras, administradoras y clientes.
+  - Cumplimiento estricto de confidencialidad: Cero menciones a modelos técnicos o proveedores y cero logos genéricos de bots en el frontend.
+- **Componentes y Servicios Frontend ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx), [FloatingMascot.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/FloatingMascot.tsx), [aiAgentService.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/aiAgentService.ts), [useVoiceRecorder.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/useVoiceRecorder.ts))**:
+  - La mascota interactiva (Estrellita) ahora despliega un modal de chat en tiempo real adaptativo con video kawaii, chips de preguntas rápidas y soporte dual para texto y notas de voz grabadas desde el micrófono.
+  - Modo equipo para colaboradoras y administradoras (consultas directas de existencias y cupos) y modo tienda para clientes (asesoría dulce, envíos y stock).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.182`.
+
+---
+
 ## [v4.19.181] - 2026-11-13
 
 ### 📁 Google Drive: Confirmación y Documentación de Permisos Completos (Ver, Modificar y Eliminar)
