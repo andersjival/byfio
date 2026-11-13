@@ -211,7 +211,7 @@ export const AdminPwaShell: React.FC<AdminPwaShellProps> = ({
                     {adminTab === 'catalog-view' && <AdminCatalogVisualView onBackToHub={() => onSelectAdminTab('hub')} />}
                     {adminTab === 'apps' && (
                       <React.Suspense fallback={<div className="py-12 text-center text-slate-400 font-bubble text-sm">Cargando aplicaciones...</div>}>
-                        <AppsManagementSection onSelectAdminTab={onSelectAdminTab} onNavigate={onNavigate} onOpenDesignModal={onOpenDesignModal} />
+                        <AppsManagementSection onSelectAdminTab={onSelectAdminTab} onNavigate={onNavigate} onOpenDesignModal={onOpenDesignModal} onOpenPwaModal={() => setIsPwaModalOpen(true)} />
                       </React.Suspense>
                     )}
                     {adminTab === 'drive-courses' && (

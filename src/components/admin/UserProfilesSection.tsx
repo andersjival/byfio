@@ -478,10 +478,10 @@ export const UserProfilesSection: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => toggleUserProfileStatus(prof.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all active:scale-95 border ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all active:scale-95 ${
                     prof.isActive
-                      ? 'btn-pause-profile bg-amber-100 text-amber-900 border-amber-300/80 hover:bg-amber-200 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-600/40 dark:hover:bg-amber-900/60'
-                      : 'btn-activate-profile bg-emerald-100 text-emerald-900 border-emerald-300/80 hover:bg-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-200 dark:border-emerald-600/40 dark:hover:bg-emerald-900/60'
+                      ? 'btn-pause-profile bg-amber-100 text-amber-900 border border-amber-300/80 hover:bg-amber-200 dark:bg-[#C03A70] dark:text-[#FCE7F3] dark:border-transparent'
+                      : 'btn-activate-profile bg-emerald-100 text-emerald-900 border border-emerald-300/80 hover:bg-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-200 dark:border-emerald-600/40 dark:hover:bg-emerald-900/60'
                   }`}
                 >
                   {prof.isActive ? 'Pausar Perfil' : 'Activar Perfil'}

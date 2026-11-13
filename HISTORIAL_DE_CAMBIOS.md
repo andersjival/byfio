@@ -1,3 +1,14 @@
+## [v4.19.160] - 2026-11-13
+
+### 🎨 Refuerzo Visual de Alto Contraste en Segmentos de Caja (Celeste & Turquesa)
+- **Segmentos de Caja con Resalte de Borde y Brillo ([CashRegisterReports.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx))**:
+  - Segmento **Tienda & Catálogo**: reforzado a borde 2px celeste brillante (`border-2 border-sky-400 dark:border-sky-400`), resplandor celeste en modo oscuro (`dark:shadow-[0_0_15px_rgba(56,189,248,0.25)]`), fondo con gradiente contrastado celeste (`dark:from-sky-950/90 dark:via-[#1e324d]`), texto celeste (`dark:text-sky-300`) e icono en celeste (`text-sky-600 dark:text-sky-400`).
+  - Segmento **Ganancia Neta Est.**: reforzado a borde 2px turquesa brillante (`border-2 border-teal-400 dark:border-teal-400`), resplandor turquesa en modo oscuro (`dark:shadow-[0_0_15px_rgba(45,212,191,0.25)]`), fondo con gradiente contrastado turquesa (`dark:from-teal-950/90 dark:via-[#1a3838]`), texto turquesa (`dark:text-teal-300`) e icono en turquesa (`text-teal-600 dark:text-teal-400`).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.160`.
+
+---
+
 ## [v4.19.159] - 2026-11-13
 
 ### 🎓 Módulo Oficial Cursos Drive con Integración Composio & Google Drive

@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Smartphone, Monitor, Download, Share2, Copy, Check,
-  ExternalLink, QrCode, Sparkles, ShieldCheck, Users,
+  ExternalLink, QrCode, ShieldCheck, Users,
   Boxes, Receipt, Calendar, ArrowLeft, Vibrate, Zap,
   KeyRound, Eye, EyeOff, CheckCircle2, AlertCircle,
-  Truck, ShoppingBag, ClipboardList, Lock, Sliders, PackageCheck,
-  Settings
+  Truck, ShoppingBag, ClipboardList, Lock, Sliders, PackageCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
@@ -28,12 +27,14 @@ interface AppsManagementSectionProps {
   onSelectAdminTab?: (tab: AdminTabType) => void;
   onNavigate?: (route: AppRoute, adminTab?: AdminTabType) => void;
   onOpenDesignModal?: () => void;
+  onOpenPwaModal?: () => void;
 }
 
 export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
   onSelectAdminTab,
   onNavigate,
   onOpenDesignModal,
+  onOpenPwaModal,
 }) => {
   const confirm = useConfirm();
   const showAlert = useAlert();
@@ -764,77 +765,105 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
       )}
 
       {/* ============================================================== */}
-      {/* SECCIÓN 3: CONFIGURACIÓN (VIBRACIÓN TÁCTIL & AJUSTES GLOBALES) */}
+      {/* SECCIÓN 3: CONFIGURACIÓN (CENTRO DE APLICACIONES PWA)          */}
       {/* ============================================================== */}
       {activeTab === 'config' && (
-        <div className="p-5 sm:p-6 rounded-3xl bg-white border-2 border-purple-200 shadow-sm space-y-6 animate-fadeIn">
-          {/* Cabecera Principal de Configuración */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-purple-100">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-700 via-fio-purple to-fio-pink text-white flex items-center justify-center shadow-md shrink-0">
-                <Sliders className="w-6 h-6 text-fio-yellow" />
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#200B3B] via-[#3B1161] to-[#170529] border border-purple-500/50 text-white shadow-md flex flex-col gap-4 animate-fadeIn">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-fio-pink via-purple-600 to-indigo-700 text-white flex items-center justify-center shadow-md shrink-0">
+                <Smartphone className="w-6 h-6 text-fio-yellow" />
               </div>
-              <div>
+              <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-bubble font-bold text-base sm:text-lg text-fio-900">
-                    Configuración de Aplicaciones &amp; Respuesta Háptica
+                  <h3 className="font-bubble font-bold text-sm sm:text-base text-white">
+                    Centro de Aplicaciones (PC &amp; Celular)
                   </h3>
-                  <span className="text-[10px] font-bubble font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 border border-purple-300">
-                    Ajustes Globales (PC &amp; Celular)
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-fio-pink/30 text-pink-200 border border-fio-pink/40 font-bubble font-bold">
+                    ★ Administradora &amp; Colaboradores
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 font-sans mt-0.5">
-                  Personaliza la vibración física al presionar botones, la intensidad táctil y las preferencias de las aplicaciones.
+                <p className="text-xs text-purple-200/90 font-sans max-w-2xl leading-relaxed">
+                  Instala la plataforma en tu computadora de escritorio y en tu celular personal. Configura la vibración táctil al hacer clic y genera accesos directos para tu equipo.
                 </p>
               </div>
             </div>
 
-            {/* Acceso a la Ventana de Personalización del Sistema si está disponible */}
-            {onOpenDesignModal && (
+            <div className="flex items-center gap-2 w-full md:w-auto shrink-0 flex-wrap sm:flex-nowrap">
               <button
                 type="button"
-                onClick={onOpenDesignModal}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bubble font-bold transition-all border border-purple-200 shadow-2xs active:scale-95 cursor-pointer self-start sm:self-auto shrink-0"
-                title="Abrir ventana de personalización de temas, colores, tipografía y sonidos"
+                onClick={() => {
+                  if (onOpenPwaModal) {
+                    onOpenPwaModal();
+                  } else {
+                    setActiveTab('admin');
+                  }
+                }}
+                className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-fio-pink to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bubble font-bold shadow-md active:scale-95 transition-all cursor-pointer"
               >
-                <Settings className="w-3.5 h-3.5 text-fio-pink" />
-                <span>Personalización &amp; Diseño</span>
+                <Smartphone className="w-4 h-4 text-fio-yellow" />
+                <span>Abrir Centro de Aplicaciones</span>
               </button>
-            )}
+            </div>
           </div>
 
-          {/* Panel de Vibración Táctil Háptica Sincronizada */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-600/30 text-pink-300 flex items-center justify-center shrink-0 border border-purple-500/40">
-                  <Vibrate className="w-5 h-5" />
+          {/* Fila Directa de Configuración de Vibración Táctil en PWA */}
+          <div className="p-3.5 rounded-2xl bg-black/35 border border-purple-400/30 backdrop-blur-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-purple-500/30 text-pink-300 flex items-center justify-center shrink-0 border border-purple-400/40">
+                <Vibrate className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bubble font-bold text-white text-xs sm:text-sm">
+                    Vibración Táctil al Clic (Celular y PC)
+                  </span>
+                  <span
+                    className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full border ${
+                      vibrationEnabled
+                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                        : 'bg-white/10 text-slate-300 border-white/20'
+                    }`}
+                  >
+                    {vibrationEnabled ? `Activa • Nivel ${vibrationIntensity}` : 'Desactivada'}
+                  </span>
                 </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-white">
-                      Respuesta Háptica / Vibración Táctil al Clic
-                    </h4>
-                    <span className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full border ${
-                      vibrationEnabled ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-white/10 text-slate-400 border-white/20'
-                    }`}>
-                      {vibrationEnabled ? `Activa • Nivel ${vibrationIntensity}` : 'Desactivada'}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-400 font-sans mt-0.5">
-                    Sincronizado: Al presionar botones interactivos se genera una respuesta física táctil en celulares y PC compatibles.
-                  </p>
-                </div>
+                <p className="text-[11px] text-purple-200/80 font-sans mt-0.5">
+                  Vibración corta y suave de {calculateHapticDuration(vibrationIntensity)}ms al hacer clic en cualquier botón o enlace.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 w-full md:w-auto flex-wrap sm:flex-nowrap justify-between md:justify-end">
+              {/* Botones numéricos de intensidad 1 a 10 */}
+              <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl border border-white/10 overflow-x-auto max-w-full">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => handleIntensitySelect(lvl)}
+                    className={`w-6 h-6 rounded-lg text-[10px] font-bubble font-bold flex items-center justify-center transition-all cursor-pointer ${
+                      vibrationIntensity === lvl
+                        ? 'bg-gradient-to-tr from-fio-pink to-purple-500 text-white shadow-xs scale-105'
+                        : vibrationEnabled
+                        ? 'text-white/80 hover:bg-white/15'
+                        : 'text-white/30'
+                    }`}
+                    title={`Nivel ${lvl} (${calculateHapticDuration(lvl)}ms)`}
+                  >
+                    {lvl}
+                  </button>
+                ))}
               </div>
 
-              {/* Switch */}
+              {/* Botón Switch ON/OFF */}
               <button
                 type="button"
                 role="switch"
                 aria-checked={vibrationEnabled}
                 onClick={handleToggleVibration}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-                  vibrationEnabled ? 'bg-fio-pink' : 'bg-slate-700'
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-inner ${
+                  vibrationEnabled ? 'bg-fio-pink' : 'bg-white/20'
                 }`}
                 title={vibrationEnabled ? 'Desactivar vibración' : 'Activar vibración'}
               >
@@ -844,67 +873,27 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                   }`}
                 />
               </button>
-            </div>
 
-            {/* Selector de Intensidad */}
-            <div className="flex items-center justify-between gap-2 flex-wrap pt-3 border-t border-slate-800">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-xs text-slate-400 font-sans mr-2">Intensidad Táctil:</span>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => (
-                  <button
-                    key={lvl}
-                    type="button"
-                    onClick={() => handleIntensitySelect(lvl)}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl text-xs font-bubble font-bold flex items-center justify-center transition-all cursor-pointer ${
-                      vibrationIntensity === lvl
-                        ? 'bg-fio-pink text-white shadow-sm scale-110 ring-2 ring-white/40'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    {lvl}
-                  </button>
-                ))}
-              </div>
-
+              {/* Botón Probar */}
               <button
                 type="button"
+                data-haptic-test="true"
                 onClick={handleTestVibration}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble font-bold text-xs active:scale-95 transition-all cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-white font-bubble font-bold text-xs border border-purple-400/40 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                title="Probar respuesta táctil en el dispositivo"
               >
                 <Zap className="w-3.5 h-3.5 text-fio-yellow" />
-                <span>Probar Vibración Ahora</span>
+                <span>Probar</span>
               </button>
             </div>
-
-            {vibrationNotice && (
-              <div className="p-2.5 rounded-xl bg-purple-900/60 border border-purple-500/40 text-xs font-bubble font-bold text-pink-200 animate-fadeIn">
-                {vibrationNotice}
-              </div>
-            )}
           </div>
 
-          {/* Tarjetas de Información Complementaria de Configuración */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-200/80 space-y-2">
-              <h5 className="font-bubble font-bold text-xs sm:text-sm text-purple-950 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-fio-pink" />
-                <span>Sincronización Multi-Dispositivo</span>
-              </h5>
-              <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                Los ajustes de vibración y configuración se guardan y se sincronizan instantáneamente entre tu navegador web de computadora y tu aplicación móvil instalada.
-              </p>
+          {vibrationNotice && (
+            <div className="py-1 px-3 rounded-xl bg-purple-400/20 border border-purple-400/30 text-xs font-bubble font-bold text-pink-200 flex items-center gap-2 animate-fadeIn">
+              <Zap className="w-3.5 h-3.5 text-fio-yellow shrink-0 animate-bounce" />
+              <span>{vibrationNotice}</span>
             </div>
-
-            <div className="p-4 rounded-2xl bg-pink-50/60 border border-pink-200/80 space-y-2">
-              <h5 className="font-bubble font-bold text-xs sm:text-sm text-pink-950 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-pink-600" />
-                <span>Privilegios de Administración</span>
-              </h5>
-              <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                Tanto la asignación de módulos como las opciones de configuración global del sistema son exclusivas del perfil Administrador Principal.
-              </p>
-            </div>
-          </div>
+          )}
         </div>
       )}
 

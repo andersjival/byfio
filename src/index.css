@@ -2271,9 +2271,17 @@ html.dark .mascot-speech-text {
 
 body[data-color-theme="dark"] .btn-pause-profile,
 html.dark .btn-pause-profile {
-  background-color: rgba(245, 158, 11, 0.24) !important;
-  color: #FDE68A !important;
-  border-color: rgba(245, 158, 11, 0.55) !important;
+  background-color: #C03A70 !important; /* Rosado medio */
+  color: #FCE7F3 !important; /* Letras rosadas más claras */
+  border: none !important; /* Sin borde de color */
+  border-color: transparent !important;
+}
+
+body[data-color-theme="dark"] .btn-pause-profile:hover,
+html.dark .btn-pause-profile:hover {
+  background-color: #D44A85 !important;
+  color: #FFFFFF !important;
+  border-color: transparent !important;
 }
 
 .btn-activate-profile {
