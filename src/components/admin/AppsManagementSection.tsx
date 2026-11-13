@@ -5,7 +5,8 @@ import {
   ExternalLink, QrCode, Sparkles, ShieldCheck, Users,
   Boxes, Receipt, Calendar, ArrowLeft, Vibrate, Zap,
   KeyRound, Eye, EyeOff, CheckCircle2, AlertCircle,
-  Truck, ShoppingBag, ClipboardList, Lock, Sliders, PackageCheck
+  Truck, ShoppingBag, ClipboardList, Lock, Sliders, PackageCheck,
+  Settings
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
@@ -26,11 +27,13 @@ import {
 interface AppsManagementSectionProps {
   onSelectAdminTab?: (tab: AdminTabType) => void;
   onNavigate?: (route: AppRoute, adminTab?: AdminTabType) => void;
+  onOpenDesignModal?: () => void;
 }
 
 export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
   onSelectAdminTab,
   onNavigate,
+  onOpenDesignModal,
 }) => {
   const confirm = useConfirm();
   const showAlert = useAlert();
@@ -43,12 +46,21 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
     toggleCollaboratorInventoryEnabled,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'all' | 'admin' | 'collaborator'>('all');
+  const [activeTab, setActiveTab] = useState<'config' | 'admin' | 'collaborator'>('admin');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [selectedQrApp, setSelectedQrApp] = useState<{ title: string; url: string } | null>(null);
   const [installResult, setInstallResult] = useState<string | null>(null);
   const [revealedPins, setRevealedPins] = useState<{ [id: string]: boolean }>({});
   const [saveToast, setSaveToast] = useState<string | null>(null);
+
+  // Perfil específico de la Administradora vs Colaboradores
+  const adminProfile = userProfiles.find(
+    (p) => p.role === 'admin' || p.id === 'prof-admin'
+  ) || userProfiles[0];
+
+  const collaboratorProfiles = userProfiles.filter(
+    (p) => p.role !== 'admin' && p.id !== 'prof-admin'
+  );
 
   // Estados de vibración háptica
   const [vibrationEnabled, setVibrationEnabled] = useState<boolean>(() => isHapticVibrationEnabled());
@@ -208,15 +220,15 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
       <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/80">
         <button
           type="button"
-          onClick={() => setActiveTab('all')}
+          onClick={() => setActiveTab('config')}
           className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-            activeTab === 'all'
+            activeTab === 'config'
               ? 'bg-purple-700 text-white shadow-sm'
               : 'text-slate-600 hover:text-purple-700 hover:bg-white/60'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-fio-yellow" />
-          <span>Ver Ambas Secciones</span>
+          <Sliders className="w-4 h-4 text-fio-pink" />
+          <span>Configuración</span>
         </button>
 
         <button
@@ -256,7 +268,7 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
       {/* ============================================================== */}
       {/* SECCIÓN 1: APLICACIÓN ADMIN (PC / CELULAR)                     */}
       {/* ============================================================== */}
-      {(activeTab === 'all' || activeTab === 'admin') && (
+      {activeTab === 'admin' && (
         <div className="p-5 sm:p-6 rounded-3xl bg-white border-2 border-purple-200 shadow-sm space-y-5 animate-fadeIn">
           {/* Cabecera Principal de la Sección Admin */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-purple-100">
@@ -362,92 +374,139 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
             </div>
           )}
 
-          {/* Configuración de Vibración Táctil Háptica Sincronizada */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-3.5">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-purple-600/30 text-pink-300 flex items-center justify-center shrink-0 border border-purple-500/40">
-                  <Vibrate className="w-4 h-4" />
-                </div>
+          {/* Perfil de Acceso Administradora: ADMINISTRACIÓN (FIO) */}
+          {adminProfile && (
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between px-1">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-white">
-                      Respuesta Háptica / Vibración Táctil al Clic
-                    </h4>
-                    <span className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full border ${
-                      vibrationEnabled ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-white/10 text-slate-400 border-white/20'
-                    }`}>
-                      {vibrationEnabled ? `Activa • Nivel ${vibrationIntensity}` : 'Desactivada'}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-400 font-sans mt-0.5">
-                    Sincronizado: Al activarla se sentirá una pulsación física táctil en botones tanto en celular como en computadora.
+                  <h4 className="font-bubble font-bold text-sm sm:text-base text-fio-900 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-purple-700" />
+                    <span>Perfil de Administradora Principal (PC / Celular)</span>
+                  </h4>
+                  <p className="text-xs text-slate-500 font-sans">
+                    Perfil con control y acceso total al sistema. Se sincroniza simultáneamente en PC y Celular.
                   </p>
                 </div>
               </div>
 
-              {/* Switch */}
-              <button
-                type="button"
-                role="switch"
-                aria-checked={vibrationEnabled}
-                onClick={handleToggleVibration}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-                  vibrationEnabled ? 'bg-fio-pink' : 'bg-slate-700'
-                }`}
-                title={vibrationEnabled ? 'Desactivar vibración' : 'Activar vibración'}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                    vibrationEnabled ? 'translate-x-5' : 'translate-x-0'
-                  }`}
-                />
-              </button>
+              {(() => {
+                const perms = adminProfile.permissions || {
+                  orders: true,
+                  billing: true,
+                  inventory: true,
+                  reports: true,
+                  sinpe: true,
+                  workshops: true,
+                  pricing: true,
+                  users: true,
+                  customers: true,
+                  agenda: true,
+                  suppliers: true,
+                  sales: true,
+                };
+                const isPinRevealed = !!revealedPins[adminProfile.id];
+
+                return (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-50/90 via-white to-pink-50/90 border-2 border-purple-300 shadow-2xs space-y-3.5">
+                    {/* Encabezado del Perfil Administradora */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-purple-100">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-700 via-fio-purple to-fio-pink text-white flex items-center justify-center font-bubble font-bold text-base shadow-sm shrink-0">
+                          👑
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h5 className="font-bubble font-bold text-base text-fio-900">
+                              {adminProfile.name}
+                            </h5>
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-2xs">
+                              👑 Administrador Total • PC &amp; Celular
+                            </span>
+                            <span className="text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                              {adminProfile.isActive ? 'Activo' : 'Inactivo'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-500 font-sans mt-0.5">
+                            {adminProfile.note || 'Administración general, gerencia y control total del sistema'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* PIN de Seguridad del Admin */}
+                      <div className="flex items-center gap-2 self-start sm:self-auto">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-purple-200 text-xs shadow-2xs">
+                          <KeyRound className="w-3.5 h-3.5 text-purple-600" />
+                          <span className="font-sans text-slate-500">PIN:</span>
+                          <span className="font-mono font-bold text-purple-900">
+                            {isPinRevealed ? adminProfile.pin : '••••'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => togglePinReveal(adminProfile.id)}
+                            className="text-slate-400 hover:text-slate-700 ml-1 cursor-pointer"
+                            title={isPinRevealed ? 'Ocultar PIN' : 'Ver PIN'}
+                          >
+                            {isPinRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Módulos Habilitados para la Administradora */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bubble font-bold text-purple-900 uppercase tracking-wider">
+                          Módulos y Privilegios Habilitados (Control Total en PC &amp; Celular):
+                        </span>
+                        <span className="text-[10.5px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                          ✓ Acceso Maestro
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                        {COLLABORATOR_PERMISSION_MODULES.map((mod) => {
+                          const Icon = mod.icon;
+                          const isGranted = perms[mod.key] !== false;
+                          return (
+                            <button
+                              key={mod.key}
+                              type="button"
+                              onClick={() => handleTogglePermission(adminProfile, mod.key)}
+                              title={`${mod.label}: ${mod.desc}`}
+                              className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                                isGranted
+                                  ? 'bg-purple-100/90 border-purple-300 text-purple-950 font-bold shadow-2xs'
+                                  : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-600'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <Icon className={`w-4 h-4 shrink-0 ${isGranted ? 'text-fio-pink' : 'text-slate-400'}`} />
+                                <span className="text-xs truncate">{mod.label}</span>
+                              </div>
+                              <span
+                                className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] shrink-0 font-bold ${
+                                  isGranted ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-500'
+                                }`}
+                              >
+                                {isGranted ? '✓' : ''}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
-
-            {/* Selector de Intensidad */}
-            <div className="flex items-center justify-between gap-2 flex-wrap pt-2 border-t border-slate-800">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-xs text-slate-400 font-sans mr-2">Intensidad:</span>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => (
-                  <button
-                    key={lvl}
-                    type="button"
-                    onClick={() => handleIntensitySelect(lvl)}
-                    className={`w-7 h-7 rounded-xl text-xs font-bubble font-bold flex items-center justify-center transition-all cursor-pointer ${
-                      vibrationIntensity === lvl
-                        ? 'bg-fio-pink text-white shadow-sm scale-110'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    {lvl}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={handleTestVibration}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble font-bold text-xs active:scale-95 transition-all cursor-pointer"
-              >
-                <Zap className="w-3.5 h-3.5 text-fio-yellow" />
-                <span>Probar Vibración</span>
-              </button>
-            </div>
-
-            {vibrationNotice && (
-              <div className="p-2 rounded-xl bg-purple-900/60 border border-purple-500/40 text-xs font-bubble font-bold text-pink-200 animate-fadeIn">
-                {vibrationNotice}
-              </div>
-            )}
-          </div>
+          )}
         </div>
       )}
 
       {/* ============================================================== */}
       {/* SECCIÓN 2: APLICACIÓN COLABORADOR (PC / CELULAR)               */}
       {/* ============================================================== */}
-      {(activeTab === 'all' || activeTab === 'collaborator') && (
+      {activeTab === 'collaborator' && (
         <div className="p-5 sm:p-6 rounded-3xl bg-white border-2 border-amber-200/90 shadow-sm space-y-5 animate-fadeIn">
           {/* Cabecera Principal de la Sección Colaborador */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-amber-100">
@@ -593,29 +652,34 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
             </div>
 
             <div className="space-y-3">
-              {userProfiles.map((profile) => {
-                const perms = profile.permissions || {
-                  orders: true,
-                  billing: false,
-                  inventory: false,
-                  reports: false,
-      sinpe: false,
-                  workshops: false,
-                  pricing: false,
-                  users: false,
-                  customers: false,
-                  agenda: false,
-                  suppliers: false,
-                  sales: false,
-                };
-                const isPinRevealed = !!revealedPins[profile.id];
+              {collaboratorProfiles.length === 0 ? (
+                <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-500 font-bubble">
+                  No hay perfiles de colaboradores registrados actualmente. Se configuran desde la sección de Perfiles de Usuario.
+                </div>
+              ) : (
+                collaboratorProfiles.map((profile) => {
+                  const perms = profile.permissions || {
+                    orders: true,
+                    billing: false,
+                    inventory: false,
+                    reports: false,
+                    sinpe: false,
+                    workshops: false,
+                    pricing: false,
+                    users: false,
+                    customers: false,
+                    agenda: false,
+                    suppliers: false,
+                    sales: false,
+                  };
+                  const isPinRevealed = !!revealedPins[profile.id];
 
-                return (
-                  <div
-                    key={profile.id}
-                    className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 shadow-2xs space-y-3.5"
-                  >
-                    {/* Encabezado del Perfil */}
+                  return (
+                    <div
+                      key={profile.id}
+                      className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 shadow-2xs space-y-3.5"
+                    >
+                      {/* Encabezado del Perfil */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/80">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-fio-pink text-white flex items-center justify-center font-bubble font-bold text-sm shrink-0">
@@ -700,7 +764,153 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                     </div>
                   </div>
                 );
-              })}
+              })
+            )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* SECCIÓN 3: CONFIGURACIÓN (VIBRACIÓN TÁCTIL & AJUSTES GLOBALES) */}
+      {/* ============================================================== */}
+      {activeTab === 'config' && (
+        <div className="p-5 sm:p-6 rounded-3xl bg-white border-2 border-purple-200 shadow-sm space-y-6 animate-fadeIn">
+          {/* Cabecera Principal de Configuración */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-purple-100">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-700 via-fio-purple to-fio-pink text-white flex items-center justify-center shadow-md shrink-0">
+                <Sliders className="w-6 h-6 text-fio-yellow" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-bubble font-bold text-base sm:text-lg text-fio-900">
+                    Configuración de Aplicaciones &amp; Respuesta Háptica
+                  </h3>
+                  <span className="text-[10px] font-bubble font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 border border-purple-300">
+                    Ajustes Globales (PC &amp; Celular)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 font-sans mt-0.5">
+                  Personaliza la vibración física al presionar botones, la intensidad táctil y las preferencias de las aplicaciones.
+                </p>
+              </div>
+            </div>
+
+            {/* Acceso a la Ventana de Personalización del Sistema si está disponible */}
+            {onOpenDesignModal && (
+              <button
+                type="button"
+                onClick={onOpenDesignModal}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bubble font-bold transition-all border border-purple-200 shadow-2xs active:scale-95 cursor-pointer self-start sm:self-auto shrink-0"
+                title="Abrir ventana de personalización de temas, colores, tipografía y sonidos"
+              >
+                <Settings className="w-3.5 h-3.5 text-fio-pink" />
+                <span>Personalización &amp; Diseño</span>
+              </button>
+            )}
+          </div>
+
+          {/* Panel de Vibración Táctil Háptica Sincronizada */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-600/30 text-pink-300 flex items-center justify-center shrink-0 border border-purple-500/40">
+                  <Vibrate className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-white">
+                      Respuesta Háptica / Vibración Táctil al Clic
+                    </h4>
+                    <span className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full border ${
+                      vibrationEnabled ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-white/10 text-slate-400 border-white/20'
+                    }`}>
+                      {vibrationEnabled ? `Activa • Nivel ${vibrationIntensity}` : 'Desactivada'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 font-sans mt-0.5">
+                    Sincronizado: Al presionar botones interactivos se genera una respuesta física táctil en celulares y PC compatibles.
+                  </p>
+                </div>
+              </div>
+
+              {/* Switch */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={vibrationEnabled}
+                onClick={handleToggleVibration}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
+                  vibrationEnabled ? 'bg-fio-pink' : 'bg-slate-700'
+                }`}
+                title={vibrationEnabled ? 'Desactivar vibración' : 'Activar vibración'}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    vibrationEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Selector de Intensidad */}
+            <div className="flex items-center justify-between gap-2 flex-wrap pt-3 border-t border-slate-800">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs text-slate-400 font-sans mr-2">Intensidad Táctil:</span>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => handleIntensitySelect(lvl)}
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl text-xs font-bubble font-bold flex items-center justify-center transition-all cursor-pointer ${
+                      vibrationIntensity === lvl
+                        ? 'bg-fio-pink text-white shadow-sm scale-110 ring-2 ring-white/40'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {lvl}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={handleTestVibration}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble font-bold text-xs active:scale-95 transition-all cursor-pointer shadow-sm"
+              >
+                <Zap className="w-3.5 h-3.5 text-fio-yellow" />
+                <span>Probar Vibración Ahora</span>
+              </button>
+            </div>
+
+            {vibrationNotice && (
+              <div className="p-2.5 rounded-xl bg-purple-900/60 border border-purple-500/40 text-xs font-bubble font-bold text-pink-200 animate-fadeIn">
+                {vibrationNotice}
+              </div>
+            )}
+          </div>
+
+          {/* Tarjetas de Información Complementaria de Configuración */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-200/80 space-y-2">
+              <h5 className="font-bubble font-bold text-xs sm:text-sm text-purple-950 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-fio-pink" />
+                <span>Sincronización Multi-Dispositivo</span>
+              </h5>
+              <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                Los ajustes de vibración y configuración se guardan y se sincronizan instantáneamente entre tu navegador web de computadora y tu aplicación móvil instalada.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-pink-50/60 border border-pink-200/80 space-y-2">
+              <h5 className="font-bubble font-bold text-xs sm:text-sm text-pink-950 flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-pink-600" />
+                <span>Privilegios de Administración</span>
+              </h5>
+              <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                Tanto la asignación de módulos como las opciones de configuración global del sistema son exclusivas del perfil Administrador Principal.
+              </p>
             </div>
           </div>
         </div>

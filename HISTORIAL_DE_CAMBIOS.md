@@ -1,3 +1,17 @@
+## [v4.19.150] - 2026-11-12
+
+### 📱 Reorganización de Centro de Aplicaciones PC / Celular & Pestaña Configuración
+- **Reubicación de Perfil Administradora ([AppsManagementSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS%20/BYFIO/src/components/admin/AppsManagementSection.tsx))**:
+  - Extraído el perfil `ADMINISTRACIÓN (FIO)` de la sección de colaboradores y colocado de forma exclusiva en la pestaña **Aplicacion admin (PC / Celular)** con credenciales, PIN y matriz de control total.
+  - La sección **Aplicacion Colaborador (PC / Celular)** ahora filtra estrictamente para mostrar únicamente colaboradores operativos (`role !== 'admin'`).
+- **Nueva Pestaña Configuración ([AppsManagementSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS%20/BYFIO/src/components/admin/AppsManagementSection.tsx), [AdminPwaShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS%20/BYFIO/src/apps/admin/AdminPwaShell.tsx))**:
+  - Reemplazado el botón "Ver Ambas Secciones" por **Configuración**.
+  - Centralizada toda la configuración de Respuesta Háptica / Vibración Táctil al Clic (switch, niveles de intensidad 1 al 10 y prueba) y acceso directo a Personalización & Diseño dentro de esta pestaña dedicada.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS%20/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.150`.
+
+---
+
 ## [v4.19.149] - 2026-11-12
 
 ### 💜 Contraste de Texto e Iconos en Botones Pasteles (Tema Oscuro)
