@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AppRoute, AdminTabType, Customer } from '../../types';
 import { ErrorBoundary } from '../../components/common/ErrorBoundary';
@@ -189,12 +189,7 @@ export const AdminPwaShell: React.FC<AdminPwaShellProps> = ({
                   </>
                 ) : (
                   <>
-                    <div className="flex items-center justify-between gap-3 mb-4">
-                      <button type="button" onClick={() => onSelectAdminTab('hub')} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white hover:bg-pink-50 text-fio-900 hover:text-fio-pink border border-slate-200/90 shadow-2xs font-bubble font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer shrink-0 whitespace-nowrap" title="Volver al Menú de Administración">
-                        <ArrowLeft className="w-4 h-4 text-fio-pink shrink-0" />
-                        <span className="whitespace-nowrap">← Volver al Menú</span>
-                      </button>
-                    </div>
+
                     {adminTab === 'orders' && <OrdersQueue />}
                     {adminTab === 'layaways' && <AdminLayawaysSection onNavigate={onNavigate} />}
                     {adminTab === 'billing' && (

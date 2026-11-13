@@ -335,6 +335,7 @@ export interface UserPermissions {
   billing: boolean;    // Facturación Rápida
   inventory: boolean;  // Mis Productos
   reports: boolean;    // Caja & Reportería
+  sinpe?: boolean;     // Pagos SINPE Móvil
   workshops: boolean;  // Talleres & Alumnos
   pricing: boolean;    // Precios & Stickers
   users: boolean;      // Gestión de Perfiles

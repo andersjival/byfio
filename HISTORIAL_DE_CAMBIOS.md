@@ -1,3 +1,16 @@
+## [v4.19.140] - 2026-11-12
+
+### 📍 Reubicación del Botón "Volver al Menú" a la Cabecera Superior junto al Logo
+- **Reubicación Ergonómica en Cabecera ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
+  - Trasladado el botón **`[ ← Volver al Menú ]`** directamente a la barra superior (`Navbar`), posicionado a la derecha del logo oficial By.Fio con icono de flecha rosa `text-fio-pink` y estilo adaptable claro/oscuro.
+  - Visible automáticamente al acceder a cualquier submódulo del panel administrativo (`adminTab !== 'hub'`) y en la vista de métricas.
+- **Limpieza del Contenido Principal ([AdminPwaShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/admin/AdminPwaShell.tsx))**:
+  - Eliminado el botón duplicado y el contenedor inferior previo sobre la cola de pedidos de clientes, erradicando espacios vacíos verticales redundantes.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché PWA a `byfio-pwa-v4.19.140`.
+
+---
+
 ## [v4.19.139] - 2026-11-12
 
 ### 🎨 Ventana de Configuración del Admin: 4 Esquinas Redondeadas y Barra de Scroll Fucsia Pastel
