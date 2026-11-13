@@ -401,6 +401,8 @@ export interface AuthUser {
   phone?: string;
   idCard?: string;
   name: string;
+  username?: string;
+  clientSlug?: string;
   role: 'admin' | 'staff' | 'customer';
   permissions?: UserPermissions;
   isMasterAdmin?: boolean;
