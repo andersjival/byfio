@@ -1,3 +1,15 @@
+## [v4.19.155] - 2026-11-13
+
+### 📅 Personalización Cromática de Calendario: Tonos Pastel en Tema Oscuro
+- **Temas Pasteles Homogéneos ([agendaCalendarTypes.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/agendaCalendarTypes.ts))**:
+  - Configurado `CALENDAR_DARK_THEMES` para replicar exactamente los tonos pasteles suaves (Celeste Cielo, Amarillo Crema, Lila Lavanda, Menta Suave, Rosa Pastel), garantizando que en el tema oscuro el calendario conserve la misma paleta pastel que en el tema claro.
+- **Contraste y Legibilidad Superior ([CalendarAgendaView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarAgendaView.tsx))**:
+  - Ajustados encabezados de días, horas y columnas del equipo en vistas semanal y diaria para mantener texto de alto contraste y legibilidad impecable sobre los fondos pasteles en cualquier modo de tema.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.155`.
+
+---
+
 ## [v4.19.154] - 2026-11-13
 
 ### 💛 Notas del Cliente: Amarillo Pastel Suave con Letras Turquesa Pastel

@@ -87,6 +87,7 @@ export const App: React.FC = () => {
     else if (newRoute === 'workshops') targetPath = '/talleres';
     else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
     else if (newRoute === 'workshop-waitlist') targetPath = wsId ? `/lista-espera/${wsId}` : '/lista-espera';
+    else if (newRoute === 'cursos-drive') targetPath = '/cursos-drive';
     else if (newRoute === 'admin') {
       const adminPathMap: Partial<Record<AdminTabType, string>> = {
         orders: '/admin/pedidos',
@@ -102,6 +103,7 @@ export const App: React.FC = () => {
         'supplier-order-create': '/admin/realizar-pedido',
         sales: '/admin/ventas',
         apps: '/admin/aplicaciones',
+        'drive-courses': '/admin/cursos-drive',
       };
       targetPath = adminPathMap[tab] || '/admin';
     }
@@ -125,7 +127,7 @@ export const App: React.FC = () => {
   };
 
   const handleSelectAdminTab = (tab: AdminTabType) => {
-    if (tab === 'catalog-view' || tab === 'supplier-order-create' || tab === 'apps') {
+    if (tab === 'catalog-view' || tab === 'supplier-order-create' || tab === 'apps' || tab === 'drive-courses') {
       navigate('admin', tab);
       return;
     }
@@ -156,7 +158,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (currentRoute === 'admin' && adminTab !== 'hub') {
-      if (adminTab !== 'catalog-view' && adminTab !== 'supplier-order-create' && adminTab !== 'apps' && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
+      if (adminTab !== 'catalog-view' && adminTab !== 'supplier-order-create' && adminTab !== 'apps' && adminTab !== 'drive-courses' && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
         setAdminTab('hub');
       }
     } else if ((currentRoute === 'workshops' || currentRoute === 'workshop-detail' || currentRoute === 'workshop-waitlist') && !isModuleEnabled('workshops')) {
