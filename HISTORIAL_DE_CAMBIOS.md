@@ -1,3 +1,13 @@
+## [v4.19.167] - 2026-11-13
+
+### 🎨 Homologación Uniforme de Bordes en Segmentos de Caja
+- **Ajuste Quirúrgico de Estilo ([CashRegisterReports.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx))**:
+  - Asegurado que los segmentos **Tienda & Catálogo (Celeste)** y **Ganancia Neta Est. (Turquesa)** compartan de forma idéntica el grosor de 1px y la misma fórmula de borde (`border border-sky-200 dark:border-sky-500/40 shadow-claySm` y `border border-teal-200 dark:border-teal-500/40 shadow-claySm`) que los segmentos de Apartados y Talleres.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.167`.
+
+---
+
 ## [v4.19.166] - 2026-11-13
 
 ### 💜 Banner de Cursos Drive: Armonización en Morado con Rosado By.Fio
