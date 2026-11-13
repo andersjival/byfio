@@ -1,5 +1,16 @@
 ## [v4.19.141] - 2026-11-12
 
+### 📏 Mayor Separación y Espaciado del Botón "Volver al Menú" Respecto al Logo
+- **Espaciado Visual Ampliado ([Navbar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/Navbar.tsx))**:
+  - Aplicada separación ergonómica (`ml-3.5 sm:ml-6`) y esquinas `rounded-2xl` al botón **`[ ← Volver al Menú ]`** para evitar que quede pegado a la letra final "o" del logo By.Fio.
+  - Mayor área de toque (`px-3 py-1.5 sm:px-3.5 sm:py-2`) manteniendo legibilidad y equilibrio estético en cabecera.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.141`.
+
+---
+
+## [v4.19.141] - 2026-11-12
+
 ### 📐 Organización Simétrica y Balanceada de Módulos Autorizados en Perfiles
 - **Cuadrícula Símétrica y Uniforme ([UserProfilesSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx))**:
   - Reemplazado el listado irregular de píldoras por una cuadrícula estructurada CSS Grid (`grid grid-cols-2 sm:grid-cols-3 gap-1.5`).

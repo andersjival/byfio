@@ -121,12 +121,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </button>
 
-          {/* Botón Volver al Menú en Admin (ubicado en cabecera superior junto al logo) */}
+          {/* Botón Volver al Menú en Admin con separación amplia del logo */}
           {currentRoute === 'admin' && !isAdminHub && onSelectAdminHub && (
             <button
               type="button"
               onClick={onSelectAdminHub}
-              className="bg-white/95 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-fio-900 dark:text-white hover:text-fio-pink dark:hover:text-pink-300 text-xs sm:text-sm font-bubble font-bold border border-white/80 dark:border-white/15 shadow-sm hover:shadow transition-all active:scale-95 shrink-0 cursor-pointer"
+              className="ml-3.5 sm:ml-6 bg-white/95 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl text-fio-900 dark:text-white hover:text-fio-pink dark:hover:text-pink-300 text-xs sm:text-sm font-bubble font-bold border border-white/80 dark:border-white/15 shadow-sm hover:shadow transition-all active:scale-95 shrink-0 cursor-pointer"
               title="Volver al Menú de Administración"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink shrink-0" />
@@ -139,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => handleNav('admin')}
-              className="bg-white/95 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-purple-700 dark:text-purple-200 text-xs sm:text-sm font-bubble font-bold border border-purple-200/80 dark:border-white/15 shadow-sm hover:shadow transition-all active:scale-95 shrink-0 cursor-pointer"
+              className="ml-3.5 sm:ml-6 bg-white/95 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl text-purple-700 dark:text-purple-200 text-xs sm:text-sm font-bubble font-bold border border-purple-200/80 dark:border-white/15 shadow-sm hover:shadow transition-all active:scale-95 shrink-0 cursor-pointer"
               title="Volver al Panel de Administración"
             >
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-fio-pink shrink-0" />
