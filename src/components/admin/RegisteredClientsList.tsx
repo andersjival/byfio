@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Search, UserCheck, Phone, MapPin, Calendar, RefreshCw, CreditCard,
-  ExternalLink, ShieldCheck, BarChart3, Smartphone, Monitor, Globe, Filter
+  ExternalLink, ShieldCheck, BarChart3, Smartphone, Monitor, Globe, Filter, Copy, Check
 } from 'lucide-react';
 import { UserMetricsDashboardModal } from './UserMetricsDashboardModal';
 
@@ -71,6 +71,30 @@ export const RegisteredClientsList: React.FC = () => {
   const [selectedProvince, setSelectedProvince] = useState<string>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMetricsOpen, setIsMetricsOpen] = useState(false);
+  const [copiedWazeClientId, setCopiedWazeClientId] = useState<string | null>(null);
+
+  const getWazeUrlForClient = (client: RegisteredClientUser) => {
+    if (client.lat && client.lng) {
+      return `https://waze.com/ul?ll=${client.lat},${client.lng}&navigate=yes`;
+    }
+    if (!client.address || !client.address.trim()) return '';
+    const cleanAddr = client.address.trim();
+    const query = cleanAddr.toLowerCase().includes('costa rica') || cleanAddr.toLowerCase().includes('cr')
+      ? cleanAddr
+      : `${cleanAddr}, Costa Rica`;
+    return `https://waze.com/ul?q=${encodeURIComponent(query)}&navigate=yes`;
+  };
+
+  const handleCopyClientWaze = (client: RegisteredClientUser) => {
+    const url = getWazeUrlForClient(client);
+    if (!url) return;
+    navigator.clipboard.writeText(url);
+    const key = client.id || client.email;
+    setCopiedWazeClientId(key);
+    setTimeout(() => {
+      setCopiedWazeClientId((current) => (current === key ? null : current));
+    }, 2000);
+  };
 
   const loadFromStorage = useCallback(() => {
     try {
@@ -291,20 +315,63 @@ export const RegisteredClientsList: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Dirección y Ubicación Maps */}
+                {/* Dirección y Ubicación Maps & Waze */}
                 {(client.address || (client.lat && client.lng)) && (
-                  <div className="text-[11px] text-slate-600 bg-purple-50/40 p-2 rounded-xl border border-purple-100 flex items-start gap-1.5 font-sans">
-                    <MapPin className="w-3.5 h-3.5 text-fio-purple shrink-0 mt-0.5" />
-                    <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2">{client.address || 'Ubicación en mapa'}</p>
+                  <div className="text-[11px] text-slate-600 bg-purple-50/40 p-2.5 rounded-xl border border-purple-100 space-y-1.5 font-sans">
+                    <div className="flex items-start gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-fio-purple shrink-0 mt-0.5" />
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-2">{client.address || 'Ubicación en mapa'}</p>
+                      </div>
+                    </div>
+
+                    {/* Botones de Navegación: Waze + Copiar Link + Google Maps */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-purple-100/60 pl-5">
+                      <a
+                        href={getWazeUrlForClient(client)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#33CCFF] hover:bg-[#1EBEF5] text-slate-950 font-bubble font-bold text-[11px] shadow-2xs active:scale-95 transition-all cursor-pointer"
+                        title="Abrir ubicación en Waze directamente en el navegador"
+                      >
+                        <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.34 10.04C18.67 6.59 15.64 4 12 4c-4.41 0-8 3.59-8 8 0 1.25.29 2.43.8 3.49L3.5 19.5l4.31-1.15c1.23.64 2.64 1.01 4.19 1.01 4.41 0 8-3.59 8-8 0-.45-.04-.89-.11-1.32h-.55zM9 13a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm6 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
+                        </svg>
+                        <span>Waze</span>
+                        <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => handleCopyClientWaze(client)}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold border transition-all active:scale-95 cursor-pointer shadow-2xs ${
+                          copiedWazeClientId === (client.id || client.email)
+                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                            : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                        }`}
+                        title="Copiar link de Waze para enviárselo a un mensajero"
+                      >
+                        {copiedWazeClientId === (client.id || client.email) ? (
+                          <>
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            <span className="text-emerald-700">¡Copiado!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3 text-slate-500" />
+                            <span>Copiar link</span>
+                          </>
+                        )}
+                      </button>
+
                       {client.lat && client.lng && (
                         <a
                           href={`https://www.google.com/maps?q=${client.lat},${client.lng}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[10px] text-fio-purple hover:underline font-bold mt-0.5"
+                          className="inline-flex items-center gap-1 text-[10px] text-fio-purple hover:underline font-bold ml-auto"
                         >
-                          <span>Ver en Google Maps</span>
+                          <span>Google Maps</span>
                           <ExternalLink className="w-2.5 h-2.5" />
                         </a>
                       )}

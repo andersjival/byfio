@@ -6,7 +6,7 @@ import {
   Users, UserPlus, Search, Phone, Mail, MapPin, FileText, Edit2, User, Clock,
   Trash2, X, Check, ShoppingBag, MessageCircle, CreditCard,
   Calendar, CheckCircle2, AlertCircle, Building2, Crown, Trophy,
-  History, ArrowDownWideNarrow, Minus, Plus
+  History, ArrowDownWideNarrow, Minus, Plus, Copy, ExternalLink
 } from 'lucide-react';
 import { formatShortDate, formatCRC, formatDateTime } from '../../utils/formatters';
 import {
@@ -50,6 +50,30 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
   const [historyCustomer, setHistoryCustomer] = useState<Customer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [copiedWazeCustomerId, setCopiedWazeCustomerId] = useState<string | null>(null);
+
+  const getWazeUrl = (address?: string) => {
+    if (!address || !address.trim()) return '';
+    const cleanAddr = address.trim();
+    const coordsMatch = cleanAddr.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+    if (coordsMatch) {
+      return `https://waze.com/ul?ll=${coordsMatch[1]},${coordsMatch[2]}&navigate=yes`;
+    }
+    const query = cleanAddr.toLowerCase().includes('costa rica') || cleanAddr.toLowerCase().includes('cr')
+      ? cleanAddr
+      : `${cleanAddr}, Costa Rica`;
+    return `https://waze.com/ul?q=${encodeURIComponent(query)}&navigate=yes`;
+  };
+
+  const handleCopyWazeLink = (customerId: string, address?: string) => {
+    const url = getWazeUrl(address);
+    if (!url) return;
+    navigator.clipboard.writeText(url);
+    setCopiedWazeCustomerId(customerId);
+    setTimeout(() => {
+      setCopiedWazeCustomerId((current) => (current === customerId ? null : current));
+    }, 2000);
+  };
 
   // Form states
   const [name, setName] = useState('');
@@ -508,9 +532,50 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                     )}
 
                     {cust.address && (
-                      <div className="flex items-start gap-2 pt-1 text-[11px] text-slate-600">
-                        <MapPin className="w-3.5 h-3.5 text-fio-pink shrink-0 mt-0.5" />
-                        <span className="line-clamp-2 leading-relaxed">{cust.address}</span>
+                      <div className="pt-1 space-y-1.5">
+                        <div className="flex items-start gap-2 text-[11px] text-slate-600">
+                          <MapPin className="w-3.5 h-3.5 text-fio-pink shrink-0 mt-0.5" />
+                          <span className="line-clamp-2 leading-relaxed">{cust.address}</span>
+                        </div>
+                        {/* Botones Waze y Copiar Link para mensajero */}
+                        <div className="flex items-center gap-1.5 pl-5">
+                          <a
+                            href={getWazeUrl(cust.address)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#33CCFF] hover:bg-[#1EBEF5] text-slate-950 font-bubble font-bold text-[11px] shadow-2xs active:scale-95 transition-all cursor-pointer"
+                            title="Abrir ubicación en Waze directamente en el navegador"
+                          >
+                            <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M19.34 10.04C18.67 6.59 15.64 4 12 4c-4.41 0-8 3.59-8 8 0 1.25.29 2.43.8 3.49L3.5 19.5l4.31-1.15c1.23.64 2.64 1.01 4.19 1.01 4.41 0 8-3.59 8-8 0-.45-.04-.89-.11-1.32h-.55zM9 13a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm6 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
+                            </svg>
+                            <span>Waze</span>
+                            <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+                          </a>
+
+                          <button
+                            type="button"
+                            onClick={() => handleCopyWazeLink(cust.id, cust.address)}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold border transition-all active:scale-95 cursor-pointer shadow-2xs ${
+                              copiedWazeCustomerId === cust.id
+                                ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                            }`}
+                            title="Copiar link de Waze para enviárselo a un mensajero"
+                          >
+                            {copiedWazeCustomerId === cust.id ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-600" />
+                                <span className="text-emerald-700">¡Copiado!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3 text-slate-500" />
+                                <span>Copiar link</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     )}
 
