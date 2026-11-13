@@ -12,6 +12,7 @@ import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { usePwaInstall } from '../../hooks/usePwaInstall';
 import { AdminTabType } from './AdminTabs';
 import { AppRoute, UserProfile, UserPermissions } from '../../types';
+import { COLLABORATOR_PERMISSION_MODULES } from '../../utils/permissionModules';
 import {
   isHapticVibrationEnabled,
   setHapticVibrationEnabled,
@@ -140,6 +141,7 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
   const handleTogglePermission = (profile: UserProfile, permissionKey: keyof UserPermissions) => {
     const currentPermissions = profile.permissions || {
       orders: true,
+      layaways: false,
       billing: false,
       inventory: false,
       reports: false,
@@ -159,7 +161,9 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
     };
 
     updateUserProfile(profile.id, { permissions: updatedPermissions });
-    setSaveToast(`✓ Permiso "${permissionKey}" actualizado para ${profile.name} (sincronizado en PC y Celular)`);
+    const moduleDef = COLLABORATOR_PERMISSION_MODULES.find((m) => m.key === permissionKey);
+    const moduleName = moduleDef ? moduleDef.label : permissionKey;
+    setSaveToast(`✓ Permiso "${moduleName}" ${nextValue ? 'activado' : 'desactivado'} para ${profile.name} (sincronizado automáticamente en Celular y PC)`);
     setTimeout(() => setSaveToast(null), 2500);
   };
 
@@ -661,131 +665,35 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                       </span>
 
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                        {/* 1. Módulo Alisto & Pedidos */}
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePermission(profile, 'orders')}
-                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                            perms.orders
-                              ? 'bg-purple-100/80 border-purple-300 text-purple-950 font-bold shadow-2xs'
-                              : 'bg-white border-slate-200 text-slate-400'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <QrCode className="w-4 h-4 text-purple-600 shrink-0" />
-                            <span className="text-xs truncate">Alisto &amp; Pedidos</span>
-                          </div>
-                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
-                            perms.orders ? 'bg-purple-600 text-white' : 'bg-slate-300 text-white'
-                          }`}>
-                            {perms.orders ? '✓' : ''}
-                          </span>
-                        </button>
-
-                        {/* 2. Módulo Inventario / Stock */}
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePermission(profile, 'inventory')}
-                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                            perms.inventory
-                              ? 'bg-sky-100/80 border-sky-300 text-sky-950 font-bold shadow-2xs'
-                              : 'bg-white border-slate-200 text-slate-400'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Boxes className="w-4 h-4 text-sky-600 shrink-0" />
-                            <span className="text-xs truncate">Inventario Físico &amp; Stock</span>
-                          </div>
-                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
-                            perms.inventory ? 'bg-sky-600 text-white' : 'bg-slate-300 text-white'
-                          }`}>
-                            {perms.inventory ? '✓' : ''}
-                          </span>
-                        </button>
-
-                        {/* 3. Facturación Rápida */}
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePermission(profile, 'billing')}
-                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                            perms.billing
-                              ? 'bg-pink-100/80 border-pink-300 text-pink-950 font-bold shadow-2xs'
-                              : 'bg-white border-slate-200 text-slate-400'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Receipt className="w-4 h-4 text-fio-pink shrink-0" />
-                            <span className="text-xs truncate">Facturación Rápida</span>
-                          </div>
-                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
-                            perms.billing ? 'bg-fio-pink text-white' : 'bg-slate-300 text-white'
-                          }`}>
-                            {perms.billing ? '✓' : ''}
-                          </span>
-                        </button>
-
-                        {/* 4. Clientes */}
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePermission(profile, 'customers')}
-                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                            perms.customers
-                              ? 'bg-emerald-100/80 border-emerald-300 text-emerald-950 font-bold shadow-2xs'
-                              : 'bg-white border-slate-200 text-slate-400'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Users className="w-4 h-4 text-emerald-600 shrink-0" />
-                            <span className="text-xs truncate">Directorio Clientes</span>
-                          </div>
-                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
-                            perms.customers ? 'bg-emerald-600 text-white' : 'bg-slate-300 text-white'
-                          }`}>
-                            {perms.customers ? '✓' : ''}
-                          </span>
-                        </button>
-
-                        {/* 5. Agenda & Tareas */}
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePermission(profile, 'agenda')}
-                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                            perms.agenda
-                              ? 'bg-violet-100/80 border-violet-300 text-violet-950 font-bold shadow-2xs'
-                              : 'bg-white border-slate-200 text-slate-400'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Calendar className="w-4 h-4 text-violet-600 shrink-0" />
-                            <span className="text-xs truncate">Agenda &amp; Tareas</span>
-                          </div>
-                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
-                            perms.agenda ? 'bg-violet-600 text-white' : 'bg-slate-300 text-white'
-                          }`}>
-                            {perms.agenda ? '✓' : ''}
-                          </span>
-                        </button>
-
-                        {/* 6. Proveedores */}
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePermission(profile, 'suppliers')}
-                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                            perms.suppliers
-                              ? 'bg-amber-100/80 border-amber-300 text-amber-950 font-bold shadow-2xs'
-                              : 'bg-white border-slate-200 text-slate-400'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Truck className="w-4 h-4 text-amber-600 shrink-0" />
-                            <span className="text-xs truncate">Proveedores</span>
-                          </div>
-                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
-                            perms.suppliers ? 'bg-amber-600 text-white' : 'bg-slate-300 text-white'
-                          }`}>
-                            {perms.suppliers ? '✓' : ''}
-                          </span>
-                        </button>
+                        {COLLABORATOR_PERMISSION_MODULES.map((mod) => {
+                          const isGranted = Boolean(perms[mod.key]);
+                          const Icon = mod.icon;
+                          return (
+                            <button
+                              key={mod.key}
+                              type="button"
+                              onClick={() => handleTogglePermission(profile, mod.key)}
+                              title={`${mod.label}: ${mod.desc}`}
+                              className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                                isGranted
+                                  ? 'bg-purple-100/90 border-purple-300 text-purple-950 font-bold shadow-2xs'
+                                  : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-600'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <Icon className={`w-4 h-4 shrink-0 ${isGranted ? 'text-fio-pink' : 'text-slate-400'}`} />
+                                <span className="text-xs truncate">{mod.label}</span>
+                              </div>
+                              <span
+                                className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] shrink-0 font-bold ${
+                                  isGranted ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-500'
+                                }`}
+                              >
+                                {isGranted ? '✓' : ''}
+                              </span>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>

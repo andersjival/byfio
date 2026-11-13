@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
 import { UserProfile, UserPermissions } from '../../types';
+import { COLLABORATOR_PERMISSION_MODULES } from '../../utils/permissionModules';
 import { RegisteredClientsList } from './RegisteredClientsList';
 import {
   Users, Plus, KeyRound, Shield, Check, X, Edit3, Trash2,
@@ -25,6 +26,7 @@ export const UserProfilesSection: React.FC = () => {
   const [isActive, setIsActive] = useState(true);
   const [permissions, setPermissions] = useState<UserPermissions>({
     orders: true,
+    layaways: false,
     billing: false,
     inventory: false,
     reports: false,
@@ -63,6 +65,7 @@ export const UserProfilesSection: React.FC = () => {
     setIsActive(true);
     setPermissions({
       orders: true,
+      layaways: false,
       billing: false,
       inventory: false,
       reports: false,
@@ -86,6 +89,7 @@ export const UserProfilesSection: React.FC = () => {
     setIsActive(profile.isActive);
     setPermissions({
       orders: !!profile.permissions?.orders,
+      layaways: profile.permissions?.layaways !== undefined ? !!profile.permissions.layaways : true,
       billing: !!profile.permissions?.billing,
       inventory: !!profile.permissions?.inventory,
       reports: !!profile.permissions?.reports,
@@ -104,6 +108,7 @@ export const UserProfilesSection: React.FC = () => {
   const handleToggleAllPermissions = (grantAll: boolean) => {
     setPermissions({
       orders: grantAll,
+      layaways: grantAll,
       billing: grantAll,
       inventory: grantAll,
       reports: grantAll,
@@ -197,18 +202,7 @@ export const UserProfilesSection: React.FC = () => {
     }
   };
 
-  const permissionModules: { key: keyof UserPermissions; label: string; desc: string; icon: any }[] = [
-    { key: 'orders', label: 'Cola de Pedidos', desc: 'Cola de pedidos, escaneo de picking y empaque', icon: QrCode },
-    { key: 'billing', label: 'Facturación Rápida', desc: 'Búsqueda de órdenes y facturas por número', icon: Receipt },
-    { key: 'inventory', label: 'Mis Productos', desc: 'Catálogo de insumos, stock y etiquetas QR', icon: Boxes },
-    { key: 'reports', label: 'Caja & Reportería', desc: 'Arqueo diario, balances y cobros del día', icon: Landmark },
-    { key: 'workshops', label: 'Talleres & Alumnos', desc: 'Inscripciones, cupos y lista de participantes', icon: GraduationCap },
-    { key: 'users', label: 'Perfiles de Usuarios', desc: 'Crear, editar o revocar accesos a otros usuarios', icon: Users },
-    { key: 'customers', label: 'Directorio de Clientes', desc: 'Registro de clientes y fichas para pedidos', icon: UserCheck },
-    { key: 'agenda', label: 'Agenda & Tareas', desc: 'Acceso al organizador del taller y calendario', icon: Calendar },
-    { key: 'suppliers', label: 'Pedidos a Proveedor', desc: 'Órdenes de compra, borradores e historial con proveedores', icon: Truck },
-    { key: 'sales', label: 'Historial de Ventas', desc: 'Consulta de ventas realizadas y órdenes facturadas', icon: ShoppingBag },
-  ];
+  const permissionModules = COLLABORATOR_PERMISSION_MODULES;
 
   const allChecked = permissionModules.every((m) => !!permissions[m.key]);
 

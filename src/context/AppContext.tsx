@@ -3209,6 +3209,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
       setCurrentUser(updatedUser);
       writeScopedAuthUser(appScope, updatedUser);
+      if (appScope !== 'collaborator') writeScopedAuthUser('collaborator', updatedUser);
     }
   }, [userProfiles, currentUser]);
 

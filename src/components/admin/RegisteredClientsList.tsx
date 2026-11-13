@@ -297,7 +297,7 @@ export const RegisteredClientsList: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start">
           {filteredClients.map((client, idx) => {
             const { date, time } = formatDate(client.createdAt);
             const province = detectProvince(client.address, client.province);
@@ -309,11 +309,11 @@ export const RegisteredClientsList: React.FC = () => {
             const activeTab = cardTabs[clientKey] || globalTabMode;
 
             return (
-              <div key={clientKey} className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-neuCard hover:border-purple-200 transition-all flex flex-col justify-between gap-3">
-                {/* Cabecera de la Ficha */}
-                <div className="flex items-start justify-between gap-2">
+              <div key={clientKey} className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-neuCard hover:border-purple-200 transition-all flex flex-col gap-2.5">
+                {/* Cabecera de la Ficha con Botones Arriba */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-slate-100">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500 to-fio-purple text-white flex items-center justify-center font-bubble font-bold text-sm shrink-0 shadow-2xs">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-500 to-fio-purple text-white flex items-center justify-center font-bubble font-bold text-sm shrink-0 shadow-2xs">
                       {(client.name || client.email || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
@@ -331,38 +331,41 @@ export const RegisteredClientsList: React.FC = () => {
                       <div className="text-[11px] text-slate-500 font-sans truncate">{client.email}</div>
                     </div>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-xl text-[10px] font-bubble font-bold bg-purple-50 text-fio-purple border border-purple-100 shrink-0">
-                    {province}
-                  </span>
-                </div>
 
-                {/* Selector de Pestaña / Botón dentro de la Ficha */}
-                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/90 border border-slate-200/80">
-                  <button
-                    type="button"
-                    onClick={() => setCardTabs((prev) => ({ ...prev, [clientKey]: 'info' }))}
-                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
-                      activeTab === 'info'
-                        ? 'bg-gradient-to-r from-fio-purple to-purple-600 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
-                    }`}
-                  >
-                    <User className="w-3.5 h-3.5" />
-                    <span>Info de usuario</span>
-                  </button>
+                  {/* Botones de Pestaña Arriba + Badge Provincia */}
+                  <div className="flex items-center gap-1.5 shrink-0 flex-wrap sm:flex-nowrap">
+                    <div className="inline-flex items-center gap-1 p-0.5 rounded-xl bg-slate-100 border border-slate-200/80">
+                      <button
+                        type="button"
+                        onClick={() => setCardTabs((prev) => ({ ...prev, [clientKey]: 'info' }))}
+                        className={`flex items-center gap-1 py-1 px-2.5 rounded-lg text-[11px] font-bubble font-bold transition-all cursor-pointer ${
+                          activeTab === 'info'
+                            ? 'bg-gradient-to-r from-fio-purple to-purple-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
+                        }`}
+                      >
+                        <User className="w-3 h-3" />
+                        <span>Info de usuario</span>
+                      </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setCardTabs((prev) => ({ ...prev, [clientKey]: 'device' }))}
-                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
-                      activeTab === 'device'
-                        ? 'bg-gradient-to-r from-fio-purple to-purple-600 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
-                    }`}
-                  >
-                    <Smartphone className="w-3.5 h-3.5" />
-                    <span>Dispositivo &amp; Red</span>
-                  </button>
+                      <button
+                        type="button"
+                        onClick={() => setCardTabs((prev) => ({ ...prev, [clientKey]: 'device' }))}
+                        className={`flex items-center gap-1 py-1 px-2.5 rounded-lg text-[11px] font-bubble font-bold transition-all cursor-pointer ${
+                          activeTab === 'device'
+                            ? 'bg-gradient-to-r from-fio-purple to-purple-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
+                        }`}
+                      >
+                        <Smartphone className="w-3 h-3" />
+                        <span>Dispositivo &amp; Red</span>
+                      </button>
+                    </div>
+
+                    <span className="px-2 py-0.5 rounded-xl text-[10px] font-bubble font-bold bg-purple-50 text-fio-purple border border-purple-100 shrink-0">
+                      {province}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Contenido Dinámico según la Pestaña Activa */}

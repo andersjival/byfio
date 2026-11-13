@@ -1,3 +1,14 @@
+## [v4.19.137] - 2026-11-12
+
+### 📐 Reubicación Superior de Botones de Ficha y Eliminación de Espacios en Blanco
+- **Optimización y Compactación de Fichas de Clientes ([`RegisteredClientsList.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx))**:
+  - Reubicados los botones **`[ Info de usuario ]`** y **`[ Dispositivo & Red ]`** directamente en la cabecera superior de cada ficha, alineados junto al nombre del usuario y la insignia de provincia.
+  - Eliminado el espaciado forzado (`justify-between`) y los espacios vacíos intermedios mediante alineación natural `items-start` en la cuadrícula de fichas.
+  - El contenido de cada vista se despliega de forma compacta, inmediata y sin huecos en blanco.
+  - Actualizado Service Worker a `byfio-pwa-v4.19.137`.
+
+---
+
 ## [v4.19.136] - 2026-11-12
 
 ### 📋 Pestaña "Info de usuario" Interactiva dentro de las Fichas de Clientes Web
