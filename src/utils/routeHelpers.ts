@@ -231,6 +231,18 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'apps' };
   }
   if (
+    path.includes('/admin/cursos-drive') ||
+    path.includes('/admin/cursos') ||
+    path.includes('/admin/drive-courses') ||
+    path.includes('/administracion/cursos-drive') ||
+    hash.includes('admin/cursos-drive') ||
+    hash.includes('admin/cursos') ||
+    seccionParam === 'cursos-drive' ||
+    seccionParam === 'drive-courses'
+  ) {
+    return { route: 'admin', adminTab: 'drive-courses' };
+  }
+  if (
     path.includes('/admin/proveedores') ||
     path.includes('/administracion/proveedores') ||
     hash.includes('admin/proveedores') ||
@@ -357,6 +369,22 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'workshops', adminTab: 'hub' };
   }
 
+  // Cursos Drive públicos: /cursos-drive, /cursos
+  if (
+    path === '/cursos-drive' ||
+    path.startsWith('/cursos-drive') ||
+    path === '/cursos' ||
+    path.startsWith('/cursos') ||
+    path.includes('/cursos-drive') ||
+    path.includes('/cursos') ||
+    hash.includes('cursos-drive') ||
+    hash.includes('cursos') ||
+    seccionParam === 'cursos-drive' ||
+    seccionParam === 'cursos'
+  ) {
+    return { route: 'cursos-drive', adminTab: 'hub' };
+  }
+
     // Persistencia de navegación acotada: en '/' solo restaurar subrutas públicas de la Web (nunca Admin ni PWA Colaborador)
   try {
     const savedRoute = sessionStorage.getItem('byfio_last_active_route') as AppRoute | null;
@@ -371,6 +399,7 @@ export const parseRouteFromLocation = (): RouteInfo => {
       'login',
       'mi-cuenta',
       'propuesta',
+      'cursos-drive',
     ];
 
     if (savedRoute && webRestorableRoutes.includes(savedRoute) && (path === '/' || path === '')) {

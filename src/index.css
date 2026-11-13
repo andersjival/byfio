@@ -2739,3 +2739,27 @@ html.dark .btn-pastel-pink-contrast svg {
   stroke: #1E1035 !important;
 }
 
+
+
+/* =========================================================================
+   TARJETA DE NOTAS DEL CLIENTE (AMARILLO PASTEL SUAVE + TURQUESA PASTEL)
+   ========================================================================= */
+
+.customer-notes-pastel-card,
+body[data-color-theme="dark"] .customer-notes-pastel-card,
+html.dark .customer-notes-pastel-card {
+  background-color: #FEF9C3 !important; /* Amarillo pastel suave */
+  border-color: #FDE047 !important;
+}
+
+.customer-notes-pastel-title,
+body[data-color-theme="dark"] .customer-notes-pastel-title,
+html.dark .customer-notes-pastel-title {
+  color: #0F766E !important; /* Letras turquesa pastel */
+}
+
+.customer-notes-pastel-text,
+body[data-color-theme="dark"] .customer-notes-pastel-text,
+html.dark .customer-notes-pastel-text {
+  color: #0D9488 !important; /* Letras turquesa pastel */
+}

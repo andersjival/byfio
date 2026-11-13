@@ -1,3 +1,16 @@
+## [v4.19.154] - 2026-11-13
+
+### 💛 Notas del Cliente: Amarillo Pastel Suave con Letras Turquesa Pastel
+- **Rediseño Visual del Cuadro de Notas ([CustomersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx))**:
+  - Reemplazado el fondo café/ámbar oscuro por un color amarillo pastel suave (`#FEF9C3`) con borde pastel a tono (`#FDE047`).
+  - Título y notas formateados en color turquesa pastel (`#0F766E` / `#0D9488`) de alta legibilidad y contraste.
+- **Protección CSS contra Sobreescrituras ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Incorporadas las clases `.customer-notes-pastel-card`, `.customer-notes-pastel-title` y `.customer-notes-pastel-text` con blindaje `!important` para evitar que las reglas globales del tema oscuro alteren el amarillo pastel suave y el turquesa pastel.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.154`.
+
+---
+
 ## [v4.19.153] - 2026-11-13
 
 ### 🎨 Personalización Cromática de Segmentos de Registro de Caja

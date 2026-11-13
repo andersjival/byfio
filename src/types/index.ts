@@ -18,7 +18,8 @@ export type AppRoute =
   | 'pedidos-mobile'
   | 'pwa-install'
   | 'inventario-app'
-  | 'mi-cuenta';
+  | 'mi-cuenta'
+  | 'cursos-drive';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 
@@ -631,4 +632,41 @@ export interface InventoryAdjustmentRecord {
 }
 
 export type { AdminTabType } from '../components/admin/AdminTabs';
+
+export interface DriveCourse {
+  id: string;
+  title: string;
+  tagline?: string;
+  price: number;
+  description: string;
+  whatYouGet: string[];
+  driveFolderUrl?: string;
+  badge?: string;
+  coverImage?: string;
+  isActive: boolean;
+  createdAt?: string;
+}
+
+export interface DriveCoursePurchase {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  paymentReference: string;
+  paymentAmount: number;
+  paymentStatus: 'paid' | 'pending';
+  driveStatus: 'granted' | 'pending' | 'failed';
+  driveFolderUrl?: string;
+  composioSent?: boolean;
+  createdAt: string;
+}
+
+export interface DriveCoursesSettings {
+  composioWebhookUrl?: string;
+  composioApiKey?: string;
+  updatedAt?: string;
+}
+
 
