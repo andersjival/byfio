@@ -201,15 +201,15 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
         {/* DIVISIÓN 1: TIENDA & CATÁLOGO */}
         {isFeatureEnabled('reports', 'category_breakdown') && (
-          <div className="bg-gradient-to-tr from-blue-50 to-blue-100/40 dark:from-blue-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-blue-200 dark:border-blue-500/40 shadow-claySm">
+          <div className="bg-gradient-to-tr from-sky-50 to-sky-100/40 dark:from-sky-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-sky-200 dark:border-sky-500/40 shadow-claySm">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-blue-900 uppercase">🛍️ Tienda &amp; Catálogo</span>
-              <ShoppingBag className="w-4 h-4 text-blue-600" />
+              <span className="text-[11px] font-bold text-sky-900 uppercase">🛍️ Tienda &amp; Catálogo</span>
+              <ShoppingBag className="w-4 h-4 text-sky-600" />
             </div>
-            <h3 className="text-2xl font-bubble font-bold text-blue-900 mt-1">
+            <h3 className="text-2xl font-bubble font-bold text-sky-900 mt-1">
               {formatCRC(totalStoreSales)}
             </h3>
-            <p className="text-[11px] text-blue-700 mt-0.5">
+            <p className="text-[11px] text-sky-700 mt-0.5">
               {storeOrders.length} pedidos + {filteredSinpe.filter((t) => t.category === 'store').length} SINPE BCR
             </p>
           </div>
@@ -248,15 +248,15 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
         )}
 
         {/* GANANCIA ESTIMADA */}
-        <div className="bg-gradient-to-tr from-emerald-50 to-emerald-100/40 dark:from-emerald-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-emerald-200 dark:border-emerald-500/40 shadow-claySm">
+        <div className="bg-gradient-to-tr from-teal-50 to-teal-100/40 dark:from-teal-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-teal-200 dark:border-teal-500/40 shadow-claySm">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-emerald-900 uppercase">Ganancia Neta Est.</span>
-            <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <span className="text-[11px] font-bold text-teal-900 uppercase">Ganancia Neta Est.</span>
+            <TrendingUp className="w-4 h-4 text-teal-600" />
           </div>
-          <h3 className="text-2xl font-bubble font-bold text-emerald-900 mt-1">
+          <h3 className="text-2xl font-bubble font-bold text-teal-900 mt-1">
             {formatCRC(estimatedProfit)}
           </h3>
-          <p className="text-[11px] text-emerald-700 mt-0.5">Descontando costo insumos</p>
+          <p className="text-[11px] text-teal-700 mt-0.5">Descontando costo insumos</p>
         </div>
       </div>
 
@@ -359,8 +359,8 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
                           {tx.workshopTitle ? tx.workshopTitle.slice(0, 22) + '...' : 'Taller Creativo'}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md">
-                          <ShoppingBag className="w-3 h-3 text-blue-600" />
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-sky-100 text-sky-800 px-2 py-0.5 rounded-md">
+                          <ShoppingBag className="w-3 h-3 text-sky-600" />
                           Tienda &amp; Catálogo
                         </span>
                       )}
@@ -583,7 +583,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
                       <td className="py-2.5 px-3 text-right font-bubble font-bold text-slate-900 text-sm whitespace-nowrap">
                         {formatCRC(c.totalCashGrand)}
-                        <span className="text-[10px] text-emerald-700 block font-sans font-medium">
+                        <span className="text-[10px] text-teal-700 block font-sans font-medium">
                           +{formatCRC(c.netProfit)} est.
                         </span>
                       </td>

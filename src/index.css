@@ -539,27 +539,37 @@ html.dark [class*="bg-yellow-100"] {
 
 body[data-color-theme="dark"] [class*="bg-emerald-50"],
 body[data-color-theme="dark"] [class*="bg-emerald-100"],
-body[data-color-theme="dark"] [class*="bg-teal-50"],
-body[data-color-theme="dark"] [class*="bg-teal-100"],
 html.dark [class*="bg-emerald-50"],
-html.dark [class*="bg-emerald-100"],
-html.dark [class*="bg-teal-50"],
-html.dark [class*="bg-teal-100"] {
+html.dark [class*="bg-emerald-100"] {
   background-color: rgba(16, 185, 129, 0.25) !important;
   border-color: rgba(52, 211, 153, 0.35) !important;
   color: #A7F3D0 !important;
 }
 
+body[data-color-theme="dark"] [class*="bg-teal-50"],
+body[data-color-theme="dark"] [class*="bg-teal-100"],
+html.dark [class*="bg-teal-50"],
+html.dark [class*="bg-teal-100"] {
+  background-color: rgba(20, 184, 166, 0.22) !important;
+  border-color: rgba(45, 212, 191, 0.45) !important;
+  color: #99F6E4 !important;
+}
+
 body[data-color-theme="dark"] [class*="bg-blue-50"],
 body[data-color-theme="dark"] [class*="bg-blue-100"],
-body[data-color-theme="dark"] [class*="bg-sky-50"],
-body[data-color-theme="dark"] [class*="bg-sky-100"],
 html.dark [class*="bg-blue-50"],
-html.dark [class*="bg-blue-100"],
-html.dark [class*="bg-sky-50"],
-html.dark [class*="bg-sky-100"] {
+html.dark [class*="bg-blue-100"] {
   background-color: rgba(59, 130, 246, 0.25) !important;
   border-color: rgba(96, 165, 250, 0.35) !important;
+  color: #BFDBFE !important;
+}
+
+body[data-color-theme="dark"] [class*="bg-sky-50"],
+body[data-color-theme="dark"] [class*="bg-sky-100"],
+html.dark [class*="bg-sky-50"],
+html.dark [class*="bg-sky-100"] {
+  background-color: rgba(14, 165, 233, 0.22) !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
   color: #BAE6FD !important;
 }
 
@@ -668,24 +678,36 @@ html.dark [class*="from-amber-100"] {
 
 body[data-color-theme="dark"] [class*="from-emerald-50"],
 body[data-color-theme="dark"] [class*="from-emerald-100"],
-body[data-color-theme="dark"] [class*="from-teal-50"],
-body[data-color-theme="dark"] [class*="from-teal-100"],
 html.dark [class*="from-emerald-50"],
-html.dark [class*="from-emerald-100"],
-html.dark [class*="from-teal-50"],
-html.dark [class*="from-teal-100"] {
+html.dark [class*="from-emerald-100"] {
   --tw-gradient-from: rgba(6, 78, 59, 0.45) var(--tw-gradient-from-position) !important;
   --tw-gradient-to: rgba(44, 39, 70, 0.85) var(--tw-gradient-to-position) !important;
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
 }
 
+body[data-color-theme="dark"] [class*="from-teal-50"],
+body[data-color-theme="dark"] [class*="from-teal-100"],
+html.dark [class*="from-teal-50"],
+html.dark [class*="from-teal-100"] {
+  --tw-gradient-from: rgba(19, 78, 74, 0.45) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgba(44, 39, 70, 0.85) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
 body[data-color-theme="dark"] [class*="from-blue-50"],
-body[data-color-theme="dark"] [class*="from-sky-50"],
 body[data-color-theme="dark"] [class*="from-slate-50"],
 html.dark [class*="from-blue-50"],
-html.dark [class*="from-sky-50"],
 html.dark [class*="from-slate-50"] {
   --tw-gradient-from: rgba(30, 58, 138, 0.45) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgba(44, 39, 70, 0.85) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+body[data-color-theme="dark"] [class*="from-sky-50"],
+body[data-color-theme="dark"] [class*="from-sky-100"],
+html.dark [class*="from-sky-50"],
+html.dark [class*="from-sky-100"] {
+  --tw-gradient-from: rgba(12, 74, 110, 0.45) var(--tw-gradient-from-position) !important;
   --tw-gradient-to: rgba(44, 39, 70, 0.85) var(--tw-gradient-to-position) !important;
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
 }
@@ -900,14 +922,32 @@ html.dark .text-emerald-900 {
 body[data-color-theme="dark"] .text-blue-700,
 body[data-color-theme="dark"] .text-blue-800,
 body[data-color-theme="dark"] .text-blue-900,
-body[data-color-theme="dark"] .text-sky-700,
-body[data-color-theme="dark"] .text-sky-800,
 html.dark .text-blue-700,
 html.dark .text-blue-800,
-html.dark .text-blue-900,
-html.dark .text-sky-700,
-html.dark .text-sky-800 {
+html.dark .text-blue-900 {
   color: #60A5FA !important;
+}
+
+body[data-color-theme="dark"] .text-sky-600,
+body[data-color-theme="dark"] .text-sky-700,
+body[data-color-theme="dark"] .text-sky-800,
+body[data-color-theme="dark"] .text-sky-900,
+html.dark .text-sky-600,
+html.dark .text-sky-700,
+html.dark .text-sky-800,
+html.dark .text-sky-900 {
+  color: #38BDF8 !important;
+}
+
+body[data-color-theme="dark"] .text-teal-600,
+body[data-color-theme="dark"] .text-teal-700,
+body[data-color-theme="dark"] .text-teal-800,
+body[data-color-theme="dark"] .text-teal-900,
+html.dark .text-teal-600,
+html.dark .text-teal-700,
+html.dark .text-teal-800,
+html.dark .text-teal-900 {
+  color: #2DD4BF !important;
 }
 
 body[data-color-theme="dark"] .text-rose-700,

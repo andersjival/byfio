@@ -443,13 +443,13 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
                   <div className="flex items-center justify-between md:justify-end gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
                     {/* Píldoras de Montos */}
                     <div className="flex items-center gap-1.5 text-xs">
-                      <span className="px-2 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 font-sans text-[11px] hidden sm:inline" title="Precio total de contado">
+                      <span className="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 font-sans text-[11px] hidden sm:inline" title="Precio total de contado">
                         Total: <strong>{formatCRC(f.totalAmount)}</strong>
                       </span>
-                      <span className="px-2 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium text-[11px]" title="Total abonado a la fecha">
+                      <span className="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-medium text-[11px]" title="Total abonado a la fecha">
                         Abonado: <strong>{formatCRC(f.downPayment)}</strong>
                       </span>
-                      <span className="px-2.5 py-1 rounded-lg bg-amber-100 border border-amber-300 text-amber-900 font-bubble font-bold text-xs" title="Saldo pendiente que debe">
+                      <span className="px-2.5 py-1 rounded-lg bg-purple-100 text-purple-900 font-bubble font-bold text-xs" title="Saldo pendiente que debe">
                         Debe: {f.isFullyPaid ? '₡0' : formatCRC(f.remainingDebt)}
                       </span>
                     </div>

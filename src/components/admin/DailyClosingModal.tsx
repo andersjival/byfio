@@ -359,7 +359,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                 </div>
                 <div>
                   <p className="text-gray-500 uppercase text-[10px] font-bold">Ganancia Neta Estimada:</p>
-                  <p className="font-bubble font-bold text-xl sm:text-2xl text-emerald-700">{formatCRC(netProfit)}</p>
+                  <p className="font-bubble font-bold text-xl sm:text-2xl text-teal-700">{formatCRC(netProfit)}</p>
                 </div>
               </div>
 
@@ -368,7 +368,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                 <p className="font-bold text-gray-700 uppercase text-[10px] tracking-wider">División de Ingresos:</p>
                 <div className="flex justify-between py-1.5 border-b border-gray-100">
                   <span className="text-gray-600 flex items-center gap-1.5">
-                    <ShoppingBag className="w-3.5 h-3.5 text-blue-600" />
+                    <ShoppingBag className="w-3.5 h-3.5 text-sky-600" />
                     Ventas Tienda &amp; Catálogo
                   </span>
                   <span className="font-bold text-gray-900">{formatCRC(totalStoreSales)}</span>
@@ -764,7 +764,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                 </div>
                 <div>
                   <p className="text-gray-500 uppercase text-[10px] font-bold">Ganancia Neta Estimada:</p>
-                  <p className="font-bubble font-bold text-xl sm:text-2xl text-emerald-700">
+                  <p className="font-bubble font-bold text-xl sm:text-2xl text-teal-700">
                     {formatCRC(savedSummary.netProfit)}
                   </p>
                 </div>
@@ -777,7 +777,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                 </p>
                 <div className="flex justify-between py-1.5 border-b border-gray-100">
                   <span className="text-gray-600 flex items-center gap-1.5">
-                    <ShoppingBag className="w-3.5 h-3.5 text-blue-600" />
+                    <ShoppingBag className="w-3.5 h-3.5 text-sky-600" />
                     Ventas Tienda &amp; Catálogo
                   </span>
                   <span className="font-bold text-gray-900">{formatCRC(savedSummary.totalStoreSales)}</span>

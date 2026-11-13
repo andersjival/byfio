@@ -582,14 +582,6 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
             </div>
           </div>
 
-          {/* Nota aclaratoria sobre Módulos vs Aplicaciones */}
-          <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-950 font-sans flex items-start gap-2.5">
-            <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <p className="leading-relaxed">
-              <strong>Arquitectura de Módulos Unificada:</strong> Alisto &amp; Pedidos y Toma de Inventario Físico no son aplicaciones independientes, sino módulos del sistema. En este panel defines los permisos de qué módulos puede ver y utilizar cada perfil de colaborador. Las modificaciones aplican inmediatamente en <strong>PC y Celular al mismo tiempo</strong>.
-            </p>
-          </div>
-
           {/* Módulo de Inventario Físico (Switch Maestro para PC y Celulares) */}
           <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 text-white border border-purple-500/30 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">

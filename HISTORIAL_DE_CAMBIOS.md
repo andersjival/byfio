@@ -1,3 +1,13 @@
+## [v4.19.151] - 2026-11-13
+
+### 🧹 Limpieza Visual en Centro de Aplicaciones
+- **Eliminación de Nota Explicativa ([AppsManagementSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AppsManagementSection.tsx))**:
+  - Eliminado el banner informativo de "Arquitectura de Módulos Unificada" en la sección de aplicación colaborador para una interfaz más limpia, directa y despejada.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.151`.
+
+---
+
 ## [v4.19.150] - 2026-11-12
 
 ### 📱 Reorganización de Centro de Aplicaciones PC / Celular & Pestaña Configuración
