@@ -1,3 +1,16 @@
+## [v4.19.183] - 2026-11-13
+
+### 📐 Cursos Drive: Reorganización Proporcional, Centrado Visual y Ajuste de Foto
+- **Reorganización Armónica y Centrada ([DriveCoursesPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/DriveCoursesPage.tsx))**:
+  - Unificado el encabezado superior del curso con badges y título en ancho completo para equilibrar la composición visual.
+  - La fila central con los 3 elementos (Imagen, Descripción y Caja de Precio) ahora se alinea y se centra verticalmente (`items-center`), eliminando el descuadre y los espacios vacíos.
+  - La portada del curso se redujo a una escala compacta y profesional (`w-52 md:w-56 h-36 sm:h-40`), eliminando el tamaño excesivo.
+  - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
 ## [v4.19.182] - 2026-11-13
 
 ### 🌟 Asistente Estrellita en Vivo: Infraestructura de IA en Edge con Audio y Base de Datos Dedicada

@@ -348,66 +348,70 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
 
           {/* Tarjeta de Información Completa del Curso */}
           <div className="rounded-3xl p-6 sm:p-8 bg-[#FDFBF9] border border-purple-200/80 shadow-md space-y-6">
-            {/* Badges superiores */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-3 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bubble text-[11px] font-bold">
-                Acceso Inmediato en Google Drive
-              </span>
-              {selectedCourse.badge && (
-                <span className="px-3 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bubble text-[11px] font-bold">
-                  {selectedCourse.badge}
+            {/* Encabezado: Badges y Título Principal (Limpio y Centrado/Balanceado) */}
+            <div className="space-y-2.5 border-b border-purple-100/80 pb-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bubble text-[11px] font-bold">
+                  Acceso Inmediato en Google Drive
                 </span>
-              )}
+                {selectedCourse.badge && (
+                  <span className="px-3 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bubble text-[11px] font-bold">
+                    {selectedCourse.badge}
+                  </span>
+                )}
+              </div>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bubble font-black text-slate-900 leading-snug">
+                {selectedCourse.title}
+              </h1>
             </div>
 
-            {/* Fila de 3 Columnas: [Imagen con Título] [Descripción a la par] [Precio / Pagar a la par] */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-start">
-              {/* Columna 1: Título e Imagen */}
-              <div className="lg:col-span-5 space-y-3">
-                <h1 className="text-xl sm:text-2xl font-bubble font-black text-slate-900 leading-snug">
-                  {selectedCourse.title}
-                </h1>
-                {selectedCourse.coverImage && (
-                  <div className="relative rounded-2xl overflow-hidden bg-purple-100 shadow-sm border border-purple-100">
-                    <img
-                      src={selectedCourse.coverImage}
-                      alt={selectedCourse.title}
-                      className="w-full h-56 sm:h-64 object-cover"
-                    />
+            {/* Fila Central: [Imagen Profesional] [Descripción a la par] [Precio & Pagar a la par] (Centrados Verticalmente) */}
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-6 p-4 sm:p-5 rounded-2xl bg-white border border-purple-100 shadow-2xs">
+              {/* 1. Imagen del Curso (Tamaño Profesional y Compacto) */}
+              <div className="w-full sm:w-52 md:w-56 h-36 sm:h-40 rounded-2xl overflow-hidden bg-purple-100 shadow-sm border border-purple-100/80 shrink-0">
+                {selectedCourse.coverImage ? (
+                  <img
+                    src={selectedCourse.coverImage}
+                    alt={selectedCourse.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-purple-400">
+                    <HardDrive className="w-10 h-10" />
                   </div>
                 )}
               </div>
 
-              {/* Columna 2: Descripción (A la par) */}
-              <div className="lg:col-span-4 space-y-2.5 pt-1">
-                <h3 className="font-bubble font-bold text-xs text-slate-500 uppercase tracking-wider">
-                  Descripción del Curso:
+              {/* 2. Descripción Central (A la par, espaciosa y equilibrada) */}
+              <div className="flex-1 min-w-0 space-y-2.5 text-center sm:text-left">
+                <h3 className="font-bubble font-bold text-xs text-slate-400 uppercase tracking-wider">
+                  Descripción del Curso
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-700 font-sans leading-relaxed">
                   {selectedCourse.description}
                 </p>
                 {selectedCourse.tagline && (
-                  <p className="text-xs text-purple-700 font-sans italic bg-purple-50/70 p-3 rounded-2xl border border-purple-100 leading-relaxed">
+                  <p className="text-xs text-purple-700 font-sans italic bg-purple-50/70 py-1.5 px-3 rounded-xl border border-purple-100 inline-block leading-relaxed">
                     💡 {selectedCourse.tagline}
                   </p>
                 )}
               </div>
 
-              {/* Columna 3: Precio y Botón de Pago (A la par) */}
-              <div className="lg:col-span-3 bg-purple-50/80 rounded-2xl p-5 border border-purple-200 text-center space-y-3 w-full shrink-0">
-                <span className="text-[11px] font-bubble font-bold text-slate-500 block uppercase">
+              {/* 3. Caja de Precio y Botón de Pago (A la par, centrada y proporcionada) */}
+              <div className="w-full sm:w-60 md:w-64 bg-purple-50/80 rounded-2xl p-4 sm:p-5 border border-purple-200 text-center space-y-2.5 shrink-0 shadow-2xs">
+                <span className="text-[11px] font-bubble font-bold text-slate-500 block uppercase tracking-wider">
                   Inversión Total
                 </span>
-                <div className="text-3xl font-bubble font-black text-purple-900">
+                <div className="text-2xl sm:text-3xl font-bubble font-black text-purple-900">
                   {formatCRC(selectedCourse.price)}
                 </div>
-                <span className="text-[11px] text-slate-500 font-sans block">
-                  Pago único • Acceso ilimitado de por vida
+                <span className="text-[10px] sm:text-[11px] text-slate-500 font-sans block">
+                  Pago único • Acceso de por vida
                 </span>
                 <button
                   type="button"
                   onClick={handleGoToCheckout}
-                  className="w-full py-3 px-5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-sm font-bold shadow-lg shadow-purple-700/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-2.5 px-4 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs sm:text-sm font-bold shadow-md shadow-purple-700/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Comprar Curso Ahora</span>
                   <ArrowRight className="w-4 h-4" />
