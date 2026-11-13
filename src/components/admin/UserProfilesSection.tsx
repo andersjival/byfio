@@ -30,6 +30,7 @@ export const UserProfilesSection: React.FC = () => {
     billing: false,
     inventory: false,
     reports: false,
+    sinpe: false,
     workshops: false,
     pricing: false,
     users: false,
@@ -69,6 +70,7 @@ export const UserProfilesSection: React.FC = () => {
       billing: false,
       inventory: false,
       reports: false,
+      sinpe: false,
       workshops: false,
       pricing: false,
       users: false,
@@ -93,6 +95,7 @@ export const UserProfilesSection: React.FC = () => {
       billing: !!profile.permissions?.billing,
       inventory: !!profile.permissions?.inventory,
       reports: !!profile.permissions?.reports,
+      sinpe: profile.permissions?.sinpe !== undefined ? !!profile.permissions.sinpe : !!profile.permissions?.reports,
       workshops: !!profile.permissions?.workshops,
       pricing: !!profile.permissions?.pricing,
       users: !!profile.permissions?.users,
@@ -112,6 +115,7 @@ export const UserProfilesSection: React.FC = () => {
       billing: grantAll,
       inventory: grantAll,
       reports: grantAll,
+      sinpe: grantAll,
       workshops: grantAll,
       pricing: grantAll,
       users: grantAll,
@@ -434,24 +438,35 @@ export const UserProfilesSection: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                     {permissionModules.map((mod) => {
-                      const hasIt = !!perms[mod.key];
+                      const hasIt = Boolean(perms[mod.key]);
                       const Icon = mod.icon;
 
                       return (
-                        <span
+                        <div
                           key={mod.key}
                           title={`${mod.label}: ${mod.desc}`}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold transition-all border ${
+                          className={`flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bubble font-bold transition-all border min-w-0 ${
                             hasIt
-                              ? 'bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950/80 dark:text-purple-200 dark:border-purple-500/50 shadow-2xs'
-                              : 'bg-slate-100/90 text-slate-600 border-slate-200/80 dark:bg-[#201B34] dark:text-slate-300 dark:border-white/10'
+                              ? 'bg-purple-100/90 text-purple-950 border-purple-300 dark:bg-purple-950/70 dark:text-purple-100 dark:border-purple-500/60 shadow-2xs'
+                              : 'bg-slate-100/60 text-slate-400 border-slate-200/80 dark:bg-[#201B34]/60 dark:text-slate-400 dark:border-white/10 opacity-70'
                           }`}
                         >
-                          <Icon className={`w-3.5 h-3.5 ${hasIt ? 'text-fio-pink dark:text-pink-300' : 'text-slate-400 dark:text-slate-500'}`} />
-                          <span className={hasIt ? '' : 'text-slate-600 dark:text-slate-300'}>{mod.label}</span>
-                        </span>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <Icon className={`w-3.5 h-3.5 shrink-0 ${hasIt ? 'text-fio-pink dark:text-pink-300' : 'text-slate-400 dark:text-slate-500'}`} />
+                            <span className="truncate">{mod.label}</span>
+                          </div>
+                          <span
+                            className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] shrink-0 font-bold ${
+                              hasIt
+                                ? 'bg-purple-600 text-white dark:bg-fio-pink dark:text-white'
+                                : 'bg-slate-200 text-slate-400 dark:bg-white/10 dark:text-slate-500'
+                            }`}
+                          >
+                            {hasIt ? '✓' : '—'}
+                          </span>
+                        </div>
                       );
                     })}
                   </div>

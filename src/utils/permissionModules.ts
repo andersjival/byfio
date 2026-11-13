@@ -31,6 +31,7 @@ export const COLLABORATOR_PERMISSION_MODULES: PermissionModuleDef[] = [
   { key: 'billing', label: 'Facturación Rápida', desc: 'Búsqueda de órdenes y facturas por número', icon: Receipt },
   { key: 'inventory', label: 'Mis Productos', desc: 'Catálogo de insumos, stock y etiquetas QR', icon: Boxes },
   { key: 'reports', label: 'Caja & Reportería', desc: 'Arqueo diario, balances y cobros del día', icon: Landmark },
+  { key: 'sinpe', label: 'Pagos SINPE Móvil', desc: 'Recepción y validación de transferencias SINPE', icon: Landmark },
   { key: 'workshops', label: 'Talleres & Alumnos', desc: 'Inscripciones, cupos y lista de participantes', icon: GraduationCap },
   { key: 'users', label: 'Perfiles de Usuarios', desc: 'Crear, editar o revocar accesos a otros usuarios', icon: Users },
   { key: 'customers', label: 'Directorio de Clientes', desc: 'Registro de clientes y fichas para pedidos', icon: UserCheck },

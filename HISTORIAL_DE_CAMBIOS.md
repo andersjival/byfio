@@ -1,3 +1,17 @@
+## [v4.19.141] - 2026-11-12
+
+### 📐 Organización Simétrica y Balanceada de Módulos Autorizados en Perfiles
+- **Cuadrícula Símétrica y Uniforme ([UserProfilesSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx))**:
+  - Reemplazado el listado irregular de píldoras por una cuadrícula estructurada CSS Grid (`grid grid-cols-2 sm:grid-cols-3 gap-1.5`).
+  - Incorporado el módulo de *Pagos SINPE Móvil* completando los 12 submódulos del admin para una simetría perfecta de 4x3 (escritorio) y 6x2 (móvil) sin elementos huérfanos.
+  - Alturas y anchos homogéneos con tipografía truncada (`truncate`), iconos alineados y viñetas circulares de estado (`✓` habilitado / `—` no asignado).
+- **Sincronización de Tipos & Módulos ([permissionModules.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/permissionModules.ts), [index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/index.ts))**:
+  - Homologación de permisos entre el panel web del administrador y las sesiones móviles de colaboradores.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché PWA a `byfio-pwa-v4.19.141`.
+
+---
+
 ## [v4.19.140] - 2026-11-12
 
 ### 📍 Reubicación del Botón "Volver al Menú" a la Cabecera Superior junto al Logo
