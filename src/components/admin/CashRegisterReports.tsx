@@ -201,10 +201,10 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
 
         {/* DIVISIÓN 1: TIENDA & CATÁLOGO */}
         {isFeatureEnabled('reports', 'category_breakdown') && (
-          <div className="bg-gradient-to-tr from-sky-50 to-sky-100/40 dark:from-sky-950/60 dark:to-[#2C2746] p-4 rounded-3xl border border-sky-200 dark:border-sky-500/40 shadow-claySm">
+          <div className="bg-gradient-to-tr from-sky-100/80 via-sky-50 to-white dark:from-sky-950/90 dark:via-[#1e324d] dark:to-[#2C2746] p-4 rounded-3xl border-2 border-sky-400 dark:border-sky-400 shadow-claySm dark:shadow-[0_0_15px_rgba(56,189,248,0.25)]">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-sky-900 uppercase">🛍️ Tienda &amp; Catálogo</span>
-              <ShoppingBag className="w-4 h-4 text-sky-600" />
+              <span className="text-[11px] font-bold text-sky-900 dark:text-sky-300 uppercase">🛍️ Tienda &amp; Catálogo</span>
+              <ShoppingBag className="w-4 h-4 text-sky-600 dark:text-sky-400" />
             </div>
             <h3 className="text-2xl font-bubble font-bold text-sky-900 mt-1">
               {formatCRC(totalStoreSales)}

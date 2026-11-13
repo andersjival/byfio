@@ -506,19 +506,19 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
 
                 {/* Sección Desplegable Opcional: Historial y Barra de Tiempo */}
                 {isExpanded && (
-                  <div className="p-3 bg-amber-50/40 border-t border-amber-100 space-y-2 text-xs animate-in slide-in-from-top-1">
+                  <div className="p-3 border-t space-y-2 text-xs animate-in slide-in-from-top-1 layaway-expanded-container">
                     {/* Barra de Tiempo Compacta */}
-                    <div className="flex items-center justify-between text-[11px] text-slate-600">
+                    <div className="flex items-center justify-between text-[11px] text-slate-600 layaway-due-text">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-amber-600" />
-                        <span>Vencimiento: <strong>{f.countdown.dueDateFormatted}</strong></span>
+                        <Calendar className="w-3 h-3 text-amber-600 layaway-due-icon" />
+                        <span>Vencimiento: <strong className="layaway-due-strong">{f.countdown.dueDateFormatted}</strong></span>
                       </span>
-                      <span className="font-bold text-amber-800">
+                      <span className="font-bold text-amber-800 layaway-days-badge">
                         {f.countdown.isExpired ? 'Plazo expirado' : `${f.countdown.daysRemaining} días restantes`}
                       </span>
                     </div>
 
-                    <div className="w-full bg-white rounded-full h-1.5 overflow-hidden border border-amber-200">
+                    <div className="w-full bg-white rounded-full h-1.5 overflow-hidden border border-amber-200 layaway-progress-track">
                       <div
                         className={`h-full rounded-full ${
                           f.countdown.isExpired ? 'bg-red-500' : f.countdown.isNearExpiry ? 'bg-orange-500' : 'bg-amber-500'
@@ -529,8 +529,8 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
 
                     {/* Historial de Abonos si existen */}
                     {f.payments.length > 0 ? (
-                      <div className="pt-1.5 border-t border-amber-200/60 space-y-1">
-                        <span className="font-bubble font-bold text-slate-700 text-[11px] block">
+                      <div className="pt-1.5 border-t border-amber-200/60 layaway-divider space-y-1">
+                        <span className="font-bubble font-bold text-slate-700 text-[11px] block layaway-history-title">
                           Historial de Pagos ({f.payments.length}):
                         </span>
                         <div className="space-y-1 max-h-36 overflow-y-auto pr-1">

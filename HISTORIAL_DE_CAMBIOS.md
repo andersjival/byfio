@@ -1,3 +1,39 @@
+## [v4.19.159] - 2026-11-13
+
+### 🎓 Módulo Oficial Cursos Drive con Integración Composio & Google Drive
+- **Módulo Administrativo Cursos Drive ([DriveCoursesAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DriveCoursesAdminSection.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [AdminPwaShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/admin/AdminPwaShell.tsx))**:
+  - Incorporada nueva sección administrativa **Cursos Drive** en el Hub y navegación principal.
+  - Generador de enlace público para compartir a clientes (`/cursos-drive`) con copia rápida en 1 clic y botón de compartir en WhatsApp.
+  - Gestión completa de cursos (crear, editar, eliminar, activar/ocultar) con precio en colones, insignias, descripción, puntos de "Lo que obtendrás" y enlace a carpeta de Google Drive.
+  - Pestaña de Alumnos & Compras con listado de correos Google Drive registrados, montos, comprobantes SINPE y estado de acceso concedido.
+  - Pestaña de Configuración de Composio con Webhook URL, API Key y herramienta de prueba de conectividad.
+- **Página Pública y Pasarela de Cursos ([DriveCoursesPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/DriveCoursesPage.tsx), [WebShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/web/WebShell.tsx), [routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts))**:
+  - Catálogo público responsivo en `/cursos-drive` y `/cursos` con selección visual interactiva de cursos.
+  - Muestra descripción detallada, lista de beneficios ("Lo que obtendrás") y botón de compra.
+  - Formulario de pago optimizado solicitando Nombre, Correo Google Drive y Teléfono con datos bancarios de SINPE Móvil y BCR.
+  - Detección de pago y confirmación visual con confetti y mensaje explicativo indicando que revise su correo con el link de acceso a Google Drive.
+  - Invitación integrada en la parte inferior para completar el registro de cuenta By.Fio reutilizando los datos ya ingresados y solicitando únicamente dirección y contraseña.
+- **Backend API & Base de Datos Cloudflare ([drive-courses.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/drive-courses.ts), [driveCoursesService.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/driveCoursesService.ts))**:
+  - Endpoint API en Cloudflare Pages Functions con persistencia en tablas D1 `drive_courses` y `drive_course_purchases`.
+  - Disparo automático de Webhook a Composio para asignación de permisos de acceso en Google Drive al confirmar la compra.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.159`.
+
+---
+
+## [v4.19.158] - 2026-11-13
+
+### 💖 Contenedor de Detalles de Apartados: Rosado Medio en Tema Oscuro
+- **Ajuste Cromático del Contenedor Desplegable ([AdminLayawaysSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminLayawaysSection.tsx))**:
+  - Reemplazado el tono oscuro/ocre en tema oscuro por una clase dedicada `.layaway-expanded-container` con color rosado medio (`#C03A70`), ni muy claro ni muy oscuro.
+  - Tipografías, fecha de vencimiento y divisores adaptados a texto blanco y alto contraste (`#FFFFFF`, `#FEF08A`, `rgba(255, 255, 255, 0.25)`).
+- **Protección CSS con Especificidad ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Incorporadas reglas específicas `.layaway-expanded-container` con `!important` para el tema oscuro, blindando el fondo rosado medio contra reglas genéricas de modo noche.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.158`.
+
+---
+
 ## [v4.19.157] - 2026-11-13
 
 ### 🌸 Cuadro de Notas del Cliente en Color Rosado con Letras en Rosado Oscuro

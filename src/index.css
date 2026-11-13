@@ -2763,3 +2763,54 @@ body[data-color-theme="dark"] .customer-notes-pastel-text,
 html.dark .customer-notes-pastel-text {
   color: #9D174D !important; /* Letras rosado oscuro */
 }
+
+/* =========================================================================
+   CONTENEDOR EXPANDIDO DE APARTADOS (ROSADO MEDIO EN TEMA OSCURO)
+   ========================================================================= */
+
+.layaway-expanded-container {
+  background-color: rgba(254, 243, 199, 0.4);
+  border-top-color: #FEF3C7;
+}
+
+body[data-color-theme="dark"] .layaway-expanded-container,
+html.dark .layaway-expanded-container {
+  background-color: #C03A70 !important; /* Rosado medio ni tan claro ni tan oscuro */
+  border-top-color: #D94680 !important;
+}
+
+body[data-color-theme="dark"] .layaway-expanded-container .layaway-due-text,
+html.dark .layaway-expanded-container .layaway-due-text {
+  color: #FFFFFF !important;
+}
+
+body[data-color-theme="dark"] .layaway-expanded-container .layaway-due-strong,
+html.dark .layaway-expanded-container .layaway-due-strong {
+  color: #FFFFFF !important;
+}
+
+body[data-color-theme="dark"] .layaway-expanded-container .layaway-due-icon,
+html.dark .layaway-expanded-container .layaway-due-icon {
+  color: #FDF2F8 !important;
+}
+
+body[data-color-theme="dark"] .layaway-expanded-container .layaway-days-badge,
+html.dark .layaway-expanded-container .layaway-days-badge {
+  color: #FEF08A !important;
+}
+
+body[data-color-theme="dark"] .layaway-expanded-container .layaway-history-title,
+html.dark .layaway-expanded-container .layaway-history-title {
+  color: #FFFFFF !important;
+}
+
+body[data-color-theme="dark"] .layaway-expanded-container .layaway-divider,
+html.dark .layaway-expanded-container .layaway-divider {
+  border-top-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+body[data-color-theme="dark"] .layaway-expanded-container .layaway-progress-track,
+html.dark .layaway-expanded-container .layaway-progress-track {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
