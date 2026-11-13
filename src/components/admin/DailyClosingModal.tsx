@@ -573,7 +573,8 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white dark:bg-[#1E1A30] rounded-xl border border-slate-200 dark:border-white/10">
-                  <span className="text-[11px] font-bold text-slate-500">Por Día:</span>
+                  <Calendar className="w-3.5 h-3.5 text-pink-500 dark:text-pink-300 shrink-0" />
+                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-300">Por Día:</span>
                   <input
                     type="date"
                     value={historyFilterDate}
@@ -586,7 +587,8 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                 </div>
 
                 <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white dark:bg-[#1E1A30] rounded-xl border border-slate-200 dark:border-white/10">
-                  <span className="text-[11px] font-bold text-slate-500">Por Mes:</span>
+                  <Calendar className="w-3.5 h-3.5 text-pink-500 dark:text-pink-300 shrink-0" />
+                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-300">Por Mes:</span>
                   <input
                     type="month"
                     value={historyFilterMonth}

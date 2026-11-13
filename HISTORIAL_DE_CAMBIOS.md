@@ -1,3 +1,15 @@
+## [v4.19.144] - 2026-11-12
+
+### 📅 Icono de Calendario Rosado Pastel en Historial de Cierre de Caja (Tema Oscuro)
+- **Iconografía Rosado Pastel en Filtros de Fecha ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Incorporado el icono `Calendar` en color rosado pastel (`text-pink-500 dark:text-pink-300`) junto a los selectores de búsqueda *"Por Día:"* y *"Por Mes:"* en la pestaña de Historial de arqueos.
+- **Estilo Nativo de Indicador de Calendario ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Ajustado el selector de fecha del navegador (`input[type="date"]::-webkit-calendar-picker-indicator` y `input[type="month"]::-webkit-calendar-picker-indicator`) en modo oscuro con filtro en tono rosado pastel luminoso de alta visibilidad sobre fondos oscuros.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.144`.
+
+---
+
 ## [v4.19.143] - 2026-11-12
 
 ### 🌸 Recuadro Rosado Pastel y Botón Fucsia en Cierre Guardado (Tema Oscuro)
@@ -131,6 +143,18 @@
   - Eliminado el espaciado forzado (`justify-between`) y los espacios vacíos intermedios mediante alineación natural `items-start` en la cuadrícula de fichas.
   - El contenido de cada vista se despliega de forma compacta, inmediata y sin huecos en blanco.
   - Actualizado Service Worker a `byfio-pwa-v4.19.137`.
+
+---
+
+## [v4.19.144] - 2026-11-12
+
+### 📅 Icono de Calendario Rosado Pastel en Historial de Cierre de Caja (Tema Oscuro)
+- **Iconografía Rosado Pastel en Filtros de Fecha ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Incorporado el icono `Calendar` en color rosado pastel (`text-pink-500 dark:text-pink-300`) junto a los selectores de búsqueda *"Por Día:"* y *"Por Mes:"* en la pestaña de Historial de arqueos.
+- **Estilo Nativo de Indicador de Calendario ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Ajustado el selector de fecha del navegador (`input[type="date"]::-webkit-calendar-picker-indicator` y `input[type="month"]::-webkit-calendar-picker-indicator`) en modo oscuro con filtro en tono rosado pastel luminoso de alta visibilidad sobre fondos oscuros.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.144`.
 
 ---
 
