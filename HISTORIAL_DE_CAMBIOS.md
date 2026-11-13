@@ -1,3 +1,15 @@
+## [v4.19.162] - 2026-11-13
+
+### 📱 Reubicación del Centro de Aplicaciones PWA & Háptica dentro de Configuración
+- **Reubicación de la Tarjeta PWA ([AppsManagementSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AppsManagementSection.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx))**:
+  - Eliminada la tarjeta flotante de aplicaciones PWA y vibración táctil que aparecía fuera de los módulos en el Menú de Administración (`AdminHubMenu`).
+  - Reemplazada la sección previa duplicada de *Configuración de Aplicaciones & Respuesta Háptica* dentro de la pestaña **Configuración** de *Aplicaciones PC / Celular* (`AppsManagementSection`) por la tarjeta ejecutiva exclusiva solicitada con selector de intensidad 1-10, interruptor de activación, botón de prueba y botón de apertura rápida.
+  - Conexión del botón *Abrir Centro de Aplicaciones* con el modal interactivo de PWA (`AdminPwaShell.tsx`).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.162`.
+
+---
+
 ## [v4.19.161] - 2026-11-13
 
 ### 💖 Botón Pausar Perfil: Rosado Medio Sin Bordes con Letras Claras en Modo Oscuro
