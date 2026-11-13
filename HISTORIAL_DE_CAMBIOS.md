@@ -1,3 +1,15 @@
+## [v4.19.181] - 2026-11-13
+
+### 📁 Google Drive: Confirmación y Documentación de Permisos Completos (Ver, Modificar y Eliminar)
+- **Alcance Completo de Google Drive (`https://www.googleapis.com/auth/drive`) ([DriveCoursesAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DriveCoursesAdminSection.tsx), [drive-courses.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/drive-courses.ts))**:
+  - Verificado el Auth Config `ac_-eEGEgrbguQR` con el scope maestro `https://www.googleapis.com/auth/drive`, el cual otorga a By.Fio autorización completa para ver, modificar, crear y eliminar archivos y carpetas en Google Drive.
+  - Actualizada la tarjeta del módulo de cursos con la indicación explícita de facultades: *Ver, Modificar y Eliminar*.
+  - Generado enlace directo fresco para la aprobación de la pantalla de consentimiento.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.181`.
+
+---
+
 ## [v4.19.180] - 2026-11-13
 
 ### 🎨 Login: Texto Rosado "¿Olvidó contraseña?" y Animación Luminous Sweep en Firma GeoSoft

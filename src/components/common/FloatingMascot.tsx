@@ -1,9 +1,10 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Star, Heart } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getWhatsAppLink } from '../../utils/formatters';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import { AppRoute } from '../../types';
+import { StarAgentChatModal } from './StarAgentChatModal';
 
 // Colección oficial de 120 mensajes positivos y motivacionales para by.fio (60 iniciales + 60 adicionales)
 const MOTIVATIONAL_MESSAGES = [
@@ -156,6 +157,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
   const [isExiting, setIsExiting] = useState(false);
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState('');
   const [typedText, setTypedText] = useState('');
   const [mascotStatus, setMascotStatus] = useState<'idle' | 'typing' | 'reading' | 'goodbye' | 'exiting'>('idle');
@@ -297,96 +299,115 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
       : (currentUser?.role === 'staff' ? 'Equipo' : 'Fiorella');
 
     return (
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Mensaje Motivacional de by.fio"
-        className={`fixed inset-0 z-[125] flex items-center justify-center p-4 transition-all duration-300 ${
-          isExiting ? 'bg-black/0 pointer-events-none' : 'bg-black/45 backdrop-blur-xs'
-        }`}
-        onClick={handleDismiss}
-      >
+      <>
         <div
-          onClick={(e) => e.stopPropagation()}
-          className={`relative w-full max-w-sm sm:max-w-md bg-white/95 dark:bg-[#1a142a]/95 backdrop-blur-2xl rounded-3xl p-5 sm:p-6 shadow-2xl border-2 border-fio-200/90 dark:border-purple-500/40 text-center overflow-hidden transition-all ${
-            isExiting
-              ? 'animate-star-alert-down'
-              : 'animate-star-alert-in-top'
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mensaje Motivacional de by.fio"
+          className={`fixed inset-0 z-[125] flex items-center justify-center p-4 transition-all duration-300 ${
+            isExiting ? 'bg-black/0 pointer-events-none' : 'bg-black/45 backdrop-blur-xs'
           }`}
+          onClick={handleDismiss}
         >
-          {/* Glow ambiental decorativo */}
-          <div className="absolute -top-16 -left-16 w-44 h-44 bg-fio-pink/20 dark:bg-pink-600/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-amber-400/20 dark:bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-
-          {/* Botón X de Cierre en la esquina superior derecha */}
-          <button
-            type="button"
-            onClick={handleDismiss}
-            className="absolute top-3.5 right-3.5 text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-full hover:bg-slate-100 dark:hover:bg-purple-900/40 transition-colors cursor-pointer"
-            aria-label="Cerrar mensaje motivacional"
-            title="Cerrar mensaje"
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`relative w-full max-w-sm sm:max-w-md bg-white/95 dark:bg-[#1a142a]/95 backdrop-blur-2xl rounded-3xl p-5 sm:p-6 shadow-2xl border-2 border-fio-200/90 dark:border-purple-500/40 text-center overflow-hidden transition-all ${
+              isExiting
+                ? 'animate-star-alert-down'
+                : 'animate-star-alert-in-top'
+            }`}
           >
-            <X className="w-5 h-5 stroke-[2.5]" />
-          </button>
+            {/* Glow ambiental decorativo */}
+            <div className="absolute -top-16 -left-16 w-44 h-44 bg-fio-pink/20 dark:bg-pink-600/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-amber-400/20 dark:bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Avatar Circular Centrado con Video de la Estrellita */}
-          <div className="relative mx-auto w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden flex items-center justify-center shadow-xl border-4 border-white dark:border-purple-900/60 bg-gradient-to-tr from-amber-100 via-pink-100 to-purple-100">
-            <video
-              src="/assets/vid-estrellita.mp4"
-              preload="metadata"
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover scale-105 pointer-events-none"
-            />
-            {/* Insignia de Corazón Animada (Solo visible en web pública para visitantes) */}
-            {!isAdminOrStaff && (
-              <span className="absolute -top-1 -right-1 w-7 h-7 bg-fio-pink text-white rounded-full flex items-center justify-center shadow-md animate-bounce">
-                <Heart className="w-4 h-4 fill-current" />
-              </span>
-            )}
-          </div>
-
-          {/* Etiqueta superior personalizada */}
-          <div className="mt-3.5 flex items-center justify-center gap-1.5 text-xs font-bubble font-bold text-fio-pink dark:text-pink-300">
-            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span>
-              {currentUser?.role === 'staff'
-                ? `¡Hola ${greetingName}! • by.fio Equipo`
-                : `¡Hola ${greetingName}! • by.fio Creativa`}
-            </span>
-          </div>
-
-          {/* Título */}
-          <h3 className="font-bubble font-black text-xl sm:text-2xl text-fio-900 dark:text-purple-100 tracking-wide mt-1 leading-snug">
-            Mensaje Positivo del Día 🌸
-          </h3>
-
-          {/* Burbuja del Mensaje con Efecto Máquina de Escribir */}
-          <div className="mt-3.5 p-4 rounded-2xl bg-purple-50/80 dark:bg-purple-900/30 border border-purple-200/80 dark:border-purple-800/50 shadow-inner">
-            <p className="font-bubble font-bold text-base sm:text-lg text-slate-800 dark:text-purple-100 leading-relaxed min-h-[56px] flex items-center justify-center">
-              <span>
-                {typedText}
-                {mascotStatus === 'typing' && (
-                  <span className="inline-block w-2 h-4 ml-1 bg-fio-pink animate-pulse align-middle rounded-full" />
-                )}
-              </span>
-            </p>
-          </div>
-
-          {/* Botón Principal para Cerrar / Continuar */}
-          <div className="mt-4">
+            {/* Botón X de Cierre en la esquina superior derecha */}
             <button
               type="button"
               onClick={handleDismiss}
-              className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-purple-700 via-fio-pink to-purple-800 hover:opacity-95 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+              className="absolute top-3.5 right-3.5 text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-full hover:bg-slate-100 dark:hover:bg-purple-900/40 transition-colors cursor-pointer"
+              aria-label="Cerrar mensaje motivacional"
+              title="Cerrar mensaje"
             >
-              <span>¡A darlo todo hoy! ✨</span>
+              <X className="w-5 h-5 stroke-[2.5]" />
             </button>
+
+            {/* Avatar Circular Centrado con Video de la Estrellita */}
+            <div className="relative mx-auto w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden flex items-center justify-center shadow-xl border-4 border-white dark:border-purple-900/60 bg-gradient-to-tr from-amber-100 via-pink-100 to-purple-100">
+              <video
+                src="/assets/vid-estrellita.mp4"
+                preload="metadata"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover scale-105 pointer-events-none"
+              />
+              {/* Insignia de Corazón Animada (Solo visible en web pública para visitantes) */}
+              {!isAdminOrStaff && (
+                <span className="absolute -top-1 -right-1 w-7 h-7 bg-fio-pink text-white rounded-full flex items-center justify-center shadow-md animate-bounce">
+                  <Heart className="w-4 h-4 fill-current" />
+                </span>
+              )}
+            </div>
+
+            {/* Etiqueta superior personalizada */}
+            <div className="mt-3.5 flex items-center justify-center gap-1.5 text-xs font-bubble font-bold text-fio-pink dark:text-pink-300">
+              <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+              <span>
+                {currentUser?.role === 'staff'
+                  ? `¡Hola ${greetingName}! • by.fio Equipo`
+                  : `¡Hola ${greetingName}! • by.fio Creativa`}
+              </span>
+            </div>
+
+            {/* Título */}
+            <h3 className="font-bubble font-black text-xl sm:text-2xl text-fio-900 dark:text-purple-100 tracking-wide mt-1 leading-snug">
+              Mensaje Positivo del Día 🌸
+            </h3>
+
+            {/* Burbuja del Mensaje con Efecto Máquina de Escribir */}
+            <div className="mt-3.5 p-4 rounded-2xl bg-purple-50/80 dark:bg-purple-900/30 border border-purple-200/80 dark:border-purple-800/50 shadow-inner">
+              <p className="font-bubble font-bold text-base sm:text-lg text-slate-800 dark:text-purple-100 leading-relaxed min-h-[56px] flex items-center justify-center">
+                <span>
+                  {typedText}
+                  {mascotStatus === 'typing' && (
+                    <span className="inline-block w-2 h-4 ml-1 bg-fio-pink animate-pulse align-middle rounded-full" />
+                  )}
+                </span>
+              </p>
+            </div>
+
+            {/* Botones de Acción */}
+            <div className="mt-4 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  handleDismiss();
+                  setIsChatModalOpen(true);
+                }}
+                className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-purple-700 via-fio-pink to-purple-800 hover:opacity-95 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>Consultar Stock o Talleres ✨</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleDismiss}
+                className="w-full py-1 text-slate-400 hover:text-slate-600 dark:hover:text-purple-200 text-xs font-semibold transition-colors"
+              >
+                ¡A darlo todo hoy! ✨
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+
+        <StarAgentChatModal
+          isOpen={isChatModalOpen}
+          onClose={() => setIsChatModalOpen(false)}
+          userRole={currentUser?.role === 'admin' ? 'admin' : 'staff'}
+          userName={currentUser?.name}
+        />
+      </>
     );
   }
 
@@ -458,21 +479,21 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
       )}
 
       {/* Cartel para Tienda Pública */}
-      {showSpeechBubble && !isOpen && (
+      {showSpeechBubble && !isChatModalOpen && (
         <div
           onClick={() => {
             playWaterDropSound();
-            setIsOpen(true);
+            setIsChatModalOpen(true);
             setShowSpeechBubble(false);
           }}
           className="mb-2 max-w-[230px] bg-white/95 dark:bg-[#1f1a32]/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-fio-200/80 dark:border-purple-500/30 flex items-center gap-2 cursor-pointer hover:shadow-2xl transition-all duration-200 animate-in fade-in zoom-in-95 slide-in-from-bottom-2 relative group"
         >
           <div className="flex-1">
             <p className="text-[12px] font-bold text-fio-900 dark:text-purple-100 leading-tight">
-              ¡Bienvenido a <span className="text-fio-pink font-bubble">by.fio</span>! ✨
+              ¡Hola! Soy la <span className="text-fio-pink font-bubble">Estrellita</span> ✨
             </p>
             <p className="text-[11px] text-gray-500 dark:text-purple-300 font-medium leading-tight mt-0.5">
-              ¿Tenés alguna consulta?
+              ¡Pregúntame por stock o talleres!
             </p>
           </div>
           <button
@@ -494,7 +515,7 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
       <button
         onClick={() => {
           playWaterDropSound();
-          setIsOpen(!isOpen);
+          setIsChatModalOpen(true);
           setShowSpeechBubble(false);
         }}
         className="relative group rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-0 p-0"
@@ -519,6 +540,13 @@ export const FloatingMascot: React.FC<FloatingMascotProps> = ({ currentRoute }) 
           </span>
         )}
       </button>
+
+      <StarAgentChatModal
+        isOpen={isChatModalOpen}
+        onClose={() => setIsChatModalOpen(false)}
+        userRole="customer"
+        userName={currentUser?.name}
+      />
     </div>
   );
 };
