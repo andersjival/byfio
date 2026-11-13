@@ -2,13 +2,15 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Search, UserCheck, Phone, MapPin, Calendar, RefreshCw, CreditCard,
-  ExternalLink, ShieldCheck, BarChart3, Smartphone, Monitor, Globe, Filter, Copy, Check
+  ExternalLink, ShieldCheck, BarChart3, Smartphone, Monitor, Globe, Filter, Copy, Check, User
 } from 'lucide-react';
 import { UserMetricsDashboardModal } from './UserMetricsDashboardModal';
 
 export interface RegisteredClientUser {
   id?: string;
   name?: string;
+  username?: string;
+  clientSlug?: string;
   email: string;
   phone?: string;
   idCard?: string;
@@ -73,6 +75,10 @@ export const RegisteredClientsList: React.FC = () => {
   const [isMetricsOpen, setIsMetricsOpen] = useState(false);
   const [copiedWazeClientId, setCopiedWazeClientId] = useState<string | null>(null);
 
+  // Estado de pestañas dentro de las fichas: 'info' (Info de usuario) vs 'device' (Dispositivo & Red)
+  const [cardTabs, setCardTabs] = useState<{ [clientKey: string]: 'info' | 'device' }>({});
+  const [globalTabMode, setGlobalTabMode] = useState<'info' | 'device'>('info');
+
   const getWazeUrlForClient = (client: RegisteredClientUser) => {
     if (typeof client.lat === 'number' && typeof client.lng === 'number' && !isNaN(client.lat) && !isNaN(client.lng) && (client.lat !== 0 || client.lng !== 0)) {
       return `https://waze.com/ul?ll=${client.lat},${client.lng}&navigate=yes`;
@@ -94,6 +100,15 @@ export const RegisteredClientsList: React.FC = () => {
     setTimeout(() => {
       setCopiedWazeClientId((current) => (current === key ? null : current));
     }, 2000);
+  };
+
+  const setAllCardsTab = (tab: 'info' | 'device') => {
+    setGlobalTabMode(tab);
+    const updated: { [k: string]: 'info' | 'device' } = {};
+    clients.forEach((c) => {
+      updated[c.id || c.email] = tab;
+    });
+    setCardTabs(updated);
   };
 
   const loadFromStorage = useCallback(() => {
@@ -165,7 +180,7 @@ export const RegisteredClientsList: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Barra de Acciones y Estadísticas Rápidas */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#F1F2F6] border border-white/90 shadow-neuCard">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 p-4 rounded-2xl bg-[#F1F2F6] border border-white/90 shadow-neuCard">
         <div className="flex items-center gap-2 flex-wrap">
           <div className="px-3 py-1.5 rounded-xl bg-purple-100 text-fio-purple font-bubble font-bold text-xs shadow-2xs">
             Total de usuarios: <strong>{clients.length}</strong>
@@ -173,11 +188,38 @@ export const RegisteredClientsList: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsMetricsOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs shadow-xs active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl neu-btn-primary text-white font-bubble font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
           >
             <BarChart3 className="w-3.5 h-3.5" />
             <span>Métricas de usuarios</span>
           </button>
+
+          {/* Selector Global de Modo de Fichas */}
+          <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-white/80 border border-slate-200 text-xs">
+            <span className="text-[10px] text-slate-400 font-bold px-1 hidden sm:inline">Vista fichas:</span>
+            <button
+              type="button"
+              onClick={() => setAllCardsTab('info')}
+              className={`px-2 py-0.5 rounded-lg text-[11px] font-bubble font-bold transition-all cursor-pointer ${
+                globalTabMode === 'info'
+                  ? 'bg-fio-purple text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Info de usuario
+            </button>
+            <button
+              type="button"
+              onClick={() => setAllCardsTab('device')}
+              className={`px-2 py-0.5 rounded-lg text-[11px] font-bubble font-bold transition-all cursor-pointer ${
+                globalTabMode === 'device'
+                  ? 'bg-fio-purple text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Dispositivo &amp; Red
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 flex-1 sm:max-w-md">
@@ -195,7 +237,7 @@ export const RegisteredClientsList: React.FC = () => {
             type="button"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-fio-purple shadow-xs active:scale-95 transition-all shrink-0"
+            className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-fio-purple shadow-xs active:scale-95 transition-all shrink-0 cursor-pointer"
             title="Sincronizar usuarios"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-fio-purple' : ''}`} />
@@ -213,7 +255,7 @@ export const RegisteredClientsList: React.FC = () => {
           <button
             type="button"
             onClick={() => setSelectedProvince('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold shrink-0 transition-all ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold shrink-0 transition-all cursor-pointer ${
               selectedProvince === 'all'
                 ? 'bg-fio-purple text-white shadow-xs'
                 : 'bg-white border border-slate-200 text-slate-600 hover:border-purple-300'
@@ -229,7 +271,7 @@ export const RegisteredClientsList: React.FC = () => {
                 key={prov}
                 type="button"
                 onClick={() => setSelectedProvince(prov)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold shrink-0 transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
                   isSelected
                     ? 'bg-fio-purple text-white shadow-xs'
                     : 'bg-white border border-slate-200 text-slate-600 hover:border-purple-300'
@@ -245,7 +287,7 @@ export const RegisteredClientsList: React.FC = () => {
         </div>
       </div>
 
-      {/* Listado de Clientes */}
+      {/* Listado de Clientes en Fichas Interactivas */}
       {filteredClients.length === 0 ? (
         <div className="p-8 rounded-2xl bg-white/70 border border-slate-200 text-center space-y-2">
           <UserCheck className="w-8 h-8 mx-auto text-slate-300" />
@@ -255,7 +297,7 @@ export const RegisteredClientsList: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {filteredClients.map((client, idx) => {
             const { date, time } = formatDate(client.createdAt);
             const province = detectProvince(client.address, client.province);
@@ -263,16 +305,25 @@ export const RegisteredClientsList: React.FC = () => {
             const waPhone = rawPhone.length === 8 ? `506${rawPhone}` : rawPhone;
             const isMobile = client.deviceType === 'mobile' || (client.deviceModel?.toLowerCase().includes('iphone') || client.deviceModel?.toLowerCase().includes('android'));
 
+            const clientKey = client.id || client.email || String(idx);
+            const activeTab = cardTabs[clientKey] || globalTabMode;
+
             return (
-              <div key={client.email || idx} className="p-4 rounded-2xl bg-white border border-slate-200 shadow-neuCard hover:border-purple-200 transition-all flex flex-col justify-between gap-3">
+              <div key={clientKey} className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-neuCard hover:border-purple-200 transition-all flex flex-col justify-between gap-3">
+                {/* Cabecera de la Ficha */}
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-500 to-fio-purple text-white flex items-center justify-center font-bubble font-bold text-sm shrink-0 shadow-2xs">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500 to-fio-purple text-white flex items-center justify-center font-bubble font-bold text-sm shrink-0 shadow-2xs">
                       {(client.name || client.email || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-bubble font-bold text-slate-900 text-sm truncate">{client.name || 'Sin nombre'}</span>
+                        <span className="font-bubble font-bold text-slate-900 text-sm truncate">{client.name || 'Sin nombre registrado'}</span>
+                        {(client.username || client.clientSlug) && (
+                          <span className="px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-800 font-mono text-[10px] font-bold shrink-0">
+                            @{client.username || client.clientSlug}
+                          </span>
+                        )}
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1 shrink-0">
                           <ShieldCheck className="w-2.5 h-2.5" /> Web
                         </span>
@@ -280,101 +331,186 @@ export const RegisteredClientsList: React.FC = () => {
                       <div className="text-[11px] text-slate-500 font-sans truncate">{client.email}</div>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded-xl text-[10px] font-bubble font-bold bg-purple-50 text-fio-purple border border-purple-100 shrink-0">
+                  <span className="px-2.5 py-0.5 rounded-xl text-[10px] font-bubble font-bold bg-purple-50 text-fio-purple border border-purple-100 shrink-0">
                     {province}
                   </span>
                 </div>
 
-                {/* Detalles de Cédula, Teléfono, Dispositivo e IP */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 font-sans">
-                  <div className="flex items-center gap-1.5">
-                    <CreditCard className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className="truncate">Cédula: <strong className="text-slate-800">{client.idCard || 'N/A'}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    {client.phone ? (
-                      <a href={`https://wa.me/${waPhone}`} target="_blank" rel="noopener noreferrer" className="text-emerald-700 hover:underline font-bold truncate">
-                        {client.phone}
-                      </a>
-                    ) : (
-                      <span className="text-slate-400">Sin teléfono</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    {isMobile ? <Smartphone className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> : <Monitor className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
-                    <span className="truncate">Disp: <strong className="text-slate-800">{client.deviceModel || (isMobile ? 'Celular' : 'Computadora')}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Globe className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span className="truncate">IP: <strong className="text-slate-800 font-mono text-[10px]">{client.ipAddress || 'Registrada en D1'}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-1.5 col-span-1 sm:col-span-2 text-slate-500 pt-0.5 border-t border-slate-100">
-                    <Calendar className="w-3.5 h-3.5 text-fio-purple shrink-0" />
-                    <span>Registro: <strong>{date}</strong> {time && <span>a las {time}</span>}</span>
-                  </div>
+                {/* Selector de Pestaña / Botón dentro de la Ficha */}
+                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/90 border border-slate-200/80">
+                  <button
+                    type="button"
+                    onClick={() => setCardTabs((prev) => ({ ...prev, [clientKey]: 'info' }))}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
+                      activeTab === 'info'
+                        ? 'bg-gradient-to-r from-fio-purple to-purple-600 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>Info de usuario</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCardTabs((prev) => ({ ...prev, [clientKey]: 'device' }))}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg text-xs font-bubble font-bold transition-all cursor-pointer ${
+                      activeTab === 'device'
+                        ? 'bg-gradient-to-r from-fio-purple to-purple-600 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span>Dispositivo &amp; Red</span>
+                  </button>
                 </div>
 
-                {/* Dirección y Ubicación Maps & Waze */}
-                {(client.address || (client.lat && client.lng)) && (
-                  <div className="text-[11px] text-slate-600 bg-purple-50/40 p-2.5 rounded-xl border border-purple-100 space-y-1.5 font-sans">
-                    <div className="flex items-start gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-fio-purple shrink-0 mt-0.5" />
+                {/* Contenido Dinámico según la Pestaña Activa */}
+                {activeTab === 'info' ? (
+                  /* PESTAÑA: INFO DE USUARIO */
+                  <div className="space-y-2 text-xs font-sans animate-fadeIn">
+                    {/* Fecha y Hora de Creación */}
+                    <div className="p-2.5 rounded-xl bg-purple-50/70 border border-purple-100 flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-fio-purple shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2">{client.address || 'Ubicación en mapa'}</p>
+                        <span className="text-[10px] text-purple-700 font-bold uppercase block">Fecha y Hora de Creación</span>
+                        <span className="font-sans font-bold text-purple-950 text-xs">
+                          {date} {time && <span className="text-purple-800 font-medium">a las {time}</span>}
+                        </span>
                       </div>
                     </div>
 
-                    {/* Botones de Navegación: Waze + Copiar Link + Google Maps */}
-                    <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-purple-100/60 pl-5">
-                      <a
-                        href={getWazeUrlForClient(client)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#33CCFF] hover:bg-[#1EBEF5] text-slate-950 font-bubble font-bold text-[11px] shadow-2xs active:scale-95 transition-all cursor-pointer"
-                        title="Abrir ubicación en Waze directamente en el navegador"
-                      >
-                        <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M19.34 10.04C18.67 6.59 15.64 4 12 4c-4.41 0-8 3.59-8 8 0 1.25.29 2.43.8 3.49L3.5 19.5l4.31-1.15c1.23.64 2.64 1.01 4.19 1.01 4.41 0 8-3.59 8-8 0-.45-.04-.89-.11-1.32h-.55zM9 13a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm6 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
-                        </svg>
-                        <span>Waze</span>
-                        <ExternalLink className="w-2.5 h-2.5 opacity-70" />
-                      </a>
+                    {/* Nombre del Usuario */}
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
+                      <User className="w-4 h-4 text-fio-purple shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">Nombre del usuario</span>
+                        <span className="font-bubble font-bold text-slate-900 text-sm truncate block">
+                          {client.name || 'Sin nombre registrado'}
+                        </span>
+                      </div>
+                    </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleCopyClientWaze(client)}
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold border transition-all active:scale-95 cursor-pointer shadow-2xs ${
-                          copiedWazeClientId === (client.id || client.email)
-                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                            : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
-                        }`}
-                        title="Copiar link de Waze para enviárselo a un mensajero"
-                      >
-                        {copiedWazeClientId === (client.id || client.email) ? (
-                          <>
-                            <Check className="w-3 h-3 text-emerald-600" />
-                            <span className="text-emerald-700">¡Copiado!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3 text-slate-500" />
-                            <span>Copiar link</span>
-                          </>
-                        )}
-                      </button>
-
-                      {client.lat && client.lng && (
+                    {/* Teléfono */}
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Phone className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-[10px] text-slate-400 font-bold uppercase block">Teléfono</span>
+                          {client.phone ? (
+                            <a href={`https://wa.me/${waPhone}`} target="_blank" rel="noopener noreferrer" className="font-bold text-emerald-700 hover:underline">
+                              {client.phone}
+                            </a>
+                          ) : (
+                            <span className="text-slate-400">Sin teléfono</span>
+                          )}
+                        </div>
+                      </div>
+                      {client.phone && (
                         <a
-                          href={`https://www.google.com/maps?q=${client.lat},${client.lng}`}
+                          href={`https://wa.me/${waPhone}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[10px] text-fio-purple hover:underline font-bold ml-auto"
+                          className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bubble font-bold flex items-center gap-1 hover:bg-emerald-100 cursor-pointer shrink-0"
                         >
-                          <span>Google Maps</span>
+                          <span>WhatsApp</span>
                           <ExternalLink className="w-2.5 h-2.5" />
                         </a>
                       )}
+                    </div>
+
+                    {/* Dirección */}
+                    <div className="p-2.5 rounded-xl bg-purple-50/40 border border-purple-100 space-y-2">
+                      <div className="flex items-start gap-2">
+                        <MapPin className="w-4 h-4 text-fio-purple shrink-0 mt-0.5" />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-[10px] text-slate-400 font-bold uppercase block">Dirección</span>
+                            <span className="px-2 py-0.2 rounded-md bg-purple-100 text-fio-purple text-[10px] font-bubble font-bold">
+                              {province}
+                            </span>
+                          </div>
+                          <p className="text-slate-800 text-xs mt-0.5 font-medium leading-relaxed">
+                            {client.address || 'Ubicación seleccionada en mapa'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Botones de Navegación: Waze + Copiar Link + Google Maps */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-purple-100/60 pl-6">
+                        <a
+                          href={getWazeUrlForClient(client)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#33CCFF] hover:bg-[#1EBEF5] text-slate-950 font-bubble font-bold text-[11px] shadow-2xs active:scale-95 transition-all cursor-pointer"
+                          title="Abrir ubicación en Waze directamente en el navegador"
+                        >
+                          <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.34 10.04C18.67 6.59 15.64 4 12 4c-4.41 0-8 3.59-8 8 0 1.25.29 2.43.8 3.49L3.5 19.5l4.31-1.15c1.23.64 2.64 1.01 4.19 1.01 4.41 0 8-3.59 8-8 0-.45-.04-.89-.11-1.32h-.55zM9 13a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm6 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
+                          </svg>
+                          <span>Waze</span>
+                          <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+                        </a>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyClientWaze(client)}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold border transition-all active:scale-95 cursor-pointer shadow-2xs ${
+                            copiedWazeClientId === clientKey
+                              ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                              : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                          }`}
+                          title="Copiar link de Waze para enviárselo a un mensajero"
+                        >
+                          {copiedWazeClientId === clientKey ? (
+                            <>
+                              <Check className="w-3 h-3 text-emerald-600" />
+                              <span className="text-emerald-700">¡Copiado!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3 text-slate-500" />
+                              <span>Copiar link</span>
+                            </>
+                          )}
+                        </button>
+
+                        {client.lat && client.lng && (
+                          <a
+                            href={`https://www.google.com/maps?q=${client.lat},${client.lng}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[10px] text-fio-purple hover:underline font-bold ml-auto"
+                          >
+                            <span>Google Maps</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* PESTAÑA: DISPOSITIVO & RED */
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100 font-sans animate-fadeIn">
+                    <div className="flex items-center gap-1.5">
+                      <CreditCard className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="truncate">Cédula: <strong className="text-slate-800">{client.idCard || 'N/A'}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {isMobile ? <Smartphone className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> : <Monitor className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+                      <span className="truncate">Disp: <strong className="text-slate-800">{client.deviceModel || (isMobile ? 'Celular' : 'Computadora')}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Globe className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                      <span className="truncate">IP: <strong className="text-slate-800 font-mono text-[10px]">{client.ipAddress || 'Registrada en D1'}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-fio-purple shrink-0" />
+                      <span className="truncate">Provincia: <strong className="text-slate-800">{province}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1.5 col-span-1 sm:col-span-2 text-slate-500 pt-1 border-t border-slate-100">
+                      <Calendar className="w-3.5 h-3.5 text-fio-purple shrink-0" />
+                      <span>Registro inicial: <strong>{date}</strong> {time && <span>a las {time}</span>}</span>
                     </div>
                   </div>
                 )}

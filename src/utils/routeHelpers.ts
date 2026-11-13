@@ -6,6 +6,7 @@ export interface RouteInfo {
   adminTab: AdminTabType;
   workshopId?: string | null;
   openDesignModal?: boolean;
+  clientUsername?: string | null;
 }
 
 export const parseRouteFromLocation = (): RouteInfo => {
@@ -272,6 +273,14 @@ export const parseRouteFromLocation = (): RouteInfo => {
   if (path.includes('/login') || hash.includes('login') || seccionParam === 'login') {
     return { route: 'login', adminTab: 'hub' };
   }
+  // Rutas de cliente web registrado: /usuario/webcliente/:username
+  const webClientMatch = path.match(/^\/usuario\/webcliente(?:\/([^/?#]+))?/i);
+  if (webClientMatch || path.includes('/usuario/webcliente') || hash.includes('usuario/webcliente')) {
+    const slugFromMatch = webClientMatch?.[1] && webClientMatch[1] !== 'undefined' ? decodeURIComponent(webClientMatch[1]) : null;
+    const slugFromQuery = searchParams.get('cliente') || searchParams.get('username') || searchParams.get('user');
+    return { route: 'mi-cuenta', adminTab: 'hub', clientUsername: slugFromMatch || slugFromQuery || null };
+  }
+
   if (
     path === '/mi-cuenta' ||
     path.startsWith('/mi-cuenta') ||

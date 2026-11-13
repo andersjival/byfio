@@ -34,6 +34,7 @@ import { metricsTracker } from '../services/metricsTracker';
 import { deepSanitize } from '../utils/sanitizeText';
 import { safeSessionStorage, safeLocalStorage } from '../utils/safeStorage';
 import { getClientDeviceInfo } from '../utils/deviceDetection';
+import { generateClientSlug } from '../utils/clientSlug';
 import { pushStoreConfig, applyCloudCatalogTaxonomies, getLastBlockedPushAt } from '../utils/storeConfigSync';
 import {
   AppScope,
@@ -2717,8 +2718,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             const regList = JSON.parse(localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS) || '[]');
             const matched = regList.find((u: any) => u.email && u.email.toLowerCase() === emailLower);
             if (matched) {
+              const slug = matched.clientSlug || matched.username || parsed.clientSlug || parsed.username || generateClientSlug(matched.name, matched.email);
               return {
                 ...parsed,
+                username: slug,
+                clientSlug: slug,
                 address: matched.address ?? parsed.address ?? '',
                 lat: matched.lat ?? parsed.lat,
                 lng: matched.lng ?? parsed.lng,
@@ -3003,9 +3007,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return uEmail === cleanEmailLower && uPass === cleanPass;
       });
       if (found) {
+        const slug = found.clientSlug || found.username || generateClientSlug(found.name, found.email);
         const normalUser: AuthUser = {
           email: found.email,
           name: found.name || found.email.split('@')[0],
+          username: slug,
+          clientSlug: slug,
           phone: found.phone || '',
           idCard: found.idCard || '',
           role: 'customer',
@@ -3059,10 +3066,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return { success: false, error: 'Ya existe una cuenta con este correo electrónico.' };
       }
       const clientDevice = getClientDeviceInfo();
+      const clientSlug = generateClientSlug(nameInput, cleanEmail);
       const record = {
         email: cleanEmail,
         password: cleanPass,
         name: nameInput?.trim() || cleanEmail.split('@')[0],
+        username: clientSlug,
+        clientSlug: clientSlug,
         phone: phoneInput?.trim() || '',
         idCard: idCardInput?.trim() || '',
         address: addressInput?.trim() || '',
@@ -3095,6 +3105,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const customer: AuthUser = {
         email: record.email,
         name: record.name,
+        username: clientSlug,
+        clientSlug: clientSlug,
         phone: record.phone,
         idCard: record.idCard,
         address: record.address,

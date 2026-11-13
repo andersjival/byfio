@@ -1,3 +1,37 @@
+## [v4.19.136] - 2026-11-12
+
+### 📋 Pestaña "Info de usuario" Interactiva dentro de las Fichas de Clientes Web
+- **Vistas Dinámicas en Fichas de Clientes ([`RegisteredClientsList.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx))**:
+  - Incorporado selector interno de pestañas dentro de cada ficha de cliente con los botones **Info de usuario** y **Dispositivo & Red**.
+  - Al hacer clic en **Info de usuario**, el contenido interior de la ficha cambia de inmediato para mostrar en detalle los 4 campos solicitados:
+    1. **Fecha y hora de creación** (`createdAt` formateada en es-CR con hora exacta).
+    2. **Nombre del usuario** (destacado en tipografía legible).
+    3. **Teléfono** (con enlace directo a WhatsApp y llamada).
+    4. **Dirección** (con provincia y accesos integrados a Waze, Copiar Link y Google Maps).
+  - Al pulsar en **Dispositivo & Red**, el contenido conmuta para mostrar cédula, tipo de dispositivo (Celular / Computadora), modelo e IP real registrada en Cloudflare D1.
+  - Añadido selector global en la barra superior para alternar todas las fichas simultáneamente.
+  - Actualizado Service Worker a `byfio-pwa-v4.19.136`.
+
+---
+
+## [v4.19.135] - 2026-11-12
+
+### 👤 Flujo de Acceso Personal para Clientes Web Registrados (`/usuario/webcliente/:username`)
+- **Enrutamiento Dedicado para Clientes Web ([routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx))**:
+  - Implementado el nuevo estándar de URLs de cliente web bajo la ruta canónica `https://byfiocr.com/usuario/webcliente/:username` (ej: `/usuario/webcliente/maria21-ax`).
+  - Reconocimiento de slug dinámico en el enrutador SPA y redirección canónica automática de `/mi-cuenta` al enlace personal del usuario logueado.
+- **Generador Automático de Slug de Usuario ([clientSlug.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/clientSlug.ts), [AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx))**:
+  - Al registrarse un usuario normal o iniciar sesión, se genera y persiste su identificador único (`username` / `clientSlug`) respetando el formato `maria21-ax` (nombre base + número + sufijo corto de 2 letras).
+  - Persistencia bidireccional en estado local, almacenamiento seguro y Cloudflare D1.
+- **Portal Personal del Cliente ([MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx), [WebShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/web/WebShell.tsx))**:
+  - Al completar el registro o login, los usuarios normales son redirigidos directamente a su portal personal `https://byfiocr.com/usuario/webcliente/:username`.
+  - La vista de Mi Cuenta incorpora un módulo de acceso rápido para consultar y copiar su enlace personal web cliente con un solo toque.
+  - Usuarios no autenticados que visitan un enlace directo son recibidos con el banner personalizado del portal web cliente con acceso a inicio de sesión y registro.
+- **Service Worker & Caché ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Elevada la versión a `byfio-pwa-v4.19.135`.
+
+---
+
 ## [v4.19.134] - 2026-11-12
 
 ### 📱 Unificación de Secciones PWA: Administrador y Colaborador (PC / Celular)

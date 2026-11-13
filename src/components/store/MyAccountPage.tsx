@@ -13,11 +13,13 @@ import { AppRoute, AdminTabType } from '../../types';
 import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { isLayawaySaleOrder } from '../../utils/layaway';
+import { generateClientSlug } from '../../utils/clientSlug';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
-interface MyAccountPageProps {
-  onNavigate: (route: AppRoute, targetTab?: AdminTabType, wsId?: string) => void;
+export interface MyAccountPageProps {
+  onNavigate: (route: AppRoute, targetTab?: AdminTabType, wsId?: string, clientSlug?: string) => void;
   onOpenLogin?: (mode?: 'login' | 'register') => void;
+  clientUsername?: string | null;
 }
 
 // Ubicaciones comunes de referencia en Costa Rica para el mapa de entregas
@@ -35,6 +37,7 @@ const CR_PRESETS = [
 export const MyAccountPage: React.FC<MyAccountPageProps> = ({
   onNavigate,
   onOpenLogin,
+  clientUsername,
 }) => {
   const {
     currentUser,
@@ -78,10 +81,12 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
           <div className="space-y-2">
             <h2 className="font-bubble font-black text-2xl sm:text-3xl text-slate-900">
-              Mi Cuenta by.fio
+              {clientUsername ? `Portal Web Cliente (@${clientUsername})` : 'Mi Cuenta by.fio'}
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-              Inicia sesión o crea una cuenta para acceder a tu historial de pedidos en vivo, cupones exclusivos y guardar tu dirección exacta de entrega en el mapa.
+              {clientUsername
+                ? `Inicia sesión o completa tu registro para ingresar a tu portal personal ${clientUsername}.`
+                : 'Inicia sesión o crea una cuenta para acceder a tu historial de pedidos en vivo, cupones exclusivos y guardar tu dirección exacta de entrega en el mapa.'}
             </p>
           </div>
 
@@ -441,6 +446,38 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
             </span>
           </div>
         </div>
+
+        {/* Enlace Personal Web Cliente */}
+        {(() => {
+          const effectiveSlug = currentUser.clientSlug || currentUser.username || clientUsername || (currentUser.name ? generateClientSlug(currentUser.name, currentUser.email) : 'cliente');
+          const clientUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://byfiocr.com'}/usuario/webcliente/${effectiveSlug}`;
+          return (
+            <div className="mt-4 pt-3.5 border-t border-purple-200/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2 min-w-0">
+                <Sparkles className="w-4 h-4 text-fio-pink shrink-0" />
+                <div className="min-w-0">
+                  <span className="text-[11px] font-bubble font-bold text-slate-500 block">Tu Enlace Personal Web Cliente:</span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-purple-900 truncate block">
+                    {clientUrl}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  playWaterDropSound();
+                  navigator.clipboard.writeText(clientUrl);
+                  setCopiedCode('url');
+                  setTimeout(() => setCopiedCode(null), 2000);
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bubble font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-all active:scale-95 cursor-pointer shrink-0"
+              >
+                {copiedCode === 'url' ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedCode === 'url' ? '¡Copiado!' : 'Copiar mi Enlace'}</span>
+              </button>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Botón y Alerta en Lista de Espera de Talleres */}

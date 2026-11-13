@@ -27,12 +27,14 @@ const PropuestaPage = React.lazy(() =>
 interface WebShellProps {
   currentRoute: AppRoute;
   selectedWorkshopId: string | null;
-  onNavigate: (route: AppRoute, adminTab?: AdminTabType, workshopId?: string) => void;
+  clientUsername?: string | null;
+  onNavigate: (route: AppRoute, adminTab?: AdminTabType, workshopId?: string, clientSlug?: string) => void;
 }
 
 export const WebShell: React.FC<WebShellProps> = ({
   currentRoute,
   selectedWorkshopId,
+  clientUsername,
   onNavigate,
 }) => {
   const {
@@ -62,7 +64,7 @@ export const WebShell: React.FC<WebShellProps> = ({
     setIsLoginModalOpen(true);
   };
 
-  const handleAuthSuccess = (user: { email?: string; role?: string; permissions?: any }) => {
+  const handleAuthSuccess = (user: { email?: string; role?: string; permissions?: any; clientSlug?: string; username?: string }) => {
     setIsLoginModalOpen(false);
     closeLogoutTransition();
     if (user.email === 'superadmin@byfio.com') {
@@ -75,7 +77,8 @@ export const WebShell: React.FC<WebShellProps> = ({
         !user.permissions?.inventory;
       onNavigate('admin', isAlistoOnly ? 'orders' : undefined);
     } else {
-      onNavigate('home');
+      const slug = user.clientSlug || user.username;
+      onNavigate('mi-cuenta', undefined, undefined, slug || undefined);
     }
   };
 
@@ -124,7 +127,7 @@ export const WebShell: React.FC<WebShellProps> = ({
               {currentRoute === 'precios' && isModuleEnabled('pricing') && <PricingStickersSection onNavigate={onNavigate} />}
 
               {currentRoute === 'mi-cuenta' && (
-                <MyAccountPage onNavigate={onNavigate} onOpenLogin={handleOpenLogin} />
+                <MyAccountPage onNavigate={onNavigate} onOpenLogin={handleOpenLogin} clientUsername={clientUsername} />
               )}
 
               {currentRoute === 'workshop-detail' && isModuleEnabled('workshops') && (

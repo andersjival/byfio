@@ -7,7 +7,7 @@ import { setupGlobalHapticClickListener } from './utils/haptics';
 import { parseRouteFromLocation } from './utils/routeHelpers';
 import { getScopeFromRoute, updateDocumentManifestAndTitle } from './utils/appScope';
 
-const WebShell = React.lazy(() => import('./apps/web/WebShell'));
+const WebShell = React.lazy<React.ComponentType<any>>(() => import('./apps/web/WebShell'));
 const AdminPwaShell = React.lazy(() => import('./apps/admin/AdminPwaShell'));
 const CollaboratorPwaShell = React.lazy(() => import('./apps/collaborator/CollaboratorPwaShell'));
 
@@ -32,6 +32,7 @@ export const App: React.FC = () => {
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(initial.route);
   const [adminTab, setAdminTab] = useState<AdminTabType>(initial.adminTab);
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(initial.workshopId || null);
+  const [clientUsername, setClientUsername] = useState<string | null>(initial.clientUsername || null);
   const [isDesignModalOpen, setIsDesignModalOpen] = useState(Boolean(initial.openDesignModal));
 
   const syncScopeRuntime = (route: AppRoute, search?: string) => {
@@ -45,7 +46,7 @@ export const App: React.FC = () => {
     syncScopeRuntime(currentRoute);
   }, [currentRoute]);
 
-  const navigate = (newRoute: AppRoute, targetTab?: AdminTabType, workshopId?: string) => {
+  const navigate = (newRoute: AppRoute, targetTab?: AdminTabType, workshopId?: string, clientSlug?: string) => {
     if (newRoute !== 'home' && isIntroOpen) closeWebIntro();
 
     const nextScope = syncScopeRuntime(newRoute, newRoute === 'pwa-install' ? window.location.search : '');
@@ -58,12 +59,18 @@ export const App: React.FC = () => {
     const wsId = workshopId !== undefined ? workshopId : selectedWorkshopId;
     setSelectedWorkshopId(wsId);
 
+    const activeSlug = clientSlug !== undefined ? clientSlug : (clientUsername || currentUser?.clientSlug || currentUser?.username || null);
+    if (clientSlug !== undefined) setClientUsername(clientSlug);
+
     let targetPath = '/';
     if (newRoute === 'superadmin') targetPath = '/admin/superadmin';
     else if (newRoute === 'propuesta') targetPath = '/propuesta';
     else if (newRoute === 'metricas') targetPath = '/metricas';
     else if (newRoute === 'login') targetPath = '/login';
-    else if (newRoute === 'mi-cuenta') targetPath = '/mi-cuenta';
+    else if (newRoute === 'mi-cuenta') {
+      const cSlug = activeSlug || currentUser?.clientSlug || currentUser?.username;
+      targetPath = cSlug ? `/usuario/webcliente/${cSlug}` : '/mi-cuenta';
+    }
     else if (newRoute === 'precios') targetPath = '/precios';
     else if (newRoute === 'catalogo') targetPath = '/catalogo';
     else if (newRoute === 'store') targetPath = '/tienda';
@@ -173,6 +180,7 @@ export const App: React.FC = () => {
       setCurrentRoute(parsed.route);
       setAdminTab(parsed.adminTab);
       setSelectedWorkshopId(parsed.workshopId || null);
+      setClientUsername(parsed.clientUsername || null);
       setIsDesignModalOpen(Boolean(parsed.openDesignModal));
       setViewMode(parsed.route === 'admin' ? 'admin' : 'store');
     };
@@ -191,6 +199,11 @@ export const App: React.FC = () => {
         const isUserAdmin = currentUser?.role === 'admin' || Boolean(currentUser?.isMasterAdmin);
         const canonical = isUserAdmin ? '/usuario/admin/pedidos/apps' : '/usuario/colaborador/pedidos/apps';
         window.history.replaceState({ route: 'pedidos-mobile', adminTab: 'orders' }, '', canonical + window.location.search);
+      } else if (path === '/mi-cuenta' || path === '/cuenta' || path === '/perfil') {
+        const slug = currentUser?.clientSlug || currentUser?.username;
+        if (slug) {
+          window.history.replaceState({ route: 'mi-cuenta', adminTab: 'hub', clientUsername: slug }, '', `/usuario/webcliente/${slug}` + window.location.search);
+        }
       }
     }
   }, [currentUser]);
@@ -227,7 +240,7 @@ export const App: React.FC = () => {
           onNavigate={navigate}
         />
       ) : (
-        <WebShell currentRoute={currentRoute} selectedWorkshopId={selectedWorkshopId} onNavigate={navigate} />
+        <WebShell currentRoute={currentRoute} selectedWorkshopId={selectedWorkshopId} onNavigate={navigate} clientUsername={clientUsername} />
       )}
     </React.Suspense>
   );
