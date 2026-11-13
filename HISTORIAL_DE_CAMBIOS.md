@@ -1,3 +1,13 @@
+## [v4.19.146] - 2026-11-12
+
+### 💛 Botón "Guardar / Actualizar Cierre" en Amarillo Pastel
+- **Botón en Amarillo Pastel ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Reemplazado el botón verde inferior de *Actualizar Cierre Guardado* / *Guardar Cierre de Caja* por el color amarillo pastel oficial By.Fio (`bg-[#FFF07C] hover:bg-[#FEEA4D]`), texto e icono de guardado en alto contraste `text-amber-950` y borde sutil `border-amber-300/70`.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.146`.
+
+---
+
 ## [v4.19.145] - 2026-11-12
 
 ### 🎨 Personalización Completa de Temas de Calendario en Modo Oscuro

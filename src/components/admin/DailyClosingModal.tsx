@@ -507,14 +507,14 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                 <button
                   type="button"
                   onClick={handleSaveClosing}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#FFF07C] hover:bg-[#FEEA4D] text-amber-950 font-bubble text-xs font-bold border border-amber-300/70 shadow-md transition-all active:scale-95 cursor-pointer"
                 >
-                  <Save className="w-4 h-4" />
+                  <Save className="w-4 h-4 text-amber-950" />
                   <span>{existingClosing ? 'Actualizar Cierre Guardado' : 'Guardar Cierre de Caja'}</span>
                 </button>
 
                 {savedSuccess && (
-                  <span className="text-xs font-bold text-emerald-700 animate-fadeIn">
+                  <span className="text-xs font-bold text-amber-700 dark:text-amber-300 animate-fadeIn">
                     ✓ Cierre guardado
                   </span>
                 )}
