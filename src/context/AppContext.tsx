@@ -1,3 +1,4 @@
+import { encodeEtfInNotes } from '../services/etfService';
 import { calculateLayawayDaysRemaining, checkAndSendLayawayReminders } from '../services/layawayReminderService';
 import { LAYAWAY_SALE_CATEGORY, isLayawaySaleOrder } from '../utils/layaway';
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
@@ -10,7 +11,8 @@ import {
   Supplier, SupplierOrder, SupplierOrderStatus, DailyClosingRecord, ProposalAcceptance,
   InventoryAdjustmentRecord, ShelfInventoryState, ShelfInventoryStatus,
   SweepLoadMode, SweepEntryStatus, InventorySweepEntry,
-  WorkshopWaitlistEntry, WorkshopWaitlistSettings
+  WorkshopWaitlistEntry, WorkshopWaitlistSettings,
+  EtfOrderData
 } from '../types';
 import {
   DEFAULT_WAITLIST_SETTINGS,
@@ -346,7 +348,6 @@ interface AppContextType {
   resolveMissingReport: (reportId: string) => void;
   deleteMissingReport: (reportId: string) => void;
   updateOrderStatus: (orderId: string, newStatus: OrderStatus, pickerName?: string) => void;
-  updateOrderEtfData: (orderId: string, updates: Partial<EtfOrderData>) => void;
   addLayawayPayment: (
     orderId: string,
     payment: {
