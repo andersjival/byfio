@@ -8,13 +8,11 @@ import {
   TEAM_MEMBERS,
   CalendarTheme,
   CALENDAR_THEMES,
-  CALENDAR_DARK_THEMES,
 } from './agendaCalendarTypes';
 import { CalendarTopBar } from './CalendarTopBar';
 import { BlockSpaceModal } from './BlockSpaceModal';
 import { CalendarSyncModal } from './CalendarSyncModal';
 import { AgendaItem, AgendaCategory, Workshop } from '../../../types';
-import { useApp } from '../../../context/AppContext';
 import { syncCalendarBlockedSpacesToCloud } from '../../../utils/storeConfigSync';
 import {
   Plus,
