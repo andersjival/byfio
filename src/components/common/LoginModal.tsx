@@ -870,11 +870,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     setErrorMessage(null);
                     setResetSuccessMessage(null);
                   }}
-                  className="inline-flex items-center gap-1.5 text-xs font-bubble font-bold text-fio-purple hover:text-fio-pink transition-colors hover:underline cursor-pointer"
-                  title="¿Olvidaste tu contraseña? Restablécela aquí"
+                  className="inline-flex items-center gap-1.5 text-xs font-bubble font-black text-pink-600 dark:text-pink-400 hover:text-pink-700 transition-colors hover:underline cursor-pointer"
+                  style={{ color: '#EC4899' }}
+                  title="¿Olvidó contraseña? Restablézcala aquí"
                 >
-                  <KeyRound className="w-3.5 h-3.5 text-purple-600" />
-                  <span>¿Olvidaste tu contraseña?</span>
+                  <KeyRound className="w-3.5 h-3.5 text-pink-500 dark:text-pink-400 shrink-0" style={{ color: '#EC4899' }} />
+                  <span className="font-extrabold" style={{ color: '#EC4899' }}>¿Olvidó contraseña?</span>
                 </button>
 
                 <button
@@ -885,7 +886,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     setErrorMessage(null);
                     setResetSuccessMessage(null);
                   }}
-                  className="px-2.5 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-fio-purple text-[11px] font-bubble font-bold border border-purple-200/80 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer"
+                  className="px-2.5 py-1 rounded-xl bg-pink-50 hover:bg-pink-100 dark:bg-pink-950/50 text-pink-600 dark:text-pink-300 text-[11px] font-bubble font-bold border border-pink-200 dark:border-pink-500/40 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer"
+                  style={{ color: '#EC4899' }}
                   title="Restablecer contraseña"
                 >
                   Restablecer
@@ -937,19 +939,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       )}
       </div>
 
-      {/* Badge de Copyright GeoSoft */}
-      <div className="mt-2.5 text-center pb-0.5">
-        <div className="geosoft-copyright-pill px-3 py-1">
+      {/* Badge de Copyright Animado de GeoSoft (Estilo BOSUNI CR) */}
+      <div className="mt-3 text-center pb-1 w-full flex items-center justify-center overflow-visible">
+        <div className="geosoft-copyright-pill px-4 py-1.5 shadow-sm hover:shadow-md transition-all">
           <a
             href="https://www.geosoft.lat"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[10.5px] sm:text-[11px] tracking-wide hover:opacity-90 transition-opacity font-bubble"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] tracking-wide hover:opacity-95 transition-opacity font-bubble whitespace-nowrap"
             title="Desarrollado por GeoSoft • https://www.geosoft.lat"
           >
-            <span className="text-slate-600 dark:text-slate-300 font-semibold">© byfio</span>
-            <span className="text-slate-400 dark:text-slate-500">•</span>
-            <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fio-purple to-pink-500 dark:from-purple-400 dark:via-fio-pink dark:to-pink-400">
+            <span className="font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">© byfio</span>
+            <span className="text-pink-400 font-extrabold mx-0.5">•</span>
+            <span className="animate-copyright-sweep font-black whitespace-nowrap">
               by GeoSoft
             </span>
           </a>

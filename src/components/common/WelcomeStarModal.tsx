@@ -114,7 +114,7 @@ export const WelcomeStarModal: React.FC = () => {
               <Gift className="w-4 h-4 text-amber-700" />
             </div>
             <p className="font-sans leading-tight">
-              <strong>Beneficios exclusivos:</strong> Consulta promociones y ofertas en <strong>Mi Cuenta</strong>.
+              <strong>Beneficios exclusivos:</strong> Consulta promociones especiales en <strong>Mi Cuenta</strong>.
             </p>
           </div>
         </div>

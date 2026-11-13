@@ -2298,41 +2298,101 @@ html.dark .btn-activate-profile {
 }
 
 /* =========================================================================
-   PÍLDORA DE COPYRIGHT GEOSOFT
+   ANIMACIÓN DE COPYRIGHT BY GEOSOFT (ESTILO BOSUNI CR MEJORADO)
    ========================================================================= */
+
+@keyframes textLightSweep {
+  0% {
+    background-position: 250% center;
+  }
+  45%, 100% {
+    background-position: -150% center;
+  }
+}
 
 .geosoft-copyright-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.88);
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 9999px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 4px rgba(109, 40, 217, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: all 0.25s ease;
+  overflow: visible;
+  flex-shrink: 0;
 }
 
 .geosoft-copyright-pill:hover {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(192, 132, 252, 0.6);
-  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.12);
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(236, 72, 153, 0.6);
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.18);
   transform: translateY(-1px);
 }
 
 body[data-color-theme="dark"] .geosoft-copyright-pill,
 html.dark .geosoft-copyright-pill {
-  background: rgba(30, 24, 46, 0.85) !important;
-  border: 1px solid rgba(168, 85, 247, 0.25) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  background: rgba(30, 24, 46, 0.90) !important;
+  border: 1px solid rgba(168, 85, 247, 0.35) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
 }
 
 body[data-color-theme="dark"] .geosoft-copyright-pill:hover,
 html.dark .geosoft-copyright-pill:hover {
-  background: rgba(40, 32, 60, 0.95) !important;
-  border-color: rgba(192, 132, 252, 0.5) !important;
-  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.2) !important;
+  background: rgba(42, 33, 64, 0.98) !important;
+  border-color: rgba(244, 114, 182, 0.6) !important;
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.25) !important;
+}
+
+.animate-copyright-sweep {
+  display: inline-block;
+  white-space: nowrap;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  background: linear-gradient(
+    90deg,
+    #7C3AED 0%,
+    #7C3AED 22%,
+    #DB2777 34%,
+    #F43F5E 42%,
+    #FFFFFF 50%,
+    #38BDF8 58%,
+    #C026D3 66%,
+    #7C3AED 78%,
+    #7C3AED 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: #7C3AED;
+  animation: textLightSweep 3.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  text-shadow: 0 0 10px rgba(236, 72, 153, 0.15);
+}
+
+body[data-color-theme="dark"] .animate-copyright-sweep,
+html.dark .animate-copyright-sweep {
+  background: linear-gradient(
+    90deg,
+    #C084FC 0%,
+    #C084FC 22%,
+    #F472B6 34%,
+    #FB7185 42%,
+    #FFFFFF 50%,
+    #38BDF8 58%,
+    #E879F9 66%,
+    #C084FC 78%,
+    #C084FC 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: #C084FC;
+  text-shadow: 0 0 12px rgba(244, 114, 182, 0.3);
 }
 
 /* =========================================================================

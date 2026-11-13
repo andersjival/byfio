@@ -46,7 +46,7 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
     setIsCartOpen,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'info' | 'orders' | 'promos' | 'offers'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'orders' | 'promos'>('info');
   const [purchasesSubTab, setPurchasesSubTab] = useState<'pedidos' | 'online' | 'talleres' | 'drive'>('pedidos');
 
   // Estados de datos editables del usuario
@@ -448,22 +448,6 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
             <Tag className="w-3.5 h-3.5" />
             <span>Promociones</span>
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('offers');
-              playWaterDropSound();
-            }}
-            className={`py-3 px-3 sm:px-4 text-xs font-bubble font-bold border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'offers'
-                ? 'border-fio-pink text-fio-pink'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <Gift className="w-3.5 h-3.5" />
-            <span>Ofertas</span>
           </button>
         </div>
 
@@ -1272,117 +1256,6 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
                     <span>{copiedCode === 'TALLER15' ? '¡Copiado!' : 'Copiar Cupón'}</span>
                   </button>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: SECCIÓN DE OFERTAS */}
-          {activeTab === 'offers' && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-bubble font-bold text-sm text-slate-800 flex items-center gap-2">
-                  <Gift className="w-4 h-4 text-fio-pink" />
-                  <span>Ofertas Especiales Vigentes</span>
-                </h3>
-                <span className="text-[11px] text-slate-500">
-                  Por tiempo limitado
-                </span>
-              </div>
-
-              {/* Oferta 1: Combo Agendas */}
-              <div className="p-4 rounded-2xl bg-white border border-fio-200/80 shadow-xs flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                      Ahorra ₡3.100
-                    </span>
-                    <h4 className="font-bubble font-bold text-sm text-slate-900">
-                      Combo Libreta Personalizada + Pack de Stickers
-                    </h4>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    Incluye dedicatoria personalizada con nombre y lámina holográfica.
-                  </p>
-                  <div className="flex items-baseline gap-2 pt-0.5">
-                    <span className="font-bubble font-bold text-base text-fio-pink">₡8.900</span>
-                    <span className="text-xs text-slate-400 line-through">₡12.000</span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    if (onNavigate) onNavigate('store');
-                  }}
-                  className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bubble font-bold transition-all shrink-0 cursor-pointer"
-                >
-                  Ver en Tienda
-                </button>
-              </div>
-
-              {/* Oferta 2: Kit Libros de Vacunas */}
-              <div className="p-4 rounded-2xl bg-white border border-fio-200/80 shadow-xs flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-full bg-pink-100 text-fio-pink text-[10px] font-bold">
-                      2x Especial
-                    </span>
-                    <h4 className="font-bubble font-bold text-sm text-slate-900">
-                      Pack Dúo Libros de Vacunas Pediátricos
-                    </h4>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    Tapa dura laminada contra agua y libreta de control pediátrico.
-                  </p>
-                  <div className="flex items-baseline gap-2 pt-0.5">
-                    <span className="font-bubble font-bold text-base text-fio-pink">₡15.000</span>
-                    <span className="text-xs text-slate-400 line-through">₡19.000</span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    if (onNavigate) onNavigate('catalogo');
-                  }}
-                  className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bubble font-bold transition-all shrink-0 cursor-pointer"
-                >
-                  Ver en Catálogo
-                </button>
-              </div>
-
-              {/* Oferta 3: Preventa Taller */}
-              <div className="p-4 rounded-2xl bg-white border border-fio-200/80 shadow-xs flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
-                      Preventa Cupos Limitados
-                    </span>
-                    <h4 className="font-bubble font-bold text-sm text-slate-900">
-                      Taller Presencial de Encuadernación Copta en Tibás
-                    </h4>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    Incluye todas las herramientas, papeles importados y coffee break artesanal.
-                  </p>
-                  <div className="flex items-baseline gap-2 pt-0.5">
-                    <span className="font-bubble font-bold text-base text-fio-pink">₡28.000</span>
-                    <span className="text-xs text-slate-400 line-through">₡35.000</span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    if (onNavigate) onNavigate('workshops');
-                  }}
-                  className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bubble font-bold transition-all shrink-0 cursor-pointer"
-                >
-                  Ver Taller
-                </button>
               </div>
             </div>
           )}

@@ -132,7 +132,7 @@ export const NavbarMobileDrawer: React.FC<NavbarMobileDrawerProps> = ({
             className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white text-xs font-bubble font-bold text-center flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
           >
             <User className="w-4 h-4 text-white" />
-            <span>{currentUser.role === 'admin' ? 'Mi Cuenta (Datos de Contacto)' : 'Mi Cuenta (Datos, Pedidos y Ofertas)'}</span>
+            <span>{currentUser.role === 'admin' ? 'Mi Cuenta (Datos de Contacto)' : 'Mi Cuenta (Datos, Compras y Promos)'}</span>
           </button>
           <div className="flex items-center gap-2 pt-1 border-t border-purple-100">
             {(currentUser.role === 'admin' || currentUser.role === 'staff') && (

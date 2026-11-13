@@ -51,7 +51,7 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
     logoutUser,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'info' | 'orders' | 'promos' | 'offers'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'orders' | 'promos'>('info');
   const [purchasesSubTab, setPurchasesSubTab] = useState<'pedidos' | 'online' | 'talleres' | 'drive'>('pedidos');
 
   // Estados de datos editables del usuario
@@ -597,22 +597,6 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
           <Tag className="w-4 h-4" />
           <span>Promociones</span>
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab('offers');
-            playWaterDropSound();
-          }}
-          className={`flex-1 min-w-[130px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'offers'
-              ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-clayBtn'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
-          }`}
-        >
-          <Gift className="w-4 h-4" />
-          <span>Ofertas</span>
         </button>
       </div>
 
@@ -1436,109 +1420,6 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
           </div>
         </div>
       )}
-
-      {/* PESTAÑA 4: OFERTAS ESPECIALES */}
-      {activeTab === 'offers' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-bubble font-bold text-base text-slate-800 flex items-center gap-2">
-              <Gift className="w-5 h-5 text-fio-pink" />
-              <span>Ofertas Especiales Vigentes</span>
-            </h3>
-            <span className="text-xs text-slate-500">
-              Por tiempo limitado
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Oferta 1: Combo Agendas */}
-            <div className="p-5 rounded-3xl bg-white border border-fio-200/80 shadow-sm flex flex-col justify-between space-y-3">
-              <div className="space-y-1.5">
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                  Ahorra ₡3.100
-                </span>
-                <h4 className="font-bubble font-bold text-base text-slate-900">
-                  Combo Libreta Personalizada + Stickers
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Incluye dedicatoria personalizada con nombre y lámina holográfica.
-                </p>
-                <div className="flex items-baseline gap-2 pt-1">
-                  <span className="font-bubble font-bold text-lg text-fio-pink">₡8.900</span>
-                  <span className="text-xs text-slate-400 line-through">₡12.000</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => onNavigate('store')}
-                className="w-full py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bubble font-bold transition-all cursor-pointer text-center"
-              >
-                Ver en Tienda
-              </button>
-            </div>
-
-            {/* Oferta 2: Kit Libros de Vacunas */}
-            <div className="p-5 rounded-3xl bg-white border border-fio-200/80 shadow-sm flex flex-col justify-between space-y-3">
-              <div className="space-y-1.5">
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-pink-100 text-fio-pink text-[10px] font-bold">
-                  2x Especial
-                </span>
-                <h4 className="font-bubble font-bold text-base text-slate-900">
-                  Pack Dúo Libros de Vacunas Pediátricos
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Tapa dura laminada contra agua y libreta de control pediátrico.
-                </p>
-                <div className="flex items-baseline gap-2 pt-1">
-                  <span className="font-bubble font-bold text-lg text-fio-pink">₡15.000</span>
-                  <span className="text-xs text-slate-400 line-through">₡19.000</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => onNavigate('catalogo')}
-                className="w-full py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bubble font-bold transition-all cursor-pointer text-center"
-              >
-                Ver en Catálogo
-              </button>
-            </div>
-
-            {/* Oferta 3: Preventa Taller */}
-            <div className="p-5 rounded-3xl bg-white border border-fio-200/80 shadow-sm flex flex-col justify-between space-y-3">
-              <div className="space-y-1.5">
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
-                  Preventa Cupos Limitados
-                </span>
-                <h4 className="font-bubble font-bold text-base text-slate-900">
-                  Taller Presencial de Encuadernación Copta
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Incluye herramientas, papeles importados y coffee break artesanal en Tibás.
-                </p>
-                <div className="flex items-baseline gap-2 pt-1">
-                  <span className="font-bubble font-bold text-lg text-fio-pink">₡28.000</span>
-                  <span className="text-xs text-slate-400 line-through">₡35.000</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => onNavigate('workshops')}
-                className="w-full py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bubble font-bold transition-all cursor-pointer text-center"
-              >
-                Ver Taller
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      <EtfCustomerUploadModal
-        order={selectedEtfOrder}
-        isOpen={Boolean(selectedEtfOrder)}
-        onClose={() => setSelectedEtfOrder(null)}
-      />
     </div>
   );
 };

@@ -2,7 +2,16 @@ name = "byfiocr"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
 
+[ai]
+binding = "AI"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "byfiocr-db"
 database_id = "60326015-d917-4a7b-baac-ab90d972ae57"
+
+[[d1_databases]]
+binding = "AGENT_DB"
+database_name = "byfio-agent-db"
+database_id = "56c38379-4579-41c5-a189-abb580893175"
+

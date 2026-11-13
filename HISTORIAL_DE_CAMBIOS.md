@@ -1,3 +1,32 @@
+## [v4.19.180] - 2026-11-13
+
+### 🎨 Login: Texto Rosado "¿Olvidó contraseña?" y Animación Luminous Sweep en Firma GeoSoft
+- **Color Rosado de Alto Contraste en "¿Olvidó contraseña?" ([LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx))**:
+  - Actualizado el texto a *"¿Olvidó contraseña?"* e implementado color rosado vibrante `#EC4899` en tipografía, icono `KeyRound` y botón de restablecimiento.
+  - Blindado con `style={{ color: '#EC4899' }}` contra estilos heredados para máxima visibilidad en temas claro y oscuro.
+- **Activación y Ajuste de Animación Barrido GeoSoft ([WebShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/web/WebShell.tsx), [LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Reintegrada la animación `@keyframes textLightSweep` con clase `.animate-copyright-sweep` sobre *"by GeoSoft"*.
+  - Configurado gradiente cromático vivo (violeta, magenta, destello blanco y cian) con `-webkit-text-fill-color: transparent` y color de reserva violeta para garantizar que nunca se vea negro ni opaco.
+  - Añadido `whitespace-nowrap` y padding ergonómico para evitar que el texto o nombre se corten en pantallas reducidas.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.180`.
+
+---
+
+## [v4.19.179] - 2026-11-13
+
+### 🗑️ Eliminación Definitiva de la Sección y Botón de Ofertas
+- **Eliminación del Botón y Sección de Ofertas ([MyAccountModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/MyAccountModal.tsx), [MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx))**:
+  - Removido el botón tab "Ofertas" y su icono `Gift` de la barra de navegación de Mi Cuenta (tanto en el modal como en la página completa `/mi-cuenta`).
+  - Eliminado el contenedor completo de ofertas especiales vigentes y combos de preventa.
+  - Tipado de pestaña activa simplificado a `'info' | 'orders' | 'promos'`.
+- **Textos de Menú y Bienvenida ([NavbarMobileDrawer.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/navbar/NavbarMobileDrawer.tsx), [WelcomeStarModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/WelcomeStarModal.tsx))**:
+  - Actualizado el texto del acceso directo móvil a "Mi Cuenta (Datos, Compras y Promos)".
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.179`.
+
+---
+
 ## [v4.19.178] - 2026-11-13
 
 ### 🔧 Corrección de Tipografía & Codificación UTF-8 en Módulo ETF

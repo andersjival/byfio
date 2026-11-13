@@ -153,18 +153,18 @@ export const WebShell: React.FC<WebShellProps> = ({
         )}
       </div>
 
-      <footer className="w-full py-5 text-center mt-auto pb-8 z-10">
-        <div className="geosoft-copyright-pill px-3.5 py-1 sm:px-4 sm:py-1.5">
+      <footer className="w-full py-5 text-center mt-auto pb-8 z-10 flex items-center justify-center overflow-visible">
+        <div className="geosoft-copyright-pill px-4 py-1.5 shadow-sm hover:shadow-md transition-all">
           <a
             href="https://www.geosoft.lat"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm tracking-wide transition-opacity hover:opacity-90 font-bubble"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm tracking-wide hover:opacity-95 transition-opacity font-bubble whitespace-nowrap"
             title="Desarrollado por GeoSoft • https://www.geosoft.lat"
           >
-            <span className="text-slate-600 dark:text-slate-300 font-semibold">© byfio</span>
-            <span className="text-slate-400 dark:text-slate-500">•</span>
-            <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fio-purple to-pink-500 dark:from-purple-400 dark:via-fio-pink dark:to-pink-400">
+            <span className="font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">© byfio</span>
+            <span className="text-pink-400 font-extrabold mx-0.5">•</span>
+            <span className="animate-copyright-sweep font-black whitespace-nowrap">
               by GeoSoft
             </span>
           </a>
