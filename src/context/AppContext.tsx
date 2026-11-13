@@ -1,4 +1,4 @@
-import { encodeEtfInNotes } from '../services/etfService';
+import { encodeEtfInNotes, extractEtfData } from '../services/etfService';
 import { calculateLayawayDaysRemaining, checkAndSendLayawayReminders } from '../services/layawayReminderService';
 import { LAYAWAY_SALE_CATEGORY, isLayawaySaleOrder } from '../utils/layaway';
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
@@ -348,6 +348,7 @@ interface AppContextType {
   resolveMissingReport: (reportId: string) => void;
   deleteMissingReport: (reportId: string) => void;
   updateOrderStatus: (orderId: string, newStatus: OrderStatus, pickerName?: string) => void;
+  updateOrderEtfData: (orderId: string, updates: Partial<EtfOrderData>) => void;
   addLayawayPayment: (
     orderId: string,
     payment: {
@@ -757,6 +758,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const rawNum = (o.orderNumber || '').replace(/^#+/, '');
       if (rawNum) {
         o.orderNumber = `#${rawNum}`;
+      }
+
+      // Reconstrucción e hidratación de compras ETF
+      if (!o.etfData && (o.notes?.includes('[ETF_DATA:') || o.items?.some((it) => /etf|dtf/i.test(it.name + ' ' + (it.sku || ''))))) {
+        o.etfData = extractEtfData(o);
+      } else if (o.etfData && !o.etfData.isEtfOrder) {
+        o.etfData.isEtfOrder = true;
       }
 
       // Identidad persistente de ventas generadas por liquidación de apartados
@@ -2779,6 +2787,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       if (tab === 'layaways') {
         return Boolean(livePerms?.layaways ?? livePerms?.orders ?? true);
+      }
+      if (tab === 'etf') {
+        return Boolean(livePerms?.etf ?? livePerms?.orders ?? true);
       }
       if (tab === 'suppliers' || tab === 'sales') {
         if (currentUser.role === 'staff' && livePerms) {
@@ -4994,6 +5005,51 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
   };
 
+  const updateOrderEtfData = (orderId: string, updates: Partial<EtfOrderData>) => {
+    let updatedOrders: Order[] = [];
+    setOrders((prev) => {
+      const next = prev.map((order) => {
+        if (order.id !== orderId) return order;
+        const currentEtf = order.etfData || { isEtfOrder: true, files: [], requirement: '', productionStatus: 'pending_files' };
+        const nextEtf: EtfOrderData = {
+          ...currentEtf,
+          ...updates,
+          isEtfOrder: true,
+          updatedAt: new Date().toISOString(),
+        };
+        const nextNotes = encodeEtfInNotes(order.notes, nextEtf);
+        return {
+          ...order,
+          notes: nextNotes,
+          etfData: nextEtf,
+        };
+      });
+      updatedOrders = next;
+      safeLocalStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(next));
+      return next;
+    });
+
+    const target = updatedOrders.find((o) => o.id === orderId);
+    if (target) {
+      fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: target.id,
+          orderNumber: target.orderNumber,
+          notes: target.notes,
+        }),
+      }).catch(() => {});
+    }
+
+    try {
+      syncChannel?.postMessage({
+        type: 'SYNC_UPDATE',
+        orders: updatedOrders,
+      });
+    } catch {}
+  };
+
   const updateProductStock = (
     productId: string,
     stock: number,
@@ -6024,6 +6080,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resolveMissingReport,
         deleteMissingReport,
         updateOrderStatus,
+        updateOrderEtfData,
         addLayawayPayment,
         inventoryMode,
         setInventoryMode,

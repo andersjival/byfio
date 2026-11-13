@@ -60,11 +60,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   const [isValidating, setIsValidating] = useState(false);
   const [refValidationError, setRefValidationError] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
+  const [etfRequirement, setEtfRequirement] = useState('');
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
   if (!isOpen) return null;
 
   const safeCart = Array.isArray(cart) ? cart.filter(Boolean) : [];
+  const hasEtfItems = safeCart.some((it) => /etf|dtf/i.test(it.name + ' ' + (it.sku || '')));
   const subtotal = safeCart.reduce((acc, it) => acc + (Number(it?.price) || 0) * (it?.quantity || 1), 0);
   const shippingFee = deliveryMethod === 'envio' ? 2500 : 0;
   const total = subtotal + shippingFee;
@@ -281,6 +283,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
       shippingAddress: deliveryMethod === 'envio' ? shippingAddress : 'Retiro en Taller (200 sur del parque de Tibás)',
       paymentMethod: paymentTab,
       notes: orderNotesCombined,
+      ...(hasEtfItems ? {
+        etfData: {
+          isEtfOrder: true,
+          requirement: etfRequirement.trim(),
+          files: [],
+          productionStatus: 'pending_files',
+          updatedAt: new Date().toISOString(),
+        }
+      } : {}),
     });
 
     // Guardar teléfono y dirección actualizados en el perfil registrado
@@ -609,7 +620,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
             )}
 
             <div>
-              <label className="block text-[11px] font-bold text-gray-700 mb-1">Notas especiales (opcional):</label>
+              {hasEtfItems && (
+              <div className="p-3 bg-purple-50 rounded-xl border border-purple-200 space-y-1">
+                <label className="block text-[11px] font-bold text-purple-900">
+                  🎨 Requerimiento de impresión ETF / DTF (medidas, acabados o indicaciones):
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej: 58x100cm, fondo transparente, colores vibrantes..."
+                  value={etfRequirement}
+                  onChange={(e) => setEtfRequirement(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-purple-300 bg-white text-xs focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                />
+                <p className="text-[10px] text-purple-700">Podrás adjuntar tus fotos y archivos de diseño desde "Mis Compras" una vez confirmado el pedido.</p>
+              </div>
+            )}
+            <label className="block text-[11px] font-bold text-gray-700 mb-1">Notas especiales (opcional):</label>
               <input
                 type="text"
                 placeholder="Dedicatoria o instrucciones de empaque"

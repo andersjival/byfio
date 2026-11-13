@@ -11,6 +11,7 @@ import {
   Calendar,
   Truck,
   ShoppingBag,
+  Layers,
 } from 'lucide-react';
 import { UserPermissions } from '../types';
 
@@ -38,4 +39,5 @@ export const COLLABORATOR_PERMISSION_MODULES: PermissionModuleDef[] = [
   { key: 'agenda', label: 'Agenda & Tareas', desc: 'Acceso al organizador del taller y calendario', icon: Calendar },
   { key: 'suppliers', label: 'Pedidos a Proveedor', desc: 'Órdenes de compra, borradores e historial con proveedores', icon: Truck },
   { key: 'sales', label: 'Historial de Ventas', desc: 'Consulta de ventas realizadas y órdenes facturadas', icon: ShoppingBag },
+  { key: 'etf', label: 'Módulo ETF', desc: 'Compras de ETF, requerimientos y fotos de clientes', icon: Layers },
 ];

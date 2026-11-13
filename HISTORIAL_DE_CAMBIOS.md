@@ -1,3 +1,25 @@
+## [v4.19.175] - 2026-11-13
+
+### 🎨 Módulo ETF: Panel Exclusivo de Compras ETF, Requerimientos, Fotos y Descarga para Taller
+- **Módulo Administrativo ETF ([EtfOrdersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/etf/EtfOrdersSection.tsx), [EtfOrderCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/etf/EtfOrderCard.tsx))**:
+  - Panel exclusivo dedicado a las compras y pedidos de transferencias ETF / DTF.
+  - Tarjetas detalladas de pedidos con nombre del cliente, teléfono con enlace directo a WhatsApp y lista de ítems.
+  - Visualización y edición en tiempo real del requerimiento de impresión solicitado por el cliente.
+  - Selector de estado de producción: *Pendiente de Archivos*, *Archivos Recibidos*, *En Impresión / Producción*, *Listo para Entrega* y *Entregado*.
+  - Galería de miniaturas y subida directa de archivos complementarios desde el panel.
+- **Visor y Descarga de Archivos en Alta Resolución ([EtfPhotoModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/etf/EtfPhotoModal.tsx), [etfService.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/etfService.ts))**:
+  - Modal para inspeccionar imágenes y archivos de diseño preservando calidad original.
+  - Botón de descarga individual y botón de descarga por lote (*Descargar Todo*) con nombrado automático para uso inmediato en taller.
+- **Registro Directo de Compras ETF ([EtfNewOrderModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/etf/EtfNewOrderModal.tsx))**:
+  - Modal para crear compras directas de ETF con cliente, teléfono, producto, monto, requerimiento y archivos adjuntos.
+- **Experiencia de Cliente & Checkout ([MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx), [EtfCustomerUploadModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/EtfCustomerUploadModal.tsx), [CheckoutModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/CheckoutModal.tsx))**:
+  - Botón "Requerimiento & Fotos ETF" en la sección Mis Compras de la cuenta del cliente para subir/actualizar archivos y especificaciones.
+  - Campo de requerimiento ETF automático durante el checkout al detectar productos de impresión transfer.
+- **Permisos y Service Worker ([permissionModules.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/permissionModules.ts), [sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Permiso granular `etf` en el catálogo de colaboradores y caché PWA actualizada a `byfio-pwa-v4.19.175`.
+
+---
+
 ## [v4.19.174] - 2026-11-13
 
 ### ⚡ Integración Oficial Composio: Conexión Google Drive & Gmail para Administrador del Sitio

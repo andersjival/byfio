@@ -17,7 +17,8 @@ export type AdminTabType =
   | 'sales'
   | 'catalog-view'
   | 'apps'
-  | 'drive-courses';
+  | 'drive-courses'
+  | 'etf';
 
 export interface AdminTabsProps {
   activeTab?: AdminTabType;

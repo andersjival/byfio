@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminTabType } from './AdminTabs';
+import { isEtfOrder } from '../../services/etfService';
 import {
   QrCode, BookmarkCheck, Receipt, Boxes, Landmark, GraduationCap,  ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Users,
   BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone, Save,
-  ClipboardList, ShieldCheck, Shield, HardDrive
+  ClipboardList, ShieldCheck, Shield, HardDrive, Layers
 } from 'lucide-react';
 
 import { AppRoute, SupplierOrder } from '../../types';
@@ -67,6 +68,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
   });
   const criticalProducts = products.filter((p) => p.stock <= p.minStock);
   const activeProfiles = userProfiles.filter((p) => p.isActive);
+  const pendingEtfCount = orders.filter((o) => { if (!isEtfOrder(o)) return false; const s = o.etfData?.productionStatus || 'pending_files'; return s === 'pending_files' || s === 'files_received' || s === 'in_production'; }).length;
 
   const allMenuItems = [
     {
@@ -164,6 +166,13 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       gradient: 'from-[#7C3AED] to-[#DB2777]',
 
 
+    },
+    {
+      id: 'etf' as AdminTabType,
+      title: 'Módulo ETF',
+      icon: Layers,
+      gradient: 'from-[#EC4899] to-[#8B5CF6]',
+      badge: pendingEtfCount > 0 ? pendingEtfCount : undefined,
     },
   ];
 

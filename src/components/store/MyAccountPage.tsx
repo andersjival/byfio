@@ -6,7 +6,7 @@ import {
   User, Mail, Phone, MapPin, Calendar, Clock, PackageCheck,
   Tag, Gift, Sparkles, Navigation, ExternalLink, Check, Copy,
   ShoppingBag, Truck, CheckCircle2, ChevronRight, Printer, RefreshCw,
-  ArrowLeft, LogOut, ShieldCheck, Laptop, Palette, HardDrive, GraduationCap
+  ArrowLeft, LogOut, ShieldCheck, Laptop, Palette, HardDrive, GraduationCap, Layers
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AppRoute, AdminTabType, Order, OrderItem } from '../../types';
@@ -14,6 +14,8 @@ import { getLocalPurchases } from '../../services/driveCoursesService';
 import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { isLayawaySaleOrder } from '../../utils/layaway';
+import { isEtfOrder } from '../../services/etfService';
+import { EtfCustomerUploadModal } from './EtfCustomerUploadModal';
 import { generateClientSlug } from '../../utils/clientSlug';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 
@@ -60,6 +62,7 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [isSavedSuccess, setIsSavedSuccess] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [selectedEtfOrder, setSelectedEtfOrder] = useState<Order | null>(null);
 
   // Sincronizar datos locales cuando cambie el currentUser
   useEffect(() => {
@@ -1003,6 +1006,21 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
                         <span className="text-base text-fio-pink">{formatCRC(ord.total)}</span>
                       </div>
 
+                      {isEtfOrder(ord) && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedEtfOrder(ord)}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bubble font-bold transition-all shadow-sm cursor-pointer"
+                        >
+                          <Layers className="w-3.5 h-3.5" />
+                          <span>Requerimiento & Fotos ETF</span>
+                          {ord.etfData?.files && ord.etfData.files.length > 0 && (
+                            <span className="ml-1 px-1.5 py-0.5 bg-white/20 rounded-full text-[10px]">
+                              {ord.etfData.files.length}
+                            </span>
+                          )}
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => setInvoiceOrder(ord)}
@@ -1516,6 +1534,11 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
           </div>
         </div>
       )}
+      <EtfCustomerUploadModal
+        order={selectedEtfOrder}
+        isOpen={Boolean(selectedEtfOrder)}
+        onClose={() => setSelectedEtfOrder(null)}
+      />
     </div>
   );
 };
