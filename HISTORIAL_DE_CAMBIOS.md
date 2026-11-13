@@ -1,3 +1,16 @@
+## [v4.19.161] - 2026-11-13
+
+### 💖 Botón Pausar Perfil: Rosado Medio Sin Bordes con Letras Claras en Modo Oscuro
+- **Ajuste Cromático del Botón ([UserProfilesSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserProfilesSection.tsx))**:
+  - Eliminado el borde de color del botón de *Pausar Perfil* en tema oscuro (`border-transparent`).
+  - Fondo actualizado a rosado medio (`#C03A70`) y texto en rosado claro de alta definición (`#FCE7F3`).
+- **Blindaje de Estilos con Especificidad ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Actualizada la regla `.btn-pause-profile` en `html.dark` y `body[data-color-theme="dark"]` con `background-color: #C03A70 !important; color: #FCE7F3 !important; border: none !important; border-color: transparent !important;` garantizando persistencia total y anulación de estilos ocre anteriores.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.161`.
+
+---
+
 ## [v4.19.160] - 2026-11-13
 
 ### 🎨 Refuerzo Visual de Alto Contraste en Segmentos de Caja (Celeste & Turquesa)
