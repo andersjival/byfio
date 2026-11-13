@@ -1,3 +1,13 @@
+## [v4.19.148] - 2026-11-12
+
+### 🌸 Cuadro de "Conteo Físico Real" en Rosado Pastel
+- **Columna y Casillas en Rosado Pastel ([InventoryChecklistModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryChecklistModal.tsx))**:
+  - Reemplazado el fondo café/ámbar del encabezado y celdas de *Conteo Físico Real* por un tono rosado pastel suave (`bg-[#FBCFE8]`, `bg-pink-50/80` y `dark:bg-pink-950/60`), con bordes en `border-pink-300`, tipografía `text-pink-950 dark:text-pink-100` y recuadro de input adaptado con borde rosado.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.148`.
+
+---
+
 ## [v4.19.147] - 2026-11-12
 
 ### 💛 Botón Aceptar Amarillo Pastel y Botón Detalles Rosado Pastel en Cierre de Caja

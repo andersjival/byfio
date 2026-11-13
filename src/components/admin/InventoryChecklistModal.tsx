@@ -446,7 +446,7 @@ export const InventoryChecklistModal: React.FC<InventoryChecklistModalProps> = (
                             <th className="py-2 px-2.5">Código SKU & Barras</th>
                             <th className="py-2 px-2.5">Descripción del Producto</th>
                             <th className="py-2 px-2 text-center w-20">Stock Sistema</th>
-                            <th className="py-2 px-3 text-center w-28 bg-amber-50 print:bg-white font-bold">
+                            <th className="py-2 px-3 text-center w-28 bg-[#FBCFE8] dark:bg-pink-950/60 text-pink-950 dark:text-pink-100 border-x border-pink-300/80 dark:border-pink-500/40 print:bg-white print:text-black print:border-black font-bold">
                               Conteo Físico Real
                             </th>
                             <th className="py-2 px-2 text-center w-24">Estado / Dif.</th>
@@ -525,7 +525,7 @@ export const InventoryChecklistModal: React.FC<InventoryChecklistModalProps> = (
                                 </td>
 
                                 {/* Casilla de Conteo Físico Real (Para escribir a mano o digitar) */}
-                                <td className="py-2 px-3 text-center bg-amber-50/40 print:bg-transparent">
+                                <td className="py-2 px-3 text-center bg-pink-50/80 dark:bg-pink-950/30 border-x border-pink-200/80 dark:border-pink-500/30 print:bg-transparent print:border-black">
                                   <div className="flex items-center justify-center">
                                     {/* En pantalla permite digitar para auditoría digital */}
                                     <input
@@ -533,7 +533,7 @@ export const InventoryChecklistModal: React.FC<InventoryChecklistModalProps> = (
                                       placeholder="____"
                                       value={countedStr ?? ''}
                                       onChange={(e) => handleCountChange(p.id, e.target.value)}
-                                      className="w-20 px-2 py-1 text-center font-mono font-black text-sm bg-white border-2 border-slate-300 rounded-lg focus:border-fio-pink focus:outline-none print:hidden"
+                                      className="w-20 px-2 py-1 text-center font-mono font-black text-sm bg-white dark:bg-[#1E1A30] border-2 border-pink-300 dark:border-pink-500/50 rounded-lg focus:border-fio-pink focus:outline-none text-slate-900 dark:text-white print:hidden"
                                     />
                                     {/* En impresión muestra casilla en blanco con recuadro punteado para escribir con lapicero */}
                                     <div className="hidden print:block w-full h-8 border border-black border-dashed rounded text-center leading-8 font-mono font-bold text-xs">
