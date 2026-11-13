@@ -287,7 +287,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     if (currentUser) {
       updateCurrentUserData({
         phone: customerPhone.trim(),
-        ...(deliveryMethod === 'envio' && shippingAddress.trim() ? { address: shippingAddress.trim() } : {}),
+        ...(deliveryMethod === 'envio' && shippingAddress.trim() ? {
+          address: shippingAddress.trim(),
+          lat: shippingLat,
+          lng: shippingLng,
+        } : {}),
       });
     }
 

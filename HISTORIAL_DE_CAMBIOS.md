@@ -1,3 +1,45 @@
+## [v4.19.130] - 2026-11-12
+
+### 📍 Enlaces de Waze con Coordenadas GPS Exactas del Pin en Directorio de Clientes
+- **Navegación Exacta por Coordenadas GPS (`https://waze.com/ul?ll=lat,lng&navigate=yes`)**:
+  - Corregido el problema de apertura de ubicaciones erróneas en Waze: en lugar de buscar por texto descriptivo, el botón "Waze" y el botón "Copiar link" ahora utilizan las coordenadas GPS exactas (`lat` y `lng`) donde el cliente colocó el pin en el mapa interactivo.
+- **Sincronización Automática al Mover o Guardar el Pin ([AppContext.tsx](file:///C:/Users/Juan/byfio/src/context/AppContext.tsx))**:
+  - `mergeRegisteredUsersIntoCustomers` y `updateCurrentUserData` ahora propagan y sincronizan automáticamente las coordenadas del pin a la lista de clientes registrados en tiempo real.
+  - Cuando un cliente cambia o mueve su pin en el mapa de su perfil o durante el checkout, las coordenadas se actualizan al instante en el enlace de Waze del panel de administración.
+- **Selector de Mapa Interactivo en el Modal de Edición de Clientes ([CustomersSection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/CustomersSection.tsx))**:
+  - Los administradores ahora pueden ver y fijar el pin exacto directamente en el mapa al crear o editar la ficha de un cliente, asegurando coordenadas exactas para clientes registrados manualmente.
+- **PWA & Caché**:
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.130` para forzar la recarga automática en todos los dispositivos móviles.
+
+---
+## [v4.19.129] - 2026-11-12
+
+### 🌙 Corrección Definitiva y Exhaustiva del Modo Oscuro en Toda la Plataforma
+- **Motor Global de Superficies y Gradientes con Comodines de Opacidad ([index.css](file:///C:/Users/Juan/byfio/src/index.css))**:
+  - Implementados selectores universales con comodines de atributo (`[class*="bg-slate-50"]`, `[class*="bg-slate-100"]`, `[class*="bg-slate-200"]`, `[class*="bg-amber-50"]`, `[class*="bg-purple-50"]`, `[class*="bg-blue-50"]`, `[class*="bg-pink-50"]`, etc.) para cubrir al 100% cualquier opacidad arbitraria de Tailwind (`/60`, `/70`, `/80`, `/90`, etc.), erradicando cualquier cápsula o caja clara residual.
+  - Incorporada la totalidad de colores hexadecimales de gradiente claros (`from-[#E6D4FB]`, `via-[#F3D9FA]`, `to-[#FBD5E8]`, `bg-[#FDFBF9]`, etc.) en el sistema de gradientes oscuros.
+  - Cobertura universal de textos de bajo contraste (`text-purple-950`, `text-amber-950`, `text-blue-950`, `text-teal-950`, `text-fio-purple`) asegurando legibilidad absoluta.
+- **Gestión de Apartados ([AdminLayawaysSection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/AdminLayawaysSection.tsx))**:
+  - Banner principal corregido con degradado oscuro profundo, badge de activos contrastado y barra de filtros/búsqueda adaptada.
+- **Módulo SINPE Móvil ([SinpePaymentsSection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/SinpePaymentsSection.tsx))**:
+  - Las 3 tarjetas de modalidades técnicas (Gmail, SMS, Pasarela) y sus etiquetas inferiores adaptadas a modo oscuro.
+  - Las 3 cintas de resumen financiero y la barra contenedora de pestañas ahora lucen fondos oscuros con tipografía clara y sin estilos en línea conflictivos.
+- **Perfiles de Usuarios & Permisos ([UserProfilesSection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/UserProfilesSection.tsx))**:
+  - Tarjeta informativa de 'Acceso Seguro e Inmediato' y botón de PIN adaptados armónicamente al modo oscuro.
+- **Directorio de Clientes ([CustomersSection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/CustomersSection.tsx))**:
+  - Cuadro de notas del cliente (📌) corregido con fondo ámbar oscuro translúcido y texto legible.
+  - Widget de umbral de compras mínimas VIP y selector de mapa adaptados al modo oscuro.
+- **Módulo de Proveedores ([SuppliersOrdersSection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/SuppliersOrdersSection.tsx))**:
+  - Las dos tarjetas principales de opciones (Pedidos a Proveedores e Ingreso de Facturas) adaptadas al tema oscuro sin recuadros claros.
+- **Historial de Ventas ([SalesHistorySection.tsx](file:///C:/Users/Juan/byfio/src/components/admin/SalesHistorySection.tsx))**:
+  - Cápsula de filtros temporales (Por Día, Por Semana, Por Mes, Todo) adaptada a fondo oscuro profundo con botones contrastados e inputs de fecha oscuros.
+- **Calendario y Agenda ([CalendarAgendaView.tsx](file:///C:/Users/Juan/byfio/src/components/admin/agenda/CalendarAgendaView.tsx))**:
+  - Detección reactiva de modo oscuro para la cuadrícula y encabezados del calendario.
+- **PWA & Caché**:
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.129` para forzar la purga y recarga automática inmediata.
+
+---
+
 ## [v4.19.127] - 2026-11-12
 
 ### 📱 Nuevo Módulo: Aplicaciones PC / Celular y Gestor de Permisos para Colaboradores

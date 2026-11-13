@@ -221,21 +221,21 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
   return (
     <div className="space-y-4 animate-in fade-in duration-200">
       {/* Encabezado Principal Compacto */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#E6D4FB] via-[#F3D9FA] to-[#FBD5E8] border border-purple-200/90 text-purple-950 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#E6D4FB] via-[#F3D9FA] to-[#FBD5E8] dark:from-[#282245] dark:via-[#211D35] dark:to-[#2D244A] border border-purple-200/90 dark:border-purple-500/30 text-purple-950 dark:text-purple-100 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-white/75 backdrop-blur-xs border border-purple-200/70 flex items-center justify-center text-fio-pink shrink-0 shadow-2xs">
+          <div className="w-10 h-10 rounded-xl bg-white/75 dark:bg-white/10 backdrop-blur-xs border border-purple-200/70 dark:border-purple-400/30 flex items-center justify-center text-fio-pink shrink-0 shadow-2xs">
             <BookmarkCheck className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="font-bubble font-bold text-base sm:text-lg text-purple-950">
+              <h2 className="font-bubble font-bold text-base sm:text-lg text-purple-950 dark:text-white">
                 Gestión de Apartados
               </h2>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-purple-900 border border-purple-200/80 uppercase">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 dark:bg-white/15 text-purple-900 dark:text-purple-200 border border-purple-200/80 dark:border-purple-400/40 uppercase">
                 {metrics.activeCount} Activos
               </span>
             </div>
-            <p className="text-[11px] text-purple-800/90 font-sans">
+            <p className="text-[11px] text-purple-800/90 dark:text-purple-200/80 font-sans">
               Control de cuotas, saldos pendientes y registro de abonos.
             </p>
           </div>
@@ -302,7 +302,7 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
       </div>
 
       {/* Barra de Filtros y Búsqueda Compacta */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 p-2.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 p-2.5 rounded-2xl bg-white dark:bg-[#1E1A30] border border-slate-200 dark:border-white/10 shadow-2xs">
         <div className="relative flex-1">
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -310,7 +310,7 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar cliente, teléfono, #FIO o producto..."
-            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-amber-500 font-sans text-xs text-slate-800 outline-hidden transition-all"
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-[#25203D] border border-slate-200 dark:border-white/10 focus:bg-white dark:focus:bg-[#2C2746] focus:border-amber-500 font-sans text-xs text-slate-800 dark:text-white outline-hidden transition-all"
           />
         </div>
 
@@ -332,7 +332,7 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
               className={`px-2.5 py-1 rounded-xl text-xs font-bubble font-bold whitespace-nowrap transition-all cursor-pointer ${
                 statusFilter === tab.id
                   ? 'bg-amber-500 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
               }`}
             >
               {tab.label}

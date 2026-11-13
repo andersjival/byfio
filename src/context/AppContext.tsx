@@ -214,6 +214,8 @@ const mergeRegisteredUsersIntoCustomers = (baseCustomers: Customer[], regUsers: 
     const webPhone = String(raw.phone || '').trim();
     const webAddress = String(raw.address || '').trim();
     const webIdCard = String(raw.idCard || '').trim();
+    const webLat = typeof raw.lat === 'number' && !isNaN(raw.lat) ? raw.lat : undefined;
+    const webLng = typeof raw.lng === 'number' && !isNaN(raw.lng) ? raw.lng : undefined;
     const regId = `reg-${cleanEmail}`;
 
     const existingIdx = result.findIndex(
@@ -223,8 +225,10 @@ const mergeRegisteredUsersIntoCustomers = (baseCustomers: Customer[], regUsers: 
     if (existingIdx !== -1) {
       const curr = result[existingIdx];
       const nextPhone = curr.phone?.trim() ? curr.phone : webPhone;
-      const nextAddress = curr.address?.trim() ? curr.address : (webAddress || undefined);
+      const nextAddress = webAddress || curr.address;
       const nextEmail = curr.email?.trim() ? curr.email : cleanEmail;
+      const nextLat = typeof webLat === 'number' ? webLat : curr.lat;
+      const nextLng = typeof webLng === 'number' ? webLng : curr.lng;
       const currCedula = curr.customFields?.['field-cedula'];
       const nextCustomFields =
         webIdCard && !currCedula
@@ -235,6 +239,8 @@ const mergeRegisteredUsersIntoCustomers = (baseCustomers: Customer[], regUsers: 
         nextPhone !== curr.phone ||
         nextAddress !== curr.address ||
         nextEmail !== curr.email ||
+        nextLat !== curr.lat ||
+        nextLng !== curr.lng ||
         nextCustomFields !== curr.customFields
       ) {
         result[existingIdx] = {
@@ -242,6 +248,8 @@ const mergeRegisteredUsersIntoCustomers = (baseCustomers: Customer[], regUsers: 
           email: nextEmail,
           phone: nextPhone,
           address: nextAddress,
+          lat: nextLat,
+          lng: nextLng,
           customFields: nextCustomFields,
         };
         changed = true;
@@ -253,6 +261,8 @@ const mergeRegisteredUsersIntoCustomers = (baseCustomers: Customer[], regUsers: 
         phone: webPhone,
         email: cleanEmail,
         address: webAddress || undefined,
+        lat: webLat,
+        lng: webLng,
         notes: 'Cliente registrado en la página web',
         createdAt: typeof raw.createdAt === 'string' && raw.createdAt ? raw.createdAt : new Date().toISOString(),
         createdBy: 'Registro Web (Cliente)',
@@ -2664,6 +2674,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   name: updated.name || c.name,
                   phone: updated.phone ?? c.phone,
                   address: updated.address ?? c.address,
+                  lat: typeof updated.lat === 'number' ? updated.lat : c.lat,
+                  lng: typeof updated.lng === 'number' ? updated.lng : c.lng,
                   customFields: nextCedula ? { ...(c.customFields || {}), 'field-cedula': nextCedula } : c.customFields,
                 };
               });
@@ -2676,6 +2688,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   phone: updated.phone || '',
                   email: cleanEmail,
                   address: updated.address || undefined,
+                  lat: typeof updated.lat === 'number' ? updated.lat : undefined,
+                  lng: typeof updated.lng === 'number' ? updated.lng : undefined,
                   notes: 'Cliente registrado en la página web',
                   createdAt: updated.createdAt || new Date().toISOString(),
                   customFields: updated.idCard ? { 'field-cedula': updated.idCard } : undefined,

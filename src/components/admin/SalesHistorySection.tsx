@@ -252,17 +252,17 @@ export const SalesHistorySection: React.FC = () => {
       </div>
 
       {/* 2. Pestañas de Filtro Temporal: DÍA, SEMANA, MES, TODO */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-[#FDFBF9] border border-fio-200/80 shadow-claySm space-y-3.5">
+      <div className="p-4 sm:p-5 rounded-3xl bg-[#FDFBF9] dark:bg-[#1E1A30] border border-fio-200/80 dark:border-white/10 shadow-claySm space-y-3.5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Selector de Nivel: Día / Semana / Mes / Todo */}
-          <div className="inline-flex p-1 rounded-2xl bg-slate-100/90 border border-slate-200/70 shadow-inner self-start">
+          <div className="inline-flex p-1 rounded-2xl bg-slate-100/90 dark:bg-[#151124] border border-slate-200/70 dark:border-white/10 shadow-inner self-start">
             <button
               type="button"
               onClick={() => setFilterType('day')}
               className={`px-3.5 py-1.5 rounded-xl font-bubble font-bold text-xs sm:text-sm transition-all cursor-pointer ${
                 filterType === 'day'
-                  ? 'bg-white text-fio-900 shadow-xs scale-[1.02]'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-[#352F54] text-fio-900 dark:text-white shadow-xs scale-[1.02]'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Por Día
@@ -272,8 +272,8 @@ export const SalesHistorySection: React.FC = () => {
               onClick={() => setFilterType('week')}
               className={`px-3.5 py-1.5 rounded-xl font-bubble font-bold text-xs sm:text-sm transition-all cursor-pointer ${
                 filterType === 'week'
-                  ? 'bg-white text-fio-900 shadow-xs scale-[1.02]'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-[#352F54] text-fio-900 dark:text-white shadow-xs scale-[1.02]'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Por Semana
@@ -283,8 +283,8 @@ export const SalesHistorySection: React.FC = () => {
               onClick={() => setFilterType('month')}
               className={`px-3.5 py-1.5 rounded-xl font-bubble font-bold text-xs sm:text-sm transition-all cursor-pointer ${
                 filterType === 'month'
-                  ? 'bg-white text-fio-900 shadow-xs scale-[1.02]'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-[#352F54] text-fio-900 dark:text-white shadow-xs scale-[1.02]'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Por Mes
@@ -294,8 +294,8 @@ export const SalesHistorySection: React.FC = () => {
               onClick={() => setFilterType('all')}
               className={`px-3.5 py-1.5 rounded-xl font-bubble font-bold text-xs sm:text-sm transition-all cursor-pointer ${
                 filterType === 'all'
-                  ? 'bg-white text-fio-900 shadow-xs scale-[1.02]'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-[#352F54] text-fio-900 dark:text-white shadow-xs scale-[1.02]'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Todo
@@ -312,7 +312,7 @@ export const SalesHistorySection: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                     daySubFilter === 'today'
                       ? 'bg-fio-800 text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-pink-50 border border-slate-200'
+                      : 'bg-white dark:bg-[#2C2746] text-slate-700 dark:text-slate-200 hover:bg-pink-50 dark:hover:bg-[#352F54] border border-slate-200 dark:border-white/10'
                   }`}
                 >
                   Hoy
@@ -323,12 +323,12 @@ export const SalesHistorySection: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                     daySubFilter === 'yesterday'
                       ? 'bg-fio-800 text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-pink-50 border border-slate-200'
+                      : 'bg-white dark:bg-[#2C2746] text-slate-700 dark:text-slate-200 hover:bg-pink-50 dark:hover:bg-[#352F54] border border-slate-200 dark:border-white/10'
                   }`}
                 >
                   Ayer
                 </button>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white border border-slate-200">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#2C2746] border border-slate-200 dark:border-white/10">
                   <span className="text-[11px] font-bold text-slate-500">Fecha:</span>
                   <input
                     type="date"
@@ -337,7 +337,7 @@ export const SalesHistorySection: React.FC = () => {
                       setCustomDay(e.target.value);
                       setDaySubFilter('custom');
                     }}
-                    className="text-xs font-semibold text-slate-800 bg-transparent outline-none cursor-pointer"
+                    className="text-xs font-semibold text-slate-800 dark:text-white bg-transparent outline-none cursor-pointer"
                   />
                 </div>
               </>
@@ -351,7 +351,7 @@ export const SalesHistorySection: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                     weekSubFilter === 'current'
                       ? 'bg-fio-800 text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-pink-50 border border-slate-200'
+                      : 'bg-white dark:bg-[#2C2746] text-slate-700 dark:text-slate-200 hover:bg-pink-50 dark:hover:bg-[#352F54] border border-slate-200 dark:border-white/10'
                   }`}
                 >
                   Esta Semana
@@ -362,7 +362,7 @@ export const SalesHistorySection: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                     weekSubFilter === 'last7'
                       ? 'bg-fio-800 text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-pink-50 border border-slate-200'
+                      : 'bg-white dark:bg-[#2C2746] text-slate-700 dark:text-slate-200 hover:bg-pink-50 dark:hover:bg-[#352F54] border border-slate-200 dark:border-white/10'
                   }`}
                 >
                   Últimos 7 Días
@@ -373,7 +373,7 @@ export const SalesHistorySection: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                     weekSubFilter === 'previous'
                       ? 'bg-fio-800 text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-pink-50 border border-slate-200'
+                      : 'bg-white dark:bg-[#2C2746] text-slate-700 dark:text-slate-200 hover:bg-pink-50 dark:hover:bg-[#352F54] border border-slate-200 dark:border-white/10'
                   }`}
                 >
                   Semana Pasada
@@ -389,7 +389,7 @@ export const SalesHistorySection: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                     monthSubFilter === 'current'
                       ? 'bg-fio-800 text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-pink-50 border border-slate-200'
+                      : 'bg-white dark:bg-[#2C2746] text-slate-700 dark:text-slate-200 hover:bg-pink-50 dark:hover:bg-[#352F54] border border-slate-200 dark:border-white/10'
                   }`}
                 >
                   Este Mes
@@ -400,12 +400,12 @@ export const SalesHistorySection: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
                     monthSubFilter === 'previous'
                       ? 'bg-fio-800 text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-pink-50 border border-slate-200'
+                      : 'bg-white dark:bg-[#2C2746] text-slate-700 dark:text-slate-200 hover:bg-pink-50 dark:hover:bg-[#352F54] border border-slate-200 dark:border-white/10'
                   }`}
                 >
                   Mes Pasado
                 </button>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white border border-slate-200">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#2C2746] border border-slate-200 dark:border-white/10">
                   <span className="text-[11px] font-bold text-slate-500">Mes:</span>
                   <input
                     type="month"
@@ -414,7 +414,7 @@ export const SalesHistorySection: React.FC = () => {
                       setCustomMonth(e.target.value);
                       setMonthSubFilter('custom');
                     }}
-                    className="text-xs font-semibold text-slate-800 bg-transparent outline-none cursor-pointer"
+                    className="text-xs font-semibold text-slate-800 dark:text-white bg-transparent outline-none cursor-pointer"
                   />
                 </div>
               </>
@@ -431,7 +431,7 @@ export const SalesHistorySection: React.FC = () => {
               placeholder="Buscar por # orden, cliente, teléfono o producto..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-8 py-2 bg-white rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-fio-400 focus:outline-none text-slate-800"
+              className="w-full pl-10 pr-8 py-2 bg-white dark:bg-[#151124] rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold focus:ring-2 focus:ring-fio-400 focus:outline-none text-slate-800 dark:text-white"
             />
             {searchQuery && (
               <button
@@ -448,7 +448,7 @@ export const SalesHistorySection: React.FC = () => {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value as any)}
-              className="px-3 py-2 bg-white rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+              className="px-3 py-2 bg-white dark:bg-[#2C2746] rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
             >
               <option value="all">Categoría: Todas</option>
               <option value="store">Tienda &amp; Catálogo</option>

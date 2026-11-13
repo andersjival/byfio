@@ -352,14 +352,14 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
 
   if (subView === 'menu') {
     return (
-      <div className="bg-white rounded-3xl border border-fio-200 shadow-clay p-6 sm:p-8 space-y-6 animate-fadeIn">
+      <div className="bg-white dark:bg-[#1E1A30] rounded-3xl border border-fio-200 dark:border-white/10 shadow-clay p-6 sm:p-8 space-y-6 animate-fadeIn">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center shadow-md">
             <Truck className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="font-bubble font-bold text-xl sm:text-2xl text-fio-900">Módulo de Proveedores</h2>
-            <p className="text-xs sm:text-sm text-slate-500">Selecciona una opción para gestionar órdenes o ingresar facturas y productos de proveedores.</p>
+            <h2 className="font-bubble font-bold text-xl sm:text-2xl text-fio-900 dark:text-white">Módulo de Proveedores</h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300">Selecciona una opción para gestionar órdenes o ingresar facturas y productos de proveedores.</p>
           </div>
         </div>
 
@@ -367,15 +367,15 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
           <button
             type="button"
             onClick={() => setSubView('orders')}
-            className="group text-left rounded-3xl p-6 bg-amber-50/70 hover:bg-amber-100/80 border-2 border-amber-200 hover:border-amber-400 shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] flex items-center justify-between gap-4"
+            className="group text-left rounded-3xl p-6 bg-amber-50/70 dark:bg-[#2C2338] hover:bg-amber-100/80 dark:hover:bg-[#352A44] border-2 border-amber-200 dark:border-amber-500/30 hover:border-amber-400 dark:hover:border-amber-400/60 shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] flex items-center justify-between gap-4"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md shrink-0">
                 <Truck className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bubble font-bold text-lg text-slate-900">Pedidos a Proveedores</h3>
-                <p className="text-xs text-slate-600 mt-0.5">Historial, borradores, requisiciones y directorio ({totalCount} registros).</p>
+                <h3 className="font-bubble font-bold text-lg text-slate-900 dark:text-white dark:text-white">Pedidos a Proveedores</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">Historial, borradores, requisiciones y directorio ({totalCount} registros).</p>
               </div>
             </div>
             <ArrowRight className="w-5 h-5 text-amber-700 group-hover:translate-x-1 transition-transform shrink-0" />
@@ -384,7 +384,7 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
           <button
             type="button"
             onClick={() => setSubView('intake')}
-            className="group text-left rounded-3xl p-6 bg-purple-50/70 hover:bg-purple-100/80 border-2 border-purple-200 hover:border-purple-400 shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] flex items-center justify-between gap-4"
+            className="group text-left rounded-3xl p-6 bg-purple-50/70 dark:bg-[#282245] hover:bg-purple-100/80 dark:hover:bg-[#322B55] border-2 border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-400/60 shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] flex items-center justify-between gap-4"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-700 to-fio-pink text-white flex items-center justify-center shadow-md shrink-0">
@@ -392,7 +392,7 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
               </div>
               <div>
                 <h3 className="font-bubble font-bold text-lg text-slate-900">Ingresar pedido de Proveedor</h3>
-                <p className="text-xs text-slate-600 mt-0.5">Registrar factura de proveedor, montos e ingresar productos manualmente.</p>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">Registrar factura de proveedor, montos e ingresar productos manualmente.</p>
               </div>
             </div>
             <ArrowRight className="w-5 h-5 text-purple-700 group-hover:translate-x-1 transition-transform shrink-0" />

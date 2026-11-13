@@ -572,7 +572,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl border border-slate-200">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white dark:bg-[#1E1A30] rounded-xl border border-slate-200 dark:border-white/10">
                   <span className="text-[11px] font-bold text-slate-500">Por Día:</span>
                   <input
                     type="date"
@@ -581,11 +581,11 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                       setHistoryFilterDate(e.target.value);
                       setHistoryFilterMonth('');
                     }}
-                    className="text-xs font-semibold text-slate-800 bg-transparent outline-none flex-1 cursor-pointer"
+                    className="text-xs font-semibold text-slate-800 dark:text-white bg-transparent outline-none flex-1 cursor-pointer"
                   />
                 </div>
 
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-xl border border-slate-200">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white dark:bg-[#1E1A30] rounded-xl border border-slate-200 dark:border-white/10">
                   <span className="text-[11px] font-bold text-slate-500">Por Mes:</span>
                   <input
                     type="month"
@@ -594,7 +594,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                       setHistoryFilterMonth(e.target.value);
                       setHistoryFilterDate('');
                     }}
-                    className="text-xs font-semibold text-slate-800 bg-transparent outline-none flex-1 cursor-pointer"
+                    className="text-xs font-semibold text-slate-800 dark:text-white bg-transparent outline-none flex-1 cursor-pointer"
                   />
                 </div>
               </div>

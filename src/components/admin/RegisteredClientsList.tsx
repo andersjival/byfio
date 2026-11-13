@@ -74,7 +74,7 @@ export const RegisteredClientsList: React.FC = () => {
   const [copiedWazeClientId, setCopiedWazeClientId] = useState<string | null>(null);
 
   const getWazeUrlForClient = (client: RegisteredClientUser) => {
-    if (client.lat && client.lng) {
+    if (typeof client.lat === 'number' && typeof client.lng === 'number' && !isNaN(client.lat) && !isNaN(client.lng) && (client.lat !== 0 || client.lng !== 0)) {
       return `https://waze.com/ul?ll=${client.lat},${client.lng}&navigate=yes`;
     }
     if (!client.address || !client.address.trim()) return '';

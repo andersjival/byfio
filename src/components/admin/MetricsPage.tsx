@@ -1351,7 +1351,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('all')}
-                style={ecosystemFilter === 'all' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+                
                 className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   ecosystemFilter === 'all'
                     ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
@@ -1366,7 +1366,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('store')}
-                style={ecosystemFilter === 'store' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+                
                 className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   ecosystemFilter === 'store'
                     ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
@@ -1381,7 +1381,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
               <button
                 type="button"
                 onClick={() => setEcosystemFilter('admin')}
-                style={ecosystemFilter === 'admin' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+                
                 className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   ecosystemFilter === 'admin'
                     ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
@@ -2314,7 +2314,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
             <button
               type="button"
               onClick={() => setSectionFilterCategory('all')}
-              style={sectionFilterCategory === 'all' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+              
               className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 sectionFilterCategory === 'all'
                   ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
@@ -2329,7 +2329,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
             <button
               type="button"
               onClick={() => setSectionFilterCategory('store')}
-              style={sectionFilterCategory === 'store' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+              
               className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 sectionFilterCategory === 'store'
                   ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'
@@ -2344,7 +2344,7 @@ Generado el ${new Date().toLocaleDateString('es-CR')} ${new Date().toLocaleTimeS
             <button
               type="button"
               onClick={() => setSectionFilterCategory('admin')}
-              style={sectionFilterCategory === 'admin' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+              
               className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 sectionFilterCategory === 'admin'
                   ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 border border-purple-400 scale-[1.02]'

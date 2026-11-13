@@ -251,6 +251,8 @@ export interface Customer {
 
   email?: string;
   address?: string;
+  lat?: number;
+  lng?: number;
   notes?: string;
   createdAt: string;
   createdBy?: string;

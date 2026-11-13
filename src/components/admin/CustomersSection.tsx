@@ -16,6 +16,7 @@ import {
   buildCustomerPurchaseMap,
 } from '../../utils/customerPurchases';
 import { CustomerPurchaseHistoryModal } from './CustomerPurchaseHistoryModal';
+import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 
 interface CustomersSectionProps {
   onSelectCustomerForBilling?: (customer: Customer) => void;
@@ -52,7 +53,10 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [copiedWazeCustomerId, setCopiedWazeCustomerId] = useState<string | null>(null);
 
-  const getWazeUrl = (address?: string) => {
+  const getWazeUrl = (address?: string, lat?: number, lng?: number) => {
+    if (typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng) && (lat !== 0 || lng !== 0)) {
+      return `https://waze.com/ul?ll=${lat},${lng}&navigate=yes`;
+    }
     if (!address || !address.trim()) return '';
     const cleanAddr = address.trim();
     const coordsMatch = cleanAddr.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
@@ -65,8 +69,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     return `https://waze.com/ul?q=${encodeURIComponent(query)}&navigate=yes`;
   };
 
-  const handleCopyWazeLink = (customerId: string, address?: string) => {
-    const url = getWazeUrl(address);
+  const handleCopyWazeLink = (customerId: string, address?: string, lat?: number, lng?: number) => {
+    const url = getWazeUrl(address, lat, lng);
     if (!url) return;
     navigator.clipboard.writeText(url);
     setCopiedWazeCustomerId(customerId);
@@ -80,6 +84,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
+  const [customerLat, setCustomerLat] = useState<number | undefined>(undefined);
+  const [customerLng, setCustomerLng] = useState<number | undefined>(undefined);
   const [cedula, setCedula] = useState('');
   const [notes, setNotes] = useState('');
   const [createdBy, setCreatedBy] = useState('');
@@ -173,6 +179,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     setPhone('');
     setEmail('');
     setAddress('');
+    setCustomerLat(undefined);
+    setCustomerLng(undefined);
     setCedula('');
     setNotes('');
     setCreatedBy(currentUser?.name || 'Administración (Fio)');
@@ -188,6 +196,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
     setPhone(customer.phone || '');
     setEmail(customer.email || '');
     setAddress(customer.address || '');
+    setCustomerLat(customer.lat);
+    setCustomerLng(customer.lng);
     setCedula(customer.customFields?.['field-cedula'] || '');
     setNotes(customer.notes || '');
     setCreatedBy(customer.createdBy || currentUser?.name || 'Administración (Fio)');
@@ -224,6 +234,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
         phone: cleanPhone,
         email: email.trim() || undefined,
         address: address.trim() || undefined,
+        lat: customerLat,
+        lng: customerLng,
         notes: notes.trim() || undefined,
         createdBy: createdBy.trim() || editingCustomer.createdBy || currentUser?.name || 'Administración',
         customFields: Object.keys(mergedCustomFields).length > 0 ? mergedCustomFields : undefined,
@@ -235,6 +247,8 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
         phone: cleanPhone,
         email: email.trim() || undefined,
         address: address.trim() || undefined,
+        lat: customerLat,
+        lng: customerLng,
         notes: notes.trim() || undefined,
         createdAt: createdAtDisplay || new Date().toISOString(),
         createdBy: createdBy.trim() || currentUser?.name || 'Administración (Fio)',
@@ -359,7 +373,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
               filterMode === 'vip'
                 ? 'bg-amber-500 text-white shadow-xs'
-                : 'bg-white text-amber-800 hover:bg-amber-50 border border-amber-200'
+                : 'bg-white dark:bg-[#2C2746] text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-[#352F54] border border-amber-200 dark:border-amber-500/30'
             }`}
           >
             <Crown className="w-3.5 h-3.5" />
@@ -383,15 +397,15 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
           </div>
 
           <div
-            className="flex items-center gap-1.5 bg-amber-50/90 px-2.5 py-1 rounded-xl border border-amber-200"
+            className="flex items-center gap-1.5 bg-amber-50/90 dark:bg-[#282245] px-2.5 py-1 rounded-xl border border-amber-200 dark:border-amber-500/30"
             title="Elige cuántas compras debe tener un cliente para ser VIP"
           >
             <Crown className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span className="text-[11px] font-bold text-amber-900 whitespace-nowrap">VIP mín:</span>
+            <span className="text-[11px] font-bold text-amber-900 dark:text-amber-200 whitespace-nowrap">VIP mín:</span>
             <button
               type="button"
               onClick={() => handleVipThresholdChange(vipMinPurchases - 1)}
-              className="w-5 h-5 rounded-md bg-white hover:bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-800 cursor-pointer"
+              className="w-5 h-5 rounded-md bg-white dark:bg-[#352F54] hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-500/40 flex items-center justify-center text-amber-800 dark:text-amber-200 cursor-pointer"
               aria-label="Disminuir compras para VIP"
             >
               <Minus className="w-3 h-3" />
@@ -402,17 +416,17 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
               max={999}
               value={vipMinPurchases}
               onChange={(e) => handleVipThresholdChange(parseInt(e.target.value, 10) || 1)}
-              className="w-11 text-center text-xs font-mono font-black text-amber-950 bg-white rounded-md border border-amber-200 py-0.5 focus:outline-none focus:ring-1 focus:ring-amber-400"
+              className="w-11 text-center text-xs font-mono font-black text-amber-950 dark:text-white bg-white dark:bg-[#1E1A30] rounded-md border border-amber-200 dark:border-amber-500/40 py-0.5 focus:outline-none focus:ring-1 focus:ring-amber-400"
             />
             <button
               type="button"
               onClick={() => handleVipThresholdChange(vipMinPurchases + 1)}
-              className="w-5 h-5 rounded-md bg-white hover:bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-800 cursor-pointer"
+              className="w-5 h-5 rounded-md bg-white dark:bg-[#352F54] hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-500/40 flex items-center justify-center text-amber-800 dark:text-amber-200 cursor-pointer"
               aria-label="Aumentar compras para VIP"
             >
               <Plus className="w-3 h-3" />
             </button>
-            <span className="text-[10px] font-bold text-amber-800">compras</span>
+            <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300">compras</span>
           </div>
         </div>
       </div>
@@ -531,16 +545,23 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                       </div>
                     )}
 
-                    {cust.address && (
+                    {(cust.address || (typeof cust.lat === 'number' && typeof cust.lng === 'number')) && (
                       <div className="pt-1 space-y-1.5">
                         <div className="flex items-start gap-2 text-[11px] text-slate-600">
                           <MapPin className="w-3.5 h-3.5 text-fio-pink shrink-0 mt-0.5" />
-                          <span className="line-clamp-2 leading-relaxed">{cust.address}</span>
+                          <div className="min-w-0 flex-1">
+                            <span className="line-clamp-2 leading-relaxed">{cust.address || 'Ubicación fijada con pin en mapa GPS'}</span>
+                            {typeof cust.lat === 'number' && typeof cust.lng === 'number' && (
+                              <span className="block text-[9px] font-mono text-emerald-700 font-semibold">
+                                GPS Pin: {cust.lat.toFixed(5)}, {cust.lng.toFixed(5)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         {/* Botones Waze y Copiar Link para mensajero */}
                         <div className="flex items-center gap-1.5 pl-5">
                           <a
-                            href={getWazeUrl(cust.address)}
+                            href={getWazeUrl(cust.address, cust.lat, cust.lng)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#33CCFF] hover:bg-[#1EBEF5] text-slate-950 font-bubble font-bold text-[11px] shadow-2xs active:scale-95 transition-all cursor-pointer"
@@ -555,7 +576,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
 
                           <button
                             type="button"
-                            onClick={() => handleCopyWazeLink(cust.id, cust.address)}
+                            onClick={() => handleCopyWazeLink(cust.id, cust.address, cust.lat, cust.lng)}
                             className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bubble font-bold border transition-all active:scale-95 cursor-pointer shadow-2xs ${
                               copiedWazeCustomerId === cust.id
                                 ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
@@ -580,11 +601,11 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                     )}
 
                     {cust.notes && (
-                      <div className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 mt-1">
-                        <p className="font-bold flex items-center gap-1 text-[10px] uppercase text-amber-800">
+                      <div className="p-2.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-500/30 text-[11px] text-amber-900 dark:text-amber-200 mt-1">
+                        <p className="font-bold flex items-center gap-1 text-[10px] uppercase text-amber-800 dark:text-amber-300">
                           <span>📌 Notas del Cliente:</span>
                         </p>
-                        <p className="mt-0.5 text-amber-950 font-sans italic">{cust.notes}</p>
+                        <p className="mt-0.5 text-amber-950 dark:text-amber-100 font-sans italic">{cust.notes}</p>
                       </div>
                     )}
 
@@ -804,6 +825,41 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Provincia, cantón, distrito y señas exactas..."
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
+                  />
+                </div>
+
+                {/* Pin GPS en Mapa Interactivo para Waze */}
+                <div className="space-y-1.5 p-3 rounded-2xl bg-slate-50 dark:bg-[#1E1A30] border border-slate-200 dark:border-white/10">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-fio-pink" />
+                      <span>Ubicación Exacta en el Mapa (Pin GPS para Waze)</span>
+                    </label>
+                    {typeof customerLat === 'number' && typeof customerLng === 'number' ? (
+                      <span className="text-[10px] font-mono text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full font-bold">
+                        Pin fijado ({customerLat.toFixed(4)}, {customerLng.toFixed(4)})
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-amber-700 bg-amber-100/70 px-2 py-0.5 rounded-full font-medium">
+                        Sin pin en mapa
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-500 leading-tight">
+                    Arrastra el pin o toca el mapa para ubicar la casa o negocio. El enlace de Waze llevará al mensajero directamente a este punto.
+                  </p>
+                  <InteractiveMapPicker
+                    lat={typeof customerLat === 'number' ? customerLat : 9.9575}
+                    lng={typeof customerLng === 'number' ? customerLng : -84.0818}
+                    height="210px"
+                    showGpsButton={true}
+                    onChange={(coords) => {
+                      setCustomerLat(coords.lat);
+                      setCustomerLng(coords.lng);
+                      if (coords.addressSuggestion && !address.trim()) {
+                        setAddress(coords.addressSuggestion);
+                      }
+                    }}
                   />
                 </div>
 

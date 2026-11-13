@@ -271,7 +271,7 @@ export const SinpePaymentsSection: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
             {/* Opción 1: Sistema 1 - Verificación Automática por Correo Gmail (0% Comisión) */}
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50/40 to-white border border-purple-200 shadow-2xs space-y-2 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50/40 to-white dark:from-[#251F3D] dark:via-[#1E1A30] dark:to-[#282245] border border-purple-200 dark:border-purple-500/30 shadow-2xs space-y-2 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
@@ -290,14 +290,14 @@ export const SinpePaymentsSection: React.FC = () => {
                   <strong>Condición obligatoria:</strong> Requiere que el banco emita comprobantes a una bandeja <strong>Gmail</strong>. <em>Si el cliente no tiene sistema de confirmación de correo en su banco, NO se puede instalar este Sistema 1</em> y debe optarse por el Sistema Semiautomático o la pasarela.
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-purple-900 bg-purple-100/70 px-2.5 py-1 rounded-xl border border-purple-200">
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-purple-900 bg-purple-100/70 dark:bg-purple-900/40 px-2.5 py-1 rounded-xl border border-purple-200 dark:border-purple-500/30">
                 <CheckCircle2 className="w-3.5 h-3.5 text-purple-700 shrink-0" />
                 <span>100% automático • Requiere reenvío Gmail</span>
               </div>
             </div>
 
             {/* Opción 2: Sistema Semiautomático - Verificación por Referencia y SMS (0% Comisión) */}
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-teal-50/80 via-emerald-50/30 to-white border border-teal-200 shadow-2xs space-y-2 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-teal-50/80 via-emerald-50/30 to-white dark:from-[#1A2E2C] dark:via-[#1A2530] dark:to-[#1E1A30] border border-teal-200 dark:border-teal-500/30 shadow-2xs space-y-2 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
@@ -316,14 +316,14 @@ export const SinpePaymentsSection: React.FC = () => {
                   <strong>En caso de no tener confirmación por correo:</strong> El cliente ingresa el número de referencia en el producto. Al llegar al panel, el administrador lo verifica contra el <strong>SMS o notificación</strong> de su teléfono. Al corroborar la referencia, pulsa <strong>"Confirmar Pago"</strong> y se acredita en caja.
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-teal-900 bg-teal-100/70 px-2.5 py-1 rounded-xl border border-teal-200">
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-teal-900 bg-teal-100/70 dark:bg-teal-900/40 px-2.5 py-1 rounded-xl border border-teal-200 dark:border-teal-500/30">
                 <CheckCircle2 className="w-3.5 h-3.5 text-teal-700 shrink-0" />
                 <span>0% comisión • Validación contra SMS en panel</span>
               </div>
             </div>
 
             {/* Opción 3: Sistema 3 - Pasarela de Confirmación Bancaria Directa (1.5% Comisión) */}
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50/80 via-orange-50/30 to-white border border-amber-300/80 shadow-2xs space-y-2 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50/80 via-orange-50/30 to-white dark:from-[#352518] dark:via-[#2B1F20] dark:to-[#1E1A30] border border-amber-300/80 dark:border-amber-500/30 shadow-2xs space-y-2 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
@@ -342,7 +342,7 @@ export const SinpePaymentsSection: React.FC = () => {
                   <strong>Alternativa con pasarela de pago:</strong> En caso de que el cliente no pueda o no desee el sistema semiautomático, puede optar por la confirmación bancaria con <strong>1.5% de comisión</strong>. Requiere que el comercio esté formalmente inscrito en el <strong>Régimen Simplificado</strong>.
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-amber-900 bg-amber-100/80 px-2.5 py-1 rounded-xl border border-amber-200">
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-amber-900 bg-amber-100/80 dark:bg-amber-900/40 px-2.5 py-1 rounded-xl border border-amber-200 dark:border-amber-500/30">
                 <Building2 className="w-3.5 h-3.5 text-amber-700 shrink-0" />
                 <span>Confirmación bancaria directa • Régimen Simplificado</span>
               </div>
@@ -352,35 +352,35 @@ export const SinpePaymentsSection: React.FC = () => {
 
         {/* Cintas Resumen de Ingresos por SINPE BCR */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-          <div className="p-4 rounded-2xl bg-purple-50/80 border border-purple-200/80 flex items-center gap-3">
+          <div className="p-4 rounded-2xl bg-purple-50/80 dark:bg-[#282245] border border-purple-200/80 dark:border-purple-500/30 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-purple-700 text-white flex items-center justify-center shrink-0 shadow-sm">
               <DollarSign className="w-5 h-5 text-amber-300" />
             </div>
             <div>
-              <p className="text-[11px] font-bubble font-bold text-purple-900 uppercase">Total SINPE BCR Verificado</p>
-              <p className="font-bubble font-bold text-xl text-purple-950 mt-0.5">{formatCRC(totalSinpeVerified)}</p>
+              <p className="text-[11px] font-bubble font-bold text-purple-900 dark:text-purple-300 uppercase">Total SINPE BCR Verificado</p>
+              <p className="font-bubble font-bold text-xl text-purple-950 dark:text-white mt-0.5">{formatCRC(totalSinpeVerified)}</p>
               <span className="text-[10px] text-purple-700/80 font-medium">{sinpeTransactions.length} comprobantes procesados</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200/80 flex items-center gap-3">
+          <div className="p-4 rounded-2xl bg-blue-50/80 dark:bg-[#1E2548] border border-blue-200/80 dark:border-blue-500/30 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
               <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-bubble font-bold text-blue-900 uppercase">Acreditado a Tienda &amp; Catálogo</p>
-              <p className="font-bubble font-bold text-xl text-blue-950 mt-0.5">{formatCRC(totalStoreSinpe)}</p>
+              <p className="text-[11px] font-bubble font-bold text-blue-900 dark:text-blue-300 uppercase">Acreditado a Tienda &amp; Catálogo</p>
+              <p className="font-bubble font-bold text-xl text-blue-950 dark:text-white mt-0.5">{formatCRC(totalStoreSinpe)}</p>
               <span className="text-[10px] text-blue-700/80 font-medium">{sinpeTransactions.filter(t => t.category === 'store').length} pagos a productos</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-pink-50/80 border border-pink-200/80 flex items-center gap-3">
+          <div className="p-4 rounded-2xl bg-pink-50/80 dark:bg-[#351F35] border border-pink-200/80 dark:border-pink-500/30 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-pink-600 text-white flex items-center justify-center shrink-0 shadow-sm">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-bubble font-bold text-pink-900 uppercase">Acreditado a Talleres Creativos</p>
-              <p className="font-bubble font-bold text-xl text-pink-950 mt-0.5">{formatCRC(totalWorkshopSinpe)}</p>
+              <p className="text-[11px] font-bubble font-bold text-pink-900 dark:text-pink-300 uppercase">Acreditado a Talleres Creativos</p>
+              <p className="font-bubble font-bold text-xl text-pink-950 dark:text-white mt-0.5">{formatCRC(totalWorkshopSinpe)}</p>
               <span className="text-[10px] text-pink-700/80 font-medium">{sinpeTransactions.filter(t => t.category === 'workshop').length} inscripciones de alumnos</span>
             </div>
           </div>
@@ -388,15 +388,15 @@ export const SinpePaymentsSection: React.FC = () => {
       </div>
 
       {/* Pestañas de Navegación del Módulo */}
-      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-200/80 border border-slate-300/80 shrink-0 flex-wrap">
+      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-200/80 dark:bg-[#1C1830] border border-slate-300/80 dark:border-white/10 shrink-0 flex-wrap">
         <button
           type="button"
           onClick={() => setActiveTab('extract')}
-          style={activeTab === 'extract' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+          
           className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'extract'
               ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 scale-[1.01]'
-              : 'bg-white text-slate-800 hover:text-purple-700 hover:bg-purple-50 shadow-xs border border-slate-300/80'
+              : 'bg-white dark:bg-[#2C2746] text-slate-800 dark:text-slate-200 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-[#352F54] shadow-xs border border-slate-300/80 dark:border-white/10'
           }`}
         >
           <Mail className={`w-3.5 h-3.5 ${activeTab === 'extract' ? 'text-amber-300' : 'text-purple-600'}`} />
@@ -407,11 +407,11 @@ export const SinpePaymentsSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('settings')}
-            style={activeTab === 'settings' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+            
             className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'settings'
                 ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 scale-[1.01]'
-                : 'bg-white text-slate-800 hover:text-purple-700 hover:bg-purple-50 shadow-xs border border-slate-300/80'
+                : 'bg-white dark:bg-[#2C2746] text-slate-800 dark:text-slate-200 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-[#352F54] shadow-xs border border-slate-300/80 dark:border-white/10'
             }`}
           >
             <Mail className={`w-3.5 h-3.5 ${activeTab === 'settings' ? 'text-blue-300' : 'text-blue-600'}`} />
@@ -425,11 +425,11 @@ export const SinpePaymentsSection: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('history')}
-          style={activeTab === 'history' ? { backgroundColor: '#581C87', color: '#FFFFFF' } : { backgroundColor: '#FFFFFF', color: '#1E293B' }}
+          
           className={`px-4 py-2 rounded-xl text-xs font-bubble font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'history'
               ? 'bg-purple-900 text-white shadow-md ring-2 ring-purple-400/80 scale-[1.01]'
-              : 'bg-white text-slate-800 hover:text-purple-700 hover:bg-purple-50 shadow-xs border border-slate-300/80'
+              : 'bg-white dark:bg-[#2C2746] text-slate-800 dark:text-slate-200 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-[#352F54] shadow-xs border border-slate-300/80 dark:border-white/10'
           }`}
         >
           <ShieldCheck className={`w-3.5 h-3.5 ${activeTab === 'history' ? 'text-emerald-300' : 'text-emerald-600'}`} />

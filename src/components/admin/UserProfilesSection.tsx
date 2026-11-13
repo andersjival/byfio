@@ -312,7 +312,7 @@ export const UserProfilesSection: React.FC = () => {
       </div>
 
       {/* Tarjeta Informativa: Acceso con PIN de 4 Dígitos */}
-      <div className="p-4 rounded-2xl bg-purple-50/80 border border-purple-200/80 text-xs text-purple-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+      <div className="p-4 rounded-2xl bg-purple-50/80 dark:bg-[#282245] border border-purple-200/80 dark:border-purple-500/30 text-xs text-purple-950 dark:text-purple-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-2.5">
           <Shield className="w-4 h-4 text-fio-purple shrink-0" />
           <div>
@@ -322,7 +322,7 @@ export const UserProfilesSection: React.FC = () => {
             </span>
           </div>
         </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-purple-200 font-mono text-[11px] font-bold text-purple-800 self-start sm:self-auto shrink-0 shadow-2xs">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-[#1E1A30] border border-purple-200 dark:border-white/15 font-mono text-[11px] font-bold text-purple-800 dark:text-purple-200 self-start sm:self-auto shrink-0 shadow-2xs">
           <span>Ej: PIN 1001 &rarr; ALISTO DE PEDIDOS</span>
         </div>
       </div>

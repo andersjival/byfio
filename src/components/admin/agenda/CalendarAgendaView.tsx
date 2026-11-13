@@ -13,6 +13,7 @@ import { CalendarTopBar } from './CalendarTopBar';
 import { BlockSpaceModal } from './BlockSpaceModal';
 import { CalendarSyncModal } from './CalendarSyncModal';
 import { AgendaItem, AgendaCategory, Workshop } from '../../../types';
+import { useApp } from '../../../context/AppContext';
 import { syncCalendarBlockedSpacesToCloud } from '../../../utils/storeConfigSync';
 import {
   Plus,
@@ -176,7 +177,22 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
     } catch {}
   };
 
-  const themeConfig = CALENDAR_THEMES[calendarTheme] || CALENDAR_THEMES.celeste;
+  const { colorTheme } = useApp();
+  const isDark = colorTheme === 'dark';
+  const rawThemeConfig = CALENDAR_THEMES[calendarTheme] || CALENDAR_THEMES.celeste;
+  const themeConfig = useMemo(() => {
+    if (!isDark) return rawThemeConfig;
+    return {
+      ...rawThemeConfig,
+      bgContainer: '#1E1A30',
+      bgHeader: '#282245',
+      bgHourCol: '#231E38',
+      borderTable: 'rgba(255, 255, 255, 0.12)',
+      borderDiv: 'rgba(255, 255, 255, 0.08)',
+      hoverCell: 'rgba(255, 255, 255, 0.05)',
+      accentText: '#C084FC',
+    };
+  }, [rawThemeConfig, isDark]);
 
     // Estado de Bloqueos de Espacio (Almuerzo y personalizados)
   const [blockedSpaces, setBlockedSpaces] = useState<BlockedSpace[]>(() => {
@@ -633,7 +649,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                         <th
                           className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-purple-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                           style={{
-                            backgroundColor: '#FAF5FF',
+                            backgroundColor: isDark ? '#352F54' : '#FAF5FF',
                             borderRight: `1px solid ${themeConfig.borderDiv}`,
                             borderBottom: `1px solid ${themeConfig.borderDiv}`,
                           }}
@@ -643,7 +659,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                         <th
                           className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-sky-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                           style={{
-                            backgroundColor: '#F0F9FF',
+                            backgroundColor: isDark ? '#2C2746' : '#F0F9FF',
                             borderBottom: `1px solid ${themeConfig.borderDiv}`,
                           }}
                         >
