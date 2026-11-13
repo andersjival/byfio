@@ -1,3 +1,27 @@
+## [v4.19.153] - 2026-11-13
+
+### 🎨 Personalización Cromática de Segmentos de Registro de Caja
+- **Segmentos de Caja Actualizados ([CashRegisterReports.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx), [DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Segmento **Tienda & Catálogo**: migrado de azul clásico a celeste (`sky-50`, `sky-200`, `sky-600`, `sky-700`, `sky-900`, `dark:border-sky-500/40`).
+  - Segmento **Ganancia Neta Est.**: migrado de verde esmeralda a turquesa (`teal-50`, `teal-200`, `teal-600`, `teal-700`, `teal-900`, `dark:border-teal-500/40`).
+- **Soporte de Tema Oscuro ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Separados los estilos oscuros independientes para tonos `sky` (#38BDF8 / celeste) y `teal` (#2DD4BF / turquesa) en gradientes, fondos y textos, evitando que se mezclen con azul marino o verde esmeralda.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.153`.
+
+---
+
+## [v4.19.152] - 2026-11-13
+
+### 💜 Eliminación de Bordes y Píldora de Deuda en Morado en Apartados
+- **Píldoras Financieras Sin Bordes ([AdminLayawaysSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminLayawaysSection.tsx))**:
+  - Eliminados los bordes de los badges de montos (*Total*, *Abonado* y *Debe*) para un diseño limpio, moderno y sin sobrecarga visual.
+  - Actualizado el botón/píldora de *Debe:* de color ámbar/café a morado suave (`bg-purple-100 text-purple-900 font-bubble font-bold text-xs`) en plena armonía con la identidad de marca By.Fio.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.152`.
+
+---
+
 ## [v4.19.151] - 2026-11-13
 
 ### 🧹 Limpieza Visual en Centro de Aplicaciones

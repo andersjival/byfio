@@ -178,15 +178,9 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
     } catch {}
   };
 
-  const { colorTheme } = useApp();
-  const isDark = colorTheme === 'dark';
-
   const themeConfig = useMemo(() => {
-    if (isDark) {
-      return CALENDAR_DARK_THEMES[calendarTheme] || CALENDAR_DARK_THEMES.celeste;
-    }
     return CALENDAR_THEMES[calendarTheme] || CALENDAR_THEMES.celeste;
-  }, [calendarTheme, isDark]);
+  }, [calendarTheme]);
 
     // Estado de Bloqueos de Espacio (Almuerzo y personalizados)
   const [blockedSpaces, setBlockedSpaces] = useState<BlockedSpace[]>(() => {
@@ -351,7 +345,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                 <tr>
                   {/* Columna Hora */}
                   <th
-                    className="sticky top-0 left-0 z-30 w-16 sm:w-20 p-2 sm:p-3 text-center text-[11px] sm:text-xs font-bubble font-bold text-slate-600 dark:text-slate-300 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
+                    className="sticky top-0 left-0 z-30 w-16 sm:w-20 p-2 sm:p-3 text-center text-[11px] sm:text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
                     style={{
                       backgroundColor: themeConfig.bgHeader,
                       borderRight: `1px solid ${themeConfig.borderDiv}`,
@@ -394,11 +388,11 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                         <div className="flex items-center justify-between gap-1">
                           {/* Nombre del Día y Mes */}
                           <div className="min-w-0">
-                            <span className="font-bubble font-bold text-xs sm:text-sm text-slate-900 dark:text-white block truncate">
+                            <span className="font-bubble font-bold text-xs sm:text-sm text-slate-900 block truncate">
                               <span className="inline lg:hidden">{DAYS_NAMES_SHORT[idx]}</span>
                               <span className="hidden lg:inline">{dayName}</span>
                             </span>
-                            <span className="text-[11px] text-slate-400 dark:text-slate-300 font-sans block -mt-0.5">
+                            <span className="text-[11px] text-slate-500 font-sans block -mt-0.5">
                               {monthName}
                             </span>
                           </div>
@@ -415,7 +409,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                 className={`w-6 h-6 rounded-lg text-xs font-bubble font-bold flex items-center justify-center transition-all ${
                                   isToday
                                     ? 'bg-blue-600 text-white shadow-xs'
-                                    : 'bg-slate-200/80 dark:bg-white/10 text-slate-700 dark:text-slate-200'
+                                    : 'bg-slate-200/80 text-slate-700'
                                 }`}
                               >
                                 {dayNum}
@@ -435,7 +429,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     <tr key={hourLabel} className="transition-colors hover:bg-black/[0.015]">
                       {/* Columna Hora */}
                       <td
-                        className="sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 dark:text-slate-300 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
+                        className="sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
                         style={{
                           borderRight: `1px solid ${themeConfig.borderDiv}`,
                           borderBottom: `1px solid ${themeConfig.borderDiv}`,
@@ -612,10 +606,10 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     </span>
                   </div>
                   <div>
-                    <h3 className="font-bubble font-bold text-base sm:text-lg text-slate-900 dark:text-white leading-tight">
+                    <h3 className="font-bubble font-bold text-base sm:text-lg text-slate-900 leading-tight">
                       {DAYS_NAMES[(currentDate.getDay() + 6) % 7]}, {currentDate.getDate()} de {MONTHS_SHORT[currentDate.getMonth()]}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-sans">
+                    <p className="text-xs text-slate-500 font-sans">
                       {activePeriodAppointments.length} cita{activePeriodAppointments.length === 1 ? '' : 's'} programada{activePeriodAppointments.length === 1 ? '' : 's'} para este día
                     </p>
                   </div>
@@ -629,7 +623,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                 <thead>
                   <tr>
                     <th
-                      className="sticky top-0 left-0 z-30 w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600 dark:text-slate-300 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
+                      className="sticky top-0 left-0 z-30 w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
                       style={{
                         backgroundColor: themeConfig.bgHeader,
                         borderRight: `1px solid ${themeConfig.borderDiv}`,
@@ -641,9 +635,9 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     {teamFilter === 'all' ? (
                       <>
                         <th
-                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-purple-900 dark:text-purple-200 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-purple-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                           style={{
-                            backgroundColor: isDark ? '#352F54' : '#FAF5FF',
+                            backgroundColor: '#FAF5FF',
                             borderRight: `1px solid ${themeConfig.borderDiv}`,
                             borderBottom: `1px solid ${themeConfig.borderDiv}`,
                           }}
@@ -651,9 +645,9 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           Fiorella Brenes (Diseño &amp; Admin)
                         </th>
                         <th
-                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-sky-900 dark:text-sky-200 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-sky-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                           style={{
-                            backgroundColor: isDark ? '#2C2746' : '#F0F9FF',
+                            backgroundColor: '#F0F9FF',
                             borderBottom: `1px solid ${themeConfig.borderDiv}`,
                           }}
                         >
@@ -662,7 +656,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                       </>
                     ) : (
                       <th
-                        className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-slate-800 dark:text-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                        className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-slate-800 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                         style={{
                           backgroundColor: themeConfig.bgHeader,
                           borderBottom: `1px solid ${themeConfig.borderDiv}`,
@@ -685,7 +679,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     return (
                       <tr key={`daily-${hourLabel}`} className="hover:bg-black/[0.015] transition-colors">
                         <td
-                        className="sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 dark:text-slate-300 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
+                        className="sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
                         style={{
                           borderRight: `1px solid ${themeConfig.borderDiv}`,
                           borderBottom: `1px solid ${themeConfig.borderDiv}`,
