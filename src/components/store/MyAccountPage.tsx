@@ -6,10 +6,11 @@ import {
   User, Mail, Phone, MapPin, Calendar, Clock, PackageCheck,
   Tag, Gift, Sparkles, Navigation, ExternalLink, Check, Copy,
   ShoppingBag, Truck, CheckCircle2, ChevronRight, Printer, RefreshCw,
-  ArrowLeft, LogOut, ShieldCheck
+  ArrowLeft, LogOut, ShieldCheck, Laptop, Palette, HardDrive, GraduationCap
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { AppRoute, AdminTabType } from '../../types';
+import { AppRoute, AdminTabType, Order, OrderItem } from '../../types';
+import { getLocalPurchases } from '../../services/driveCoursesService';
 import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { isLayawaySaleOrder } from '../../utils/layaway';
@@ -42,12 +43,14 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const {
     currentUser,
     orders,
+    workshops = [],
     setInvoiceOrder,
     updateCurrentUserData,
     logoutUser,
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'info' | 'orders' | 'promos' | 'offers'>('info');
+  const [purchasesSubTab, setPurchasesSubTab] = useState<'pedidos' | 'online' | 'talleres' | 'drive'>('pedidos');
 
   // Estados de datos editables del usuario
   const [phone, setPhone] = useState(currentUser?.phone || '');

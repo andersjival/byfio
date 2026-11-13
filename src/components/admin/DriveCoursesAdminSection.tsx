@@ -611,174 +611,245 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
         </div>
       )}
 
-      {/* MODAL CREAR / EDITAR CURSO */}
+      {/* MODAL CREAR / EDITAR CURSO - OPTIMIZADO PANTALLA COMPLETA SIN SCROLL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-purple-950/40 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl p-5 sm:p-6 w-full max-w-xl shadow-2xl space-y-4 my-8">
-            <div className="flex items-center justify-between border-b border-purple-100 pb-3">
-              <h3 className="font-bubble font-bold text-base text-slate-800">
-                {editingCourse ? 'Editar Curso Drive' : 'Crear Nuevo Curso Drive'}
-              </h3>
+        <div className="fixed inset-0 z-50 bg-purple-950/50 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl p-4 sm:p-5 w-full max-w-4xl lg:max-w-5xl shadow-2xl border border-purple-100 flex flex-col justify-between max-h-[96vh]">
+            {/* Header del Modal */}
+            <div className="flex items-center justify-between border-b border-purple-100 pb-2.5 shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-xl bg-purple-100 text-purple-800">
+                  <HardDrive className="w-4 h-4" />
+                </span>
+                <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-800">
+                  {editingCourse ? 'Editar Curso Drive' : 'Crear Nuevo Curso Drive'}
+                </h3>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-bubble font-bold border border-purple-200">
+                  Ajustes en Pantalla Completa
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 font-bubble text-sm"
+                className="w-7 h-7 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 font-bubble text-sm transition-colors"
+                title="Cerrar ventana"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleSaveCourse} className="space-y-3.5">
-              <div>
-                <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">Título del Curso</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Ej: Curso Completo de Encuadernación Artesanal"
-                  className="w-full px-3.5 py-2 rounded-xl border border-purple-200 text-xs font-sans text-slate-800"
-                />
-              </div>
+            <form onSubmit={handleSaveCourse} className="space-y-3 pt-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 items-start">
+                {/* COLUMNA IZQUIERDA: DATOS PRINCIPALES */}
+                <div className="space-y-2.5">
+                  <div>
+                    <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-0.5">
+                      Título del Curso *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="Ej: Curso Completo de Encuadernación Artesanal"
+                      className="w-full px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-sans text-slate-800 focus:outline-hidden focus:border-purple-600"
+                    />
+                  </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">Precio (Colones ₡)</label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2 rounded-xl border border-purple-200 text-xs font-sans text-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">Etiqueta / Badge</label>
-                  <input
-                    type="text"
-                    value={formData.badge}
-                    onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                    placeholder="Ej: Bestseller, Nuevo, 2027"
-                    className="w-full px-3.5 py-2 rounded-xl border border-purple-200 text-xs font-sans text-slate-800"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">Subtítulo / Tagline</label>
-                <input
-                  type="text"
-                  value={formData.tagline}
-                  onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
-                  placeholder="Resumen atractivo en 1 frase..."
-                  className="w-full px-3.5 py-2 rounded-xl border border-purple-200 text-xs font-sans text-slate-800"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">Descripción Completa</label>
-                <textarea
-                  rows={3}
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Explica qué aprenderá el alumno y las ventajas del curso..."
-                  className="w-full px-3.5 py-2 rounded-xl border border-purple-200 text-xs font-sans text-slate-800"
-                />
-              </div>
-
-              {/* Lo que obtendrás */}
-              <div>
-                <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                  Lo que obtendrá el alumno (Puntos destacados):
-                </label>
-                <div className="space-y-2">
-                  {formData.whatYouGet.map((point, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-0.5">
+                        Precio (Colones ₡) *
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        value={formData.price}
+                        onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                        className="w-full px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-sans text-slate-800 focus:outline-hidden focus:border-purple-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-0.5">
+                        Etiqueta / Badge
+                      </label>
                       <input
                         type="text"
-                        value={point}
-                        onChange={(e) => {
-                          const updated = [...formData.whatYouGet];
-                          updated[idx] = e.target.value;
-                          setFormData({ ...formData, whatYouGet: updated });
-                        }}
-                        placeholder={`Beneficio #${idx + 1}`}
-                        className="flex-1 px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-sans text-slate-800"
+                        value={formData.badge}
+                        onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                        placeholder="Ej: Bestseller, Nuevo"
+                        className="w-full px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-sans text-slate-800 focus:outline-hidden focus:border-purple-600"
                       />
-                      {formData.whatYouGet.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const updated = formData.whatYouGet.filter((_, i) => i !== idx);
-                            setFormData({ ...formData, whatYouGet: updated });
-                          }}
-                          className="text-rose-500 hover:text-rose-700 text-xs font-bold px-2"
-                        >
-                          ✕
-                        </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-0.5">
+                        Subtítulo / Tagline
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.tagline}
+                        onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+                        placeholder="Resumen atractivo en 1 frase..."
+                        className="w-full px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-sans text-slate-800 focus:outline-hidden focus:border-purple-600"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-end">
+                      <label className="flex items-center gap-2 p-1.5 rounded-xl bg-purple-50/80 border border-purple-200 cursor-pointer hover:bg-purple-100/60 transition-colors">
+                        <input
+                          type="checkbox"
+                          id="isActiveCourse"
+                          checked={formData.isActive}
+                          onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                          className="rounded text-purple-600"
+                        />
+                        <span className="text-[11px] font-bubble font-bold text-slate-700">
+                          Curso Activo para Clientes
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-0.5">
+                      Descripción Completa
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Explica qué aprenderá el alumno y las ventajas..."
+                      className="w-full px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-sans text-slate-800 focus:outline-hidden focus:border-purple-600 resize-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-0.5">
+                        Carpeta Google Drive (URL)
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.driveFolderUrl}
+                        onChange={(e) => setFormData({ ...formData, driveFolderUrl: e.target.value })}
+                        placeholder="https://drive.google.com/..."
+                        className="w-full px-3 py-1.5 rounded-xl border border-purple-200 text-[11px] font-mono text-slate-800 focus:outline-hidden focus:border-purple-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-0.5">
+                        Imagen Portada (URL)
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.coverImage}
+                        onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                        placeholder="https://..."
+                        className="w-full px-3 py-1.5 rounded-xl border border-purple-200 text-[11px] font-mono text-slate-800 focus:outline-hidden focus:border-purple-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* COLUMNA DERECHA: PUNTOS QUE OBTENDRÁ Y VISTA PREVIA COMPACTA */}
+                <div className="space-y-2.5">
+                  <div className="bg-purple-50/60 rounded-2xl p-3 border border-purple-100/90 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[11px] font-bubble font-bold text-purple-900">
+                        Lo que obtendrá el alumno (Puntos destacados):
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, whatYouGet: [...formData.whatYouGet, ''] })}
+                        className="text-purple-700 hover:text-purple-900 font-bubble text-[11px] font-bold"
+                      >
+                        + Agregar
+                      </button>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {formData.whatYouGet.slice(0, 4).map((point, idx) => (
+                        <div key={idx} className="flex items-center gap-1.5">
+                          <span className="w-4 text-center font-bubble font-bold text-[10px] text-purple-600 shrink-0">
+                            #{idx + 1}
+                          </span>
+                          <input
+                            type="text"
+                            value={point}
+                            onChange={(e) => {
+                              const updated = [...formData.whatYouGet];
+                              updated[idx] = e.target.value;
+                              setFormData({ ...formData, whatYouGet: updated });
+                            }}
+                            placeholder={`Beneficio del curso #${idx + 1}`}
+                            className="flex-1 px-2.5 py-1 rounded-lg border border-purple-200 text-xs font-sans text-slate-800 bg-white focus:outline-hidden focus:border-purple-600"
+                          />
+                          {formData.whatYouGet.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = formData.whatYouGet.filter((_, i) => i !== idx);
+                                setFormData({ ...formData, whatYouGet: updated });
+                              }}
+                              className="text-rose-500 hover:text-rose-700 text-xs font-bold px-1.5"
+                              title="Quitar punto"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Vista Previa en Vivo de la Tarjeta del Curso */}
+                  <div className="bg-[#FDFBF9] rounded-2xl p-2.5 border border-purple-200/80 flex items-center gap-3">
+                    <div className="w-20 h-16 rounded-xl bg-purple-100 overflow-hidden shrink-0 relative">
+                      {formData.coverImage ? (
+                        <img src={formData.coverImage} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-purple-400">
+                          <HardDrive className="w-6 h-6" />
+                        </div>
+                      )}
+                      {formData.badge && (
+                        <span className="absolute top-1 left-1 px-1.5 py-0.2 rounded-full bg-purple-700 text-white font-bubble font-bold text-[8px]">
+                          {formData.badge}
+                        </span>
                       )}
                     </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, whatYouGet: [...formData.whatYouGet, ''] })}
-                    className="text-purple-700 hover:text-purple-900 font-bubble text-xs font-bold"
-                  >
-                    + Agregar otro punto
-                  </button>
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <span className="text-[10px] font-bubble font-bold text-slate-400 block uppercase">
+                        Vista Previa en Vivo:
+                      </span>
+                      <h4 className="font-bubble font-bold text-xs text-slate-900 truncate">
+                        {formData.title || 'Título del curso'}
+                      </h4>
+                      <div className="flex items-center justify-between text-xs font-bubble font-black text-purple-800">
+                        <span>{formatCRC(formData.price || 0)}</span>
+                        <span className="text-[10px] font-normal text-slate-500 font-sans">
+                          {formData.isActive ? '✓ Visible' : 'Oculto'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                  Enlace a Carpeta de Google Drive
-                </label>
-                <input
-                  type="url"
-                  value={formData.driveFolderUrl}
-                  onChange={(e) => setFormData({ ...formData, driveFolderUrl: e.target.value })}
-                  placeholder="https://drive.google.com/drive/folders/..."
-                  className="w-full px-3.5 py-2 rounded-xl border border-purple-200 text-xs font-mono text-slate-800"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                  Imagen de Portada (URL)
-                </label>
-                <input
-                  type="url"
-                  value={formData.coverImage}
-                  onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                  placeholder="https://..."
-                  className="w-full px-3.5 py-2 rounded-xl border border-purple-200 text-xs font-mono text-slate-800"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="isActiveCourse"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="rounded text-purple-600"
-                />
-                <label htmlFor="isActiveCourse" className="text-xs font-bubble font-bold text-slate-700 cursor-pointer">
-                  Curso visible y activo para la venta
-                </label>
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-purple-100">
+              {/* Botones de Acción */}
+              <div className="flex items-center justify-end gap-2 pt-2.5 border-t border-purple-100 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-500 font-bubble text-xs font-bold hover:bg-slate-100"
+                  className="px-4 py-2 rounded-xl text-slate-500 font-bubble text-xs font-bold hover:bg-slate-100 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-md"
+                  className="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95"
                 >
                   Guardar Curso
                 </button>
