@@ -66,6 +66,8 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
   const [isTestingGmail, setIsTestingGmail] = useState(false);
   const [isTestingDrive, setIsTestingDrive] = useState(false);
   const [testEmailInput, setTestEmailInput] = useState('tienda@byfiocr.com');
+  const [driveDirectLink, setDriveDirectLink] = useState<string | null>(null);
+  const [gmailDirectLink, setGmailDirectLink] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -231,15 +233,37 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
     if (toolkit === 'googledrive') setIsConnectingDrive(true);
     else setIsConnectingGmail(true);
 
+    // Abrir ventana inmediatamente en el evento de clic para evitar que el navegador bloquee el popup
+    const popup = window.open('about:blank', '_blank');
+    if (popup) {
+      try {
+        popup.document.write(
+          '<div style="font-family: -apple-system, sans-serif; text-align: center; padding-top: 60px;">' +
+          '<h2 style="color: #6b21a8; font-size: 20px;">Cargando pantalla de consentimiento de Google...</h2>' +
+          '<p style="color: #64748b; font-size: 13px;">Conectando con Composio Managed Auth. Redirigiendo en unos segundos...</p>' +
+          '</div>'
+        );
+      } catch {}
+    }
+
     try {
       const res = await getComposioConnectLink(toolkit, adminEmail, composioKey);
       if (res.success && res.redirectUrl) {
-        window.open(res.redirectUrl, '_blank');
-        showToast(`Abriendo ventana de Google para conectar ${toolkit === 'googledrive' ? 'Google Drive' : 'Gmail'}.`);
+        if (toolkit === 'googledrive') setDriveDirectLink(res.redirectUrl);
+        else setGmailDirectLink(res.redirectUrl);
+
+        if (popup && !popup.closed) {
+          popup.location.href = res.redirectUrl;
+        } else {
+          window.open(res.redirectUrl, '_blank');
+        }
+        showToast(`Pantalla de consentimiento abierta. Aprueba los permisos en la cuenta ${adminEmail}.`);
       } else {
-        showToast(res.message || 'Error al obtener enlace.');
+        if (popup) popup.close();
+        showToast(res.message || 'Error al obtener enlace de consentimiento.');
       }
     } catch (e: any) {
+      if (popup) popup.close();
       showToast(e.message || 'Error de conexión.');
     } finally {
       setIsConnectingDrive(false);
@@ -248,6 +272,13 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
   };
 
   const handleTestGmail = async () => {
+    // Si Gmail aún no está activo, abrir directamente la pantalla de consentimiento
+    if (composioStatus.gmail?.status !== 'ACTIVE') {
+      showToast('Gmail requiere autorización previa. Abriendo pantalla de consentimiento...');
+      await handleConnectComposio('gmail');
+      return;
+    }
+
     setIsTestingGmail(true);
     try {
       const res = await testComposioGmail({
@@ -256,14 +287,24 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
         adminEmail,
       });
       showToast(res.message);
+      if (!res.success) {
+        await handleConnectComposio('gmail');
+      }
     } catch (e: any) {
-      showToast(e.message || 'Error al probar Gmail.');
+      showToast(e.message || 'Error al probar lectura de Gmail.');
     } finally {
       setIsTestingGmail(false);
     }
   };
 
   const handleTestDrive = async () => {
+    // Si Google Drive aún no está activo, abrir directamente la pantalla de consentimiento
+    if (composioStatus.drive?.status !== 'ACTIVE') {
+      showToast('Google Drive requiere aprobación previa. Abriendo pantalla de consentimiento...');
+      await handleConnectComposio('googledrive');
+      return;
+    }
+
     setIsTestingDrive(true);
     try {
       const res = await testComposioDrive({
@@ -272,6 +313,9 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
         adminEmail,
       });
       showToast(res.message);
+      if (!res.success) {
+        await handleConnectComposio('googledrive');
+      }
     } catch (e: any) {
       showToast(e.message || 'Error al probar Drive.');
     } finally {
@@ -686,32 +730,48 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
                 </div>
               </div>
 
-              <div className="pt-2 flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleConnectComposio('googledrive')}
-                  disabled={isConnectingDrive}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bubble text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>
-                    {isConnectingDrive
-                      ? 'Abriendo conexión...'
-                      : composioStatus.drive?.status === 'ACTIVE'
-                      ? 'Reconectar Google Drive'
-                      : 'Conectar Google Drive'}
-                  </span>
-                </button>
+              <div className="pt-2 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleConnectComposio('googledrive')}
+                    disabled={isConnectingDrive}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bubble text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>
+                      {isConnectingDrive
+                        ? 'Generando enlace...'
+                        : composioStatus.drive?.status === 'ACTIVE'
+                        ? 'Reconectar Google Drive'
+                        : 'Abrir Pantalla de Consentimiento de Google Drive'}
+                    </span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={handleTestDrive}
-                  disabled={isTestingDrive}
-                  className="px-3.5 py-2.5 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bubble text-xs font-bold transition-all disabled:opacity-50"
-                  title="Probar asignación de permiso"
-                >
-                  {isTestingDrive ? 'Probando...' : 'Probar Drive'}
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleTestDrive}
+                    disabled={isTestingDrive}
+                    className="px-3.5 py-2.5 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bubble text-xs font-bold transition-all disabled:opacity-50"
+                    title="Probar asignación de permiso en Google Drive"
+                  >
+                    {isTestingDrive ? 'Probando...' : 'Probar Permisos Drive'}
+                  </button>
+                </div>
+
+                {driveDirectLink && (
+                  <div className="p-2 rounded-xl bg-amber-50/80 border border-amber-200/80">
+                    <a
+                      href={driveDirectLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-amber-900 underline font-bubble font-bold flex items-center gap-1.5 hover:text-amber-950"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                      <span>Si tu navegador bloqueó el popup, toca aquí para abrir el consentimiento</span>
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -756,32 +816,48 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
                 </div>
               </div>
 
-              <div className="pt-2 flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleConnectComposio('gmail')}
-                  disabled={isConnectingGmail}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bubble text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>
-                    {isConnectingGmail
-                      ? 'Abriendo conexión...'
-                      : composioStatus.gmail?.status === 'ACTIVE'
-                      ? 'Reconectar Gmail (Solo Lectura)'
-                      : 'Conectar Gmail (Solo Lectura)'}
-                  </span>
-                </button>
+              <div className="pt-2 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleConnectComposio('gmail')}
+                    disabled={isConnectingGmail}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bubble text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>
+                      {isConnectingGmail
+                        ? 'Generando enlace...'
+                        : composioStatus.gmail?.status === 'ACTIVE'
+                        ? 'Reconectar Gmail (Solo Lectura)'
+                        : 'Abrir Pantalla de Consentimiento (Gmail Solo Lectura)'}
+                    </span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={handleTestGmail}
-                  disabled={isTestingGmail}
-                  className="px-3.5 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-800 font-bubble text-xs font-bold transition-all disabled:opacity-50"
-                  title="Probar lectura de correos recibidos"
-                >
-                  {isTestingGmail ? 'Consultando...' : 'Probar Lectura'}
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleTestGmail}
+                    disabled={isTestingGmail}
+                    className="px-3.5 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-800 font-bubble text-xs font-bold transition-all disabled:opacity-50"
+                    title="Probar lectura de correos recibidos"
+                  >
+                    {isTestingGmail ? 'Consultando...' : 'Probar Lectura'}
+                  </button>
+                </div>
+
+                {gmailDirectLink && (
+                  <div className="p-2 rounded-xl bg-rose-50/80 border border-rose-200/80">
+                    <a
+                      href={gmailDirectLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-rose-900 underline font-bubble font-bold flex items-center gap-1.5 hover:text-rose-950"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                      <span>Si tu navegador bloqueó el popup, toca aquí para abrir el consentimiento</span>
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>

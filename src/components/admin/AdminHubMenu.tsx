@@ -169,7 +169,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     },
     {
       id: 'etf' as AdminTabType,
-      title: 'Módulo ETF',
+      title: 'MÃ³dulo ETF',
       icon: Layers,
       gradient: 'from-[#EC4899] to-[#8B5CF6]',
       badge: pendingEtfCount > 0 ? pendingEtfCount : undefined,

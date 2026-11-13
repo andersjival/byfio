@@ -1,3 +1,26 @@
+## [v4.19.178] - 2026-11-13
+
+### 🔧 Corrección de Tipografía & Codificación UTF-8 en Módulo ETF
+- **Codificación Limpia UTF-8 ([AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx))**:
+  - Corregido el carácter especial con signo de pregunta erróneo (`\uFFFD`) en la etiqueta del botón administrativo.
+  - Normalizado el texto a `Módulo ETF` con codificación estándar UTF-8 (`ó` / `\u00F3`).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.178`.
+
+---
+
+## [v4.19.177] - 2026-11-13
+
+### 🚀 Google Drive & Gmail: Desbloqueo de Popup y Activación Automática de Consentimiento
+- **Apertura Confiable de Pantalla de Consentimiento ([DriveCoursesAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DriveCoursesAdminSection.tsx))**:
+  - Eliminado el bloqueo de ventanas emergentes (popup blocker) de los navegadores al invocar `window.open` inmediatamente en el evento de clic del usuario antes de la resolución de la promesa.
+  - El botón *"Probar Permisos Drive"* ahora detecta automáticamente si Google Drive no está activo e inicia de inmediato la pantalla de consentimiento de Google para su aprobación.
+  - Incorporado enlace de contingencia visible *"Toca aquí para abrir el consentimiento"* en caso de que el navegador tenga políticas agresivas de bloqueo de ventanas emergentes.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.177`.
+
+---
+
 ## [v4.19.176] - 2026-11-13
 
 ### 🔒 Composio Managed Auth: Permisos Estrictos de Solo Lectura para Gmail
