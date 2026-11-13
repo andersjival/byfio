@@ -50,9 +50,9 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     setHapticVibrationEnabled(next);
     if (next) {
       triggerHapticFeedback(hubVibrationIntensity, true);
-      setHubVibrationNotice(`âœ“ VibraciÃ³n tÃ¡ctil activada (Nivel ${hubVibrationIntensity})`);
+      setHubVibrationNotice(`✓ Vibración táctil activada (Nivel ${hubVibrationIntensity})`);
     } else {
-      setHubVibrationNotice('âœ• VibraciÃ³n tÃ¡ctil desactivada');
+      setHubVibrationNotice('✕ Vibración táctil desactivada');
     }
     setTimeout(() => setHubVibrationNotice(null), 2500);
   };
@@ -75,8 +75,8 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     const hasVib = isVibrationSupported();
     setHubVibrationNotice(
       hasVib
-        ? `âš¡ VibraciÃ³n fÃ­sica emitida (Nivel ${hubVibrationIntensity} â€¢ ${dur}ms)`
-        : `âš¡ VibraciÃ³n tÃ¡ctil emitida (Nivel ${hubVibrationIntensity} â€¢ ${dur}ms) â€¢ En celulares Android activa el motor fÃ­sico`
+        ? `⚡ Vibración física emitida (Nivel ${hubVibrationIntensity} • ${dur}ms)`
+        : `⚡ Vibración táctil emitida (Nivel ${hubVibrationIntensity} • ${dur}ms) • En celulares Android activa el motor físico`
     );
     setTimeout(() => setHubVibrationNotice(null), 3000);
   };
@@ -91,8 +91,8 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     }
     setCatalogSaveToast(
       catalogWebCheck
-        ? 'âœ“ Â¡Guardado! Catálogo activado: botÃ³n y secciÃ³n visibles en la web.'
-        : 'âœ“ Â¡Guardado! Catálogo desactivado: botÃ³n y secciÃ³n ocultos de la web.'
+        ? '✓ ¡Guardado! Catálogo activado: botón y sección visibles en la web.'
+        : '✓ ¡Guardado! Catálogo desactivado: botón y sección ocultos de la web.'
     );
     setTimeout(() => setCatalogSaveToast(null), 3500);
   };
@@ -108,7 +108,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
   const shareCatalogWhatsApp = () => {
     const link = `${window.location.origin}/catalogo`;
     const message = encodeURIComponent(
-      `Â¡Hola! Te comparto el Catálogo Oficial de by.fio con toda nuestra colecciÃ³n de papelerÃ­a bonita, agendas y artÃ­culos listos para pedir: ${link}`
+      `¡Hola! Te comparto el Catálogo Oficial de by.fio con toda nuestra colección de papelería bonita, agendas y artículos listos para pedir: ${link}`
     );
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
@@ -144,7 +144,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     },
     {
       id: 'billing' as AdminTabType,
-      title: 'FacturaciÃ³n RÃ¡pida',
+      title: 'Facturación Rápida',
                         icon: Receipt,
       gradient: 'from-[#C084FC] to-[#8B5CF6]',
     },
@@ -157,13 +157,13 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     },
     {
       id: 'reports' as AdminTabType,
-      title: 'Caja & ReporterÃ­a',
+      title: 'Caja & Reportería',
                         icon: Landmark,
       gradient: 'from-[#34D399] to-[#047857]',
     },
     {
       id: 'sinpe' as AdminTabType,
-      title: 'Pagos y RecepciÃ³n SINPE MÃ³vil',
+      title: 'Pagos y Recepción SINPE Móvil',
 
       icon: Landmark,
       gradient: 'from-[#6B21A8] to-[#4C1D95]',
@@ -224,7 +224,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
     <div className="space-y-4">
       {/* Sección Menú Principal de Administración */}
       <div className="space-y-4">
-        {/* TÃ­tulo Compacto de una Sola LÃ­nea */}
+        {/* Título Compacto de una Sola Línea */}
         <div className="flex items-center justify-between gap-2 px-1">
           <div className="flex items-center gap-2">
             <span className="p-1 rounded-lg bg-purple-100 text-fio-700">
@@ -235,11 +235,11 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
             </h2>
           </div>
           <span className="text-[11px] text-slate-400 font-sans hidden sm:inline">
-            Selecciona una secciÃ³n para ingresar
+            Selecciona una sección para ingresar
           </span>
         </div>
 
-        {/* Grid de Cajitas Compactas, Redonditas y Profesionales (Balance SimÃ©trico 2x5) */}
+        {/* Grid de Cajitas Compactas, Redonditas y Profesionales (Balance Simétrico 2x5) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -267,7 +267,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                   <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-fio-pink group-hover:translate-x-0.5 transition-all" />
                 </div>
 
-                {/* TÃ­tulo de MÃ³dulo con Letras MÃ¡s Grandes */}
+                {/* Título de Módulo con Letras Más Grandes */}
                 <div>
                   <h3 className="font-bubble font-bold text-sm sm:text-base text-fio-900 group-hover:text-fio-pink transition-colors leading-snug">
                     {item.title}
@@ -293,7 +293,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               </div>
               <div>
                 <h3 className="font-bubble font-bold text-sm sm:text-base text-fio-900 dark:text-white group-hover:text-fio-pink transition-colors leading-snug">
-                  Inventario FÃ­sico (App)
+                  Inventario Físico (App)
                 </h3>
               </div>
             </button>
@@ -315,11 +315,11 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                     Centro de Aplicaciones (PC &amp; Celular)
                   </h3>
                   <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-fio-pink/30 text-pink-200 border border-fio-pink/40 font-bubble font-bold">
-                    â˜… Administradora &amp; Colaboradores
+                    ★ Administradora &amp; Colaboradores
                   </span>
                 </div>
                 <p className="text-xs text-purple-200/90 font-sans max-w-2xl leading-relaxed">
-                  Instala la plataforma en tu computadora de escritorio y en tu celular personal. Configura la vibraciÃ³n tÃ¡ctil al hacer clic y genera accesos directos para tu equipo.
+                  Instala la plataforma en tu computadora de escritorio y en tu celular personal. Configura la vibración táctil al hacer clic y genera accesos directos para tu equipo.
                 </p>
               </div>
             </div>
@@ -336,7 +336,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
             </div>
           </div>
 
-          {/* Fila Directa de ConfiguraciÃ³n de VibraciÃ³n TÃ¡ctil en PWA */}
+          {/* Fila Directa de Configuración de Vibración Táctil en PWA */}
           <div className="p-3.5 rounded-2xl bg-black/35 border border-purple-400/30 backdrop-blur-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-8 h-8 rounded-xl bg-purple-500/30 text-pink-300 flex items-center justify-center shrink-0 border border-purple-400/40">
@@ -345,7 +345,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-bubble font-bold text-white text-xs sm:text-sm">
-                    VibraciÃ³n TÃ¡ctil al Clic (Celular y PC)
+                    Vibración Táctil al Clic (Celular y PC)
                   </span>
                   <span
                     className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full border ${
@@ -354,17 +354,17 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                         : 'bg-white/10 text-slate-300 border-white/20'
                     }`}
                   >
-                    {hubVibrationEnabled ? `Activa â€¢ Nivel ${hubVibrationIntensity}` : 'Desactivada'}
+                    {hubVibrationEnabled ? `Activa • Nivel ${hubVibrationIntensity}` : 'Desactivada'}
                   </span>
                 </div>
                 <p className="text-[11px] text-purple-200/80 font-sans mt-0.5">
-                  VibraciÃ³n corta y suave de {calculateHapticDuration(hubVibrationIntensity)}ms al hacer clic en cualquier botÃ³n o enlace.
+                  Vibración corta y suave de {calculateHapticDuration(hubVibrationIntensity)}ms al hacer clic en cualquier botón o enlace.
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2.5 w-full md:w-auto flex-wrap sm:flex-nowrap justify-between md:justify-end">
-              {/* Botones numÃ©ricos de intensidad 1 a 10 */}
+              {/* Botones numéricos de intensidad 1 a 10 */}
               <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl border border-white/10 overflow-x-auto max-w-full">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => (
                   <button
@@ -385,7 +385,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                 ))}
               </div>
 
-              {/* BotÃ³n Switch ON/OFF */}
+              {/* Botón Switch ON/OFF */}
               <button
                 type="button"
                 role="switch"
@@ -394,7 +394,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-inner ${
                   hubVibrationEnabled ? 'bg-fio-pink' : 'bg-white/20'
                 }`}
-                title={hubVibrationEnabled ? 'Desactivar vibraciÃ³n' : 'Activar vibraciÃ³n'}
+                title={hubVibrationEnabled ? 'Desactivar vibración' : 'Activar vibración'}
               >
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
@@ -403,13 +403,13 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                 />
               </button>
 
-              {/* BotÃ³n Probar */}
+              {/* Botón Probar */}
               <button
                 type="button"
                 data-haptic-test="true"
                 onClick={handleTestVibrationHub}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-600 text-white font-bubble font-bold text-xs border border-purple-400/40 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                title="Probar respuesta tÃ¡ctil en el dispositivo"
+                title="Probar respuesta táctil en el dispositivo"
               >
                 <Zap className="w-3.5 h-3.5 text-fio-yellow" />
                 <span>Probar</span>
@@ -436,24 +436,24 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900">
-                    Catálogo Comercial Online (PÃºblico &amp; Vista Visual)
+                    Catálogo Comercial Online (Público &amp; Vista Visual)
                   </h4>
                   <span className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full ${
                     isModuleEnabled('catalogo')
                       ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                       : 'bg-rose-100 text-rose-700 border border-rose-200'
                   }`}>
-                    {isModuleEnabled('catalogo') ? 'âœ“ Activo en la Web' : 'âœ— Desactivado / Oculto'}
+                    {isModuleEnabled('catalogo') ? '✓ Activo en la Web' : '✗ Desactivado / Oculto'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-500 font-sans mt-0.5">
-                  Controla la presencia del catÃ¡logo en la web pÃºblica o accede a la vista visual exclusiva con fotos y slider.
+                  Controla la presencia del catálogo en la web pública o accede a la vista visual exclusiva con fotos y slider.
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
-              {/* Checkbox y BotÃ³n Guardar para Activar / Desactivar Catálogo en la Web */}
+              {/* Checkbox y Botón Guardar para Activar / Desactivar Catálogo en la Web */}
               <div className="flex items-center gap-2 bg-white/90 dark:bg-[#1E1A30] px-3 py-1.5 rounded-xl border border-purple-200 dark:border-white/15 shadow-2xs">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
@@ -470,19 +470,19 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                   type="button"
                   onClick={handleSaveCatalogVisibility}
                   className="flex items-center gap-1 px-3 py-1 rounded-lg bg-fio-800 hover:bg-fio-900 text-white text-xs font-bubble font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
-                  title="Guardar el estado de activaciÃ³n o desactivaciÃ³n del catÃ¡logo"
+                  title="Guardar el estado de activación o desactivación del catálogo"
                 >
                   <Save className="w-3 h-3 text-fio-yellow" />
                   <span>Guardar</span>
                 </button>
               </div>
 
-              {/* BotÃ³n Nueva Vista Catálogo Visual */}
+              {/* Botón Nueva Vista Catálogo Visual */}
               <button
                 type="button"
                 onClick={() => onSelectTab('catalog-view')}
                 className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white text-xs font-bubble font-bold shadow-xs active:scale-95 transition-all cursor-pointer"
-                title="Abrir vista de catÃ¡logo exclusiva con fotos y slider sin barra de info"
+                title="Abrir vista de catálogo exclusiva con fotos y slider sin barra de info"
               >
                 <BookOpen className="w-3.5 h-3.5 text-fio-yellow" />
                 <span>Vista Catálogo Visual</span>
@@ -497,19 +497,19 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
             </div>
           )}
 
-          {/* Enlaces de compartir (visibles cuando estÃ¡ activo en la web) */}
+          {/* Enlaces de compartir (visibles cuando está activo en la web) */}
           {isModuleEnabled('catalogo') && (
             <div className="pt-2 border-t border-purple-100 flex items-center justify-end gap-2 flex-wrap">
               <button
                 type="button"
                 onClick={copyCatalogLink}
                 className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
-                title="Copiar link directo del catÃ¡logo online"
+                title="Copiar link directo del catálogo online"
               >
                 {copiedCatalog ? (
                   <>
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Â¡Copiado!</span>
+                    <span>¡Copiado!</span>
                   </>
                 ) : (
                   <>
@@ -523,7 +523,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
                 type="button"
                 onClick={shareCatalogWhatsApp}
                 className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold shadow-xs active:scale-95 transition-all"
-                title="Compartir catÃ¡logo completo por WhatsApp"
+                title="Compartir catálogo completo por WhatsApp"
               >
                 <Share2 className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Compartir por WhatsApp</span>
@@ -542,7 +542,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
           )}
         </div>
 
-        {/* Tarjeta de Acceso RÃ¡pido a MÃ©tricas & Rastreo de Enlaces (Solo Admin y Superadmin) */}
+        {/* Tarjeta de Acceso Rápido a Métricas & Rastreo de Enlaces (Solo Admin y Superadmin) */}
         {isAdminOrSuperadmin && isModuleEnabled('metricas') && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 text-white shadow-md border border-purple-800/40">
             <div className="flex items-center gap-3">
@@ -552,14 +552,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-bubble font-bold text-sm text-white">
-                    MÃ©tricas de Visitas & Rastreo de Enlaces (/metricas)
+                    Métricas de Visitas & Rastreo de Enlaces (/metricas)
                   </h3>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200 font-mono flex items-center gap-1">
                     <Lock className="w-3 h-3" /> Privado
                   </span>
                 </div>
                 <p className="text-[11px] text-purple-200/80 font-sans">
-                  Genera links especÃ­ficos, rastrea aperturas por campaÃ±as, dispositivos (PC vs Celular) y preferencias por secciÃ³n.
+                  Genera links específicos, rastrea aperturas por campañas, dispositivos (PC vs Celular) y preferencias por sección.
                 </p>
               </div>
             </div>
@@ -573,7 +573,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
               className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white text-purple-950 hover:bg-purple-50 text-xs font-bubble font-bold shadow-md active:scale-95 transition-all shrink-0 cursor-pointer"
             >
               <BarChart3 className="w-3.5 h-3.5 text-fio-purple" />
-              <span>Abrir Panel de MÃ©tricas</span>
+              <span>Abrir Panel de Métricas</span>
             </button>
           </div>
         )}
