@@ -1,3 +1,15 @@
+## [v4.19.149] - 2026-11-12
+
+### 💜 Contraste de Texto e Iconos en Botones Pasteles (Tema Oscuro)
+- **Texto e Icono en Morado Profundo By.Fio ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Eliminado el color blanco forzado en modo oscuro dentro de los botones pasteles (*Actualizar Cierre Guardado*, *Aceptar* y *Detalles*), sustituyéndolo por el morado profundo oficial By.Fio (`#1E1035`) de máxima nitidez y contraste.
+- **Protección CSS Universal de Contraste ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Creadas las utilidades `.btn-pastel-yellow-contrast` y `.btn-pastel-pink-contrast` que impiden que las reglas globales de modo oscuro (`.font-bubble`) sobreescriban el color del texto e iconos vectoriales a blanco.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.149`.
+
+---
+
 ## [v4.19.148] - 2026-11-12
 
 ### 🌸 Cuadro de "Conteo Físico Real" en Rosado Pastel

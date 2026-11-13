@@ -507,10 +507,10 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                 <button
                   type="button"
                   onClick={handleSaveClosing}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#FFF07C] hover:bg-[#FEEA4D] text-amber-950 font-bubble text-xs font-bold border border-amber-300/70 shadow-md transition-all active:scale-95 cursor-pointer"
+                  className="btn-pastel-yellow-contrast flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#FFF07C] hover:bg-[#FEEA4D] font-bubble text-xs font-bold border border-amber-300/70 shadow-md transition-all active:scale-95 cursor-pointer text-[#1E1035]"
                 >
-                  <Save className="w-4 h-4 text-amber-950" />
-                  <span>{existingClosing ? 'Actualizar Cierre Guardado' : 'Guardar Cierre de Caja'}</span>
+                  <Save className="w-4 h-4 text-[#1E1035]" />
+                  <span className="text-[#1E1035]">{existingClosing ? 'Actualizar Cierre Guardado' : 'Guardar Cierre de Caja'}</span>
                 </button>
 
                 {savedSuccess && (
@@ -666,11 +666,11 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                       <button
                         type="button"
                         onClick={() => setSavedSummary(item)}
-                        className="px-3 py-1.5 rounded-xl bg-[#FBCFE8] hover:bg-[#F9A8D4] text-pink-950 font-bubble font-bold text-xs border border-pink-300/80 shadow-xs active:scale-95 transition-all cursor-pointer flex items-center gap-1"
+                        className="btn-pastel-pink-contrast px-3 py-1.5 rounded-xl bg-[#FBCFE8] hover:bg-[#F9A8D4] font-bubble font-bold text-xs border border-pink-300/80 shadow-xs active:scale-95 transition-all cursor-pointer flex items-center gap-1 text-[#1E1035]"
                         title="Ver modal de resumen con todos los detalles"
                       >
-                        <CheckCircle2 className="w-3 h-3 text-pink-950" />
-                        <span>Detalles</span>
+                        <CheckCircle2 className="w-3 h-3 text-[#1E1035]" />
+                        <span className="text-[#1E1035]">Detalles</span>
                       </button>
 
                       <button
@@ -912,10 +912,10 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
               <button
                 type="button"
                 onClick={handleAcceptSummary}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-[#FFF07C] hover:bg-[#FEEA4D] text-amber-950 font-bubble text-xs font-bold border border-amber-300/70 shadow-md transition-all active:scale-95 cursor-pointer ml-auto"
+                className="btn-pastel-yellow-contrast flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-[#FFF07C] hover:bg-[#FEEA4D] font-bubble text-xs font-bold border border-amber-300/70 shadow-md transition-all active:scale-95 cursor-pointer ml-auto text-[#1E1035]"
               >
-                <CheckCircle2 className="w-4 h-4 text-amber-950" />
-                <span>Aceptar</span>
+                <CheckCircle2 className="w-4 h-4 text-[#1E1035]" />
+                <span className="text-[#1E1035]">Aceptar</span>
               </button>
             </div>
           </div>

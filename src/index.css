@@ -2671,3 +2671,31 @@ html.dark *::-webkit-scrollbar-thumb:hover {
   filter: invert(85%) sepia(40%) saturate(1500%) hue-rotate(285deg) brightness(108%) contrast(100%);
   opacity: 1;
 }
+
+/* =========================================================================
+   BOTONES PASTELES CON CONTRASTE PROTEGIDO EN TEMA OSCURO (MORADO BYFIO #1E1035)
+   ========================================================================= */
+
+.btn-pastel-yellow-contrast,
+body[data-color-theme="dark"] .btn-pastel-yellow-contrast,
+html.dark .btn-pastel-yellow-contrast,
+body[data-color-theme="dark"] .btn-pastel-yellow-contrast *,
+html.dark .btn-pastel-yellow-contrast *,
+.btn-pastel-pink-contrast,
+body[data-color-theme="dark"] .btn-pastel-pink-contrast,
+html.dark .btn-pastel-pink-contrast,
+body[data-color-theme="dark"] .btn-pastel-pink-contrast *,
+html.dark .btn-pastel-pink-contrast * {
+  color: #1E1035 !important;
+}
+
+.btn-pastel-yellow-contrast svg,
+body[data-color-theme="dark"] .btn-pastel-yellow-contrast svg,
+html.dark .btn-pastel-yellow-contrast svg,
+.btn-pastel-pink-contrast svg,
+body[data-color-theme="dark"] .btn-pastel-pink-contrast svg,
+html.dark .btn-pastel-pink-contrast svg {
+  color: #1E1035 !important;
+  stroke: #1E1035 !important;
+}
+
