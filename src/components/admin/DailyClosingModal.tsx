@@ -666,10 +666,10 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
                       <button
                         type="button"
                         onClick={() => setSavedSummary(item)}
-                        className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-xl bg-[#FBCFE8] hover:bg-[#F9A8D4] text-pink-950 font-bubble font-bold text-xs border border-pink-300/80 shadow-xs active:scale-95 transition-all cursor-pointer flex items-center gap-1"
                         title="Ver modal de resumen con todos los detalles"
                       >
-                        <CheckCircle2 className="w-3 h-3" />
+                        <CheckCircle2 className="w-3 h-3 text-pink-950" />
                         <span>Detalles</span>
                       </button>
 
@@ -912,9 +912,9 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
               <button
                 type="button"
                 onClick={handleAcceptSummary}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer ml-auto"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-[#FFF07C] hover:bg-[#FEEA4D] text-amber-950 font-bubble text-xs font-bold border border-amber-300/70 shadow-md transition-all active:scale-95 cursor-pointer ml-auto"
               >
-                <CheckCircle2 className="w-4 h-4 text-white" />
+                <CheckCircle2 className="w-4 h-4 text-amber-950" />
                 <span>Aceptar</span>
               </button>
             </div>

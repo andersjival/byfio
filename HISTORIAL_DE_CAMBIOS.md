@@ -1,3 +1,15 @@
+## [v4.19.147] - 2026-11-12
+
+### 💛 Botón Aceptar Amarillo Pastel y Botón Detalles Rosado Pastel en Cierre de Caja
+- **Botón Aceptar en Amarillo Pastel ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Reemplazado el botón verde de *Aceptar* en el modal de confirmación y resumen por el color amarillo pastel oficial (`bg-[#FFF07C] hover:bg-[#FEEA4D]`), texto e icono `CheckCircle2` en alto contraste `text-amber-950` y borde sutil `border-amber-300/70`.
+- **Botón Detalles en Rosado Pastel ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Actualizado el botón *Detalles* del historial de arqueos a color rosado pastel suave (`bg-[#FBCFE8] hover:bg-[#F9A8D4]`), texto e icono en `text-pink-950` y borde suave `border-pink-300/80` de óptima legibilidad en tema oscuro.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.147`.
+
+---
+
 ## [v4.19.146] - 2026-11-12
 
 ### 💛 Botón "Guardar / Actualizar Cierre" en Amarillo Pastel
