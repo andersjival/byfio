@@ -160,14 +160,14 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
   // Aplicación ÚNICA para los Colaboradores del Negocio (los permisos definen la funcionalidad)
   const collaboratorApp = {
     id: 'colaborador',
-    title: 'App Colaborador By.Fio (Única)',
-    roleTag: 'Permisos Dinámicos',
+    title: 'Aplicacion Colaborador (PC / Celular)',
+    roleTag: 'Módulos por Permiso',
     badgeColor: 'bg-gradient-to-r from-fio-pink to-purple-600 text-white',
-    description: 'Aplicación única para todo el equipo de trabajo. Las herramientas y vistas disponibles se adaptan automáticamente según los permisos y el PIN que le asignes a cada colaborador en Perfiles de Usuario.',
+    description: 'Aplicación única para colaboradores. Alisto & Pedidos y Toma de Inventario Físico no son aplicaciones separadas, sino módulos asignados mediante permisos de usuario. Lo que modifiques dentro de la sección se modificará en PC y Celular al mismo tiempo.',
     path: '/instalar-app?app=colaborador',
     icon: Users,
     deviceRecommendText: '📱 Celular, Tablet o Computadora',
-    shareMessage: '¡Hola! Te comparto tu acceso a la App de Colaboradores de By.Fio. Abre este enlace en tu celular para descargar la app e ingresar con tu PIN personal:',
+    shareMessage: '¡Hola! Te comparto tu acceso a la Aplicacion Colaborador (PC / Celular) de By.Fio. Abre este enlace en tu celular o PC para ingresar con tu PIN personal:',
   };
 
   return (
@@ -232,7 +232,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
             }`}
           >
             <ShieldCheck className="w-4 h-4 shrink-0" />
-            <span className="truncate">👑 App Admin</span>
+            <span className="truncate">👑 Admin (PC / Celular)</span>
           </button>
 
           <button
@@ -258,7 +258,7 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
             }`}
           >
             <Users className="w-4 h-4 shrink-0" />
-            <span className="truncate">👥 Colaboradores</span>
+            <span className="truncate">👥 Colaborador (PC / Celular)</span>
           </button>
 
           <button
@@ -282,9 +282,9 @@ export const PwaManagerModal: React.FC<PwaManagerModalProps> = ({
             <div className="space-y-4">
               <div className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-100/70 to-pink-100/50 dark:from-purple-950/40 dark:to-pink-950/30 border border-purple-200 dark:border-purple-800/60 text-xs text-slate-700 dark:text-slate-300 font-sans leading-relaxed">
                 <span className="font-bubble font-bold text-fio-purple dark:text-fio-pink block mb-0.5 text-sm">
-                  ★ Tu Ecosistema Administrativo en 2 Dispositivos
+                  ★ Aplicacion admin (PC / Celular)
                 </span>
-                Instala la aplicación administrativa tanto en tu <strong>computadora</strong> para trabajar cómoda en el estudio, como en tu <strong>celular</strong> para supervisar pedidos, responder clientes y recibir alertas sonoras dondequiera que estés.
+                Acceso administrativo universal tanto para tu <strong>computadora</strong> como para tu <strong>celular</strong>. Todo lo que modifiques dentro de esta sección se sincroniza en ambos dispositivos al mismo tiempo.
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

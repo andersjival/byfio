@@ -2803,15 +2803,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const canReceiveOrderNotifications = (isWorkshop?: boolean, isLayaway?: boolean) => {
     if (isSuperAdminAuthenticated) return true;
-    if (
-      typeof window !== 'undefined' &&
-      (window.location.pathname.includes('/pedidos') ||
-       window.location.hash.includes('pedidos') ||
-       window.location.pathname.includes('/apartados') ||
-       window.location.hash.includes('apartados'))
-    ) {
-      return true;
-    }
     if (!currentUser) return false;
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
     return hasPermission(isWorkshop ? 'workshops' : 'orders') || (Boolean(isLayaway) && hasPermission('layaways'));

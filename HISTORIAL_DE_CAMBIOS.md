@@ -1,3 +1,19 @@
+## [v4.19.133] - 2026-11-12
+
+### 🔒 Protección y Restricción Estricta de Gestión de Pedidos (`/usuario/colaborador/pedidos/apps` y `/usuario/admin/pedidos/apps`)
+- **Cierre de Acceso Público a la URL `/pedidos` ([routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx))**:
+  - Toda visita a `/pedidos` ahora es redirigida canónicamente a las rutas oficiales según el rol del usuario: `/usuario/admin/pedidos/apps` para administradores o `/usuario/colaborador/pedidos/apps` para colaboradores.
+  - Si un usuario no autenticado o con rol de cliente regular ingresa, la visualización de pedidos queda terminantemente bloqueada por la compuerta de seguridad.
+- **Nuevas Rutas y Accesos Blindados ([CollaboratorPwaShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/collaborator/CollaboratorPwaShell.tsx), [LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx))**:
+  - `https://byfiocr.com/usuario/colaborador/pedidos/apps`: Acceso exclusivo para colaboradores y administradores con soporte para login vía PIN de perfil o correo/contraseña.
+  - `https://byfiocr.com/usuario/admin/pedidos/apps`: Acceso administrativo optimizado para celular.
+  - Clientes regulares que intenten ingresar reciben una pantalla de acceso denegado con opciones para volver a la tienda o iniciar sesión con cuenta de colaborador.
+- **Seguridad en Notificaciones Push y Alertas ([AppContext.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/context/AppContext.tsx), [pushNotifications.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/pushNotifications.ts))**:
+  - Eliminada la excepción de recepción de notificaciones de nuevos pedidos basada únicamente en la presencia de `/pedidos` en la URL; ahora se exige sesión autenticada con permisos activos.
+  - Actualizado el Service Worker a `byfio-pwa-v4.19.133`.
+
+---
+
 ## [v4.19.132] - 2026-11-12
 
 ### 🧹 Limpieza de Controles en Cola de Alisto y Empaque
