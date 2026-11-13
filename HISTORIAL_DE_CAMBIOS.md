@@ -1,3 +1,15 @@
+## [v4.19.143] - 2026-11-12
+
+### 🌸 Recuadro Rosado Pastel y Botón Fucsia en Cierre Guardado (Tema Oscuro)
+- **Recuadro Rosado Pastel en Cierre de Caja ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Actualizado el recuadro informativo de "Cierre guardado el..." a un color rosado pastel armónico (`dark:bg-[#341629] dark:border-pink-400/40 dark:text-pink-100`) con icono en rosa pastel (`text-pink-500 dark:text-pink-300`).
+- **Botón "Guardado" Fucsia de Alta Visibilidad ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Reemplazada la píldora verde de bajo contraste por un botón fucsia vibrante (`bg-fuchsia-600 dark:bg-fuchsia-500 text-white`) con tipografía nítida y visible sobre cualquier fondo.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.143`.
+
+---
+
 ## [v4.19.136] - 2026-11-12
 
 ### 🧹 Limpieza y Depuración de Skills Redundantes
@@ -119,6 +131,18 @@
   - Eliminado el espaciado forzado (`justify-between`) y los espacios vacíos intermedios mediante alineación natural `items-start` en la cuadrícula de fichas.
   - El contenido de cada vista se despliega de forma compacta, inmediata y sin huecos en blanco.
   - Actualizado Service Worker a `byfio-pwa-v4.19.137`.
+
+---
+
+## [v4.19.143] - 2026-11-12
+
+### 🌸 Recuadro Rosado Pastel y Botón Fucsia en Cierre Guardado (Tema Oscuro)
+- **Recuadro Rosado Pastel en Cierre de Caja ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Actualizado el recuadro informativo de "Cierre guardado el..." a un color rosado pastel armónico (`dark:bg-[#341629] dark:border-pink-400/40 dark:text-pink-100`) con icono en rosa pastel (`text-pink-500 dark:text-pink-300`).
+- **Botón "Guardado" Fucsia de Alta Visibilidad ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx))**:
+  - Reemplazada la píldora verde de bajo contraste por un botón fucsia vibrante (`bg-fuchsia-600 dark:bg-fuchsia-500 text-white`) con tipografía nítida y visible sobre cualquier fondo.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.143`.
 
 ---
 

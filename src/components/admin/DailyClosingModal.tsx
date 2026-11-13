@@ -324,14 +324,14 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
 
             {/* Aviso si ya existe un cierre guardado para la fecha */}
             {existingClosing && (
-              <div className="no-print mx-4 sm:mx-6 mt-3 p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs text-emerald-800 animate-fadeIn">
+              <div className="no-print mx-4 sm:mx-6 mt-3 p-2.5 rounded-2xl bg-pink-50 dark:bg-[#341629] border border-pink-200 dark:border-pink-400/40 flex items-center justify-between text-xs text-pink-900 dark:text-pink-100 animate-fadeIn shadow-xs">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-pink-500 dark:text-pink-300 shrink-0" />
                   <span>
-                    Cierre guardado el <strong>{formatShortDate(existingClosing.closedAt)}</strong> por <strong>{existingClosing.closedBy}</strong>.
+                    Cierre guardado el <strong className="font-bold text-pink-950 dark:text-white">{formatShortDate(existingClosing.closedAt)}</strong> por <strong className="font-bold text-pink-950 dark:text-white">{existingClosing.closedBy}</strong>.
                   </span>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-200/80 px-2 py-0.5 rounded-full text-emerald-900">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-fuchsia-600 dark:bg-fuchsia-500 text-white px-2.5 py-0.5 rounded-full shadow-xs shrink-0 ml-2">
                   Guardado
                 </span>
               </div>
