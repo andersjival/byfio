@@ -1,3 +1,16 @@
+## [v4.19.135] - 2026-11-12
+
+### 📐 Uniformidad de Tamaño y Tipografía en Fichas de Clientes Web
+- **Homogeneización Visual de Pestañas ([RegisteredClientsList.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx))**:
+  - Reestructurado el interior de la pestaña **Info de usuario** utilizando el mismo contenedor en cuadrícula compacta (`grid-cols-1 sm:grid-cols-2`, `p-3`, `text-[11px]`, iconos `w-3.5 h-3.5`) que **Dispositivo & Red**.
+  - El tamaño de la ficha y la tipografía se mantienen completamente idénticos al alternar entre ambas pestañas, eliminando cambios bruscos de altura.
+- **Limpieza de Cabecera en Fichas ([RegisteredClientsList.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx))**:
+  - Eliminada la etiqueta redundante de provincia que se mostraba a la derecha de los botones de pestañas (*Dispositivo & Red*), manteniendo la provincia organizada limpiamente dentro de los datos de la ficha.
+- **Service Worker & Caché ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado a `byfio-pwa-v4.19.135` para refrescar los componentes en producción.
+
+---
+
 ## [v4.19.138] - 2026-11-12
 
 ### 📱 Unificación Total de Módulos y Permisos de Colaboradores (PC / Celular)
