@@ -1,3 +1,15 @@
+## [v4.19.168] - 2026-11-13
+
+### 🖥️ Modal de Edición de Cursos Drive: Diseño en Pantalla Completa Sin Scroll
+- **Rediseño Horizontal en 2 Columnas ([DriveCoursesAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DriveCoursesAdminSection.tsx))**:
+  - Ampliado el ancho del modal de `max-w-xl` a `max-w-4xl lg:max-w-5xl`, aprovechando al máximo el espacio horizontal de la pantalla.
+  - Reorganizada la estructura en 2 columnas balanceadas: Columna izquierda (Título, precio, badge, tagline, estado activo, descripción compacta, links de Drive e imagen) y Columna derecha (Puntos destacados de beneficios y caja de vista previa en vivo).
+  - Eliminado el scroll vertical y desbordamientos superior e inferior (`max-h-[96vh]`), permitiendo visualizar todos los campos y botones simultáneamente en pantalla completa.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.168`.
+
+---
+
 ## [v4.19.167] - 2026-11-13
 
 ### 🎨 Homologación Uniforme de Bordes en Segmentos de Caja

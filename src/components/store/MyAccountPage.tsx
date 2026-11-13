@@ -151,6 +151,58 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
     return false;
   });
 
+  // Compras de cursos en Drive
+  const userDrivePurchases = React.useMemo(() => {
+    const list = getLocalPurchases();
+    if (!currentUser) return list;
+    const cleanPhone = (currentUser.phone || '').replace(/\D/g, '');
+    const cleanEmail = (currentUser.email || '').trim().toLowerCase();
+    const cleanName = (currentUser.name || '').trim().toLowerCase();
+
+    return list.filter((p) => {
+      const pPhone = (p.customerPhone || '').replace(/\D/g, '');
+      const pEmail = (p.customerEmail || '').trim().toLowerCase();
+      const pName = (p.customerName || '').trim().toLowerCase();
+
+      if (cleanEmail && pEmail && cleanEmail === pEmail) return true;
+      if (cleanPhone && pPhone && (cleanPhone === pPhone || pPhone.endsWith(cleanPhone) || cleanPhone.endsWith(pPhone))) return true;
+      if (cleanName && pName && cleanName === pName) return true;
+      return false;
+    });
+  }, [currentUser]);
+
+  // Talleres en los que está inscrito el usuario a partir de sus pedidos
+  const userWorkshops = React.useMemo(() => {
+    const list: { order: Order; item: OrderItem; workshop?: any }[] = [];
+    userOrders.forEach((ord) => {
+      (ord.items || []).forEach((it) => {
+        if (it.type === 'workshop') {
+          const ws = (workshops || []).find((w) => w.id === it.workshopId || w.id === it.id || w.title?.toLowerCase() === it.name?.toLowerCase());
+          list.push({ order: ord, item: it, workshop: ws });
+        }
+      });
+    });
+    return list;
+  }, [userOrders, workshops]);
+
+  // Cursos online (talleres virtuales o con palabra clave online/virtual)
+  const userOnlineCourses = React.useMemo(() => {
+    return userWorkshops.filter((uw) =>
+      uw.workshop?.modality === 'Virtual en Vivo' ||
+      uw.item.name?.toLowerCase().includes('online') ||
+      uw.item.name?.toLowerCase().includes('virtual')
+    );
+  }, [userWorkshops]);
+
+  // Talleres presenciales
+  const userInPersonWorkshops = React.useMemo(() => {
+    return userWorkshops.filter((uw) =>
+      uw.workshop?.modality !== 'Virtual en Vivo' &&
+      !uw.item.name?.toLowerCase().includes('online') &&
+      !uw.item.name?.toLowerCase().includes('virtual')
+    );
+  }, [userWorkshops]);
+
   // Guardar datos editables del usuario
   const handleSaveData = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -516,13 +568,13 @@ export const MyAccountPage: React.FC<MyAccountPageProps> = ({
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
           }`}
         >
-          <PackageCheck className="w-4 h-4" />
-          <span>Mis Pedidos</span>
-          {userOrders.length > 0 && (
+          <ShoppingBag className="w-4 h-4" />
+          <span>Mis Compras</span>
+          {userOrders.length + userDrivePurchases.length > 0 && (
             <span className={`px-2 py-0.2 rounded-full text-[10px] font-bold ${
               activeTab === 'orders' ? 'bg-white text-fio-purple' : 'bg-purple-100 text-purple-800'
             }`}>
-              {userOrders.length}
+              {userOrders.length + userDrivePurchases.length}
             </span>
           )}
         </button>
