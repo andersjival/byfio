@@ -1,3 +1,18 @@
+## [v4.19.145] - 2026-11-12
+
+### 🎨 Personalización Completa de Temas de Calendario en Modo Oscuro
+- **Temas Oscuros Dinámicos ([agendaCalendarTypes.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/agendaCalendarTypes.ts))**:
+  - Implementado `CALENDAR_DARK_THEMES` con variantes calibradas para cada tema pastel (Celeste, Amarillo, Lila, Menta, Rosa) con fondos matizados, bordes temáticos luminosos y acentos de color.
+- **Sincronización Reactiva ([CalendarAgendaView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarAgendaView.tsx))**:
+  - Eliminado el override estático de color morado fijo en modo oscuro; ahora el calendario responde instantáneamente al tema seleccionado con `CALENDAR_DARK_THEMES[calendarTheme]`.
+  - Contrastes y tipografías optimizadas para lectura nocturna (`dark:text-white`, `dark:text-slate-200`).
+- **Barra de Navegación y Selector de Temas ([CalendarTopBar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarTopBar.tsx))**:
+  - Adaptados los controles, selector de paletas, filtros y contadores al modo oscuro (`dark:bg-slate-800/90`, `dark:ring-white`).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.145`.
+
+---
+
 ## [v4.19.144] - 2026-11-12
 
 ### 📅 Icono de Calendario Rosado Pastel en Historial de Cierre de Caja (Tema Oscuro)

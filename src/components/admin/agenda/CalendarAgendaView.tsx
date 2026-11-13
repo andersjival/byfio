@@ -629,7 +629,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                 <thead>
                   <tr>
                     <th
-                      className="sticky top-0 left-0 z-30 w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
+                      className="sticky top-0 left-0 z-30 w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600 dark:text-slate-300 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
                       style={{
                         backgroundColor: themeConfig.bgHeader,
                         borderRight: `1px solid ${themeConfig.borderDiv}`,
@@ -641,7 +641,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     {teamFilter === 'all' ? (
                       <>
                         <th
-                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-purple-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-purple-900 dark:text-purple-200 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                           style={{
                             backgroundColor: isDark ? '#352F54' : '#FAF5FF',
                             borderRight: `1px solid ${themeConfig.borderDiv}`,
@@ -651,7 +651,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           Fiorella Brenes (Diseño &amp; Admin)
                         </th>
                         <th
-                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-sky-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-sky-900 dark:text-sky-200 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                           style={{
                             backgroundColor: isDark ? '#2C2746' : '#F0F9FF',
                             borderBottom: `1px solid ${themeConfig.borderDiv}`,
@@ -662,7 +662,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                       </>
                     ) : (
                       <th
-                        className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-slate-800 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                        className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-slate-800 dark:text-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                         style={{
                           backgroundColor: themeConfig.bgHeader,
                           borderBottom: `1px solid ${themeConfig.borderDiv}`,

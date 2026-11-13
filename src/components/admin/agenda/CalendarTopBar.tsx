@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -54,18 +54,18 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
   onOpenSyncModal,
 }) => {
   return (
-    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-3xl bg-[#F1F2F6] border border-white/90 shadow-neuCard">
+    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-3xl bg-[#F1F2F6] dark:bg-slate-900/80 border border-white/90 dark:border-purple-900/40 shadow-neuCard">
       {/* Lado Izquierdo: Vistas, Navegación de Fechas y Filtro */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {/* Toggle Vista Diaria vs Semanal */}
-        <div className="flex items-center p-1 rounded-2xl bg-[#ECEEF2] border border-white/80 shadow-neuInset">
+        <div className="flex items-center p-1 rounded-2xl bg-[#ECEEF2] dark:bg-slate-800/80 border border-white/80 dark:border-purple-900/30 shadow-neuInset">
           <button
             type="button"
             onClick={() => onViewTypeChange('daily')}
             className={`px-3.5 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer ${
               viewType === 'daily'
-                ? 'bg-[#1E1035] text-white shadow-md scale-[1.02]'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#1E1035] dark:bg-purple-600 text-white shadow-md scale-[1.02]'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Vista Diaria
@@ -75,8 +75,8 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
             onClick={() => onViewTypeChange('weekly')}
             className={`px-3.5 py-1.5 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer ${
               viewType === 'weekly'
-                ? 'bg-[#1E1035] text-white shadow-md scale-[1.02]'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#1E1035] dark:bg-purple-600 text-white shadow-md scale-[1.02]'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Semanal
@@ -85,24 +85,24 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
 
 
         {/* Navegación de Fechas con Flechas */}
-        <div className="flex items-center gap-1 px-1.5 py-1 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs">
+        <div className="flex items-center gap-1 px-1.5 py-1 rounded-2xl bg-white/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-purple-800/60 shadow-xs">
           <button
             type="button"
             onClick={onPrevDate}
-            className="p-1 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all cursor-pointer"
+            className="p-1 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer"
             title="Anterior"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <span className="px-1.5 sm:px-2 text-[11px] sm:text-xs font-bubble font-bold text-slate-800 select-none min-w-[75px] sm:min-w-[90px] text-center">
+          <span className="px-1.5 sm:px-2 text-[11px] sm:text-xs font-bubble font-bold text-slate-800 dark:text-slate-100 select-none min-w-[75px] sm:min-w-[90px] text-center">
             {dateRangeLabel}
           </span>
 
           <button
             type="button"
             onClick={onNextDate}
-            className="p-1 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all cursor-pointer"
+            className="p-1 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer"
             title="Siguiente"
           >
             <ChevronRight className="w-4 h-4" />
@@ -120,17 +120,17 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
         </div>
 
         {/* Filtro de Equipo */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs">
-          <Users className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-          <span className="text-xs text-slate-500 font-sans font-medium">Filtrar:</span>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-purple-800/60 shadow-xs">
+          <Users className="w-3.5 h-3.5 text-slate-500 dark:text-purple-300 shrink-0" />
+          <span className="text-xs text-slate-500 dark:text-purple-300 font-sans font-medium">Filtrar:</span>
           <div className="relative">
             <select
               value={teamFilter}
               onChange={(e) => onTeamFilterChange(e.target.value as TeamFilterType)}
-              className="appearance-none bg-transparent pr-4 text-xs font-bubble font-bold text-slate-800 focus:outline-none cursor-pointer"
+              className="appearance-none bg-transparent pr-4 text-xs font-bubble font-bold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer"
             >
               {TEAM_MEMBERS.map((m) => (
-                <option key={m.id} value={m.id}>
+                <option key={m.id} value={m.id} className="dark:bg-slate-800 dark:text-white">
                   {m.name}
                 </option>
               ))}
@@ -144,8 +144,8 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {/* Selector de Temas Pasteles */}
         {onSelectTheme && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs" title="Personalizar color del calendario">
-            <Palette className="w-3.5 h-3.5 text-slate-400 mr-0.5" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl bg-white/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-purple-800/60 shadow-xs" title="Personalizar color del calendario">
+            <Palette className="w-3.5 h-3.5 text-slate-400 dark:text-purple-300 mr-0.5" />
             {(Object.keys(CALENDAR_THEMES) as CalendarTheme[]).map((thmKey) => {
               const thm = CALENDAR_THEMES[thmKey];
               const isSelected = currentTheme === thmKey;
@@ -157,7 +157,7 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
                   title={`Tema ${thm.name}`}
                   className={`w-5 h-5 rounded-full transition-all cursor-pointer ${
                     isSelected
-                      ? 'scale-110 shadow-sm ring-2 ring-offset-1 ring-slate-700/80'
+                      ? 'scale-110 shadow-sm ring-2 ring-offset-1 ring-slate-700/80 dark:ring-white dark:ring-offset-slate-900'
                       : 'hover:scale-110 opacity-80 hover:opacity-100'
                   }`}
                   style={{ backgroundColor: thm.circleColor }}
@@ -168,14 +168,14 @@ export const CalendarTopBar: React.FC<CalendarTopBarProps> = ({
         )}
 
         {/* Contador de Citas */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs">
-          <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-          <span className="text-xs font-bubble font-semibold text-slate-700">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-purple-800/60 shadow-xs">
+          <Calendar className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <span className="text-xs font-bubble font-semibold text-slate-700 dark:text-slate-200">
             {appointmentsCount} citas programadas {viewType === 'weekly' ? 'esta semana' : 'este día'}
           </span>
         </div>
+        </div>
 
       </div>
-    </div>
   );
 };
