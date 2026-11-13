@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { TypographyTheme, StarAlertDuration } from '../../types';
 import { X, Type, Palette, CheckCircle2, Heart, Star, Volume2, Droplets, Sun, Moon, Bell, Clock, Settings, Play, GraduationCap, BookOpen, Check, Vibrate, Sliders, Zap } from 'lucide-react';
@@ -132,19 +132,25 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
-      <div className="bg-white rounded-3xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-5 border border-fio-200">
-        {/* Encabezado */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-purple-100 text-fio-700 flex items-center justify-center">
-              <Settings className="w-4 h-4 text-fio-pink" />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-xs p-3 sm:p-5 animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-[28px] sm:rounded-[32px] shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col border border-fio-200/90 overflow-hidden relative animate-scaleUp text-slate-800"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Encabezado Fijo con Bordes Superiores Perfectamente Redondeados */}
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-fio-100 bg-white/95 backdrop-blur-xs shrink-0 z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-2xl bg-purple-100 text-fio-700 flex items-center justify-center shrink-0 shadow-2xs">
+              <Settings className="w-4.5 h-4.5 text-fio-pink" />
             </div>
             <div>
-              <h2 className="font-bubble font-bold text-base text-fio-900">
+              <h2 className="font-bubble font-bold text-base text-fio-900 leading-tight">
                 Configuración del Sistema &amp; Personalización
               </h2>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
                 Configura la alerta estrellita, paleta de color, tipografía y efectos de sonido.
               </p>
             </div>
@@ -152,11 +158,15 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+            className="p-1.5 rounded-xl hover:bg-fio-50 text-slate-400 hover:text-fio-800 transition-colors cursor-pointer shrink-0"
+            title="Cerrar ventana"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Cuerpo Desplazable con Barra de Scroll Fucsia Pastel (4 Esquinas Protegidas) */}
+        <div className="overflow-y-auto px-5 sm:px-6 py-5 space-y-5 flex-1 fuchsia-pastel-scrollbar overscroll-contain">
 
         {/* Control del Botón y Sección de Catálogo Online en la Web Pública */}
         <div className="p-4 rounded-3xl bg-gradient-to-r from-purple-50 via-pink-50/50 to-purple-50 border-2 border-purple-200/90 shadow-2xs space-y-3">
@@ -675,8 +685,10 @@ export const AdminDesignSettingsModal: React.FC<AdminDesignSettingsModalProps> =
           </div>
         </div>
 
-        {/* Botón de Confirmación y Guardado */}
-        <div className="pt-2 space-y-2">
+        </div>
+
+        {/* Pie Fijo con Botón de Confirmación y Guardado (Esquinas Inferiores Protegidas) */}
+        <div className="p-4 sm:p-5 pt-3 border-t border-fio-100 bg-white/95 backdrop-blur-xs shrink-0 z-10 space-y-2">
           {saveSuccessNotice && (
             <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bubble font-bold text-center animate-fadeIn flex items-center justify-center gap-1.5">
               <Check className="w-4 h-4 text-emerald-700 stroke-[2.5]" />

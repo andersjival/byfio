@@ -1,3 +1,17 @@
+## [v4.19.139] - 2026-11-12
+
+### 🎨 Ventana de Configuración del Admin: 4 Esquinas Redondeadas y Barra de Scroll Fucsia Pastel
+- **Diseño Ergonómico con 4 Esquinas 100% Redondeadas ([`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx))**:
+  - Reestructurado el modal con contenedor exterior `rounded-[28px] sm:rounded-[32px]` y `overflow-hidden`, asegurando que las cuatro esquinas se muestren visiblemente redondeadas sin cortes ni artefactos rectangulares de scroll en navegadores de escritorio y móviles.
+  - Cabecera y botón de guardado fijados arriba y abajo para mantener accesibilidad inmediata sin importar la posición del scroll.
+- **Barra de Scroll Fucsia Pastel ([`index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css), [`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx))**:
+  - Implementada la clase `.fuchsia-pastel-scrollbar` con track `#FAF5FF` (fondo suave lavanda de By.Fio) y cursor/thumb `#F0ABFC` fucsia pastel con hover dinámico `#E879F9` y bordes redondeados tipo píldora flotante.
+  - Soporte universal de estándares (`scrollbar-width`, `scrollbar-color` y pseudoelementos `::-webkit-scrollbar`).
+- **Service Worker & Caché ([`sw.js`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado a `byfio-pwa-v4.19.139` para refrescar los componentes en vivo.
+
+---
+
 ## [v4.19.135] - 2026-11-12
 
 ### 📐 Uniformidad de Tamaño y Tipografía en Fichas de Clientes Web
@@ -60,6 +74,20 @@
   - Al pulsar en **Dispositivo & Red**, el contenido conmuta para mostrar cédula, tipo de dispositivo (Celular / Computadora), modelo e IP real registrada en Cloudflare D1.
   - Añadido selector global en la barra superior para alternar todas las fichas simultáneamente.
   - Actualizado Service Worker a `byfio-pwa-v4.19.136`.
+
+---
+
+## [v4.19.139] - 2026-11-12
+
+### 🎨 Ventana de Configuración del Admin: 4 Esquinas Redondeadas y Barra de Scroll Fucsia Pastel
+- **Diseño Ergonómico con 4 Esquinas 100% Redondeadas ([`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx))**:
+  - Reestructurado el modal con contenedor exterior `rounded-[28px] sm:rounded-[32px]` y `overflow-hidden`, asegurando que las cuatro esquinas se muestren visiblemente redondeadas sin cortes ni artefactos rectangulares de scroll en navegadores de escritorio y móviles.
+  - Cabecera y botón de guardado fijados arriba y abajo para mantener accesibilidad inmediata sin importar la posición del scroll.
+- **Barra de Scroll Fucsia Pastel ([`index.css`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css), [`AdminDesignSettingsModal.tsx`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminDesignSettingsModal.tsx))**:
+  - Implementada la clase `.fuchsia-pastel-scrollbar` con track `#FAF5FF` (fondo suave lavanda de By.Fio) y cursor/thumb `#F0ABFC` fucsia pastel con hover dinámico `#E879F9` y bordes redondeados tipo píldora flotante.
+  - Soporte universal de estándares (`scrollbar-width`, `scrollbar-color` y pseudoelementos `::-webkit-scrollbar`).
+- **Service Worker & Caché ([`sw.js`](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado a `byfio-pwa-v4.19.139` para refrescar los componentes en vivo.
 
 ---
 

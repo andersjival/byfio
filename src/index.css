@@ -2517,3 +2517,66 @@ html.dark .geosoft-copyright-pill:hover {
 #byfio-qr-camera-viewport canvas#qr-canvas-visible {
   display: none !important;
 }
+
+
+/* =========================================================================
+   BARRA DE SCROLL FUCSIA PASTEL & CUSTOM SCROLLBAR (TEMA BYFIO)
+   ========================================================================= */
+
+.fuchsia-pastel-scrollbar,
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #F0ABFC #FAF5FF;
+}
+
+.fuchsia-pastel-scrollbar::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.fuchsia-pastel-scrollbar::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #FAF5FF;
+  border-radius: 9999px;
+  margin: 6px 0;
+}
+
+.fuchsia-pastel-scrollbar::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #F0ABFC;
+  border-radius: 9999px;
+  border: 2px solid #FAF5FF;
+  transition: background-color 0.2s ease;
+}
+
+.fuchsia-pastel-scrollbar::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #E879F9;
+}
+
+.fuchsia-pastel-scrollbar::-webkit-scrollbar-thumb:active,
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #D946EF;
+}
+
+.dark .fuchsia-pastel-scrollbar,
+.dark .custom-scrollbar {
+  scrollbar-color: #E879F9 #1E1B2E;
+}
+
+.dark .fuchsia-pastel-scrollbar::-webkit-scrollbar-track,
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: #1E1B2E;
+}
+
+.dark .fuchsia-pastel-scrollbar::-webkit-scrollbar-thumb,
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #E879F9;
+  border: 2px solid #1E1B2E;
+}
+
+.dark .fuchsia-pastel-scrollbar::-webkit-scrollbar-thumb:hover,
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #F0ABFC;
+}
