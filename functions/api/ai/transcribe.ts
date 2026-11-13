@@ -1,5 +1,6 @@
 interface Env {
   AI?: any;
+  AGENT_DB?: any;
 }
 
 const CORS_HEADERS: Record<string, string> = {
@@ -44,6 +45,17 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     });
 
     const transcribedText = (result?.text || '').trim();
+
+    if (context.env.AGENT_DB) {
+      try {
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+        const hourStr = String(now.getUTCHours()).padStart(2, '0');
+        await context.env.AGENT_DB.prepare(
+          'INSERT INTO agent_neuron_logs (id, date_str, hour_str, model, role, neurons, action_type) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)'
+        ).bind(`nlog_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`, dateStr, hourStr, MODEL_WHISPER, 'user', 18.5, 'audio').run();
+      } catch {}
+    }
 
     return new Response(
       JSON.stringify({

@@ -126,4 +126,27 @@ export const aiAgentService = {
       conversationId: chatResult.conversationId,
     };
   },
+
+  async trackChatOpened(role = 'customer', userIdentifier = 'anon'): Promise<void> {
+    try {
+      await requestWithFallback('/api/ai/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventType: 'chat_opened', role, userIdentifier }),
+      });
+    } catch {}
+  },
+
+  async fetchMetrics(): Promise<any> {
+    try {
+      const resp = await requestWithFallback('/api/ai/metrics', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      return await resp.json();
+    } catch {
+      return null;
+    }
+  },
 };

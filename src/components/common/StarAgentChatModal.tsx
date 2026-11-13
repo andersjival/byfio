@@ -38,9 +38,10 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      aiAgentService.trackChatOpened(userRole, userName);
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isOpen]);
+  }, [messages, isOpen, userRole, userName]);
 
   if (!isOpen) return null;
 

@@ -157,22 +157,29 @@ REGLAS DE ATENCIÓN:
     const chosenModel = role === 'staff' || role === 'admin' ? MODEL_STAFF : MODEL_CUSTOMER;
     const fallbackModel = role === 'staff' || role === 'admin' ? MODEL_STAFF_FALLBACK : MODEL_CUSTOMER_FALLBACK;
 
+    let consumedNeurons = role === 'customer' ? 38.5 : 24.2;
     if (context.env.AI) {
       try {
-        const aiResponse = await context.env.AI.run(chosenModel, {
+        const aiResponse: any = await context.env.AI.run(chosenModel, {
           messages: messagesForModel,
           max_tokens: 600,
           temperature: 0.7,
         });
         assistantReply = (aiResponse?.response || aiResponse?.choices?.[0]?.message?.content || '').trim();
+        if (aiResponse?.usage?.neurons) {
+          consumedNeurons = Number(aiResponse.usage.neurons);
+        }
       } catch (err: any) {
         try {
-          const fallbackResp = await context.env.AI.run(fallbackModel, {
+          const fallbackResp: any = await context.env.AI.run(fallbackModel, {
             messages: messagesForModel,
             max_tokens: 600,
             temperature: 0.7,
           });
           assistantReply = (fallbackResp?.response || fallbackResp?.choices?.[0]?.message?.content || '').trim();
+          if (fallbackResp?.usage?.neurons) {
+            consumedNeurons = Number(fallbackResp.usage.neurons);
+          }
         } catch {
           assistantReply =
             '¡Hola! En este momento estoy consultando el catálogo para ti. Si gustas una atención personalizada de inmediato, también puedes escribirnos al WhatsApp oficial 6400-4640 ✨🌸';
@@ -183,9 +190,13 @@ REGLAS DE ATENCIÓN:
         '¡Hola! Gracias por consultar en by.fio. Tenemos disponibles tazas personalizadas, agendas y talleres creativos. ¿Buscas algún producto en especial? ✨🌸';
     }
 
-    // 4. Guardar conversación en AGENT_DB si está disponible
+    // 4. Guardar conversación y neuronas en AGENT_DB si está disponible
     if (context.env.AGENT_DB) {
       try {
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+        const hourStr = String(now.getUTCHours()).padStart(2, '0');
+
         await context.env.AGENT_DB.batch([
           context.env.AGENT_DB.prepare(
             'INSERT INTO agent_conversations (id, user_id, user_role, updated_at) VALUES (?1, ?2, ?3, CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SET updated_at = CURRENT_TIMESTAMP'
@@ -196,6 +207,9 @@ REGLAS DE ATENCIÓN:
           context.env.AGENT_DB.prepare(
             'INSERT INTO agent_messages (id, conversation_id, role, content, has_audio) VALUES (?1, ?2, ?3, ?4, 0)'
           ).bind(`msg_${Date.now()}_a`, conversationId, 'assistant', assistantReply),
+          context.env.AGENT_DB.prepare(
+            'INSERT INTO agent_neuron_logs (id, date_str, hour_str, model, role, neurons, action_type) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)'
+          ).bind(`nlog_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`, dateStr, hourStr, chosenModel, role, consumedNeurons, 'chat'),
         ]);
       } catch {}
     }

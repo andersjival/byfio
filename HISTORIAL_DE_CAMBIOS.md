@@ -11,6 +11,26 @@
 
 ---
 
+## [v4.19.183] - 2026-11-13
+
+### 📊 Panel "IA ByFio" en Superadmin: Control de Neuronas, Métricas Realtime y Reportes Detallados
+- **Nuevo Módulo y Panel "IA ByFio" ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx), [SuperadminAiPanel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiPanel.tsx))**:
+  - Incorporada la pestaña interactiva **"IA ByFio"** en la consola central del Superadmin con indicador *Live* en tiempo real.
+  - Tarjetas de KPIs: Neuronas gastadas hoy (con barra de progreso del plan gratuito de Cloudflare de 10,000 neuronas/día), clics/aperturas del chat, total de respuestas generadas y audios procesados.
+  - Generador de reportes con selector de 3 vistas:
+    - **Tiempo Real:** Feed en vivo con auto-refresco cada 12s de las interacciones atendidas por la Estrellita, rol y tipo de mensaje.
+    - **Por Hora:** Tabla y gráfico de barras con el consumo de neuronas hora a hora durante el día.
+    - **Por Día:** Histórico diario de los últimos 7 días con desglose de consultas, notas de voz y estado del cupo.
+  - Botón de exportación oficial de reportes en formato JSON con fecha y métricas agregadas.
+- **Telemetría de Neuronas e Interacciones en Edge ([metrics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/metrics.ts), [chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [transcribe.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/transcribe.ts))**:
+  - Nuevas tablas en D1 `agent_neuron_logs` y `agent_interaction_events` en `byfio-agent-db`.
+  - Endpoint `GET /api/ai/metrics` para lectura de agregados y `POST /api/ai/metrics` para conteo en tiempo real de aperturas de chat.
+  - Registro automático del cómputo exacto de neuronas consumidas por cada consulta y transcripción.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Versión de caché confirmada en `byfio-pwa-v4.19.183`.
+
+---
+
 ## [v4.19.182] - 2026-11-13
 
 ### 🌟 Asistente Estrellita en Vivo: Infraestructura de IA en Edge con Audio y Base de Datos Dedicada

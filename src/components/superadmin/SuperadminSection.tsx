@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { AppRoute } from '../../types';
@@ -6,6 +6,7 @@ import { AdminTabType } from '../admin/AdminTabs';
 import { SuperadminLogin } from './SuperadminLogin';
 import { SuperadminModuleCard } from './SuperadminModuleCard';
 import { SuppliersOrdersSection } from '../admin/SuppliersOrdersSection';
+import { SuperadminAiPanel } from './SuperadminAiPanel';
 import {
   Shield, CheckCheck, RotateCcw, ExternalLink, LogOut, Search,
   SlidersHorizontal, CheckCircle2, AlertCircle, Layers,
@@ -39,7 +40,7 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
     markProposalAcceptanceAsRead,
   } = useApp();
 
-  const [activeSuperadminTab, setActiveSuperadminTab] = useState<'modules' | 'suppliers' | 'proposals'>('modules');
+  const [activeSuperadminTab, setActiveSuperadminTab] = useState<'modules' | 'suppliers' | 'proposals' | 'ai'>('modules');
   const [proposalStatusFilter, setProposalStatusFilter] = useState<'all' | 'pending' | 'contacted' | 'active'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -458,6 +459,22 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
             {proposalAcceptances.length}
           </span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSuperadminTab('ai')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bubble text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            activeSuperadminTab === 'ai'
+              ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 text-white shadow-xs'
+              : 'text-pink-200 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-amber-300" />
+          <span>IA ByFio</span>
+          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-emerald-300 font-mono font-bold">
+            Live
+          </span>
+        </button>
       </div>
 
       {activeSuperadminTab === 'suppliers' && (
@@ -805,6 +822,10 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
             </div>
           )}
         </>
+      )}
+
+      {activeSuperadminTab === 'ai' && (
+        <SuperadminAiPanel />
       )}
     </div>
   );
