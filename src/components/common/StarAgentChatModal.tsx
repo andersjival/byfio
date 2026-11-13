@@ -4,6 +4,7 @@ import { ChatMessage, aiAgentService } from '../../services/aiAgentService';
 import { useVoiceRecorder } from '../../hooks/useVoiceRecorder';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import { getWhatsAppLink } from '../../utils/formatters';
+import { StarAgentRegisterCard } from './StarAgentRegisterCard';
 
 interface StarAgentChatModalProps {
   isOpen: boolean;
@@ -31,10 +32,24 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [conversationId] = useState(() => `conv_${Date.now()}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { isRecording, recordingTime, startRecording, stopRecording, cancelRecording } = useVoiceRecorder();
+
+  const handleRegisterSuccess = ({ name, email }: { name: string; email: string }) => {
+    playWaterDropSound();
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `a_${Date.now()}`,
+        role: 'assistant',
+        content: `¡Muchas felicidades, ${name.split(' ')[0]}! 🎉🌸✨ Tu cuenta ha quedado registrada con éxito.\n\nCon los accesos que acabas de ingresar (${email} y tu contraseña), podrás ingresar a la web de by.fio cuando quieras para disfrutar de beneficios exclusivos y ver tus compras. ¡Bienvenida a nuestra familia! 💕`,
+        timestamp: Date.now(),
+      },
+    ]);
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -48,6 +63,30 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   const handleSendText = async (textToSend?: string) => {
     const text = (textToSend || inputValue).trim();
     if (!text || isLoading) return;
+
+    // Detectar intención de registro de usuario
+    const isRegisterIntent = /(registrar|registro|crear cuenta|inscribirme|crear mi cuenta|quiero una cuenta|abrir cuenta)/i.test(text);
+    if (isRegisterIntent) {
+      playBubblePopSound(0.3);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `u_${Date.now()}`,
+          role: 'user',
+          content: text,
+          timestamp: Date.now(),
+        },
+        {
+          id: `a_${Date.now() + 1}`,
+          role: 'assistant',
+          content: '¡Qué emoción! 🌸 Vamos a crear tu cuenta. Acabo de abrirte la tarjeta de registro a la par para que ingreses tus datos paso a paso ✨',
+          timestamp: Date.now() + 1,
+        },
+      ]);
+      setInputValue('');
+      setIsRegisterOpen(true);
+      return;
+    }
 
     playBubblePopSound(0.3);
     const userMsg: ChatMessage = {
@@ -138,7 +177,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   const quickChips =
     userRole === 'staff' || userRole === 'admin'
       ? ['¿Cuánto stock queda de tazas?', '¿Qué talleres tienen cupos?', '¿Cuáles productos están agotados?']
-      : ['¿Tienen tazas en stock?', '¿Qué talleres hay disponibles?', '¿Hacen envíos a todo Costa Rica?'];
+      : ['✨ Registrarme en by.fio', '¿Tienen tazas en stock?', '¿Qué talleres hay disponibles?', '¿Hacen envíos a todo Costa Rica?'];
 
   const waUrl = getWhatsAppLink('64004640', '¡Hola! Estaba conversando con la Estrellita y quisiera hacer una consulta.');
 
@@ -146,13 +185,17 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-[130] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/45 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-[130] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/55 backdrop-blur-xs animate-in fade-in duration-200 overflow-x-hidden"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full sm:max-w-md h-[88vh] sm:h-[620px] max-h-[92vh] bg-white dark:bg-[#1a142a] rounded-t-3xl sm:rounded-3xl shadow-2xl border-2 border-fio-200/90 dark:border-purple-500/40 flex flex-col overflow-hidden animate-in slide-in-from-bottom-6 duration-200"
+        className="relative flex flex-col sm:flex-row items-center justify-center gap-0 sm:gap-4 max-w-full"
       >
+        {/* Ventana de Chat de la Estrellita (z-20) */}
+        <div
+          className="relative z-20 w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh] bg-white dark:bg-[#1a142a] rounded-t-3xl sm:rounded-3xl shadow-2xl border-2 border-fio-200/90 dark:border-purple-500/40 flex flex-col overflow-hidden animate-in slide-in-from-bottom-6 duration-200"
+        >
         {/* Header con Mascota Estrellita */}
         <div className="relative px-4 py-3 bg-gradient-to-r from-fio-100 via-pink-50 to-purple-100 dark:from-purple-950 dark:via-[#221838] dark:to-purple-900 border-b border-fio-200/80 dark:border-purple-800/40 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -321,6 +364,14 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
           )}
         </div>
       </div>
+
+      {/* Tarjeta de Registro que sale por detrás hacia la derecha */}
+      <StarAgentRegisterCard
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        onSuccess={handleRegisterSuccess}
+      />
     </div>
-  );
+  </div>
+);
 };

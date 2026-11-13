@@ -1,3 +1,24 @@
+## [v4.19.184] - 2026-11-13
+
+### ✨ Registro Animado por Detrás de la Estrellita, RAG de FAQs y Visor de System Prompt
+- **Ventana de Registro Animada Lateral ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - En PC, al solicitar registrarse (o presionar el chip rápido), se despliega una ventana interactiva que emerge suavemente por detrás de la ventana de chat hacia la derecha (`@keyframes slideFromBehindRight`).
+  - La ventana solicita los datos de dos en dos con transiciones suaves:
+    - Paso 1: Nombre completo + WhatsApp.
+    - Paso 2: Correo electrónico + Dirección/Provincia.
+    - Paso 3: Contraseña + Confirmación de contraseña.
+    - Paso 4: Tarjeta festiva *"¡Bienvenido a by.fio!"* con auto-cierre suave (`@keyframes slideIntoBehind`).
+  - Al culminar el registro, la Estrellita en el chat envía automáticamente una felicitación personalizada indicando que con los datos ingresados podrá iniciar sesión en la web cuando guste.
+- **Motor RAG de Preguntas Frecuentes y System Prompt ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - Integrada base de conocimiento con RAG semántico que inyecta respuestas oficiales a preguntas frecuentes (horarios en Tibás, envíos a todo CR, métodos de pago SINPE Móvil 6400-4640, talleres, personalización y registro).
+  - Configurado System Prompt para responder de manera dulce, alegre y tierna (kawaii) con emojis y restricciones de confidencialidad de modelos.
+- **Pestaña System Prompt & RAG en Superadmin ([SuperadminAiPanel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiPanel.tsx))**:
+  - Añadida la 4ª pestaña en el panel "IA ByFio" con visor del System Prompt en producción, rutas de código para modificaciones y lista de preguntas frecuentes activas.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.184`.
+
+---
+
 ## [v4.19.183] - 2026-11-13
 
 ### 📐 Cursos Drive: Reorganización Proporcional, Centrado Visual y Ajuste de Foto
@@ -8,6 +29,27 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.184] - 2026-11-13
+
+### ✨ Registro Animado por Detrás de la Estrellita, RAG de FAQs y Visor de System Prompt
+- **Ventana de Registro Animada Lateral ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - En PC, al solicitar registrarse (o presionar el chip rápido), se despliega una ventana interactiva que emerge suavemente por detrás de la ventana de chat hacia la derecha (`@keyframes slideFromBehindRight`).
+  - La ventana solicita los datos de dos en dos con transiciones suaves:
+    - Paso 1: Nombre completo + WhatsApp.
+    - Paso 2: Correo electrónico + Dirección/Provincia.
+    - Paso 3: Contraseña + Confirmación de contraseña.
+    - Paso 4: Tarjeta festiva *"¡Bienvenido a by.fio!"* con auto-cierre suave (`@keyframes slideIntoBehind`).
+  - Al culminar el registro, la Estrellita en el chat envía automáticamente una felicitación personalizada indicando que con los datos ingresados podrá iniciar sesión en la web cuando guste.
+- **Motor RAG de Preguntas Frecuentes y System Prompt ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - Integrada base de conocimiento con RAG semántico que inyecta respuestas oficiales a preguntas frecuentes (horarios en Tibás, envíos a todo CR, métodos de pago SINPE Móvil 6400-4640, talleres, personalización y registro).
+  - Configurado System Prompt para responder de manera dulce, alegre y tierna (kawaii) con emojis y restricciones de confidencialidad de modelos.
+- **Pestaña System Prompt & RAG en Superadmin ([SuperadminAiPanel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiPanel.tsx))**:
+  - Añadida la 4ª pestaña en el panel "IA ByFio" con visor del System Prompt en producción, rutas de código para modificaciones y lista de preguntas frecuentes activas.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.184`.
 
 ---
 

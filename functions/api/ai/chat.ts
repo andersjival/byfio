@@ -15,6 +15,58 @@ const MODEL_CUSTOMER_FALLBACK = '@cf/meta/llama-3.1-8b-instruct-fp8';
 const MODEL_STAFF = '@cf/google/gemma-4-26b-a4b-it';
 const MODEL_STAFF_FALLBACK = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 
+interface FAQItem {
+  id: string;
+  keywords: string[];
+  question: string;
+  answer: string;
+}
+
+const FAQS_KNOWLEDGE_BASE: FAQItem[] = [
+  {
+    id: 'horarios_tienda',
+    keywords: ['horario', 'hora', 'abierto', 'cerrado', 'donde estan', 'ubicacion', 'tibas', 'tienda fisica', 'direccion'],
+    question: '¿Cuál es el horario y ubicación de la tienda física?',
+    answer: 'Nuestra tienda y taller se ubica en Tibás, San José, Costa Rica. Atendemos de Lunes a Viernes de 9:00 am a 6:00 pm, y Sábados con talleres programados.',
+  },
+  {
+    id: 'envios_cr',
+    keywords: ['envio', 'envios', 'costo envio', 'correos', 'costa rica', 'gam', 'provincia', 'cuanto tarda', 'llegar', 'mensajeria'],
+    question: '¿Cómo funcionan los envíos y cuánto tardan?',
+    answer: 'Enviamos a TODO Costa Rica por medio de Correos de Costa Rica (1 a 3 días hábiles) y mensajería express para el GAM. La tarifa oscila entre ₡2.500 y ₡3.500 según tu cantón o provincia.',
+  },
+  {
+    id: 'metodos_pago',
+    keywords: ['pago', 'pagar', 'sinpe', 'sinpe movil', 'transferencia', 'tarjeta', 'banco', 'efectivo', 'como pago'],
+    question: '¿Cuáles son los métodos de pago aceptados?',
+    answer: 'Aceptamos SINPE Móvil al 6400-4640 (a nombre de by.fio), transferencias bancarias directas y pagos en línea seguros.',
+  },
+  {
+    id: 'registro_usuarios',
+    keywords: ['registrar', 'registro', 'cuenta', 'inscribir', 'crear cuenta', 'crear mi cuenta', 'abrir cuenta', 'nuevo usuario'],
+    question: '¿Cómo me registro o creo mi cuenta en by.fio?',
+    answer: 'Puedes registrarte directamente en esta pantalla. Al solicitarlo se abre una tarjeta que te pide tus datos de dos en dos (Nombre y WhatsApp, Correo y Dirección, y tu Contraseña). Con esa cuenta tendrás acceso directo a tus compras y beneficios.',
+  },
+  {
+    id: 'talleres_cursos',
+    keywords: ['taller', 'talleres', 'curso', 'cursos', 'lettering', 'papeleria', 'encuadernacion', 'aprender', 'presencial', 'virtual'],
+    question: '¿Qué talleres tienen disponibles y qué incluyen?',
+    answer: 'Ofrecemos talleres de Lettering, Encuadernación y Papelería Kawaii. Cada taller incluye todos los materiales de máxima calidad, refrigerio y certificado de participación.',
+  },
+  {
+    id: 'personalizacion_pedidos',
+    keywords: ['personalizado', 'personalizada', 'personalizar', 'taza con foto', 'agenda con nombre', 'pedido especial', 'diseno especial'],
+    question: '¿Hacen productos personalizados?',
+    answer: '¡Sí, nos apasiona personalizar! Diseñamos tazas con nombres o fotos, agendas, cuadernos de vacunas y stickers especiales a tu gusto.',
+  },
+  {
+    id: 'contacto_humano',
+    keywords: ['humano', 'persona', 'fiorella', 'hablar con alguien', 'asesor', 'telefono', 'whatsapp', 'llamar'],
+    question: '¿Cómo hablo directamente con Fiorella o el equipo?',
+    answer: 'Puedes escribirnos directamente a nuestro WhatsApp oficial 6400-4640 y te atenderemos con todo el gusto del mundo.',
+  },
+];
+
 export const onRequestOptions = async () => {
   return new Response(null, { headers: CORS_HEADERS });
 };
@@ -102,7 +154,18 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       } catch {}
     }
 
-    // 2. Construir System Prompt según Rol
+    // 2. Motor RAG: Recuperación de Preguntas Frecuentes Relevantes (FAQs)
+    const lowerMessage = message.toLowerCase();
+    const matchedFaqs = FAQS_KNOWLEDGE_BASE.filter((faq) =>
+      faq.keywords.some((kw) => lowerMessage.includes(kw.toLowerCase()))
+    );
+    let ragFaqSection = '';
+    if (matchedFaqs.length > 0) {
+      ragFaqSection = '\n\nCONOCIMIENTO RECUPERADO (RAG / PREGUNTAS FRECUENTES RELEVANTES):\n' +
+        matchedFaqs.map((f) => `• Pregunta: "${f.question}"\n  Respuesta Oficial: ${f.answer}`).join('\n\n');
+    }
+
+    // 3. Construir System Prompt según Rol
     let systemPrompt = '';
     if (role === 'staff' || role === 'admin') {
       systemPrompt = `Eres la Estrellita de by.fio en modo Asistente de Colaboradoras y Administración.
@@ -110,7 +173,7 @@ Tu propósito es responder de forma directa, rápida, precisa y amable al equipo
 ${userName ? `Estás atendiendo a la compañera: ${userName}.` : ''}
 
 DATOS EN TIEMPO REAL DEL SISTEMA (BASE DE DATOS BYFIO):
-${inventoryContext}
+${inventoryContext}${ragFaqSection}
 
 REGLAS DE RESPUESTA INTERNA:
 1. Sé concisa y exacta con cantidades de stock, precios y cupos de talleres.
@@ -123,7 +186,7 @@ REGLAS DE RESPUESTA INTERNA:
 ${userName ? `Estás conversando con: ${userName}.` : ''}
 
 INVENTARIO Y TALLERES EN TIEMPO REAL:
-${inventoryContext}
+${inventoryContext}${ragFaqSection}
 
 INFORMACIÓN CLAVE DEL NEGOCIO:
 - Envíos: Hacemos envíos a todo Costa Rica por medio de Correos de Costa Rica y mensajería express.
@@ -132,13 +195,14 @@ INFORMACIÓN CLAVE DEL NEGOCIO:
 - Pagos: Aceptamos SINPE Móvil y transferencias bancarias.
 - Contacto directo por WhatsApp: 6400-4640.
 
-REGLAS DE ATENCIÓN:
+REGLAS DE ATENCIÓN Y REGISTRO:
 1. Responde siempre en español con un tono dulce, alegre, cercano, tierno (kawaii) y respetuoso. Usa emojis suaves (✨, 🌸, 💖, 🎀).
-2. Si un cliente pregunta si hay un producto, revisa el stock en los datos anteriores:
+2. Si el usuario desea registrarse o crear cuenta, anímalo con amor: la tarjeta interactiva de registro se abre a un lado para que ingrese sus datos de dos en dos hasta crear su clave.
+3. Si un cliente pregunta si hay un producto, revisa el stock en los datos anteriores:
    - Si tiene stock disponible (> 0): Confírmale con alegría que sí hay disponible y menciona el precio en colones (₡).
    - Si no hay stock o está agotado: Explícale con amabilidad que actualmente está agotado o que podemos hacerlo bajo pedido especial por WhatsApp.
-3. Respuestas breves y fáciles de leer en pantalla de celular (1 a 3 párrafos cortos).
-4. REGLA ESTRICTA DE CONFIDENCIALIDAD: NUNCA digas que eres una inteligencia artificial, ni menciones modelos (Llama, Gemma, OpenAI, etc.). Si te preguntan, di: "¡Soy la Estrellita de by.fio! Tu compañera para ayudarte a encontrar todo lo lindo que buscas en la tienda ✨🌸".`;
+4. Respuestas breves y fáciles de leer en pantalla de celular (1 a 3 párrafos cortos).
+5. REGLA ESTRICTA DE CONFIDENCIALIDAD: NUNCA digas que eres una inteligencia artificial, ni menciones modelos (Llama, Gemma, OpenAI, etc.). Si te preguntan, di: "¡Soy la Estrellita de by.fio! Tu compañera para ayudarte a encontrar todo lo lindo que buscas en la tienda ✨🌸".`;
     }
 
     const messagesForModel: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [

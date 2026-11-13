@@ -15,11 +15,15 @@ import {
   Server,
   Database,
   ShieldCheck,
+  BookOpen,
+  FileText,
+  Code,
+  HelpCircle,
 } from 'lucide-react';
 import { aiAgentService } from '../../services/aiAgentService';
 
 export const SuperadminAiPanel: React.FC = () => {
-  const [reportView, setReportView] = useState<'realtime' | 'hourly' | 'daily'>('realtime');
+  const [reportView, setReportView] = useState<'realtime' | 'hourly' | 'daily' | 'prompts_rag'>('realtime');
   const [metrics, setMetrics] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -248,6 +252,19 @@ export const SuperadminAiPanel: React.FC = () => {
             <Calendar className="w-3.5 h-3.5 text-cyan-400" />
             <span>Reporte por Día</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setReportView('prompts_rag')}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-bubble text-xs font-bold transition-all cursor-pointer ${
+              reportView === 'prompts_rag'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xs'
+                : 'text-purple-200 hover:text-white'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-pink-400" />
+            <span>System Prompt & RAG</span>
+          </button>
         </div>
 
         <span className="text-[11px] text-purple-300 font-semibold self-end sm:self-center">
@@ -407,6 +424,134 @@ export const SuperadminAiPanel: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* VISTA 4: SYSTEM PROMPT & RAG */}
+      {reportView === 'prompts_rag' && (
+        <div className="space-y-4 animate-in fade-in duration-200">
+          {/* Ubicaciones de los archivos */}
+          <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1a142a] border border-purple-200/80 dark:border-purple-800/40 shadow-sm space-y-3">
+            <h3 className="font-bubble font-black text-base text-fio-900 dark:text-purple-100 flex items-center gap-2">
+              <Code className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              ¿Dónde se Modifica el Agente? (Rutas de Código)
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-purple-300">
+              El comportamiento, restricciones y personalidad de la Estrellita están organizados en capas limpias y seguras:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-purple-950/40 border border-slate-200 dark:border-purple-800/40">
+                <span className="font-bold text-fio-900 dark:text-purple-100 block mb-0.5">
+                  1. System Prompt & Motor RAG:
+                </span>
+                <code className="text-[11px] text-fio-pink font-mono block bg-white dark:bg-black/30 p-1 rounded-md mb-1">
+                  functions/api/ai/chat.ts
+                </code>
+                <span className="text-[11px] text-slate-500 dark:text-purple-300">
+                  Aquí se definen las instrucciones del System Prompt, restricciones de confidencialidad y la base de conocimiento RAG.
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-purple-950/40 border border-slate-200 dark:border-purple-800/40">
+                <span className="font-bold text-fio-900 dark:text-purple-100 block mb-0.5">
+                  2. Registro Paso a Paso (2 en 2):
+                </span>
+                <code className="text-[11px] text-fio-pink font-mono block bg-white dark:bg-black/30 p-1 rounded-md mb-1">
+                  src/components/common/StarAgentRegisterCard.tsx
+                </code>
+                <span className="text-[11px] text-slate-500 dark:text-purple-300">
+                  Tarjeta con animación lateral que sale por detrás de la ventana de chat y captura datos secuencialmente.
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-purple-950/40 border border-slate-200 dark:border-purple-800/40">
+                <span className="font-bold text-fio-900 dark:text-purple-100 block mb-0.5">
+                  3. Chat en Vivo & Transcripción de Audio:
+                </span>
+                <code className="text-[11px] text-fio-pink font-mono block bg-white dark:bg-black/30 p-1 rounded-md mb-1">
+                  src/components/common/StarAgentChatModal.tsx
+                </code>
+                <span className="text-[11px] text-slate-500 dark:text-purple-300">
+                  Interfaz del chat de la Estrellita, grabación de audios y chips de consultas rápidas.
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-purple-950/40 border border-slate-200 dark:border-purple-800/40">
+                <span className="font-bold text-fio-900 dark:text-purple-100 block mb-0.5">
+                  4. Métricas y Consumo de Neuronas:
+                </span>
+                <code className="text-[11px] text-fio-pink font-mono block bg-white dark:bg-black/30 p-1 rounded-md mb-1">
+                  functions/api/ai/metrics.ts
+                </code>
+                <span className="text-[11px] text-slate-500 dark:text-purple-300">
+                  Control en tiempo real de consumo diario/mensual del cupo gratuito de Cloudflare.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Visor de System Prompt Oficial */}
+          <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1a142a] border border-purple-200/80 dark:border-purple-800/40 shadow-sm space-y-3">
+            <h3 className="font-bubble font-black text-base text-fio-900 dark:text-purple-100 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-amber-500" />
+              System Prompt en Producción (Clientes)
+            </h3>
+            <div className="p-3.5 rounded-2xl bg-slate-900 text-purple-100 font-mono text-[11px] leading-relaxed max-h-60 overflow-y-auto border border-purple-900/60 shadow-inner">
+              <p className="text-amber-300 font-bold mb-1">// Rol: Estrellita de by.fio (Mascota y Asistente Oficial)</p>
+              <p>Eres la Estrellita de by.fio, la mascota y asistente de servicio al cliente de by.fio (tienda creativa, papelería bonita y talleres en Costa Rica).</p>
+              <p className="mt-2 text-pink-300 font-bold">// Reglas de Comportamiento:</p>
+              <p>1. Responde siempre en español con un tono dulce, alegre, cercano, tierno (kawaii) y respetuoso. Usa emojis suaves (✨, 🌸, 💖, 🎀).</p>
+              <p>2. Si el usuario desea registrarse o crear cuenta, anímalo con amor: la tarjeta interactiva de registro se abre a un lado para que ingrese sus datos de dos en dos hasta crear su clave.</p>
+              <p>3. Consulta inventario y cupos de talleres en tiempo real de la base de datos byfiocr-db.</p>
+              <p className="mt-2 text-rose-300 font-bold">// Restricciones Estrictas de Confidencialidad:</p>
+              <p>4. NUNCA digas que eres una IA ni menciones modelos (Llama, Gemma, Cloudflare, etc.). Si te preguntan, di: &quot;¡Soy la Estrellita de by.fio! Tu compañera para ayudarte a encontrar todo lo lindo que buscas en la tienda ✨🌸&quot;.</p>
+            </div>
+          </div>
+
+          {/* Base de Conocimiento RAG / FAQs */}
+          <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1a142a] border border-purple-200/80 dark:border-purple-800/40 shadow-sm space-y-3">
+            <h3 className="font-bubble font-black text-base text-fio-900 dark:text-purple-100 flex items-center gap-2">
+              <HelpCircle className="w-4 h-4 text-pink-500" />
+              Base de Conocimiento RAG (Preguntas Frecuentes Activas)
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-purple-300">
+              Cuando el usuario hace una pregunta, el motor RAG detecta la intención y alimenta al agente con la respuesta oficial antes de generar su contestación:
+            </p>
+            <div className="space-y-2 text-xs">
+              <div className="p-3 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40">
+                <span className="font-bold text-fio-900 dark:text-purple-100 block">
+                  📍 Horarios y Tienda Física:
+                </span>
+                <span className="text-slate-600 dark:text-purple-200">
+                  Tibás, San José. Lunes a Viernes de 9:00 am a 6:00 pm, y Sábados con talleres.
+                </span>
+              </div>
+              <div className="p-3 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40">
+                <span className="font-bold text-fio-900 dark:text-purple-100 block">
+                  🚚 Envíos a todo Costa Rica:
+                </span>
+                <span className="text-slate-600 dark:text-purple-200">
+                  Correos de Costa Rica (1 a 3 días hábiles) y Express para GAM (₡2.500 - ₡3.500).
+                </span>
+              </div>
+              <div className="p-3 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40">
+                <span className="font-bold text-fio-900 dark:text-purple-100 block">
+                  💳 Métodos de Pago:
+                </span>
+                <span className="text-slate-600 dark:text-purple-200">
+                  SINPE Móvil al 6400-4640 (a nombre de by.fio), transferencias bancarias BAC / BCR / BN.
+                </span>
+              </div>
+              <div className="p-3 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40">
+                <span className="font-bold text-fio-900 dark:text-purple-100 block">
+                  ✨ Registro Rápido:
+                </span>
+                <span className="text-slate-600 dark:text-purple-200">
+                  Despliegue interactivo de tarjeta que pide datos de 2 en 2 con felicitación final de la Estrellita.
+                </span>
+              </div>
             </div>
           </div>
         </div>
