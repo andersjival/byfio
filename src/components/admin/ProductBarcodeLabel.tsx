@@ -134,25 +134,28 @@ export const ProductBarcodeLabel: React.FC<ProductBarcodeLabelProps> = ({
               </span>
             </div>
 
-            {/* Descripción / Nombre del Producto (mismo tamaño del código de barras: 10px sm:11px) */}
-            <div className="flex-1 min-h-0 flex items-center">
+            {/* Descripción / Nombre del Producto con Ubicación directamente debajo */}
+            <div className="flex-1 min-h-0 flex flex-col justify-center py-0.5">
               <h4 className="font-bubble font-bold text-[10px] sm:text-[11px] text-slate-900 print:text-black leading-tight line-clamp-2">
                 {cleanName}
               </h4>
-            </div>
-
-            {/* Ubicación y Precio (sin palabras Ubicación: ni Código:) */}
-            <div className="mt-1 pt-0.5 border-t border-slate-100 print:border-black/30 flex items-center justify-between gap-1 text-[9px] sm:text-[10px]">
-              {cleanLocation ? (
-                <span className="font-bubble font-bold text-purple-900 print:text-black truncate max-w-[95px] sm:max-w-[115px]">
+              {cleanLocation && (
+                <span className="font-bubble font-bold text-purple-900 print:text-black truncate text-[8.5px] sm:text-[9.5px] mt-0.5">
                   📍 {cleanLocation.split('(')[0].trim()}
                 </span>
-              ) : (
-                <span />
+              )}
+            </div>
+
+            {/* Precio en el pie (no a la par de la ubicación) */}
+            <div className="mt-0.5 pt-0.5 border-t border-slate-100 print:border-black/30 flex items-center justify-end px-0.5 text-[9px] sm:text-[10px]">
+              {product.supplier && (
+                <span className="text-[7.5px] text-slate-400 print:text-black truncate max-w-[65px] mr-auto hidden sm:inline">
+                  {product.supplier}
+                </span>
               )}
 
               {showPrice && typeof product.price === 'number' && product.price > 0 && (
-                <span className="font-bubble font-black text-fio-800 print:text-black text-[10px] sm:text-[11px] shrink-0 ml-auto">
+                <span className="font-bubble font-black text-fio-800 print:text-black text-[10px] sm:text-[11px] shrink-0">
                   {formatCRC(product.price)}
                 </span>
               )}
