@@ -121,7 +121,6 @@ export const AdminPwaShell: React.FC<AdminPwaShellProps> = ({
   };
 
   if (currentRoute === 'admin' && (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'staff'))) {
-    const isStandalone = typeof window !== 'undefined' && (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true);
     return (
       <ErrorBoundary fallbackTitle="Inconveniente al cargar el acceso administrativo">
         <div
@@ -129,17 +128,6 @@ export const AdminPwaShell: React.FC<AdminPwaShellProps> = ({
           style={{ backgroundImage: "url('/bg-pwa-login.png')", backgroundColor: '#EBD8F7' }}
         >
           <div className="absolute inset-0 bg-purple-950/10 pointer-events-none" />
-          {!isStandalone && (
-            <button
-              type="button"
-              onClick={() => onNavigate('home')}
-              className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 hover:bg-white text-slate-700 text-xs font-bubble font-bold backdrop-blur-md border border-purple-200/60 shadow-xs transition-all active:scale-95 cursor-pointer"
-              title="Volver a la tienda pública"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 text-fio-pink" />
-              <span>Volver a la tienda</span>
-            </button>
-          )}
           <div className="relative z-10 w-full max-w-[395px] my-auto flex items-center justify-center">
             <LoginModal
               isOpen={true}
