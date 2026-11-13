@@ -206,7 +206,7 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
       )}
 
       {/* Banner Principal con Generador de Enlaces */}
-      <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-blue-700 via-indigo-700 to-purple-800 text-white shadow-xl relative overflow-hidden">
+      <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#9D174D] via-[#831843] to-[#500724] text-white shadow-xl relative overflow-hidden">
         <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
@@ -215,14 +215,14 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
               <span className="p-2 rounded-xl bg-white/20 backdrop-blur-xs text-white">
                 <HardDrive className="w-5 h-5" />
               </span>
-              <span className="text-xs uppercase font-bubble font-bold tracking-wider text-blue-200">
+              <span className="text-xs uppercase font-bubble font-bold tracking-wider text-pink-200">
                 Módulo Oficial
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bubble font-black tracking-wide">
               CURSOS DRIVE
             </h1>
-            <p className="text-xs sm:text-sm text-blue-100 font-sans leading-relaxed">
+            <p className="text-xs sm:text-sm text-pink-100 font-sans leading-relaxed">
               Genera enlaces para entregar a clientes que quieran comprar un curso. Al confirmar el pago,
               el sistema registra automáticamente el correo en Google Drive vía Composio y le da acceso a los materiales.
             </p>
@@ -230,7 +230,7 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
 
           {/* Generador de Enlace Público para Clientes */}
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3.5 sm:p-4 space-y-2.5 min-w-[280px]">
-            <div className="text-[11px] font-bubble font-bold text-blue-200 flex items-center justify-between">
+            <div className="text-[11px] font-bubble font-bold text-pink-200 flex items-center justify-between">
               <span>ENLACE PARA CLIENTES</span>
               <span className="text-[10px] bg-emerald-500/30 text-emerald-200 px-2 py-0.5 rounded-full">Activo</span>
             </div>
@@ -241,7 +241,7 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white text-blue-900 font-bubble text-xs font-bold hover:bg-blue-50 transition-all shadow-md active:scale-95"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white text-rose-950 font-bubble text-xs font-bold hover:bg-pink-50 transition-all shadow-md active:scale-95"
               >
                 {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copiedLink ? '¡Copiado!' : 'Copiar Enlace'}</span>
@@ -269,15 +269,15 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
         {/* Métricas Rápidas */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-5 pt-4 border-t border-white/15">
           <div className="bg-white/10 rounded-2xl p-2.5 sm:p-3 text-center">
-            <span className="text-[10px] sm:text-xs font-bubble text-blue-200 block">Cursos Activos</span>
+            <span className="text-[10px] sm:text-xs font-bubble text-pink-200 block">Cursos Activos</span>
             <span className="text-lg sm:text-2xl font-bubble font-black">{activeCoursesCount}</span>
           </div>
           <div className="bg-white/10 rounded-2xl p-2.5 sm:p-3 text-center">
-            <span className="text-[10px] sm:text-xs font-bubble text-blue-200 block">Alumnos Registrados</span>
+            <span className="text-[10px] sm:text-xs font-bubble text-pink-200 block">Alumnos Registrados</span>
             <span className="text-lg sm:text-2xl font-bubble font-black">{purchases.length}</span>
           </div>
           <div className="bg-white/10 rounded-2xl p-2.5 sm:p-3 text-center">
-            <span className="text-[10px] sm:text-xs font-bubble text-blue-200 block">Ingresos Totales</span>
+            <span className="text-[10px] sm:text-xs font-bubble text-pink-200 block">Ingresos Totales</span>
             <span className="text-sm sm:text-xl font-bubble font-black text-emerald-300">{formatCRC(totalSales)}</span>
           </div>
         </div>

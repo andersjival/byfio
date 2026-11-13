@@ -1,3 +1,26 @@
+## [v4.19.164] - 2026-11-13
+
+### 🌸 Banner de Cursos Drive: Reemplazo de Azul por Rosado Oscuro
+- **Ajuste Cromático del Banner Oficial ([DriveCoursesAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DriveCoursesAdminSection.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx))**:
+  - Reemplazado el degradado azul del banner principal (*Módulo Oficial CURSOS DRIVE*) por un tono rosado oscuro elegante y profundo (`from-[#9D174D] via-[#831843] to-[#500724]`).
+  - Actualizados los textos de acento y etiquetas secundarias a rosado suave (`text-pink-200`, `text-pink-100`, `text-rose-950`, `hover:bg-pink-50`) en perfecta sintonía con la estética By.Fio.
+  - Actualizado el gradiente del icono en el Menú de Administración a rosado oscuro (`from-[#9D174D] to-[#831843]`).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.164`.
+
+---
+
+## [v4.19.163] - 2026-11-13
+
+### 🎨 Homologación Estricta de Bordes en Segmentos de Caja
+- **Unificación de Bordes y Estructura ([CashRegisterReports.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx))**:
+  - Homologado el borde y diseño de los segmentos **Tienda & Catálogo (Celeste)** y **Ganancia Neta Est. (Turquesa)** para compartir exactamente la misma estructura que los demás botones (`border border-sky-200 dark:border-sky-500/40 shadow-claySm` y `border border-teal-200 dark:border-teal-500/40 shadow-claySm`).
+  - Eliminados grosores o brillos discordantes, garantizando 100% de coherencia visual entre todas las tarjetas de caja.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.163`.
+
+---
+
 ## [v4.19.162] - 2026-11-13
 
 ### 📱 Reubicación del Centro de Aplicaciones PWA & Háptica dentro de Configuración

@@ -161,7 +161,7 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       id: 'drive-courses' as AdminTabType,
       title: 'Cursos Drive',
       icon: HardDrive,
-      gradient: 'from-[#2563EB] to-[#1D4ED8]',
+      gradient: 'from-[#9D174D] to-[#831843]',
 
 
     },

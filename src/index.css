@@ -2756,20 +2756,20 @@ html.dark .btn-pastel-pink-contrast svg {
 .customer-notes-pastel-card,
 body[data-color-theme="dark"] .customer-notes-pastel-card,
 html.dark .customer-notes-pastel-card {
-  background-color: #FCE7F3 !important; /* Color rosado pastel */
-  border-color: #FBCFE8 !important;
+  background-color: #F9A8D4 !important; /* Rosado más presente / un poco más oscuro */
+  border-color: #F472B6 !important;
 }
 
 .customer-notes-pastel-title,
 body[data-color-theme="dark"] .customer-notes-pastel-title,
 html.dark .customer-notes-pastel-title {
-  color: #831843 !important; /* Letras rosado oscuro */
+  color: #700732 !important; /* Letras rosado oscuro profundo */
 }
 
 .customer-notes-pastel-text,
 body[data-color-theme="dark"] .customer-notes-pastel-text,
 html.dark .customer-notes-pastel-text {
-  color: #9D174D !important; /* Letras rosado oscuro */
+  color: #831843 !important; /* Letras rosado oscuro legible */
 }
 
 /* =========================================================================
