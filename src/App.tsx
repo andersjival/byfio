@@ -25,6 +25,7 @@ export const App: React.FC = () => {
     closeWebIntro,
     hasPermission,
     isModuleEnabled,
+    currentUser,
   } = useApp();
 
   const initial = parseRouteFromLocation();
@@ -66,7 +67,14 @@ export const App: React.FC = () => {
     else if (newRoute === 'precios') targetPath = '/precios';
     else if (newRoute === 'catalogo') targetPath = '/catalogo';
     else if (newRoute === 'store') targetPath = '/tienda';
-    else if (newRoute === 'pedidos-mobile') targetPath = '/pedidos';
+    else if (newRoute === 'pedidos-mobile') {
+      const currentPath = typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '';
+      if (currentPath.includes('/usuario/admin/pedidos/apps') || currentUser?.role === 'admin' || Boolean(currentUser?.isMasterAdmin)) {
+        targetPath = '/usuario/admin/pedidos/apps';
+      } else {
+        targetPath = '/usuario/colaborador/pedidos/apps';
+      }
+    }
     else if (newRoute === 'pwa-install') targetPath = '/instalar-app';
     else if (newRoute === 'inventario-app') targetPath = '/inventario-app';
     else if (newRoute === 'workshops') targetPath = '/talleres';
@@ -175,6 +183,17 @@ export const App: React.FC = () => {
       window.removeEventListener('hashchange', handlePop);
     };
   }, [setViewMode, isIntroOpen]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      if (path === '/pedidos' || path === '/pedidos-movil' || path === '/pedidos-mobile' || path === '/alisto') {
+        const isUserAdmin = currentUser?.role === 'admin' || Boolean(currentUser?.isMasterAdmin);
+        const canonical = isUserAdmin ? '/usuario/admin/pedidos/apps' : '/usuario/colaborador/pedidos/apps';
+        window.history.replaceState({ route: 'pedidos-mobile', adminTab: 'orders' }, '', canonical + window.location.search);
+      }
+    }
+  }, [currentUser]);
 
   useEffect(() => { getActiveCampaignRef(); }, []);
   useEffect(() => setupGlobalHapticClickListener(), []);

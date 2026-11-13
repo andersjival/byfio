@@ -5,7 +5,7 @@ import {
   ExternalLink, QrCode, Sparkles, ShieldCheck, Users,
   Boxes, Receipt, Calendar, ArrowLeft, Vibrate, Zap,
   KeyRound, Eye, EyeOff, CheckCircle2, AlertCircle,
-  Truck, ShoppingBag, ClipboardList, Lock, Sliders
+  Truck, ShoppingBag, ClipboardList, Lock, Sliders, PackageCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm, useAlert } from '../../context/ConfirmContext';
@@ -133,11 +133,23 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
       tag: 'Operaciones de Alisto',
       badgeColor: 'bg-amber-100 text-amber-900 border-amber-300',
       description: 'Aplicación táctil optimizada para celular. Permite escanear códigos de barra, chequear pedidos y empacar con verificación táctil.',
-      path: '/pedidos',
-      url: `${origin}/pedidos`,
+      path: '/usuario/colaborador/pedidos/apps',
+      url: `${origin}/usuario/colaborador/pedidos/apps`,
       icon: QrCode,
       target: 'mobile',
-      shareText: `Hola, aquí tienes tu acceso a la Aplicación de Alisto y Pedidos de by.fio: ${origin}/pedidos`,
+      shareText: `Hola, aquí tienes tu acceso a la Aplicación de Alisto y Pedidos de by.fio: ${origin}/usuario/colaborador/pedidos/apps`,
+    },
+    {
+      id: 'admin-orders',
+      title: 'Gestión Móvil de Pedidos (Administración)',
+      tag: 'Pedidos & Alisto Admin',
+      badgeColor: 'bg-purple-100 text-purple-900 border-purple-300',
+      description: 'Acceso móvil directo a la gestión y alisto de pedidos con privilegios administrativos totales.',
+      path: '/usuario/admin/pedidos/apps',
+      url: `${origin}/usuario/admin/pedidos/apps`,
+      icon: PackageCheck,
+      target: 'mobile',
+      shareText: `Acceso Admin a Gestión de Pedidos de by.fio: ${origin}/usuario/admin/pedidos/apps`,
     },
     {
       id: 'collab-inventory',

@@ -59,6 +59,9 @@ export const detectInitialAppScope = (
   }
 
   if (
+    path === '/usuario/colaborador/pedidos/apps' || path.startsWith('/usuario/colaborador/pedidos/apps') ||
+    path === '/usuario/admin/pedidos/apps' || path.startsWith('/usuario/admin/pedidos/apps') ||
+    path.includes('/pedidos/apps') ||
     path === '/pedidos' || path.startsWith('/pedidos/') ||
     path === '/pedidos-movil' || path.startsWith('/pedidos-movil/') ||
     path === '/pedidos-mobile' || path.startsWith('/pedidos-mobile/') ||
@@ -93,6 +96,16 @@ export const readScopedAuthUser = (scope: AppScope): AuthUser | null => {
     const raw = localStorage.getItem(getAuthStorageKey(scope));
     if (raw) {
       return JSON.parse(raw) as AuthUser;
+    }
+
+    if (scope === 'collaborator') {
+      const adminRaw = localStorage.getItem(AUTH_KEY_MAP.admin);
+      if (adminRaw) {
+        const adminUser = JSON.parse(adminRaw) as AuthUser;
+        if (adminUser && (adminUser.role === 'admin' || adminUser.isMasterAdmin)) {
+          return adminUser;
+        }
+      }
     }
 
     const legacyRaw = localStorage.getItem(LEGACY_AUTH_KEY);

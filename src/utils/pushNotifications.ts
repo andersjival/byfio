@@ -95,7 +95,7 @@ export const sendOrderPushNotification = (payload: PushOrderNotificationPayload)
     icon: '/logo-byfio-lila-HD.png',
     badge: '/logo-byfio-lila-HD.png',
     tag: `byfio-order-${payload.orderNumber}`,
-    data: { url: payload.isLayaway ? '/apartados' : '/pedidos' },
+    data: { url: payload.isLayaway ? '/apartados' : '/usuario/colaborador/pedidos/apps' },
     renotify: true,
     requireInteraction: true,
   };
@@ -123,8 +123,8 @@ const spawnWindowNotification = (title: string, options: NotificationOptions) =>
     notification.onclick = () => {
       window.focus();
       try {
-        if (!window.location.pathname.includes('/pedidos')) {
-          window.location.href = '/pedidos';
+        if (!window.location.pathname.includes('/pedidos/apps') && !window.location.pathname.includes('/pedidos')) {
+          window.location.href = '/usuario/colaborador/pedidos/apps';
         }
       } catch {}
       notification.close();

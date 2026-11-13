@@ -43,7 +43,7 @@ export const parseRouteFromLocation = (): RouteInfo => {
     seccionParam === 'instalar-app' ||
     seccionParam === 'instalar' ||
     seccionParam === 'colaborador' ||
-    ((searchParams.get('app') === 'colaborador' || searchParams.get('target') === 'colaborador' || searchParams.get('pwa') === 'colaborador') && path !== '/pedidos' && !path.startsWith('/admin'))
+    ((searchParams.get('app') === 'colaborador' || searchParams.get('target') === 'colaborador' || searchParams.get('pwa') === 'colaborador') && path !== '/pedidos' && !path.startsWith('/admin') && !path.includes('/pedidos/apps'))
   ) {
     return { route: 'pwa-install', adminTab: 'hub' };
   }
@@ -69,6 +69,10 @@ export const parseRouteFromLocation = (): RouteInfo => {
 
   // Vista separada optimizada para móviles de Gestión de Pedidos (/pedidos, /pedidos-movil, /app/pedidos, /alisto, /picking)
   if (
+    path === '/usuario/colaborador/pedidos/apps' || path.startsWith('/usuario/colaborador/pedidos/apps') ||
+    path === '/usuario/admin/pedidos/apps' || path.startsWith('/usuario/admin/pedidos/apps') ||
+    path.includes('/pedidos/apps') ||
+    hash.includes('pedidos/apps') ||
     (!path.startsWith('/admin') && (
       path === '/pedidos' || path.startsWith('/pedidos/') ||
       path === '/pedidos-movil' || path.startsWith('/pedidos-movil/') ||
@@ -400,6 +404,9 @@ export const isCollaboratorPwaContext = (): boolean => {
 
     // 2. Detección de rutas exclusivas de pedidos / colaboradores / inventario PWA
     const isCollaboratorPath =
+      path === '/usuario/colaborador/pedidos/apps' || path.startsWith('/usuario/colaborador/pedidos/apps') ||
+      path === '/usuario/admin/pedidos/apps' || path.startsWith('/usuario/admin/pedidos/apps') ||
+      path.includes('/pedidos/apps') ||
       path === '/pedidos' || path.startsWith('/pedidos/') ||
       path === '/pedidos-mobile' || path.startsWith('/pedidos-mobile/') ||
       path === '/pedidos-movil' || path.startsWith('/pedidos-movil/') ||

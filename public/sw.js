@@ -1,5 +1,5 @@
 // Service Worker oficial By.Fio para PWA, Notificaciones Push y Gestión de Pedidos en Tiempo Real
-const CACHE_VERSION = 'byfio-pwa-v4.19.131';
+const CACHE_VERSION = 'byfio-pwa-v4.19.132';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -19,24 +19,19 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Soporte PWA con protección total para WebKit / iOS Safari
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-  const url = new URL(event.request.url);
-
-  // Ignorar peticiones a APIs externas, autenticación, base de datos y Cloudflare Pages
+  // En desarrollo o llamadas API/Worker/D1, permitir paso directo a la red sin cachear
   if (
-    url.pathname.startsWith('/api/') ||
-    url.pathname.startsWith('/auth/') ||
-    url.pathname.startsWith('/_app/') ||
-    url.hostname.includes('supabase') ||
-    url.hostname.includes('google') ||
-    url.hostname.includes('gstatic')
+    event.request.method !== 'GET' ||
+    event.request.url.includes('/api/') ||
+    event.request.url.includes('cloudflare') ||
+    event.request.url.includes('fonts.googleapis') ||
+    event.request.url.includes('fonts.gstatic')
   ) {
     return;
   }
 
-  // Network First con fallback a Cache para máxima frescura en actualizaciones
+  // Network First con fallback a caché para navegación siempre fresca
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
@@ -48,15 +43,15 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       })
-      .catch(async () => {
-        const cachedResponse = await caches.match(event.request);
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        // Fallback para navegación offline si se solicita HTML
-        if (event.request.mode === 'navigate') {
-          return caches.match('/');
-        }
+      .catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          if (event.request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+        });
       })
   );
 });

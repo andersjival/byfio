@@ -3,11 +3,10 @@ import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
 import { isLayawayReservationOrder, isLayawaySaleOrder } from '../../utils/layaway';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
-import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, Bell, BellOff, ClipboardList, Scan, Package, Printer, Star, GraduationCap, Trash2, UserCheck } from 'lucide-react';
-import { playNewOrderChimeSound } from '../../utils/soundEffects';
+import { QrCode, FileCheck, Phone, MapPin, Clock, ArrowRight, CheckCircle2, ClipboardList, Scan, Package, Printer, Trash2, UserCheck } from 'lucide-react';
 
 export const OrdersQueue: React.FC = () => {
-  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, soundNewOrderEnabled, setSoundNewOrderEnabled, isFeatureEnabled, showNewOrderAlert, deleteOrder, currentUser } = useApp();
+  const { orders, startPicking, setInvoiceOrder, updateOrderStatus, isFeatureEnabled, deleteOrder, currentUser } = useApp();
   const [filterMode, setFilterMode] = React.useState<'all' | 'pending' | 'packing' | 'packed' | 'delivered'>('all');
 
   // IDs de pedidos recién terminados que deben mostrar el colorcito temporal
@@ -172,69 +171,6 @@ export const OrdersQueue: React.FC = () => {
           <p className="text-xs text-gray-500 mt-0.5">
             Los pedidos nuevos ingresan automáticamente en la parte superior y se actualizan en orden en tiempo real.
           </p>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Botón Switch Sonido de Nuevos Pedidos */}
-          <button
-            type="button"
-            onClick={() => {
-              const next = !soundNewOrderEnabled;
-              setSoundNewOrderEnabled(next);
-              if (next) playNewOrderChimeSound(0.35);
-            }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border text-xs font-bold transition-all active:scale-95 cursor-pointer ${
-              soundNewOrderEnabled
-                ? 'bg-amber-50 border-amber-300 text-amber-900 hover:bg-amber-100 shadow-xs'
-                : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
-            }`}
-            title={soundNewOrderEnabled ? 'Sonido de pedidos activado (clic para silenciar)' : 'Sonido de pedidos desactivado (clic para activar)'}
-          >
-            {soundNewOrderEnabled ? (
-              <Bell className="w-4 h-4 text-amber-600 fill-amber-500/20" />
-            ) : (
-              <BellOff className="w-4 h-4 text-slate-400" />
-            )}
-            <span>{soundNewOrderEnabled ? 'Sonido: Activado' : 'Sonido: Silenciado'}</span>
-          </button>
-
-          {/* Botón Probar Notificación de la Estrellita (Pedido General) */}
-          <button
-            type="button"
-            onClick={() => {
-              showNewOrderAlert({
-                orderNumber: pendingOrders[0]?.orderNumber || '#FIO-DEMO',
-              });
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-pink-200 bg-pink-50 text-fio-pink hover:bg-pink-100 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs"
-            title="Probar notificación animada de la estrellita (Pedido)"
-          >
-            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-            <span>Probar Pedido</span>
-          </button>
-
-          {/* Botón Probar Notificación de la Estrellita (Inscripción a Taller) */}
-          <button
-            type="button"
-            onClick={() => {
-              showNewOrderAlert({
-                orderNumber: '#WS-DEMO',
-                customerName: 'Valeria Solís',
-                isWorkshop: true,
-                workshopTitle: 'Taller de Encuadernación Artesanal',
-              });
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs"
-            title="Probar notificación de la estrellita para taller: Hemos recibido una nueva inscripción al taller"
-          >
-            <GraduationCap className="w-3.5 h-3.5 text-purple-600" />
-            <span>Probar Taller 🎨</span>
-          </button>
-
-          <div className="flex items-center gap-2 bg-purple-50 text-purple-900 px-3 py-1.5 rounded-2xl border border-purple-200 text-xs font-semibold">
-            <CheckCircle2 className="w-4 h-4 text-fio-pink" />
-            <span>Alisto con Código y Alistar Pedido</span>
-          </div>
         </div>
       </div>
 

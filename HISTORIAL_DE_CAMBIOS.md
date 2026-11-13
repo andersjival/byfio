@@ -1,3 +1,13 @@
+## [v4.19.132] - 2026-11-12
+
+### 🧹 Limpieza de Controles en Cola de Alisto y Empaque
+- **Eliminación de Botones de Prueba y Sonido ([OrdersQueue.tsx](file:///C:/Users/Juan/byfio/src/components/admin/OrdersQueue.tsx))**:
+  - Eliminados los botones de prueba y switches en la cabecera de la cola de pedidos: `Sonido: Activado/Silenciado`, `⭐ Probar Pedido`, `🎓 Probar Taller 🎨` y el badge descriptivo `✓ Alisto con Código y Alistar Pedido`.
+  - Limpieza de dependencias, iconos e imports no utilizados (`Bell`, `BellOff`, `Star`, `GraduationCap`, `playNewOrderChimeSound`).
+  - Actualizado Service Worker a `byfio-pwa-v4.19.132`.
+
+---
+
 ## [v4.19.131] - 2026-11-12
 
 ### 🔤 Corrección Exhaustiva de Codificación de Caracteres UTF-8 (Mojibake) en el Menú de Administración

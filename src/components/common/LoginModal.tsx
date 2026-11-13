@@ -364,7 +364,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
         if (result.success && result.user) {
           if (
-            forcedRole === 'admin' &&
+            (forcedRole === 'admin' || forcedRole === 'staff') &&
             result.user.role !== 'admin' &&
             result.user.role !== 'staff' &&
             !result.user.isMasterAdmin &&
@@ -381,7 +381,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         const result = registerUser(email, password, name);
         if (result.success && result.user) {
           if (
-            forcedRole === 'admin' &&
+            (forcedRole === 'admin' || forcedRole === 'staff') &&
             result.user.role !== 'admin' &&
             result.user.role !== 'staff' &&
             !result.user.isMasterAdmin &&
@@ -453,7 +453,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         </div>
 
         {/* Selector de Modo: Iniciar Sesión vs Registrarse (Público) */}
-        {forcedRole !== 'admin' && (
+        {forcedRole !== 'admin' && forcedRole !== 'staff' && (
           <div className="px-3 sm:px-4 mb-2">
             <div className="flex items-center p-1 rounded-2xl bg-purple-100/70 border border-purple-200/80 shadow-2xs">
               <button
@@ -980,7 +980,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             )}
           </button>
 
-          {loginMethod === 'email' && forcedRole !== 'admin' && (
+          {loginMethod === 'email' && forcedRole !== 'admin' && forcedRole !== 'staff' && (
             <p className="signup-text mt-3">
               ¿No tienes una cuenta?{' '}
               <button
