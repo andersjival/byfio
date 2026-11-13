@@ -1,3 +1,51 @@
+## [v4.19.174] - 2026-11-13
+
+### ⚡ Integración Oficial Composio: Conexión Google Drive & Gmail para Administrador del Sitio
+- **Conexión Directa Google Drive & Gmail ([drive-courses.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/drive-courses.ts), [DriveCoursesAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DriveCoursesAdminSection.tsx))**:
+  - Integrada la API v3.1 de Composio con la clave oficial del proyecto para la cuenta administrativa `tienda@byfiocr.com`.
+  - Configurados Auth Configs para los toolkits `googledrive` y `gmail`.
+  - Implementado generador de enlaces de conexión OAuth en 1 clic para que el administrador vincule su cuenta de Google.
+  - Implementado monitoreo en vivo de estado (`ACTIVE`, `INITIALIZING`, `DISCONNECTED`) con botón de verificación en tiempo real.
+- **Automatización de Compras de Cursos Digitales**:
+  - Al confirmarse el pago de un curso, se otorga automáticamente permiso de lector en la carpeta privada de Google Drive al correo del alumno (`GOOGLEDRIVE_ADD_FILE_SHARING_PREFERENCE`).
+  - Envío automático de correo oficial de bienvenida con el enlace directo desde `tienda@byfiocr.com` vía Gmail (`GMAIL_SEND_EMAIL`).
+  - Herramientas de diagnóstico integradas para pruebas de correo y verificación de permisos.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.174`.
+
+---
+
+## [v4.19.173] - 2026-11-13
+
+### 🔐 Login & Footer: Retiro de Accesos Directos de Perfiles y Rediseño de Firma GeoSoft
+- **Retiro de Accesos Directos de Perfiles en Login ([LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx))**:
+  - Removida la sección de botones rápidos de perfiles con PIN (*"Perfiles de Usuario Disponibles"*).
+  - Removidos los chips de perfiles sobre el campo de texto (*"Toca o escribe:"*), garantizando que el usuario deba escribir manualmente su perfil y PIN.
+  - Ajustado el placeholder a *"Nombre de tu perfil"*.
+- **Rediseño Estético y Tipográfico de Píldora GeoSoft ([WebShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/web/WebShell.tsx), [LoginModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/LoginModal.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Reemplazado el texto anterior por la firma limpia *"© byfio • by GeoSoft"* con separación visual nítida.
+  - Reemplazada la animación de barrido multicolor por un degradado de marca de alta definición y contraste (*purple-600* a *pink-500*) perfectamente legible en temas claro y oscuro.
+  - Corregida la duplicación de reglas CSS en modo oscuro.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.173`.
+
+---
+
+## [v4.19.172] - 2026-11-13
+
+### 💖 Contenedor de Apartados Rosado Medio en Tema Oscuro & Pestaña Mis Compras con 4 Subsecciones
+- **Fondo Rosado Medio en Contenedor Desplegable de Apartados ([AdminLayawaysSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminLayawaysSection.tsx))**:
+  - Aplicado color rosado medio directo (`#C03A70`) y borde superior (`#D94680`) en modo noche mediante estilo inline con máxima especificidad contra reglas globales.
+  - Textos de vencimiento e historial adaptados en blanco (`text-white`) con alto contraste, y filas de abono estilizadas con fondo oscuro semitransparente.
+- **Pestaña Mis Compras con 4 Botones de Sub-Navegación ([MyAccountModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/MyAccountModal.tsx), [MyAccountPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountPage.tsx))**:
+  - Renombrada la pestaña principal "Mis Pedidos" a "Mis Compras" con icono de bolsa de compras.
+  - Implementados 4 botones de acceso rápido: *Mis pedidos*, *Mi cursos online*, *Mis talleres* y *Cursos en Drive*, con conteos en vivo y navegación contextual a sus módulos.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.172`.
+
+
+---
+
 ## [v4.19.170] - 2026-11-13
 
 ### 📐 Cursos Drive: Distribución en 3 Columnas Horizontales & Beneficios Abajo
