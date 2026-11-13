@@ -1,16 +1,18 @@
 import { LayawayOrderCard } from '../store/LayawayOrderCard';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   X, User, Mail, Phone, MapPin, Calendar, Clock, PackageCheck,
   Tag, Gift, Sparkles, Navigation, ExternalLink, Check, Copy,
   ShoppingBag, Truck, CheckCircle2, ChevronRight, Printer, AlertCircle, RefreshCw,
-  ShieldCheck
+  ShieldCheck, Laptop, Palette, HardDrive, GraduationCap
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatCRC, formatShortDate } from '../../utils/formatters';
 import { isLayawaySaleOrder } from '../../utils/layaway';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import { InteractiveMapPicker } from './InteractiveMapPicker';
+import { getLocalPurchases } from '../../services/driveCoursesService';
+import { Order, OrderItem } from '../../types';
 
 interface MyAccountModalProps {
   isOpen: boolean;
@@ -38,12 +40,14 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
   const {
     currentUser,
     orders,
+    workshops,
     setInvoiceOrder,
     updateCurrentUserData,
     setIsCartOpen,
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'info' | 'orders' | 'promos' | 'offers'>('info');
+  const [purchasesSubTab, setPurchasesSubTab] = useState<'pedidos' | 'online' | 'talleres' | 'drive'>('pedidos');
 
   // Estados de datos editables del usuario
   const [phone, setPhone] = useState(currentUser?.phone || '');
@@ -84,6 +88,58 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
     if (userName && oName && oName === userName) return true;
     return false;
   });
+
+  // Compras de cursos en Drive
+  const userDrivePurchases = useMemo(() => {
+    const list = getLocalPurchases();
+    if (!currentUser) return list;
+    const cleanPhone = (currentUser.phone || '').replace(/\D/g, '');
+    const cleanEmail = (currentUser.email || '').trim().toLowerCase();
+    const cleanName = (currentUser.name || '').trim().toLowerCase();
+
+    return list.filter((p) => {
+      const pPhone = (p.customerPhone || '').replace(/\D/g, '');
+      const pEmail = (p.customerEmail || '').trim().toLowerCase();
+      const pName = (p.customerName || '').trim().toLowerCase();
+
+      if (cleanEmail && pEmail && cleanEmail === pEmail) return true;
+      if (cleanPhone && pPhone && (cleanPhone === pPhone || pPhone.endsWith(cleanPhone) || cleanPhone.endsWith(pPhone))) return true;
+      if (cleanName && pName && cleanName === pName) return true;
+      return false;
+    });
+  }, [currentUser]);
+
+  // Talleres en los que está inscrito el usuario a partir de sus pedidos
+  const userWorkshops = useMemo(() => {
+    const list: { order: Order; item: OrderItem; workshop?: any }[] = [];
+    userOrders.forEach((ord) => {
+      (ord.items || []).forEach((it) => {
+        if (it.type === 'workshop') {
+          const ws = (workshops || []).find((w) => w.id === it.workshopId || w.id === it.id || w.title?.toLowerCase() === it.name?.toLowerCase());
+          list.push({ order: ord, item: it, workshop: ws });
+        }
+      });
+    });
+    return list;
+  }, [userOrders, workshops]);
+
+  // Cursos online (talleres virtuales o con palabra clave online/virtual)
+  const userOnlineCourses = useMemo(() => {
+    return userWorkshops.filter((uw) =>
+      uw.workshop?.modality === 'Virtual en Vivo' ||
+      uw.item.name?.toLowerCase().includes('online') ||
+      uw.item.name?.toLowerCase().includes('virtual')
+    );
+  }, [userWorkshops]);
+
+  // Talleres presenciales
+  const userInPersonWorkshops = useMemo(() => {
+    return userWorkshops.filter((uw) =>
+      uw.workshop?.modality !== 'Virtual en Vivo' &&
+      !uw.item.name?.toLowerCase().includes('online') &&
+      !uw.item.name?.toLowerCase().includes('virtual')
+    );
+  }, [userWorkshops]);
 
   // Guardar datos editables del usuario
   const handleSaveData = (e?: React.FormEvent) => {
@@ -368,11 +424,11 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
-            <PackageCheck className="w-3.5 h-3.5" />
-            <span>Mis Pedidos</span>
-            {userOrders.length > 0 && (
+            <ShoppingBag className="w-3.5 h-3.5" />
+            <span>Mis Compras</span>
+            {(userOrders.length + userDrivePurchases.length) > 0 && (
               <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[10px] font-bold">
-                {userOrders.length}
+                {userOrders.length + userDrivePurchases.length}
               </span>
             )}
           </button>

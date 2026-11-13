@@ -1,3 +1,17 @@
+## [v4.19.169] - 2026-11-13
+
+### 🎓 Cursos Drive: Navegación de Catálogo Limpio a Vista Interior del Curso
+- **Vista Exterior Exclusiva de Selección ([DriveCoursesPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/DriveCoursesPage.tsx))**:
+  - Al ingresar a la sección de cursos Drive, el usuario ve únicamente el catálogo de cursos para elegir, sin información detallada visible afuera por debajo de las tarjetas.
+  - Ningún curso se preselecciona automáticamente al cargar.
+- **Vista Interior de Curso Dedicada ([DriveCoursesPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/DriveCoursesPage.tsx))**:
+  - Al hacer clic en cualquier curso ("Entrar al curso"), el usuario ingresa adentro del curso para ver toda su información completa: descripción detallada, portada grande, caja de inversión total con botón de compra ("Comprar Curso Ahora") y lista de lo que obtendrá.
+  - Añadido botón de retorno superior `← Volver a Cursos` para regresar fluidamente al catálogo.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.169`.
+
+---
+
 ## [v4.19.168] - 2026-11-13
 
 ### 🖥️ Modal de Edición de Cursos Drive: Diseño en Pantalla Completa Sin Scroll

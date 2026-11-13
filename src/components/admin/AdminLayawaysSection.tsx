@@ -36,7 +36,8 @@ interface AdminLayawaysSectionProps {
 }
 
 export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
-  const { orders, products, addLayawayPayment, currentUser, setInvoiceOrder } = useApp();
+  const { orders, products, addLayawayPayment, currentUser, setInvoiceOrder, colorTheme } = useApp();
+  const isDark = colorTheme === 'dark';
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'near_expiry' | 'expired' | 'completed'>('active');
@@ -506,19 +507,26 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
 
                 {/* Sección Desplegable Opcional: Historial y Barra de Tiempo */}
                 {isExpanded && (
-                  <div className="p-3 border-t space-y-2 text-xs animate-in slide-in-from-top-1 layaway-expanded-container">
+                  <div
+                    className="p-3 border-t space-y-2 text-xs animate-in slide-in-from-top-1 layaway-expanded-container"
+                    style={isDark ? { backgroundColor: '#C03A70', borderTopColor: '#D94680' } : undefined}
+                  >
                     {/* Barra de Tiempo Compacta */}
-                    <div className="flex items-center justify-between text-[11px] text-slate-600 layaway-due-text">
+                    <div className={`flex items-center justify-between text-[11px] ${isDark ? 'text-white' : 'text-slate-600'} layaway-due-text`}>
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-amber-600 layaway-due-icon" />
-                        <span>Vencimiento: <strong className="layaway-due-strong">{f.countdown.dueDateFormatted}</strong></span>
+                        <Calendar className={`w-3 h-3 ${isDark ? 'text-pink-100' : 'text-amber-600'} layaway-due-icon`} />
+                        <span>Vencimiento: <strong className={isDark ? 'text-white font-bold' : 'layaway-due-strong'}>{f.countdown.dueDateFormatted}</strong></span>
                       </span>
-                      <span className="font-bold text-amber-800 layaway-days-badge">
+                      <span className={`font-bold ${isDark ? 'text-yellow-200' : 'text-amber-800'} layaway-days-badge`}>
                         {f.countdown.isExpired ? 'Plazo expirado' : `${f.countdown.daysRemaining} días restantes`}
                       </span>
                     </div>
 
-                    <div className="w-full bg-white rounded-full h-1.5 overflow-hidden border border-amber-200 layaway-progress-track">
+                    <div
+                      className={`w-full rounded-full h-1.5 overflow-hidden border layaway-progress-track ${
+                        isDark ? 'bg-black/30 border-white/20' : 'bg-white border-amber-200'
+                      }`}
+                    >
                       <div
                         className={`h-full rounded-full ${
                           f.countdown.isExpired ? 'bg-red-500' : f.countdown.isNearExpiry ? 'bg-orange-500' : 'bg-amber-500'
@@ -529,31 +537,38 @@ export const AdminLayawaysSection: React.FC<AdminLayawaysSectionProps> = () => {
 
                     {/* Historial de Abonos si existen */}
                     {f.payments.length > 0 ? (
-                      <div className="pt-1.5 border-t border-amber-200/60 layaway-divider space-y-1">
-                        <span className="font-bubble font-bold text-slate-700 text-[11px] block layaway-history-title">
+                      <div
+                        className="pt-1.5 border-t layaway-divider space-y-1"
+                        style={isDark ? { borderTopColor: 'rgba(255, 255, 255, 0.25)' } : { borderTopColor: 'rgba(251, 191, 36, 0.4)' }}
+                      >
+                        <span className={`font-bubble font-bold text-[11px] block layaway-history-title ${isDark ? 'text-white' : 'text-slate-700'}`}>
                           Historial de Pagos ({f.payments.length}):
                         </span>
                         <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
                           {f.payments.map((p, idx) => (
                             <div
                               key={p.id || idx}
-                              className="flex items-center justify-between py-1 px-2 rounded-lg bg-white border border-amber-200/70 text-[11px]"
+                              className={`flex items-center justify-between py-1 px-2 rounded-lg border text-[11px] ${
+                                isDark
+                                  ? 'bg-[#1E1A30]/80 border-white/15 text-white'
+                                  : 'bg-white border-amber-200/70'
+                              }`}
                             >
                               <div className="flex items-center gap-2">
-                                <span className="font-bubble font-bold text-emerald-700">{formatCRC(p.amount)}</span>
-                                <span className="px-1 py-0.2 rounded-sm bg-slate-100 text-slate-600 font-mono text-[9px] uppercase">
+                                <span className={`font-bubble font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>{formatCRC(p.amount)}</span>
+                                <span className={`px-1 py-0.2 rounded-sm font-mono text-[9px] uppercase ${isDark ? 'bg-white/15 text-pink-100' : 'bg-slate-100 text-slate-600'}`}>
                                   {p.paymentMethod}
                                 </span>
-                                {p.reference && <span className="text-slate-400 font-mono text-[10px]">Ref: #{p.reference}</span>}
-                                {p.registeredBy && <span className="text-slate-400 italic text-[10px]">({p.registeredBy})</span>}
+                                {p.reference && <span className={`${isDark ? 'text-pink-200/70' : 'text-slate-400'} font-mono text-[10px]`}>Ref: #{p.reference}</span>}
+                                {p.registeredBy && <span className={`${isDark ? 'text-pink-200/70' : 'text-slate-400'} italic text-[10px]`}>({p.registeredBy})</span>}
                               </div>
-                              <span className="text-slate-400">{formatShortDate(p.date)}</span>
+                              <span className={isDark ? 'text-pink-100/90' : 'text-slate-400'}>{formatShortDate(p.date)}</span>
                             </div>
                           ))}
                         </div>
                       </div>
                     ) : (
-                      <p className="text-[11px] text-slate-400 pt-1">
+                      <p className={`text-[11px] pt-1 ${isDark ? 'text-pink-100' : 'text-slate-400'}`}>
                         No hay abonos adicionales registrados aún (solo el anticipo inicial de {formatCRC(order.total)}).
                       </p>
                     )}

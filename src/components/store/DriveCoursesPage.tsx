@@ -22,8 +22,8 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
   const [selectedCourse, setSelectedCourse] = useState<DriveCourse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Step state: 'select' | 'checkout' | 'success'
-  const [step, setStep] = useState<'select' | 'checkout' | 'success'>('select');
+  // Step state: 'catalog' | 'detail' | 'checkout' | 'success'
+  const [step, setStep] = useState<'catalog' | 'detail' | 'checkout' | 'success'>('catalog');
 
   // Formulario de Pago
   const [customerName, setCustomerName] = useState(() => currentUser?.name || '');
@@ -65,10 +65,8 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
         const activeOnly = list.filter((c) => c.isActive);
         const finalList = activeOnly.length > 0 ? activeOnly : DEFAULT_DRIVE_COURSES;
         setCourses(finalList);
-        setSelectedCourse(finalList[0]);
       } catch {
         setCourses(DEFAULT_DRIVE_COURSES);
-        setSelectedCourse(DEFAULT_DRIVE_COURSES[0]);
       } finally {
         setLoading(false);
       }
@@ -76,18 +74,25 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
     load();
   }, []);
 
-  const handleSelectCourse = (c: DriveCourse) => {
+  const handleOpenCourse = (c: DriveCourse) => {
     setSelectedCourse(c);
+    setStep('detail');
+    playBubblePopSound();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToCatalog = () => {
+    setSelectedCourse(null);
+    setStep('catalog');
     playWaterDropSound();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleGoToCheckout = () => {
     setFormError(null);
     setStep('checkout');
     playBubblePopSound();
-    setTimeout(() => {
-      checkoutRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCopySinpe = () => {
@@ -232,157 +237,195 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-16 animate-fadeIn select-none sm:select-text">
-      {/* Hero Header */}
-      <div className="text-center space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 border border-purple-200/60 shadow-xs">
-          <HardDrive className="w-4 h-4 text-blue-700" />
-          <span className="font-bubble font-bold text-xs text-purple-900 tracking-wide">
-            Cursos & Contenidos Digitales en Google Drive
-          </span>
-        </div>
-        <h1 className="text-2xl sm:text-4xl font-bubble font-black text-slate-900 tracking-tight">
-          Aprende con <span className="text-purple-700">by.fio</span> desde Cualquier Lugar
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-600 font-sans max-w-2xl mx-auto leading-relaxed">
-          Selecciona el curso que deseas llevar. Al confirmar tu pago, te otorgamos acceso automático
-          en Google Drive con videos paso a paso, plantillas imprimibles y recursos descargables de por vida.
-        </p>
-      </div>
-
-      {/* PASO 1: SELECCIONAR CURSO */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between border-b border-purple-100 pb-2">
-          <h2 className="font-bubble font-bold text-sm sm:text-base text-slate-800 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-purple-700 text-white text-xs flex items-center justify-center font-black">1</span>
-            <span>Elige tu Curso:</span>
-          </h2>
-          <span className="text-xs font-sans text-slate-400 hidden sm:inline">
-            Haz clic en un curso para ver sus detalles
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {courses.map((course) => {
-            const isSelected = selectedCourse?.id === course.id;
-            return (
-              <div
-                key={course.id}
-                onClick={() => handleSelectCourse(course)}
-                className={`rounded-3xl p-4 cursor-pointer transition-all duration-200 relative flex flex-col justify-between ${
-                  isSelected
-                    ? 'bg-purple-50/70 border-2 border-purple-600 shadow-lg scale-[1.02]'
-                    : 'bg-[#FDFBF9] border border-purple-100 hover:border-purple-300 hover:shadow-md'
-                }`}
-              >
-                {/* Portada */}
-                <div className="relative h-40 rounded-2xl overflow-hidden bg-purple-100 mb-3">
-                  {course.coverImage ? (
-                    <img src={course.coverImage} alt={course.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-purple-400">
-                      <HardDrive className="w-12 h-12" />
-                    </div>
-                  )}
-                  {course.badge && (
-                    <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-purple-700/90 text-white font-bubble font-bold text-[10px] shadow-sm">
-                      {course.badge}
-                    </span>
-                  )}
-                  {isSelected && (
-                    <span className="absolute top-2 right-2 p-1.5 rounded-full bg-purple-700 text-white shadow-md">
-                      <Check className="w-4 h-4 stroke-[3]" />
-                    </span>
-                  )}
-                  <div className="absolute bottom-2 right-2 px-3 py-1 rounded-xl bg-white/95 text-purple-900 font-bubble font-black text-xs shadow-md">
-                    {formatCRC(course.price)}
-                  </div>
-                </div>
-
-                {/* Título y Tagline */}
-                <div className="space-y-1">
-                  <h3 className={`font-bubble font-bold text-sm ${isSelected ? 'text-purple-950' : 'text-slate-800'}`}>
-                    {course.title}
-                  </h3>
-                  {course.tagline && (
-                    <p className="text-[11px] text-purple-700 font-sans line-clamp-2">{course.tagline}</p>
-                  )}
-                </div>
-
-                <div className="mt-3 pt-2 border-t border-purple-100/60 flex items-center justify-between text-xs font-bubble font-bold">
-                  <span className={isSelected ? 'text-purple-700' : 'text-slate-500'}>
-                    {isSelected ? '✓ Seleccionado' : 'Elegir este curso'}
-                  </span>
-                  <ArrowRight className={`w-3.5 h-3.5 ${isSelected ? 'text-purple-700 translate-x-1' : 'text-slate-400'} transition-transform`} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* PASO 2: DETALLES DEL CURSO ELEGIDO ("lo que obtendrá y botón comprar") */}
-      {selectedCourse && step === 'select' && (
-        <div className="rounded-3xl p-6 sm:p-8 bg-[#FDFBF9] border border-purple-200/80 shadow-md space-y-6 animate-fadeIn">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-            <div className="space-y-3 max-w-2xl">
-              <div className="flex items-center gap-2">
-                <span className="px-3 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bubble text-[11px] font-bold">
-                  Acceso Inmediato en Google Drive
-                </span>
-                {selectedCourse.badge && (
-                  <span className="px-3 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bubble text-[11px] font-bold">
-                    {selectedCourse.badge}
-                  </span>
-                )}
-              </div>
-
-              <h2 className="text-xl sm:text-2xl font-bubble font-black text-slate-900">
-                {selectedCourse.title}
-              </h2>
-
-              <p className="text-xs sm:text-sm text-slate-600 font-sans leading-relaxed">
-                {selectedCourse.description}
-              </p>
-            </div>
-
-            {/* Caja de Precio y Botón Comprar */}
-            <div className="bg-purple-50/80 rounded-2xl p-5 border border-purple-200 text-center min-w-[260px] space-y-3 shrink-0">
-              <span className="text-[11px] font-bubble font-bold text-slate-500 block uppercase">
-                Inversión Total
+      {/* VISTA 1: CATÁLOGO DE CURSOS (Afuera: solo elegir cuál curso) */}
+      {step === 'catalog' && (
+        <div className="space-y-8 animate-fadeIn">
+          {/* Hero Header */}
+          <div className="text-center space-y-3 pt-2">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 border border-purple-200/60 shadow-xs">
+              <HardDrive className="w-4 h-4 text-blue-700" />
+              <span className="font-bubble font-bold text-xs text-purple-900 tracking-wide">
+                Cursos & Contenidos Digitales en Google Drive
               </span>
-              <div className="text-3xl font-bubble font-black text-purple-900">
-                {formatCRC(selectedCourse.price)}
-              </div>
-              <span className="text-[11px] text-slate-500 font-sans block">
-                Pago único • Acceso ilimitado de por vida
-              </span>
-              <button
-                type="button"
-                onClick={handleGoToCheckout}
-                className="w-full py-3 px-5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-sm font-bold shadow-lg shadow-purple-700/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>Comprar Curso Ahora</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
             </div>
+            <h1 className="text-2xl sm:text-4xl font-bubble font-black text-slate-900 tracking-tight">
+              Aprende con <span className="text-purple-700">by.fio</span> desde Cualquier Lugar
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 font-sans max-w-2xl mx-auto leading-relaxed">
+              Selecciona el curso que deseas llevar. Al confirmar tu pago, te otorgamos acceso automático
+              en Google Drive con videos paso a paso, plantillas imprimibles y recursos descargables de por vida.
+            </p>
           </div>
 
-          {/* Sección "Lo que obtendrás" */}
-          <div className="bg-white rounded-2xl p-5 border border-purple-100 space-y-3">
-            <h3 className="font-bubble font-bold text-sm text-purple-900 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-yellow-500" />
-              <span>Lo que obtendrás con este curso:</span>
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {selectedCourse.whatYouGet?.map((item, idx) => (
-                <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-sans">
-                  <span className="p-1 rounded-lg bg-emerald-100 text-emerald-700 shrink-0 mt-0.5">
-                    <Check className="w-3 h-3 stroke-[3]" />
-                  </span>
-                  <span>{item}</span>
+          {/* Grid de Cursos para Elegir */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-purple-100 pb-2">
+              <h2 className="font-bubble font-bold text-sm sm:text-base text-slate-800 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-purple-700 text-white text-xs flex items-center justify-center font-black">1</span>
+                <span>Elige tu Curso:</span>
+              </h2>
+              <span className="text-xs font-sans text-slate-400 hidden sm:inline">
+                Haz clic en un curso para entrar a ver los detalles
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {courses.map((course) => (
+                <div
+                  key={course.id}
+                  onClick={() => handleOpenCourse(course)}
+                  className="group rounded-3xl p-4 cursor-pointer transition-all duration-200 relative flex flex-col justify-between bg-[#FDFBF9] border border-purple-100 hover:border-purple-400 hover:shadow-xl hover:-translate-y-1"
+                >
+                  <div>
+                    {/* Portada */}
+                    <div className="relative h-44 rounded-2xl overflow-hidden bg-purple-100 mb-3">
+                      {course.coverImage ? (
+                        <img
+                          src={course.coverImage}
+                          alt={course.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-purple-400">
+                          <HardDrive className="w-12 h-12" />
+                        </div>
+                      )}
+                      {course.badge && (
+                        <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-purple-700/90 backdrop-blur-xs text-white font-bubble font-bold text-[10px] shadow-sm">
+                          {course.badge}
+                        </span>
+                      )}
+                      <div className="absolute bottom-2.5 right-2.5 px-3 py-1 rounded-xl bg-white/95 text-purple-900 font-bubble font-black text-xs shadow-md">
+                        {formatCRC(course.price)}
+                      </div>
+                    </div>
+
+                    {/* Título y Tagline */}
+                    <div className="space-y-1.5">
+                      <h3 className="font-bubble font-bold text-sm sm:text-base text-slate-900 group-hover:text-purple-900 transition-colors">
+                        {course.title}
+                      </h3>
+                      {course.tagline && (
+                        <p className="text-[11px] text-purple-700 font-sans line-clamp-2 leading-relaxed">
+                          {course.tagline}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Botón de Entrada */}
+                  <div className="mt-4 pt-3 border-t border-purple-100/70 flex items-center justify-between text-xs font-bubble font-bold text-purple-700 group-hover:text-purple-900">
+                    <span>Entrar al curso</span>
+                    <span className="p-1.5 rounded-full bg-purple-100 group-hover:bg-purple-700 group-hover:text-white transition-all">
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* VISTA 2: ADENTRO DEL CURSO */}
+      {step === 'detail' && selectedCourse && (
+        <div className="space-y-6 animate-fadeIn">
+          {/* Barra Superior con botón para volver afuera a los cursos */}
+          <div className="flex items-center justify-between gap-3 flex-wrap border-b border-purple-100 pb-3">
+            <button
+              type="button"
+              onClick={handleBackToCatalog}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-purple-50 text-purple-700 border border-purple-200 font-bubble text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>← Volver a Cursos</span>
+            </button>
+            <div className="flex items-center gap-2 text-xs font-bubble">
+              <span className="text-slate-400">Cursos Drive /</span>
+              <span className="text-purple-900 font-bold truncate max-w-xs">{selectedCourse.title}</span>
+            </div>
+          </div>
+
+          {/* Tarjeta de Información Completa del Curso */}
+          <div className="rounded-3xl p-6 sm:p-8 bg-[#FDFBF9] border border-purple-200/80 shadow-md space-y-6">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+              <div className="space-y-4 max-w-2xl">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-3 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bubble text-[11px] font-bold">
+                    Acceso Inmediato en Google Drive
+                  </span>
+                  {selectedCourse.badge && (
+                    <span className="px-3 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bubble text-[11px] font-bold">
+                      {selectedCourse.badge}
+                    </span>
+                  )}
+                </div>
+
+                <h1 className="text-xl sm:text-3xl font-bubble font-black text-slate-900 leading-snug">
+                  {selectedCourse.title}
+                </h1>
+
+                {selectedCourse.coverImage && (
+                  <div className="relative h-56 sm:h-72 rounded-2xl overflow-hidden bg-purple-100 shadow-sm border border-purple-100">
+                    <img
+                      src={selectedCourse.coverImage}
+                      alt={selectedCourse.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <h3 className="font-bubble font-bold text-xs text-slate-500 uppercase tracking-wider">
+                    Descripción del Curso:
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-700 font-sans leading-relaxed">
+                    {selectedCourse.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Caja de Precio y Botón Comprar */}
+              <div className="bg-purple-50/80 rounded-2xl p-5 border border-purple-200 text-center min-w-[260px] space-y-3 shrink-0 self-start w-full md:w-auto">
+                <span className="text-[11px] font-bubble font-bold text-slate-500 block uppercase">
+                  Inversión Total
+                </span>
+                <div className="text-3xl font-bubble font-black text-purple-900">
+                  {formatCRC(selectedCourse.price)}
+                </div>
+                <span className="text-[11px] text-slate-500 font-sans block">
+                  Pago único • Acceso ilimitado de por vida
+                </span>
+                <button
+                  type="button"
+                  onClick={handleGoToCheckout}
+                  className="w-full py-3 px-5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-sm font-bold shadow-lg shadow-purple-700/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Comprar Curso Ahora</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Sección "Lo que obtendrás" */}
+            {selectedCourse.whatYouGet && selectedCourse.whatYouGet.length > 0 && (
+              <div className="bg-white rounded-2xl p-5 border border-purple-100 space-y-3">
+                <h3 className="font-bubble font-bold text-sm text-purple-900 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-yellow-500" />
+                  <span>Lo que obtendrás con este curso:</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {selectedCourse.whatYouGet.map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-sans">
+                      <span className="p-1 rounded-lg bg-emerald-100 text-emerald-700 shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -393,11 +436,11 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
           <div className="flex items-center justify-between border-b border-purple-100 pb-3">
             <button
               type="button"
-              onClick={() => setStep('select')}
-              className="inline-flex items-center gap-1.5 text-xs font-bubble font-bold text-purple-700 hover:text-purple-900"
+              onClick={() => setStep('detail')}
+              className="inline-flex items-center gap-1.5 text-xs font-bubble font-bold text-purple-700 hover:text-purple-900 cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Cambiar curso</span>
+              <span>← Volver al curso</span>
             </button>
             <span className="text-xs font-bubble font-bold text-slate-500">
               Curso: <span className="text-purple-900">{selectedCourse.title}</span> ({formatCRC(selectedCourse.price)})
@@ -749,10 +792,11 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
             <button
               type="button"
               onClick={() => {
-                setStep('select');
+                setStep('catalog');
+                setSelectedCourse(null);
                 setConfirmedData(null);
               }}
-              className="text-xs font-bubble font-bold text-purple-700 hover:text-purple-900 underline"
+              className="text-xs font-bubble font-bold text-purple-700 hover:text-purple-900 underline cursor-pointer"
             >
               ← Volver al catálogo de cursos
             </button>
