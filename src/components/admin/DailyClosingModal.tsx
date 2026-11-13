@@ -222,7 +222,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
 
   return (
     <>
-      <div className="closing-modal-overlay fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-3 sm:p-5 animate-fadeIn">
+      <div className="closing-modal-overlay fixed inset-0 z-50 overflow-y-auto fuchsia-pastel-scrollbar custom-scrollbar bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-3 sm:p-5 animate-fadeIn">
       <div className="closing-modal-card relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[94vh] flex flex-col">
         {/* Header Fijo con Selector de Pestañas */}
         <div className="no-print p-4 border-b border-slate-200 bg-[#F1F2F6] flex items-center justify-between gap-3 shrink-0">
@@ -338,7 +338,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
             )}
 
             {/* Contenido Imprimible del Acta */}
-            <div id="printable-closing-report" className="p-5 sm:p-6 space-y-4 text-xs overflow-y-auto">
+            <div id="printable-closing-report" className="p-5 sm:p-6 space-y-4 text-xs overflow-y-auto fuchsia-pastel-scrollbar custom-scrollbar">
               <div className="flex items-start justify-between border-b border-gray-200 pb-3">
                 <div>
                   <BrandLogo size="sm" />
@@ -550,7 +550,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
             PESTAÑA 2: HISTORIAL DE CIERRES ANTERIORES
             ======================================================== */}
         {activeTab === 'history' && (
-          <div className="p-4 sm:p-5 space-y-4 overflow-y-auto max-h-[80vh]">
+          <div className="p-4 sm:p-5 space-y-4 overflow-y-auto max-h-[80vh] fuchsia-pastel-scrollbar custom-scrollbar">
             {/* Barra de Filtros por Día y Fecha */}
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -709,7 +709,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
           MODAL DE CONFIRMACIÓN Y DETALLES DEL CIERRE DE CAJA
           ======================================================== */}
       {savedSummary && (
-        <div className="fixed inset-0 z-[70] overflow-y-auto bg-slate-950/75 backdrop-blur-xs flex items-start sm:items-center justify-center p-3 sm:p-5 animate-fadeIn">
+        <div className="fixed inset-0 z-[70] overflow-y-auto fuchsia-pastel-scrollbar custom-scrollbar bg-slate-950/75 backdrop-blur-xs flex items-start sm:items-center justify-center p-3 sm:p-5 animate-fadeIn">
           <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto flex flex-col max-h-[92vh] animate-scaleUp">
             {/* Header del Modal */}
             <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white flex items-center justify-between shrink-0 shadow-sm">
@@ -737,7 +737,7 @@ export const DailyClosingModal: React.FC<DailyClosingModalProps> = ({ isOpen, on
             </div>
 
             {/* Contenido con Todos los Detalles */}
-            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto text-xs">
+            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto fuchsia-pastel-scrollbar custom-scrollbar text-xs">
               {/* Fila de Datos Generales (Fecha, Hora, Responsable) */}
               <div className="p-3 bg-purple-50/80 rounded-2xl border border-purple-100 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">

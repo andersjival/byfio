@@ -1,3 +1,26 @@
+## [v4.19.136] - 2026-11-12
+
+### 🧹 Limpieza y Depuración de Skills Redundantes
+- **Eliminación Definitiva de `.agents/skills/deploy-cloudflare-byfio`**:
+  - Removido el archivo y directorio remanente `.agents/skills/deploy-cloudflare-byfio/SKILL.md`.
+  - El protocolo y credenciales de despliegue en vivo se gestionan exclusivamente mediante las instrucciones automáticas de `GEMINI.md`.
+- **Service Worker & Caché ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Elevada la versión a `byfio-pwa-v4.19.136`.
+
+---
+
+## [v4.19.142] - 2026-11-12
+
+### 🌸 Barra de Desplazamiento Fucsia Pastel Universal (Tema By.Fio) y Cierre de Caja Diario
+- **Estilo de Scrollbar Global Universal ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Extendida la regla de scrollbar a nivel universal (`html`, `body`, `*`, `::-webkit-scrollbar*`) para que todas las barras de desplazamiento del sitio adopten automáticamente la estética fucsia pastel (`#F0ABFC` / hover `#E879F9` / active `#D946EF`) con canal de pista `#FAF5FF` (en modo claro) y `#E879F9` sobre `#1E1B2E` (en modo oscuro).
+- **Sección de Cierre de Caja Diario y Reportes ([DailyClosingModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DailyClosingModal.tsx), [CashRegisterReports.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CashRegisterReports.tsx))**:
+  - Aplicadas clases utilitarias explícitas `fuchsia-pastel-scrollbar custom-scrollbar` a las áreas con scroll interno: acta de arqueo diario (`#printable-closing-report`), pestaña de historial de cierres, vista resumen y tablas de transacciones.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché PWA a `byfio-pwa-v4.19.142`.
+
+---
+
 ## [v4.19.141] - 2026-11-12
 
 ### 📏 Mayor Separación y Espaciado del Botón "Volver al Menú" Respecto al Logo

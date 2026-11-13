@@ -2520,9 +2520,53 @@ html.dark .geosoft-copyright-pill:hover {
 
 
 /* =========================================================================
-   BARRA DE SCROLL FUCSIA PASTEL & CUSTOM SCROLLBAR (TEMA BYFIO)
+   BARRA DE SCROLL FUCSIA PASTEL UNIVERSAL & CUSTOM SCROLLBAR (TEMA BYFIO)
+   Aplica a toda la web (html, body y cualquier contenedor con desplazamiento)
    ========================================================================= */
 
+html,
+body,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #F0ABFC #FAF5FF;
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: #FAF5FF;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background: #F0ABFC;
+  border-radius: 9999px;
+  border: 2px solid #FAF5FF;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: #E879F9;
+}
+
+::-webkit-scrollbar-thumb:active,
+*::-webkit-scrollbar-thumb:active {
+  background: #D946EF;
+}
+
+::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Clases utilitarias directas */
 .fuchsia-pastel-scrollbar,
 .custom-scrollbar {
   scrollbar-width: thin;
@@ -2558,6 +2602,36 @@ html.dark .geosoft-copyright-pill:hover {
 .fuchsia-pastel-scrollbar::-webkit-scrollbar-thumb:active,
 .custom-scrollbar::-webkit-scrollbar-thumb:active {
   background: #D946EF;
+}
+
+/* Modo Oscuro Universal */
+.dark,
+.dark *,
+html.dark,
+html.dark * {
+  scrollbar-color: #E879F9 #1E1B2E;
+}
+
+.dark::-webkit-scrollbar-track,
+.dark *::-webkit-scrollbar-track,
+html.dark::-webkit-scrollbar-track,
+html.dark *::-webkit-scrollbar-track {
+  background: #1E1B2E;
+}
+
+.dark::-webkit-scrollbar-thumb,
+.dark *::-webkit-scrollbar-thumb,
+html.dark::-webkit-scrollbar-thumb,
+html.dark *::-webkit-scrollbar-thumb {
+  background: #E879F9;
+  border: 2px solid #1E1B2E;
+}
+
+.dark::-webkit-scrollbar-thumb:hover,
+.dark *::-webkit-scrollbar-thumb:hover,
+html.dark::-webkit-scrollbar-thumb:hover,
+html.dark *::-webkit-scrollbar-thumb:hover {
+  background: #F0ABFC;
 }
 
 .dark .fuchsia-pastel-scrollbar,

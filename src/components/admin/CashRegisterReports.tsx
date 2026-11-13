@@ -325,7 +325,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
             <p className="text-xs">No hay transacciones SINPE BCR registradas en esta vista.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-200">
+          <div className="overflow-x-auto fuchsia-pastel-scrollbar custom-scrollbar rounded-2xl border border-slate-200">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[10px]">
                 <tr>
@@ -526,7 +526,7 @@ export const CashRegisterReports: React.FC<CashRegisterReportsProps> = ({ onOpen
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-2xl border border-slate-200">
+            <div className="overflow-x-auto fuchsia-pastel-scrollbar custom-scrollbar rounded-2xl border border-slate-200">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[10px]">
                   <tr>
