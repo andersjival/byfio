@@ -1,3 +1,27 @@
+## [v4.19.166] - 2026-11-13
+
+### 💜 Banner de Cursos Drive: Armonización en Morado con Rosado By.Fio
+- **Degradado Morado con Rosado ([DriveCoursesAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/DriveCoursesAdminSection.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx))**:
+  - Actualizado el fondo del banner principal (*Módulo Oficial CURSOS DRIVE*) a un degradado horizontal morado con rosado (`from-[#3B0764] via-[#701A75] to-[#BE185D]`) en plena armonía con la identidad de marca By.Fio.
+  - Botón de copiado con tipografía morada profunda (`text-purple-900`) y acentos en rosado suave.
+  - Icono del módulo en el Hub administrativo actualizado al gradiente morado a fucsia/rosado (`from-[#7C3AED] to-[#DB2777]`).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.166`.
+
+---
+
+## [v4.19.165] - 2026-11-13
+
+### 🌸 Tarjeta Notas del Cliente: Fondo Rosado Más Oscuro y Tipografía en Rosado Profundo
+- **Ajuste Cromático de Alta Definición ([CustomersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Intensificado el fondo de la tarjeta de notas del cliente (*📌 NOTAS DEL CLIENTE*) a un tono rosado pastel más oscuro y definido (`#F9A8D4` / Tailwind `pink-300`) con borde rosado coordinado (`#F472B6`).
+  - Título fijado en rosado oscuro profundo (`#700732`) y texto de observaciones en rosado oscuro legible (`#831843`) garantizando contraste superior (7.2:1) y legibilidad absoluta tanto en tema claro como en tema oscuro.
+  - Blindaje con `!important` y clases dedicadas `.customer-notes-pastel-card`, `.customer-notes-pastel-title` y `.customer-notes-pastel-text` para eliminar definitivamente cualquier interferencia del modo oscuro que lo mostraba en color café.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.165`.
+
+---
+
 ## [v4.19.164] - 2026-11-13
 
 ### 🌸 Banner de Cursos Drive: Reemplazo de Azul por Rosado Oscuro

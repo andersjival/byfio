@@ -206,7 +206,7 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
       )}
 
       {/* Banner Principal con Generador de Enlaces */}
-      <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#9D174D] via-[#831843] to-[#500724] text-white shadow-xl relative overflow-hidden">
+      <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-r from-[#3B0764] via-[#701A75] to-[#BE185D] text-white shadow-xl relative overflow-hidden">
         <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
@@ -241,7 +241,7 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white text-rose-950 font-bubble text-xs font-bold hover:bg-pink-50 transition-all shadow-md active:scale-95"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white text-purple-900 font-bubble text-xs font-bold hover:bg-pink-50 transition-all shadow-md active:scale-95"
               >
                 {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copiedLink ? '¡Copiado!' : 'Copiar Enlace'}</span>
