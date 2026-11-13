@@ -213,7 +213,33 @@ export interface OrderItem {
   layawayDueDate?: string;
   layawayDaysTotal?: number;
   layawayPayments?: LayawayPaymentRecord[];
+  etfData?: EtfOrderData;
 }
+export interface EtfFileAttachment {
+  id: string;
+  name: string;
+  url: string;
+  size?: number;
+  uploadedAt: string;
+  type?: string;
+}
+
+export type EtfProductionStatus =
+  | 'pending_files'
+  | 'files_received'
+  | 'in_production'
+  | 'ready'
+  | 'delivered';
+
+export interface EtfOrderData {
+  isEtfOrder?: boolean;
+  requirement?: string;
+  files?: EtfFileAttachment[];
+  operatorNotes?: string;
+  productionStatus?: EtfProductionStatus;
+  updatedAt?: string;
+}
+
 
 export interface InventoryMissingReport {
   id: string;
@@ -302,6 +328,7 @@ export interface Order {
   layawaySaleOrderId?: string;
   layawayCompletedAt?: string;
   layawayPayments?: LayawayPaymentRecord[];
+  etfData?: EtfOrderData;
 }
 
 export interface CartItem {
@@ -344,6 +371,7 @@ export interface UserPermissions {
   agenda?: boolean;    // Agenda & Organizador de Tareas
   suppliers?: boolean; // Pedidos a Proveedor & Requisiciones
   sales?: boolean;     // Historial de Ventas
+  etf?: boolean;       // Módulo ETF
 }
 
 export type AgendaCategory = 'taller' | 'entrega' | 'produccion' | 'proveedor' | 'recordatorio';
@@ -663,7 +691,26 @@ export interface DriveCoursePurchase {
   createdAt: string;
 }
 
+
+export interface ComposioAccountStatus {
+  id?: string;
+  toolkit: 'googledrive' | 'gmail';
+  status: 'ACTIVE' | 'INITIALIZING' | 'DISCONNECTED' | 'EXPIRED' | 'ERROR';
+  userId: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ComposioStatusResponse {
+  success: boolean;
+  adminEmail: string;
+  drive: ComposioAccountStatus | null;
+  gmail: ComposioAccountStatus | null;
+  error?: string;
+}
+
 export interface DriveCoursesSettings {
+  adminEmail?: string;
   composioWebhookUrl?: string;
   composioApiKey?: string;
   updatedAt?: string;

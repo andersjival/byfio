@@ -597,9 +597,111 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
             </div>
           )}
 
-          {/* TAB 2: MIS PEDIDOS */}
+          {/* TAB 2: MIS COMPRAS */}
           {activeTab === 'orders' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
+              {/* 4 BOTONES DE SUB-NAVEGACIÓN DENTRO DE MIS COMPRAS */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1.5 rounded-2xl bg-purple-50/70 border border-purple-100">
+                {/* 1. Mis pedidos */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPurchasesSubTab('pedidos');
+                    playWaterDropSound();
+                  }}
+                  className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+                    purchasesSubTab === 'pedidos'
+                      ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-clayBtn'
+                      : 'text-slate-600 hover:bg-white hover:text-fio-pink'
+                  }`}
+                >
+                  <PackageCheck className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Mis pedidos</span>
+                  {userOrders.length > 0 && (
+                    <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold shrink-0 ${
+                      purchasesSubTab === 'pedidos' ? 'bg-white text-purple-700' : 'bg-purple-100 text-purple-800'
+                    }`}>
+                      {userOrders.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* 2. Mi cursos online */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPurchasesSubTab('online');
+                    playWaterDropSound();
+                  }}
+                  className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+                    purchasesSubTab === 'online'
+                      ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-clayBtn'
+                      : 'text-slate-600 hover:bg-white hover:text-fio-pink'
+                  }`}
+                >
+                  <Laptop className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Mi cursos online</span>
+                  {userOnlineCourses.length > 0 && (
+                    <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold shrink-0 ${
+                      purchasesSubTab === 'online' ? 'bg-white text-purple-700' : 'bg-purple-100 text-purple-800'
+                    }`}>
+                      {userOnlineCourses.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* 3. Mis talleres */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPurchasesSubTab('talleres');
+                    playWaterDropSound();
+                  }}
+                  className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+                    purchasesSubTab === 'talleres'
+                      ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-clayBtn'
+                      : 'text-slate-600 hover:bg-white hover:text-fio-pink'
+                  }`}
+                >
+                  <Palette className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Mis talleres</span>
+                  {userInPersonWorkshops.length > 0 && (
+                    <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold shrink-0 ${
+                      purchasesSubTab === 'talleres' ? 'bg-white text-purple-700' : 'bg-purple-100 text-purple-800'
+                    }`}>
+                      {userInPersonWorkshops.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* 4. Cursos en Drive */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPurchasesSubTab('drive');
+                    playWaterDropSound();
+                  }}
+                  className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl font-bubble font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+                    purchasesSubTab === 'drive'
+                      ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white shadow-clayBtn'
+                      : 'text-slate-600 hover:bg-white hover:text-fio-pink'
+                  }`}
+                >
+                  <HardDrive className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Cursos en Drive</span>
+                  {userDrivePurchases.length > 0 && (
+                    <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold shrink-0 ${
+                      purchasesSubTab === 'drive' ? 'bg-white text-purple-700' : 'bg-purple-100 text-purple-800'
+                    }`}>
+                      {userDrivePurchases.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* VISTA 1: MIS PEDIDOS */}
+              {purchasesSubTab === 'pedidos' && (
+                <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="font-bubble font-bold text-sm text-slate-800 flex items-center gap-2">
                   <PackageCheck className="w-4 h-4 text-fio-pink" />
@@ -777,6 +879,300 @@ export const MyAccountModal: React.FC<MyAccountModalProps> = ({
               )}
             </div>
           )}
+
+          {/* VISTA 2: MI CURSOS ONLINE */}
+          {purchasesSubTab === 'online' && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bubble font-bold text-sm text-slate-800 flex items-center gap-2">
+                    <Laptop className="w-4 h-4 text-fio-pink" />
+                    <span>Cursos Online ({userOnlineCourses.length})</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Cursos virtuales con clases y asesorías online
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    if (onNavigate) onNavigate('workshops');
+                  }}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bubble font-bold text-xs transition-all cursor-pointer"
+                >
+                  <span>Ver Talleres</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+
+              {userOnlineCourses.length === 0 ? (
+                <div className="p-8 text-center bg-white rounded-2xl border border-fio-200/80 space-y-3">
+                  <div className="w-14 h-14 rounded-full bg-purple-50 text-fio-pink flex items-center justify-center mx-auto shadow-inner">
+                    <Laptop className="w-7 h-7" />
+                  </div>
+                  <h4 className="font-bubble font-bold text-base text-slate-800">
+                    No tienes cursos online activos
+                  </h4>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Inscríbete en nuestros cursos virtuales en vivo para aprender encuadernación, foil y papelería desde tu casa.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      if (onNavigate) onNavigate('workshops');
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-fio-pink text-white text-xs font-bubble font-bold shadow-clayBtn hover:shadow-lg active:scale-95 transition-all cursor-pointer"
+                  >
+                    <GraduationCap className="w-3.5 h-3.5" />
+                    <span>Explorar Cursos Online</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {userOnlineCourses.map((uw, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-2xl bg-white border border-fio-200/80 shadow-xs space-y-2.5"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-100 text-purple-800 uppercase">
+                            Virtual en Vivo
+                          </span>
+                          <h4 className="font-bubble font-bold text-sm text-slate-900 mt-1">
+                            {uw.item.name}
+                          </h4>
+                          <p className="text-[11px] text-slate-500">
+                            Pedido #{uw.order.orderNumber || uw.order.id.slice(-6)} • {formatShortDate(uw.order.createdAt)}
+                          </p>
+                        </div>
+                        <span className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                          <Laptop className="w-4 h-4" />
+                        </span>
+                      </div>
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Cupo Confirmado</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onClose();
+                            if (onNavigate) onNavigate('workshops');
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white font-bubble font-bold text-[11px] flex items-center gap-1 shadow-clayBtn cursor-pointer"
+                        >
+                          <span>Ver Detalles del Taller</span>
+                          <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* VISTA 3: MIS TALLERES */}
+          {purchasesSubTab === 'talleres' && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bubble font-bold text-sm text-slate-800 flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-fio-pink" />
+                    <span>Mis Talleres Presenciales ({userInPersonWorkshops.length})</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Talleres presenciales en el estudio by.fio en Tibás
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    if (onNavigate) onNavigate('workshops');
+                  }}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bubble font-bold text-xs transition-all cursor-pointer"
+                >
+                  <span>Ver Talleres</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+
+              {userInPersonWorkshops.length === 0 ? (
+                <div className="p-8 text-center bg-white rounded-2xl border border-fio-200/80 space-y-3">
+                  <div className="w-14 h-14 rounded-full bg-purple-50 text-fio-pink flex items-center justify-center mx-auto shadow-inner">
+                    <Palette className="w-7 h-7" />
+                  </div>
+                  <h4 className="font-bubble font-bold text-base text-slate-800">
+                    No tienes talleres presenciales registrados
+                  </h4>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Aprende en persona en grupos reducidos con todos los materiales incluidos y refrigerio en nuestro estudio.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      if (onNavigate) onNavigate('workshops');
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-fio-pink text-white text-xs font-bubble font-bold shadow-clayBtn hover:shadow-lg active:scale-95 transition-all cursor-pointer"
+                  >
+                    <Palette className="w-3.5 h-3.5" />
+                    <span>Ver Próximos Talleres</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {userInPersonWorkshops.map((uw, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-2xl bg-white border border-fio-200/80 shadow-xs space-y-2.5"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-pink-100 text-fio-pink uppercase">
+                            Presencial en Estudio
+                          </span>
+                          <h4 className="font-bubble font-bold text-sm text-slate-900 mt-1">
+                            {uw.item.name}
+                          </h4>
+                          <p className="text-[11px] text-slate-500">
+                            Pedido #{uw.order.orderNumber || uw.order.id.slice(-6)} • {formatShortDate(uw.order.createdAt)}
+                          </p>
+                        </div>
+                        <span className="w-8 h-8 rounded-xl bg-pink-100 text-fio-pink flex items-center justify-center shrink-0">
+                          <Palette className="w-4 h-4" />
+                        </span>
+                      </div>
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Cupo Reservado</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onClose();
+                            if (onNavigate) onNavigate('workshops');
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-fio-pink text-white font-bubble font-bold text-[11px] flex items-center gap-1 shadow-clayBtn cursor-pointer"
+                        >
+                          <span>Ver Información</span>
+                          <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* VISTA 4: CURSOS EN DRIVE */}
+          {purchasesSubTab === 'drive' && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bubble font-bold text-sm text-slate-800 flex items-center gap-2">
+                    <HardDrive className="w-4 h-4 text-fio-pink" />
+                    <span>Cursos en Google Drive ({userDrivePurchases.length})</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Archivos y plantillas compartidos a tu cuenta de Google Drive
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    if (onNavigate) onNavigate('cursos-drive');
+                  }}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bubble font-bold text-xs transition-all cursor-pointer"
+                >
+                  <HardDrive className="w-3 h-3" />
+                  <span>Ver Catálogo Drive</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+
+              {userDrivePurchases.length === 0 ? (
+                <div className="p-8 text-center bg-white rounded-2xl border border-fio-200/80 space-y-3">
+                  <div className="w-14 h-14 rounded-full bg-purple-50 text-fio-pink flex items-center justify-center mx-auto shadow-inner">
+                    <HardDrive className="w-7 h-7" />
+                  </div>
+                  <h4 className="font-bubble font-bold text-base text-slate-800">
+                    Aún no tienes cursos en Google Drive
+                  </h4>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Accede de por vida a nuestras carpetas privadas en Google Drive con más de 250 plantillas editables y moldes listos para imprimir.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      if (onNavigate) onNavigate('cursos-drive');
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-fio-pink text-white text-xs font-bubble font-bold shadow-clayBtn hover:shadow-lg active:scale-95 transition-all cursor-pointer"
+                  >
+                    <HardDrive className="w-3.5 h-3.5" />
+                    <span>Explorar Cursos en Drive</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {userDrivePurchases.map((p, idx) => (
+                    <div
+                      key={p.id || idx}
+                      className="p-4 rounded-2xl bg-white border border-fio-200/80 shadow-xs space-y-2.5"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800 uppercase">
+                            Acceso Permanente
+                          </span>
+                          <h4 className="font-bubble font-bold text-sm text-slate-900 mt-1">
+                            {p.courseTitle}
+                          </h4>
+                          <p className="text-[11px] text-slate-500 font-mono">
+                            Comprado el {formatShortDate(p.createdAt)}
+                          </p>
+                        </div>
+                        <span className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                          <HardDrive className="w-4 h-4" />
+                        </span>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Acceso Concedido</span>
+                        </span>
+                        <a
+                          href={p.driveFolderUrl || 'https://drive.google.com'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bubble font-bold text-xs flex items-center gap-1 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                        >
+                          <HardDrive className="w-3 h-3" />
+                          <span>Abrir Carpeta</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
           {/* TAB 3: SECCIÓN DE PROMOCIONES */}
           {activeTab === 'promos' && (

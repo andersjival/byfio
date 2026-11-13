@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import {
   HardDrive, Copy, Check, ExternalLink, Share2, Plus, Edit2, Trash2,
   Users, DollarSign, CheckCircle2, AlertCircle, RefreshCw, Sparkles,
-  FolderGit2, ShieldCheck, ArrowRight, Eye, EyeOff, BookOpen, Send
+  FolderGit2, ShieldCheck, ArrowRight, Eye, EyeOff, BookOpen, Send,
+  Mail, Cloud, CheckCircle, Clock, Link as LinkIcon
 } from 'lucide-react';
-import { DriveCourse, DriveCoursePurchase, DriveCoursesSettings, AppRoute } from '../../types';
+import { DriveCourse, DriveCoursePurchase, DriveCoursesSettings, AppRoute, ComposioAccountStatus } from '../../types';
 import {
   fetchDriveCourses, fetchDrivePurchases, saveCourse, deleteCourse,
-  saveComposioSettings, testComposioConnection, DEFAULT_DRIVE_COURSES
+  saveComposioSettings, testComposioConnection, fetchComposioStatus,
+  getComposioConnectLink, testComposioGmail, testComposioDrive, DEFAULT_DRIVE_COURSES
 } from '../../services/driveCoursesService';
 import { formatCRC } from '../../utils/formatters';
 
@@ -42,13 +44,47 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
 
   // Composio Settings State
   const [composioUrl, setComposioUrl] = useState('');
-  const [composioKey, setComposioKey] = useState('');
+  const [composioKey, setComposioKey] = useState('ak_AiRbOjfO_jCuUfBfQHUc');
+  const [adminEmail, setAdminEmail] = useState('tienda@byfiocr.com');
   const [isTestingComposio, setIsTestingComposio] = useState(false);
   const [composioTestResult, setComposioTestResult] = useState<string | null>(null);
+  const [showApiKey, setShowApiKey] = useState(false);
+
+  // Live Composio Connected Accounts Status (Drive & Gmail)
+  const [composioStatus, setComposioStatus] = useState<{
+    drive: ComposioAccountStatus | null;
+    gmail: ComposioAccountStatus | null;
+    loading: boolean;
+  }>({
+    drive: null,
+    gmail: null,
+    loading: false,
+  });
+
+  const [isConnectingDrive, setIsConnectingDrive] = useState(false);
+  const [isConnectingGmail, setIsConnectingGmail] = useState(false);
+  const [isTestingGmail, setIsTestingGmail] = useState(false);
+  const [isTestingDrive, setIsTestingDrive] = useState(false);
+  const [testEmailInput, setTestEmailInput] = useState('tienda@byfiocr.com');
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const loadComposioStatus = async () => {
+    setComposioStatus((prev) => ({ ...prev, loading: true }));
+    try {
+      const res = await fetchComposioStatus();
+      setComposioStatus({
+        drive: res.drive,
+        gmail: res.gmail,
+        loading: false,
+      });
+      if (res.adminEmail) setAdminEmail(res.adminEmail);
+    } catch {
+      setComposioStatus((prev) => ({ ...prev, loading: false }));
+    }
   };
 
   const loadData = async () => {
@@ -58,10 +94,12 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
       setCourses(cList.length > 0 ? cList : DEFAULT_DRIVE_COURSES);
       setSettings(cSettings);
       setComposioUrl(cSettings.composioWebhookUrl || '');
-      setComposioKey(cSettings.composioApiKey || '');
+      if (cSettings.composioApiKey) setComposioKey(cSettings.composioApiKey);
+      if (cSettings.adminEmail) setAdminEmail(cSettings.adminEmail);
 
       const pList = await fetchDrivePurchases();
       setPurchases(pList);
+      await loadComposioStatus();
     } catch {
       setCourses(DEFAULT_DRIVE_COURSES);
     } finally {
@@ -178,10 +216,67 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
 
   const handleSaveComposio = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updated = { composioWebhookUrl: composioUrl.trim(), composioApiKey: composioKey.trim() };
+    const updated = {
+      composioWebhookUrl: composioUrl.trim(),
+      composioApiKey: composioKey.trim(),
+      adminEmail: adminEmail.trim(),
+    };
     await saveComposioSettings(updated);
     setSettings(updated);
     showToast('✓ Configuración de Composio guardada.');
+    loadComposioStatus();
+  };
+
+  const handleConnectComposio = async (toolkit: 'googledrive' | 'gmail') => {
+    if (toolkit === 'googledrive') setIsConnectingDrive(true);
+    else setIsConnectingGmail(true);
+
+    try {
+      const res = await getComposioConnectLink(toolkit, adminEmail, composioKey);
+      if (res.success && res.redirectUrl) {
+        window.open(res.redirectUrl, '_blank');
+        showToast(`Abriendo ventana de Google para conectar ${toolkit === 'googledrive' ? 'Google Drive' : 'Gmail'}.`);
+      } else {
+        showToast(res.message || 'Error al obtener enlace.');
+      }
+    } catch (e: any) {
+      showToast(e.message || 'Error de conexión.');
+    } finally {
+      setIsConnectingDrive(false);
+      setIsConnectingGmail(false);
+    }
+  };
+
+  const handleTestGmail = async () => {
+    setIsTestingGmail(true);
+    try {
+      const res = await testComposioGmail({
+        recipientEmail: testEmailInput,
+        composioApiKey: composioKey,
+        adminEmail,
+      });
+      showToast(res.message);
+    } catch (e: any) {
+      showToast(e.message || 'Error al probar Gmail.');
+    } finally {
+      setIsTestingGmail(false);
+    }
+  };
+
+  const handleTestDrive = async () => {
+    setIsTestingDrive(true);
+    try {
+      const res = await testComposioDrive({
+        testEmail: testEmailInput,
+        composioApiKey: composioKey,
+        adminEmail,
+      });
+      showToast(res.message);
+    } catch (e: any) {
+      showToast(e.message || 'Error al probar Drive.');
+    } finally {
+      setIsTestingDrive(false);
+    }
   };
 
   const handleTestComposio = async () => {
@@ -321,7 +416,7 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
           }`}
         >
           <FolderGit2 className="w-3.5 h-3.5" />
-          <span>Integración Composio & Drive</span>
+          <span>Integración Composio (Drive & Gmail)</span>
         </button>
       </div>
 
@@ -521,90 +616,275 @@ export const DriveCoursesAdminSection: React.FC<DriveCoursesAdminSectionProps> =
         </div>
       )}
 
-      {/* TAB 3: INTEGRACIÓN COMPOSIO & GOOGLE DRIVE */}
+      {/* TAB 3: INTEGRACIÓN COMPOSIO (GOOGLE DRIVE & GMAIL) */}
       {activeTab === 'composio' && (
-        <div className="bg-[#FDFBF9] rounded-3xl p-5 sm:p-6 border border-purple-100 space-y-5">
-          <div className="space-y-1">
-            <h2 className="text-base font-bubble font-bold text-slate-800 flex items-center gap-2">
-              <FolderGit2 className="w-5 h-5 text-blue-600" />
-              <span>Configuración de Composio & Google Drive</span>
-            </h2>
-            <p className="text-xs text-slate-500 font-sans leading-relaxed">
-              Composio automatiza la asignación de permisos en Google Drive. Cuando un cliente realiza el pago,
-              by.fio envía una solicitud a este Webhook con el correo del cliente para que Composio lo invite como lector/editor de la carpeta.
-            </p>
+        <div className="bg-[#FDFBF9] rounded-3xl p-5 sm:p-6 border border-purple-100 space-y-6">
+          {/* Header de la Integración */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-purple-100">
+            <div className="space-y-1">
+              <h2 className="text-base font-bubble font-bold text-slate-800 flex items-center gap-2">
+                <FolderGit2 className="w-5 h-5 text-purple-700" />
+                <span>Conexión Google Drive & Gmail (Administrador)</span>
+              </h2>
+              <p className="text-xs text-slate-500 font-sans leading-relaxed">
+                Cuenta Oficial del Administrador: <strong className="text-purple-900 font-mono">{adminEmail}</strong>.
+                Composio automatiza los accesos a los cursos y el envío oficial de correos.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={loadComposioStatus}
+              disabled={composioStatus.loading}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bubble text-xs font-bold transition-all disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${composioStatus.loading ? 'animate-spin' : ''}`} />
+              <span>{composioStatus.loading ? 'Consultando...' : 'Verificar Estado'}</span>
+            </button>
           </div>
 
-          <form onSubmit={handleSaveComposio} className="space-y-4 max-w-2xl">
-            <div>
-              <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                Webhook URL de Composio
-              </label>
-              <input
-                type="url"
-                value={composioUrl}
-                onChange={(e) => setComposioUrl(e.target.value)}
-                placeholder="https://backend.composio.dev/api/v1/actions/execute/..."
-                className="w-full px-3.5 py-2.5 rounded-2xl border border-purple-200 bg-white text-xs font-mono text-slate-800 focus:outline-hidden focus:border-purple-600"
-              />
-              <span className="text-[11px] text-slate-400 font-sans block mt-1">
-                URL generada en tu flujo de Composio para la acción de Google Drive (compartir carpeta/archivo).
+          {/* Tarjetas de Conexión: Google Drive y Gmail */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 1. Tarjeta Google Drive */}
+            <div className="bg-white rounded-3xl p-5 border border-purple-100/90 shadow-xs flex flex-col justify-between space-y-4 hover:border-purple-300 transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span className="p-2 rounded-2xl bg-amber-50 text-amber-600">
+                      <HardDrive className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h3 className="font-bubble font-bold text-sm text-slate-900">Google Drive</h3>
+                      <span className="text-[11px] font-sans text-slate-400">Carpetas y Materiales</span>
+                    </div>
+                  </div>
+
+                  {composioStatus.drive?.status === 'ACTIVE' ? (
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bubble text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Conectado</span>
+                    </span>
+                  ) : composioStatus.drive?.status === 'INITIALIZING' ? (
+                    <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bubble text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Autorización Pendiente</span>
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-bubble text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      <span>No Conectado</span>
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                  Permite a By.Fio otorgar permiso de lectura inmediato a la carpeta de Google Drive del curso adquirido, vinculando el correo del alumno tras su compra.
+                </p>
+
+                <div className="bg-purple-50/60 rounded-xl p-2.5 text-[11px] font-mono text-purple-900 truncate">
+                  Cuenta vinculada: {adminEmail}
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleConnectComposio('googledrive')}
+                  disabled={isConnectingDrive}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bubble text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>
+                    {isConnectingDrive
+                      ? 'Abriendo conexión...'
+                      : composioStatus.drive?.status === 'ACTIVE'
+                      ? 'Reconectar Google Drive'
+                      : 'Conectar Google Drive'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleTestDrive}
+                  disabled={isTestingDrive}
+                  className="px-3.5 py-2.5 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bubble text-xs font-bold transition-all disabled:opacity-50"
+                  title="Probar asignación de permiso"
+                >
+                  {isTestingDrive ? 'Probando...' : 'Probar Drive'}
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Tarjeta Gmail */}
+            <div className="bg-white rounded-3xl p-5 border border-purple-100/90 shadow-xs flex flex-col justify-between space-y-4 hover:border-purple-300 transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span className="p-2 rounded-2xl bg-rose-50 text-rose-600">
+                      <Mail className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h3 className="font-bubble font-bold text-sm text-slate-900">Gmail Oficial</h3>
+                      <span className="text-[11px] font-sans text-slate-400">Correos y Bienvenida</span>
+                    </div>
+                  </div>
+
+                  {composioStatus.gmail?.status === 'ACTIVE' ? (
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bubble text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Conectado</span>
+                    </span>
+                  ) : composioStatus.gmail?.status === 'INITIALIZING' ? (
+                    <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bubble text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Autorización Pendiente</span>
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-bubble text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      <span>No Conectado</span>
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-slate-600 font-sans leading-relaxed">
+                  Envía el correo de bienvenida con diseño oficial de By.Fio directamente desde <strong className="text-slate-800 font-mono">{adminEmail}</strong> con el enlace a los materiales.
+                </p>
+
+                <div className="bg-purple-50/60 rounded-xl p-2.5 text-[11px] font-mono text-purple-900 truncate">
+                  Remitente oficial: {adminEmail}
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleConnectComposio('gmail')}
+                  disabled={isConnectingGmail}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bubble text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>
+                    {isConnectingGmail
+                      ? 'Abriendo conexión...'
+                      : composioStatus.gmail?.status === 'ACTIVE'
+                      ? 'Reconectar Gmail'
+                      : 'Conectar Gmail'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleTestGmail}
+                  disabled={isTestingGmail}
+                  className="px-3.5 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-800 font-bubble text-xs font-bold transition-all disabled:opacity-50"
+                  title="Enviar correo de prueba"
+                >
+                  {isTestingGmail ? 'Enviando...' : 'Probar Gmail'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Destinatario de Pruebas */}
+          <div className="bg-white rounded-2xl p-4 border border-purple-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <span className="text-xs font-bubble font-bold text-slate-800 block">
+                Correo para Pruebas de Diagnóstico
               </span>
+              <p className="text-[11px] text-slate-400 font-sans">
+                Las pruebas de envío y verificación de Drive usarán esta dirección.
+              </p>
             </div>
-
-            <div>
-              <label className="block text-xs font-bubble font-bold text-slate-700 mb-1">
-                API Key o Token de Autorización (Opcional)
-              </label>
+            <div className="flex items-center gap-2">
               <input
-                type="password"
-                value={composioKey}
-                onChange={(e) => setComposioKey(e.target.value)}
-                placeholder="Bearer token o API Key si requiere autenticación..."
-                className="w-full px-3.5 py-2.5 rounded-2xl border border-purple-200 bg-white text-xs font-mono text-slate-800 focus:outline-hidden focus:border-purple-600"
+                type="email"
+                value={testEmailInput}
+                onChange={(e) => setTestEmailInput(e.target.value)}
+                placeholder="ej: tienda@byfiocr.com"
+                className="px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-mono text-slate-800 focus:outline-hidden focus:border-purple-600"
               />
             </div>
+          </div>
 
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                type="submit"
-                className="px-5 py-2.5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95"
-              >
-                Guardar Configuración
-              </button>
-
+          {/* Configuración de API & Credenciales Composio */}
+          <div className="bg-white rounded-3xl p-5 border border-purple-100 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <h3 className="font-bubble font-bold text-sm text-slate-800 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>Credenciales Composio API v3.1</span>
+                </h3>
+                <p className="text-xs text-slate-500 font-sans">
+                  Clave del proyecto preconfigurada para la tienda By.Fio.
+                </p>
+              </div>
               <button
                 type="button"
-                onClick={handleTestComposio}
-                disabled={isTestingComposio || !composioUrl.trim()}
-                className="px-4 py-2.5 rounded-2xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bubble text-xs font-bold transition-all disabled:opacity-50"
+                onClick={() => setShowApiKey(!showApiKey)}
+                className="text-purple-700 hover:text-purple-900 font-bubble text-xs font-bold flex items-center gap-1"
               >
-                {isTestingComposio ? 'Enviando prueba...' : 'Probar Conexión'}
+                {showApiKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                <span>{showApiKey ? 'Ocultar' : 'Ver Clave'}</span>
               </button>
             </div>
 
-            {composioTestResult && (
-              <div className="p-3 rounded-2xl bg-purple-50 text-purple-900 text-xs font-sans">
-                {composioTestResult}
+            <form onSubmit={handleSaveComposio} className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-1">
+                    Composio API Key
+                  </label>
+                  <input
+                    type={showApiKey ? 'text' : 'password'}
+                    value={composioKey}
+                    onChange={(e) => setComposioKey(e.target.value)}
+                    placeholder="ak_..."
+                    className="w-full px-3.5 py-2 rounded-xl border border-purple-200 bg-[#FDFBF9] text-xs font-mono text-slate-800 focus:outline-hidden focus:border-purple-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bubble font-bold text-slate-700 mb-1">
+                    Correo del Administrador
+                  </label>
+                  <input
+                    type="email"
+                    value={adminEmail}
+                    onChange={(e) => setAdminEmail(e.target.value)}
+                    placeholder="tienda@byfiocr.com"
+                    className="w-full px-3.5 py-2 rounded-xl border border-purple-200 bg-[#FDFBF9] text-xs font-mono text-slate-800 focus:outline-hidden focus:border-purple-600"
+                  />
+                </div>
               </div>
-            )}
-          </form>
 
-          {/* Guía Rápida */}
-          <div className="mt-6 pt-5 border-t border-purple-100 space-y-2">
-            <h4 className="font-bubble font-bold text-xs text-purple-900 uppercase">¿Cómo funciona la automatización?</h4>
+              <div className="flex items-center justify-end gap-2 pt-1">
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bubble text-xs font-bold shadow-md transition-all active:scale-95"
+                >
+                  Guardar Ajustes
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Flujo de Automatización */}
+          <div className="mt-4 pt-4 border-t border-purple-100 space-y-2">
+            <h4 className="font-bubble font-bold text-xs text-purple-900 uppercase">
+              Flujo Oficial de Entrega Automática
+            </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-sans text-slate-600">
-              <div className="bg-white p-3 rounded-2xl border border-purple-100 space-y-1">
-                <span className="font-bubble font-bold text-purple-700 block">1. Pago del Cliente</span>
-                <p>El cliente entra al enlace de cursos, elige uno, realiza el pago por SINPE Móvil e ingresa su correo de Google Drive.</p>
+              <div className="bg-white p-3.5 rounded-2xl border border-purple-100 space-y-1">
+                <span className="font-bubble font-bold text-purple-700 block">1. Pago del Alumno</span>
+                <p>El cliente adquiere el curso en la tienda e ingresa su correo de Google Drive al confirmar el pago por SINPE.</p>
               </div>
-              <div className="bg-white p-3 rounded-2xl border border-purple-100 space-y-1">
-                <span className="font-bubble font-bold text-blue-700 block">2. Notificación a Composio</span>
-                <p>By.Fio envía el correo y la carpeta correspondiente al Webhook de Composio para registrar el permiso en Google Drive.</p>
+              <div className="bg-white p-3.5 rounded-2xl border border-purple-100 space-y-1">
+                <span className="font-bubble font-bold text-amber-700 block">2. Permiso en Google Drive</span>
+                <p>Composio otorga permiso de lector en la carpeta privada de Google Drive de manera inmediata y segura.</p>
               </div>
-              <div className="bg-white p-3 rounded-2xl border border-purple-100 space-y-1">
-                <span className="font-bubble font-bold text-emerald-700 block">3. Acceso Inmediato</span>
-                <p>El cliente recibe un correo de Google Drive para abrir los materiales y puede crear su cuenta By.Fio en el mismo paso.</p>
+              <div className="bg-white p-3.5 rounded-2xl border border-purple-100 space-y-1">
+                <span className="font-bubble font-bold text-rose-700 block">3. Notificación por Gmail</span>
+                <p>By.Fio envía un correo electrónico automático desde {adminEmail} con la bienvenida y el enlace directo.</p>
               </div>
             </div>
           </div>

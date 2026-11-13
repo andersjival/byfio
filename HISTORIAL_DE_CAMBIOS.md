@@ -1,3 +1,14 @@
+## [v4.19.170] - 2026-11-13
+
+### 📐 Cursos Drive: Distribución en 3 Columnas Horizontales & Beneficios Abajo
+- **Diseño Interior en 3 Columnas a la Par ([DriveCoursesPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/DriveCoursesPage.tsx))**:
+  - Reorganizada la estructura principal del curso en 3 columnas alineadas: Columna 1 (Título y Portada del curso), Columna 2 (Descripción completa a la par) y Columna 3 (Caja de inversión y botón de compra a la par).
+  - La sección *"Lo que obtendrás con este curso"* se ubica abajo en ancho completo con su cuadrícula de beneficios.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.170`.
+
+---
+
 ## [v4.19.169] - 2026-11-13
 
 ### 🎓 Cursos Drive: Navegación de Catálogo Limpio a Vista Interior del Curso

@@ -154,15 +154,19 @@ export const WebShell: React.FC<WebShellProps> = ({
       </div>
 
       <footer className="w-full py-5 text-center mt-auto pb-8 z-10">
-        <div className="geosoft-copyright-pill px-4 py-1.5">
+        <div className="geosoft-copyright-pill px-3.5 py-1 sm:px-4 sm:py-1.5">
           <a
             href="https://www.geosoft.lat"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs sm:text-sm tracking-wider hover:opacity-90 transition-opacity font-bubble"
-            title="Desarrollado por GeoSoft"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm tracking-wide transition-opacity hover:opacity-90 font-bubble"
+            title="Desarrollado por GeoSoft • https://www.geosoft.lat"
           >
-            <span className="animate-copyright-sweep font-bold">© Copyright en byfio by GeoSoft</span>
+            <span className="text-slate-600 dark:text-slate-300 font-semibold">© byfio</span>
+            <span className="text-slate-400 dark:text-slate-500">•</span>
+            <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fio-purple to-pink-500 dark:from-purple-400 dark:via-fio-pink dark:to-pink-400">
+              by GeoSoft
+            </span>
           </a>
         </div>
       </footer>

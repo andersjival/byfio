@@ -1,4 +1,4 @@
-import { DriveCourse, DriveCoursePurchase, DriveCoursesSettings } from '../types';
+import { DriveCourse, DriveCoursePurchase, DriveCoursesSettings, ComposioStatusResponse } from '../types';
 
 const STORAGE_KEY_COURSES = 'byfio_drive_courses_list';
 const STORAGE_KEY_PURCHASES = 'byfio_drive_course_purchases';
@@ -260,4 +260,90 @@ export const testComposioConnection = async (settings: DriveCoursesSettings): Pr
     }
   } catch {}
   return { success: false, message: 'No se pudo conectar con el endpoint de prueba.' };
+};
+
+export const fetchComposioStatus = async (): Promise<ComposioStatusResponse> => {
+  try {
+    const res = await fetch('/api/drive-courses?type=composio_status');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch {}
+  return {
+    success: false,
+    adminEmail: 'tienda@byfiocr.com',
+    drive: null,
+    gmail: null,
+  };
+};
+
+export const getComposioConnectLink = async (
+  toolkit: 'googledrive' | 'gmail',
+  adminEmail?: string,
+  composioApiKey?: string
+): Promise<{ success: boolean; redirectUrl?: string; message?: string }> => {
+  try {
+    const res = await fetch('/api/drive-courses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'get_composio_connect_link',
+        toolkit,
+        adminEmail,
+        composioApiKey,
+      }),
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      return { success: true, redirectUrl: data.redirectUrl };
+    }
+    return { success: false, message: data.message || 'Error al obtener enlace.' };
+  } catch (err: any) {
+    return { success: false, message: err.message };
+  }
+};
+
+export const testComposioGmail = async (params: {
+  recipientEmail?: string;
+  subject?: string;
+  body?: string;
+  composioApiKey?: string;
+  adminEmail?: string;
+}): Promise<{ success: boolean; message: string }> => {
+  try {
+    const res = await fetch('/api/drive-courses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'test_composio_gmail',
+        ...params,
+      }),
+    });
+    const data = await res.json();
+    return { success: data.success, message: data.message };
+  } catch (err: any) {
+    return { success: false, message: err.message };
+  }
+};
+
+export const testComposioDrive = async (params: {
+  testEmail?: string;
+  folderUrl?: string;
+  composioApiKey?: string;
+  adminEmail?: string;
+}): Promise<{ success: boolean; message: string }> => {
+  try {
+    const res = await fetch('/api/drive-courses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'test_composio_drive',
+        ...params,
+      }),
+    });
+    const data = await res.json();
+    return { success: data.success, message: data.message };
+  } catch (err: any) {
+    return { success: false, message: err.message };
+  }
 };

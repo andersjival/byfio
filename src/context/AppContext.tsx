@@ -346,6 +346,7 @@ interface AppContextType {
   resolveMissingReport: (reportId: string) => void;
   deleteMissingReport: (reportId: string) => void;
   updateOrderStatus: (orderId: string, newStatus: OrderStatus, pickerName?: string) => void;
+  updateOrderEtfData: (orderId: string, updates: Partial<EtfOrderData>) => void;
   addLayawayPayment: (
     orderId: string,
     payment: {

@@ -35,7 +35,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     registerUser,
     resetPassword,
     logoutUser,
-    userProfiles,
     loginIntroStage,
     triggerLoginCinematic,
     isFeatureEnabled,
@@ -693,38 +692,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   </button>
                 )}
               </div>
-
-              {/* Acceso Rápido a Perfiles de Usuario con PIN */}
-              {isFeatureEnabled('users', 'pin_authentication') && userProfiles.filter((p) => p.isActive).length > 0 && (
-                <div className="pt-2 pb-1 text-center">
-                  <div className="text-[10px] font-bubble font-bold text-slate-500 mb-1">
-                    Perfiles de Usuario Disponibles:
-                  </div>
-                  <div className="flex flex-wrap items-center justify-center gap-1.5">
-                    {userProfiles
-                      .filter((p) => p.isActive)
-                      .map((p) => (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => {
-                            handleSelectLoginMethod('pin');
-                            handleProfileNameChange(p.name);
-                            setErrorMessage(null);
-                          }}
-                          className={`px-2.5 py-1 rounded-xl text-[10px] font-bubble font-bold transition-all border cursor-pointer ${
-                            loginMethod === 'pin' && profileNameInput === p.name
-                              ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white border-transparent shadow-xs scale-105'
-                              : 'bg-white hover:bg-purple-50 text-purple-900 border-purple-200 shadow-2xs'
-                          }`}
-                          title={`Tocar para ingresar con perfil ${p.name}`}
-                        >
-                          👤 {p.name}
-                        </button>
-                      ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
           {/* Mensaje de Sesión Activa con Botón Directo al Admin */}
@@ -775,45 +742,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             <div className="space-y-2.5">
               {/* Campo 1: Nombre de Perfil con selector rápido de perfiles activos */}
               <div className="space-y-1 text-left">
-                <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1">
+                <label className="text-[11px] font-bubble font-bold text-slate-600 ml-1 block">
                     Perfil de Usuario:
                   </label>
-                  <span className="text-[10px] text-fio-purple font-bold">Toca o escribe:</span>
-                </div>
-
-                {/* Chips rápidos de perfiles existentes para no tener que adivinar */}
-                {userProfiles.filter((p) => p.isActive).length > 0 && (
-                  <div className="flex flex-wrap gap-1 mb-1.5">
-                    {userProfiles
-                      .filter((p) => p.isActive)
-                      .map((p) => (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => {
-                            handleProfileNameChange(p.name);
-                            if (errorMessage) setErrorMessage(null);
-                          }}
-                          className={`px-2 py-0.5 rounded-lg text-[10px] font-bubble font-bold transition-all border cursor-pointer ${
-                            profileNameInput === p.name
-                              ? 'bg-gradient-to-r from-purple-600 to-fio-pink text-white border-transparent shadow-xs scale-102'
-                              : 'bg-white/80 text-purple-900 border-purple-200/80 hover:bg-purple-50 shadow-2xs'
-                          }`}
-                        >
-                          {p.name}
-                        </button>
-                      ))}
-                  </div>
-                )}
-
                 <div className="input-group">
                   <div className="icon-badge">
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <input
                     type="text"
-                    placeholder="Escribe o toca tu perfil"
+                    placeholder="Nombre de tu perfil"
                     value={profileNameInput}
                     onChange={(e) => {
                       handleProfileNameChange(e.target.value);
@@ -999,18 +937,20 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       )}
       </div>
 
-      {/* Badge de Copyright Animado de GeoSoft (Estilo BOSUNI CR) */}
+      {/* Badge de Copyright GeoSoft */}
       <div className="mt-2.5 text-center pb-0.5">
         <div className="geosoft-copyright-pill px-3 py-1">
           <a
             href="https://www.geosoft.lat"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10.5px] sm:text-[11px] tracking-wider hover:opacity-90 transition-opacity font-bubble"
-            title="Desarrollado por GeoSoft"
+            className="inline-flex items-center gap-1 text-[10.5px] sm:text-[11px] tracking-wide hover:opacity-90 transition-opacity font-bubble"
+            title="Desarrollado por GeoSoft • https://www.geosoft.lat"
           >
-            <span className="animate-copyright-sweep font-bold">
-              © Copyright en byfio by GeoSoft
+            <span className="text-slate-600 dark:text-slate-300 font-semibold">© byfio</span>
+            <span className="text-slate-400 dark:text-slate-500">•</span>
+            <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fio-purple to-pink-500 dark:from-purple-400 dark:via-fio-pink dark:to-pink-400">
+              by GeoSoft
             </span>
           </a>
         </div>

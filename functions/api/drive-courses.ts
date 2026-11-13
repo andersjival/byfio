@@ -4,6 +4,19 @@ interface Env {
   COMPOSIO_API_KEY?: string;
 }
 
+const DEFAULT_COMPOSIO_API_KEY = 'ak_AiRbOjfO_jCuUfBfQHUc';
+const DEFAULT_ADMIN_EMAIL = 'tienda@byfiocr.com';
+const AUTH_CONFIG_GOOGLEDRIVE = 'ac_-eEGEgrbguQR';
+const AUTH_CONFIG_GMAIL = 'ac_gw1GUuwE0GfP';
+
+const extractDriveFileOrFolderId = (url?: string): string | null => {
+  if (!url) return null;
+  const match = url.match(/\/folders\/([a-zA-Z0-9_-]+)/) ||
+                url.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
+                url.match(/id=([a-zA-Z0-9_-]+)/);
+  return match ? match[1] : null;
+};
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
@@ -140,6 +153,67 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
       } catch {}
     }
 
+    if (type === 'composio_status') {
+      const activeApiKey = (settings.composioApiKey || env.COMPOSIO_API_KEY || DEFAULT_COMPOSIO_API_KEY).trim();
+      const adminEmail = (settings.adminEmail || DEFAULT_ADMIN_EMAIL).trim();
+
+      try {
+        const compRes = await fetch('https://backend.composio.dev/api/v3.1/connected_accounts', {
+          headers: { 'x-api-key': activeApiKey },
+        });
+
+        if (compRes.ok) {
+          const compData: any = await compRes.json();
+          const items = Array.isArray(compData.items) ? compData.items : [];
+
+          const driveItem = items.find((i: any) => i.toolkit?.slug === 'googledrive' && i.user_id === adminEmail);
+          const gmailItem = items.find((i: any) => i.toolkit?.slug === 'gmail' && i.user_id === adminEmail);
+
+          return new Response(JSON.stringify({
+            success: true,
+            adminEmail,
+            drive: driveItem ? {
+              id: driveItem.id,
+              status: driveItem.status,
+              toolkit: 'googledrive',
+              updatedAt: driveItem.updated_at || driveItem.created_at,
+            } : null,
+            gmail: gmailItem ? {
+              id: gmailItem.id,
+              status: gmailItem.status,
+              toolkit: 'gmail',
+              updatedAt: gmailItem.updated_at || gmailItem.created_at,
+            } : null,
+          }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+
+        const errJson: any = await compRes.json().catch(() => ({}));
+        return new Response(JSON.stringify({
+          success: false,
+          error: errJson.error?.message || `Composio HTTP ${compRes.status}`,
+          adminEmail,
+          drive: null,
+          gmail: null,
+        }), {
+          status: compRes.status,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch (err: any) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: err.message,
+          adminEmail,
+          drive: null,
+          gmail: null,
+        }), {
+          status: 500,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     if (type === 'settings') {
       return new Response(JSON.stringify({ success: true, settings }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -216,10 +290,11 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const action = body.action || 'purchase';
 
     if (action === 'save_settings') {
-      const { composioWebhookUrl, composioApiKey } = body;
+      const { composioWebhookUrl, composioApiKey, adminEmail } = body;
       const settingsData = JSON.stringify({
         composioWebhookUrl: (composioWebhookUrl || '').trim(),
         composioApiKey: (composioApiKey || '').trim(),
+        adminEmail: (adminEmail || DEFAULT_ADMIN_EMAIL).trim(),
         updatedAt: new Date().toISOString(),
       });
       if (env.DB) {
@@ -230,6 +305,162 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       return new Response(JSON.stringify({ success: true, message: 'Configuración de Composio guardada correctamente.' }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       });
+    }
+
+    if (action === 'get_composio_connect_link') {
+      const activeApiKey = (body.composioApiKey || env.COMPOSIO_API_KEY || DEFAULT_COMPOSIO_API_KEY).trim();
+      const adminEmail = (body.adminEmail || DEFAULT_ADMIN_EMAIL).trim();
+      const toolkit = body.toolkit === 'gmail' ? 'gmail' : 'googledrive';
+      const authConfigId = toolkit === 'gmail' ? AUTH_CONFIG_GMAIL : AUTH_CONFIG_GOOGLEDRIVE;
+
+      try {
+        const linkRes = await fetch('https://backend.composio.dev/api/v3.1/connected_accounts/link', {
+          method: 'POST',
+          headers: {
+            'x-api-key': activeApiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: adminEmail,
+            auth_config_id: authConfigId,
+          }),
+        });
+
+        const linkData: any = await linkRes.json();
+        if (!linkRes.ok) {
+          return new Response(JSON.stringify({
+            success: false,
+            message: linkData.error?.message || 'Error al generar enlace de conexión en Composio.',
+          }), {
+            status: 400,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+
+        return new Response(JSON.stringify({
+          success: true,
+          redirectUrl: linkData.redirect_url,
+          linkToken: linkData.link_token,
+          connectedAccountId: linkData.connected_account_id,
+        }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch (err: any) {
+        return new Response(JSON.stringify({ success: false, message: err.message }), {
+          status: 500,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    if (action === 'test_composio_gmail') {
+      const activeApiKey = (body.composioApiKey || env.COMPOSIO_API_KEY || DEFAULT_COMPOSIO_API_KEY).trim();
+      const adminEmail = (body.adminEmail || DEFAULT_ADMIN_EMAIL).trim();
+      const recipientEmail = (body.recipientEmail || adminEmail).trim();
+      const subject = body.subject || 'Prueba de Conexión Composio & Gmail - By.Fio';
+      const emailContent = body.body || `¡Hola! Esta es una prueba de envío exitosa desde la cuenta del administrador (${adminEmail}) de By.Fio usando la API de Composio.`;
+
+      try {
+        const execRes = await fetch('https://backend.composio.dev/api/v3.1/tools/execute/GMAIL_SEND_EMAIL', {
+          method: 'POST',
+          headers: {
+            'x-api-key': activeApiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: adminEmail,
+            entity_id: adminEmail,
+            arguments: {
+              recipient_email: recipientEmail,
+              subject,
+              body: emailContent,
+              is_html: false,
+            },
+          }),
+        });
+
+        const execData: any = await execRes.json();
+        if (!execRes.ok) {
+          const errMsg = execData.error?.message || 'Error al enviar correo por Gmail';
+          return new Response(JSON.stringify({ success: false, message: errMsg }), {
+            status: 400,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+
+        return new Response(JSON.stringify({
+          success: true,
+          message: `¡Correo de prueba enviado con éxito a ${recipientEmail}!`,
+          data: execData,
+        }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch (err: any) {
+        return new Response(JSON.stringify({ success: false, message: err.message }), {
+          status: 500,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    if (action === 'test_composio_drive') {
+      const activeApiKey = (body.composioApiKey || env.COMPOSIO_API_KEY || DEFAULT_COMPOSIO_API_KEY).trim();
+      const adminEmail = (body.adminEmail || DEFAULT_ADMIN_EMAIL).trim();
+      const testEmail = (body.testEmail || 'cliente.prueba@gmail.com').trim();
+      const folderUrl = body.folderUrl || 'https://drive.google.com/drive/folders/byfio-test';
+      const fileId = extractDriveFileOrFolderId(folderUrl);
+
+      if (!fileId) {
+        return new Response(JSON.stringify({
+          success: false,
+          message: 'Se requiere una URL de Google Drive con un ID válido de carpeta o archivo.',
+        }), {
+          status: 400,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+
+      try {
+        const execRes = await fetch('https://backend.composio.dev/api/v3.1/tools/execute/GOOGLEDRIVE_ADD_FILE_SHARING_PREFERENCE', {
+          method: 'POST',
+          headers: {
+            'x-api-key': activeApiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: adminEmail,
+            entity_id: adminEmail,
+            arguments: {
+              file_id: fileId,
+              role: 'reader',
+              type: 'user',
+              email_address: testEmail,
+            },
+          }),
+        });
+
+        const execData: any = await execRes.json();
+        if (!execRes.ok) {
+          const errMsg = execData.error?.message || 'Error al asignar permisos en Google Drive';
+          return new Response(JSON.stringify({ success: false, message: errMsg }), {
+            status: 400,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+
+        return new Response(JSON.stringify({
+          success: true,
+          message: `¡Permiso de lectura otorgado con éxito en Google Drive para ${testEmail}!`,
+          data: execData,
+        }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch (err: any) {
+        return new Response(JSON.stringify({ success: false, message: err.message }), {
+          status: 500,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
     }
 
     if (action === 'test_composio') {
@@ -346,9 +577,10 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const purchaseId = `dcp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     let composioSent = false;
 
-    // Obtener webhook URL de Composio
+    // Obtener configuración de Composio
     let webhookUrl = (env.COMPOSIO_WEBHOOK_URL || '').trim();
-    let apiKey = (env.COMPOSIO_API_KEY || '').trim();
+    let apiKey = (env.COMPOSIO_API_KEY || DEFAULT_COMPOSIO_API_KEY).trim();
+    let adminEmail = DEFAULT_ADMIN_EMAIL;
     if (env.DB) {
       try {
         const row: any = await env.DB.prepare("SELECT data FROM site_metrics WHERE id = 'drive_courses_settings' LIMIT 1").first();
@@ -356,11 +588,87 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
           const parsed = JSON.parse(row.data);
           if (parsed.composioWebhookUrl) webhookUrl = parsed.composioWebhookUrl.trim();
           if (parsed.composioApiKey) apiKey = parsed.composioApiKey.trim();
+          if (parsed.adminEmail) adminEmail = parsed.adminEmail.trim();
         }
       } catch {}
     }
 
-    // Si hay webhook de Composio configurado, notificar para registrar correo en Google Drive
+    // 1. Integración Directa con Composio (Google Drive & Gmail)
+    const folderId = extractDriveFileOrFolderId(driveFolderUrl);
+    if (apiKey) {
+      // 1.A. Otorgar permiso en Google Drive si hay un ID de archivo/carpeta
+      if (folderId) {
+        try {
+          const driveRes = await fetch('https://backend.composio.dev/api/v3.1/tools/execute/GOOGLEDRIVE_ADD_FILE_SHARING_PREFERENCE', {
+            method: 'POST',
+            headers: {
+              'x-api-key': apiKey,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              user_id: adminEmail,
+              entity_id: adminEmail,
+              arguments: {
+                file_id: folderId,
+                role: 'reader',
+                type: 'user',
+                email_address: customerEmail.trim().toLowerCase(),
+              },
+            }),
+          });
+          if (driveRes.ok) composioSent = true;
+        } catch (e) {
+          console.warn('Error otorgando acceso en Drive:', e);
+        }
+      }
+
+      // 1.B. Enviar correo oficial de bienvenida por Gmail del Administrador
+      try {
+        const emailHtml = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #f3e8ff; border-radius: 20px; background-color: #ffffff;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h1 style="color: #6b21a8; margin: 0; font-size: 24px;">¡Felicidades por tu compra en by.fio!</h1>
+              <p style="color: #9333ea; font-size: 14px; margin-top: 4px;">Acceso digital inmediato a tu curso</p>
+            </div>
+            <p style="color: #334155; font-size: 15px; line-height: 1.6;">Hola <strong>${customerName}</strong>,</p>
+            <p style="color: #334155; font-size: 15px; line-height: 1.6;">Hemos confirmado tu comprobante de pago exitosamente. Ya tienes acceso habilitado a tu material de estudio en Google Drive:</p>
+            <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 14px; padding: 18px; margin: 20px 0; text-align: center;">
+              <h2 style="color: #581c87; font-size: 18px; margin: 0 0 10px 0;">${courseTitle}</h2>
+              ${driveFolderUrl ? `<a href="${driveFolderUrl}" target="_blank" style="background-color: #7e22ce; color: #ffffff; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">Abrir Carpeta en Google Drive</a>` : ''}
+            </div>
+            <p style="color: #64748b; font-size: 13px; line-height: 1.5;">El permiso se otorgó al correo: <strong>${customerEmail}</strong>. Si ingresas con una cuenta de Google distinta, asegúrate de cambiar a esta cuenta para visualizar los archivos.</p>
+            <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 24px 0;" />
+            <div style="text-align: center; color: #94a3b8; font-size: 12px;">
+              <p style="margin: 0;">by.fio Costa Rica — Cursos Digitales & Papelería Creativa</p>
+              <p style="margin: 4px 0 0 0;">WhatsApp de Asistencia: +506 6000-0000 • tienda@byfiocr.com</p>
+            </div>
+          </div>
+        `;
+
+        const gmailRes = await fetch('https://backend.composio.dev/api/v3.1/tools/execute/GMAIL_SEND_EMAIL', {
+          method: 'POST',
+          headers: {
+            'x-api-key': apiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: adminEmail,
+            entity_id: adminEmail,
+            arguments: {
+              recipient_email: customerEmail.trim().toLowerCase(),
+              subject: `¡Acceso concedido a tu curso: ${courseTitle}! - by.fio`,
+              body: emailHtml,
+              is_html: true,
+            },
+          }),
+        });
+        if (gmailRes.ok) composioSent = true;
+      } catch (e) {
+        console.warn('Error enviando correo por Gmail:', e);
+      }
+    }
+
+    // 2. Si hay webhook legacy configurado, notificar también
     if (webhookUrl) {
       try {
         const composioPayload = {
@@ -392,9 +700,9 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
           },
           body: JSON.stringify(composioPayload),
         });
-        composioSent = res.ok;
+        if (res.ok) composioSent = true;
       } catch (e) {
-        console.warn('Error enviando a Composio:', e);
+        console.warn('Error enviando a Webhook Composio:', e);
       }
     }
 

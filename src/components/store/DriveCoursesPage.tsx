@@ -348,45 +348,53 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
 
           {/* Tarjeta de Información Completa del Curso */}
           <div className="rounded-3xl p-6 sm:p-8 bg-[#FDFBF9] border border-purple-200/80 shadow-md space-y-6">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-              <div className="space-y-4 max-w-2xl">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-3 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bubble text-[11px] font-bold">
-                    Acceso Inmediato en Google Drive
-                  </span>
-                  {selectedCourse.badge && (
-                    <span className="px-3 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bubble text-[11px] font-bold">
-                      {selectedCourse.badge}
-                    </span>
-                  )}
-                </div>
+            {/* Badges superiores */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-3 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bubble text-[11px] font-bold">
+                Acceso Inmediato en Google Drive
+              </span>
+              {selectedCourse.badge && (
+                <span className="px-3 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bubble text-[11px] font-bold">
+                  {selectedCourse.badge}
+                </span>
+              )}
+            </div>
 
-                <h1 className="text-xl sm:text-3xl font-bubble font-black text-slate-900 leading-snug">
+            {/* Fila de 3 Columnas: [Imagen con Título] [Descripción a la par] [Precio / Pagar a la par] */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-start">
+              {/* Columna 1: Título e Imagen */}
+              <div className="lg:col-span-5 space-y-3">
+                <h1 className="text-xl sm:text-2xl font-bubble font-black text-slate-900 leading-snug">
                   {selectedCourse.title}
                 </h1>
-
                 {selectedCourse.coverImage && (
-                  <div className="relative h-56 sm:h-72 rounded-2xl overflow-hidden bg-purple-100 shadow-sm border border-purple-100">
+                  <div className="relative rounded-2xl overflow-hidden bg-purple-100 shadow-sm border border-purple-100">
                     <img
                       src={selectedCourse.coverImage}
                       alt={selectedCourse.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-56 sm:h-64 object-cover"
                     />
                   </div>
                 )}
-
-                <div className="space-y-2">
-                  <h3 className="font-bubble font-bold text-xs text-slate-500 uppercase tracking-wider">
-                    Descripción del Curso:
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-700 font-sans leading-relaxed">
-                    {selectedCourse.description}
-                  </p>
-                </div>
               </div>
 
-              {/* Caja de Precio y Botón Comprar */}
-              <div className="bg-purple-50/80 rounded-2xl p-5 border border-purple-200 text-center min-w-[260px] space-y-3 shrink-0 self-start w-full md:w-auto">
+              {/* Columna 2: Descripción (A la par) */}
+              <div className="lg:col-span-4 space-y-2.5 pt-1">
+                <h3 className="font-bubble font-bold text-xs text-slate-500 uppercase tracking-wider">
+                  Descripción del Curso:
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-700 font-sans leading-relaxed">
+                  {selectedCourse.description}
+                </p>
+                {selectedCourse.tagline && (
+                  <p className="text-xs text-purple-700 font-sans italic bg-purple-50/70 p-3 rounded-2xl border border-purple-100 leading-relaxed">
+                    💡 {selectedCourse.tagline}
+                  </p>
+                )}
+              </div>
+
+              {/* Columna 3: Precio y Botón de Pago (A la par) */}
+              <div className="lg:col-span-3 bg-purple-50/80 rounded-2xl p-5 border border-purple-200 text-center space-y-3 w-full shrink-0">
                 <span className="text-[11px] font-bubble font-bold text-slate-500 block uppercase">
                   Inversión Total
                 </span>
@@ -407,7 +415,7 @@ export const DriveCoursesPage: React.FC<DriveCoursesPageProps> = ({ onNavigate }
               </div>
             </div>
 
-            {/* Sección "Lo que obtendrás" */}
+            {/* ABAJO: Lo que obtendrás con este curso (Full width) */}
             {selectedCourse.whatYouGet && selectedCourse.whatYouGet.length > 0 && (
               <div className="bg-white rounded-2xl p-5 border border-purple-100 space-y-3">
                 <h3 className="font-bubble font-bold text-sm text-purple-900 flex items-center gap-2">
