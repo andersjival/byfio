@@ -1,3 +1,19 @@
+## [v4.19.134] - 2026-11-12
+
+### 📱 Unificación de Secciones PWA: Administrador y Colaborador (PC / Celular)
+- **Unificación de Aplicación Administradora ([AppsManagementSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AppsManagementSection.tsx), [PwaManagerModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/PwaManagerModal.tsx))**:
+  - Unificadas las tarjetas y opciones de *Aplicación Administradora (PC / Computadora)* y *Aplicación Administradora (Celular)* bajo una única sección canónica: **Aplicacion admin (PC / Celular)**.
+  - Toda modificación de ajustes, vibración háptica táctil y parámetros realizada en esta sección aplica simultáneamente a ambos dispositivos (PC y Celular).
+- **Módulos y Permisos en Aplicación Colaborador ([AppsManagementSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AppsManagementSection.tsx))**:
+  - Reestructurado el módulo de colaboradores bajo el título único **Aplicacion Colaborador (PC / Celular)**.
+  - Alisto & Pedidos y Toma de Inventario Físico quedan integrados explícitamente como módulos gobernados por permisos configurables directamente desde la sección.
+  - Modificar los permisos de módulos para cualquier colaborador actualiza su perfil en tiempo real (`updateUserProfile`) y se sincroniza en PC y Celular al mismo tiempo.
+  - Incluye conmutador maestro de acceso a Inventario Físico (`/inventario-app`) y visualización segura de PIN por perfil.
+- **Service Worker & Caché ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Elevada la versión a `byfio-pwa-v4.19.134` para renovación inmediata de caché PWA en dispositivos cliente y administrativos.
+
+---
+
 ## [v4.19.133] - 2026-11-12
 
 ### 🔒 Protección y Restricción Estricta de Gestión de Pedidos (`/usuario/colaborador/pedidos/apps` y `/usuario/admin/pedidos/apps`)

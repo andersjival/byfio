@@ -42,7 +42,7 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
     toggleCollaboratorInventoryEnabled,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'hub' | 'permissions'>('hub');
+  const [activeTab, setActiveTab] = useState<'all' | 'admin' | 'collaborator'>('all');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [selectedQrApp, setSelectedQrApp] = useState<{ title: string; url: string } | null>(null);
   const [installResult, setInstallResult] = useState<string | null>(null);
@@ -102,68 +102,9 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
 
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://byfiocr.com';
 
-  const apps = [
-    {
-      id: 'admin-pc',
-      title: 'Aplicación Administradora (PC / Computadora)',
-      tag: 'Administración Principal',
-      badgeColor: 'bg-purple-100 text-purple-900 border-purple-300',
-      description: 'Acceso completo con pantalla grande para control de pedidos, inventario, caja, talleres y facturación.',
-      path: '/admin',
-      url: `${origin}/admin`,
-      icon: Monitor,
-      target: 'desktop',
-      shareText: `Acceso al Panel de Administración de by.fio: ${origin}/admin`,
-    },
-    {
-      id: 'admin-mobile',
-      title: 'Aplicación Administradora (Celular)',
-      tag: 'Gerencia Móvil',
-      badgeColor: 'bg-pink-100 text-pink-900 border-pink-300',
-      description: 'Acceso móvil al panel administrativo con métricas, notificaciones de pedidos y control total en la palma de tu mano.',
-      path: '/admin',
-      url: `${origin}/admin`,
-      icon: Smartphone,
-      target: 'mobile',
-      shareText: `Aplicación Móvil de Administración by.fio: ${origin}/admin`,
-    },
-    {
-      id: 'collab-orders',
-      title: 'Aplicación de Alisto & Pedidos (Celular Colaborador)',
-      tag: 'Operaciones de Alisto',
-      badgeColor: 'bg-amber-100 text-amber-900 border-amber-300',
-      description: 'Aplicación táctil optimizada para celular. Permite escanear códigos de barra, chequear pedidos y empacar con verificación táctil.',
-      path: '/usuario/colaborador/pedidos/apps',
-      url: `${origin}/usuario/colaborador/pedidos/apps`,
-      icon: QrCode,
-      target: 'mobile',
-      shareText: `Hola, aquí tienes tu acceso a la Aplicación de Alisto y Pedidos de by.fio: ${origin}/usuario/colaborador/pedidos/apps`,
-    },
-    {
-      id: 'admin-orders',
-      title: 'Gestión Móvil de Pedidos (Administración)',
-      tag: 'Pedidos & Alisto Admin',
-      badgeColor: 'bg-purple-100 text-purple-900 border-purple-300',
-      description: 'Acceso móvil directo a la gestión y alisto de pedidos con privilegios administrativos totales.',
-      path: '/usuario/admin/pedidos/apps',
-      url: `${origin}/usuario/admin/pedidos/apps`,
-      icon: PackageCheck,
-      target: 'mobile',
-      shareText: `Acceso Admin a Gestión de Pedidos de by.fio: ${origin}/usuario/admin/pedidos/apps`,
-    },
-    {
-      id: 'collab-inventory',
-      title: 'Aplicación de Inventario Físico (Celular Colaborador)',
-      tag: collaboratorInventoryEnabled ? 'Inventario Activo' : 'Inventario Bloqueado',
-      badgeColor: collaboratorInventoryEnabled ? 'bg-emerald-100 text-emerald-900 border-emerald-300' : 'bg-rose-100 text-rose-900 border-rose-300',
-      description: 'Toma rápida de inventario por estantes en tiempo real con cámara del celular. El administrador puede habilitar o bloquear su uso.',
-      path: '/inventario-app',
-      url: `${origin}/inventario-app`,
-      icon: ClipboardList,
-      target: 'mobile',
-      shareText: `Hola, aquí tienes tu acceso a la Aplicación de Toma de Inventario de by.fio: ${origin}/inventario-app`,
-    },
-  ];
+  const adminUrl = `${origin}/admin`;
+  const collabPath = '/usuario/colaborador/pedidos/apps';
+  const collabUrl = `${origin}${collabPath}`;
 
   const copyToClipboard = (key: string, text: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -218,7 +159,7 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
     };
 
     updateUserProfile(profile.id, { permissions: updatedPermissions });
-    setSaveToast(`✓ Permiso "${permissionKey}" actualizado para ${profile.name}`);
+    setSaveToast(`✓ Permiso "${permissionKey}" actualizado para ${profile.name} (sincronizado en PC y Celular)`);
     setTimeout(() => setSaveToast(null), 2500);
   };
 
@@ -258,32 +199,45 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
         )}
       </div>
 
-      {/* Selector de Pestañas Internas */}
+      {/* Selector de Pestañas / Filtro de Secciones */}
       <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/80">
         <button
           type="button"
-          onClick={() => setActiveTab('hub')}
+          onClick={() => setActiveTab('all')}
           className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-            activeTab === 'hub'
+            activeTab === 'all'
               ? 'bg-purple-700 text-white shadow-sm'
               : 'text-slate-600 hover:text-purple-700 hover:bg-white/60'
           }`}
         >
-          <Smartphone className="w-4 h-4 text-fio-yellow" />
-          <span>Centro de Aplicaciones</span>
+          <Sparkles className="w-4 h-4 text-fio-yellow" />
+          <span>Ver Ambas Secciones</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab('permissions')}
+          onClick={() => setActiveTab('admin')}
           className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-            activeTab === 'permissions'
+            activeTab === 'admin'
               ? 'bg-purple-700 text-white shadow-sm'
               : 'text-slate-600 hover:text-purple-700 hover:bg-white/60'
           }`}
         >
-          <ShieldCheck className="w-4 h-4 text-pink-300" />
-          <span>Permisos para Celulares de Colaboradores</span>
+          <Monitor className="w-4 h-4 text-fio-yellow" />
+          <span>Aplicacion admin (PC / Celular)</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('collaborator')}
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bubble font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'collaborator'
+              ? 'bg-purple-700 text-white shadow-sm'
+              : 'text-slate-600 hover:text-purple-700 hover:bg-white/60'
+          }`}
+        >
+          <Users className="w-4 h-4 text-pink-300" />
+          <span>Aplicacion Colaborador (PC / Celular)</span>
         </button>
       </div>
 
@@ -295,28 +249,102 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
       )}
 
       {/* ============================================================== */}
-      {/* TAB 1: CENTRO DE APLICACIONES                                  */}
+      {/* SECCIÓN 1: APLICACIÓN ADMIN (PC / CELULAR)                     */}
       {/* ============================================================== */}
-      {activeTab === 'hub' && (
-        <div className="space-y-4">
-          {/* Banner de Instalación Rápida */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h3 className="font-bubble font-bold text-sm sm:text-base text-fio-900 flex items-center gap-2">
+      {(activeTab === 'all' || activeTab === 'admin') && (
+        <div className="p-5 sm:p-6 rounded-3xl bg-white border-2 border-purple-200 shadow-sm space-y-5 animate-fadeIn">
+          {/* Cabecera Principal de la Sección Admin */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-purple-100">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-700 via-purple-600 to-fio-pink text-white flex items-center justify-center shadow-md shrink-0">
+                <Monitor className="w-6 h-6 text-fio-yellow" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-bubble font-bold text-base sm:text-lg text-fio-900">
+                    Aplicacion admin (PC / Celular)
+                  </h3>
+                  <span className="text-[10px] font-bubble font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 border border-purple-300">
+                    Sincronización Total (PC &amp; Celular)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 font-sans mt-0.5">
+                  Acceso unificado para computadora de escritorio y celular. Lo que modifiques dentro de esta sección se modificará en las dos al mismo tiempo.
+                </p>
+              </div>
+            </div>
+
+            {/* Botones de Acción Rápida */}
+            <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setSelectedQrApp({ title: 'Aplicacion admin (PC / Celular)', url: adminUrl })}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bubble font-bold transition-all cursor-pointer border border-purple-200"
+                title="Ver código QR para escanear con la cámara del celular"
+              >
+                <QrCode className="w-3.5 h-3.5 text-purple-600" />
+                <span>Ver QR</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => copyToClipboard('admin', adminUrl)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bubble font-bold transition-all cursor-pointer"
+                title="Copiar enlace directo"
+              >
+                {copiedKey === 'admin' ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="text-emerald-700">¡Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-slate-600" />
+                    <span>Copiar Enlace</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => shareWhatsApp(`Acceso al Panel de Aplicacion admin (PC / Celular) de by.fio: ${adminUrl}`)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bubble font-bold transition-all cursor-pointer border border-emerald-200"
+                title="Enviar enlace por WhatsApp"
+              >
+                <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>WhatsApp</span>
+              </button>
+
+              <a
+                href="/admin"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-bubble font-bold transition-all shadow-xs"
+              >
+                <span>Abrir Panel</span>
+                <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
+              </a>
+            </div>
+          </div>
+
+          {/* Banner de Instalación Rápida PWA */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-white to-pink-50 border border-purple-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <h4 className="font-bubble font-bold text-xs sm:text-sm text-fio-900 flex items-center gap-1.5">
                 <Download className="w-4 h-4 text-fio-pink" />
                 <span>Instalación Directa en este Dispositivo</span>
-              </h3>
-              <p className="text-xs text-slate-600 font-sans leading-relaxed">
+              </h4>
+              <p className="text-xs text-slate-600 font-sans">
                 {isStandalone
-                  ? '✓ Esta aplicación ya se encuentra ejecutándose instalada de forma independiente.'
-                  : 'Instala el acceso directo en tu escritorio o pantalla de inicio para abrirla como programa nativo.'}
+                  ? '✓ La aplicación administradora ya está instalada y activa en este dispositivo.'
+                  : 'Instala el acceso directo en tu pantalla de inicio o escritorio para abrirla como programa nativo.'}
               </p>
             </div>
 
             <button
               type="button"
               onClick={handleInstallClick}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white font-bubble font-bold text-xs shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:from-purple-800 hover:to-pink-600 text-white font-bubble font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer whitespace-nowrap shrink-0"
             >
               <Download className="w-4 h-4 text-fio-yellow" />
               <span>{isStandalone ? 'Aplicación Ya Instalada' : 'Instalar en este Dispositivo'}</span>
@@ -329,117 +357,31 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
             </div>
           )}
 
-          {/* Grilla de Aplicaciones Separadas (PC, Admin Celular, Colaborador Celular) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {apps.map((app) => {
-              const Icon = app.icon;
-              return (
-                <div
-                  key={app.id}
-                  className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-700 to-fio-pink text-white flex items-center justify-center shadow-xs shrink-0">
-                          <Icon className="w-5 h-5 text-fio-yellow" />
-                        </div>
-                        <div>
-                          <h4 className="font-bubble font-bold text-sm sm:text-base text-fio-900 leading-snug">
-                            {app.title}
-                          </h4>
-                          <span className={`inline-block text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full border mt-0.5 ${app.badgeColor}`}>
-                            {app.tag}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-slate-500 font-sans leading-relaxed">
-                      {app.description}
-                    </p>
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-100 flex items-center gap-2 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedQrApp({ title: app.title, url: app.url })}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bubble font-bold transition-all cursor-pointer"
-                      title="Ver código QR para escanear con la cámara del celular"
-                    >
-                      <QrCode className="w-3.5 h-3.5 text-purple-600" />
-                      <span>Ver Código QR</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => copyToClipboard(app.id, app.url)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bubble font-bold transition-all cursor-pointer"
-                      title="Copiar enlace directo"
-                    >
-                      {copiedKey === app.id ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
-                          <span className="text-emerald-700">¡Copiado!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5 text-slate-600" />
-                          <span>Copiar Enlace</span>
-                        </>
-                      )}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => shareWhatsApp(app.shareText)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bubble font-bold transition-all cursor-pointer"
-                      title="Enviar enlace por WhatsApp"
-                    >
-                      <Share2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>WhatsApp</span>
-                    </button>
-
-                    <a
-                      href={app.path}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-fio-800 hover:bg-fio-900 text-white text-xs font-bubble font-bold ml-auto transition-all"
-                    >
-                      <span>Abrir</span>
-                      <ExternalLink className="w-3 h-3 text-fio-yellow" />
-                    </a>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Configuración de Vibración Táctil en Celulares y PC */}
-          <div className="p-4 sm:p-5 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-4">
+          {/* Configuración de Vibración Táctil Háptica Sincronizada */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-md space-y-3.5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-purple-600/30 text-pink-300 flex items-center justify-center shrink-0 border border-purple-500/40">
-                  <Vibrate className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-purple-600/30 text-pink-300 flex items-center justify-center shrink-0 border border-purple-500/40">
+                  <Vibrate className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bubble font-bold text-sm sm:text-base text-white">
+                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-white">
                       Respuesta Háptica / Vibración Táctil al Clic
-                    </h3>
+                    </h4>
                     <span className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full border ${
                       vibrationEnabled ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-white/10 text-slate-400 border-white/20'
                     }`}>
                       {vibrationEnabled ? `Activa • Nivel ${vibrationIntensity}` : 'Desactivada'}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 font-sans mt-0.5">
-                    Activa una micro-vibración física en celulares al tocar botones para una sensación de teclado y botones reales.
+                  <p className="text-[11px] text-slate-400 font-sans mt-0.5">
+                    Sincronizado: Al activarla se sentirá una pulsación física táctil en botones tanto en celular como en computadora.
                   </p>
                 </div>
               </div>
 
-              {/* Interruptor Switch */}
+              {/* Switch */}
               <button
                 type="button"
                 role="switch"
@@ -458,7 +400,7 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
               </button>
             </div>
 
-            {/* Selector de Nivel de 1 a 10 */}
+            {/* Selector de Intensidad */}
             <div className="flex items-center justify-between gap-2 flex-wrap pt-2 border-t border-slate-800">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="text-xs text-slate-400 font-sans mr-2">Intensidad:</span>
@@ -498,31 +440,113 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
       )}
 
       {/* ============================================================== */}
-      {/* TAB 2: CONFIGURACIÓN DE PERMISOS PARA CELULARES               */}
+      {/* SECCIÓN 2: APLICACIÓN COLABORADOR (PC / CELULAR)               */}
       {/* ============================================================== */}
-      {activeTab === 'permissions' && (
-        <div className="space-y-4">
-          {/* Tarjeta de Control Maestro de Inventario Móvil */}
-          <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 text-white border border-purple-500/30 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {(activeTab === 'all' || activeTab === 'collaborator') && (
+        <div className="p-5 sm:p-6 rounded-3xl bg-white border-2 border-amber-200/90 shadow-sm space-y-5 animate-fadeIn">
+          {/* Cabecera Principal de la Sección Colaborador */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-amber-100">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-500/30 text-indigo-300 border border-indigo-400/40 flex items-center justify-center shrink-0">
-                <ClipboardList className="w-6 h-6 text-fio-yellow" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 via-pink-600 to-purple-700 text-white flex items-center justify-center shadow-md shrink-0">
+                <Users className="w-6 h-6 text-fio-yellow" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-bubble font-bold text-base sm:text-lg text-fio-900">
+                    Aplicacion Colaborador (PC / Celular)
+                  </h3>
+                  <span className="text-[10px] font-bubble font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                    1 Sola Aplicación • Módulos por Permiso
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 font-sans mt-0.5">
+                  Alisto &amp; Pedidos e Inventario Físico son módulos gobernados por permisos. Lo que modifiques dentro de esta sección se modificará en las dos al mismo tiempo.
+                </p>
+              </div>
+            </div>
+
+            {/* Botones de Acción Rápida */}
+            <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setSelectedQrApp({ title: 'Aplicacion Colaborador (PC / Celular)', url: collabUrl })}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bubble font-bold transition-all cursor-pointer border border-amber-200"
+                title="Ver código QR para escanear en taller o celular"
+              >
+                <QrCode className="w-3.5 h-3.5 text-amber-600" />
+                <span>Ver QR</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => copyToClipboard('collab', collabUrl)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bubble font-bold transition-all cursor-pointer"
+                title="Copiar enlace directo"
+              >
+                {copiedKey === 'collab' ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="text-emerald-700">¡Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-slate-600" />
+                    <span>Copiar Enlace</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => shareWhatsApp(`Hola, aquí tienes tu acceso a la Aplicacion Colaborador (PC / Celular) de by.fio: ${collabUrl}`)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bubble font-bold transition-all cursor-pointer border border-emerald-200"
+                title="Enviar enlace por WhatsApp"
+              >
+                <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>WhatsApp</span>
+              </button>
+
+              <a
+                href={collabPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bubble font-bold transition-all shadow-xs"
+              >
+                <span>Abrir App</span>
+                <ExternalLink className="w-3.5 h-3.5 text-fio-yellow" />
+              </a>
+            </div>
+          </div>
+
+          {/* Nota aclaratoria sobre Módulos vs Aplicaciones */}
+          <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-950 font-sans flex items-start gap-2.5">
+            <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong>Arquitectura de Módulos Unificada:</strong> Alisto &amp; Pedidos y Toma de Inventario Físico no son aplicaciones independientes, sino módulos del sistema. En este panel defines los permisos de qué módulos puede ver y utilizar cada perfil de colaborador. Las modificaciones aplican inmediatamente en <strong>PC y Celular al mismo tiempo</strong>.
+            </p>
+          </div>
+
+          {/* Módulo de Inventario Físico (Switch Maestro para PC y Celulares) */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 text-white border border-purple-500/30 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/30 text-indigo-300 border border-indigo-400/40 flex items-center justify-center shrink-0">
+                <ClipboardList className="w-5 h-5 text-fio-yellow" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bubble font-bold text-sm sm:text-base text-white">
-                    Acceso de Celulares a Toma de Inventario Físico
-                  </h3>
+                  <h4 className="font-bubble font-bold text-xs sm:text-sm text-white">
+                    Módulo: Toma de Inventario Físico por Estantes
+                  </h4>
                   <span className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full ${
                     collaboratorInventoryEnabled
                       ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                       : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
                   }`}>
-                    {collaboratorInventoryEnabled ? '✓ Habilitado para Celulares' : '✗ Bloqueado'}
+                    {collaboratorInventoryEnabled ? '✓ Habilitado (PC & Celular)' : '✗ Bloqueado'}
                   </span>
                 </div>
-                <p className="text-xs text-purple-200/80 font-sans mt-0.5">
-                  Cuando está bloqueado, ningún colaborador puede iniciar conteos de estantes desde su teléfono móvil.
+                <p className="text-[11px] text-purple-200/80 font-sans mt-0.5">
+                  Habilita o bloquea el acceso en tiempo real a la ruta <code>/inventario-app</code> para todos los colaboradores.
                 </p>
               </div>
             </div>
@@ -531,32 +555,34 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
               type="button"
               onClick={() => {
                 toggleCollaboratorInventoryEnabled();
+                const nextState = !collaboratorInventoryEnabled;
                 setSaveToast(
-                  !collaboratorInventoryEnabled
-                    ? '✓ Acceso a toma de inventario habilitado para celulares de colaboradores'
-                    : '✓ Acceso a toma de inventario bloqueado para celulares de colaboradores'
+                  nextState
+                    ? '✓ Módulo de Inventario Físico habilitado simultáneamente para PC y Celular'
+                    : '✓ Módulo de Inventario Físico bloqueado simultáneamente para PC y Celular'
                 );
                 setTimeout(() => setSaveToast(null), 3000);
               }}
-              className={`px-4 py-2.5 rounded-xl font-bubble font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer shrink-0 ${
+              className={`px-4 py-2 rounded-xl font-bubble font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer shrink-0 ${
                 collaboratorInventoryEnabled
                   ? 'bg-rose-600 hover:bg-rose-700 text-white'
                   : 'bg-emerald-600 hover:bg-emerald-700 text-white'
               }`}
             >
-              {collaboratorInventoryEnabled ? 'Bloquear Acceso Móvil' : 'Habilitar Acceso Móvil'}
+              {collaboratorInventoryEnabled ? 'Bloquear Módulo de Inventario' : 'Habilitar Módulo de Inventario'}
             </button>
           </div>
 
-          {/* Matriz de Permisos por Colaborador */}
-          <div className="space-y-3">
+          {/* Asignación y Modificación de Permisos por Colaborador */}
+          <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between px-1">
               <div>
-                <h3 className="font-bubble font-bold text-sm sm:text-base text-fio-900">
-                  Colaboradores Registrados & Permisos en Celular
-                </h3>
+                <h4 className="font-bubble font-bold text-sm sm:text-base text-fio-900 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-purple-700" />
+                  <span>Asignar Permisos de Módulos a Colaboradores (PC / Celular)</span>
+                </h4>
                 <p className="text-xs text-slate-500 font-sans">
-                  Activa o desactiva qué módulos y operaciones puede realizar cada colaborador en su celular personal.
+                  Activa o desactiva los módulos que cada colaborador puede ver. Lo que modifiques aquí se actualizará en PC y Celular al mismo tiempo.
                 </p>
               </div>
             </div>
@@ -581,38 +607,38 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                 return (
                   <div
                     key={profile.id}
-                    className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4"
+                    className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 shadow-2xs space-y-3.5"
                   >
                     {/* Encabezado del Perfil */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/80">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-700 to-fio-pink text-white flex items-center justify-center font-bubble font-bold text-sm shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-fio-pink text-white flex items-center justify-center font-bubble font-bold text-sm shrink-0">
                           {profile.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="font-bubble font-bold text-base text-fio-900">
+                            <h5 className="font-bubble font-bold text-sm sm:text-base text-fio-900">
                               {profile.name}
-                            </h4>
+                            </h5>
                             <span className={`text-[10px] font-bubble font-bold px-2 py-0.5 rounded-full ${
-                              profile.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
+                              profile.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
                             }`}>
                               {profile.isActive ? 'Activo' : 'Inactivo'}
                             </span>
                           </div>
                           {profile.note && (
-                            <p className="text-xs text-slate-400 font-sans mt-0.5">
+                            <p className="text-xs text-slate-500 font-sans mt-0.5">
                               {profile.note}
                             </p>
                           )}
                         </div>
                       </div>
 
-                      {/* PIN de Seguridad en Celular */}
+                      {/* PIN de Seguridad */}
                       <div className="flex items-center gap-2 self-start sm:self-auto">
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs">
                           <KeyRound className="w-3.5 h-3.5 text-purple-600" />
-                          <span className="font-sans text-slate-500">PIN Celular:</span>
+                          <span className="font-sans text-slate-500">PIN:</span>
                           <span className="font-mono font-bold text-purple-900">
                             {isPinRevealed ? profile.pin : '••••'}
                           </span>
@@ -628,21 +654,21 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                       </div>
                     </div>
 
-                    {/* Fila de Interruptores de Permisos para Celular */}
-                    <div className="space-y-2">
+                    {/* Fila de Módulos conmutables */}
+                    <div className="space-y-1.5">
                       <span className="text-[11px] font-bubble font-bold text-slate-500 uppercase tracking-wider">
-                        Permisos Habilitados en la Aplicación Móvil:
+                        Módulos Asignados (se sincronizan en PC &amp; Celular):
                       </span>
 
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                        {/* 1. Alisto & Pedidos */}
+                        {/* 1. Módulo Alisto & Pedidos */}
                         <button
                           type="button"
                           onClick={() => handleTogglePermission(profile, 'orders')}
-                          className={`p-2.5 rounded-2xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
                             perms.orders
-                              ? 'bg-purple-50 border-purple-300 text-purple-950 font-bold'
-                              : 'bg-slate-50/70 border-slate-200 text-slate-400'
+                              ? 'bg-purple-100/80 border-purple-300 text-purple-950 font-bold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-400'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
@@ -656,14 +682,35 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                           </span>
                         </button>
 
-                        {/* 2. Facturación Rápida */}
+                        {/* 2. Módulo Inventario / Stock */}
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePermission(profile, 'inventory')}
+                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                            perms.inventory
+                              ? 'bg-sky-100/80 border-sky-300 text-sky-950 font-bold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-400'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Boxes className="w-4 h-4 text-sky-600 shrink-0" />
+                            <span className="text-xs truncate">Inventario Físico &amp; Stock</span>
+                          </div>
+                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
+                            perms.inventory ? 'bg-sky-600 text-white' : 'bg-slate-300 text-white'
+                          }`}>
+                            {perms.inventory ? '✓' : ''}
+                          </span>
+                        </button>
+
+                        {/* 3. Facturación Rápida */}
                         <button
                           type="button"
                           onClick={() => handleTogglePermission(profile, 'billing')}
-                          className={`p-2.5 rounded-2xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
                             perms.billing
-                              ? 'bg-pink-50 border-pink-300 text-pink-950 font-bold'
-                              : 'bg-slate-50/70 border-slate-200 text-slate-400'
+                              ? 'bg-pink-100/80 border-pink-300 text-pink-950 font-bold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-400'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
@@ -677,40 +724,19 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                           </span>
                         </button>
 
-                        {/* 3. Mis Productos & Inventario */}
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePermission(profile, 'inventory')}
-                          className={`p-2.5 rounded-2xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                            perms.inventory
-                              ? 'bg-sky-50 border-sky-300 text-sky-950 font-bold'
-                              : 'bg-slate-50/70 border-slate-200 text-slate-400'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Boxes className="w-4 h-4 text-sky-600 shrink-0" />
-                            <span className="text-xs truncate">Stock &amp; Inventario</span>
-                          </div>
-                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
-                            perms.inventory ? 'bg-sky-600 text-white' : 'bg-slate-300 text-white'
-                          }`}>
-                            {perms.inventory ? '✓' : ''}
-                          </span>
-                        </button>
-
                         {/* 4. Clientes */}
                         <button
                           type="button"
                           onClick={() => handleTogglePermission(profile, 'customers')}
-                          className={`p-2.5 rounded-2xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
                             perms.customers
-                              ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold'
-                              : 'bg-slate-50/70 border-slate-200 text-slate-400'
+                              ? 'bg-emerald-100/80 border-emerald-300 text-emerald-950 font-bold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-400'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <Users className="w-4 h-4 text-emerald-600 shrink-0" />
-                            <span className="text-xs truncate">Clientes</span>
+                            <span className="text-xs truncate">Directorio Clientes</span>
                           </div>
                           <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
                             perms.customers ? 'bg-emerald-600 text-white' : 'bg-slate-300 text-white'
@@ -723,10 +749,10 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                         <button
                           type="button"
                           onClick={() => handleTogglePermission(profile, 'agenda')}
-                          className={`p-2.5 rounded-2xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
                             perms.agenda
-                              ? 'bg-violet-50 border-violet-300 text-violet-950 font-bold'
-                              : 'bg-slate-50/70 border-slate-200 text-slate-400'
+                              ? 'bg-violet-100/80 border-violet-300 text-violet-950 font-bold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-400'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
@@ -744,10 +770,10 @@ export const AppsManagementSection: React.FC<AppsManagementSectionProps> = ({
                         <button
                           type="button"
                           onClick={() => handleTogglePermission(profile, 'suppliers')}
-                          className={`p-2.5 rounded-2xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+                          className={`p-2.5 rounded-xl border text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
                             perms.suppliers
-                              ? 'bg-amber-50 border-amber-300 text-amber-950 font-bold'
-                              : 'bg-slate-50/70 border-slate-200 text-slate-400'
+                              ? 'bg-amber-100/80 border-amber-300 text-amber-950 font-bold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-400'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
