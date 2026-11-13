@@ -36,6 +36,7 @@ const GuidedPickingModal = React.lazy(() => import('../../components/admin/Guide
 const AgendaSection = React.lazy(() => import('../../components/admin/AgendaSection').then((m) => ({ default: m.AgendaSection })));
 const MetricsPage = React.lazy(() => import('../../components/admin/MetricsPage').then((m) => ({ default: m.MetricsPage })));
 const AppsManagementSection = React.lazy(() => import('../../components/admin/AppsManagementSection').then((m) => ({ default: m.AppsManagementSection })));
+const DriveCoursesAdminSection = React.lazy(() => import('../../components/admin/DriveCoursesAdminSection').then((m) => ({ default: m.DriveCoursesAdminSection })));
 const SuperadminSection = React.lazy(() => import('../../components/superadmin/SuperadminSection').then((m) => ({ default: m.SuperadminSection })));
 
 interface AdminPwaShellProps {
@@ -211,6 +212,11 @@ export const AdminPwaShell: React.FC<AdminPwaShellProps> = ({
                     {adminTab === 'apps' && (
                       <React.Suspense fallback={<div className="py-12 text-center text-slate-400 font-bubble text-sm">Cargando aplicaciones...</div>}>
                         <AppsManagementSection onSelectAdminTab={onSelectAdminTab} onNavigate={onNavigate} onOpenDesignModal={onOpenDesignModal} />
+                      </React.Suspense>
+                    )}
+                    {adminTab === 'drive-courses' && (
+                      <React.Suspense fallback={<div className="py-12 text-center text-slate-400 font-bubble text-sm">Cargando cursos drive...</div>}>
+                        <DriveCoursesAdminSection onSelectTab={onSelectAdminTab} onNavigate={onNavigate} />
                       </React.Suspense>
                     )}
                   </>

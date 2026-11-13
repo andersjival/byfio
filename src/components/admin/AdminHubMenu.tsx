@@ -5,7 +5,7 @@ import {
   QrCode, BookmarkCheck, Receipt, Boxes, Landmark, GraduationCap, Vibrate, Sliders, Zap,
   ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Users,
   BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone, Save,
-  ClipboardList, ShieldCheck, Shield
+  ClipboardList, ShieldCheck, Shield, HardDrive
 } from 'lucide-react';
 
 import { AppRoute, SupplierOrder } from '../../types';
@@ -215,6 +215,14 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       title: 'Aplicaciones PC / Celular',
       icon: Smartphone,
       gradient: 'from-[#4F46E5] to-[#7C3AED]',
+    },
+    {
+      id: 'drive-courses' as AdminTabType,
+      title: 'Cursos Drive',
+      icon: HardDrive,
+      gradient: 'from-[#2563EB] to-[#1D4ED8]',
+
+
     },
   ];
 

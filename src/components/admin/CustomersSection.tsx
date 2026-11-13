@@ -601,11 +601,11 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
                     )}
 
                     {cust.notes && (
-                      <div className="p-2.5 rounded-xl border mt-1 shadow-2xs customer-notes-pastel-card bg-[#FEF9C3] dark:bg-[#FEF9C3] border-[#FDE047]/80 dark:border-[#FDE047]/80">
-                        <p className="font-bold flex items-center gap-1 text-[10px] uppercase customer-notes-pastel-title text-[#0F766E] dark:text-[#0F766E]">
+                      <div className="p-2.5 rounded-xl border mt-1 shadow-2xs customer-notes-pastel-card bg-[#FCE7F3] dark:bg-[#FCE7F3] border-[#FBCFE8] dark:border-[#FBCFE8]">
+                        <p className="font-bold flex items-center gap-1 text-[10px] uppercase customer-notes-pastel-title text-[#831843] dark:text-[#831843]">
                           <span>📌 Notas del Cliente:</span>
                         </p>
-                        <p className="mt-0.5 font-sans italic font-medium customer-notes-pastel-text text-[#0D9488] dark:text-[#0D9488]">{cust.notes}</p>
+                        <p className="mt-0.5 font-sans italic font-medium customer-notes-pastel-text text-[#9D174D] dark:text-[#9D174D]">{cust.notes}</p>
                       </div>
                     )}
 

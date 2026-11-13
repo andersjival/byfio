@@ -23,6 +23,9 @@ import { CheckoutModal } from '../../components/store/CheckoutModal';
 const PropuestaPage = React.lazy(() =>
   import('../../components/propuesta/PropuestaPage').then((m) => ({ default: m.PropuestaPage }))
 );
+const DriveCoursesPage = React.lazy(() =>
+  import('../../components/store/DriveCoursesPage').then((m) => ({ default: m.DriveCoursesPage }))
+);
 
 interface WebShellProps {
   currentRoute: AppRoute;
@@ -132,6 +135,12 @@ export const WebShell: React.FC<WebShellProps> = ({
 
               {currentRoute === 'workshop-detail' && isModuleEnabled('workshops') && (
                 <WorkshopDetailPage workshopId={selectedWorkshopId} onNavigate={onNavigate} />
+              )}
+
+              {currentRoute === 'cursos-drive' && (
+                <React.Suspense fallback={<div className="py-16 text-center font-bubble text-sm text-slate-400">Cargando cursos...</div>}>
+                  <DriveCoursesPage onNavigate={onNavigate} />
+                </React.Suspense>
               )}
 
               {currentRoute === 'propuesta' && (

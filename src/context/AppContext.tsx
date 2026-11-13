@@ -2463,7 +2463,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const isModuleEnabled = (moduleIdOrAlias: string): boolean => {
-    if (moduleIdOrAlias === 'hub' || moduleIdOrAlias === 'apps' || moduleIdOrAlias === 'aplicaciones') return true;
+    if (moduleIdOrAlias === 'hub' || moduleIdOrAlias === 'apps' || moduleIdOrAlias === 'aplicaciones' || moduleIdOrAlias === 'drive-courses' || moduleIdOrAlias === 'cursos-drive') return true;
     const normalized = normalizeModuleId(moduleIdOrAlias);
     const mod = superadminModules.find((m) => m.id === normalized);
     return mod ? mod.enabled : true;
@@ -2760,7 +2760,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!isModuleEnabled(tab)) return false;
     if (!currentUser) return false;
     if (currentUser.role === 'admin' || currentUser.isMasterAdmin) return true;
-    if (tab === 'hub' || tab === 'apps') return true;
+    if (tab === 'hub' || tab === 'apps' || tab === 'drive-courses') return true;
 
     // Sincronización dinámica instantánea con el perfil activo en userProfiles
     const matchingProfile = userProfiles.find(
