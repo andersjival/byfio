@@ -1,3 +1,17 @@
+## [v4.19.195] - 2026-11-13
+
+### 🌓 Profundidad Tridimensional y Sombra Direccional: Despliegue Escalonado con Capa Superpuesta
+- **Sombra Direccional Lateral ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Incorporada sombra lateral proyectada `shadow-[16px_0_35px_-5px_rgba(0,0,0,0.5),0_25px_60px_-15px_rgba(0,0,0,0.45)]` en la ventana del chat (`z-20`), haciendo que su borde derecho proyecte una sombra física realista sobre la ventana de registro colocada por debajo (`z-10`).
+- **Gradiente de Profundidad en Tarjeta de Registro ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Sombra interna de contacto de 32px (`w-8 bg-gradient-to-r from-black/45 via-purple-950/20 to-transparent`) que enfatiza el efecto de capa superpuesta donde ambas ventanas se acoplan.
+- **Transición Suave y Ajuste de Entrada ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Despliegue a 1400ms arrancando desde `sm:-translate-x-44`, emergiendo con gracia por detrás de la sombra del chat hasta asentarse en su posición de descanso.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.195`.
+
+---
+
 ## [v4.19.194] - 2026-11-13
 
 ### ⚡ Neuronas Promedio por Chat Interactivas y Estilizado Púrpura Armónico
@@ -208,6 +222,20 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.195] - 2026-11-13
+
+### 🌓 Profundidad Tridimensional y Sombra Direccional: Despliegue Escalonado con Capa Superpuesta
+- **Sombra Direccional Lateral ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Incorporada sombra lateral proyectada `shadow-[16px_0_35px_-5px_rgba(0,0,0,0.5),0_25px_60px_-15px_rgba(0,0,0,0.45)]` en la ventana del chat (`z-20`), haciendo que su borde derecho proyecte una sombra física realista sobre la ventana de registro colocada por debajo (`z-10`).
+- **Gradiente de Profundidad en Tarjeta de Registro ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Sombra interna de contacto de 32px (`w-8 bg-gradient-to-r from-black/45 via-purple-950/20 to-transparent`) que enfatiza el efecto de capa superpuesta donde ambas ventanas se acoplan.
+- **Transición Suave y Ajuste de Entrada ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Despliegue a 1400ms arrancando desde `sm:-translate-x-44`, emergiendo con gracia por detrás de la sombra del chat hasta asentarse en su posición de descanso.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.195`.
 
 ---
 
