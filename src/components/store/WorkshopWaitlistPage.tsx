@@ -119,7 +119,7 @@ export const WorkshopWaitlistPage: React.FC<WorkshopWaitlistPageProps> = ({
         ) : (
           <div className="bg-white/95 backdrop-blur-md rounded-[32px] p-5 sm:p-7 border border-purple-200/80 shadow-2xl space-y-5">
             <div className="text-center space-y-2 border-b border-purple-100 pb-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bubble font-bold">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bubble font-bold dark:bg-amber-500/20 dark:border-amber-500/40 dark:text-amber-300">
                 <GraduationCap className="w-3.5 h-3.5 text-fio-pink" />
                 <span>Lista de Espera • Cupos Agotados</span>
               </div>

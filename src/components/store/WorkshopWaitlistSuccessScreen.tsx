@@ -46,14 +46,14 @@ export const WorkshopWaitlistSuccessScreen: React.FC<WorkshopWaitlistSuccessScre
       </div>
 
       <div className="space-y-1.5">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bubble font-bold">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bubble font-bold dark:bg-emerald-950/50 dark:border-emerald-700/50 dark:text-emerald-300">
           <span>Turno en Lista de Espera: #{position}</span>
         </span>
-        <h1 className="font-bubble font-black text-2xl sm:text-3xl text-slate-900">
+        <h1 className="font-bubble font-black text-2xl sm:text-3xl text-slate-900 dark:text-white">
           ¡Listo, {(entry.name || '').split(' ')[0]}! Ya estás anotad@
         </h1>
-        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
-          Estás en la lista de espera de <strong className="text-fio-900">{workshop.title}</strong>.
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-md mx-auto">
+          Estás en la lista de espera de <strong className="text-fio-900 dark:text-pink-300">{workshop.title}</strong>.
         </p>
       </div>
 

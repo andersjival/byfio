@@ -47,8 +47,8 @@ export const MyAccountWaitlistBanner: React.FC<MyAccountWaitlistBannerProps> = (
             key={entry.id}
             className={`rounded-[28px] border shadow-md overflow-hidden transition-all ${
               spotOpened
-                ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-emerald-300'
-                : 'bg-gradient-to-r from-amber-50 via-pink-50/70 to-purple-50 border-amber-200/90'
+                ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-emerald-300 dark:from-[#1A2E26] dark:via-[#162922] dark:to-[#1A2E26] dark:border-emerald-700/60'
+                : 'bg-gradient-to-r from-amber-50 via-pink-50/70 to-purple-50 border-amber-200/90 dark:from-[#251E33] dark:via-[#211A2E] dark:to-[#281D35] dark:border-amber-500/40'
             }`}
           >
             {/* Botón Principal de Estado en Lista de Espera */}
@@ -58,7 +58,7 @@ export const MyAccountWaitlistBanner: React.FC<MyAccountWaitlistBannerProps> = (
                 playWaterDropSound();
                 setExpandedId((prev) => (prev === entry.id && expandedId !== null ? 'none' : entry.id));
               }}
-              className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left cursor-pointer hover:bg-white/40 transition-colors"
+              className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left cursor-pointer hover:bg-white/40 dark:hover:bg-white/5 transition-colors"
             >
               <div className="flex items-start sm:items-center gap-3 min-w-0">
                 <div
@@ -76,16 +76,16 @@ export const MyAccountWaitlistBanner: React.FC<MyAccountWaitlistBannerProps> = (
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-bubble font-bold uppercase tracking-wider ${
                         spotOpened
                           ? 'bg-emerald-600 text-white'
-                          : 'bg-amber-200/90 text-amber-950'
+                          : 'bg-amber-200/90 text-amber-950 dark:bg-amber-500/25 dark:text-amber-300 dark:border dark:border-amber-500/40'
                       }`}
                     >
                       {spotOpened ? '¡Se liberó un cupo!' : `Lista de Espera • Turno #${turn}`}
                     </span>
-                    <span className="text-[11px] text-slate-500 font-sans">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-sans">
                       Registrado: {formatShortDate(entry.createdAt)}
                     </span>
                   </div>
-                  <p className="font-bubble font-bold text-sm sm:text-base text-slate-900 truncate">
+                  <p className="font-bubble font-bold text-sm sm:text-base text-slate-900 dark:text-white truncate">
                     Estás en la lista de espera del taller: Nombre: {workshopTitle}
                   </p>
                 </div>

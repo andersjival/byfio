@@ -528,16 +528,16 @@ export const WorkshopDetailPage: React.FC<WorkshopDetailPageProps> = ({
             {isFull ? (
               /* Caso: Cupos Agotados */
               <div className="space-y-4 py-3 text-center">
-                <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/60 text-amber-800 text-xs">
+                <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/60 text-amber-800 text-xs dark:bg-amber-950/40 dark:border-amber-700/40 dark:text-amber-200">
                   <p className="font-bold">¡Cupos agotados para esta fecha!</p>
-                  <p className="mt-1 text-amber-700">
+                  <p className="mt-1 text-amber-700 dark:text-amber-300">
                     Únete a la lista de espera oficial para recibir notificación automática por correo electrónico y WhatsApp apenas se libere un cupo.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => onNavigate('workshop-waitlist', undefined, workshop.id)}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn hover:shadow-lg active:scale-95 transition-all cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn hover:shadow-lg active:scale-95 transition-all cursor-pointer dark:bg-gradient-to-r dark:from-purple-600 dark:to-fio-pink dark:hover:opacity-95 dark:shadow-[0_0_20px_rgba(217,70,239,0.35)]"
                 >
                   <Users className="w-4 h-4" />
                   <span>Ingresar a la lista de espera</span>

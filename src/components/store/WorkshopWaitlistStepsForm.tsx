@@ -330,13 +330,13 @@ export const WorkshopWaitlistStepsForm: React.FC<WorkshopWaitlistStepsFormProps>
             </>
           )}
 
-          <div className="p-3.5 rounded-2xl bg-purple-50/80 border border-purple-200/80 text-xs text-slate-700 space-y-1.5 font-sans">
-            <p className="font-bubble font-bold text-purple-950 text-sm">Resumen de tu Registro en Lista de Espera:</p>
-            <p className="truncate"><strong className="text-purple-900">Nombre:</strong> {name}</p>
-            <p className="truncate"><strong className="text-purple-900">Correo:</strong> {email}</p>
-            <p className="truncate"><strong className="text-purple-900">WhatsApp:</strong> {phone}</p>
-            {idCard && <p className="truncate"><strong className="text-purple-900">Cédula:</strong> {idCard}</p>}
-            {address && <p className="truncate"><strong className="text-purple-900">Ubicación:</strong> {address}</p>}
+          <div className="p-3.5 rounded-2xl bg-purple-50/80 border border-purple-200/80 text-xs text-slate-700 space-y-1.5 font-sans dark:bg-[#1E1A30] dark:border-purple-800/60 dark:text-slate-300">
+            <p className="font-bubble font-bold text-purple-950 dark:text-purple-200 text-sm">Resumen de tu Registro en Lista de Espera:</p>
+            <p className="truncate"><strong className="text-purple-900 dark:text-purple-300">Nombre:</strong> {name}</p>
+            <p className="truncate"><strong className="text-purple-900 dark:text-purple-300">Correo:</strong> {email}</p>
+            <p className="truncate"><strong className="text-purple-900 dark:text-purple-300">WhatsApp:</strong> {phone}</p>
+            {idCard && <p className="truncate"><strong className="text-purple-900 dark:text-purple-300">Cédula:</strong> {idCard}</p>}
+            {address && <p className="truncate"><strong className="text-purple-900 dark:text-purple-300">Ubicación:</strong> {address}</p>}
           </div>
 
           <div className="flex items-center gap-2.5 pt-2">
@@ -344,7 +344,7 @@ export const WorkshopWaitlistStepsForm: React.FC<WorkshopWaitlistStepsFormProps>
               type="button"
               onClick={() => goStep(2, 'prev')}
               disabled={isSubmitting}
-              className="py-3 px-4 rounded-2xl bg-white hover:bg-purple-50 text-slate-700 font-bubble font-bold text-xs border border-purple-200 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+              className="py-3 px-4 rounded-2xl bg-white hover:bg-purple-50 text-slate-700 font-bubble font-bold text-xs border border-purple-200 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all dark:bg-[#1E1A30] dark:hover:bg-[#25203D] dark:text-slate-200 dark:border-white/10"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Atrás</span>
@@ -352,7 +352,7 @@ export const WorkshopWaitlistStepsForm: React.FC<WorkshopWaitlistStepsFormProps>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 py-3.5 px-4 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="flex-1 py-3.5 px-4 rounded-2xl bg-fio-pink hover:bg-pink-600 text-white font-bubble font-bold text-xs sm:text-sm shadow-clayBtn hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 dark:bg-gradient-to-r dark:from-purple-600 dark:to-fio-pink dark:hover:opacity-95 dark:shadow-[0_0_20px_rgba(217,70,239,0.35)]"
             >
               <Users className="w-4 h-4" />
               <span className="font-extrabold tracking-wide">
