@@ -1,3 +1,25 @@
+## [v4.19.192] - 2026-11-13
+
+### 📊 Filtros por Periodo (Hora, Día, Semana, Mes), Estado ACTIVO y Visor de Modelos Protegido por Superadmin
+- **Renombrado y Simplificación de Tarjetas ([AiMetricsOverviewCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiMetricsOverviewCard.tsx))**:
+  - Eliminado el término `"Workers AI"` del encabezado principal, quedando como `"Rendimiento & Métricas AI"`.
+  - Renombrada la tarjeta de neuronas a `"Neuronas  AI"`.
+  - Simplificado el estado del motor a únicamente `"ACTIVO"` con indicador verde de verificación, sin exponer nombres de modelos a usuarios o administradores generales.
+- **Filtros Temporales para Métricas AI ([AiMetricsOverviewCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiMetricsOverviewCard.tsx), [metrics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/metrics.ts))**:
+  - Selector interactivo de periodos: **Hora**, **Día**, **Semana** y **Mes**.
+  - Recálculo dinámico de Chats Abiertos, Conversaciones y Neuronas AI según el periodo temporal seleccionado.
+- **Visor de Modelos Protegido con Password de Superadmin ([AiSuperadminModelsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiSuperadminModelsModal.tsx), [SuperadminAiAccessCards.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiAccessCards.tsx))**:
+  - Nuevo botón `"Ver Modelos"` con candado que abre modal de validación exclusivo para Superadmin.
+  - Validación de contraseña del Superadmin para desbloquear el desglose detallado de modelos:
+    - Cliente Web: `@cf/meta/llama-3.3-70b-instruct-fp8-fast` (Fallback: `@cf/meta/llama-3.1-8b-instruct-fp8`).
+    - Staff & Colaboradoras: `@cf/google/gemma-4-26b-a4b-it` (Fallback: `@cf/meta/llama-3.3-70b-instruct-fp8-fast`).
+    - Transcripción: `@cf/openai/whisper`.
+  - Sección oficial integrada en el panel del Superadmin mostrando los modelos en producción.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.192`.
+
+---
+
 ## [v4.19.191] - 2026-11-13
 
 ### 📱 Experiencia Móvil de Registro: Descenso Vertical desde Arriba y Retirada Hacia Arriba
@@ -156,6 +178,28 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.192] - 2026-11-13
+
+### 📊 Filtros por Periodo (Hora, Día, Semana, Mes), Estado ACTIVO y Visor de Modelos Protegido por Superadmin
+- **Renombrado y Simplificación de Tarjetas ([AiMetricsOverviewCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiMetricsOverviewCard.tsx))**:
+  - Eliminado el término `"Workers AI"` del encabezado principal, quedando como `"Rendimiento & Métricas AI"`.
+  - Renombrada la tarjeta de neuronas a `"Neuronas  AI"`.
+  - Simplificado el estado del motor a únicamente `"ACTIVO"` con indicador verde de verificación, sin exponer nombres de modelos a usuarios o administradores generales.
+- **Filtros Temporales para Métricas AI ([AiMetricsOverviewCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiMetricsOverviewCard.tsx), [metrics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/metrics.ts))**:
+  - Selector interactivo de periodos: **Hora**, **Día**, **Semana** y **Mes**.
+  - Recálculo dinámico de Chats Abiertos, Conversaciones y Neuronas AI según el periodo temporal seleccionado.
+- **Visor de Modelos Protegido con Password de Superadmin ([AiSuperadminModelsModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiSuperadminModelsModal.tsx), [SuperadminAiAccessCards.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiAccessCards.tsx))**:
+  - Nuevo botón `"Ver Modelos"` con candado que abre modal de validación exclusivo para Superadmin.
+  - Validación de contraseña del Superadmin para desbloquear el desglose detallado de modelos:
+    - Cliente Web: `@cf/meta/llama-3.3-70b-instruct-fp8-fast` (Fallback: `@cf/meta/llama-3.1-8b-instruct-fp8`).
+    - Staff & Colaboradoras: `@cf/google/gemma-4-26b-a4b-it` (Fallback: `@cf/meta/llama-3.3-70b-instruct-fp8-fast`).
+    - Transcripción: `@cf/openai/whisper`.
+  - Sección oficial integrada en el panel del Superadmin mostrando los modelos en producción.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.192`.
 
 ---
 

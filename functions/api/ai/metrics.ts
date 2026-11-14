@@ -167,6 +167,48 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
       totalChatOpens = totalMessagesAnswered + 2;
     }
 
+    // Cálculos agregados por periodo (hora, día, semana, mes)
+    const currentHourStr = String(now.getUTCHours()).padStart(2, '0');
+    const hourFound = hourlyData.find((h) => h.hour.startsWith(currentHourStr));
+    const hourNeurons = hourFound ? hourFound.neurons : 0;
+    const hourQueries = hourFound ? hourFound.queries : 0;
+    const hourOpens = hourFound ? hourFound.opens : 0;
+
+    const dayNeurons = totalNeuronsToday;
+    const dayQueries = hourlyData.reduce((acc, h) => acc + h.queries, 0) || totalMessagesAnswered;
+    const dayOpens = hourlyData.reduce((acc, h) => acc + h.opens, 0) || totalChatOpens;
+
+    const weekNeurons = dailyData.reduce((acc, d) => acc + d.neurons, 0) || totalNeuronsToday;
+    const weekQueries = dailyData.reduce((acc, d) => acc + d.queries, 0) || totalMessagesAnswered;
+    const weekOpens = dailyData.reduce((acc, d) => acc + d.opens, 0) || totalChatOpens;
+
+    const monthNeurons = totalNeuronsMonth || weekNeurons;
+    const monthQueries = Math.max(totalMessagesAnswered, weekQueries);
+    const monthOpens = Math.max(totalChatOpens, weekOpens);
+
+    const periods = {
+      hour: {
+        chatsOpened: hourOpens,
+        conversations: hourQueries,
+        neurons: hourNeurons,
+      },
+      day: {
+        chatsOpened: Math.max(dayOpens, hourOpens),
+        conversations: Math.max(dayQueries, hourQueries),
+        neurons: dayNeurons,
+      },
+      week: {
+        chatsOpened: Math.max(weekOpens, dayOpens),
+        conversations: Math.max(weekQueries, dayQueries),
+        neurons: weekNeurons,
+      },
+      month: {
+        chatsOpened: Math.max(monthOpens, weekOpens),
+        conversations: Math.max(monthQueries, weekQueries),
+        neurons: monthNeurons,
+      },
+    };
+
     const freeTierDailyLimit = 10000;
     const quotaUsedPercent = Number(((totalNeuronsToday / freeTierDailyLimit) * 100).toFixed(1));
 
@@ -184,6 +226,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
           totalVoiceNotes,
           serverTimestamp: now.toISOString(),
         },
+        periods,
         hourly: hourlyData,
         daily: dailyData,
         recent: recentInteractions,

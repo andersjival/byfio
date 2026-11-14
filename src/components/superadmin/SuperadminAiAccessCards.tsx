@@ -387,6 +387,71 @@ export const SuperadminAiAccessCards: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Modelos Oficiales de IA en Uso en el Proyecto (Exclusivo Superadmin) */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1a142a] border-2 border-purple-200/90 dark:border-purple-800/50 shadow-md space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="font-bubble font-black text-sm text-fio-900 dark:text-purple-100 flex items-center gap-2">
+            <span className="p-1.5 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
+              <Server className="w-4 h-4" />
+            </span>
+            <span>Modelos de Inteligencia Artificial Oficiales en Uso en el Proyecto</span>
+          </h4>
+          <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-mono font-bold">
+            Cloudflare Workers AI Activo
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          {/* Modelo 1 */}
+          <div className="p-3 rounded-2xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40 space-y-1">
+            <span className="text-[11px] font-bold text-slate-700 dark:text-purple-200 block">
+              1. Clientes Web (Atención &amp; Ventas)
+            </span>
+            <code className="text-[11px] font-mono text-purple-700 dark:text-purple-300 font-bold block truncate">
+              @cf/meta/llama-3.3-70b-instruct-fp8-fast
+            </code>
+            <p className="text-[10px] text-slate-500 dark:text-purple-400">
+              Fallback: <span className="font-mono">@cf/meta/llama-3.1-8b-instruct-fp8</span>
+            </p>
+          </div>
+
+          {/* Modelo 2 */}
+          <div className="p-3 rounded-2xl bg-pink-50/70 dark:bg-pink-950/30 border border-pink-100 dark:border-pink-900/40 space-y-1">
+            <span className="text-[11px] font-bold text-slate-700 dark:text-purple-200 block">
+              2. Staff &amp; Administración (Inventario)
+            </span>
+            <code className="text-[11px] font-mono text-pink-700 dark:text-pink-300 font-bold block truncate">
+              @cf/google/gemma-4-26b-a4b-it
+            </code>
+            <p className="text-[10px] text-slate-500 dark:text-purple-400">
+              Fallback: <span className="font-mono">@cf/meta/llama-3.3-70b-instruct-fp8-fast</span>
+            </p>
+          </div>
+
+          {/* Modelo 3 */}
+          <div className="p-3 rounded-2xl bg-slate-50 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/40 space-y-1">
+            <span className="text-[11px] font-bold text-slate-700 dark:text-purple-200 block">
+              3. Transcripción de Audio / Voz
+            </span>
+            <code className="text-[11px] font-mono text-purple-700 dark:text-purple-300 font-bold block truncate">
+              @cf/openai/whisper
+            </code>
+            <p className="text-[10px] text-slate-500 dark:text-purple-400">
+              Procesamiento de notas de voz en tiempo real
+            </p>
+          </div>
+        </div>
+
+        <div className="p-2.5 rounded-xl bg-purple-50/50 dark:bg-purple-950/20 text-[11px] text-slate-600 dark:text-purple-300 flex items-center justify-between flex-wrap gap-2">
+          <span>
+            Calibración técnica activa: <strong>Temp 0.3</strong> | <strong>Tokens 120</strong> | <strong>Top-P 0.85</strong> | <strong>Top-K 40</strong>
+          </span>
+          <span className="text-purple-600 dark:text-purple-300 font-mono font-bold">
+            Separador: ||| (Chunking WhatsApp)
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
