@@ -56,39 +56,40 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
     let dailyData: Array<{ date: string; neurons: number; queries: number; opens: number; voiceNotes: number }> = [];
     let recentInteractions: Array<any> = [];
 
-    if (context.env.AGENT_DB) {
+    const targetDb = context.env.DB || context.env.AGENT_DB;
+    if (targetDb) {
       try {
         // 1. Neuronas hoy y mes
-        const neuronsTodayQuery = await context.env.AGENT_DB.prepare(
+        const neuronsTodayQuery = await targetDb.prepare(
           'SELECT COALESCE(SUM(neurons), 0) as total FROM agent_neuron_logs WHERE date_str = ?1'
         ).bind(todayStr).first();
         totalNeuronsToday = Math.round(Number(neuronsTodayQuery?.total || 0));
 
-        const neuronsMonthQuery = await context.env.AGENT_DB.prepare(
+        const neuronsMonthQuery = await targetDb.prepare(
           "SELECT COALESCE(SUM(neurons), 0) as total FROM agent_neuron_logs WHERE date_str >= date('now', 'start of month')"
         ).first();
         totalNeuronsMonth = Math.round(Number(neuronsMonthQuery?.total || 0));
 
         // 2. Clics / Aperturas de chat
-        const opensQuery = await context.env.AGENT_DB.prepare(
+        const opensQuery = await targetDb.prepare(
           "SELECT COUNT(*) as total FROM agent_interaction_events WHERE event_type = 'chat_opened'"
         ).first();
         totalChatOpens = Number(opensQuery?.total || 0);
 
         // 3. Total chats respondidos
-        const msgsQuery = await context.env.AGENT_DB.prepare(
+        const msgsQuery = await targetDb.prepare(
           "SELECT COUNT(*) as total FROM agent_messages WHERE role = 'assistant'"
         ).first();
         totalMessagesAnswered = Number(msgsQuery?.total || 0);
 
         // 4. Notas de voz
-        const voiceQuery = await context.env.AGENT_DB.prepare(
+        const voiceQuery = await targetDb.prepare(
           'SELECT COUNT(*) as total FROM agent_neuron_logs WHERE action_type = "audio"'
         ).first();
         totalVoiceNotes = Number(voiceQuery?.total || 0);
 
         // 5. Desglose por hora (hoy)
-        const hourlyQuery = await context.env.AGENT_DB.prepare(
+        const hourlyQuery = await targetDb.prepare(
           `SELECT hour_str as hour, 
                   ROUND(COALESCE(SUM(neurons), 0)) as neurons, 
                   COUNT(*) as queries 
@@ -98,7 +99,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
            ORDER BY hour_str ASC`
         ).bind(todayStr).all();
 
-        const opensByHourQuery = await context.env.AGENT_DB.prepare(
+        const opensByHourQuery = await targetDb.prepare(
           `SELECT hour_str as hour, COUNT(*) as opens 
            FROM agent_interaction_events 
            WHERE date_str = ?1 AND event_type = 'chat_opened' 
@@ -121,7 +122,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
         }
 
         // 6. Desglose por día (últimos 7 días)
-        const dailyQuery = await context.env.AGENT_DB.prepare(
+        const dailyQuery = await targetDb.prepare(
           `SELECT date_str as date, 
                   ROUND(COALESCE(SUM(neurons), 0)) as neurons, 
                   COUNT(*) as queries,
@@ -132,7 +133,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
            ORDER BY date_str ASC`
         ).all();
 
-        const opensByDayQuery = await context.env.AGENT_DB.prepare(
+        const opensByDayQuery = await targetDb.prepare(
           `SELECT date_str as date, COUNT(*) as opens 
            FROM agent_interaction_events 
            WHERE date_str >= date('now', '-7 days') AND event_type = 'chat_opened' 
@@ -151,7 +152,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
         }));
 
         // 7. Interacciones recientes en realtime
-        const recentQuery = await context.env.AGENT_DB.prepare(
+        const recentQuery = await targetDb.prepare(
           `SELECT m.id, m.role, m.content, m.has_audio, m.created_at, c.user_role 
            FROM agent_messages m 
            LEFT JOIN agent_conversations c ON m.conversation_id = c.id 

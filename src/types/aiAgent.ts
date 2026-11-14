@@ -7,6 +7,28 @@ export interface AiChunkMessage {
   delayBeforeMs?: number;
 }
 
+export type ChatRetentionPeriod = '1h' | '6h' | '24h' | '3d' | '7d' | '30d' | 'never';
+
+export interface AiLiveConversation {
+  id: string;
+  user_id: string;
+  user_name?: string;
+  user_role: 'customer' | 'staff' | 'admin';
+  last_message?: string;
+  message_count?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AiLiveMessage {
+  id: string;
+  conversation_id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  has_audio?: number | boolean;
+  created_at: string;
+}
+
 export interface AiHumanSimulationData {
   initialDelayMs: number;
   isChunked: boolean;
@@ -42,12 +64,14 @@ export interface AiAgentConfig {
   initialDelayMaxMs?: number; // 3500 ms (3.5s)
   msPerChar?: number; // 30 a 50 ms (default 40 recomendado)
   delayMarginMs?: number; // 1000 a 2000 ms (default 1200)
+  chatRetentionPeriod?: ChatRetentionPeriod; // Retención de historial (1h, 6h, 24h, 3d, 7d, 30d, never)
   updatedAt?: string;
 }
 
 export const DEFAULT_AI_AGENT_CONFIG: AiAgentConfig = {
   stockDisclosureMode: 'availability_only',
   agentName: 'Estrellita',
+  chatRetentionPeriod: '7d',
   welcomeMessage:
     '¡Hola! ✨🌸 Soy la Estrellita de by.fio. Estoy aquí para contarte si tenemos productos en stock, fechas de talleres o ayudarte con lo que necesites.',
   customInstructions: '',

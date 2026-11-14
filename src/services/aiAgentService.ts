@@ -212,4 +212,89 @@ export const aiAgentService = {
       return null;
     }
   },
+
+  async fetchLiveConversations(filters?: { role?: string; search?: string; period?: string }): Promise<{
+    conversations: import('../types/aiAgent').AiLiveConversation[];
+    retentionPeriod: import('../types/aiAgent').ChatRetentionPeriod;
+  }> {
+    try {
+      const q = new URLSearchParams();
+      if (filters?.role) q.set('role', filters.role);
+      if (filters?.search) q.set('search', filters.search);
+      if (filters?.period) q.set('period', filters.period);
+
+      const resp = await requestWithFallback(`/api/ai/live-chats?${q.toString()}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      return {
+        conversations: data.conversations || [],
+        retentionPeriod: data.retentionPeriod || '7d',
+      };
+    } catch {
+      return { conversations: [], retentionPeriod: '7d' };
+    }
+  },
+
+  async fetchConversationThread(conversationId: string): Promise<{
+    conversation: import('../types/aiAgent').AiLiveConversation | null;
+    messages: import('../types/aiAgent').AiLiveMessage[];
+  }> {
+    try {
+      const resp = await requestWithFallback(`/api/ai/live-chats?conversationId=${encodeURIComponent(conversationId)}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      return {
+        conversation: data.conversation || null,
+        messages: data.messages || [],
+      };
+    } catch {
+      return { conversation: null, messages: [] };
+    }
+  },
+
+  async setChatRetention(retentionPeriod: import('../types/aiAgent').ChatRetentionPeriod): Promise<boolean> {
+    try {
+      const resp = await requestWithFallback('/api/ai/live-chats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'set_retention', retentionPeriod }),
+      });
+      return resp.ok;
+    } catch {
+      return false;
+    }
+  },
+
+  async purgeChatsNow(retentionPeriod: import('../types/aiAgent').ChatRetentionPeriod): Promise<{ success: boolean; purgedCount?: number }> {
+    try {
+      const resp = await requestWithFallback('/api/ai/live-chats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'purge_now', retentionPeriod }),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      return await resp.json();
+    } catch {
+      return { success: false };
+    }
+  },
+
+  async deleteConversation(conversationId: string): Promise<boolean> {
+    try {
+      const resp = await requestWithFallback('/api/ai/live-chats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete_conversation', conversationId }),
+      });
+      return resp.ok;
+    } catch {
+      return false;
+    }
+  },
 };
