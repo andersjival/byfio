@@ -1,3 +1,18 @@
+## [v4.19.205] - 2026-11-13
+
+### 🎨 Contraste y Estilo de Botón de Lista de Espera en Modo Oscuro (Admin & Tienda)
+- **Botón de Lista de Espera en Admin Talleres ([WorkshopEnrollmentsSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/WorkshopEnrollmentsSection.tsx))**:
+  - Incorporadas variantes de tema oscuro de alta legibilidad (`dark:bg-amber-500/20`, `dark:text-amber-300`, `dark:border-amber-500/40`) tanto en el botón cabecera como en el botón individual por taller.
+  - Indicador numérico de espera adaptado con fondo oscuro e iconos sincronizados (`dark:text-amber-400`).
+- **Panel de Lista de Espera de Talleres ([WorkshopWaitlistAdminPanel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/WorkshopWaitlistAdminPanel.tsx))**:
+  - Estilizado integral en modo oscuro para el panel de espera, formulario de configuración WhatsApp, filtros por taller, tarjetas de inscritos y botones de acción.
+- **Botones de Lista de Espera en Tienda Pública y Mi Cuenta ([HomePage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/HomePage.tsx), [WorkshopsPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopsPage.tsx), [WorkshopDetailPage.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopDetailPage.tsx), [WorkshopWaitlistStepsForm.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/WorkshopWaitlistStepsForm.tsx), [MyAccountWaitlistBanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/store/MyAccountWaitlistBanner.tsx))**:
+  - Aplicados gradientes y contrastes vibrantes (`dark:bg-gradient-to-r dark:from-purple-600 dark:to-fio-pink`) para asegurar visibilidad en modo oscuro.
+- **Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Caché PWA actualizado a `byfio-pwa-v4.19.205`.
+
+---
+
 ## [v4.19.203] - 2026-11-13
 
 ### 🎙️ Grabadora de Audio WhatsApp en Chatbot (Onda Dinámica, Segundero, Pausa y Borrar)
