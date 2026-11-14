@@ -235,6 +235,37 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         matchedFaqs.map((f) => `• Pregunta: "${f.question}"\n  Respuesta Oficial: ${f.answer}`).join('\n\n');
     }
 
+    // 2b. Motor RAG sobre el Historial de la Conversación (Memoria Semántica Persistente)
+    let chatHistoryRagSection = '';
+    const targetDb = context.env.DB || context.env.AGENT_DB;
+    if (targetDb) {
+      try {
+        const keywords = message
+          .toLowerCase()
+          .replace(/[^\w\sáéíóúüñ]/gi, '')
+          .split(/\s+/)
+          .filter((w: string) => w.length >= 3 && !['para', 'como', 'pero', 'este', 'esta', 'estos', 'tienes', 'quiero', 'hacer', 'necesito'].includes(w))
+          .slice(0, 4);
+
+        if (keywords.length > 0) {
+          const likeConditions = keywords.map((_: any, idx: number) => `content LIKE ?${idx + 2}`).join(' OR ');
+          const bindings = [conversationId, ...keywords.map((k: string) => `%${k}%`)];
+
+          const prevRows = await targetDb.prepare(
+            `SELECT role, content FROM agent_messages 
+             WHERE conversation_id = ?1 AND (${likeConditions}) 
+             ORDER BY created_at DESC LIMIT 5`
+          ).bind(...bindings).all();
+
+          const hits = (prevRows.results || []) as Array<{ role: string; content: string }>;
+          if (hits.length > 0) {
+            chatHistoryRagSection = '\n\nMEMORIA HISTÓRICA RELEVANTE RECUPERADA (RAG CHAT):\n' +
+              hits.reverse().map((h) => `• [${h.role === 'user' ? 'Cliente' : 'Estrellita'}]: ${h.content}`).join('\n');
+          }
+        }
+      } catch {}
+    }
+
     // 3. Construir System Prompt según Rol con Reglas de Comportamiento Estrictas
     let systemPrompt = '';
     const stockDisclosureRule =
@@ -275,7 +306,7 @@ ROL, TONO Y ESTRUCTURA:
 4. Lista Negra: JAMÁS menciones modelos de IA (Llama, Gemma, GPT, OpenAI, Cloudflare). No especules datos fuera del sistema.
 
 DATOS EN TIEMPO REAL DEL SISTEMA (BASE DE DATOS BYFIO):
-${inventoryContext}${ragFaqSection}`;
+${inventoryContext}${ragFaqSection}${chatHistoryRagSection}`;
     } else {
       const sep = aiConfig.responseChunkSeparator || '|||';
       const maxCh = aiConfig.maxResponseChunks || 3;
@@ -300,7 +331,7 @@ ${aiConfig.escapeProtocol || '- Si no tienes el dato exacto o si el cliente soli
 - Ejemplo: "¡Hola! Con gusto te cuento ✨${sep}Tenemos agendas y tazas hermosas 🌸${sep}¿Buscabas algún diseño especial?"
 
 CONTEXTO EN TIEMPO REAL:
-${inventoryContext}${ragFaqSection}
+${inventoryContext}${ragFaqSection}${chatHistoryRagSection}
 
 INFORMACIÓN CLAVE DEL NEGOCIO:
 - Envíos: A todo Costa Rica por Correos de CR (1 a 3 días) y mensajería express GAM. Tarifa aproximada ₡2.500 a ₡3.500.
@@ -443,24 +474,31 @@ ${aiConfig.systemPromptOverride ? `\nDIRECTRICES ADICIONALES DEL SYSTEM PROMPT:\
       };
     });
 
-    // 5. Guardar conversación y neuronas en AGENT_DB si está disponible
-    if (context.env.AGENT_DB) {
+    // 5. Guardar conversación y neuronas en Base de Datos (DB / AGENT_DB)
+    const storageDb = context.env.DB || context.env.AGENT_DB;
+    if (storageDb) {
       try {
         const now = new Date();
         const dateStr = now.toISOString().split('T')[0];
         const hourStr = String(now.getUTCHours()).padStart(2, '0');
+        const lastMsgSnippet = (messageChunks.join(' ') || '').slice(0, 160);
 
-        await context.env.AGENT_DB.batch([
-          context.env.AGENT_DB.prepare(
-            'INSERT INTO agent_conversations (id, user_id, user_role, updated_at) VALUES (?1, ?2, ?3, CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SET updated_at = CURRENT_TIMESTAMP'
-          ).bind(conversationId, userName || 'anon', role),
-          context.env.AGENT_DB.prepare(
+        await storageDb.batch([
+          storageDb.prepare(
+            `INSERT INTO agent_conversations (id, user_id, user_name, user_role, last_message, updated_at) 
+             VALUES (?1, ?2, ?3, ?4, ?5, CURRENT_TIMESTAMP) 
+             ON CONFLICT(id) DO UPDATE SET 
+               user_name = excluded.user_name,
+               last_message = excluded.last_message,
+               updated_at = CURRENT_TIMESTAMP`
+          ).bind(conversationId, userName || 'anon', userName || 'Cliente Web', role, lastMsgSnippet),
+          storageDb.prepare(
             'INSERT INTO agent_messages (id, conversation_id, role, content, has_audio) VALUES (?1, ?2, ?3, ?4, 0)'
           ).bind(`msg_${Date.now()}_u`, conversationId, 'user', message),
-          context.env.AGENT_DB.prepare(
+          storageDb.prepare(
             'INSERT INTO agent_messages (id, conversation_id, role, content, has_audio) VALUES (?1, ?2, ?3, ?4, 0)'
           ).bind(`msg_${Date.now()}_a`, conversationId, 'assistant', messageChunks.join('\n\n')),
-          context.env.AGENT_DB.prepare(
+          storageDb.prepare(
             'INSERT INTO agent_neuron_logs (id, date_str, hour_str, model, role, neurons, action_type) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)'
           ).bind(`nlog_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`, dateStr, hourStr, chosenModel, role, consumedNeurons, 'chat'),
         ]);

@@ -349,8 +349,6 @@ export const SinpePaymentsSection: React.FC = () => {
             </div>
           </div>
         </div>
-          </div>
-        </div>
 
         {/* Cintas Resumen de Ingresos por SINPE BCR */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
