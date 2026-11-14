@@ -15,6 +15,18 @@ const DEFAULT_CONFIG = {
     '¡Hola! ✨🌸 Soy la Estrellita de by.fio. Estoy aquí para contarte si tenemos productos en stock, fechas de talleres o ayudarte con lo que necesites.',
   customInstructions: '',
   isEnabled: true,
+  // Parámetros técnicos del modelo
+  temperature: 0.3, // 0.1 a 0.4
+  topP: 0.85,
+  topK: 40,
+  maxTokens: 120, // 60 a 120 tokens por mensaje corto
+  // Simulación humana y tiempos
+  enableHumanSimulation: true,
+  enableChunking: true,
+  initialDelayMinMs: 2000,
+  initialDelayMaxMs: 3500,
+  msPerChar: 40, // 30 a 50 ms por carácter
+  delayMarginMs: 1200, // 1000 a 2000 ms
   updatedAt: new Date().toISOString(),
 };
 

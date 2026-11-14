@@ -20,6 +20,8 @@ const KEY_MAP: Record<string, string> = {
   catalogTaxonomies: 'app_catalog_taxonomies',
   calendarBlockedSpaces: 'app_calendar_blocked_spaces',
   aiSettings: 'app_ai_settings',
+  uberDirectSettings: 'app_uber_direct_settings',
+  enviosAccessTokens: 'app_envios_access_tokens',
 };
 
 const ensureTable = async (db: any) => {

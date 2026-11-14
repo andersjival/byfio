@@ -19,7 +19,8 @@ export type AppRoute =
   | 'pwa-install'
   | 'inventario-app'
   | 'mi-cuenta'
-  | 'cursos-drive';
+  | 'cursos-drive'
+  | 'envios';
 
 export type TypographyTheme = 'bubble' | 'serif' | 'hybrid';
 

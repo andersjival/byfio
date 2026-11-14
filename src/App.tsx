@@ -10,6 +10,7 @@ import { getScopeFromRoute, updateDocumentManifestAndTitle } from './utils/appSc
 const WebShell = React.lazy<React.ComponentType<any>>(() => import('./apps/web/WebShell'));
 const AdminPwaShell = React.lazy(() => import('./apps/admin/AdminPwaShell'));
 const CollaboratorPwaShell = React.lazy(() => import('./apps/collaborator/CollaboratorPwaShell'));
+const EnviosApp = React.lazy(() => import('./apps/envios/EnviosApp'));
 
 const ShellFallback: React.FC = () => (
   <div className="min-h-screen min-h-[100dvh] flex items-center justify-center bg-[#F7F4FC] text-purple-700 font-bubble text-sm">
@@ -88,6 +89,7 @@ export const App: React.FC = () => {
     else if (newRoute === 'workshop-detail') targetPath = `/talleres/${wsId || ''}`;
     else if (newRoute === 'workshop-waitlist') targetPath = wsId ? `/lista-espera/${wsId}` : '/lista-espera';
     else if (newRoute === 'cursos-drive') targetPath = '/cursos-drive';
+    else if (newRoute === 'envios') targetPath = '/envios';
     else if (newRoute === 'admin') {
       const adminPathMap: Partial<Record<AdminTabType, string>> = {
         orders: '/admin/pedidos',
@@ -223,6 +225,14 @@ export const App: React.FC = () => {
       console.warn('Metrics tracking error', e);
     }
   }, [currentRoute, adminTab]);
+
+  if (currentRoute === 'envios') {
+    return (
+      <React.Suspense fallback={<ShellFallback />}>
+        <EnviosApp onNavigate={navigate} />
+      </React.Suspense>
+    );
+  }
 
   const isCollaboratorRoute = currentRoute === 'pedidos-mobile' || currentRoute === 'inventario-app' || currentRoute === 'pwa-install';
   const isAdminRoute = currentRoute === 'admin' || currentRoute === 'superadmin' || currentRoute === 'metricas';

@@ -23,7 +23,7 @@ const APPLE_TITLE_MAP: Record<AppScope, string> = {
 };
 
 export const getScopeFromRoute = (route: AppRoute, search?: string): AppScope => {
-  if (route === 'admin' || route === 'superadmin' || route === 'metricas') {
+  if (route === 'admin' || route === 'superadmin' || route === 'metricas' || route === 'envios') {
     return 'admin';
   }
   if (route === 'pwa-install') {
@@ -53,6 +53,7 @@ export const detectInitialAppScope = (
     path.startsWith('/administracion') ||
     path.startsWith('/superadmin') ||
     path.startsWith('/metricas') ||
+    path.startsWith('/envios') ||
     ((path.startsWith('/instalar')) && appParam === 'admin')
   ) {
     return 'admin';

@@ -27,6 +27,26 @@ export const parseRouteFromLocation = (): RouteInfo => {
     ''
   ).toLowerCase();
 
+  const hostname = (typeof window !== 'undefined' ? window.location.hostname : '').toLowerCase();
+  const isEnviosSubdomain = hostname.startsWith('envios.') || hostname === 'envios' || hostname.includes('envios-');
+
+  // Subdominio o ruta de Envíos & Uber Direct
+  if (
+    isEnviosSubdomain ||
+    path === '/envios' ||
+    path.startsWith('/envios/') ||
+    path === '/admin/envios' ||
+    path.startsWith('/admin/envios/') ||
+    hash.includes('envios') ||
+    hash.includes('uber-direct') ||
+    seccionParam === 'envios' ||
+    seccionParam === 'uber' ||
+    seccionParam === 'uberdirect' ||
+    searchParams.get('app') === 'envios'
+  ) {
+    return { route: 'envios', adminTab: 'hub' };
+  }
+
   // 0a. Portal Exclusivo de Instalación PWA y Onboarding con PIN (solo rutas explícitas)
   if (
     path === '/instalar' ||

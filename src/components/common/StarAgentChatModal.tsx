@@ -33,6 +33,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [typingStatus, setTypingStatus] = useState<'thinking' | 'typing' | null>(null);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [conversationId] = useState(() => `conv_${Date.now()}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -100,6 +101,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
     setMessages((prev) => [...prev, userMsg]);
     setInputValue('');
     setIsLoading(true);
+    setTypingStatus('thinking');
 
     const historyPayload = messages.slice(-6).map((m) => ({ role: m.role, content: m.content }));
     const result = await aiAgentService.sendMessage({
@@ -110,17 +112,59 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       conversationId,
     });
 
-    playWaterDropSound();
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `a_${Date.now()}`,
-        role: 'assistant',
-        content: result.response,
-        timestamp: Date.now(),
-      },
-    ]);
+    await deliverAssistantChunks(result);
+  };
+
+  const deliverAssistantChunks = async (result: {
+    response: string;
+    messages?: string[];
+    chunks?: Array<{ index: number; text: string; typingMs: number }>;
+    humanSimulation?: { initialDelayMs: number };
+  }) => {
+    const config = getCachedAiConfig();
+    const chunks =
+      result.chunks && result.chunks.length > 0
+        ? result.chunks
+        : result.messages && result.messages.length > 0
+        ? result.messages.map((m, i) => ({ index: i, text: m, typingMs: 1200 }))
+        : [{ index: 0, text: result.response, typingMs: 1200 }];
+
+    if (config.enableHumanSimulation !== false) {
+      setTypingStatus('thinking');
+      const initialDelay = result.humanSimulation?.initialDelayMs || 2200;
+      await new Promise((resolve) => setTimeout(resolve, Math.min(initialDelay, 3200)));
+
+      for (let i = 0; i < chunks.length; i++) {
+        setTypingStatus('typing');
+        const chunk = chunks[i];
+        const typingTime = Math.min(chunk.typingMs || 1400, 3200);
+        await new Promise((resolve) => setTimeout(resolve, typingTime));
+
+        playWaterDropSound();
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `a_${Date.now()}_${i}`,
+            role: 'assistant',
+            content: chunk.text,
+            timestamp: Date.now(),
+          },
+        ]);
+      }
+    } else {
+      playWaterDropSound();
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `a_${Date.now()}`,
+          role: 'assistant',
+          content: result.response,
+          timestamp: Date.now(),
+        },
+      ]);
+    }
     setIsLoading(false);
+    setTypingStatus(null);
   };
 
   const handleToggleVoice = async () => {
@@ -130,6 +174,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
 
       playBubblePopSound(0.3);
       setIsLoading(true);
+      setTypingStatus('thinking');
 
       const historyPayload = messages.slice(-6).map((m) => ({ role: m.role, content: m.content }));
       const result = await aiAgentService.sendVoiceNote({
@@ -150,26 +195,11 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
             hasAudio: true,
             timestamp: Date.now(),
           },
-          {
-            id: `a_${Date.now()}`,
-            role: 'assistant',
-            content: result.response,
-            timestamp: Date.now(),
-          },
         ]);
-        playWaterDropSound();
+        await deliverAssistantChunks(result);
       } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `a_${Date.now()}`,
-            role: 'assistant',
-            content: result.response,
-            timestamp: Date.now(),
-          },
-        ]);
+        await deliverAssistantChunks(result);
       }
-      setIsLoading(false);
     } else {
       await startRecording();
     }
@@ -260,7 +290,9 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
                 <span className="w-2 h-2 rounded-full bg-fio-pink animate-bounce" />
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-bounce [animation-delay:0.15s]" />
                 <span className="w-2 h-2 rounded-full bg-purple-500 animate-bounce [animation-delay:0.3s]" />
-                <span className="text-[11px] text-slate-500 dark:text-purple-300 font-semibold ml-1">Consultando...</span>
+                <span className="text-[11px] text-fio-pink dark:text-purple-300 font-semibold ml-1">
+                  {typingStatus === 'typing' ? 'Estrellita está escribiendo...' : 'Consultando...'}
+                </span>
               </div>
             </div>
           )}

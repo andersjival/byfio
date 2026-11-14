@@ -17,6 +17,8 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [statusText, setStatusText] = useState<string>('Estrellita escribiendo...');
+
   const handleSend = async (customText?: string) => {
     const text = (customText || input).trim();
     if (!text || loading) return;
@@ -25,6 +27,7 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
     setMessages(newHistory);
     setInput('');
     setLoading(true);
+    setStatusText('Consultando modelo...');
 
     try {
       const historyPayload = newHistory.slice(-5).map((m) => ({ role: m.role, content: m.text }));
@@ -35,10 +38,27 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
         stockDisclosureMode: currentMode,
       });
 
-      setMessages((prev) => [
-        ...prev,
-        { role: 'assistant', text: res.response || 'Sin respuesta' },
-      ]);
+      const chunks =
+        res.chunks && res.chunks.length > 0
+          ? res.chunks
+          : res.messages && res.messages.length > 0
+          ? res.messages.map((m, i) => ({ index: i, text: m, typingMs: 1200 }))
+          : [{ index: 0, text: res.response, typingMs: 1200 }];
+
+      // Simular retraso inicial (2 a 4s)
+      setStatusText('Estrellita pensando (2s)...');
+      await new Promise((resolve) => setTimeout(resolve, Math.min(res.humanSimulation?.initialDelayMs || 2000, 2500)));
+
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        setStatusText(`Escribiendo mensaje ${i + 1}/${chunks.length}... (${chunk.typingMs}ms)`);
+        await new Promise((resolve) => setTimeout(resolve, Math.min(chunk.typingMs || 1200, 2200)));
+
+        setMessages((prev) => [
+          ...prev,
+          { role: 'assistant', text: chunk.text },
+        ]);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -46,6 +66,7 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
       ]);
     } finally {
       setLoading(false);
+      setStatusText('Estrellita escribiendo...');
     }
   };
 
@@ -84,13 +105,19 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
       </div>
 
       <div className="flex flex-wrap gap-1.5">
-        {['¿Tienen tazas kawaii disponibles?', 'Quiero 2 tazas', 'Quiero 30 tazas'].map((chip) => (
+        {[
+          '¿Tienen tazas kawaii disponibles?',
+          '¿Eres un robot o una IA?',
+          'Quiero hablar con una persona',
+          '¿Me das un 50% de descuento?',
+          'Quiero 2 libretas',
+        ].map((chip) => (
           <button
             key={chip}
             type="button"
             onClick={() => handleSend(chip)}
             disabled={loading}
-            className="text-[11px] px-2.5 py-1 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40 cursor-pointer transition-all active:scale-95"
+            className="text-[11px] px-2.5 py-1 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40 cursor-pointer transition-all active:scale-95 disabled:opacity-50"
           >
             {chip}
           </button>
@@ -117,7 +144,7 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
         {loading && (
           <div className="flex justify-start">
             <div className="bg-white dark:bg-[#201833] px-3 py-2 rounded-2xl text-[11px] text-purple-600 flex items-center gap-1.5 shadow-xs">
-              <span className="animate-spin">✨</span> Estrellita escribiendo...
+              <span className="animate-spin">✨</span> {statusText}
             </div>
           </div>
         )}

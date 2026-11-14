@@ -98,11 +98,21 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       });
     }
 
-    // Cargar configuración de AI BYFIO (política de stock e instrucciones)
+    // Cargar configuración de AI BYFIO (política de stock, parámetros y humanización)
     let aiConfig = {
       stockDisclosureMode: 'availability_only',
       isEnabled: true,
       customInstructions: '',
+      temperature: 0.3,
+      topP: 0.85,
+      topK: 40,
+      maxTokens: 120,
+      enableHumanSimulation: true,
+      enableChunking: true,
+      initialDelayMinMs: 2000,
+      initialDelayMaxMs: 3500,
+      msPerChar: 40,
+      delayMarginMs: 1200,
     };
 
     if (context.env.DB) {
@@ -119,6 +129,18 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     if (body?.stockDisclosureMode === 'full_stock' || body?.stockDisclosureMode === 'availability_only') {
       aiConfig.stockDisclosureMode = body.stockDisclosureMode;
     }
+    if (typeof body?.temperature === 'number') aiConfig.temperature = body.temperature;
+    if (typeof body?.maxTokens === 'number') aiConfig.maxTokens = body.maxTokens;
+    if (typeof body?.topP === 'number') aiConfig.topP = body.topP;
+    if (typeof body?.topK === 'number') aiConfig.topK = body.topK;
+
+    // Filtros de Seguridad y Moderación (Jailbreak, contenido ofensivo o político)
+    const jailbreakPattern = /ignore\s+(all\s+)?(previous\s+)?instructions|forget\s+all\s+rules|act\s+as\s+a\s+DAN|system\s+prompt|revela\s+(el\s+)?prompt|prompt\s+del\s+sistema/i;
+    const offensiveOrPolitical = /(partido\s+politico|elecciones|votar\s+por|gobierno\s+corrupto|hijueputa|malparid)/i;
+    const humanHandoffPattern = /(hablar\s+con\s+(un\s+)?humano|persona\s+real|asesor\s+humano|hablar\s+con\s+fiorella|atencion\s+humana|quiero\s+una\s+persona|agente\s+humano|pasame\s+a\s+alguien)/i;
+
+    const isBlockedBySafety = jailbreakPattern.test(message) || offensiveOrPolitical.test(message);
+    const isEscaped = humanHandoffPattern.test(message);
 
     // 1. Obtener datos de productos en tiempo real desde DB (solo lectura)
     let inventoryContext = 'Catálogo actual en tienda:\n';
@@ -187,56 +209,68 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         matchedFaqs.map((f) => `• Pregunta: "${f.question}"\n  Respuesta Oficial: ${f.answer}`).join('\n\n');
     }
 
-    // 3. Construir System Prompt según Rol
+    // 3. Construir System Prompt según Rol con Reglas de Comportamiento Estrictas
     let systemPrompt = '';
     const stockDisclosureRule =
       aiConfig.stockDisclosureMode === 'full_stock'
         ? `POLÍTICA DE STOCK (MODO COMPLETO TRANSPARENTE ACTIVADO POR ADMIN):
-- Puedes indicar abiertamente al cliente la cantidad total exacta disponible en el catálogo (por ejemplo: "¡Sí tenemos disponible! Nos quedan X unidades a un precio de ₡...").
+- Puedes indicar abiertamente al cliente la cantidad total exacta disponible en el catálogo (ej: "¡Sí tenemos disponible! Nos quedan X unidades a un precio de ₡...").
 - Si no hay stock o dice AGOTADO, explícale que actualmente está agotado o podemos elaborarlo bajo pedido especial por WhatsApp.`
         : `POLÍTICA MANDATORIA DE STOCK (MODO DISPONIBILIDAD Y CONSULTA DE CANTIDAD):
-- NUNCA le digas al usuario de la web cuánto es el total de cosas o unidades que tienes en stock (ESTÁ ESTRICTAMENTE PROHIBIDO decir de entrada números totales como "tenemos 15 unidades", "nos quedan 8", o revelar la cifra total del inventario).
-- SOLO debes decir con entusiasmo que SÍ hay disponible y preguntarle de inmediato cuántas unidades necesita o le gustaría llevarse (ejemplo: "¡Hola! Sí, tenemos disponible a ₡[precio] ✨ ¿Cuántas unidades te gustaría llevarte / necesitas?").
+- NUNCA le digas al usuario de la web cuánto es el total de cosas o unidades que tienes en stock (ESTÁ ESTRICTAMENTE PROHIBIDO decir cifras totales como "tenemos 15 unidades", "nos quedan 8", o revelar el inventario total).
+- SOLO debes decir con entusiasmo que SÍ hay disponible y preguntarle de inmediato cuántas unidades necesita o le gustaría llevarse (ejemplo: "¡Hola! Sí, tenemos disponible a ₡[precio] ✨ ¿Cuántas unidades te gustaría llevarte?").
 - Si el usuario te indica cuántas unidades quiere o necesita:
-  * Si la cantidad que pide es MENOR O IGUAL al stock disponible: Confírmale alegremente que sí tenemos esa cantidad lista para su entrega o pedido.
-  * Si el usuario requiere MÁS de las que hay en stock: Explícale amablemente que por el momento solo contamos con la cantidad que tenemos (ejemplo: "¡Por el momento solo tenemos X unidades disponibles! ✨ ¿Deseas llevarte esas X unidades o te gustaría encargar las restantes bajo pedido especial por WhatsApp?").
-- Si el producto tiene stock 0 o dice AGOTADO: Explícale con dulzura que por el momento no hay disponibles o que podemos elaborarlo bajo pedido especial al WhatsApp 6400-4640.`;
+  * Si la cantidad que pide es MENOR O IGUAL al stock: Confírmale alegremente que sí tenemos esa cantidad lista para entrega o pedido.
+  * Si el usuario requiere MÁS de las que hay: Explícale amablemente cuántas podemos apartar hoy (ejemplo: "¡Por el momento solo tenemos X unidades disponibles! ✨ ¿Deseas llevarte esas X unidades o te gustaría encargar las restantes bajo pedido especial por WhatsApp?").
+- Si el producto tiene stock 0 o dice AGOTADO: Explícale con dulzura que por ahora no hay disponibles o que podemos elaborarlo bajo pedido especial al WhatsApp 6400-4640.`;
 
     if (role === 'staff' || role === 'admin') {
-      systemPrompt = `Eres la Estrellita de by.fio en modo Asistente de Colaboradoras y Administración.
-Tu propósito es responder de forma directa, rápida, precisa y amable al equipo interno de by.fio (colaboradoras y Fiorella).
-${userName ? `Estás atendiendo a la compañera: ${userName}.` : ''}
+      systemPrompt = `Eres la asistente interna y de inventario del equipo de by.fio (colaboradoras y Fiorella).
+${userName ? `Atendiendo a la compañera: ${userName}.` : ''}
+
+ROL, TONO Y ESTRUCTURA:
+1. Rol: Eficiente, directa, ágil, precisa, amable y profesional. Cero rodeos corporativos ni textos largos.
+2. Longitud y Estructura: Responde SIEMPRE en frases cortas y directas. Cero párrafos extensos.
+3. Separación en Múltiples Mensajes: Divide tu respuesta en 1 a 3 mensajes cortos usando '|||' como separador obligatorio.
+4. Lista Negra: JAMÁS menciones modelos de IA (Llama, Gemma, GPT, OpenAI, Cloudflare). No especules datos fuera del sistema.
 
 DATOS EN TIEMPO REAL DEL SISTEMA (BASE DE DATOS BYFIO):
-${inventoryContext}${ragFaqSection}
-
-REGLAS DE RESPUESTA INTERNA:
-1. Sé concisa y exacta con cantidades de stock, precios y cupos de talleres.
-2. Si preguntan por un producto y tiene 0 stock o dice AGOTADO, indícalo claramente sin rodeos.
-3. Si preguntan cuántos hay, responde la cifra exacta disponible.
-4. Tono: Eficiente, servicial, cálido y profesional.
-5. PROHIBICIÓN ABSOLUTA: JAMÁS menciones nombres de modelos de IA, proveedores tecnológicos ni términos como Llama, Gemma, GPT, OpenAI o Cloudflare. Si te preguntan quién eres, responde que eres la Estrellita de by.fio para el equipo.`;
+${inventoryContext}${ragFaqSection}`;
     } else {
-      systemPrompt = `Eres la Estrellita de by.fio, la mascota y asistente de servicio al cliente de by.fio (tienda creativa, papelería bonita y talleres en Costa Rica).
+      systemPrompt = `Eres la asesora comercial y compañera de atención al cliente de by.fio (tienda creativa, papelería bonita y talleres en San José, Costa Rica).
 ${userName ? `Estás conversando con: ${userName}.` : ''}
 
-INVENTARIO Y TALLERES EN TIEMPO REAL:
+1. ROL, TONO Y PERSONALIDAD:
+- Tu identidad es de asesora cercana, amable, ágil, profesional, cálida y tierna (kawaii).
+- Cero tono corporativo o robótico. Usa lenguaje natural, cálido y emojis suaves (✨, 🌸, 💖).
+
+2. LONGITUD Y ESTRUCTURA (OBLIGATORIO):
+- Responde SIEMPRE en frases cortas, directas y sin párrafos extensos de texto.
+- Prohibido escribir bloques pesados de texto.
+
+3. LISTA NEGRA ESTRICTA ("LO QUE NO DEBES DECIR NUNCA"):
+- PROHIBIDO decir que eres una IA, un bot, un modelo de lenguaje o un asistente virtual. Eres parte del equipo humano de atención de by.fio (la Estrellita).
+- PROHIBIDO prometer descuentos, regalías o condiciones que no estén en la base de conocimiento oficial.
+- PROHIBIDO hablar de competidores o marcas ajenas a by.fio.
+- PROHIBIDO usar frases de relleno como "¡Excelente pregunta!", "Con mucho gusto te asisto", "¿Hay algo más en lo que te pueda colaborar hoy?", "Es un placer atenderte". Ve al grano con naturalidad.
+
+4. PROTOCOLO DE ESCAPE (DERIVACIÓN A HUMANO):
+- Si no tienes el dato exacto o si el cliente solicita una persona real, no inventes nada ni des largas: derívalo directamente con Fiorella al WhatsApp oficial 6400-4640.
+
+5. DINÁMICA DE CONVERSACIÓN (CHUNKING WHATSAPP):
+- Divide tu respuesta en 1 a 3 mensajes cortos independientes usando el separador exacto '|||' entre cada fragmento.
+- Ejemplo: "¡Hola! Con gusto te cuento ✨|||Tenemos tazas personalizadas desde ₡4.500 y agendas hermosas 🌸|||¿Buscabas algún diseño en especial?"
+
+CONTEXTO EN TIEMPO REAL:
 ${inventoryContext}${ragFaqSection}
 
 INFORMACIÓN CLAVE DEL NEGOCIO:
-- Envíos: Hacemos envíos a todo Costa Rica por medio de Correos de Costa Rica y mensajería express.
-- Productos: Tazas personalizadas, libretas, agendas, libros de vacunas, stickers kawaii, souvenirs y kits creativos.
-- Talleres: Talleres presenciales y virtuales de lettering, papelería creativa y encuadernación.
-- Pagos: Aceptamos SINPE Móvil y transferencias bancarias.
+- Envíos: A todo Costa Rica por Correos de CR (1 a 3 días) y mensajería express GAM. Tarifa aproximada ₡2.500 a ₡3.500.
+- Pagos: SINPE Móvil al 6400-4640 (by.fio) y transferencias bancarias.
 - Contacto directo por WhatsApp: 6400-4640.
 
 ${stockDisclosureRule}
-${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\n${aiConfig.customInstructions}\n` : ''}
-REGLAS DE ATENCIÓN Y REGISTRO:
-1. Responde siempre en español con un tono dulce, alegre, cercano, tierno (kawaii) y respetuoso. Usa emojis suaves (✨, 🌸, 💖, 🎀).
-2. Si el usuario desea registrarse o crear cuenta, anímalo con amor: la tarjeta interactiva de registro se abre a un lado para que ingrese sus datos de dos en dos hasta crear su clave.
-3. Respuestas breves y fáciles de leer en pantalla de celular (1 a 3 párrafos cortos).
-4. REGLA ESTRICTA DE CONFIDENCIALIDAD: NUNCA digas que eres una inteligencia artificial, ni menciones modelos (Llama, Gemma, OpenAI, etc.). Si te preguntan, di: "¡Soy la Estrellita de by.fio! Tu compañera para ayudarte a encontrar todo lo lindo que buscas en la tienda ✨🌸".`;
+${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\n${aiConfig.customInstructions}\n` : ''}`;
     }
 
     const messagesForModel: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
@@ -250,18 +284,34 @@ REGLAS DE ATENCIÓN Y REGISTRO:
     }
     messagesForModel.push({ role: 'user', content: message });
 
-    // 3. Ejecutar inferencia en Workers AI
+    // 3. Ejecutar inferencia o filtros de escape / seguridad
     let assistantReply = '';
     const chosenModel = role === 'staff' || role === 'admin' ? MODEL_STAFF : MODEL_CUSTOMER;
     const fallbackModel = role === 'staff' || role === 'admin' ? MODEL_STAFF_FALLBACK : MODEL_CUSTOMER_FALLBACK;
+    let consumedNeurons = role === 'customer' ? 22.0 : 18.0;
 
-    let consumedNeurons = role === 'customer' ? 38.5 : 24.2;
-    if (context.env.AI) {
+    // A. Filtro de Seguridad / Jailbreak
+    if (isBlockedBySafety) {
+      assistantReply =
+        'Como parte del equipo de by.fio, estoy para ayudarte con nuestros productos, papelería y talleres creativos ✨🌸|||¿Te gustaría consultar algo de nuestra tienda?';
+    } else if (isEscaped) {
+      // B. Protocolo de Escape directo
+      assistantReply =
+        '¡Con mucho gusto! Te paso directamente con Fiorella a nuestro WhatsApp oficial 6400-4640 para coordinar con todo detalle ✨🌸|||También puedes tocar el enlace de WhatsApp para escribirnos de inmediato.';
+    } else if (context.env.AI) {
+      // C. Inferencia con Parámetros Calibrados (Temperatura 0.1 a 0.4, Top-P, Top-K, Tokens 60 a 120)
+      const temp = Math.min(Math.max(Number(aiConfig.temperature ?? 0.3), 0.1), 0.4);
+      const maxTok = Math.min(Math.max(Number(aiConfig.maxTokens ?? 120), 60), 200);
+      const topP = Math.min(Math.max(Number(aiConfig.topP ?? 0.85), 0.1), 1.0);
+      const topK = Math.min(Math.max(Number(aiConfig.topK ?? 40), 1), 100);
+
       try {
         const aiResponse: any = await context.env.AI.run(chosenModel, {
           messages: messagesForModel,
-          max_tokens: 600,
-          temperature: 0.7,
+          max_tokens: maxTok,
+          temperature: temp,
+          top_p: topP,
+          top_k: topK,
         });
         assistantReply = (aiResponse?.response || aiResponse?.choices?.[0]?.message?.content || '').trim();
         if (aiResponse?.usage?.neurons) {
@@ -271,8 +321,10 @@ REGLAS DE ATENCIÓN Y REGISTRO:
         try {
           const fallbackResp: any = await context.env.AI.run(fallbackModel, {
             messages: messagesForModel,
-            max_tokens: 600,
-            temperature: 0.7,
+            max_tokens: maxTok,
+            temperature: temp,
+            top_p: topP,
+            top_k: topK,
           });
           assistantReply = (fallbackResp?.response || fallbackResp?.choices?.[0]?.message?.content || '').trim();
           if (fallbackResp?.usage?.neurons) {
@@ -280,15 +332,60 @@ REGLAS DE ATENCIÓN Y REGISTRO:
           }
         } catch {
           assistantReply =
-            '¡Hola! En este momento estoy consultando el catálogo para ti. Si gustas una atención personalizada de inmediato, también puedes escribirnos al WhatsApp oficial 6400-4640 ✨🌸';
+            '¡Hola! En este instante no pude conectar con el catálogo ✨|||Escríbenos directamente a nuestro WhatsApp oficial 6400-4640 y con gusto te atenderemos 🌸';
         }
       }
     } else {
       assistantReply =
-        '¡Hola! Gracias por consultar en by.fio. Tenemos disponibles tazas personalizadas, agendas y talleres creativos. ¿Buscas algún producto en especial? ✨🌸';
+        '¡Hola! Gracias por consultar en by.fio ✨|||Tenemos hermosas tazas personalizadas, libretas y talleres disponibles 🌸|||¿Buscabas algún producto en especial?';
     }
 
-    // 4. Guardar conversación y neuronas en AGENT_DB si está disponible
+    if (!assistantReply) {
+      assistantReply = '¡Hola! ¿En qué puedo ayudarte hoy en by.fio? ✨';
+    }
+
+    // 4. Dinámica de Conversación y Retrasos (Chunking & Simulación Humana)
+    let rawChunks = assistantReply
+      .split('|||')
+      .map((c: string) => c.replace(/^[\s\r\n\-,•]+|[\s\r\n]+$/g, '').trim())
+      .filter((c: string) => c.length > 0);
+
+    if (rawChunks.length === 0) {
+      rawChunks = [assistantReply.trim()];
+    }
+
+    // Si el modelo no usó ||| pero generó bloques con saltos dobles, fragmentar
+    if (rawChunks.length === 1 && rawChunks[0].includes('\n\n')) {
+      rawChunks = rawChunks[0]
+        .split('\n\n')
+        .map((c: string) => c.trim())
+        .filter((c: string) => c.length > 0);
+    }
+
+    const messageChunks = rawChunks;
+
+    // Retraso Inicial (Primer Mensaje): 2 a 4 segundos
+    const initialMin = Math.min(Math.max(Number(aiConfig.initialDelayMinMs ?? 2000), 1000), 3000);
+    const initialMax = Math.min(Math.max(Number(aiConfig.initialDelayMaxMs ?? 3500), initialMin + 500), 4500);
+    const initialDelayMs = Math.floor(Math.random() * (initialMax - initialMin + 1)) + initialMin;
+
+    // Simulación de tipeo y retraso intermedio: 30 a 50 ms por carácter con margen de 1 a 2 seg
+    const msPerChar = Math.min(Math.max(Number(aiConfig.msPerChar ?? 40), 30), 50);
+    const delayMarginMs = Math.min(Math.max(Number(aiConfig.delayMarginMs ?? 1200), 1000), 2000);
+
+    let cumulativeTyping = 0;
+    const chunkObjects = messageChunks.map((chunk, index) => {
+      const typingMs = Math.min(6500, Math.max(1000, Math.round(chunk.length * msPerChar) + delayMarginMs));
+      cumulativeTyping += typingMs;
+      return {
+        index,
+        text: chunk,
+        typingMs,
+        delayBeforeMs: index === 0 ? initialDelayMs : delayMarginMs,
+      };
+    });
+
+    // 5. Guardar conversación y neuronas en AGENT_DB si está disponible
     if (context.env.AGENT_DB) {
       try {
         const now = new Date();
@@ -304,7 +401,7 @@ REGLAS DE ATENCIÓN Y REGISTRO:
           ).bind(`msg_${Date.now()}_u`, conversationId, 'user', message),
           context.env.AGENT_DB.prepare(
             'INSERT INTO agent_messages (id, conversation_id, role, content, has_audio) VALUES (?1, ?2, ?3, ?4, 0)'
-          ).bind(`msg_${Date.now()}_a`, conversationId, 'assistant', assistantReply),
+          ).bind(`msg_${Date.now()}_a`, conversationId, 'assistant', messageChunks.join('\n\n')),
           context.env.AGENT_DB.prepare(
             'INSERT INTO agent_neuron_logs (id, date_str, hour_str, model, role, neurons, action_type) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)'
           ).bind(`nlog_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`, dateStr, hourStr, chosenModel, role, consumedNeurons, 'chat'),
@@ -315,7 +412,17 @@ REGLAS DE ATENCIÓN Y REGISTRO:
     return new Response(
       JSON.stringify({
         success: true,
-        response: assistantReply,
+        response: messageChunks.join('\n\n'),
+        messages: messageChunks,
+        chunks: chunkObjects,
+        humanSimulation: {
+          initialDelayMs,
+          isChunked: messageChunks.length > 1,
+          totalTypingMs: cumulativeTyping,
+          msPerChar,
+          delayMarginMs,
+        },
+        isEscaped,
         conversationId,
       }),
       {

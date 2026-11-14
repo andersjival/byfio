@@ -1,4 +1,5 @@
 import { getCachedAiConfig } from './aiConfigService';
+import { AiChunkMessage, AiHumanSimulationData } from '../types/aiAgent';
 
 export interface ChatMessage {
   id: string;
@@ -15,6 +16,20 @@ export interface SendMessageOptions {
   userName?: string;
   conversationId?: string;
   stockDisclosureMode?: 'availability_only' | 'full_stock';
+  temperature?: number;
+  maxTokens?: number;
+  topP?: number;
+  topK?: number;
+}
+
+export interface SendMessageResult {
+  success: boolean;
+  response: string;
+  messages?: string[];
+  chunks?: AiChunkMessage[];
+  humanSimulation?: AiHumanSimulationData;
+  isEscaped?: boolean;
+  conversationId?: string;
 }
 
 export interface SendAudioOptions {
@@ -47,8 +62,9 @@ async function requestWithFallback(endpoint: string, options: RequestInit): Prom
 }
 
 export const aiAgentService = {
-  async sendMessage(opts: SendMessageOptions): Promise<{ success: boolean; response: string; conversationId?: string }> {
+  async sendMessage(opts: SendMessageOptions): Promise<SendMessageResult> {
     try {
+      const currentConfig = getCachedAiConfig();
       const resp = await requestWithFallback('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,7 +74,11 @@ export const aiAgentService = {
           history: opts.history || [],
           userName: opts.userName,
           conversationId: opts.conversationId,
-          stockDisclosureMode: opts.stockDisclosureMode || getCachedAiConfig().stockDisclosureMode,
+          stockDisclosureMode: opts.stockDisclosureMode || currentConfig.stockDisclosureMode,
+          temperature: opts.temperature ?? currentConfig.temperature,
+          maxTokens: opts.maxTokens ?? currentConfig.maxTokens,
+          topP: opts.topP ?? currentConfig.topP,
+          topK: opts.topK ?? currentConfig.topK,
         }),
       });
 
@@ -70,6 +90,10 @@ export const aiAgentService = {
       return {
         success: true,
         response: data.response || '¡Hola! ¿En qué puedo ayudarte hoy en by.fio? ✨',
+        messages: Array.isArray(data.messages) ? data.messages : undefined,
+        chunks: Array.isArray(data.chunks) ? data.chunks : undefined,
+        humanSimulation: data.humanSimulation,
+        isEscaped: Boolean(data.isEscaped),
         conversationId: data.conversationId,
       };
     } catch {
@@ -77,6 +101,7 @@ export const aiAgentService = {
         success: false,
         response:
           '¡Hola! En este instante no pude conectar con el catálogo. Escríbenos directamente a nuestro WhatsApp 6400-4640 y con gusto te atenderemos ✨🌸',
+        messages: ['¡Hola! En este instante no pude conectar con el catálogo. Escríbenos directamente a nuestro WhatsApp 6400-4640 y con gusto te atenderemos ✨🌸'],
       };
     }
   },

@@ -87,6 +87,16 @@ export default {
           stockDisclosureMode: 'availability_only',
           isEnabled: true,
           customInstructions: '',
+          temperature: 0.3,
+          topP: 0.85,
+          topK: 40,
+          maxTokens: 120,
+          enableHumanSimulation: true,
+          enableChunking: true,
+          initialDelayMinMs: 2000,
+          initialDelayMaxMs: 3500,
+          msPerChar: 40,
+          delayMarginMs: 1200,
         };
 
         if (env.STORE_DB) {
@@ -103,6 +113,18 @@ export default {
         if (body?.stockDisclosureMode === 'full_stock' || body?.stockDisclosureMode === 'availability_only') {
           aiConfig.stockDisclosureMode = body.stockDisclosureMode;
         }
+        if (typeof body?.temperature === 'number') aiConfig.temperature = body.temperature;
+        if (typeof body?.maxTokens === 'number') aiConfig.maxTokens = body.maxTokens;
+        if (typeof body?.topP === 'number') aiConfig.topP = body.topP;
+        if (typeof body?.topK === 'number') aiConfig.topK = body.topK;
+
+        // Filtros de Seguridad y Moderación (Jailbreak, ofensas, política o solicitud de agente humano)
+        const jailbreakPattern = /ignore\s+(all\s+)?(previous\s+)?instructions|forget\s+all\s+rules|act\s+as\s+a\s+DAN|system\s+prompt|revela\s+(el\s+)?prompt|prompt\s+del\s+sistema/i;
+        const offensiveOrPolitical = /(partido\s+politico|elecciones|votar\s+por|gobierno\s+corrupto|hijueputa|malparid)/i;
+        const humanHandoffPattern = /(hablar\s+con\s+(un\s+)?humano|persona\s+real|asesor\s+humano|hablar\s+con\s+fiorella|atencion\s+humana|quiero\s+una\s+persona|agente\s+humano|pasame\s+a\s+alguien)/i;
+
+        const isBlockedBySafety = jailbreakPattern.test(message) || offensiveOrPolitical.test(message);
+        const isEscaped = humanHandoffPattern.test(message);
 
         // Obtener inventario en tiempo real de STORE_DB (solo lectura)
         let inventoryContext = 'Catálogo actual en tienda:\n';
@@ -144,39 +166,58 @@ export default {
           workshopsContext += '';
         }
 
-        // Prompts del Sistema según el Rol
+        // Prompts del Sistema según el Rol con Reglas de Comportamiento Estrictas
         let systemPrompt = '';
         if (role === 'staff' || role === 'admin') {
-          systemPrompt = `Eres la Estrellita de by.fio en modo Asistente de Colaboradoras y Administración.
-Tu propósito es dar respuestas directas, rápidas, precisas y amables al equipo interno de by.fio (colaboradoras y Fiorella).
-${userName ? `Estás atendiendo a: ${userName}.` : ''}
+          systemPrompt = `Eres la asistente interna y de inventario del equipo de by.fio (colaboradoras y Fiorella).
+${userName ? `Atendiendo a: ${userName}.` : ''}
+
+ROL, TONO Y ESTRUCTURA:
+1. Rol: Eficiente, directa, ágil, precisa, amable y profesional. Cero rodeos corporativos ni textos largos.
+2. Longitud y Estructura: Responde SIEMPRE en frases cortas y directas. Cero párrafos extensos.
+3. Separación en Múltiples Mensajes: Divide tu respuesta en 1 a 3 mensajes cortos usando '|||' como separador obligatorio.
+4. Lista Negra: JAMÁS menciones modelos de IA (Llama, Gemma, GPT, OpenAI, Cloudflare). No especules datos fuera del sistema.
 
 DATOS EN TIEMPO REAL DEL SISTEMA:
 ${inventoryContext}
-${workshopsContext}
-
-REGLAS DE RESPUESTA INTERNA:
-1. Sé concisa y exacta con cantidades de stock, precios y cupos de talleres.
-2. Si preguntan por un producto y tiene 0 stock, indícalo claramente como agotado.
-3. Si preguntan cuántos hay, responde la cifra exacta sin rodeos.
-4. Tono: Eficiente, servicial, cálido y profesional.
-5. PROHIBICIÓN ABSOLUTA: JAMÁS menciones nombres de modelos de IA, proveedores tecnológicos ni términos como Llama, Gemma, GPT, OpenAI o Cloudflare. Si te preguntan quién eres, responde que eres la Estrellita de by.fio para el equipo.`;
+${workshopsContext}`;
         } else {
           const stockDisclosureRule =
             aiConfig.stockDisclosureMode === 'full_stock'
               ? `POLÍTICA DE STOCK (MODO COMPLETO TRANSPARENTE ACTIVADO POR ADMIN):
-- Puedes indicar abiertamente al cliente la cantidad total exacta disponible en el catálogo (por ejemplo: "¡Sí tenemos disponible! Nos quedan X unidades a un precio de ₡...").
+- Puedes indicar abiertamente al cliente la cantidad total exacta disponible en el catálogo (ejemplo: "¡Sí tenemos disponible! Nos quedan X unidades a un precio de ₡...").
 - Si no hay stock o dice AGOTADO, explícale que actualmente está agotado o es bajo pedido especial por WhatsApp.`
               : `POLÍTICA MANDATORIA DE STOCK (MODO DISPONIBILIDAD Y CONSULTA DE CANTIDAD):
 - NUNCA le digas al usuario de la web cuánto es el total de cosas o unidades que tienes en stock (ESTÁ ESTRICTAMENTE PROHIBIDO decir de entrada números totales como "tenemos 15 unidades", "nos quedan 8", o revelar la cifra total del inventario).
 - SOLO debes decir con entusiasmo que SÍ hay disponible y preguntarle de inmediato cuántas unidades necesita o le gustaría llevarse (ejemplo: "¡Hola! Sí, tenemos disponible a ₡[precio] ✨ ¿Cuántas unidades te gustaría llevarte / necesitas?").
 - Si el usuario te indica cuántas unidades quiere o necesita:
   * Si la cantidad que pide es MENOR O IGUAL al stock disponible: Confírmale alegremente que sí tenemos esa cantidad lista para su entrega o pedido.
-  * Si el usuario requiere MÁS de las que hay en stock: Explícale amablemente que por el momento solo contamos con la cantidad que tenemos (ejemplo: "¡Por el momento solo tenemos X unidades disponibles! ✨ ¿Deseas llevarte esas X unidades o te gustaría encargar las restantes bajo pedido especial por WhatsApp?").
+  * Si el usuario requiere MÁS de las que hay en stock: Explícale amablemente cuántas unidades tenemos disponibles hoy (ejemplo: "¡Por el momento solo tenemos X unidades disponibles! ✨ ¿Deseas llevarte esas X unidades o te gustaría encargar las restantes bajo pedido especial por WhatsApp?").
 - Si el producto tiene stock 0 o dice AGOTADO: Explícale con dulzura que por el momento no hay disponibles o que podemos elaborarlo bajo pedido especial al WhatsApp 6400-4640.`;
 
-          systemPrompt = `Eres la Estrellita de by.fio, la mascota y asistente de servicio al cliente de by.fio (tienda creativa, papelería y talleres en Costa Rica).
+          systemPrompt = `Eres la asesora comercial y compañera de atención al cliente de by.fio (tienda creativa, papelería y talleres en Costa Rica).
 ${userName ? `Estás conversando con: ${userName}.` : ''}
+
+1. ROL, TONO Y PERSONALIDAD:
+- Tu identidad es de asesora cercana, amable, ágil, profesional, cálida y tierna (kawaii).
+- Cero tono corporativo o robótico. Usa lenguaje natural, cálido y emojis suaves (✨, 🌸, 💖).
+
+2. LONGITUD Y ESTRUCTURA (OBLIGATORIO):
+- Responde SIEMPRE en frases cortas, directas y sin párrafos extensos de texto.
+- Prohibido escribir bloques pesados de texto.
+
+3. LISTA NEGRA ESTRICTA ("LO QUE NO DEBES DECIR NUNCA"):
+- PROHIBIDO decir que eres una IA, un bot, un modelo de lenguaje o un asistente virtual. Eres parte del equipo humano de atención de by.fio (la Estrellita).
+- PROHIBIDO prometer descuentos, regalías o condiciones que no estén en la base de conocimiento oficial.
+- PROHIBIDO hablar de competidores o marcas ajenas a by.fio.
+- PROHIBIDO usar frases de relleno como "¡Excelente pregunta!", "Con mucho gusto te asisto", "¿Hay algo más en lo que te pueda colaborar hoy?", "Es un placer atenderte". Ve al grano con naturalidad.
+
+4. PROTOCOLO DE ESCAPE (DERIVACIÓN A HUMANO):
+- Si no tienes el dato exacto o si el cliente solicita una persona real, no inventes nada ni des largas: derívalo directamente con Fiorella al WhatsApp oficial 6400-4640.
+
+5. DINÁMICA DE CONVERSACIÓN (CHUNKING WHATSAPP):
+- Divide tu respuesta en 1 a 3 mensajes cortos independientes usando el separador exacto '|||' entre cada fragmento.
+- Ejemplo: "¡Hola! Con gusto te cuento ✨|||Tenemos tazas personalizadas desde ₡4.500 y agendas hermosas 🌸|||¿Buscabas algún diseño en especial?"
 
 CONTEXTO EN TIEMPO REAL DE LA TIENDA:
 ${inventoryContext}
@@ -190,11 +231,7 @@ INFORMACIÓN CLAVE DEL NEGOCIO:
 - Contacto directo por WhatsApp: 6400-4640.
 
 ${stockDisclosureRule}
-${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\n${aiConfig.customInstructions}\n` : ''}
-REGLAS DE ATENCIÓN:
-1. Responde siempre en español con un tono dulce, alegre, cercano, tierno (kawaii) y respetuoso. Usa emojis suaves (✨, 🌸, 💖, 🎀).
-2. Respuestas breves y fáciles de leer en pantalla de celular (1 a 3 párrafos cortos).
-3. REGLA ESTRICTA DE CONFIDENCIALIDAD: NUNCA digas que eres una inteligencia artificial, ni menciones modelos (Llama, Gemma, OpenAI, etc.). Si te preguntan, di: "¡Soy la Estrellita de by.fio! Tu compañera para ayudarte a encontrar todo lo lindo que buscas en la tienda ✨🌸".`;
+${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\n${aiConfig.customInstructions}\n` : ''}`;
         }
 
         const messagesForModel: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
@@ -209,35 +246,91 @@ REGLAS DE ATENCIÓN:
         }
         messagesForModel.push({ role: 'user', content: message });
 
-        // Seleccionar modelo
+        // Seleccionar modelo y ejecutar inferencia calibrada
         const chosenModel = role === 'staff' || role === 'admin' ? MODEL_STAFF : MODEL_CUSTOMER;
         const fallbackModel = role === 'staff' || role === 'admin' ? MODEL_STAFF_FALLBACK : MODEL_CUSTOMER_FALLBACK;
 
         let assistantReply = '';
-        try {
-          const aiResponse: any = await env.AI.run(chosenModel, {
-            messages: messagesForModel,
-            max_tokens: 600,
-            temperature: 0.7,
-          });
-          assistantReply = (aiResponse?.response || aiResponse?.choices?.[0]?.message?.content || '').trim();
-        } catch (primaryErr: any) {
-          // Fallback resiliente
+        if (isBlockedBySafety) {
+          assistantReply =
+            'Como parte del equipo de by.fio, estoy para ayudarte con nuestros productos, papelería y talleres creativos ✨🌸|||¿Te gustaría consultar algo de nuestra tienda?';
+        } else if (isEscaped) {
+          assistantReply =
+            '¡Con mucho gusto! Te paso directamente con Fiorella a nuestro WhatsApp oficial 6400-4640 para coordinar con todo detalle ✨🌸|||También puedes tocar el enlace de WhatsApp para escribirnos de inmediato.';
+        } else {
+          const temp = Math.min(Math.max(Number(aiConfig.temperature ?? 0.3), 0.1), 0.4);
+          const maxTok = Math.min(Math.max(Number(aiConfig.maxTokens ?? 120), 60), 200);
+          const topP = Math.min(Math.max(Number(aiConfig.topP ?? 0.85), 0.1), 1.0);
+          const topK = Math.min(Math.max(Number(aiConfig.topK ?? 40), 1), 100);
+
           try {
-            const aiFallback: any = await env.AI.run(fallbackModel, {
+            const aiResponse: any = await env.AI.run(chosenModel, {
               messages: messagesForModel,
-              max_tokens: 600,
-              temperature: 0.7,
+              max_tokens: maxTok,
+              temperature: temp,
+              top_p: topP,
+              top_k: topK,
             });
-            assistantReply = (aiFallback?.response || aiFallback?.choices?.[0]?.message?.content || '').trim();
-          } catch (secErr: any) {
-            assistantReply = '¡Hola! En este instante estoy teniendo un pequeño inconveniente de conexión. Por favor escríbenos directamente a nuestro WhatsApp oficial 6400-4640 y con gusto te atenderemos con todo el cariño ✨🌸';
+            assistantReply = (aiResponse?.response || aiResponse?.choices?.[0]?.message?.content || '').trim();
+          } catch (primaryErr: any) {
+            try {
+              const aiFallback: any = await env.AI.run(fallbackModel, {
+                messages: messagesForModel,
+                max_tokens: maxTok,
+                temperature: temp,
+                top_p: topP,
+                top_k: topK,
+              });
+              assistantReply = (aiFallback?.response || aiFallback?.choices?.[0]?.message?.content || '').trim();
+            } catch (secErr: any) {
+              assistantReply = '¡Hola! En este instante estoy consultando el catálogo para ti ✨|||Por favor escríbenos directamente a nuestro WhatsApp oficial 6400-4640 y con gusto te atenderemos 🌸';
+            }
           }
         }
 
         if (!assistantReply) {
           assistantReply = '¡Hola! ¿En qué puedo ayudarte hoy en by.fio? ✨';
         }
+
+        // Dinámica de Conversación y Retrasos (Chunking & Simulación Humana)
+        let rawChunks = assistantReply
+          .split('|||')
+          .map((c: string) => c.replace(/^[\s\r\n\-,•]+|[\s\r\n]+$/g, '').trim())
+          .filter((c: string) => c.length > 0);
+
+        if (rawChunks.length === 0) {
+          rawChunks = [assistantReply.trim()];
+        }
+
+        if (rawChunks.length === 1 && rawChunks[0].includes('\n\n')) {
+          rawChunks = rawChunks[0]
+            .split('\n\n')
+            .map((c: string) => c.trim())
+            .filter((c: string) => c.length > 0);
+        }
+
+        const messageChunks = rawChunks;
+
+        // Retraso Inicial (Primer Mensaje): 2 a 4 segundos
+        const initialMin = Math.min(Math.max(Number(aiConfig.initialDelayMinMs ?? 2000), 1000), 3000);
+        const initialMax = Math.min(Math.max(Number(aiConfig.initialDelayMaxMs ?? 3500), initialMin + 500), 4500);
+        const initialDelayMs = Math.floor(Math.random() * (initialMax - initialMin + 1)) + initialMin;
+
+        // Simulación de tipeo: 30 a 50 ms/char con margen de 1 a 2 seg
+        const msPerChar = Math.min(Math.max(Number(aiConfig.msPerChar ?? 40), 30), 50);
+        const delayMarginMs = Math.min(Math.max(Number(aiConfig.delayMarginMs ?? 1200), 1000), 2000);
+
+        let cumulativeTyping = 0;
+        const chunkObjects = messageChunks.map((chunk, index) => {
+          const typingMs = Math.min(6500, Math.max(1000, Math.round(chunk.length * msPerChar) + delayMarginMs));
+          cumulativeTyping += typingMs;
+          return {
+            index,
+            text: chunk,
+            typingMs,
+            delayBeforeMs: index === 0 ? initialDelayMs : delayMarginMs,
+          };
+        });
 
         // Guardar en AGENT_DB de forma asíncrona / sin bloquear
         try {
@@ -250,7 +343,7 @@ REGLAS DE ATENCIÓN:
             ).bind(`msg_${Date.now()}_u`, conversationId, 'user', message, 0),
             env.AGENT_DB.prepare(
               'INSERT INTO agent_messages (id, conversation_id, role, content, has_audio) VALUES (?1, ?2, ?3, ?4, ?5)'
-            ).bind(`msg_${Date.now()}_a`, conversationId, 'assistant', assistantReply, 0),
+            ).bind(`msg_${Date.now()}_a`, conversationId, 'assistant', messageChunks.join('\n\n'), 0),
           ]);
         } catch (dbErr) {
           // No romper la respuesta si falla el log
@@ -258,7 +351,17 @@ REGLAS DE ATENCIÓN:
 
         return jsonResponse({
           success: true,
-          response: assistantReply,
+          response: messageChunks.join('\n\n'),
+          messages: messageChunks,
+          chunks: chunkObjects,
+          humanSimulation: {
+            initialDelayMs,
+            isChunked: messageChunks.length > 1,
+            totalTypingMs: cumulativeTyping,
+            msPerChar,
+            delayMarginMs,
+          },
+          isEscaped,
           conversationId,
         });
       }

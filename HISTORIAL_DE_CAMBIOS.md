@@ -1,3 +1,27 @@
+## [v4.19.187] - 2026-11-13
+
+### 🤖 Calibración Técnica, Reglas de Comportamiento Estrictas y Simulación Humana para el Agente AI
+- **Parámetros Técnicos del Modelo ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/worker-ai/src/index.ts))**:
+  - Temperatura calibrada en rango 0.1 a 0.4 (default: 0.3) para respuestas directas, predecibles y sin rodeos.
+  - Top-P (0.85) y Top-K (40) delimitando el abanico léxico para máxima consistencia comercial.
+  - Límite de tokens estricto (Max Output Tokens: 60 a 120, default: 120) forzando concisión por mensaje.
+  - Filtros de moderación y seguridad pre-inferencia activos contra intentos de jailbreak, ofensas y temas políticos.
+- **System Prompt y Directrices de Comportamiento**:
+  - Rol y personalidad: Identidad de asesora amable, ágil, profesional, cercana, cálida y sin tono robótico ni corporativo.
+  - Longitud y estructura: Mandato obligatorio de respuestas en frases cortas, directas y sin párrafos extensos.
+  - Lista negra estricta ("Lo que no debe decir nunca"): Prohibido admitir que es IA/bot, prohibido prometer descuentos inexistentes, prohibido hablar de competidores y prohibido frases de relleno clichés corporativas ("¡Excelente pregunta!", "Con mucho gusto te asisto", etc.).
+  - Protocolo de escape: Derivación transparente y directa con Fiorella al WhatsApp oficial 6400-4640 si no se tiene el dato exacto o si el cliente solicita un agente humano.
+- **Dinámica de Conversación y Retrasos de Simulación Humana ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx), [AiLiveTesterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiLiveTesterCard.tsx))**:
+  - Chunking WhatsApp: Instrucción de división mediante separador `|||` en el backend para emitir fragmentos independientes.
+  - Retraso inicial de 2 a 4 segundos simulando el tiempo que tarda una persona en tomar el teléfono.
+  - Simulación de escritura ("typing...") calculada dinámicamente en 30 a 50 ms por carácter más margen de 1 a 2 segundos entre mensajes.
+- **Panel Administrativo AI ([AiGeneralSettingsCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiGeneralSettingsCard.tsx), [aiAgent.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/aiAgent.ts))**:
+  - Sliders y controles interactivos para calibrar Temperatura, Tokens, Top-P, Simulación Humana y visualización de reglas de comportamiento.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.187`.
+
+---
+
 ## [v4.19.186] - 2026-11-13
 
 ### 🤖 Módulo Administrativo AI BYFIO & Política Estricta de Revelación de Stock para la Estrellita
@@ -70,6 +94,30 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.187] - 2026-11-13
+
+### 🤖 Calibración Técnica, Reglas de Comportamiento Estrictas y Simulación Humana para el Agente AI
+- **Parámetros Técnicos del Modelo ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [index.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/worker-ai/src/index.ts))**:
+  - Temperatura calibrada en rango 0.1 a 0.4 (default: 0.3) para respuestas directas, predecibles y sin rodeos.
+  - Top-P (0.85) y Top-K (40) delimitando el abanico léxico para máxima consistencia comercial.
+  - Límite de tokens estricto (Max Output Tokens: 60 a 120, default: 120) forzando concisión por mensaje.
+  - Filtros de moderación y seguridad pre-inferencia activos contra intentos de jailbreak, ofensas y temas políticos.
+- **System Prompt y Directrices de Comportamiento**:
+  - Rol y personalidad: Identidad de asesora amable, ágil, profesional, cercana, cálida y sin tono robótico ni corporativo.
+  - Longitud y estructura: Mandato obligatorio de respuestas en frases cortas, directas y sin párrafos extensos.
+  - Lista negra estricta ("Lo que no debe decir nunca"): Prohibido admitir que es IA/bot, prohibido prometer descuentos inexistentes, prohibido hablar de competidores y prohibido frases de relleno clichés corporativas ("¡Excelente pregunta!", "Con mucho gusto te asisto", etc.).
+  - Protocolo de escape: Derivación transparente y directa con Fiorella al WhatsApp oficial 6400-4640 si no se tiene el dato exacto o si el cliente solicita un agente humano.
+- **Dinámica de Conversación y Retrasos de Simulación Humana ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx), [AiLiveTesterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiLiveTesterCard.tsx))**:
+  - Chunking WhatsApp: Instrucción de división mediante separador `|||` en el backend para emitir fragmentos independientes.
+  - Retraso inicial de 2 a 4 segundos simulando el tiempo que tarda una persona en tomar el teléfono.
+  - Simulación de escritura ("typing...") calculada dinámicamente en 30 a 50 ms por carácter más margen de 1 a 2 segundos entre mensajes.
+- **Panel Administrativo AI ([AiGeneralSettingsCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiGeneralSettingsCard.tsx), [aiAgent.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/aiAgent.ts))**:
+  - Sliders y controles interactivos para calibrar Temperatura, Tokens, Top-P, Simulación Humana y visualización de reglas de comportamiento.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.187`.
 
 ---
 
