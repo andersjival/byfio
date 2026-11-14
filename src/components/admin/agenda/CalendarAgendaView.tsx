@@ -604,10 +604,10 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     </span>
                   </div>
                   <div>
-                    <h3 className="font-bubble font-bold text-base sm:text-lg text-slate-900 leading-tight">
+                    <h3 className="agenda-daily-title font-bubble font-bold text-base sm:text-lg text-slate-900 leading-tight">
                       {DAYS_NAMES[(currentDate.getDay() + 6) % 7]}, {currentDate.getDate()} de {MONTHS_SHORT[currentDate.getMonth()]}
                     </h3>
-                    <p className="text-xs text-slate-500 font-sans">
+                    <p className="agenda-daily-subtitle text-xs text-slate-500 font-sans">
                       {activePeriodAppointments.length} cita{activePeriodAppointments.length === 1 ? '' : 's'} programada{activePeriodAppointments.length === 1 ? '' : 's'} para este día
                     </p>
                   </div>
@@ -621,7 +621,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                 <thead>
                   <tr>
                     <th
-                      className="sticky top-0 left-0 z-30 w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
+                      className="agenda-hour-header sticky top-0 left-0 z-30 w-24 p-3 text-center text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
                       style={{
                         backgroundColor: themeConfig.bgHeader,
                         borderRight: `1px solid ${themeConfig.borderDiv}`,
@@ -633,7 +633,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     {teamFilter === 'all' ? (
                       <>
                         <th
-                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-purple-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                          className="agenda-daily-col-fiorella sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-purple-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                           style={{
                             backgroundColor: '#FAF5FF',
                             borderRight: `1px solid ${themeConfig.borderDiv}`,
@@ -643,7 +643,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           Fiorella Brenes (Diseño &amp; Admin)
                         </th>
                         <th
-                          className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-sky-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                          className="agenda-daily-col-taller sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-sky-900 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                           style={{
                             backgroundColor: '#F0F9FF',
                             borderBottom: `1px solid ${themeConfig.borderDiv}`,
@@ -654,7 +654,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                       </>
                     ) : (
                       <th
-                        className="sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-slate-800 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
+                        className="agenda-daily-col-single sticky top-0 z-20 p-3 text-left text-xs font-bubble font-bold text-slate-800 shadow-[0_2px_4px_rgba(0,0,0,0.04)]"
                         style={{
                           backgroundColor: themeConfig.bgHeader,
                           borderBottom: `1px solid ${themeConfig.borderDiv}`,
@@ -677,7 +677,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     return (
                       <tr key={`daily-${hourLabel}`} className="hover:bg-black/[0.015] transition-colors">
                         <td
-                        className="sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
+                        className="agenda-hour-cell sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
                         style={{
                           borderRight: `1px solid ${themeConfig.borderDiv}`,
                           borderBottom: `1px solid ${themeConfig.borderDiv}`,
@@ -698,10 +698,10 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                     <div
                                       key={item.id}
                                       onClick={() => (onSelectItem ? onSelectItem(item) : onEditItem(item))}
-                                      className="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-xs cursor-pointer hover:shadow-sm hover:border-purple-300 transition-all"
+                                      className="agenda-daily-card-fiorella p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-xs cursor-pointer hover:shadow-sm hover:border-purple-300 transition-all"
                                     >
-                                      <div className="font-bubble font-bold text-purple-900 truncate">{item.title}</div>
-                                      <div className="flex items-center justify-between text-[10px] text-purple-700 font-mono mt-1">
+                                      <div className="agenda-daily-card-title font-bubble font-bold text-purple-900 truncate">{item.title}</div>
+                                      <div className="agenda-daily-card-time flex items-center justify-between text-[10px] text-purple-700 font-mono mt-1">
                                         <span className="truncate">{item.endTime ? `${item.time} - ${item.endTime}` : item.time || 'Programado'}</span>
                                         {item.notes && (
                                           <span className="text-[9px] bg-purple-100 text-purple-800 font-sans font-bold px-1.5 py-0.5 rounded-md shrink-0 ml-1">
@@ -723,10 +723,10 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                     <div
                                       key={item.id}
                                       onClick={() => (onSelectItem ? onSelectItem(item) : onEditItem(item))}
-                                      className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-xs cursor-pointer hover:shadow-sm hover:border-sky-300 transition-all"
+                                      className="agenda-daily-card-taller p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-xs cursor-pointer hover:shadow-sm hover:border-sky-300 transition-all"
                                     >
-                                      <div className="font-bubble font-bold text-sky-900 truncate">{item.title}</div>
-                                      <div className="flex items-center justify-between text-[10px] text-sky-700 font-mono mt-1">
+                                      <div className="agenda-daily-card-title font-bubble font-bold text-sky-900 truncate">{item.title}</div>
+                                      <div className="agenda-daily-card-time flex items-center justify-between text-[10px] text-sky-700 font-mono mt-1">
                                         <span className="truncate">{item.endTime ? `${item.time} - ${item.endTime}` : item.time || 'Programado'}</span>
                                         {item.notes && (
                                           <span className="text-[9px] bg-sky-100 text-sky-800 font-sans font-bold px-1.5 py-0.5 rounded-md shrink-0 ml-1">
@@ -747,11 +747,11 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                 <div
                                   key={item.id}
                                   onClick={() => (onSelectItem ? onSelectItem(item) : onEditItem(item))}
-                                  className="p-3 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between cursor-pointer hover:border-purple-300 transition-all"
+                                  className="agenda-daily-card-single p-3 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between cursor-pointer hover:border-purple-300 transition-all"
                                 >
                                   <div className="min-w-0 pr-2">
-                                    <div className="font-bubble font-bold text-xs sm:text-sm text-slate-900 truncate">{item.title}</div>
-                                    <div className="flex items-center gap-2 mt-0.5">
+                                    <div className="agenda-daily-card-title font-bubble font-bold text-xs sm:text-sm text-slate-900 truncate">{item.title}</div>
+                                    <div className="agenda-daily-card-time flex items-center gap-2 mt-0.5">
                                       <span className="text-[10px] font-mono text-purple-700 font-bold">
                                         {item.endTime ? `${item.time} - ${item.endTime}` : item.time}
                                       </span>

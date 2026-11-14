@@ -2893,3 +2893,285 @@ html.dark .layaway-expanded-container .layaway-progress-track {
 .animate-slide-into-behind {
   animation: slideIntoBehind 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* =========================================================================
+   PROTECCIÓN Y CONTRASTE DE LA AGENDA EN TEMA OSCURO Y TEMA CLARO
+   El calendario de la agenda mantiene su cuadrícula y paleta pastel (celeste,
+   amarillo, lila, menta, rosa). En tema oscuro, estos estilos garantizan
+   que los textos, números, tarjetas de eventos, horas y controles mantengan
+   contraste óptimo (WCAG AAA) y no se desvanezcan a blanco ni tonos pálidos.
+   ========================================================================= */
+
+/* 1. Títulos de días y nombres de días en la cuadrícula */
+.agenda-calendar-surface .agenda-day-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-day-title,
+html.dark .agenda-calendar-surface .agenda-day-title {
+  color: #0F172A !important;
+}
+
+/* 2. Mes debajo del nombre del día (ej. 'nov') */
+.agenda-calendar-surface .agenda-month-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-month-title,
+html.dark .agenda-calendar-surface .agenda-month-title {
+  color: #475569 !important;
+}
+
+/* 3. Encabezado 'Hora' y celdas de horas (8:00 AM, 9:00 AM, etc.) */
+.agenda-calendar-surface .agenda-hour-header,
+.agenda-calendar-surface .agenda-hour-cell,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-hour-header,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-hour-cell,
+html.dark .agenda-calendar-surface .agenda-hour-header,
+html.dark .agenda-calendar-surface .agenda-hour-cell {
+  color: #334155 !important;
+}
+
+/* 4. Pastilla del número de día (1, 2, 3...) */
+.agenda-calendar-surface .agenda-day-number,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-day-number,
+html.dark .agenda-calendar-surface .agenda-day-number {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #1E293B !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
+}
+
+/* 5. Badge de Domingo 'Cerrado' */
+.agenda-calendar-surface .agenda-closed-badge,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-closed-badge,
+html.dark .agenda-calendar-surface .agenda-closed-badge {
+  background-color: #FFE4E6 !important;
+  border-color: #FDA4AF !important;
+  color: #BE123C !important;
+}
+
+/* 6. Botón '+ Agendar' en celdas vacías al hacer hover */
+.agenda-calendar-surface .agenda-btn-agendar,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-btn-agendar,
+html.dark .agenda-calendar-surface .agenda-btn-agendar {
+  background-color: rgba(238, 242, 255, 0.7) !important;
+  border-color: #C4B5FD !important;
+  color: #6D28D9 !important;
+}
+
+.agenda-calendar-surface .agenda-btn-agendar:hover,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-btn-agendar:hover,
+html.dark .agenda-calendar-surface .agenda-btn-agendar:hover {
+  background-color: #7C3AED !important;
+  border-color: #6D28D9 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35) !important;
+}
+
+/* 7. Tarjetas de Eventos / Citas según categoría */
+/* Proveedor & Insumos (Ámbar) */
+.agenda-calendar-surface .agenda-item-proveedor,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-proveedor,
+html.dark .agenda-calendar-surface .agenda-item-proveedor {
+  background-color: #FEF3C7 !important;
+  border-color: #FCD34D !important;
+}
+.agenda-calendar-surface .agenda-item-proveedor .agenda-item-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-proveedor .agenda-item-title,
+html.dark .agenda-calendar-surface .agenda-item-proveedor .agenda-item-title {
+  color: #78350F !important;
+}
+.agenda-calendar-surface .agenda-item-proveedor .agenda-item-icon,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-proveedor .agenda-item-icon,
+html.dark .agenda-calendar-surface .agenda-item-proveedor .agenda-item-icon {
+  color: #B45309 !important;
+}
+.agenda-calendar-surface .agenda-item-proveedor .agenda-item-time,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-proveedor .agenda-item-time,
+html.dark .agenda-calendar-surface .agenda-item-proveedor .agenda-item-time {
+  color: #92400E !important;
+}
+
+/* Taller Creativo (Púrpura) */
+.agenda-calendar-surface .agenda-item-taller,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-taller,
+html.dark .agenda-calendar-surface .agenda-item-taller {
+  background-color: #F3E8FF !important;
+  border-color: #D8B4FE !important;
+}
+.agenda-calendar-surface .agenda-item-taller .agenda-item-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-taller .agenda-item-title,
+html.dark .agenda-calendar-surface .agenda-item-taller .agenda-item-title {
+  color: #581C87 !important;
+}
+.agenda-calendar-surface .agenda-item-taller .agenda-item-icon,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-taller .agenda-item-icon,
+html.dark .agenda-calendar-surface .agenda-item-taller .agenda-item-icon {
+  color: #7E22CE !important;
+}
+.agenda-calendar-surface .agenda-item-taller .agenda-item-time,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-taller .agenda-item-time,
+html.dark .agenda-calendar-surface .agenda-item-taller .agenda-item-time {
+  color: #6B21A8 !important;
+}
+
+/* Entrega / Envío (Rosa) */
+.agenda-calendar-surface .agenda-item-entrega,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-entrega,
+html.dark .agenda-calendar-surface .agenda-item-entrega {
+  background-color: #FCE7F3 !important;
+  border-color: #FBCFE8 !important;
+}
+.agenda-calendar-surface .agenda-item-entrega .agenda-item-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-entrega .agenda-item-title,
+html.dark .agenda-calendar-surface .agenda-item-entrega .agenda-item-title {
+  color: #831843 !important;
+}
+.agenda-calendar-surface .agenda-item-entrega .agenda-item-icon,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-entrega .agenda-item-icon,
+html.dark .agenda-calendar-surface .agenda-item-entrega .agenda-item-icon {
+  color: #BE185D !important;
+}
+.agenda-calendar-surface .agenda-item-entrega .agenda-item-time,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-entrega .agenda-item-time,
+html.dark .agenda-calendar-surface .agenda-item-entrega .agenda-item-time {
+  color: #9D174D !important;
+}
+
+/* Producción & Ensamble (Azul Cielo) */
+.agenda-calendar-surface .agenda-item-produccion,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-produccion,
+html.dark .agenda-calendar-surface .agenda-item-produccion {
+  background-color: #E0F2FE !important;
+  border-color: #BAE6FD !important;
+}
+.agenda-calendar-surface .agenda-item-produccion .agenda-item-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-produccion .agenda-item-title,
+html.dark .agenda-calendar-surface .agenda-item-produccion .agenda-item-title {
+  color: #0C4A6E !important;
+}
+.agenda-calendar-surface .agenda-item-produccion .agenda-item-icon,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-produccion .agenda-item-icon,
+html.dark .agenda-calendar-surface .agenda-item-produccion .agenda-item-icon {
+  color: #0284C7 !important;
+}
+.agenda-calendar-surface .agenda-item-produccion .agenda-item-time,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-produccion .agenda-item-time,
+html.dark .agenda-calendar-surface .agenda-item-produccion .agenda-item-time {
+  color: #0369A1 !important;
+}
+
+/* Recordatorio / General (Gris Slate) */
+.agenda-calendar-surface .agenda-item-recordatorio,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-recordatorio,
+html.dark .agenda-calendar-surface .agenda-item-recordatorio {
+  background-color: #F1F5F9 !important;
+  border-color: #CBD5E1 !important;
+}
+.agenda-calendar-surface .agenda-item-recordatorio .agenda-item-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-recordatorio .agenda-item-title,
+html.dark .agenda-calendar-surface .agenda-item-recordatorio .agenda-item-title {
+  color: #0F172A !important;
+}
+.agenda-calendar-surface .agenda-item-recordatorio .agenda-item-icon,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-recordatorio .agenda-item-icon,
+html.dark .agenda-calendar-surface .agenda-item-recordatorio .agenda-item-icon {
+  color: #475569 !important;
+}
+.agenda-calendar-surface .agenda-item-recordatorio .agenda-item-time,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-recordatorio .agenda-item-time,
+html.dark .agenda-calendar-surface .agenda-item-recordatorio .agenda-item-time {
+  color: #334155 !important;
+}
+
+/* Cita completada (Done) */
+.agenda-calendar-surface .agenda-item-done,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-done,
+html.dark .agenda-calendar-surface .agenda-item-done {
+  background-color: #E2E8F0 !important;
+  border-color: #CBD5E1 !important;
+}
+.agenda-calendar-surface .agenda-item-done .agenda-item-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-done .agenda-item-title,
+html.dark .agenda-calendar-surface .agenda-item-done .agenda-item-title {
+  color: #64748B !important;
+}
+.agenda-calendar-surface .agenda-item-done .agenda-item-icon,
+.agenda-calendar-surface .agenda-item-done .agenda-item-time,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-done .agenda-item-icon,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-item-done .agenda-item-time,
+html.dark .agenda-calendar-surface .agenda-item-done .agenda-item-icon,
+html.dark .agenda-calendar-surface .agenda-item-done .agenda-item-time {
+  color: #94A3B8 !important;
+}
+
+/* 8. Bloqueos de espacio (Almuerzo / Personalizados) */
+.agenda-calendar-surface .agenda-block-space,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-block-space,
+html.dark .agenda-calendar-surface .agenda-block-space {
+  background-color: #F1F5F9 !important;
+  border-color: #CBD5E1 !important;
+  color: #1E293B !important;
+}
+
+/* 9. Vista Diaria: Encabezados y tarjetas */
+.agenda-calendar-surface .agenda-daily-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-title,
+html.dark .agenda-calendar-surface .agenda-daily-title {
+  color: #0F172A !important;
+}
+.agenda-calendar-surface .agenda-daily-subtitle,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-subtitle,
+html.dark .agenda-calendar-surface .agenda-daily-subtitle {
+  color: #475569 !important;
+}
+.agenda-calendar-surface .agenda-daily-col-fiorella,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-col-fiorella,
+html.dark .agenda-calendar-surface .agenda-daily-col-fiorella {
+  color: #581C87 !important;
+  background-color: #FAF5FF !important;
+}
+.agenda-calendar-surface .agenda-daily-col-taller,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-col-taller,
+html.dark .agenda-calendar-surface .agenda-daily-col-taller {
+  color: #0C4A6E !important;
+  background-color: #F0F9FF !important;
+}
+.agenda-calendar-surface .agenda-daily-col-single,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-col-single,
+html.dark .agenda-calendar-surface .agenda-daily-col-single {
+  color: #0F172A !important;
+}
+.agenda-calendar-surface .agenda-daily-card-fiorella,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-card-fiorella,
+html.dark .agenda-calendar-surface .agenda-daily-card-fiorella {
+  background-color: #FAF5FF !important;
+  border-color: #E9D5FF !important;
+}
+.agenda-calendar-surface .agenda-daily-card-fiorella .agenda-daily-card-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-card-fiorella .agenda-daily-card-title,
+html.dark .agenda-calendar-surface .agenda-daily-card-fiorella .agenda-daily-card-title {
+  color: #581C87 !important;
+}
+.agenda-calendar-surface .agenda-daily-card-fiorella .agenda-daily-card-time,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-card-fiorella .agenda-daily-card-time,
+html.dark .agenda-calendar-surface .agenda-daily-card-fiorella .agenda-daily-card-time {
+  color: #6B21A8 !important;
+}
+.agenda-calendar-surface .agenda-daily-card-taller,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-card-taller,
+html.dark .agenda-calendar-surface .agenda-daily-card-taller {
+  background-color: #F0F9FF !important;
+  border-color: #BAE6FD !important;
+}
+.agenda-calendar-surface .agenda-daily-card-taller .agenda-daily-card-title,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-card-taller .agenda-daily-card-title,
+html.dark .agenda-calendar-surface .agenda-daily-card-taller .agenda-daily-card-title {
+  color: #0C4A6E !important;
+}
+.agenda-calendar-surface .agenda-daily-card-taller .agenda-daily-card-time,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-card-taller .agenda-daily-card-time,
+html.dark .agenda-calendar-surface .agenda-daily-card-taller .agenda-daily-card-time {
+  color: #0369A1 !important;
+}
+.agenda-calendar-surface .agenda-daily-card-single,
+body[data-color-theme="dark"] .agenda-calendar-surface .agenda-daily-card-single,
+html.dark .agenda-calendar-surface .agenda-daily-card-single {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
