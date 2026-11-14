@@ -89,7 +89,7 @@ export const SupplierManualIntakeStep: React.FC<SupplierManualIntakeStepProps> =
       <p className="text-xs sm:text-sm text-slate-600">{savedSummary}</p>
       <div className="flex flex-wrap justify-center gap-2.5 pt-2">
         <button type="button" onClick={() => { setDraft(createEmptyDraft()); setItems([]); setStep('header'); }} className="px-4 py-2.5 rounded-2xl bg-purple-700 text-white font-bubble text-xs font-bold cursor-pointer">Ingresar Otra Factura</button>
-        <button type="button" onClick={onGoToOrders} className="px-4 py-2.5 rounded-2xl bg-amber-500 text-white font-bubble text-xs font-bold cursor-pointer">Ver Pedidos a Proveedores</button>
+        <button type="button" onClick={onGoToOrders} className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-bubble text-xs font-bold cursor-pointer shadow-xs">Ver Pedidos a Proveedores</button>
       </div>
     </div>
   );

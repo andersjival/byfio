@@ -1,3 +1,15 @@
+## [v4.19.208] - 2026-11-13
+
+### 馃帹 Armonizaci贸n Crom谩tica en M贸dulo de Proveedores (Tema Claro & Oscuro)
+- **Tarjeta "Pedidos a Proveedores" ([SuppliersOrdersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SuppliersOrdersSection.tsx), [SupplierManualIntakeStep.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/SupplierManualIntakeStep.tsx))**:
+  - Reemplazado el tono caf茅/谩mbar apagado por una paleta Azul 脥ndigo & Cielo (`bg-sky-50/80` en claro, `dark:bg-[#162238]` en oscuro con borde `border-sky-200 dark:border-sky-500/30`).
+  - Icono modernizado con degradado `bg-gradient-to-tr from-blue-600 to-sky-500` y flecha interactiva en `text-sky-600 dark:text-sky-400`.
+  - Encabezado interno y badges actualizados a `text-sky-800 dark:text-sky-200 bg-sky-50 dark:bg-sky-950/60 border-sky-200 dark:border-sky-800/60` para contraste y legibilidad 贸ptimos en ambos temas.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado cach茅 a `byfio-pwa-v4.19.208`.
+
+---
+
 ## [v4.19.207] - 2026-11-13
 
 ### 馃摫 Detecci贸n de Dispositivo (PC/M贸vil) y Adaptaci贸n Responsiva de Productos en Chat IA
@@ -5158,3 +5170,11 @@ Cualquier funcionalidad registrada aqu铆 est谩 blindada: ninguna IA puede elimin
 - [x] Modal de configuraci贸n de Uber Direct (entorno Sandbox/Producci贸n, credenciales API, direcci贸n de tienda By.Fio en Heredia y reglas de despacho).
 - [x] Acceso protegido por Login exclusivo (Credenciales Superadmin o Token de Acceso con enlace directo de 1 clic).
 - [x] Panel de Gesti贸n de Tokens de Env铆os en Superadmin (`SuperadminEnviosTokensTab`) con generaci贸n, copiado, revocaci贸n y persistencia en Cloudflare D1 (`/api/store-config`).
+
+### Versi髇 1.5.0 - Ingreso de Pedidos de Proveedor por Correo (Worker & XML) e Historial de Cargas
+- [x] Secci髇 dedicada **Ingresar Pedido por Correo** en el m骴ulo de Ingresar Pedido de Proveedor.
+- [x] Automatizaci髇 y explicaci髇 de recepci髇 a ingresarpedido@byfiocr.com mediante Cloudflare Worker y extracci髇 de XML de Factura Electr髇ica.
+- [x] Alerta interactiva *Correo recibido para ingresar pedido al sistema* con navegaci髇 directa a la ficha completa.
+- [x] Ficha completa del proveedor y factura con desglose de subtotal, impuestos, total y tabla detallada de l韓eas de productos.
+- [x] Bot髇 mandatorio **CARGAR AL SISTEMA** que suma autom醫icamente las unidades al inventario y registra el pedido.
+- [x] Secci髇 **Historial de Cargas de Pedidos** con filtros por D韆, Semana, Mes y Todos, registrando fecha y hora, usuario y modal de detalle de productos.
