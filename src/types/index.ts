@@ -598,6 +598,32 @@ export interface SupplierOrder {
   createdAt: string;
   orderedAt?: string;
   receivedAt?: string;
+  loadedBy?: string;
+  loadedAt?: string;
+  source?: 'manual' | 'email' | 'xml';
+}
+
+export interface IncomingEmailOrder {
+  id: string;
+  emailFrom: string;
+  emailSubject: string;
+  receivedAt: string;
+  xmlRaw?: string;
+  supplierName: string;
+  supplierLegalId?: string;
+  supplierPhone?: string;
+  supplierEmail?: string;
+  invoiceNumber: string;
+  entryDate: string;
+  subtotalAmount: number;
+  taxAmount: number;
+  discountAmount: number;
+  otherAmount?: number;
+  totalCost: number;
+  items: SupplierOrderItem[];
+  status: 'pending' | 'loaded';
+  loadedAt?: string;
+  loadedBy?: string;
 }
 
 export type SweepLoadMode = 'auto' | 'manual';

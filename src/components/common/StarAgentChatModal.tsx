@@ -628,7 +628,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
 
                     {/* Tarjeta de Producto interactiva si el mensaje la contiene */}
                     {m.product && (
-                      <div className="max-w-[92%] sm:max-w-[88%]">
+                      <div className="w-full sm:max-w-[88%]">
                         <StarAgentProductCard
                           product={m.product}
                           actionType={m.productAction || 'pay_or_more'}
@@ -642,7 +642,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
 
                     {/* Sugerencias de productos si el mensaje las contiene */}
                     {m.suggestedProducts && m.suggestedProducts.length > 0 && (
-                      <div className="pt-1 flex flex-wrap gap-1.5 max-w-[92%] sm:max-w-[88%] animate-in fade-in">
+                      <div className="pt-1 flex flex-wrap gap-1.5 w-full sm:max-w-[88%] animate-in fade-in">
                         {m.suggestedProducts.map((p) => (
                           <button
                             key={p.id}

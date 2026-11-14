@@ -354,7 +354,7 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
     return (
       <div className="bg-white dark:bg-[#1E1A30] rounded-3xl border border-fio-200 dark:border-white/10 shadow-clay p-6 sm:p-8 space-y-6 animate-fadeIn">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center shadow-md">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-500 text-white flex items-center justify-center shadow-md">
             <Truck className="w-6 h-6" />
           </div>
           <div>
@@ -367,18 +367,18 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
           <button
             type="button"
             onClick={() => setSubView('orders')}
-            className="group text-left rounded-3xl p-6 bg-amber-50/70 dark:bg-[#2C2338] hover:bg-amber-100/80 dark:hover:bg-[#352A44] border-2 border-amber-200 dark:border-amber-500/30 hover:border-amber-400 dark:hover:border-amber-400/60 shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] flex items-center justify-between gap-4"
+            className="group text-left rounded-3xl p-6 bg-sky-50/80 dark:bg-[#162238] hover:bg-sky-100/90 dark:hover:bg-[#1d2d4a] border-2 border-sky-200 dark:border-sky-500/30 hover:border-sky-400 dark:hover:border-sky-400/60 shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] flex items-center justify-between gap-4"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-500 text-white flex items-center justify-center shadow-md shrink-0">
                 <Truck className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bubble font-bold text-lg text-slate-900 dark:text-white dark:text-white">Pedidos a Proveedores</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">Historial, borradores, requisiciones y directorio ({totalCount} registros).</p>
+                <h3 className="font-bubble font-bold text-lg text-slate-900 dark:text-white">Pedidos a Proveedores</h3>
+                <p className="text-xs text-slate-600 dark:text-sky-200/80 mt-0.5">Historial, borradores, requisiciones y directorio ({totalCount} registros).</p>
               </div>
             </div>
-            <ArrowRight className="w-5 h-5 text-amber-700 group-hover:translate-x-1 transition-transform shrink-0" />
+            <ArrowRight className="w-5 h-5 text-sky-600 dark:text-sky-400 group-hover:translate-x-1 transition-transform shrink-0" />
           </button>
 
           <button
@@ -391,7 +391,7 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
                 <Receipt className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bubble font-bold text-lg text-slate-900">Ingresar pedido de Proveedor</h3>
+                <h3 className="font-bubble font-bold text-lg text-slate-900 dark:text-white">Ingresar pedido de Proveedor</h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">Registrar factura de proveedor, montos e ingresar productos manualmente.</p>
               </div>
             </div>
@@ -426,13 +426,13 @@ export const SuppliersOrdersSection: React.FC<SuppliersOrdersSectionProps> = ({ 
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Proveedores</span>
               </button>
-              <div className="w-9 h-9 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md">
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-500 text-white flex items-center justify-center shadow-md">
                 <Truck className="w-5 h-5" />
               </div>
-              <h2 className="font-bubble font-bold text-xl sm:text-2xl text-fio-900">
+              <h2 className="font-bubble font-bold text-xl sm:text-2xl text-fio-900 dark:text-white">
                 Pedidos a Proveedores &amp; Requisiciones
               </h2>
-              <span className="text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+              <span className="text-xs font-bold text-sky-800 dark:text-sky-200 bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 px-3 py-1 rounded-full">
                 {totalCount} órdenes registradas
               </span>
             </div>

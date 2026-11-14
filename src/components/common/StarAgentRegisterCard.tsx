@@ -220,7 +220,7 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
       className={`fixed inset-x-0 bottom-0 top-auto sm:relative sm:inset-auto z-30 sm:z-10 sm:self-end transition-all duration-[1600ms] ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
         isVisible
           ? 'w-full sm:w-[360px] sm:max-w-[360px] sm:-ml-4 opacity-100 max-sm:translate-y-0'
-          : 'max-sm:w-full sm:w-0 sm:max-w-0 sm:ml-0 opacity-0 pointer-events-none max-sm:-translate-y-[135%]'
+          : 'max-sm:w-full sm:w-0 sm:max-w-0 sm:ml-0 opacity-0 pointer-events-none max-sm:translate-y-full'
       }`}
     >
       <div

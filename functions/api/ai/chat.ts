@@ -91,6 +91,17 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const conversationId: string =
       body?.conversationId || `conv_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
+    // Detección de Dispositivo (Celular / Móvil vs Computadora / PC)
+    const userAgent = context.request.headers.get('user-agent') || '';
+    const isMobileUa = /Mobile|Android|iP(hone|od)/i.test(userAgent);
+    const deviceType: 'mobile' | 'pc' | 'tablet' =
+      body?.deviceType === 'mobile' || body?.deviceType === 'tablet' || body?.deviceType === 'pc'
+        ? body.deviceType
+        : isMobileUa
+        ? 'mobile'
+        : 'pc';
+    const deviceModel: string = (body?.deviceModel || (isMobileUa ? 'Dispositivo Móvil' : 'Computadora PC')).trim();
+
     if (!message) {
       return new Response(JSON.stringify({ success: false, error: 'Mensaje requerido' }), {
         status: 400,
@@ -329,6 +340,11 @@ ${aiConfig.escapeProtocol || '- Si no tienes el dato exacto o si el cliente soli
 5. DINÁMICA DE CONVERSACIÓN (CHUNKING WHATSAPP):
 - Divide tu respuesta en 1 a ${maxCh} mensajes cortos independientes usando el separador exacto '${sep}' entre cada fragmento.
 - Ejemplo: "¡Hola! Con gusto te cuento ✨${sep}Tenemos agendas y tazas hermosas 🌸${sep}¿Buscabas algún diseño especial?"
+
+6. DISPOSITIVO DEL CLIENTE (${deviceType === 'mobile' ? 'TELÉFONO CELULAR' : 'COMPUTADORA / PC'} - ${deviceModel}):
+${deviceType === 'mobile'
+  ? '- El cliente te escribe desde su TELÉFONO CELULAR (pantalla vertical compacta).\n- Mantén siempre respuestas ágiles y breves. Al mencionar productos, la interfaz desplegará la tarjeta visual interactiva ajustada a su pantalla con foto, descripción y botón de compra.'
+  : '- El cliente te escribe desde una COMPUTADORA / PC de escritorio.\n- Ofrece respuestas completas, claras y bien estructuradas.'}
 
 CONTEXTO EN TIEMPO REAL:
 ${inventoryContext}${ragFaqSection}${chatHistoryRagSection}

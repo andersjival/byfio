@@ -1,3 +1,19 @@
+## [v4.19.207] - 2026-11-13
+
+### 📱 Detección de Dispositivo (PC/Móvil) y Adaptación Responsiva de Productos en Chat IA
+- **Detección Automática de Dispositivo ([aiAgentService.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/aiAgentService.ts), [deviceDetection.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/deviceDetection.ts))**:
+  - Detección precisa del cliente (`pc`, `mobile`, `tablet`) y modelo de dispositivo transmitida en el payload de mensajería con la IA.
+- **Inyección de Contexto de Dispositivo en Backend IA ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - Directriz del System Prompt adaptada dinámicamente según el dispositivo para emitir descripciones hiper-concisas en móviles sin truncamientos.
+- **Tarjeta de Producto Responsiva en Chat ([StarAgentProductCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentProductCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Ancho completo responsivo (`w-full sm:max-w-[88%]`), imagen optimizada (`w-16 h-16 sm:w-20 sm:h-20`), badges truncados y botones de acción táctiles en cuadrícula adaptativa (`grid-cols-2`).
+- **Transición Fluida de Carrito Móvil ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Desplazamiento bottom-sheet optimizado con `max-sm:translate-y-full` para entrada y salida limpia en pantallas táctiles.
+- **Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Caché PWA actualizado a `byfio-pwa-v4.19.207`.
+
+---
+
 ## [v4.19.206] - 2026-11-13
 
 ### 📊 Reporte y Filtro de Nuevos Usuarios Registrados (Día, Semana, Mes) en Panel Clientes
