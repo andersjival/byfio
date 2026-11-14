@@ -1,3 +1,22 @@
+## [v4.19.203] - 2026-11-13
+
+### 🎙️ Grabadora de Audio WhatsApp en Chatbot (Onda Dinámica, Segundero, Pausa y Borrar)
+- **Grabadora de Audio Interactiva Estilo WhatsApp ([StarAgentAudioBar.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentAudioBar.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Al presionar el botón circular ("la bolita"), la barra de entrada se transforma en la interfaz de audio de WhatsApp.
+  - **Segundero e Indicador**: Punto rojo intermitente con contador de segundos en formato `m:ss` tabular.
+  - **Línea de Tiempo y Onda Dinámica**: 18 barras de visualización de audio en movimiento continuo que oscilan y reaccionan al volumen real del micrófono.
+  - **Botón de Borrar (Izquierda)**: Icono de papelera para descartar la grabación en cualquier momento.
+  - **Botón Central de Pausa / Reanudar**: Control central que permite pausar la grabación (congelando el contador y la onda) y reanudarla fluidamente.
+  - **Botón de Enviar (Derecha)**: Botón circular con icono de envío para remitir la nota de voz a la Estrellita.
+- **Hook useVoiceRecorder Expandido ([useVoiceRecorder.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/useVoiceRecorder.ts))**:
+  - Incorporadas funciones nativas de `pauseRecording` y `resumeRecording`, cálculo de `audioLevel` mediante Web Audio API (`AnalyserNode`), y formato de tiempo `formattedTime`.
+- **Burbuja de Mensaje con Onda en Chat ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Las notas de voz enviadas por el usuario se muestran en el historial con badge de micrófono, visualizador de onda y transcripción.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.203`.
+
+---
+
 ## [v4.19.202] - 2026-11-13
 
 ### 🛍️ Compra Conversacional Interactiva en Chat (Checkout Integrado & Carrito en Ventana Oculta)

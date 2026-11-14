@@ -5,7 +5,7 @@ import { isEtfOrder } from '../../services/etfService';
 import {
   QrCode, BookmarkCheck, Receipt, Boxes, Landmark, GraduationCap,  ChevronRight, Star, BookOpen, Link2, CheckCircle2, ExternalLink, Share2, Users,
   BarChart3, Lock, UserCheck, Calendar, Truck, ShoppingBag, Smartphone, Save,
-  ClipboardList, ShieldCheck, Shield, HardDrive, Layers, Bot
+  ClipboardList, ShieldCheck, Shield, HardDrive, Layers, Bot, MessageSquare
 } from 'lucide-react';
 
 import { AppRoute, SupplierOrder } from '../../types';
@@ -179,6 +179,12 @@ export const AdminHubMenu: React.FC<AdminHubMenuProps> = ({ onSelectTab, onNavig
       title: 'AI BYFIO',
       icon: Bot,
       gradient: 'from-[#8B5CF6] to-[#EC4899]',
+    },
+    {
+      id: 'chats-vivo' as AdminTabType,
+      title: 'Chats en Vivo ✨',
+      icon: MessageSquare,
+      gradient: 'from-[#EC4899] to-[#8B5CF6]',
     },
   ];
 
