@@ -4643,3 +4643,13 @@ Cualquier funcionalidad registrada aquí está blindada: ninguna IA puede elimin
 - [x] Catálogo de 5 Talleres Creativos oficiales y Tienda con stock en tiempo real.
 - [x] Checkout SINPE Móvil y ordenes FIFO.
 - [x] Alisto guiado paso a paso con escaneo QR y sonidos Web Audio API.
+
+
+### Versión 1.4.0 - Subdominio de Envíos & Banco de Pruebas Uber Direct con Tokens Superadmin
+- [x] Subdominio Oficial `envios.byfiocr.com` configurado en Cloudflare Pages y enrutador SPA (`parseRouteFromLocation`, ruta `envios`).
+- [x] Doble producto de prueba oficial con especificaciones de peso y volumen para Uber Direct.
+- [x] Flujo completo de compra interactiva: selección de producto, captura de dirección completa (CR), cotización de despacho y confirmación de pago.
+- [x] Monitor de despacho Uber Direct en pantalla en tiempo real con simulación de estados (búsqueda, asignación de chofer con foto y placa, recolección en tienda, tránsito y entrega) e inspección de JSON API.
+- [x] Modal de configuración de Uber Direct (entorno Sandbox/Producción, credenciales API, dirección de tienda By.Fio en Heredia y reglas de despacho).
+- [x] Acceso protegido por Login exclusivo (Credenciales Superadmin o Token de Acceso con enlace directo de 1 clic).
+- [x] Panel de Gestión de Tokens de Envíos en Superadmin (`SuperadminEnviosTokensTab`) con generación, copiado, revocación y persistencia en Cloudflare D1 (`/api/store-config`).

@@ -7,6 +7,7 @@ import { SuperadminLogin } from './SuperadminLogin';
 import { SuperadminModuleCard } from './SuperadminModuleCard';
 import { SuppliersOrdersSection } from '../admin/SuppliersOrdersSection';
 import { SuperadminAiPanel } from './SuperadminAiPanel';
+import { SuperadminEnviosTokensTab } from './SuperadminEnviosTokensTab';
 import {
   Shield, CheckCheck, RotateCcw, ExternalLink, LogOut, Search,
   SlidersHorizontal, CheckCircle2, AlertCircle, Layers,
@@ -40,7 +41,7 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
     markProposalAcceptanceAsRead,
   } = useApp();
 
-  const [activeSuperadminTab, setActiveSuperadminTab] = useState<'modules' | 'suppliers' | 'proposals' | 'ai'>('modules');
+  const [activeSuperadminTab, setActiveSuperadminTab] = useState<'modules' | 'suppliers' | 'proposals' | 'ai' | 'envios'>('modules');
   const [proposalStatusFilter, setProposalStatusFilter] = useState<'all' | 'pending' | 'contacted' | 'active'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -475,6 +476,22 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
             Live
           </span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSuperadminTab('envios')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bubble text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            activeSuperadminTab === 'envios'
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-xs'
+              : 'text-teal-200 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Truck className="w-4 h-4 text-emerald-300" />
+          <span>Tokens Envíos &amp; Uber</span>
+          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-950 text-emerald-300 font-mono font-bold">
+            Subdominio
+          </span>
+        </button>
       </div>
 
       {activeSuperadminTab === 'suppliers' && (
@@ -826,6 +843,10 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
 
       {activeSuperadminTab === 'ai' && (
         <SuperadminAiPanel />
+      )}
+
+      {activeSuperadminTab === 'envios' && (
+        <SuperadminEnviosTokensTab onNavigateToEnvios={() => onNavigate('envios')} />
       )}
     </div>
   );

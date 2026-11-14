@@ -2802,7 +2802,45 @@ html.dark .layaway-expanded-container .layaway-progress-track {
   border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Animación de ventana que sale suavemente por detrás hacia la derecha */
+/* Animación de apertura estilo cortina suave para tarjeta de registro */
+@keyframes curtainSlideOpen {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0 round 24px);
+    transform: translateX(-30px) scale(0.98);
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0% 0 0 round 24px);
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes curtainSlideClose {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 0% 0 0 round 24px);
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0 round 24px);
+    transform: translateX(-30px) scale(0.98);
+  }
+}
+
+.animate-curtain-open {
+  animation: curtainSlideOpen 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-curtain-close {
+  animation: curtainSlideClose 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Animación legacy de ventana que sale por detrás */
 @keyframes slideFromBehindRight {
   0% {
     opacity: 0;

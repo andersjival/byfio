@@ -221,7 +221,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative flex flex-col sm:flex-row items-center justify-center gap-0 sm:gap-4 max-w-full"
+        className="relative flex flex-col sm:flex-row items-center justify-center max-w-full"
       >
         {/* Ventana de Chat de la Estrellita (z-20) */}
         <div
