@@ -1,4 +1,25 @@
-﻿## [v4.19.209] - 2026-11-13
+## [v4.19.210] - 2026-11-13
+
+### 💬 Unificación Inteligente y Antiduplicados en Chat Online en Vivo
+- **Resolución Inteligente de Conversación ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - Unificación automática de hilo por identidad de usuario (`user_name` o `user_id`). Al enviar nuevos mensajes, el backend reutiliza el hilo existente en lugar de crear filas duplicadas en la base de datos D1.
+- **Deduplicación y Consolidación en API ([live-chats.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/live-chats.ts))**:
+  - En la lista de chats en vivo, los mensajes y sesiones de un mismo usuario se agrupan en una única entrada consolidada con el último mensaje, tiempo relativo más reciente y conteo acumulado de mensajes.
+  - Al abrir el hilo de un cliente, se cargan todos sus mensajes de forma continua y cronológica.
+  - Al eliminar un chat, se limpian todos los registros asociados a ese usuario para no dejar huérfanos.
+- **Persistencia de Conversación en Cliente ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Clave de sesión determinista por usuario identificado (`conv_user_{nombre}`) y persistencia de ID de invitado en `localStorage` para visitantes anónimos.
+  - Los mensajes recientes se preservan en caché local para que el usuario mantenga su historial continuo al cerrar y reabrir el chat.
+- **Panel Administrativo Blindado ([AiLiveChatsCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiLiveChatsCard.tsx))**:
+  - Memoria `useMemo` de deduplicación en tiempo real en la vista de lista de conversaciones. Un usuario jamás vuelve a aparecer repetido.
+- **Limpieza y Fusión de Base de Datos D1**:
+  - Consolidadas en producción las conversaciones dispersas previas hacia hilos únicos por cliente.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.210`.
+
+---
+
+## [v4.19.209] - 2026-11-13
 
 ### 🎨 Corrección Integral de Contraste y Colores en Agenda (Tema Oscuro & Claro)
 - **Aislamiento y Protección de Superficie Pastel ([CalendarAgendaView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/agenda/CalendarAgendaView.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:

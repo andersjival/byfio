@@ -83,22 +83,42 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
         'SELECT id, user_id, user_name, user_role, last_message, created_at, updated_at FROM agent_conversations WHERE id = ?1'
       ).bind(conversationId).first();
 
-      const messagesRes = await db.prepare(
-        'SELECT id, conversation_id, role, content, has_audio, created_at FROM agent_messages WHERE conversation_id = ?1 ORDER BY created_at ASC'
-      ).bind(conversationId).all();
+      const targetUser = conv?.user_name ? String(conv.user_name).trim().toLowerCase() : '';
+      const isNamed = targetUser && targetUser !== 'cliente web' && targetUser !== 'anon';
+
+      const messagesRes = isNamed
+        ? await db.prepare(`
+            SELECT m.id, m.conversation_id, m.role, m.content, m.has_audio, m.created_at 
+            FROM agent_messages m
+            LEFT JOIN agent_conversations c ON c.id = m.conversation_id
+            WHERE m.conversation_id = ?1 
+               OR LOWER(TRIM(c.user_name)) = ?2
+            ORDER BY datetime(m.created_at) ASC
+          `).bind(conversationId, targetUser).all()
+        : await db.prepare(
+            'SELECT id, conversation_id, role, content, has_audio, created_at FROM agent_messages WHERE conversation_id = ?1 ORDER BY datetime(created_at) ASC'
+          ).bind(conversationId).all();
+
+      const rawMsgs = (messagesRes.results || []) as any[];
+      const seenMsgIds = new Set<string>();
+      const uniqueMessages = rawMsgs.filter((m) => {
+        if (!m.id || seenMsgIds.has(m.id)) return false;
+        seenMsgIds.add(m.id);
+        return true;
+      });
 
       return new Response(
         JSON.stringify({
           success: true,
           conversation: conv,
-          messages: messagesRes.results || [],
+          messages: uniqueMessages,
           retentionPeriod: chatRetentionPeriod,
         }),
         { headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
       );
     }
 
-    // 4. Listar todas las conversaciones con filtros
+    // 4. Listar todas las conversaciones con filtros y unificación inteligente por usuario
     let sql = `
       SELECT 
         c.id, 
@@ -129,14 +149,47 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
       sql += ` AND date(c.updated_at) = date('now')`;
     }
 
-    sql += ` GROUP BY c.id ORDER BY c.updated_at DESC LIMIT 120`;
+    sql += ` GROUP BY c.id ORDER BY c.updated_at DESC LIMIT 200`;
 
     const convRows = await db.prepare(sql).bind(...params).all();
+    const rawRows = (convRows.results || []) as any[];
+
+    // Agrupación y deduplicación inteligente: NUNCA repetir el mismo usuario en vivo
+    const userMap = new Map<string, any>();
+    for (const row of rawRows) {
+      const uName = (row.user_name || '').trim();
+      const uId = (row.user_id || '').trim();
+      const isNamed = uName && uName.toLowerCase() !== 'cliente web' && uName.toLowerCase() !== 'anon';
+      const uniqueKey = isNamed
+        ? `user_${uName.toLowerCase()}`
+        : (uId && uId !== 'anon' ? `uid_${uId.toLowerCase()}` : `conv_${row.id}`);
+
+      if (!userMap.has(uniqueKey)) {
+        userMap.set(uniqueKey, {
+          ...row,
+          message_count: Number(row.message_count || 0),
+        });
+      } else {
+        const existing = userMap.get(uniqueKey);
+        existing.message_count = Number(existing.message_count || 0) + Number(row.message_count || 0);
+        // Conservar la versión más reciente en fecha y último mensaje
+        if (new Date(row.updated_at).getTime() > new Date(existing.updated_at).getTime()) {
+          existing.id = row.id;
+          existing.last_message = row.last_message;
+          existing.updated_at = row.updated_at;
+          existing.user_role = row.user_role || existing.user_role;
+        }
+      }
+    }
+
+    const unifiedConversations = Array.from(userMap.values())
+      .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+      .slice(0, 100);
 
     return new Response(
       JSON.stringify({
         success: true,
-        conversations: convRows.results || [],
+        conversations: unifiedConversations,
         retentionPeriod: chatRetentionPeriod,
         timestamp: new Date().toISOString(),
       }),
@@ -203,7 +256,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       );
     }
 
-    // Acción C: Eliminar conversación individual
+    // Acción C: Eliminar conversación individual (limpiando todos los fragmentos del usuario)
     if (action === 'delete_conversation') {
       const conversationId = body?.conversationId;
       if (!conversationId) {
@@ -213,8 +266,24 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         });
       }
 
-      await db.prepare('DELETE FROM agent_messages WHERE conversation_id = ?1').bind(conversationId).run();
-      await db.prepare('DELETE FROM agent_conversations WHERE id = ?1').bind(conversationId).run();
+      const conv = await db.prepare(
+        'SELECT id, user_id, user_name FROM agent_conversations WHERE id = ?1'
+      ).bind(conversationId).first();
+
+      const uName = conv?.user_name ? String(conv.user_name).trim().toLowerCase() : '';
+      const isNamed = uName && uName !== 'cliente web' && uName !== 'anon';
+
+      if (isNamed) {
+        await db.prepare(`
+          DELETE FROM agent_messages WHERE conversation_id IN (
+            SELECT id FROM agent_conversations WHERE LOWER(TRIM(user_name)) = ?1 OR id = ?2
+          )
+        `).bind(uName, conversationId).run();
+        await db.prepare('DELETE FROM agent_conversations WHERE LOWER(TRIM(user_name)) = ?1 OR id = ?2').bind(uName, conversationId).run();
+      } else {
+        await db.prepare('DELETE FROM agent_messages WHERE conversation_id = ?1').bind(conversationId).run();
+        await db.prepare('DELETE FROM agent_conversations WHERE id = ?1').bind(conversationId).run();
+      }
 
       return new Response(
         JSON.stringify({ success: true, deletedId: conversationId }),

@@ -88,8 +88,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       ? body.history
       : [];
     const userName: string = (body?.userName || '').trim();
-    const conversationId: string =
-      body?.conversationId || `conv_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const userId: string = (body?.userId || userName || '').trim();
+    let conversationId: string = (body?.conversationId || '').trim();
 
     // Detección de Dispositivo (Celular / Móvil vs Computadora / PC)
     const userAgent = context.request.headers.get('user-agent') || '';
@@ -494,6 +494,35 @@ ${aiConfig.systemPromptOverride ? `\nDIRECTRICES ADICIONALES DEL SYSTEM PROMPT:\
     const storageDb = context.env.DB || context.env.AGENT_DB;
     if (storageDb) {
       try {
+        const normName = userName.toLowerCase();
+        const normUserId = userId.toLowerCase();
+        const isNamedUser = normName && normName !== 'anon' && normName !== 'cliente web';
+
+        let existingConv: any = null;
+        if (conversationId) {
+          existingConv = await storageDb.prepare(
+            'SELECT id FROM agent_conversations WHERE id = ?1'
+          ).bind(conversationId).first();
+        }
+
+        // Resolución inteligente: si no se encontró por ID directo pero el usuario tiene identidad, buscar su conversación activa
+        if (!existingConv && isNamedUser) {
+          existingConv = await storageDb.prepare(
+            `SELECT id FROM agent_conversations 
+             WHERE LOWER(TRIM(user_name)) = ?1 
+                OR LOWER(TRIM(user_id)) = ?2 
+             ORDER BY updated_at DESC LIMIT 1`
+          ).bind(normName, normUserId || normName).first();
+        }
+
+        if (existingConv?.id) {
+          conversationId = existingConv.id;
+        } else if (!conversationId) {
+          conversationId = isNamedUser
+            ? `conv_user_${normName.replace(/[^a-z0-9_-]/g, '_')}`
+            : `conv_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        }
+
         const now = new Date();
         const dateStr = now.toISOString().split('T')[0];
         const hourStr = String(now.getUTCHours()).padStart(2, '0');
@@ -505,6 +534,7 @@ ${aiConfig.systemPromptOverride ? `\nDIRECTRICES ADICIONALES DEL SYSTEM PROMPT:\
              VALUES (?1, ?2, ?3, ?4, ?5, CURRENT_TIMESTAMP) 
              ON CONFLICT(id) DO UPDATE SET 
                user_name = excluded.user_name,
+               user_role = excluded.user_role,
                last_message = excluded.last_message,
                updated_at = CURRENT_TIMESTAMP`
           ).bind(conversationId, userName || 'anon', userName || 'Cliente Web', role, lastMsgSnippet),

@@ -80,6 +80,26 @@ const findMatchingProduct = (text: string, catalog: Product[]): Product | null =
   return null;
 };
 
+const getChatConversationId = (uName?: string) => {
+  const normName = (uName || '').trim().toLowerCase();
+  if (normName && normName !== 'anon' && normName !== 'cliente web') {
+    const safeKey = normName.replace(/[^a-z0-9_-]/g, '_');
+    return `conv_user_${safeKey}`;
+  }
+  const key = 'byfio_guest_chat_session_id';
+  let stored = '';
+  try {
+    stored = localStorage.getItem(key) || '';
+  } catch {}
+  if (!stored) {
+    stored = `conv_guest_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    try {
+      localStorage.setItem(key, stored);
+    } catch {}
+  }
+  return stored;
+};
+
 export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   isOpen,
   onClose,
@@ -88,17 +108,29 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
 }) => {
   const { products, addToCart } = useApp();
 
-  const [messages, setMessages] = useState<ChatMessage[]>(() => [
-    {
-      id: 'init',
-      role: 'assistant',
-      content:
-        userRole === 'staff' || userRole === 'admin'
-          ? `¡Hola ${userName ? userName.split(' ')[0] : 'compañera'}! ✨ Soy tu asistente de inventario y pedidos. Puedes preguntarme el stock de cualquier producto o cupos de talleres por texto o con un audio.`
-          : (getCachedAiConfig().welcomeMessage || `¡Hola ${userName ? userName.split(' ')[0] : ''}! ✨🌸 Soy la Estrellita de by.fio. Estoy aquí para contarte si tenemos productos en stock, fechas de talleres o ayudarte con lo que necesites.`),
-      timestamp: Date.now(),
-    },
-  ]);
+  const [conversationId, setConversationId] = useState(() => getChatConversationId(userName));
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    const cid = getChatConversationId(userName);
+    try {
+      const saved = localStorage.getItem(`byfio_chat_msgs_${cid}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [
+      {
+        id: 'init',
+        role: 'assistant',
+        content:
+          userRole === 'staff' || userRole === 'admin'
+            ? `¡Hola ${userName ? userName.split(' ')[0] : 'compañera'}! ✨ Soy tu asistente de inventario y pedidos. Puedes preguntarme el stock de cualquier producto o cupos de talleres por texto o con un audio.`
+            : (getCachedAiConfig().welcomeMessage || `¡Hola ${userName ? userName.split(' ')[0] : ''}! ✨🌸 Soy la Estrellita de by.fio. Estoy aquí para contarte si tenemos productos en stock, fechas de talleres o ayudarte con lo que necesites.`),
+        timestamp: Date.now(),
+      },
+    ];
+  });
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [typingStatus, setTypingStatus] = useState<'thinking' | 'typing' | null>(null);
@@ -112,8 +144,8 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   const [isWaitingForSecondProduct, setIsWaitingForSecondProduct] = useState(false);
   const [addedSecondProductIds, setAddedSecondProductIds] = useState<Set<string>>(new Set());
 
-  const [conversationId] = useState(() => `conv_${Date.now()}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasTrackedOpenRef = useRef(false);
 
   const {
     isRecording,
@@ -141,11 +173,37 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   };
 
   useEffect(() => {
+    const nextId = getChatConversationId(userName);
+    if (nextId !== conversationId) {
+      setConversationId(nextId);
+    }
+  }, [userName, conversationId]);
+
+  useEffect(() => {
+    if (messages.length > 1) {
+      try {
+        localStorage.setItem(`byfio_chat_msgs_${conversationId}`, JSON.stringify(messages.slice(-30)));
+      } catch {}
+    }
+  }, [messages, conversationId]);
+
+  useEffect(() => {
     if (isOpen) {
-      aiAgentService.trackChatOpened(userRole, userName);
+      if (!hasTrackedOpenRef.current) {
+        hasTrackedOpenRef.current = true;
+        aiAgentService.trackChatOpened(userRole, userName);
+      }
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      hasTrackedOpenRef.current = false;
+    }
+  }, [isOpen, userRole, userName]);
+
+  useEffect(() => {
+    if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isOpen, userRole, userName]);
+  }, [messages, isOpen]);
 
   if (!isOpen) return null;
 
@@ -394,6 +452,10 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       conversationId,
     });
 
+    if (result.conversationId && result.conversationId !== conversationId) {
+      setConversationId(result.conversationId);
+    }
+
     await deliverAssistantChunks(result, matchedProduct);
   };
 
@@ -474,6 +536,10 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       userName,
       conversationId,
     });
+
+    if (result.conversationId && result.conversationId !== conversationId) {
+      setConversationId(result.conversationId);
+    }
 
     if (result.transcription) {
       const matched = findMatchingProduct(result.transcription, products);

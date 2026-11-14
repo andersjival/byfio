@@ -38,6 +38,36 @@ export const AiLiveChatsCard: React.FC<AiLiveChatsCardProps> = () => {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Deduplicación inteligente por usuario único: garantiza que jamás se repita un mismo usuario
+  const uniqueConversations = React.useMemo(() => {
+    const map = new Map<string, AiLiveConversation>();
+    for (const conv of conversations) {
+      const uName = (conv.user_name || '').trim();
+      const uId = (conv.user_id || '').trim();
+      const isNamed = uName && uName.toLowerCase() !== 'cliente web' && uName.toLowerCase() !== 'anon';
+      const key = isNamed
+        ? `user_${uName.toLowerCase()}`
+        : (uId && uId !== 'anon' ? `uid_${uId.toLowerCase()}` : `conv_${conv.id}`);
+
+      if (!map.has(key)) {
+        map.set(key, { ...conv, message_count: Number(conv.message_count || 0) });
+      } else {
+        const prev = map.get(key)!;
+        const prevTime = new Date(prev.updated_at).getTime();
+        const currTime = new Date(conv.updated_at).getTime();
+        const totalMsgs = Number(prev.message_count || 0) + Number(conv.message_count || 0);
+        if (currTime > prevTime) {
+          map.set(key, { ...conv, message_count: totalMsgs });
+        } else {
+          prev.message_count = totalMsgs;
+        }
+      }
+    }
+    return Array.from(map.values()).sort(
+      (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+    );
+  }, [conversations]);
+
   const loadConversations = useCallback(async (quiet = false) => {
     if (!quiet) setLoadingList(true);
     try {
@@ -287,7 +317,7 @@ export const AiLiveChatsCard: React.FC<AiLiveChatsCardProps> = () => {
                     : 'bg-white dark:bg-[#281d42] text-slate-600 dark:text-purple-200 border border-purple-100 dark:border-purple-900/40 hover:bg-purple-50'
                 }`}
               >
-                Todos ({conversations.length})
+                Todos ({uniqueConversations.length})
               </button>
               <button
                 type="button"
@@ -327,7 +357,7 @@ export const AiLiveChatsCard: React.FC<AiLiveChatsCardProps> = () => {
 
           {/* Lista Scrolleable de Conversaciones */}
           <div className="flex-1 overflow-y-auto divide-y divide-purple-50 dark:divide-purple-900/20">
-            {conversations.length === 0 ? (
+            {uniqueConversations.length === 0 ? (
               <div className="p-8 text-center text-slate-400 dark:text-purple-300 space-y-2">
                 <MessageSquare className="w-8 h-8 mx-auto text-purple-300 dark:text-purple-600" />
                 <p className="font-bubble font-bold text-xs">No hay conversaciones registradas</p>
@@ -336,7 +366,7 @@ export const AiLiveChatsCard: React.FC<AiLiveChatsCardProps> = () => {
                 </p>
               </div>
             ) : (
-              conversations.map((conv) => {
+              uniqueConversations.map((conv) => {
                 const isSelected = selectedConvId === conv.id;
                 return (
                   <div
