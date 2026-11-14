@@ -1,3 +1,18 @@
+## [v4.19.196] - 2026-11-13
+
+### 📐 Formato Compacto, Alineación Inferior y Despliegue Pausado a 1.6s
+- **Ancho Más Angosto y Altura Metida ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Ventana de registro redimensionada a `sm:w-[360px]` (más angosta y proporcionada) y `sm:h-[570px]`.
+  - Alineada en la base con la ventana del chat mediante `items-end` y `sm:self-end`, logrando que la parte superior quede metida 50px por debajo del header del chat sin cortes ni recortes.
+- **Header Íntegro y Espaciado Óptimo**:
+  - Título `"Registro Rápido"`, icono y botón de cierre completamente visibles con esquinas redondeadas naturales `rounded-3xl` e interior holgado `sm:pl-7 sm:pr-5`.
+- **Transición Líquida Súper Lenta (1600ms) ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Calibrada a 1.6 segundos con curva `cubic-bezier(0.16, 1, 0.3, 1)` y temporizadores a 1500ms, proporcionando una apertura y cierre extremadamente suaves, serenos y continuos.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.196`.
+
+---
+
 ## [v4.19.195] - 2026-11-13
 
 ### 🌓 Profundidad Tridimensional y Sombra Direccional: Despliegue Escalonado con Capa Superpuesta
@@ -222,6 +237,21 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.196] - 2026-11-13
+
+### 📐 Formato Compacto, Alineación Inferior y Despliegue Pausado a 1.6s
+- **Ancho Más Angosto y Altura Metida ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Ventana de registro redimensionada a `sm:w-[360px]` (más angosta y proporcionada) y `sm:h-[570px]`.
+  - Alineada en la base con la ventana del chat mediante `items-end` y `sm:self-end`, logrando que la parte superior quede metida 50px por debajo del header del chat sin cortes ni recortes.
+- **Header Íntegro y Espaciado Óptimo**:
+  - Título `"Registro Rápido"`, icono y botón de cierre completamente visibles con esquinas redondeadas naturales `rounded-3xl` e interior holgado `sm:pl-7 sm:pr-5`.
+- **Transición Líquida Súper Lenta (1600ms) ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Calibrada a 1.6 segundos con curva `cubic-bezier(0.16, 1, 0.3, 1)` y temporizadores a 1500ms, proporcionando una apertura y cierre extremadamente suaves, serenos y continuos.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.196`.
 
 ---
 
