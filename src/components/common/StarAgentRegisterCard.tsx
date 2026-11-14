@@ -44,7 +44,7 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
       setIsVisible(false);
       const timer = setTimeout(() => {
         setIsMounted(false);
-      }, 1000);
+      }, 1250);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -186,7 +186,7 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
         onSuccess({ name: formData.name, email: formData.email });
         onClose();
         setStep(1);
-      }, 1000);
+      }, 1250);
     }, 2000);
   };
 
@@ -196,24 +196,24 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
     setTimeout(() => {
       onClose();
       setStep(1);
-    }, 1000);
+    }, 1250);
   };
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 top-auto sm:relative sm:inset-auto z-30 sm:z-10 transition-all duration-[1150ms] ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden ${
+      className={`fixed inset-x-0 bottom-0 top-auto sm:relative sm:inset-auto z-30 sm:z-10 sm:-translate-y-4 sm:pt-2 sm:-mt-2 transition-all duration-[1350ms] ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
         isVisible
-          ? 'w-full sm:w-[420px] sm:max-w-[420px] sm:-ml-6 opacity-100 max-sm:translate-y-0'
+          ? 'w-full sm:w-[420px] sm:max-w-[420px] sm:-ml-4 opacity-100 max-sm:translate-y-0'
           : 'max-sm:w-full sm:w-0 sm:max-w-0 sm:ml-0 opacity-0 pointer-events-none max-sm:-translate-y-[135%]'
       }`}
     >
       <div
-        className={`w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh] sm:-translate-y-4 bg-white/95 dark:bg-[#1f1535]/95 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border-2 border-fio-300 dark:border-purple-500/50 flex flex-col justify-between overflow-hidden relative transition-all duration-[1150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isVisible ? 'translate-x-0 opacity-100' : 'sm:-translate-x-48 opacity-30'
+        className={`w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh] bg-white/95 dark:bg-[#1f1535]/95 backdrop-blur-2xl rounded-t-3xl sm:rounded-[28px] p-5 sm:py-6 sm:pr-6 sm:pl-9 shadow-2xl border-2 border-fio-300 dark:border-purple-500/50 flex flex-col justify-between overflow-hidden relative transition-all duration-[1350ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isVisible ? 'translate-x-0 opacity-100' : 'sm:-translate-x-32 opacity-25'
         }`}
       >
-        {/* Pliegue / Sombra suave de cortina en el borde izquierdo (desktop) */}
-        <div className="hidden sm:block absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-purple-900/15 to-transparent pointer-events-none z-20" />
+        {/* Pliegue / Sombra suave en el borde izquierdo (desktop) */}
+        <div className="hidden sm:block absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-purple-950/20 to-transparent pointer-events-none z-20" />
 
         {/* Fondo Glow */}
         <div className="absolute -top-12 -right-12 w-32 h-32 bg-fio-pink/20 rounded-full blur-2xl pointer-events-none" />

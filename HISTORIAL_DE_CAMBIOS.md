@@ -1,3 +1,17 @@
+## [v4.19.193] - 2026-11-13
+
+### 🎨 Perfeccionamiento Visual: Esquinas Redondeadas Superiores, Sangría de Formulario y Despliegue Fluido
+- **Esquinas Superiores Redondeadas Simétricas ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Eliminado el recorte plano superior trasladando el desfase `sm:-translate-y-4` al contenedor exterior junto con compensación `sm:pt-2 sm:-mt-2` y radio `rounded-t-3xl sm:rounded-[28px]`, garantizando esquinas superiores perfectamente redondas idénticas a las inferiores.
+- **Sangría y Separación del Formulario**:
+  - Ajustado el padding interno a `p-5 sm:py-6 sm:pr-6 sm:pl-9` y solapamiento a `sm:-ml-4`, dotando a los campos de texto e inputs de un margen holgado y elegante de 20px respecto al borde del chat.
+- **Salida y Entrada Más Lenta y Fluida ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Calibrada la duración a 1350ms con desaceleración ultra-suave `cubic-bezier(0.16, 1, 0.3, 1)` y temporizadores de desmontaje a 1250ms, logrando una transición pausada, sedosa y sin aceleraciones bruscas.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.193`.
+
+---
+
 ## [v4.19.192] - 2026-11-13
 
 ### 📊 Filtros por Periodo (Hora, Día, Semana, Mes), Estado ACTIVO y Visor de Modelos Protegido por Superadmin
@@ -178,6 +192,20 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.193] - 2026-11-13
+
+### 🎨 Perfeccionamiento Visual: Esquinas Redondeadas Superiores, Sangría de Formulario y Despliegue Fluido
+- **Esquinas Superiores Redondeadas Simétricas ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Eliminado el recorte plano superior trasladando el desfase `sm:-translate-y-4` al contenedor exterior junto con compensación `sm:pt-2 sm:-mt-2` y radio `rounded-t-3xl sm:rounded-[28px]`, garantizando esquinas superiores perfectamente redondas idénticas a las inferiores.
+- **Sangría y Separación del Formulario**:
+  - Ajustado el padding interno a `p-5 sm:py-6 sm:pr-6 sm:pl-9` y solapamiento a `sm:-ml-4`, dotando a los campos de texto e inputs de un margen holgado y elegante de 20px respecto al borde del chat.
+- **Salida y Entrada Más Lenta y Fluida ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Calibrada la duración a 1350ms con desaceleración ultra-suave `cubic-bezier(0.16, 1, 0.3, 1)` y temporizadores de desmontaje a 1250ms, logrando una transición pausada, sedosa y sin aceleraciones bruscas.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.193`.
 
 ---
 
