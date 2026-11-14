@@ -23,6 +23,10 @@ const DEFAULT_CONFIG = {
   // Simulación humana y tiempos
   enableHumanSimulation: true,
   enableChunking: true,
+  delayType: 'dynamic',
+  responseChunkSeparator: '|||',
+  maxResponseChunks: 3,
+  initialDelayMs: 2500,
   initialDelayMinMs: 2000,
   initialDelayMaxMs: 3500,
   msPerChar: 40, // 30 a 50 ms por carácter

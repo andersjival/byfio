@@ -1,3 +1,20 @@
+## [v4.19.188] - 2026-11-13
+
+### 🌸 Registro Rápido: Ancho Simétrico con el Chat, Despliegue Suave Estilo Cortina y Geolocalización GPS
+- **Ancho y Dimensiones Idénticas ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Ajustado el ancho y altura de la tarjeta de registro (`w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh]`) haciéndola 100% idéntica y simétrica a la ventana de chat de la Estrellita.
+- **Animación Suave Estilo Cortina ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css), [StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Apertura suave `animate-curtain-open` y cierre `animate-curtain-close` mediante desdoble horizontal con `clip-path: inset(...)` y expansión progresiva en 700ms (`cubic-bezier(0.16, 1, 0.3, 1)`), eliminando cualquier apertura instantánea o saltos de layout.
+  - Sombra sutil de pliegue de cortina en el borde izquierdo para una estética sedosa y fluida.
+- **Detección Automática de Ubicación GPS ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Incorporado botón interactivo `"📍 Usar mi ubicación GPS actual"` en el Paso 2 de registro (bajo el campo de dirección).
+  - Geocodificación inversa automática mediante OpenStreetMap Nominatim para rellenar la dirección en lenguaje natural (calle, distrito, cantón/provincia) o coordenadas de alta precisión.
+  - Almacenamiento directo de `lat` y `lng` en el perfil de la cuenta creada para envíos.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.188`.
+
+---
+
 ## [v4.19.187] - 2026-11-13
 
 ### 🤖 Calibración Técnica, Reglas de Comportamiento Estrictas y Simulación Humana para el Agente AI
@@ -94,6 +111,23 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.188] - 2026-11-13
+
+### 🌸 Registro Rápido: Ancho Simétrico con el Chat, Despliegue Suave Estilo Cortina y Geolocalización GPS
+- **Ancho y Dimensiones Idénticas ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Ajustado el ancho y altura de la tarjeta de registro (`w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh]`) haciéndola 100% idéntica y simétrica a la ventana de chat de la Estrellita.
+- **Animación Suave Estilo Cortina ([index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css), [StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Apertura suave `animate-curtain-open` y cierre `animate-curtain-close` mediante desdoble horizontal con `clip-path: inset(...)` y expansión progresiva en 700ms (`cubic-bezier(0.16, 1, 0.3, 1)`), eliminando cualquier apertura instantánea o saltos de layout.
+  - Sombra sutil de pliegue de cortina en el borde izquierdo para una estética sedosa y fluida.
+- **Detección Automática de Ubicación GPS ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Incorporado botón interactivo `"📍 Usar mi ubicación GPS actual"` en el Paso 2 de registro (bajo el campo de dirección).
+  - Geocodificación inversa automática mediante OpenStreetMap Nominatim para rellenar la dirección en lenguaje natural (calle, distrito, cantón/provincia) o coordenadas de alta precisión.
+  - Almacenamiento directo de `lat` y `lng` en el perfil de la cuenta creada para envíos.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.188`.
 
 ---
 

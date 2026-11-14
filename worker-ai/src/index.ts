@@ -93,6 +93,10 @@ export default {
           maxTokens: 120,
           enableHumanSimulation: true,
           enableChunking: true,
+          delayType: 'dynamic',
+          responseChunkSeparator: '|||',
+          maxResponseChunks: 3,
+          initialDelayMs: 2500,
           initialDelayMinMs: 2000,
           initialDelayMaxMs: 3500,
           msPerChar: 40,
@@ -117,6 +121,11 @@ export default {
         if (typeof body?.maxTokens === 'number') aiConfig.maxTokens = body.maxTokens;
         if (typeof body?.topP === 'number') aiConfig.topP = body.topP;
         if (typeof body?.topK === 'number') aiConfig.topK = body.topK;
+        if (typeof body?.responseChunkSeparator === 'string') aiConfig.responseChunkSeparator = body.responseChunkSeparator;
+        if (typeof body?.maxResponseChunks === 'number') aiConfig.maxResponseChunks = body.maxResponseChunks;
+        if (typeof body?.initialDelayMs === 'number') aiConfig.initialDelayMs = body.initialDelayMs;
+        if (typeof body?.msPerChar === 'number') aiConfig.msPerChar = body.msPerChar;
+        if (typeof body?.delayType === 'string') aiConfig.delayType = body.delayType;
 
         // Filtros de Seguridad y Moderación (Jailbreak, ofensas, política o solicitud de agente humano)
         const jailbreakPattern = /ignore\s+(all\s+)?(previous\s+)?instructions|forget\s+all\s+rules|act\s+as\s+a\s+DAN|system\s+prompt|revela\s+(el\s+)?prompt|prompt\s+del\s+sistema/i;
@@ -293,8 +302,12 @@ ${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\
         }
 
         // Dinámica de Conversación y Retrasos (Chunking & Simulación Humana)
+        const separator = (aiConfig.responseChunkSeparator || '|||').trim() || '|||';
+        const maxChunks = Math.min(Math.max(Number(aiConfig.maxResponseChunks || 3), 1), 6);
+        const delayType = aiConfig.delayType || 'dynamic';
+
         let rawChunks = assistantReply
-          .split('|||')
+          .split(separator)
           .map((c: string) => c.replace(/^[\s\r\n\-,•]+|[\s\r\n]+$/g, '').trim())
           .filter((c: string) => c.length > 0);
 
@@ -309,20 +322,33 @@ ${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\
             .filter((c: string) => c.length > 0);
         }
 
-        const messageChunks = rawChunks;
+        const messageChunks = rawChunks.slice(0, maxChunks);
 
-        // Retraso Inicial (Primer Mensaje): 2 a 4 segundos
-        const initialMin = Math.min(Math.max(Number(aiConfig.initialDelayMinMs ?? 2000), 1000), 3000);
-        const initialMax = Math.min(Math.max(Number(aiConfig.initialDelayMaxMs ?? 3500), initialMin + 500), 4500);
-        const initialDelayMs = Math.floor(Math.random() * (initialMax - initialMin + 1)) + initialMin;
+        // Retraso Inicial (Primer Mensaje)
+        let initialDelayMs = 2500;
+        if (typeof aiConfig.initialDelayMs === 'number' && aiConfig.initialDelayMs > 0) {
+          initialDelayMs = Math.min(Math.max(aiConfig.initialDelayMs, 800), 5000);
+        } else {
+          const initialMin = Math.min(Math.max(Number(aiConfig.initialDelayMinMs ?? 2000), 1000), 3000);
+          const initialMax = Math.min(Math.max(Number(aiConfig.initialDelayMaxMs ?? 3500), initialMin + 500), 4500);
+          initialDelayMs = Math.floor(Math.random() * (initialMax - initialMin + 1)) + initialMin;
+        }
 
-        // Simulación de tipeo: 30 a 50 ms/char con margen de 1 a 2 seg
-        const msPerChar = Math.min(Math.max(Number(aiConfig.msPerChar ?? 40), 30), 50);
-        const delayMarginMs = Math.min(Math.max(Number(aiConfig.delayMarginMs ?? 1200), 1000), 2000);
+        // Simulación de tipeo y retraso intermedio
+        const msPerChar = Math.min(Math.max(Number(aiConfig.msPerChar ?? 40), 20), 80);
+        const delayMarginMs = Math.min(Math.max(Number(aiConfig.delayMarginMs ?? 1200), 800), 2000);
 
         let cumulativeTyping = 0;
         const chunkObjects = messageChunks.map((chunk, index) => {
-          const typingMs = Math.min(6500, Math.max(1000, Math.round(chunk.length * msPerChar) + delayMarginMs));
+          let typingMs = 1500;
+          if (delayType === 'fixed') {
+            typingMs = 2000;
+          } else if (delayType === 'natural') {
+            const jitter = Math.floor(Math.random() * 400) - 200;
+            typingMs = Math.min(6500, Math.max(1000, Math.round(chunk.length * msPerChar) + delayMarginMs + jitter));
+          } else {
+            typingMs = Math.min(6500, Math.max(1000, Math.round(chunk.length * msPerChar) + delayMarginMs));
+          }
           cumulativeTyping += typingMs;
           return {
             index,

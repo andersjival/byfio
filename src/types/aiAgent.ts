@@ -27,9 +27,13 @@ export interface AiAgentConfig {
   // Lógica de simulación humana & retrasos
   enableHumanSimulation?: boolean; // default true
   enableChunking?: boolean; // default true
+  delayType?: 'dynamic' | 'fixed' | 'natural'; // default 'dynamic' (recomendado)
+  responseChunkSeparator?: string; // default '|||' (recomendado)
+  maxResponseChunks?: number; // default 3 (recomendado)
+  initialDelayMs?: number; // default 2500 (2.5s recomendado)
   initialDelayMinMs?: number; // 2000 ms (2s)
   initialDelayMaxMs?: number; // 3500 ms (3.5s)
-  msPerChar?: number; // 30 a 50 ms (default 40)
+  msPerChar?: number; // 30 a 50 ms (default 40 recomendado)
   delayMarginMs?: number; // 1000 a 2000 ms (default 1200)
   updatedAt?: string;
 }
@@ -47,6 +51,10 @@ export const DEFAULT_AI_AGENT_CONFIG: AiAgentConfig = {
   maxTokens: 120,
   enableHumanSimulation: true,
   enableChunking: true,
+  delayType: 'dynamic',
+  responseChunkSeparator: '|||',
+  maxResponseChunks: 3,
+  initialDelayMs: 2500,
   initialDelayMinMs: 2000,
   initialDelayMaxMs: 3500,
   msPerChar: 40,
