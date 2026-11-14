@@ -1,3 +1,20 @@
+## [v4.19.202] - 2026-11-13
+
+### 🛍️ Compra Conversacional Interactiva en Chat (Checkout Integrado & Carrito en Ventana Oculta)
+- **Tarjeta de Producto en Mensajes del Chat ([StarAgentProductCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentProductCard.tsx), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Al consultar o querer comprar un producto por chat, la Estrellita muestra la tarjeta visual con foto, título, categoría, precio en colones y disponibilidad en stock.
+  - Ofrece la pregunta interactiva: "¿Deseas pagar este producto ahora o te gustaría comprar algo más?" con botones `Pagar ahora` y `Comprar otro`.
+- **Transformación de la Ventana de Chat en Checkout ([StarAgentCheckoutView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentCheckoutView.tsx))**:
+  - Al presionar `Pagar ahora`, la ventana de chat se convierte inmediatamente en un Checkout optimizado: selección de entrega (Envío a domicilio / Retiro en tienda Tibás), datos de cliente auto-completados con GPS, instrucciones de pago SINPE Móvil al 6400-4640 y confirmación directa de orden.
+- **Flujo de Segundo Producto & Carrito Deslizante a 1 Segundo ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Si el usuario indica que desea comprar otro producto, la Estrellita pregunta cuál busca y ofrece sugerencias interactivas.
+  - Al elegir el segundo producto, la Estrellita muestra la tarjeta con el botón `Agregar`.
+  - Al dar clic en `Agregar`, exactamente 1 segundo después (`setTimeout 1000ms`), la ventana oculta del lateral derecho se desliza mostrando la lista de los 2 productos en formato carrito de compras con control de cantidades, subtotales y botón directo a Checkout.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.202`.
+
+---
+
 ## [v4.19.201] - 2026-11-13
 
 ### 🌙 Contraste y Legibilidad en Modo Oscuro (Módulo de Pagos y Recepción SINPE Móvil)

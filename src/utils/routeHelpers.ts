@@ -337,6 +337,17 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'ai-byfio' };
   }
   if (
+    path.includes('/admin/chats-en-vivo') ||
+    path.includes('/admin/chats-vivo') ||
+    path.includes('/admin/live-chats') ||
+    hash.includes('admin/chats-en-vivo') ||
+    hash.includes('admin/chats-vivo') ||
+    seccionParam === 'chats-vivo' ||
+    seccionParam === 'chats-en-vivo'
+  ) {
+    return { route: 'admin', adminTab: 'chats-vivo' };
+  }
+  if (
     !path.startsWith('/admin/superadmin') &&
     (path.startsWith('/admin') ||
     path.startsWith('/administracion') ||
@@ -366,6 +377,7 @@ export const parseRouteFromLocation = (): RouteInfo => {
         'drive-courses',
         'etf',
         'ai-byfio',
+        'chats-vivo',
       ];
       if (savedAdminTab && validAdminTabs.includes(savedAdminTab)) {
         return { route: 'admin', adminTab: savedAdminTab };

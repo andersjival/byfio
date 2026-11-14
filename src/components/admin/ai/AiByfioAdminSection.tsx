@@ -8,17 +8,19 @@ import { AiMetricsOverviewCard } from './AiMetricsOverviewCard';
 import { AiSystemPromptDirectivesCard } from './AiSystemPromptDirectivesCard';
 import { AiTechnicalParamsCard } from './AiTechnicalParamsCard';
 import { AiConversationDynamicsCard } from './AiConversationDynamicsCard';
+import { AiLiveChatsCard } from './AiLiveChatsCard';
 
 interface AiByfioAdminSectionProps {
   onBackToHub?: () => void;
+  initialTab?: TabKey;
 }
 
-type TabKey = 'directivas' | 'parametros' | 'dinamica' | 'stock' | 'simulador' | 'metricas' | 'todo';
+type TabKey = 'directivas' | 'parametros' | 'dinamica' | 'stock' | 'simulador' | 'chats-vivo' | 'metricas' | 'todo';
 
-export const AiByfioAdminSection: React.FC<AiByfioAdminSectionProps> = ({ onBackToHub }) => {
+export const AiByfioAdminSection: React.FC<AiByfioAdminSectionProps> = ({ onBackToHub, initialTab }) => {
   const { config, saving, toastMessage, updateConfig, persistConfig, resetToRecommendedDefaults } =
     useAiAgentConfig();
-  const [activeTab, setActiveTab] = useState<TabKey>('directivas');
+  const [activeTab, setActiveTab] = useState<TabKey>(initialTab || 'directivas');
 
   const tabs: Array<{ key: TabKey; label: string }> = [
     { key: 'directivas', label: '🎯 Directrices & Prompt' },
@@ -26,6 +28,7 @@ export const AiByfioAdminSection: React.FC<AiByfioAdminSectionProps> = ({ onBack
     { key: 'dinamica', label: '⏱️ Dinámica WhatsApp' },
     { key: 'stock', label: '📦 Política de Stock' },
     { key: 'simulador', label: '🧪 Bot de Prueba' },
+    { key: 'chats-vivo', label: '💬 Chats en Vivo' },
     { key: 'metricas', label: '📊 Rendimiento AI' },
     { key: 'todo', label: '📑 Ver Todo' },
   ];
@@ -165,6 +168,10 @@ export const AiByfioAdminSection: React.FC<AiByfioAdminSectionProps> = ({ onBack
       )}
 
       {(activeTab === 'metricas' || activeTab === 'todo') && <AiMetricsOverviewCard />}
+
+      {(activeTab === 'chats-vivo' || activeTab === 'todo') && (
+        <AiLiveChatsCard onBackToHub={onBackToHub} />
+      )}
     </div>
   );
 };

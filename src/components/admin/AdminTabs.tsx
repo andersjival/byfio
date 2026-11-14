@@ -19,7 +19,8 @@ export type AdminTabType =
   | 'apps'
   | 'drive-courses'
   | 'etf'
-  | 'ai-byfio';
+  | 'ai-byfio'
+  | 'chats-vivo';
 
 export interface AdminTabsProps {
   activeTab?: AdminTabType;

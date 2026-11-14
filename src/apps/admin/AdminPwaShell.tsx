@@ -232,6 +232,11 @@ export const AdminPwaShell: React.FC<AdminPwaShellProps> = ({
                         <AiByfioAdminSection onBackToHub={() => onSelectAdminTab('hub')} />
                       </React.Suspense>
                     )}
+                    {adminTab === 'chats-vivo' && (
+                      <React.Suspense fallback={<div className="py-12 text-center text-slate-400 font-bubble text-sm">Cargando Chats en Vivo...</div>}>
+                        <AiByfioAdminSection initialTab="chats-vivo" onBackToHub={() => onSelectAdminTab('hub')} />
+                      </React.Suspense>
+                    )}
                   </>
                 )}
               </div>
