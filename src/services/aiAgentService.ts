@@ -79,6 +79,11 @@ export const aiAgentService = {
           maxTokens: opts.maxTokens ?? currentConfig.maxTokens,
           topP: opts.topP ?? currentConfig.topP,
           topK: opts.topK ?? currentConfig.topK,
+          responseChunkSeparator: currentConfig.responseChunkSeparator,
+          maxResponseChunks: currentConfig.maxResponseChunks,
+          initialDelayMs: currentConfig.initialDelayMs,
+          msPerChar: currentConfig.msPerChar,
+          delayType: currentConfig.delayType,
         }),
       });
 

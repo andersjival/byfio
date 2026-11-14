@@ -1,3 +1,21 @@
+## [v4.19.189] - 2026-11-13
+
+### 🎛️ Control Configurable de Retrasos WhatsApp, Separadores Editables y Rediseño Visual Púrpura/Rosa ByFio
+- **Configuración Dinámica de Retrasos WhatsApp ([AiGeneralSettingsCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiGeneralSettingsCard.tsx), [chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [aiAgent.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/aiAgent.ts))**:
+  - Selector de Tipo de Retraso: opción Dinámica recomendada por defecto (40ms/carácter), Natural (con pausas aleatorias) y Fija (2s), editable libremente por el administrador.
+  - Separador de Respuestas: valor por defecto recomendado (`|||`) con botón de restauración y campo de texto editable.
+  - Cantidad Máxima de Separaciones / Fragmentos: slider configurable de 1 a 5 mensajes (3 mensajes recomendado por defecto).
+- **Calibración Humana de Retraso Inicial y Velocidad de Tipeo**:
+  - Retraso Inicial: slider de 1.0s a 4.5s con valor recomendado por defecto fijado en 2.5s.
+  - Velocidad de Tipeo: slider de 20ms a 65ms por carácter con valor recomendado por defecto fijado en 40ms/carácter.
+- **Rediseño Visual de Reglas de Comportamiento (Lista Negra & Escape)**:
+  - Eliminados los tonos café/ámbar y textos amarillos.
+  - Nuevo diseño en degradado púrpura y rosa (`from-purple-50 via-pink-50/70 to-purple-50` y dark mode `from-purple-950/40 via-[#241738]/50`) con bordes púrpura, icono escudo en `text-fio-pink` y tipografía nítida en púrpura y rosa acorde a la marca by.fio.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.189`.
+
+---
+
 ## [v4.19.188] - 2026-11-13
 
 ### 🌸 Registro Rápido: Ancho Simétrico con el Chat, Despliegue Suave Estilo Cortina y Geolocalización GPS
@@ -111,6 +129,24 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.189] - 2026-11-13
+
+### 🎛️ Control Configurable de Retrasos WhatsApp, Separadores Editables y Rediseño Visual Púrpura/Rosa ByFio
+- **Configuración Dinámica de Retrasos WhatsApp ([AiGeneralSettingsCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiGeneralSettingsCard.tsx), [chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [aiAgent.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/types/aiAgent.ts))**:
+  - Selector de Tipo de Retraso: opción Dinámica recomendada por defecto (40ms/carácter), Natural (con pausas aleatorias) y Fija (2s), editable libremente por el administrador.
+  - Separador de Respuestas: valor por defecto recomendado (`|||`) con botón de restauración y campo de texto editable.
+  - Cantidad Máxima de Separaciones / Fragmentos: slider configurable de 1 a 5 mensajes (3 mensajes recomendado por defecto).
+- **Calibración Humana de Retraso Inicial y Velocidad de Tipeo**:
+  - Retraso Inicial: slider de 1.0s a 4.5s con valor recomendado por defecto fijado en 2.5s.
+  - Velocidad de Tipeo: slider de 20ms a 65ms por carácter con valor recomendado por defecto fijado en 40ms/carácter.
+- **Rediseño Visual de Reglas de Comportamiento (Lista Negra & Escape)**:
+  - Eliminados los tonos café/ámbar y textos amarillos.
+  - Nuevo diseño en degradado púrpura y rosa (`from-purple-50 via-pink-50/70 to-purple-50` y dark mode `from-purple-950/40 via-[#241738]/50`) con bordes púrpura, icono escudo en `text-fio-pink` y tipografía nítida en púrpura y rosa acorde a la marca by.fio.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.189`.
 
 ---
 
