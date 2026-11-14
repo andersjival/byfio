@@ -1,4 +1,5 @@
 interface Env {
+  DB?: any;
   AGENT_DB?: any;
 }
 
@@ -23,8 +24,9 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const dateStr = now.toISOString().split('T')[0];
     const hourStr = String(now.getUTCHours()).padStart(2, '0');
 
-    if (context.env.AGENT_DB) {
-      await context.env.AGENT_DB.prepare(
+    const storageDb = context.env.DB || context.env.AGENT_DB;
+    if (storageDb) {
+      await storageDb.prepare(
         'INSERT INTO agent_interaction_events (id, event_type, role, user_identifier, created_at, date_str, hour_str) VALUES (?1, ?2, ?3, ?4, CURRENT_TIMESTAMP, ?5, ?6)'
       ).bind(`evt_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`, eventType, role, userIdentifier, dateStr, hourStr).run();
     }
