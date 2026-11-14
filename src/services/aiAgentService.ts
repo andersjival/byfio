@@ -1,5 +1,6 @@
 import { getCachedAiConfig } from './aiConfigService';
 import { AiChunkMessage, AiHumanSimulationData } from '../types/aiAgent';
+import { getClientDeviceInfo } from '../utils/deviceDetection';
 
 export interface ChatMessage {
   id: string;
@@ -15,6 +16,8 @@ export interface SendMessageOptions {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   userName?: string;
   conversationId?: string;
+  deviceType?: 'pc' | 'mobile' | 'tablet';
+  deviceModel?: string;
   stockDisclosureMode?: 'availability_only' | 'full_stock';
   temperature?: number;
   maxTokens?: number;
@@ -87,6 +90,7 @@ export const aiAgentService = {
   async sendMessage(opts: SendMessageOptions): Promise<SendMessageResult> {
     try {
       const currentConfig = getCachedAiConfig();
+      const deviceInfo = getClientDeviceInfo();
       const resp = await requestWithFallback('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,6 +100,8 @@ export const aiAgentService = {
           history: opts.history || [],
           userName: opts.userName,
           conversationId: opts.conversationId,
+          deviceType: opts.deviceType || deviceInfo.deviceType,
+          deviceModel: opts.deviceModel || deviceInfo.deviceModel,
           stockDisclosureMode: opts.stockDisclosureMode || currentConfig.stockDisclosureMode,
           temperature: opts.temperature ?? currentConfig.temperature,
           maxTokens: opts.maxTokens ?? currentConfig.maxTokens,

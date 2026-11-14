@@ -1,3 +1,22 @@
+## [v4.19.206] - 2026-11-13
+
+### 📊 Reporte y Filtro de Nuevos Usuarios Registrados (Día, Semana, Mes) en Panel Clientes
+- **Panel de Botones con Reporte de Registro ([RegisteredClientsList.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx))**:
+  - Incorporados 4 botones interactivos de métricas y filtrado reactivo:
+    1. **En el Día**: Conteo y filtro de usuarios registrados hoy (`day`).
+    2. **En la Semana**: Conteo y filtro de usuarios registrados en los últimos 7 días o semana actual (`week`).
+    3. **En el Mes**: Conteo y filtro de usuarios registrados en el mes calendario en curso o últimos 30 días (`month`).
+    4. **Histórico Total**: Conteo total y reseteo inmediato de período (`all`).
+  - Al hacer clic en cualquiera de los botones, el listado se filtra al instante para inspeccionar solo los usuarios de dicho lapso.
+- **Métricas Demográficas Expandidas ([UserMetricsDashboardModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserMetricsDashboardModal.tsx))**:
+  - Incorporada tarjeta de velocidad de registros (día, semana y mes) sincronizada con el reporte.
+- **Soporte Tema Oscuro Completo ([RegisteredClientsList.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/RegisteredClientsList.tsx), [UserMetricsDashboardModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/UserMetricsDashboardModal.tsx))**:
+  - Adaptadas todas las fichas, subpaneles de información de dispositivo e IP, botones de provincia y modales a las tonalidades del tema oscuro.
+- **Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Caché PWA actualizado a `byfio-pwa-v4.19.206`.
+
+---
+
 ## [v4.19.205] - 2026-11-13
 
 ### 🎨 Contraste y Estilo de Botón de Lista de Espera en Modo Oscuro (Admin & Tienda)
