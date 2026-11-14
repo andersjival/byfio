@@ -56,6 +56,16 @@ const PRIMARY_AI_URL = 'https://ai.byfiocr.com';
 const FALLBACK_AI_URL = window.location.origin;
 
 async function requestWithFallback(endpoint: string, options: RequestInit): Promise<Response> {
+  // 1. Intentar endpoint relativo local (mismo origen, súper rápido y sin problemas de CORS)
+  try {
+    const localResp = await fetch(endpoint, options);
+    const cType = localResp.headers.get('content-type') || '';
+    if (localResp.ok && cType.includes('application/json')) {
+      return localResp;
+    }
+  } catch {}
+
+  // 2. Intentar servicio primario ai.byfiocr.com
   try {
     const primaryResp = await fetch(`${PRIMARY_AI_URL}${endpoint}`, {
       ...options,
@@ -63,13 +73,13 @@ async function requestWithFallback(endpoint: string, options: RequestInit): Prom
         ...(options.headers || {}),
       },
     });
-    if (primaryResp.ok) {
+    const cType = primaryResp.headers.get('content-type') || '';
+    if (primaryResp.ok && cType.includes('application/json')) {
       return primaryResp;
     }
-  } catch {
-    // Si ai.byfiocr.com está resolviendo DNS o en transición, usar endpoint relativo
-  }
+  } catch {}
 
+  // 3. Fallback de origen
   return fetch(`${FALLBACK_AI_URL}${endpoint}`, options);
 }
 

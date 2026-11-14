@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { formatCRC } from '../../utils/formatters';
@@ -221,7 +221,7 @@ export const SinpePaymentsSection: React.FC = () => {
   return (
     <div className="space-y-5 animate-fadeIn">
       {/* Encabezado Principal del Módulo Independiente */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-white shadow-neu border border-white/80 space-y-4">
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1C1829] shadow-neu border border-white/80 dark:border-purple-900/40 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-800 to-indigo-900 flex items-center justify-center text-white shadow-md shrink-0">
@@ -229,20 +229,20 @@ export const SinpePaymentsSection: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 leading-tight">
+                <h2 className="text-xl sm:text-2xl font-bubble font-bold text-slate-900 dark:text-white leading-tight">
                   Módulo de Pagos y Recepción SINPE Móvil
                 </h2>
                 <span className="text-[11px] uppercase font-bold bg-amber-400 text-purple-950 px-2.5 py-0.5 rounded-full shadow-xs">
                   Banco BCR Oficial
                 </span>
                 {sinpeSettings.isLinked && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-600/40">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     Redirección Vinculada
                   </span>
                 )}
               </div>
-              <p className="text-xs sm:text-sm text-slate-500 font-sans mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 font-sans mt-0.5">
                 Procesamiento y validación inteligente de comprobantes SINPE Móvil con incremento automático de caja en Tienda y Talleres.
               </p>
             </div>
@@ -252,19 +252,19 @@ export const SinpePaymentsSection: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('settings')}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 text-xs font-bubble font-bold transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/60 dark:hover:bg-purple-800/80 text-purple-900 dark:text-purple-200 border border-purple-200 dark:border-purple-600/40 text-xs font-bubble font-bold transition-all active:scale-95 cursor-pointer"
             >
-              <Mail className="w-3.5 h-3.5 text-purple-700" />
+              <Mail className="w-3.5 h-3.5 text-purple-700 dark:text-purple-300" />
               <span>Configurar Correo</span>
             </button>
           </div>
         </div>
 
         {/* Sección de Modalidades de Instalación y Condiciones del Módulo */}
-        <div className="space-y-3 pt-3 border-t border-slate-100">
+        <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-purple-700" />
-            <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-800">
+            <ShieldCheck className="w-4 h-4 text-purple-700 dark:text-purple-400" />
+            <h3 className="font-bubble font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100">
               Modalidades de Instalación y Alternativas Técnicas de SINPE Móvil
             </h3>
           </div>
@@ -278,20 +278,20 @@ export const SinpePaymentsSection: React.FC = () => {
                     <div className="w-7 h-7 rounded-lg bg-purple-700 text-white flex items-center justify-center shrink-0 shadow-xs">
                       <Mail className="w-4 h-4 text-amber-300" />
                     </div>
-                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-purple-950">
+                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-purple-950 dark:text-purple-200">
                       Sistema 1: Automático Gmail
                     </h4>
                   </div>
-                  <span className="text-[10px] font-bold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
+                  <span className="text-[10px] font-bold uppercase bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-600/40">
                     0% Comisión
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                  <strong>Condición obligatoria:</strong> Requiere que el banco emita comprobantes a una bandeja <strong>Gmail</strong>. <em>Si el cliente no tiene sistema de confirmación de correo en su banco, NO se puede instalar este Sistema 1</em> y debe optarse por el Sistema Semiautomático o la pasarela.
+                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+                  <strong className="dark:text-white">Condición obligatoria:</strong> Requiere que el banco emita comprobantes a una bandeja <strong className="dark:text-white">Gmail</strong>. <em>Si el cliente no tiene sistema de confirmación de correo en su banco, NO se puede instalar este Sistema 1</em> y debe optarse por el Sistema Semiautomático o la pasarela.
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-purple-900 bg-purple-100/70 dark:bg-purple-900/40 px-2.5 py-1 rounded-xl border border-purple-200 dark:border-purple-500/30">
-                <CheckCircle2 className="w-3.5 h-3.5 text-purple-700 shrink-0" />
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-purple-900 dark:text-purple-200 bg-purple-100/70 dark:bg-purple-900/40 px-2.5 py-1 rounded-xl border border-purple-200 dark:border-purple-500/30">
+                <CheckCircle2 className="w-3.5 h-3.5 text-purple-700 dark:text-purple-400 shrink-0" />
                 <span>100% automático • Requiere reenvío Gmail</span>
               </div>
             </div>
@@ -304,20 +304,20 @@ export const SinpePaymentsSection: React.FC = () => {
                     <div className="w-7 h-7 rounded-lg bg-teal-700 text-white flex items-center justify-center shrink-0 shadow-xs">
                       <Phone className="w-4 h-4 text-emerald-200" />
                     </div>
-                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-teal-950">
+                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-teal-950 dark:text-teal-200">
                       Sistema 2: Semiautomático SMS
                     </h4>
                   </div>
-                  <span className="text-[10px] font-bold uppercase bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full border border-teal-300">
+                  <span className="text-[10px] font-bold uppercase bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 px-2 py-0.5 rounded-full border border-teal-300 dark:border-teal-600/40">
                     0% Comisión
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                  <strong>En caso de no tener confirmación por correo:</strong> El cliente ingresa el número de referencia en el producto. Al llegar al panel, el administrador lo verifica contra el <strong>SMS o notificación</strong> de su teléfono. Al corroborar la referencia, pulsa <strong>"Confirmar Pago"</strong> y se acredita en caja.
+                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+                  <strong className="dark:text-white">En caso de no tener confirmación por correo:</strong> El cliente ingresa el número de referencia en el producto. Al llegar al panel, el administrador lo verifica contra el <strong className="dark:text-white">SMS o notificación</strong> de su teléfono. Al corroborar la referencia, pulsa <strong className="dark:text-white">"Confirmar Pago"</strong> y se acredita en caja.
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-teal-900 bg-teal-100/70 dark:bg-teal-900/40 px-2.5 py-1 rounded-xl border border-teal-200 dark:border-teal-500/30">
-                <CheckCircle2 className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-teal-900 dark:text-teal-200 bg-teal-100/70 dark:bg-teal-900/40 px-2.5 py-1 rounded-xl border border-teal-200 dark:border-teal-500/30">
+                <CheckCircle2 className="w-3.5 h-3.5 text-teal-700 dark:text-teal-400 shrink-0" />
                 <span>0% comisión • Validación contra SMS en panel</span>
               </div>
             </div>
@@ -330,23 +330,25 @@ export const SinpePaymentsSection: React.FC = () => {
                     <div className="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                       <CreditCard className="w-4 h-4 text-amber-100" />
                     </div>
-                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-amber-950">
+                    <h4 className="font-bubble font-bold text-xs sm:text-sm text-amber-950 dark:text-amber-200">
                       Sistema 3: Pasarela Bancaria
                     </h4>
                   </div>
-                  <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+                  <span className="text-[10px] font-bold uppercase bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 px-2 py-0.5 rounded-full border border-amber-300 dark:border-amber-600/40">
                     1.5% Pasarela
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 font-sans leading-relaxed">
-                  <strong>Alternativa con pasarela de pago:</strong> En caso de que el cliente no pueda o no desee el sistema semiautomático, puede optar por la confirmación bancaria con <strong>1.5% de comisión</strong>. Requiere que el comercio esté formalmente inscrito en el <strong>Régimen Simplificado</strong>.
+                <p className="text-xs text-slate-600 dark:text-slate-300 font-sans leading-relaxed">
+                  <strong className="dark:text-white">Alternativa con pasarela de pago:</strong> En caso de que el cliente no pueda o no desee el sistema semiautomático, puede optar por la confirmación bancaria con <strong className="dark:text-white">1.5% de comisión</strong>. Requiere que el comercio esté formalmente inscrito en el <strong className="dark:text-white">Régimen Simplificado</strong>.
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-amber-900 bg-amber-100/80 dark:bg-amber-900/40 px-2.5 py-1 rounded-xl border border-amber-200 dark:border-amber-500/30">
-                <Building2 className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+              <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-amber-900 dark:text-amber-200 bg-amber-100/80 dark:bg-amber-900/40 px-2.5 py-1 rounded-xl border border-amber-200 dark:border-amber-500/30">
+                <Building2 className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400 shrink-0" />
                 <span>Confirmación bancaria directa • Régimen Simplificado</span>
               </div>
             </div>
+          </div>
+        </div>
           </div>
         </div>
 
@@ -359,7 +361,7 @@ export const SinpePaymentsSection: React.FC = () => {
             <div>
               <p className="text-[11px] font-bubble font-bold text-purple-900 dark:text-purple-300 uppercase">Total SINPE BCR Verificado</p>
               <p className="font-bubble font-bold text-xl text-purple-950 dark:text-white mt-0.5">{formatCRC(totalSinpeVerified)}</p>
-              <span className="text-[10px] text-purple-700/80 font-medium">{sinpeTransactions.length} comprobantes procesados</span>
+              <span className="text-[10px] text-purple-700/80 dark:text-purple-200 font-medium">{sinpeTransactions.length} comprobantes procesados</span>
             </div>
           </div>
 
@@ -370,7 +372,7 @@ export const SinpePaymentsSection: React.FC = () => {
             <div>
               <p className="text-[11px] font-bubble font-bold text-blue-900 dark:text-blue-300 uppercase">Acreditado a Tienda &amp; Catálogo</p>
               <p className="font-bubble font-bold text-xl text-blue-950 dark:text-white mt-0.5">{formatCRC(totalStoreSinpe)}</p>
-              <span className="text-[10px] text-blue-700/80 font-medium">{sinpeTransactions.filter(t => t.category === 'store').length} pagos a productos</span>
+              <span className="text-[10px] text-blue-700/80 dark:text-blue-200 font-medium">{sinpeTransactions.filter(t => t.category === 'store').length} pagos a productos</span>
             </div>
           </div>
 
@@ -381,7 +383,7 @@ export const SinpePaymentsSection: React.FC = () => {
             <div>
               <p className="text-[11px] font-bubble font-bold text-pink-900 dark:text-pink-300 uppercase">Acreditado a Talleres Creativos</p>
               <p className="font-bubble font-bold text-xl text-pink-950 dark:text-white mt-0.5">{formatCRC(totalWorkshopSinpe)}</p>
-              <span className="text-[10px] text-pink-700/80 font-medium">{sinpeTransactions.filter(t => t.category === 'workshop').length} inscripciones de alumnos</span>
+              <span className="text-[10px] text-pink-700/80 dark:text-pink-200 font-medium">{sinpeTransactions.filter(t => t.category === 'workshop').length} inscripciones de alumnos</span>
             </div>
           </div>
         </div>

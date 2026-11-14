@@ -120,7 +120,7 @@ export const AiSystemPromptDirectivesCard: React.FC<AiSystemPromptDirectivesCard
             rows={4}
             value={config.escapeProtocol || ''}
             onChange={(e) => onChangeField('escapeProtocol', e.target.value)}
-            placeholder="Si no tienes el dato exacto o si piden persona real, derivar a Fiorella al WhatsApp 6400-4640..."
+            placeholder="Solo derivar a Fiorella al WhatsApp 6400-4640 si el cliente lo solicita expresamente o si requiere encargo fuera de catálogo..."
             className="w-full px-3 py-2 rounded-xl border border-purple-200/80 dark:border-purple-800/60 bg-white dark:bg-[#201833] text-xs font-sans text-slate-800 dark:text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
           />
           <p className="text-[10px] text-slate-500 dark:text-purple-300">

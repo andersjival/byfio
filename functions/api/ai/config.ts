@@ -19,7 +19,7 @@ const DEFAULT_CONFIG = {
   temperature: 0.3, // 0.1 a 0.4
   topP: 0.85,
   topK: 40,
-  maxTokens: 120, // 60 a 120 tokens por mensaje corto
+  maxTokens: 200, // 60 a 250 tokens por mensaje corto
   securityFilters: true,
   // 2. Instrucciones de Sistema y Directrices
   agentRoleTone:
@@ -29,7 +29,7 @@ const DEFAULT_CONFIG = {
   strictBlacklist:
     '• Prohibido decir que es una IA, un bot o un modelo de lenguaje.\n• Prohibido prometer descuentos o condiciones que no estén en el catálogo.\n• Prohibido hablar de competidores o temas fuera del negocio.\n• Prohibido usar frases de relleno ("¡Excelente pregunta!", "Con mucho gusto te asisto", "¿Hay algo más en lo que te pueda colaborar hoy?").',
   escapeProtocol:
-    'Si no tienes el dato exacto o si el cliente solicita una persona real, derivar de inmediato y con amabilidad a Fiorella al WhatsApp 6400-4640.',
+    'Solo derivar a Fiorella (WhatsApp oficial 6400-4640) cuando el cliente lo pida expresamente ("quiero hablar con un humano / Fiorella") o si requiere un encargo personalizado fuera de catálogo. Si el producto o cantidad consultada existe en inventario, o si el cliente desea pagar por SINPE, o si aclara que NO quiere hablar con nadie más, atiéndelo y concreta la compra directamente aquí sin derivarlo a WhatsApp.',
   systemPromptOverride: '',
   // 3. Simulación humana y tiempos
   enableHumanSimulation: true,

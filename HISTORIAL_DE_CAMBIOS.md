@@ -1,3 +1,31 @@
+## [v4.19.200] - 2026-11-13
+
+### 🎨 Armonización de Color en Notas del Cliente (Tema Morado/Violeta By.Fio)
+- **Armonización Visual con la Identidad By.Fio ([CustomersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Reemplazado el fondo rosado chillón `#F9A8D4` y textos magenta por una paleta morado/violeta que combina armónicamente con la tarjeta y el tema de By.Fio.
+  - **Tema Claro**: Fondo violeta suave pastel (`#F3E8FF`), borde lavanda (`#D8B4FE`), título en morado intenso (`#6B21A8`) y contenido en morado oscuro legible (`#4C1D95`).
+  - **Tema Oscuro**: Fondo morado profundo integrado (`rgba(124, 58, 237, 0.16)`), borde translúcido (`rgba(168, 85, 247, 0.35)`), título en lavanda pastel (`#D4AEFA`) y texto en blanco lavanda de alto contraste (`#EDE9FE`).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.200`.
+
+---
+
+## [v4.19.199] - 2026-11-13
+
+### ✨ Calibración Inteligente de Conversación y Stock de la Estrellita (Cero Amnesia & Confirmación de Cantidades)
+- **Cero Amnesia y Memoria Ampliada ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Ampliado el búfer de historial de 6 a 25 mensajes en frontend y backend, evitando que la Estrellita olvide el producto consultado (ej. tazas) al continuar con la selección del método de pago.
+  - Inyectada directriz obligatoria de memoria activa para no volver a preguntar qué producto desea si ya fue indicado.
+- **Manejo Inteligente de Existencias & Cantidades Solicitadas ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [AiStockPolicyCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiStockPolicyCard.tsx))**:
+  - Regla diferenciada precisa: No revela la cifra total de bodega ante preguntas genéricas ("¿cuántos productos de estos tienes en inventario?"), pero si el cliente pide una cantidad concreta ("quiero 10"), verifica existencias y confirma inmediatamente su disponibilidad y monto total sin bloqueos.
+  - Prohibición estricta de frases evasivas ("no puedo confirmar la cantidad exacta") o derivaciones forzadas a WhatsApp cuando el cliente compra stock disponible por SINPE.
+- **Optimización de Red y Fallback ([aiAgentService.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/aiAgentService.ts))**:
+  - Priorizado el consumo local directo de `/api/ai/chat` (Pages Functions) con validación estricta de `Content-Type: application/json` para eliminar latencias cross-origin y prevenir respuestas HTML.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.199`.
+
+---
+
 ## [v4.19.198] - 2026-11-13
 
 ### 🎯 Directrices de Sistema, Dinámica WhatsApp, Persistencia Total y Bot de Prueba en Tiempo Real
@@ -275,6 +303,34 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.200] - 2026-11-13
+
+### 🎨 Armonización de Color en Notas del Cliente (Tema Morado/Violeta By.Fio)
+- **Armonización Visual con la Identidad By.Fio ([CustomersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Reemplazado el fondo rosado chillón `#F9A8D4` y textos magenta por una paleta morado/violeta que combina armónicamente con la tarjeta y el tema de By.Fio.
+  - **Tema Claro**: Fondo violeta suave pastel (`#F3E8FF`), borde lavanda (`#D8B4FE`), título en morado intenso (`#6B21A8`) y contenido en morado oscuro legible (`#4C1D95`).
+  - **Tema Oscuro**: Fondo morado profundo integrado (`rgba(124, 58, 237, 0.16)`), borde translúcido (`rgba(168, 85, 247, 0.35)`), título en lavanda pastel (`#D4AEFA`) y texto en blanco lavanda de alto contraste (`#EDE9FE`).
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.200`.
+
+---
+
+## [v4.19.199] - 2026-11-13
+
+### ✨ Calibración Inteligente de Conversación y Stock de la Estrellita (Cero Amnesia & Confirmación de Cantidades)
+- **Cero Amnesia y Memoria Ampliada ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Ampliado el búfer de historial de 6 a 25 mensajes en frontend y backend, evitando que la Estrellita olvide el producto consultado (ej. tazas) al continuar con la selección del método de pago.
+  - Inyectada directriz obligatoria de memoria activa para no volver a preguntar qué producto desea si ya fue indicado.
+- **Manejo Inteligente de Existencias & Cantidades Solicitadas ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts), [AiStockPolicyCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiStockPolicyCard.tsx))**:
+  - Regla diferenciada precisa: No revela la cifra total de bodega ante preguntas genéricas ("¿cuántos productos de estos tienes en inventario?"), pero si el cliente pide una cantidad concreta ("quiero 10"), verifica existencias y confirma inmediatamente su disponibilidad y monto total sin bloqueos.
+  - Prohibición estricta de frases evasivas ("no puedo confirmar la cantidad exacta") o derivaciones forzadas a WhatsApp cuando el cliente compra stock disponible por SINPE.
+- **Optimización de Red y Fallback ([aiAgentService.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/services/aiAgentService.ts))**:
+  - Priorizado el consumo local directo de `/api/ai/chat` (Pages Functions) con validación estricta de `Content-Type: application/json` para eliminar latencias cross-origin y prevenir respuestas HTML.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.199`.
 
 ---
 

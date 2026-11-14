@@ -103,7 +103,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
     setIsLoading(true);
     setTypingStatus('thinking');
 
-    const historyPayload = messages.slice(-6).map((m) => ({ role: m.role, content: m.content }));
+    const historyPayload = messages.slice(-25).map((m) => ({ role: m.role, content: m.content }));
     const result = await aiAgentService.sendMessage({
       message: text,
       role: userRole,
@@ -176,7 +176,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       setIsLoading(true);
       setTypingStatus('thinking');
 
-      const historyPayload = messages.slice(-6).map((m) => ({ role: m.role, content: m.content }));
+      const historyPayload = messages.slice(-25).map((m) => ({ role: m.role, content: m.content }));
       const result = await aiAgentService.sendVoiceNote({
         audioBlob,
         role: userRole,

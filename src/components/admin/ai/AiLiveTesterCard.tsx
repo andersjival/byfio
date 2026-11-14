@@ -30,7 +30,7 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode,
     setStatusText('Consultando modelo con tus parámetros...');
 
     try {
-      const historyPayload = newHistory.slice(-5).map((m) => ({ role: m.role, content: m.text }));
+      const historyPayload = newHistory.slice(-25).map((m) => ({ role: m.role, content: m.text }));
       const res = await aiAgentService.sendMessage({
         message: text,
         role: 'customer',

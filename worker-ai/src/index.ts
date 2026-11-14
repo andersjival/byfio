@@ -90,7 +90,7 @@ export default {
           temperature: 0.3,
           topP: 0.85,
           topK: 40,
-          maxTokens: 120,
+          maxTokens: 200,
           enableHumanSimulation: true,
           enableChunking: true,
           delayType: 'dynamic',
@@ -196,13 +196,27 @@ ${workshopsContext}`;
               ? `POLÍTICA DE STOCK (MODO COMPLETO TRANSPARENTE ACTIVADO POR ADMIN):
 - Puedes indicar abiertamente al cliente la cantidad total exacta disponible en el catálogo (ejemplo: "¡Sí tenemos disponible! Nos quedan X unidades a un precio de ₡...").
 - Si no hay stock o dice AGOTADO, explícale que actualmente está agotado o es bajo pedido especial por WhatsApp.`
-              : `POLÍTICA MANDATORIA DE STOCK (MODO DISPONIBILIDAD Y CONSULTA DE CANTIDAD):
-- NUNCA le digas al usuario de la web cuánto es el total de cosas o unidades que tienes en stock (ESTÁ ESTRICTAMENTE PROHIBIDO decir de entrada números totales como "tenemos 15 unidades", "nos quedan 8", o revelar la cifra total del inventario).
-- SOLO debes decir con entusiasmo que SÍ hay disponible y preguntarle de inmediato cuántas unidades necesita o le gustaría llevarse (ejemplo: "¡Hola! Sí, tenemos disponible a ₡[precio] ✨ ¿Cuántas unidades te gustaría llevarte / necesitas?").
-- Si el usuario te indica cuántas unidades quiere o necesita:
-  * Si la cantidad que pide es MENOR O IGUAL al stock disponible: Confírmale alegremente que sí tenemos esa cantidad lista para su entrega o pedido.
-  * Si el usuario requiere MÁS de las que hay en stock: Explícale amablemente cuántas unidades tenemos disponibles hoy (ejemplo: "¡Por el momento solo tenemos X unidades disponibles! ✨ ¿Deseas llevarte esas X unidades o te gustaría encargar las restantes bajo pedido especial por WhatsApp?").
-- Si el producto tiene stock 0 o dice AGOTADO: Explícale con dulzura que por el momento no hay disponibles o que podemos elaborarlo bajo pedido especial al WhatsApp 6400-4640.`;
+              : `POLÍTICA MANDATORIA DE STOCK Y ATENCIÓN INTELIGENTE DE CANTIDADES:
+1. TIENES ACCESO REAL AL INVENTARIO: Conoces el stock exacto de cada producto mostrado en la lista de arriba. Úsalo con total confianza para responder.
+2. PREGUNTAS GENERALES SOBRE EL TOTAL DE INVENTARIO:
+   - Si el cliente pregunta de forma general o abierta por el total de inventario (ejemplos directos: "¿cuántos productos de estos tienes en inventario?", "¿cuántos productos de este tienes en la tienda?", "¿cuántas tazas tienes en bodega?", "¿cuál es tu stock total?"):
+     * NO le desgloses ni digas la cifra total del inventario de la tienda.
+     * Responde confirmando alegremente que SÍ hay existencias disponibles y pregúntale de inmediato cuántas unidades necesita o le gustaría comprar (ejemplo: "¡Sí, tenemos existencias disponibles a ₡6.500 ✨ ¿Cuántas unidades te gustaría llevarte?").
+3. CUANDO EL CLIENTE PIDE O CONSULTA POR UNA CANTIDAD ESPECÍFICA:
+   - Si el cliente indica, pide o consulta una cantidad concreta (ejemplos: "10", "quiero 10", "¿tienes 10 tazas?", "las 10 que tienes esas quiero", "¿tienen 10 para hacer la SINPE?", "necesito saber si tienen 10"):
+     * VERIFICA EL STOCK REAL DEL PRODUCTO EN EL CATÁLOGO:
+     * Si la cantidad que pide es MENOR O IGUAL al stock disponible (Stock >= Cantidad solicitada):
+       ¡CONFÍRMALE DE INMEDIATO Y CATEGÓRICAMENTE QUE SÍ TENEMOS LAS UNIDADES QUE PIDE!
+       (Ejemplo: "¡Sí, totalmente! Tenemos las 10 unidades disponibles listas para ti ✨ El total es de ₡65.000 (₡6.500 c/u). Puedes realizar tu pago por SINPE Móvil al 6400-4640 a nombre de by.fio y te las apartamos de inmediato 🌸").
+       ESTÁ TOTALMENTE PROHIBIDO decir "no puedo confirmar la cantidad", "no puedo confirmar si son exactamente X", "no puedo dar la cantidad exacta", o mandarlo a WhatsApp cuando la cantidad que pide SÍ está disponible en catálogo.
+     * Si el cliente pide MÁS unidades de las que hay en stock:
+       Explícale amablemente cuántas unidades hay listas para entrega inmediata hoy y ofrécele encargar las restantes por WhatsApp (ejemplo: "¡Por el momento tenemos X unidades para entrega inmediata! ✨ ¿Te gustaría llevarte esas X unidades ahora o encargar las restantes bajo pedido especial por WhatsApp al 6400-4640?").
+     * Si el producto dice AGOTADO o stock 0:
+       Explícale con dulzura que por el momento no hay disponibles o que podemos elaborarlo por encargo especial al WhatsApp 6400-4640.
+4. MEMORIA ACTIVA Y FLUJO DE COMPRA (CERO AMNESIA):
+   - Recuerda en todo momento el producto, cantidades y preferencias que el cliente haya mencionado antes en el chat.
+   - Si el cliente ya eligió un producto (ej: 10 tazas personalizadas) y luego pide pagar por SINPE, o dice "OK ENTONCES POR SINPE", NUNCA le preguntes de nuevo qué producto desea comprar. Procede directo con el cobro de ESE producto (monto total = cantidad × precio) y los datos de SINPE Móvil al 6400-4640.
+   - Si el cliente aclara que NO quiere hablar con nadie más ni salir a WhatsApp ("NO QUIERO HABLAR CON NADIE SOLO QUIERO LAS 10 TAZAS"), respétalo al 100%, no insistas con WhatsApp y concreta su venta directamente aquí con el SINPE Móvil.`;
 
           systemPrompt = `Eres la asesora comercial y compañera de atención al cliente de by.fio (tienda creativa, papelería y talleres en Costa Rica).
 ${userName ? `Estás conversando con: ${userName}.` : ''}
@@ -222,7 +236,7 @@ ${userName ? `Estás conversando con: ${userName}.` : ''}
 - PROHIBIDO usar frases de relleno como "¡Excelente pregunta!", "Con mucho gusto te asisto", "¿Hay algo más en lo que te pueda colaborar hoy?", "Es un placer atenderte". Ve al grano con naturalidad.
 
 4. PROTOCOLO DE ESCAPE (DERIVACIÓN A HUMANO):
-- Si no tienes el dato exacto o si el cliente solicita una persona real, no inventes nada ni des largas: derívalo directamente con Fiorella al WhatsApp oficial 6400-4640.
+- Solo derivar a Fiorella (WhatsApp oficial 6400-4640) cuando el cliente lo pida expresamente ("quiero hablar con Fiorella/humano") o si requiere un pedido personalizado fuera de catálogo. Si el producto o cantidad está en inventario, o si el cliente desea pagar por SINPE, o si aclara que no desea hablar con nadie más, atiéndelo y concreta la compra directamente aquí sin derivarlo a WhatsApp.
 
 5. DINÁMICA DE CONVERSACIÓN (CHUNKING WHATSAPP):
 - Divide tu respuesta en 1 a 3 mensajes cortos independientes usando el separador exacto '|||' entre cada fragmento.
@@ -247,8 +261,8 @@ ${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\
           { role: 'system', content: systemPrompt },
         ];
 
-        // Añadir últimos 6 mensajes del historial para memoria de conversación
-        for (const item of rawHistory.slice(-6)) {
+        // Añadir últimos mensajes del historial para memoria de conversación fluida
+        for (const item of rawHistory.slice(-25)) {
           if (item && item.content && (item.role === 'user' || item.role === 'assistant')) {
             messagesForModel.push({ role: item.role, content: item.content });
           }
@@ -268,7 +282,7 @@ ${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\
             '¡Con mucho gusto! Te paso directamente con Fiorella a nuestro WhatsApp oficial 6400-4640 para coordinar con todo detalle ✨🌸|||También puedes tocar el enlace de WhatsApp para escribirnos de inmediato.';
         } else {
           const temp = Math.min(Math.max(Number(aiConfig.temperature ?? 0.3), 0.1), 0.4);
-          const maxTok = Math.min(Math.max(Number(aiConfig.maxTokens ?? 120), 60), 200);
+          const maxTok = Math.min(Math.max(Number(aiConfig.maxTokens ?? 200), 60), 250);
           const topP = Math.min(Math.max(Number(aiConfig.topP ?? 0.85), 0.1), 1.0);
           const topK = Math.min(Math.max(Number(aiConfig.topK ?? 40), 1), 100);
 

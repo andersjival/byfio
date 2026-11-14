@@ -74,11 +74,12 @@ export const AiStockPolicyCard: React.FC<AiStockPolicyCardProps> = ({
             )}
           </div>
           <p className="mt-2 text-xs text-slate-600 dark:text-purple-200 font-sans leading-relaxed">
-            La Estrellita <strong>NUNCA</strong> dice el stock total. Solo dice que sí hay disponible y pregunta cuántas piezas necesita el cliente. Si el cliente requiere más de las que hay, le informa que por el momento solo tienen esa cantidad disponible.
+            La Estrellita <strong>NO</strong> revela el total de inventario ante preguntas generales ("¿cuántas tienes en tienda?"), pero si el cliente pide una cantidad específica ("¿tienes 10?"), verifica el stock real y le confirma de inmediato que sí están disponibles para entrega o SINPE. Si pide más de las que hay, le ofrece las disponibles o encargo por WhatsApp.
           </p>
           <div className="mt-2.5 p-2 rounded-xl bg-white/80 dark:bg-purple-900/40 border border-purple-100 dark:border-purple-800/40 text-[11px] text-purple-900 dark:text-purple-200 space-y-1">
-            <p><strong>Ejemplo:</strong> — "¿Hay libretas?" → "¡Sí, tenemos disponible! ✨ ¿Cuántas te gustaría llevarte?"</p>
-            <p className="text-[10.5px] text-slate-500 dark:text-purple-300 italic">— Si pide 10 y hay 4: "Por el momento solo tenemos 4 unidades disponibles ✨ ¿Deseas llevarte esas 4?"</p>
+            <p><strong>Ejemplo 1:</strong> — "¿Cuántas tazas tienes en inventario?" → "¡Sí, tenemos existencias disponibles! ✨ ¿Cuántas te gustaría llevarte?"</p>
+            <p className="text-[10.5px] text-purple-900 dark:text-purple-200"><strong>Ejemplo 2:</strong> — "Quiero 10 tazas" (habiendo 10) → "¡Sí, totalmente! Tenemos las 10 unidades disponibles para ti a ₡6.500 c/u ✨"</p>
+            <p className="text-[10.5px] text-slate-500 dark:text-purple-300 italic">— Si pide 15 y hay 10: "Por el momento tenemos 10 unidades para entrega inmediata ✨ ¿Deseas llevarte esas 10 o encargar las restantes por WhatsApp?"</p>
           </div>
         </div>
 

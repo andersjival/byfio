@@ -2729,26 +2729,45 @@ html.dark .btn-pastel-pink-contrast svg {
 
 
 /* =========================================================================
-   TARJETA DE NOTAS DEL CLIENTE (COLOR ROSADO + LETRAS ROSADO OSCURO)
+   TARJETA DE NOTAS DEL CLIENTE (VIOLETA/MORADO BYFIO ACORDE AL TEMA)
    ========================================================================= */
 
 .customer-notes-pastel-card,
+.customer-notes-card {
+  background-color: #F3E8FF !important; /* Violeta suave armónico en claro */
+  border-color: #D8B4FE !important;
+}
+
 body[data-color-theme="dark"] .customer-notes-pastel-card,
-html.dark .customer-notes-pastel-card {
-  background-color: #F9A8D4 !important; /* Rosado más presente / un poco más oscuro */
-  border-color: #F472B6 !important;
+html.dark .customer-notes-pastel-card,
+body[data-color-theme="dark"] .customer-notes-card,
+html.dark .customer-notes-card {
+  background-color: rgba(124, 58, 237, 0.16) !important; /* Morado profundo integrado en oscuro */
+  border-color: rgba(168, 85, 247, 0.35) !important;
 }
 
 .customer-notes-pastel-title,
+.customer-notes-title {
+  color: #6B21A8 !important; /* Morado oscuro en claro */
+}
+
 body[data-color-theme="dark"] .customer-notes-pastel-title,
-html.dark .customer-notes-pastel-title {
-  color: #700732 !important; /* Letras rosado oscuro profundo */
+html.dark .customer-notes-pastel-title,
+body[data-color-theme="dark"] .customer-notes-title,
+html.dark .customer-notes-title {
+  color: #D4AEFA !important; /* Lavanda pastel fio-300 en oscuro */
 }
 
 .customer-notes-pastel-text,
+.customer-notes-text {
+  color: #4C1D95 !important; /* Morado legible en claro */
+}
+
 body[data-color-theme="dark"] .customer-notes-pastel-text,
-html.dark .customer-notes-pastel-text {
-  color: #831843 !important; /* Letras rosado oscuro legible */
+html.dark .customer-notes-pastel-text,
+body[data-color-theme="dark"] .customer-notes-text,
+html.dark .customer-notes-text {
+  color: #EDE9FE !important; /* Texto lavanda blanco nítido en oscuro */
 }
 
 /* =========================================================================
