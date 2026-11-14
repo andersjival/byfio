@@ -1,3 +1,28 @@
+## [v4.19.198] - 2026-11-13
+
+### 🎯 Directrices de Sistema, Dinámica WhatsApp, Persistencia Total y Bot de Prueba en Tiempo Real
+- **Instrucciones de Sistema & System Prompt ([AiSystemPromptDirectivesCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiSystemPromptDirectivesCard.tsx))**:
+  - Incorporados campos editables de alta visibilidad para:
+    1. **Rol, Tono y Personalidad**: Asesora amable, ágil, profesional, cercana, cálida y tierna (kawaii), sin sonar corporativa o robótica.
+    2. **Longitud y Estructura**: Frases cortas, directas y sin párrafos extensos.
+    3. **Lista Negra Estricta ("Lo que no debe decir nunca")**: Prohibido decir que es IA/bot, inventar descuentos, hablar de competidores y frases clichés.
+    4. **Protocolo de Escape Humano**: Derivación directa al WhatsApp 6400-4640 con Fiorella si no tiene el dato o si lo solicitan.
+    5. **Editor Adicional de System Prompt**: Campo expandible para directrices complementarias inyectadas al modelo.
+- **Dinámica de Conversación & Retrasos WhatsApp ([AiConversationDynamicsCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiConversationDynamicsCard.tsx))**:
+  - Configuración visible de separador de chunking (`|||`), límite de mensajes divididos (1 a 5), retraso inicial (1 a 4.5s) y velocidad de tipeo dinámico (20 a 65 ms/carácter).
+- **Persistencia en Tiempo Real sin Pérdida de Datos ([useAiAgentConfig.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/useAiAgentConfig.ts), [config.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/config.ts))**:
+  - Guardado reactivo instantáneo en `localStorage` al teclear o mover cualquier control para que al recargar (F5) nunca se pierdan los datos.
+  - Auto-sincronización debounced con Cloudflare D1 y botón explícito de Guardar Cambios con feedback en vivo.
+- **Bot de Prueba con Calibración Activa ([AiLiveTesterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiLiveTesterCard.tsx), [chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - El simulador recibe y envía todos los parámetros y directrices activos en tiempo real al backend de inferencia, probando exactamente lo que el usuario está calibrando en ese instante.
+  - Banner indicador que refleja los parámetros activos con los que está operando el bot de prueba.
+- **Navegación Modular por Pestañas ([AiByfioAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiByfioAdminSection.tsx))**:
+  - Pestañas organizadas: 🎯 Directrices & Prompt, ⚙️ Parámetros Técnicos, ⏱️ Dinámica WhatsApp, 📦 Política de Stock, 🧪 Bot de Prueba, 📊 Rendimiento AI y 📑 Ver Todo.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.198`.
+
+---
+
 ## [v4.19.197] - 2026-11-13
 
 ### 🛡️ Persistencia Total y Prevención de Redirección en Módulos Admin (AI Waifus / AI BYFIO y demás módulos)
@@ -250,6 +275,31 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.198] - 2026-11-13
+
+### 🎯 Directrices de Sistema, Dinámica WhatsApp, Persistencia Total y Bot de Prueba en Tiempo Real
+- **Instrucciones de Sistema & System Prompt ([AiSystemPromptDirectivesCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiSystemPromptDirectivesCard.tsx))**:
+  - Incorporados campos editables de alta visibilidad para:
+    1. **Rol, Tono y Personalidad**: Asesora amable, ágil, profesional, cercana, cálida y tierna (kawaii), sin sonar corporativa o robótica.
+    2. **Longitud y Estructura**: Frases cortas, directas y sin párrafos extensos.
+    3. **Lista Negra Estricta ("Lo que no debe decir nunca")**: Prohibido decir que es IA/bot, inventar descuentos, hablar de competidores y frases clichés.
+    4. **Protocolo de Escape Humano**: Derivación directa al WhatsApp 6400-4640 con Fiorella si no tiene el dato o si lo solicitan.
+    5. **Editor Adicional de System Prompt**: Campo expandible para directrices complementarias inyectadas al modelo.
+- **Dinámica de Conversación & Retrasos WhatsApp ([AiConversationDynamicsCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiConversationDynamicsCard.tsx))**:
+  - Configuración visible de separador de chunking (`|||`), límite de mensajes divididos (1 a 5), retraso inicial (1 a 4.5s) y velocidad de tipeo dinámico (20 a 65 ms/carácter).
+- **Persistencia en Tiempo Real sin Pérdida de Datos ([useAiAgentConfig.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/hooks/useAiAgentConfig.ts), [config.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/config.ts))**:
+  - Guardado reactivo instantáneo en `localStorage` al teclear o mover cualquier control para que al recargar (F5) nunca se pierdan los datos.
+  - Auto-sincronización debounced con Cloudflare D1 y botón explícito de Guardar Cambios con feedback en vivo.
+- **Bot de Prueba con Calibración Activa ([AiLiveTesterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiLiveTesterCard.tsx), [chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - El simulador recibe y envía todos los parámetros y directrices activos en tiempo real al backend de inferencia, probando exactamente lo que el usuario está calibrando en ese instante.
+  - Banner indicador que refleja los parámetros activos con los que está operando el bot de prueba.
+- **Navegación Modular por Pestañas ([AiByfioAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiByfioAdminSection.tsx))**:
+  - Pestañas organizadas: 🎯 Directrices & Prompt, ⚙️ Parámetros Técnicos, ⏱️ Dinámica WhatsApp, 📦 Política de Stock, 🧪 Bot de Prueba, 📊 Rendimiento AI y 📑 Ver Todo.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.198`.
 
 ---
 

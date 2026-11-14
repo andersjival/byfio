@@ -8,7 +8,7 @@ export const useAiAgentConfig = () => {
   const [saving, setSaving] = useState<boolean>(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(new Date());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<any>(null);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
