@@ -332,7 +332,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
       />
 
       {/* 2. Cuadrícula del Calendario */}
-      <div className="rounded-3xl border shadow-neuCard overflow-hidden transition-colors" style={{ backgroundColor: themeConfig.bgContainer, borderColor: themeConfig.borderTable }}>
+      <div className="agenda-calendar-surface rounded-3xl border shadow-neuCard overflow-hidden transition-colors" style={{ backgroundColor: themeConfig.bgContainer, borderColor: themeConfig.borderTable }}>
         <div className="overflow-auto max-h-[75vh] sm:max-h-[80vh] min-w-full custom-scrollbar touch-auto overscroll-contain">
           {viewType === 'weekly' ? (
             /* ============================================================ */
@@ -343,7 +343,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                 <tr>
                   {/* Columna Hora */}
                   <th
-                    className="sticky top-0 left-0 z-30 w-16 sm:w-20 p-2 sm:p-3 text-center text-[11px] sm:text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
+                    className="agenda-hour-header sticky top-0 left-0 z-30 w-16 sm:w-20 p-2 sm:p-3 text-center text-[11px] sm:text-xs font-bubble font-bold text-slate-600 shadow-[2px_2px_4px_rgba(0,0,0,0.06)]"
                     style={{
                       backgroundColor: themeConfig.bgHeader,
                       borderRight: `1px solid ${themeConfig.borderDiv}`,
@@ -386,11 +386,11 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                         <div className="flex items-center justify-between gap-1">
                           {/* Nombre del Día y Mes */}
                           <div className="min-w-0">
-                            <span className="font-bubble font-bold text-xs sm:text-sm text-slate-900 block truncate">
+                            <span className="agenda-day-title font-bubble font-bold text-xs sm:text-sm text-slate-900 block truncate">
                               <span className="inline lg:hidden">{DAYS_NAMES_SHORT[idx]}</span>
                               <span className="hidden lg:inline">{dayName}</span>
                             </span>
-                            <span className="text-[11px] text-slate-500 font-sans block -mt-0.5">
+                            <span className="agenda-month-title text-[11px] text-slate-500 font-sans block -mt-0.5">
                               {monthName}
                             </span>
                           </div>
@@ -398,16 +398,16 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                           {/* Número del Día (Pastilla resaltada en el día de hoy) */}
                           <div className="flex items-center gap-1 shrink-0">
                             {isSunday ? (
-                              <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200 whitespace-nowrap">
+                              <span className="agenda-closed-badge px-1.5 sm:px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200 whitespace-nowrap">
                                 <span className="inline lg:hidden">{dayNum}</span>
                                 <span className="hidden lg:inline">Cerrado {dayNum}</span>
                               </span>
                             ) : (
                               <span
-                                className={`w-6 h-6 rounded-lg text-xs font-bubble font-bold flex items-center justify-center transition-all ${
+                                className={`agenda-day-number w-6 h-6 rounded-lg text-xs font-bubble font-bold flex items-center justify-center transition-all ${
                                   isToday
                                     ? 'bg-blue-600 text-white shadow-xs'
-                                    : 'bg-slate-200/80 text-slate-700'
+                                    : 'bg-white/80 text-slate-700 border border-slate-300/60'
                                 }`}
                               >
                                 {dayNum}
@@ -427,7 +427,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                     <tr key={hourLabel} className="transition-colors hover:bg-black/[0.015]">
                       {/* Columna Hora */}
                       <td
-                        className="sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
+                        className="agenda-hour-cell sticky left-0 z-10 p-3 text-center text-xs font-mono font-bold text-slate-600 align-top shadow-[2px_0_4px_rgba(0,0,0,0.06)]"
                         style={{
                           borderRight: `1px solid ${themeConfig.borderDiv}`,
                           borderBottom: `1px solid ${themeConfig.borderDiv}`,
@@ -477,7 +477,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                               {customBlocks.map((blk) => (
                                 <div
                                   key={blk.id}
-                                  className="p-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-800 text-[10px] shadow-xs flex items-center justify-between"
+                                  className="agenda-block-space p-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-800 text-[10px] shadow-xs flex items-center justify-between"
                                 >
                                   <div className="flex items-center gap-1 font-bubble font-bold truncate">
                                     <Lock className="w-3 h-3 text-slate-500 shrink-0" />
@@ -508,9 +508,9 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                   <div
                                     key={`${item.id}-${hourLabel}`}
                                     onClick={() => (onSelectItem ? onSelectItem(item) : onEditItem(item))}
-                                    className={`p-2 rounded-xl border text-xs shadow-xs transition-all cursor-pointer group/item flex flex-col justify-between ${
+                                    className={`agenda-item-card agenda-item-${item.category} p-2 rounded-xl border text-xs shadow-xs transition-all cursor-pointer group/item flex flex-col justify-between ${
                                       isDone
-                                        ? 'bg-slate-100 border-slate-200 opacity-60'
+                                        ? 'agenda-item-done bg-slate-100 border-slate-200 opacity-60'
                                         : isContinuation
                                         ? `${cat.bg} ${cat.border} opacity-95 border-dashed border-2 hover:shadow-md`
                                         : `${cat.bg} ${cat.border} hover:shadow-md hover:scale-[1.01]`
@@ -518,8 +518,8 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                   >
                                     <div className="flex items-start justify-between gap-1">
                                       <div className="flex items-center gap-1 min-w-0">
-                                        <CatIcon className={`w-3 h-3 shrink-0 ${cat.text}`} />
-                                        <span className={`font-bubble font-bold text-[11px] truncate ${cat.text} ${isDone ? 'line-through' : ''}`}>
+                                        <CatIcon className={`w-3 h-3 shrink-0 agenda-item-icon ${cat.text}`} />
+                                        <span className={`agenda-item-title font-bubble font-bold text-[11px] truncate ${cat.text} ${isDone ? 'line-through' : ''}`}>
                                           {item.title} {isContinuation && <span className="text-[9px] opacity-75 font-normal">(en curso)</span>}
                                         </span>
                                       </div>
@@ -541,7 +541,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                       </button>
                                     </div>
 
-                                    <div className="flex items-center justify-between text-[10px] font-mono mt-1 text-slate-500">
+                                    <div className="agenda-item-time flex items-center justify-between text-[10px] font-mono mt-1 text-slate-500">
                                       <span className="flex items-center gap-0.5 truncate mr-1">
                                         {item.time && <Clock className="w-2.5 h-2.5 shrink-0" />}
                                         <span className="truncate">
@@ -572,7 +572,7 @@ export const CalendarAgendaView: React.FC<CalendarAgendaViewProps> = ({
                                 <button
                                   type="button"
                                   onClick={() => onAddNewItem(dayKey, hourLabel)}
-                                  className="w-full py-2.5 rounded-xl border border-dashed border-transparent hover:border-purple-300 hover:bg-purple-50/50 text-purple-600 opacity-0 group-hover:opacity-100 transition-all font-bubble font-bold text-[10px] flex items-center justify-center gap-1 cursor-pointer"
+                                  className="agenda-btn-agendar w-full py-2.5 rounded-xl border border-dashed border-purple-300 hover:border-purple-600 bg-purple-50/50 hover:bg-purple-600 text-purple-700 hover:text-white opacity-0 group-hover:opacity-100 transition-all font-bubble font-bold text-[10px] flex items-center justify-center gap-1 cursor-pointer"
                                 >
                                   <Plus className="w-3 h-3" />
                                   <span>Agendar</span>
