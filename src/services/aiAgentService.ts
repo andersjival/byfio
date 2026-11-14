@@ -1,3 +1,5 @@
+import { getCachedAiConfig } from './aiConfigService';
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -12,6 +14,7 @@ export interface SendMessageOptions {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   userName?: string;
   conversationId?: string;
+  stockDisclosureMode?: 'availability_only' | 'full_stock';
 }
 
 export interface SendAudioOptions {
@@ -55,6 +58,7 @@ export const aiAgentService = {
           history: opts.history || [],
           userName: opts.userName,
           conversationId: opts.conversationId,
+          stockDisclosureMode: opts.stockDisclosureMode || getCachedAiConfig().stockDisclosureMode,
         }),
       });
 

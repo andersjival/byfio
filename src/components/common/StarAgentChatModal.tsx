@@ -5,6 +5,7 @@ import { useVoiceRecorder } from '../../hooks/useVoiceRecorder';
 import { playBubblePopSound, playWaterDropSound } from '../../utils/soundEffects';
 import { getWhatsAppLink } from '../../utils/formatters';
 import { StarAgentRegisterCard } from './StarAgentRegisterCard';
+import { getCachedAiConfig } from '../../services/aiConfigService';
 
 interface StarAgentChatModalProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       content:
         userRole === 'staff' || userRole === 'admin'
           ? `¡Hola ${userName ? userName.split(' ')[0] : 'compañera'}! ✨ Soy tu asistente de inventario y pedidos. Puedes preguntarme el stock de cualquier producto o cupos de talleres por texto o con un audio.`
-          : `¡Hola ${userName ? userName.split(' ')[0] : ''}! ✨🌸 Soy la Estrellita de by.fio. Estoy aquí para contarte si tenemos productos en stock, fechas de talleres o ayudarte con lo que necesites.`,
+          : (getCachedAiConfig().welcomeMessage || `¡Hola ${userName ? userName.split(' ')[0] : ''}! ✨🌸 Soy la Estrellita de by.fio. Estoy aquí para contarte si tenemos productos en stock, fechas de talleres o ayudarte con lo que necesites.`),
       timestamp: Date.now(),
     },
   ]);
@@ -177,7 +178,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   const quickChips =
     userRole === 'staff' || userRole === 'admin'
       ? ['¿Cuánto stock queda de tazas?', '¿Qué talleres tienen cupos?', '¿Cuáles productos están agotados?']
-      : ['✨ Registrarme en by.fio', '¿Tienen tazas en stock?', '¿Qué talleres hay disponibles?', '¿Hacen envíos a todo Costa Rica?'];
+      : ['✨ Registrarme en by.fio', '¿Tienen tazas disponibles?', '¿Qué talleres hay disponibles?', '¿Hacen envíos a todo Costa Rica?'];
 
   const waUrl = getWhatsAppLink('64004640', '¡Hola! Estaba conversando con la Estrellita y quisiera hacer una consulta.');
 

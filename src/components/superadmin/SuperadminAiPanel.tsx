@@ -19,11 +19,14 @@ import {
   FileText,
   Code,
   HelpCircle,
+  Key,
+  Cpu,
 } from 'lucide-react';
 import { aiAgentService } from '../../services/aiAgentService';
+import { SuperadminAiAccessCards } from './SuperadminAiAccessCards';
 
 export const SuperadminAiPanel: React.FC = () => {
-  const [reportView, setReportView] = useState<'realtime' | 'hourly' | 'daily' | 'prompts_rag'>('realtime');
+  const [reportView, setReportView] = useState<'access_config' | 'prompts_rag' | 'realtime' | 'hourly' | 'daily'>('access_config');
   const [metrics, setMetrics] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -91,15 +94,15 @@ export const SuperadminAiPanel: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="font-bubble font-black text-xl sm:text-2xl text-white tracking-wide">
-                  IA ByFio
+                  Configuración AI Estrella ByFio
                 </h2>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  Realtime Activo
+                  Live &amp; Conectado
                 </span>
               </div>
               <p className="text-xs text-purple-300 font-medium mt-0.5">
-                Panel Central de Control de Neuronas Cloudflare, Uso y Reportes de la Estrellita
+                Consola Central de Accesos Cloudflare, Credenciales, System Prompts, Motor RAG y Telemetría en Vivo de la Estrellita
               </p>
             </div>
           </div>
@@ -211,9 +214,35 @@ export const SuperadminAiPanel: React.FC = () => {
         </div>
       </div>
 
-      {/* Selector de Sub-Reportes (Realtime, Por Hora, Por Día) */}
+      {/* Selector de Sub-Reportes y Configuración */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 p-1 bg-purple-950/40 rounded-2xl border border-purple-800/40 w-fit">
+        <div className="flex items-center gap-1.5 p-1 bg-purple-950/40 rounded-2xl border border-purple-800/40 w-fit flex-wrap">
+          <button
+            type="button"
+            onClick={() => setReportView('access_config')}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-bubble text-xs font-bold transition-all cursor-pointer ${
+              reportView === 'access_config'
+                ? 'bg-gradient-to-r from-amber-500 to-pink-600 text-white shadow-xs'
+                : 'text-purple-200 hover:text-white'
+            }`}
+          >
+            <Key className="w-3.5 h-3.5 text-amber-300" />
+            <span>Accesos &amp; Credenciales</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setReportView('prompts_rag')}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-bubble text-xs font-bold transition-all cursor-pointer ${
+              reportView === 'prompts_rag'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xs'
+                : 'text-purple-200 hover:text-white'
+            }`}
+          >
+            <Cpu className="w-3.5 h-3.5 text-pink-400" />
+            <span>Configuración Chatbot &amp; RAG</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setReportView('realtime')}
@@ -252,25 +281,15 @@ export const SuperadminAiPanel: React.FC = () => {
             <Calendar className="w-3.5 h-3.5 text-cyan-400" />
             <span>Reporte por Día</span>
           </button>
-
-          <button
-            type="button"
-            onClick={() => setReportView('prompts_rag')}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-bubble text-xs font-bold transition-all cursor-pointer ${
-              reportView === 'prompts_rag'
-                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xs'
-                : 'text-purple-200 hover:text-white'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5 text-pink-400" />
-            <span>System Prompt & RAG</span>
-          </button>
         </div>
 
         <span className="text-[11px] text-purple-300 font-semibold self-end sm:self-center">
           Última actualización: {lastUpdated || 'Cargando...'}
         </span>
       </div>
+
+      {/* VISTA 0: ACCESOS Y CREDENCIALES OFICIALES */}
+      {reportView === 'access_config' && <SuperadminAiAccessCards />}
 
       {/* VISTA 1: TIEMPO REAL */}
       {reportView === 'realtime' && (
@@ -492,21 +511,42 @@ export const SuperadminAiPanel: React.FC = () => {
             </div>
           </div>
 
-          {/* Visor de System Prompt Oficial */}
-          <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1a142a] border border-purple-200/80 dark:border-purple-800/40 shadow-sm space-y-3">
-            <h3 className="font-bubble font-black text-base text-fio-900 dark:text-purple-100 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-amber-500" />
-              System Prompt en Producción (Clientes)
-            </h3>
-            <div className="p-3.5 rounded-2xl bg-slate-900 text-purple-100 font-mono text-[11px] leading-relaxed max-h-60 overflow-y-auto border border-purple-900/60 shadow-inner">
-              <p className="text-amber-300 font-bold mb-1">// Rol: Estrellita de by.fio (Mascota y Asistente Oficial)</p>
-              <p>Eres la Estrellita de by.fio, la mascota y asistente de servicio al cliente de by.fio (tienda creativa, papelería bonita y talleres en Costa Rica).</p>
-              <p className="mt-2 text-pink-300 font-bold">// Reglas de Comportamiento:</p>
-              <p>1. Responde siempre en español con un tono dulce, alegre, cercano, tierno (kawaii) y respetuoso. Usa emojis suaves (✨, 🌸, 💖, 🎀).</p>
-              <p>2. Si el usuario desea registrarse o crear cuenta, anímalo con amor: la tarjeta interactiva de registro se abre a un lado para que ingrese sus datos de dos en dos hasta crear su clave.</p>
-              <p>3. Consulta inventario y cupos de talleres en tiempo real de la base de datos byfiocr-db.</p>
-              <p className="mt-2 text-rose-300 font-bold">// Restricciones Estrictas de Confidencialidad:</p>
-              <p>4. NUNCA digas que eres una IA ni menciones modelos (Llama, Gemma, Cloudflare, etc.). Si te preguntan, di: &quot;¡Soy la Estrellita de by.fio! Tu compañera para ayudarte a encontrar todo lo lindo que buscas en la tienda ✨🌸&quot;.</p>
+          {/* Visores de System Prompts Oficiales */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+            {/* 1. Prompt Clientes */}
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1a142a] border border-purple-200/80 dark:border-purple-800/40 shadow-sm space-y-3">
+              <h3 className="font-bubble font-black text-sm sm:text-base text-fio-900 dark:text-purple-100 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-amber-500" />
+                1. System Prompt Clientes (Público)
+              </h3>
+              <div className="p-3.5 rounded-2xl bg-slate-900 text-purple-100 font-mono text-[11px] leading-relaxed max-h-56 overflow-y-auto border border-purple-900/60 shadow-inner">
+                <p className="text-amber-300 font-bold mb-1">// Rol: Estrellita de by.fio (Mascota Oficial)</p>
+                <p>Eres la Estrellita de by.fio, la mascota y asistente de servicio al cliente de by.fio (tienda creativa, papelería bonita y talleres en Costa Rica).</p>
+                <p className="mt-2 text-pink-300 font-bold">// Reglas de Tono y Registro:</p>
+                <p>1. Tono dulce, alegre, cercano, tierno (kawaii) y respetuoso con emojis (✨, 🌸, 💖, 🎀).</p>
+                <p>2. Registro de Usuarios: Se despliega tarjeta animada lateral de dos en dos.</p>
+                <p>3. Consulta inventario y cupos en tiempo real desde byfiocr-db.</p>
+                <p className="mt-2 text-rose-300 font-bold">// Restricciones Estrictas:</p>
+                <p>4. NUNCA digas que eres una IA ni menciones modelos (Llama, Gemma, etc.).</p>
+              </div>
+            </div>
+
+            {/* 2. Prompt Colaboradoras / Admin */}
+            <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1a142a] border border-purple-200/80 dark:border-purple-800/40 shadow-sm space-y-3">
+              <h3 className="font-bubble font-black text-sm sm:text-base text-fio-900 dark:text-purple-100 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-purple-500" />
+                2. System Prompt Colaboradoras / Admin (Interno)
+              </h3>
+              <div className="p-3.5 rounded-2xl bg-slate-900 text-purple-100 font-mono text-[11px] leading-relaxed max-h-56 overflow-y-auto border border-purple-900/60 shadow-inner">
+                <p className="text-purple-300 font-bold mb-1">// Rol: Asistente Interno de Equipo</p>
+                <p>Eres la Estrellita de by.fio en modo Asistente de Colaboradoras y Administración para Fiorella y el equipo.</p>
+                <p className="mt-2 text-emerald-300 font-bold">// Reglas de Eficiencia:</p>
+                <p>1. Sé concisa y exacta con cantidades de stock, precios y cupos de talleres.</p>
+                <p>2. Si un producto tiene 0 stock o dice AGOTADO, indícalo claramente sin rodeos.</p>
+                <p>3. Responde la cifra exacta disponible en tiempo real.</p>
+                <p className="mt-2 text-rose-300 font-bold">// Restricciones Estrictas:</p>
+                <p>4. Cero mención a tecnologías de IA, solo identidad de la Estrellita interna.</p>
+              </div>
             </div>
           </div>
 

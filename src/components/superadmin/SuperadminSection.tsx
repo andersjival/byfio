@@ -470,7 +470,7 @@ export const SuperadminSection: React.FC<SuperadminSectionProps> = ({ onNavigate
           }`}
         >
           <Sparkles className="w-4 h-4 text-amber-300" />
-          <span>IA ByFio</span>
+          <span>Configuración AI Estrella ByFio</span>
           <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-emerald-300 font-mono font-bold">
             Live
           </span>

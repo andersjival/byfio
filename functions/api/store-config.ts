@@ -19,6 +19,7 @@ const KEY_MAP: Record<string, string> = {
   siteDesignSettings: 'app_site_design_settings',
   catalogTaxonomies: 'app_catalog_taxonomies',
   calendarBlockedSpaces: 'app_calendar_blocked_spaces',
+  aiSettings: 'app_ai_settings',
 };
 
 const ensureTable = async (db: any) => {

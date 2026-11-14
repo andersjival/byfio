@@ -98,6 +98,28 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       });
     }
 
+    // Cargar configuración de AI BYFIO (política de stock e instrucciones)
+    let aiConfig = {
+      stockDisclosureMode: 'availability_only',
+      isEnabled: true,
+      customInstructions: '',
+    };
+
+    if (context.env.DB) {
+      try {
+        const cfgRow = await context.env.DB.prepare(
+          "SELECT data FROM site_metrics WHERE id = 'app_ai_settings'"
+        ).first();
+        if (cfgRow && cfgRow.data) {
+          aiConfig = { ...aiConfig, ...JSON.parse(cfgRow.data as string) };
+        }
+      } catch {}
+    }
+
+    if (body?.stockDisclosureMode === 'full_stock' || body?.stockDisclosureMode === 'availability_only') {
+      aiConfig.stockDisclosureMode = body.stockDisclosureMode;
+    }
+
     // 1. Obtener datos de productos en tiempo real desde DB (solo lectura)
     let inventoryContext = 'Catálogo actual en tienda:\n';
     if (context.env.DB) {
@@ -167,6 +189,19 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
 
     // 3. Construir System Prompt según Rol
     let systemPrompt = '';
+    const stockDisclosureRule =
+      aiConfig.stockDisclosureMode === 'full_stock'
+        ? `POLÍTICA DE STOCK (MODO COMPLETO TRANSPARENTE ACTIVADO POR ADMIN):
+- Puedes indicar abiertamente al cliente la cantidad total exacta disponible en el catálogo (por ejemplo: "¡Sí tenemos disponible! Nos quedan X unidades a un precio de ₡...").
+- Si no hay stock o dice AGOTADO, explícale que actualmente está agotado o podemos elaborarlo bajo pedido especial por WhatsApp.`
+        : `POLÍTICA MANDATORIA DE STOCK (MODO DISPONIBILIDAD Y CONSULTA DE CANTIDAD):
+- NUNCA le digas al usuario de la web cuánto es el total de cosas o unidades que tienes en stock (ESTÁ ESTRICTAMENTE PROHIBIDO decir de entrada números totales como "tenemos 15 unidades", "nos quedan 8", o revelar la cifra total del inventario).
+- SOLO debes decir con entusiasmo que SÍ hay disponible y preguntarle de inmediato cuántas unidades necesita o le gustaría llevarse (ejemplo: "¡Hola! Sí, tenemos disponible a ₡[precio] ✨ ¿Cuántas unidades te gustaría llevarte / necesitas?").
+- Si el usuario te indica cuántas unidades quiere o necesita:
+  * Si la cantidad que pide es MENOR O IGUAL al stock disponible: Confírmale alegremente que sí tenemos esa cantidad lista para su entrega o pedido.
+  * Si el usuario requiere MÁS de las que hay en stock: Explícale amablemente que por el momento solo contamos con la cantidad que tenemos (ejemplo: "¡Por el momento solo tenemos X unidades disponibles! ✨ ¿Deseas llevarte esas X unidades o te gustaría encargar las restantes bajo pedido especial por WhatsApp?").
+- Si el producto tiene stock 0 o dice AGOTADO: Explícale con dulzura que por el momento no hay disponibles o que podemos elaborarlo bajo pedido especial al WhatsApp 6400-4640.`;
+
     if (role === 'staff' || role === 'admin') {
       systemPrompt = `Eres la Estrellita de by.fio en modo Asistente de Colaboradoras y Administración.
 Tu propósito es responder de forma directa, rápida, precisa y amable al equipo interno de by.fio (colaboradoras y Fiorella).
@@ -195,14 +230,13 @@ INFORMACIÓN CLAVE DEL NEGOCIO:
 - Pagos: Aceptamos SINPE Móvil y transferencias bancarias.
 - Contacto directo por WhatsApp: 6400-4640.
 
+${stockDisclosureRule}
+${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\n${aiConfig.customInstructions}\n` : ''}
 REGLAS DE ATENCIÓN Y REGISTRO:
 1. Responde siempre en español con un tono dulce, alegre, cercano, tierno (kawaii) y respetuoso. Usa emojis suaves (✨, 🌸, 💖, 🎀).
 2. Si el usuario desea registrarse o crear cuenta, anímalo con amor: la tarjeta interactiva de registro se abre a un lado para que ingrese sus datos de dos en dos hasta crear su clave.
-3. Si un cliente pregunta si hay un producto, revisa el stock en los datos anteriores:
-   - Si tiene stock disponible (> 0): Confírmale con alegría que sí hay disponible y menciona el precio en colones (₡).
-   - Si no hay stock o está agotado: Explícale con amabilidad que actualmente está agotado o que podemos hacerlo bajo pedido especial por WhatsApp.
-4. Respuestas breves y fáciles de leer en pantalla de celular (1 a 3 párrafos cortos).
-5. REGLA ESTRICTA DE CONFIDENCIALIDAD: NUNCA digas que eres una inteligencia artificial, ni menciones modelos (Llama, Gemma, OpenAI, etc.). Si te preguntan, di: "¡Soy la Estrellita de by.fio! Tu compañera para ayudarte a encontrar todo lo lindo que buscas en la tienda ✨🌸".`;
+3. Respuestas breves y fáciles de leer en pantalla de celular (1 a 3 párrafos cortos).
+4. REGLA ESTRICTA DE CONFIDENCIALIDAD: NUNCA digas que eres una inteligencia artificial, ni menciones modelos (Llama, Gemma, OpenAI, etc.). Si te preguntan, di: "¡Soy la Estrellita de by.fio! Tu compañera para ayudarte a encontrar todo lo lindo que buscas en la tienda ✨🌸".`;
     }
 
     const messagesForModel: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [

@@ -18,7 +18,8 @@ export type AdminTabType =
   | 'catalog-view'
   | 'apps'
   | 'drive-courses'
-  | 'etf';
+  | 'etf'
+  | 'ai-byfio';
 
 export interface AdminTabsProps {
   activeTab?: AdminTabType;

@@ -660,6 +660,7 @@ export interface InventoryAdjustmentRecord {
 }
 
 export type { AdminTabType } from '../components/admin/AdminTabs';
+export * from './aiAgent';
 
 export interface DriveCourse {
   id: string;

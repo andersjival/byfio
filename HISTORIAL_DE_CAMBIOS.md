@@ -1,3 +1,44 @@
+## [v4.19.186] - 2026-11-13
+
+### 🤖 Módulo Administrativo AI BYFIO & Política Estricta de Revelación de Stock para la Estrellita
+- **Nuevo Módulo Oficial en Administración: AI BYFIO ([AiByfioAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiByfioAdminSection.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [AdminPwaShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/admin/AdminPwaShell.tsx))**:
+  - Incorporada nueva sección en el menú administrativo principal con icono Bot/Sparkles y acceso directo.
+  - Orquestador y submódulos atómicos bajo estándar universal ARQMODULAR (≤150 líneas UI, ≤180 líneas servicios/hooks).
+- **Selector de Política de Stock Configurable por el Admin ([AiStockPolicyCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiStockPolicyCard.tsx))**:
+  - **Modo 1 (Por Disponibilidad y Demanda - Por Defecto / Recomendado)**: La Estrellita **NUNCA** dice el total de cosas que tiene en stock. Solo confirma alegremente que el producto está disponible y pregunta cuántas unidades necesita o quiere llevarse. Si el cliente pide una cantidad, la Estrellita valida: si hay suficientes confirma la orden; y si requiere más de las que hay, le informa amablemente que por el momento solo cuentan con la cantidad existente y ofrece alistar esas o encargar las demás por WhatsApp.
+  - **Modo 2 (Stock Completo Transparente)**: El admin puede activar esta opción para que la Estrellita diga abiertamente la cifra total exacta en catálogo desde el inicio.
+- **Simulador en Vivo Integrado en Panel Admin ([AiLiveTesterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiLiveTesterCard.tsx))**:
+  - Chat interactivo de prueba para que Fiorella y el Admin verifiquen de inmediato las respuestas de la Estrellita bajo la política seleccionada con chips de prueba rápida.
+- **Persistencia en la Nube Cloudflare D1 ([config.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/config.ts), [store-config.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/store-config.ts), [chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - Endpoint `/api/ai/config` con persistencia en tabla `site_metrics` id `app_ai_settings`. Inyección dinámica en el System Prompt de Workers AI.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.186`.
+
+---
+
+## [v4.19.185] - 2026-11-13
+
+### 🔑 Interfaz Visual de Configuración AI Estrella ByFio & Gestor de Accesos
+- **Sección Oficial en Superadmin ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx), [SuperadminAiPanel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiPanel.tsx))**:
+  - Pestaña de navegación en la consola principal renombrada y configurada como **"Configuración AI Estrella ByFio"** con indicador *Live*.
+- **Módulo Visual de Accesos & Credenciales ([SuperadminAiAccessCards.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiAccessCards.tsx))**:
+  - Tarjetas interactivas con botones de copiar al portapapeles y revelado/ocultación de claves secretas:
+    - **Token de API Cloudflare**: con permisos Workers AI, D1 Edit y Pages Deploy.
+    - **ID de Cuenta Cloudflare**: `c45409ee4154cf898c37375b1e96d910` (CUENTA ANDERSJIVAL).
+    - **Subdominio Dedicado IA**: `https://ai.byfiocr.com` con SSL Google Trust Services y acceso directo.
+    - **Proyecto Pages & Producción**: `byfiocr` / `https://byfiocr.com`.
+    - **Bases de Datos D1**: `byfio-agent-db` (`56c38379-4579-41c5-a189-abb580893175`) y `byfiocr-db` (`60326015-d917-4a7b-baac-ab90d972ae57` en modo seguro SELECT).
+    - **Storage R2 / S3**: Access Key ID, Secret Key y S3 Endpoint.
+    - **Endpoints REST**: `/api/ai/chat`, `/api/ai/transcribe`, `/api/ai/metrics`.
+- **Configuración Visual del Chatbot**:
+  - Desglose de parámetros técnicos (Temperature 0.7, Max Tokens 600, Context Window 6 turnos).
+  - Visor dual de System Prompts (Público de Clientes con tono kawaii y emojis vs Interno de Colaboradoras con datos exactos de stock).
+  - Base de Conocimiento RAG de Preguntas Frecuentes y flujo de registro de usuarios.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.185`.
+
+---
+
 ## [v4.19.184] - 2026-11-13
 
 ### ✨ Registro Animado por Detrás de la Estrellita, RAG de FAQs y Visor de System Prompt
@@ -29,6 +70,47 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.186] - 2026-11-13
+
+### 🤖 Módulo Administrativo AI BYFIO & Política Estricta de Revelación de Stock para la Estrellita
+- **Nuevo Módulo Oficial en Administración: AI BYFIO ([AiByfioAdminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiByfioAdminSection.tsx), [AdminHubMenu.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/AdminHubMenu.tsx), [AdminPwaShell.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/apps/admin/AdminPwaShell.tsx))**:
+  - Incorporada nueva sección en el menú administrativo principal con icono Bot/Sparkles y acceso directo.
+  - Orquestador y submódulos atómicos bajo estándar universal ARQMODULAR (≤150 líneas UI, ≤180 líneas servicios/hooks).
+- **Selector de Política de Stock Configurable por el Admin ([AiStockPolicyCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiStockPolicyCard.tsx))**:
+  - **Modo 1 (Por Disponibilidad y Demanda - Por Defecto / Recomendado)**: La Estrellita **NUNCA** dice el total de cosas que tiene en stock. Solo confirma alegremente que el producto está disponible y pregunta cuántas unidades necesita o quiere llevarse. Si el cliente pide una cantidad, la Estrellita valida: si hay suficientes confirma la orden; y si requiere más de las que hay, le informa amablemente que por el momento solo cuentan con la cantidad existente y ofrece alistar esas o encargar las demás por WhatsApp.
+  - **Modo 2 (Stock Completo Transparente)**: El admin puede activar esta opción para que la Estrellita diga abiertamente la cifra total exacta en catálogo desde el inicio.
+- **Simulador en Vivo Integrado en Panel Admin ([AiLiveTesterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiLiveTesterCard.tsx))**:
+  - Chat interactivo de prueba para que Fiorella y el Admin verifiquen de inmediato las respuestas de la Estrellita bajo la política seleccionada con chips de prueba rápida.
+- **Persistencia en la Nube Cloudflare D1 ([config.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/config.ts), [store-config.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/store-config.ts), [chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - Endpoint `/api/ai/config` con persistencia en tabla `site_metrics` id `app_ai_settings`. Inyección dinámica en el System Prompt de Workers AI.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.186`.
+
+---
+
+## [v4.19.185] - 2026-11-13
+
+### 🔑 Interfaz Visual de Configuración AI Estrella ByFio & Gestor de Accesos
+- **Sección Oficial en Superadmin ([SuperadminSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminSection.tsx), [SuperadminAiPanel.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiPanel.tsx))**:
+  - Pestaña de navegación en la consola principal renombrada y configurada como **"Configuración AI Estrella ByFio"** con indicador *Live*.
+- **Módulo Visual de Accesos & Credenciales ([SuperadminAiAccessCards.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/superadmin/SuperadminAiAccessCards.tsx))**:
+  - Tarjetas interactivas con botones de copiar al portapapeles y revelado/ocultación de claves secretas:
+    - **Token de API Cloudflare**: con permisos Workers AI, D1 Edit y Pages Deploy.
+    - **ID de Cuenta Cloudflare**: `c45409ee4154cf898c37375b1e96d910` (CUENTA ANDERSJIVAL).
+    - **Subdominio Dedicado IA**: `https://ai.byfiocr.com` con SSL Google Trust Services y acceso directo.
+    - **Proyecto Pages & Producción**: `byfiocr` / `https://byfiocr.com`.
+    - **Bases de Datos D1**: `byfio-agent-db` (`56c38379-4579-41c5-a189-abb580893175`) y `byfiocr-db` (`60326015-d917-4a7b-baac-ab90d972ae57` en modo seguro SELECT).
+    - **Storage R2 / S3**: Access Key ID, Secret Key y S3 Endpoint.
+    - **Endpoints REST**: `/api/ai/chat`, `/api/ai/transcribe`, `/api/ai/metrics`.
+- **Configuración Visual del Chatbot**:
+  - Desglose de parámetros técnicos (Temperature 0.7, Max Tokens 600, Context Window 6 turnos).
+  - Visor dual de System Prompts (Público de Clientes con tono kawaii y emojis vs Interno de Colaboradoras con datos exactos de stock).
+  - Base de Conocimiento RAG de Preguntas Frecuentes y flujo de registro de usuarios.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.185`.
 
 ---
 
