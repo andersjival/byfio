@@ -191,26 +191,31 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
         chatsOpened: hourOpens,
         conversations: hourQueries,
         neurons: hourNeurons,
+        avgNeuronsPerChat: hourQueries > 0 ? Number((hourNeurons / hourQueries).toFixed(1)) : 0,
       },
       day: {
         chatsOpened: Math.max(dayOpens, hourOpens),
         conversations: Math.max(dayQueries, hourQueries),
         neurons: dayNeurons,
+        avgNeuronsPerChat: dayQueries > 0 ? Number((dayNeurons / dayQueries).toFixed(1)) : 0,
       },
       week: {
         chatsOpened: Math.max(weekOpens, dayOpens),
         conversations: Math.max(weekQueries, dayQueries),
         neurons: weekNeurons,
+        avgNeuronsPerChat: weekQueries > 0 ? Number((weekNeurons / weekQueries).toFixed(1)) : 0,
       },
       month: {
         chatsOpened: Math.max(monthOpens, weekOpens),
         conversations: Math.max(monthQueries, weekQueries),
         neurons: monthNeurons,
+        avgNeuronsPerChat: monthQueries > 0 ? Number((monthNeurons / monthQueries).toFixed(1)) : 0,
       },
     };
 
     const freeTierDailyLimit = 10000;
     const quotaUsedPercent = Number(((totalNeuronsToday / freeTierDailyLimit) * 100).toFixed(1));
+    const avgNeuronsOverall = totalMessagesAnswered > 0 ? Number((totalNeuronsToday / totalMessagesAnswered).toFixed(1)) : 0;
 
     return new Response(
       JSON.stringify({
@@ -218,6 +223,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
         summary: {
           totalNeuronsToday,
           totalNeuronsMonth,
+          avgNeuronsPerChat: avgNeuronsOverall,
           freeTierDailyLimit,
           quotaUsedPercent,
           remainingNeuronsToday: Math.max(0, freeTierDailyLimit - totalNeuronsToday),

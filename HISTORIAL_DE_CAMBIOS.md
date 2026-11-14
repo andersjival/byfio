@@ -1,3 +1,19 @@
+## [v4.19.194] - 2026-11-13
+
+### ⚡ Neuronas Promedio por Chat Interactivas y Estilizado Púrpura Armónico
+- **Interacción Clickeable en Tarjeta de Neuronas ([AiMetricsOverviewCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiMetricsOverviewCard.tsx))**:
+  - Al hacer clic en la tarjeta de Neuronas, se alterna el título a `"Neuronas por promedio por chat"` y se muestra la cifra exacta del gasto promedio por chat (`X neuronas / chat`).
+  - Desglose explicativo desplegable con cálculo en vivo sobre el total de neuronas y conversaciones del periodo seleccionado (Hora, Día, Semana o Mes).
+  - Segundo clic o botón "Volver a Total" restaura la visualización del total de neuronas consumidas.
+- **Backend de Métricas en Tiempo Real ([metrics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/metrics.ts))**:
+  - Cálculo de `avgNeuronsPerChat` agregado en el resumen global y segmentado dentro de cada periodo (`hour`, `day`, `week`, `month`).
+- **Paleta de Colores Púrpura / Fucsia**:
+  - Sustituidos todos los acentos y tipografías ámbar/amarillo de la métrica por tonalidades fucsia/púrpura acordes al diseño de By.Fio.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.194`.
+
+---
+
 ## [v4.19.193] - 2026-11-13
 
 ### 🎨 Perfeccionamiento Visual: Esquinas Redondeadas Superiores, Sangría de Formulario y Despliegue Fluido
@@ -192,6 +208,22 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.194] - 2026-11-13
+
+### ⚡ Neuronas Promedio por Chat Interactivas y Estilizado Púrpura Armónico
+- **Interacción Clickeable en Tarjeta de Neuronas ([AiMetricsOverviewCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiMetricsOverviewCard.tsx))**:
+  - Al hacer clic en la tarjeta de Neuronas, se alterna el título a `"Neuronas por promedio por chat"` y se muestra la cifra exacta del gasto promedio por chat (`X neuronas / chat`).
+  - Desglose explicativo desplegable con cálculo en vivo sobre el total de neuronas y conversaciones del periodo seleccionado (Hora, Día, Semana o Mes).
+  - Segundo clic o botón "Volver a Total" restaura la visualización del total de neuronas consumidas.
+- **Backend de Métricas en Tiempo Real ([metrics.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/metrics.ts))**:
+  - Cálculo de `avgNeuronsPerChat` agregado en el resumen global y segmentado dentro de cada periodo (`hour`, `day`, `week`, `month`).
+- **Paleta de Colores Púrpura / Fucsia**:
+  - Sustituidos todos los acentos y tipografías ámbar/amarillo de la métrica por tonalidades fucsia/púrpura acordes al diseño de By.Fio.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.194`.
 
 ---
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, RefreshCw, CheckCircle2, Lock } from 'lucide-react';
+import { Activity, RefreshCw, CheckCircle2, Lock, Zap, Info } from 'lucide-react';
 import { aiAgentService } from '../../../services/aiAgentService';
 import { AiSuperadminModelsModal } from './AiSuperadminModelsModal';
 
@@ -10,6 +10,7 @@ export const AiMetricsOverviewCard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('day');
   const [isModelsModalOpen, setIsModelsModalOpen] = useState(false);
+  const [showAvgNeurons, setShowAvgNeurons] = useState(false);
 
   const loadMetrics = async () => {
     setLoading(true);
@@ -34,6 +35,14 @@ export const AiMetricsOverviewCard: React.FC = () => {
   const chatOpened = periodData.chatsOpened;
   const totalInteractions = periodData.conversations;
   const neuronsConsumed = periodData.neurons;
+
+  // Promedio de neuronas por chat
+  const avgNeuronsPerChat =
+    totalInteractions > 0
+      ? (Number(neuronsConsumed) / totalInteractions).toFixed(1)
+      : periodData.avgNeuronsPerChat
+      ? Number(periodData.avgNeuronsPerChat).toFixed(1)
+      : '0.0';
 
   const filterLabels: Array<{ id: TimeFilter; label: string }> = [
     { id: 'hour', label: 'Hora' },
@@ -118,10 +127,35 @@ export const AiMetricsOverviewCard: React.FC = () => {
           </span>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/30 text-center">
-          <span className="text-[11px] font-sans text-slate-500 dark:text-amber-300 block">Neuronas  AI</span>
-          <span className="font-bubble font-extrabold text-xl text-amber-600 dark:text-amber-300 mt-1 block">
-            {Number(neuronsConsumed).toFixed(1)}
+        {/* Tarjeta Clickeable de Neuronas -> Muestra Promedio por Chat */}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => setShowAvgNeurons(!showAvgNeurons)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setShowAvgNeurons(!showAvgNeurons);
+            }
+          }}
+          className={`p-3.5 rounded-2xl border text-center transition-all cursor-pointer active:scale-95 select-none relative group ${
+            showAvgNeurons
+              ? 'bg-fuchsia-100/80 dark:bg-fuchsia-950/60 border-fuchsia-400 dark:border-fuchsia-600 shadow-md ring-2 ring-fuchsia-400/30'
+              : 'bg-fuchsia-50/60 dark:bg-fuchsia-950/30 border-fuchsia-100 dark:border-fuchsia-900/30 hover:border-fuchsia-300 dark:hover:border-fuchsia-700 hover:shadow-xs'
+          }`}
+          title="Haz clic para ver Neuronas por promedio por chat"
+        >
+          <div className="flex items-center justify-center gap-1">
+            <span className="text-[11px] font-sans text-slate-600 dark:text-fuchsia-300 block font-semibold">
+              {showAvgNeurons ? 'Neuronas por promedio por chat' : 'Neuronas  AI'}
+            </span>
+            <Info className="w-3 h-3 text-fuchsia-500 opacity-60 group-hover:opacity-100" />
+          </div>
+          <span className="font-bubble font-extrabold text-xl text-fuchsia-700 dark:text-fuchsia-300 mt-1 block">
+            {showAvgNeurons ? avgNeuronsPerChat : Number(neuronsConsumed).toFixed(1)}
+          </span>
+          <span className="text-[10px] text-fuchsia-700/70 dark:text-fuchsia-400/80 font-medium mt-0.5 block">
+            {showAvgNeurons ? 'neuronas / chat (clic para total)' : 'total (clic para ver promedio)'}
           </span>
         </div>
 
@@ -132,6 +166,35 @@ export const AiMetricsOverviewCard: React.FC = () => {
           </span>
         </div>
       </div>
+
+      {/* Desglose Detallado de Neuronas por Promedio por Chat */}
+      {showAvgNeurons && (
+        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-fuchsia-500/15 via-purple-500/10 to-pink-500/15 border border-fuchsia-300/50 dark:border-fuchsia-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="flex items-center gap-2.5">
+            <span className="p-1.5 rounded-xl bg-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-400">
+              <Zap className="w-4 h-4" />
+            </span>
+            <div>
+              <p className="font-bubble font-bold text-slate-800 dark:text-purple-100">
+                Neuronas por promedio por chat:{' '}
+                <span className="text-fuchsia-700 dark:text-fuchsia-300 font-extrabold text-sm">
+                  {avgNeuronsPerChat} neuronas / chat
+                </span>
+              </p>
+              <p className="text-[11px] text-slate-500 dark:text-purple-300">
+                Gasto promedio calculado sobre {Number(neuronsConsumed).toFixed(1)} neuronas y {totalInteractions} conversaciones en el periodo ({timeFilter === 'hour' ? 'Hora' : timeFilter === 'day' ? 'Día' : timeFilter === 'week' ? 'Semana' : 'Mes'}).
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAvgNeurons(false)}
+            className="text-[11px] font-bold text-fuchsia-700 hover:text-fuchsia-800 dark:text-fuchsia-300 underline self-end sm:self-auto cursor-pointer"
+          >
+            Volver a Total
+          </button>
+        </div>
+      )}
 
       {/* Modal Seguro para Superadmin */}
       <AiSuperadminModelsModal

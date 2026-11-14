@@ -225,7 +225,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       >
         {/* Ventana de Chat de la Estrellita (z-20) */}
         <div
-          className="relative z-20 w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh] bg-white dark:bg-[#1a142a] rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.45)] border-2 border-fio-200/90 dark:border-purple-500/40 flex flex-col overflow-hidden animate-in slide-in-from-bottom-6 duration-200 transition-all duration-[1350ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="relative z-20 w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh] bg-white dark:bg-[#1a142a] rounded-t-3xl sm:rounded-3xl shadow-[16px_0_35px_-5px_rgba(0,0,0,0.5),0_25px_60px_-15px_rgba(0,0,0,0.45)] border-2 border-fio-200/90 dark:border-purple-500/40 flex flex-col overflow-hidden animate-in slide-in-from-bottom-6 duration-200 transition-all duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         >
         {/* Header con Mascota Estrellita */}
         <div className="relative px-4 py-3 bg-gradient-to-r from-fio-100 via-pink-50 to-purple-100 dark:from-purple-950 dark:via-[#221838] dark:to-purple-900 border-b border-fio-200/80 dark:border-purple-800/40 flex items-center justify-between">
