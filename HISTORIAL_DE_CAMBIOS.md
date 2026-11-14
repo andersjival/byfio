@@ -58,6 +58,23 @@
 
 ---
 
+## [v4.19.204] - 2026-11-13
+
+### 💬 Módulo "Chats en Vivo", Memoria RAG sobre Historial y Auto-Purga Programable
+- **Módulo "Chats en Vivo" Estilo WhatsApp Web ([AiLiveChatsCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/ai/AiLiveChatsCard.tsx), [live-chats.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/live-chats.ts))**:
+  - Panel izquierdo con buscador de texto en tiempo real, filtros tipo chip (`Todos`, `Clientes`, `Staff`, `📅 Hoy`), avatares circulares kawaii, etiquetas de rol y hora relativa.
+  - Visor interactivo en el panel derecho con globos de diálogo diferenciados (usuario a la derecha en púrpura, Estrellita a la izquierda en blanco/lavanda con avatar), timestamps y detección de notas de voz.
+  - Compatibilidad visual armónica y contrastada en **tema claro y tema oscuro**.
+- **Memoria RAG sobre Historial del Chat ([chat.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/chat.ts))**:
+  - Motor de recuperación semántica que indexa y consulta mensajes históricos previos en D1 para inyectar hechos pasados relevantes sin desbordar el contexto.
+- **Auto-Borrado y Retención Configurable por el Administrador ([live-chats.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/functions/api/ai/live-chats.ts))**:
+  - Selector en la barra de control para definir el tiempo de retención (`1 hora`, `6 horas`, `24 horas`, `3 días`, `7 días`, `30 días`, `Nunca`).
+  - Botón de purga manual inmediata (`🧹 Purgar Ahora`) y limpieza automática en D1.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.204`.
+
+---
+
 ## [v4.19.199] - 2026-11-13
 
 ### ✨ Calibración Inteligente de Conversación y Stock de la Estrellita (Cero Amnesia & Confirmación de Cantidades)

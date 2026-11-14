@@ -113,7 +113,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <button
                     type="button"
                     onClick={() => onNavigate('workshop-waitlist', undefined, ws.id)}
-                    className="px-3.5 py-2 rounded-xl bg-fio-pink hover:bg-pink-600 text-white text-xs font-bubble font-bold shadow-sm active:scale-95 transition-all cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl bg-fio-pink hover:bg-pink-600 text-white text-xs font-bubble font-bold shadow-sm active:scale-95 transition-all cursor-pointer dark:bg-gradient-to-r dark:from-purple-600 dark:to-fio-pink dark:hover:opacity-95 dark:shadow-[0_0_15px_rgba(217,70,239,0.35)]"
                   >
                     Ingresar a la lista de espera
                   </button>
