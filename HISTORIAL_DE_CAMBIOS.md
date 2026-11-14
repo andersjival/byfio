@@ -1,3 +1,16 @@
+## [v4.19.197] - 2026-11-13
+
+### 🛡️ Persistencia Total y Prevención de Redirección en Módulos Admin (AI Waifus / AI BYFIO y demás módulos)
+- **Persistencia de Recarga F5 / Swipe en Módulos de Admin ([routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx))**:
+  - Incorporadas rutas dedicadas y canónicas en `adminPathMap` para `'ai-byfio'` (`/admin/ai-byfio`), `'layaways'` (`/admin/apartados`), `'catalog-view'` (`/admin/catalogo-visual`) y `'etf'` (`/admin/etf`).
+  - Reconocimiento completo en `parseRouteFromLocation` de todas las variantes de rutas (`/admin/ai-byfio`, `/admin/waifus`, `/admin/waifu`, `/admin/ia`, `/admin/apartados`, `/admin/etf`, `/admin/catalogo-visual`, etc.).
+  - Respaldo dinámico mediante `sessionStorage`: si la PWA o el navegador recarga en `/admin`, recupera automáticamente el último módulo activo registrado (`byfio_last_admin_tab`) impidiendo volver involuntariamente al menú de administración.
+  - Blindaje en ciclo de vida (`useEffect`): agregada comprobación previa de `currentUser` y exención de módulos del sistema (`ai-byfio`, `etf`, `layaways`, `catalog-view`, etc.) para evitar caídas a `'hub'` por validaciones temporales durante la hidratación de credenciales.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.197`.
+
+---
+
 ## [v4.19.196] - 2026-11-13
 
 ### 📐 Formato Compacto, Alineación Inferior y Despliegue Pausado a 1.6s
@@ -237,6 +250,19 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.197] - 2026-11-13
+
+### 🛡️ Persistencia Total y Prevención de Redirección en Módulos Admin (AI Waifus / AI BYFIO y demás módulos)
+- **Persistencia de Recarga F5 / Swipe en Módulos de Admin ([routeHelpers.ts](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/utils/routeHelpers.ts), [App.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/App.tsx))**:
+  - Incorporadas rutas dedicadas y canónicas en `adminPathMap` para `'ai-byfio'` (`/admin/ai-byfio`), `'layaways'` (`/admin/apartados`), `'catalog-view'` (`/admin/catalogo-visual`) y `'etf'` (`/admin/etf`).
+  - Reconocimiento completo en `parseRouteFromLocation` de todas las variantes de rutas (`/admin/ai-byfio`, `/admin/waifus`, `/admin/waifu`, `/admin/ia`, `/admin/apartados`, `/admin/etf`, `/admin/catalogo-visual`, etc.).
+  - Respaldo dinámico mediante `sessionStorage`: si la PWA o el navegador recarga en `/admin`, recupera automáticamente el último módulo activo registrado (`byfio_last_admin_tab`) impidiendo volver involuntariamente al menú de administración.
+  - Blindaje en ciclo de vida (`useEffect`): agregada comprobación previa de `currentUser` y exención de módulos del sistema (`ai-byfio`, `etf`, `layaways`, `catalog-view`, etc.) para evitar caídas a `'hub'` por validaciones temporales durante la hidratación de credenciales.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.197`.
 
 ---
 

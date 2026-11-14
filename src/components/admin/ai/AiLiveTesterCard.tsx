@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { Bot, Send, Sparkles, RefreshCw } from 'lucide-react';
 import { aiAgentService } from '../../../services/aiAgentService';
-import { AiStockDisclosureMode } from '../../../types/aiAgent';
+import { AiAgentConfig, AiStockDisclosureMode } from '../../../types/aiAgent';
 
 interface AiLiveTesterCardProps {
   currentMode: AiStockDisclosureMode;
+  config?: AiAgentConfig;
 }
 
-export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode }) => {
+export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode, config }) => {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([
     {
       role: 'assistant',
-      text: '¡Hola! ✨🌸 Soy la Estrellita de by.fio en modo de prueba. Hazme una consulta sobre cualquier producto o pide una cantidad para probar la política activa.',
+      text: '¡Hola! ✨🌸 Soy la Estrellita de by.fio en modo de prueba. Hazme una consulta sobre stock, talleres o pon a prueba mis directrices.',
     },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [statusText, setStatusText] = useState<string>('Estrellita escribiendo...');
 
   const handleSend = async (customText?: string) => {
@@ -27,7 +27,7 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
     setMessages(newHistory);
     setInput('');
     setLoading(true);
-    setStatusText('Consultando modelo...');
+    setStatusText('Consultando modelo con tus parámetros...');
 
     try {
       const historyPayload = newHistory.slice(-5).map((m) => ({ role: m.role, content: m.text }));
@@ -35,29 +35,43 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
         message: text,
         role: 'customer',
         history: historyPayload,
-        stockDisclosureMode: currentMode,
+        stockDisclosureMode: config?.stockDisclosureMode || currentMode,
+        temperature: config?.temperature,
+        maxTokens: config?.maxTokens,
+        topP: config?.topP,
+        topK: config?.topK,
+        responseChunkSeparator: config?.responseChunkSeparator,
+        maxResponseChunks: config?.maxResponseChunks,
+        initialDelayMs: config?.initialDelayMs,
+        msPerChar: config?.msPerChar,
+        delayType: config?.delayType,
+        customInstructions: config?.customInstructions,
+        agentRoleTone: config?.agentRoleTone,
+        lengthStructure: config?.lengthStructure,
+        strictBlacklist: config?.strictBlacklist,
+        escapeProtocol: config?.escapeProtocol,
+        systemPromptOverride: config?.systemPromptOverride,
+        securityFilters: config?.securityFilters,
       });
 
       const chunks =
         res.chunks && res.chunks.length > 0
           ? res.chunks
           : res.messages && res.messages.length > 0
-          ? res.messages.map((m, i) => ({ index: i, text: m, typingMs: 1200 }))
-          : [{ index: 0, text: res.response, typingMs: 1200 }];
+          ? res.messages.map((m, i) => ({ index: i, text: m, typingMs: 1000 }))
+          : [{ index: 0, text: res.response, typingMs: 1000 }];
 
-      // Simular retraso inicial (2 a 4s)
-      setStatusText('Estrellita pensando (2s)...');
-      await new Promise((resolve) => setTimeout(resolve, Math.min(res.humanSimulation?.initialDelayMs || 2000, 2500)));
+      // Simular retraso inicial configurado por el usuario
+      const initialDelay = Math.min(config?.initialDelayMs || res.humanSimulation?.initialDelayMs || 2000, 2500);
+      setStatusText(`Estrellita pensando (${(initialDelay / 1000).toFixed(1)}s)...`);
+      await new Promise((resolve) => setTimeout(resolve, initialDelay));
 
       for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
         setStatusText(`Escribiendo mensaje ${i + 1}/${chunks.length}... (${chunk.typingMs}ms)`);
-        await new Promise((resolve) => setTimeout(resolve, Math.min(chunk.typingMs || 1200, 2200)));
+        await new Promise((resolve) => setTimeout(resolve, Math.min(chunk.typingMs || 1000, 2000)));
 
-        setMessages((prev) => [
-          ...prev,
-          { role: 'assistant', text: chunk.text },
-        ]);
+        setMessages((prev) => [...prev, { role: 'assistant', text: chunk.text }]);
       }
     } catch {
       setMessages((prev) => [
@@ -88,10 +102,10 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
           </span>
           <div>
             <h3 className="font-bubble font-bold text-base sm:text-lg text-slate-800 dark:text-purple-100">
-              Simulador en Vivo de la Estrellita (Cliente Web)
+              Simulador en Vivo de la Estrellita (Bot de Prueba)
             </h3>
             <p className="text-xs text-slate-500 dark:text-purple-300 font-sans">
-              Prueba al instante cómo interactúa la Estrellita según la política de stock seleccionada.
+              Interacciona directamente con los parámetros y directrices que estás configurando en este momento.
             </p>
           </div>
         </div>
@@ -104,13 +118,35 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
         </button>
       </div>
 
+      {/* Indicador de Calibración Activa en Tiempo Real */}
+      <div className="flex flex-wrap items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-50/90 dark:bg-purple-950/50 border border-purple-200/70 dark:border-purple-800/50 text-[11px] text-purple-800 dark:text-purple-200">
+        <span className="font-bold flex items-center gap-1 text-pink-600 dark:text-pink-400">
+          <Sparkles className="w-3.5 h-3.5" /> Parámetros Activos:
+        </span>
+        <span className="px-2 py-0.5 rounded bg-white dark:bg-purple-900/80 font-mono font-bold shadow-2xs">
+          Temp: {Number(config?.temperature ?? 0.3).toFixed(2)}
+        </span>
+        <span className="px-2 py-0.5 rounded bg-white dark:bg-purple-900/80 font-mono font-bold shadow-2xs">
+          Tokens: {config?.maxTokens ?? 120}
+        </span>
+        <span className="px-2 py-0.5 rounded bg-white dark:bg-purple-900/80 font-mono font-bold shadow-2xs">
+          Sep: "{config?.responseChunkSeparator ?? '|||'}"
+        </span>
+        <span className="px-2 py-0.5 rounded bg-white dark:bg-purple-900/80 font-mono font-bold shadow-2xs">
+          {config?.stockDisclosureMode === 'full_stock' ? 'Stock Completo' : 'Solo Disp.'}
+        </span>
+        <span className="ml-auto text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+          ● Probando con tus datos ingresados
+        </span>
+      </div>
+
       <div className="flex flex-wrap gap-1.5">
         {[
-          '¿Tienen tazas kawaii disponibles?',
           '¿Eres un robot o una IA?',
-          'Quiero hablar con una persona',
+          'Quiero hablar con una persona real',
           '¿Me das un 50% de descuento?',
-          'Quiero 2 libretas',
+          '¿Cuántas libretas tienen en stock?',
+          '¿Hacen envíos a Cartago?',
         ].map((chip) => (
           <button
             key={chip}
@@ -124,16 +160,16 @@ export const AiLiveTesterCard: React.FC<AiLiveTesterCardProps> = ({ currentMode 
         ))}
       </div>
 
-      <div className="h-56 overflow-y-auto space-y-2 p-3 rounded-2xl bg-slate-50/80 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 text-xs">
+      <div className="h-60 overflow-y-auto space-y-2 p-3 rounded-2xl bg-slate-50/80 dark:bg-purple-950/20 border border-slate-200/70 dark:border-purple-900/30 text-xs">
         {messages.map((m, idx) => (
           <div
             key={idx}
             className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[85%] px-3 py-2 rounded-2xl whitespace-pre-wrap leading-relaxed ${
+              className={`max-w-[85%] px-3.5 py-2 rounded-2xl whitespace-pre-wrap leading-relaxed ${
                 m.role === 'user'
-                  ? 'bg-purple-600 text-white font-sans'
+                  ? 'bg-purple-700 text-white font-sans shadow-xs'
                   : 'bg-white dark:bg-[#201833] text-slate-800 dark:text-purple-100 border border-purple-100 dark:border-purple-900/50 shadow-xs'
               }`}
             >

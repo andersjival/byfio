@@ -20,6 +20,18 @@ export interface SendMessageOptions {
   maxTokens?: number;
   topP?: number;
   topK?: number;
+  responseChunkSeparator?: string;
+  maxResponseChunks?: number;
+  initialDelayMs?: number;
+  msPerChar?: number;
+  delayType?: 'dynamic' | 'fixed' | 'natural';
+  customInstructions?: string;
+  agentRoleTone?: string;
+  lengthStructure?: string;
+  strictBlacklist?: string;
+  escapeProtocol?: string;
+  systemPromptOverride?: string;
+  securityFilters?: boolean;
 }
 
 export interface SendMessageResult {
@@ -79,11 +91,18 @@ export const aiAgentService = {
           maxTokens: opts.maxTokens ?? currentConfig.maxTokens,
           topP: opts.topP ?? currentConfig.topP,
           topK: opts.topK ?? currentConfig.topK,
-          responseChunkSeparator: currentConfig.responseChunkSeparator,
-          maxResponseChunks: currentConfig.maxResponseChunks,
-          initialDelayMs: currentConfig.initialDelayMs,
-          msPerChar: currentConfig.msPerChar,
-          delayType: currentConfig.delayType,
+          responseChunkSeparator: opts.responseChunkSeparator ?? currentConfig.responseChunkSeparator,
+          maxResponseChunks: opts.maxResponseChunks ?? currentConfig.maxResponseChunks,
+          initialDelayMs: opts.initialDelayMs ?? currentConfig.initialDelayMs,
+          msPerChar: opts.msPerChar ?? currentConfig.msPerChar,
+          delayType: opts.delayType ?? currentConfig.delayType,
+          customInstructions: opts.customInstructions ?? currentConfig.customInstructions,
+          agentRoleTone: opts.agentRoleTone ?? currentConfig.agentRoleTone,
+          lengthStructure: opts.lengthStructure ?? currentConfig.lengthStructure,
+          strictBlacklist: opts.strictBlacklist ?? currentConfig.strictBlacklist,
+          escapeProtocol: opts.escapeProtocol ?? currentConfig.escapeProtocol,
+          systemPromptOverride: opts.systemPromptOverride ?? currentConfig.systemPromptOverride,
+          securityFilters: opts.securityFilters ?? currentConfig.securityFilters,
         }),
       });
 

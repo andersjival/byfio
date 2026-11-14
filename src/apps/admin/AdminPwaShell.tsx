@@ -117,7 +117,8 @@ export const AdminPwaShell: React.FC<AdminPwaShellProps> = ({
       onNavigate('superadmin');
     } else if (user.role === 'admin' || user.role === 'staff') {
       const isAlistoOnly = user.role === 'staff' && user.permissions?.orders && !user.permissions?.billing && !user.permissions?.inventory;
-      onNavigate('admin', isAlistoOnly ? 'orders' : undefined);
+      const targetAdminTab = isAlistoOnly ? 'orders' : (adminTab !== 'hub' ? adminTab : undefined);
+      onNavigate('admin', targetAdminTab);
     } else {
       onNavigate('home');
     }

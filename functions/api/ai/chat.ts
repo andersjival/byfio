@@ -107,6 +107,16 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       topP: 0.85,
       topK: 40,
       maxTokens: 120,
+      securityFilters: true,
+      agentRoleTone:
+        'Asesora amable, ágil, profesional, cercana y cálida, sin sonar corporativa o robótica. Trato tierno, dulce y kawaii (✨, 🌸, 💖).',
+      lengthStructure:
+        'Responder en frases cortas, directas y al grano, sin párrafos extensos ni bloques pesados de texto.',
+      strictBlacklist:
+        '• Prohibido decir que es una IA, un bot o un modelo de lenguaje.\n• Prohibido prometer descuentos o condiciones que no estén en el catálogo.\n• Prohibido hablar de competidores o temas fuera del negocio.\n• Prohibido usar frases de relleno ("¡Excelente pregunta!", "Con mucho gusto te asisto", "¿Hay algo más en lo que te pueda colaborar hoy?").',
+      escapeProtocol:
+        'Si no tienes el dato exacto o si el cliente solicita una persona real, derivar de inmediato y con amabilidad a Fiorella al WhatsApp 6400-4640.',
+      systemPromptOverride: '',
       enableHumanSimulation: true,
       enableChunking: true,
       delayType: 'dynamic',
@@ -137,6 +147,13 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     if (typeof body?.maxTokens === 'number') aiConfig.maxTokens = body.maxTokens;
     if (typeof body?.topP === 'number') aiConfig.topP = body.topP;
     if (typeof body?.topK === 'number') aiConfig.topK = body.topK;
+    if (typeof body?.securityFilters === 'boolean') aiConfig.securityFilters = body.securityFilters;
+    if (typeof body?.agentRoleTone === 'string' && body.agentRoleTone.trim()) aiConfig.agentRoleTone = body.agentRoleTone.trim();
+    if (typeof body?.lengthStructure === 'string' && body.lengthStructure.trim()) aiConfig.lengthStructure = body.lengthStructure.trim();
+    if (typeof body?.strictBlacklist === 'string' && body.strictBlacklist.trim()) aiConfig.strictBlacklist = body.strictBlacklist.trim();
+    if (typeof body?.escapeProtocol === 'string' && body.escapeProtocol.trim()) aiConfig.escapeProtocol = body.escapeProtocol.trim();
+    if (typeof body?.systemPromptOverride === 'string') aiConfig.systemPromptOverride = body.systemPromptOverride.trim();
+    if (typeof body?.customInstructions === 'string') aiConfig.customInstructions = body.customInstructions.trim();
     if (typeof body?.responseChunkSeparator === 'string') aiConfig.responseChunkSeparator = body.responseChunkSeparator;
     if (typeof body?.maxResponseChunks === 'number') aiConfig.maxResponseChunks = body.maxResponseChunks;
     if (typeof body?.initialDelayMs === 'number') aiConfig.initialDelayMs = body.initialDelayMs;
@@ -148,7 +165,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const offensiveOrPolitical = /(partido\s+politico|elecciones|votar\s+por|gobierno\s+corrupto|hijueputa|malparid)/i;
     const humanHandoffPattern = /(hablar\s+con\s+(un\s+)?humano|persona\s+real|asesor\s+humano|hablar\s+con\s+fiorella|atencion\s+humana|quiero\s+una\s+persona|agente\s+humano|pasame\s+a\s+alguien)/i;
 
-    const isBlockedBySafety = jailbreakPattern.test(message) || offensiveOrPolitical.test(message);
+    const isBlockedBySafety = (aiConfig.securityFilters ?? true) && (jailbreakPattern.test(message) || offensiveOrPolitical.test(message));
     const isEscaped = humanHandoffPattern.test(message);
 
     // 1. Obtener datos de productos en tiempo real desde DB (solo lectura)
@@ -246,29 +263,27 @@ ROL, TONO Y ESTRUCTURA:
 DATOS EN TIEMPO REAL DEL SISTEMA (BASE DE DATOS BYFIO):
 ${inventoryContext}${ragFaqSection}`;
     } else {
+      const sep = aiConfig.responseChunkSeparator || '|||';
+      const maxCh = aiConfig.maxResponseChunks || 3;
+
       systemPrompt = `Eres la asesora comercial y compañera de atención al cliente de by.fio (tienda creativa, papelería bonita y talleres en San José, Costa Rica).
 ${userName ? `Estás conversando con: ${userName}.` : ''}
 
 1. ROL, TONO Y PERSONALIDAD:
-- Tu identidad es de asesora cercana, amable, ágil, profesional, cálida y tierna (kawaii).
-- Cero tono corporativo o robótico. Usa lenguaje natural, cálido y emojis suaves (✨, 🌸, 💖).
+${aiConfig.agentRoleTone || '- Tu identidad es de asesora cercana, amable, ágil, profesional, cálida y tierna (kawaii).\n- Cero tono corporativo o robótico. Usa lenguaje natural, cálido y emojis suaves (✨, 🌸, 💖).'}
 
 2. LONGITUD Y ESTRUCTURA (OBLIGATORIO):
-- Responde SIEMPRE en frases cortas, directas y sin párrafos extensos de texto.
-- Prohibido escribir bloques pesados de texto.
+${aiConfig.lengthStructure || '- Responde SIEMPRE en frases cortas, directas y sin párrafos extensos de texto.\n- Prohibido escribir bloques pesados de texto.'}
 
 3. LISTA NEGRA ESTRICTA ("LO QUE NO DEBES DECIR NUNCA"):
-- PROHIBIDO decir que eres una IA, un bot, un modelo de lenguaje o un asistente virtual. Eres parte del equipo humano de atención de by.fio (la Estrellita).
-- PROHIBIDO prometer descuentos, regalías o condiciones que no estén en la base de conocimiento oficial.
-- PROHIBIDO hablar de competidores o marcas ajenas a by.fio.
-- PROHIBIDO usar frases de relleno como "¡Excelente pregunta!", "Con mucho gusto te asisto", "¿Hay algo más en lo que te pueda colaborar hoy?", "Es un placer atenderte". Ve al grano con naturalidad.
+${aiConfig.strictBlacklist || '- PROHIBIDO decir que eres una IA, un bot, un modelo de lenguaje o asistente virtual.\n- PROHIBIDO prometer descuentos o condiciones que no estén en la base de conocimiento oficial.\n- PROHIBIDO hablar de competidores o marcas ajenas a by.fio.\n- PROHIBIDO usar frases de relleno corporativas.'}
 
 4. PROTOCOLO DE ESCAPE (DERIVACIÓN A HUMANO):
-- Si no tienes el dato exacto o si el cliente solicita una persona real, no inventes nada ni des largas: derívalo directamente con Fiorella al WhatsApp oficial 6400-4640.
+${aiConfig.escapeProtocol || '- Si no tienes el dato exacto o si el cliente solicita una persona real, no inventes nada ni des largas: derívalo directamente con Fiorella al WhatsApp oficial 6400-4640.'}
 
 5. DINÁMICA DE CONVERSACIÓN (CHUNKING WHATSAPP):
-- Divide tu respuesta en 1 a 3 mensajes cortos independientes usando el separador exacto '|||' entre cada fragmento.
-- Ejemplo: "¡Hola! Con gusto te cuento ✨|||Tenemos tazas personalizadas desde ₡4.500 y agendas hermosas 🌸|||¿Buscabas algún diseño en especial?"
+- Divide tu respuesta en 1 a ${maxCh} mensajes cortos independientes usando el separador exacto '${sep}' entre cada fragmento.
+- Ejemplo: "¡Hola! Con gusto te cuento ✨${sep}Tenemos agendas y tazas hermosas 🌸${sep}¿Buscabas algún diseño especial?"
 
 CONTEXTO EN TIEMPO REAL:
 ${inventoryContext}${ragFaqSection}
@@ -279,7 +294,8 @@ INFORMACIÓN CLAVE DEL NEGOCIO:
 - Contacto directo por WhatsApp: 6400-4640.
 
 ${stockDisclosureRule}
-${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\n${aiConfig.customInstructions}\n` : ''}`;
+${aiConfig.customInstructions ? `\nINSTRUCCIONES ESPECIALES DE ADMINISTRACIÓN:\n${aiConfig.customInstructions}\n` : ''}
+${aiConfig.systemPromptOverride ? `\nDIRECTRICES ADICIONALES DEL SYSTEM PROMPT:\n${aiConfig.systemPromptOverride}\n` : ''}`;
     }
 
     const messagesForModel: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [

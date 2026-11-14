@@ -146,6 +146,18 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'orders' };
   }
   if (
+    path.includes('/admin/apartados') ||
+    path.includes('/admin/layaways') ||
+    path.includes('/administracion/apartados') ||
+    path.includes('/administracion/layaways') ||
+    hash.includes('admin/apartados') ||
+    hash.includes('admin/layaways') ||
+    seccionParam === 'apartados' ||
+    seccionParam === 'layaways'
+  ) {
+    return { route: 'admin', adminTab: 'layaways' };
+  }
+  if (
     path.includes('/admin/facturacion') ||
     path.includes('/administracion/facturacion') ||
     hash.includes('admin/facturacion') ||
@@ -283,12 +295,82 @@ export const parseRouteFromLocation = (): RouteInfo => {
     return { route: 'admin', adminTab: 'hub', openDesignModal: true };
   }
   if (
+    path.includes('/admin/catalogo-visual') ||
+    path.includes('/admin/catalogo-fotos') ||
+    path.includes('/admin/catalog-view') ||
+    path.includes('/administracion/catalogo-visual') ||
+    hash.includes('admin/catalogo-visual') ||
+    hash.includes('admin/catalog-view') ||
+    seccionParam === 'catalogo-visual' ||
+    seccionParam === 'catalog-view'
+  ) {
+    return { route: 'admin', adminTab: 'catalog-view' };
+  }
+  if (
+    path.includes('/admin/etf') ||
+    path.includes('/administracion/etf') ||
+    hash.includes('admin/etf') ||
+    seccionParam === 'etf'
+  ) {
+    return { route: 'admin', adminTab: 'etf' };
+  }
+  if (
+    path.includes('/admin/ai-byfio') ||
+    path.includes('/admin/ai') ||
+    path.includes('/admin/ia') ||
+    path.includes('/admin/waifus') ||
+    path.includes('/admin/waifu') ||
+    path.includes('/administracion/ai-byfio') ||
+    path.includes('/administracion/ai') ||
+    path.includes('/administracion/ia') ||
+    path.includes('/administracion/waifus') ||
+    hash.includes('admin/ai-byfio') ||
+    hash.includes('admin/ai') ||
+    hash.includes('admin/ia') ||
+    hash.includes('admin/waifus') ||
+    seccionParam === 'ai-byfio' ||
+    seccionParam === 'ai' ||
+    seccionParam === 'ia' ||
+    seccionParam === 'waifus' ||
+    seccionParam === 'waifu'
+  ) {
+    return { route: 'admin', adminTab: 'ai-byfio' };
+  }
+  if (
     !path.startsWith('/admin/superadmin') &&
     (path.startsWith('/admin') ||
     path.startsWith('/administracion') ||
     hash.includes('admin') ||
     seccionParam === 'admin')
   ) {
+    // Si la URL es solo '/admin' (ej: PWA instalada en pantalla de inicio o recarga limpia),
+    // restaurar la última pestaña administrativa activa guardada en sessionStorage
+    try {
+      const savedAdminTab = (sessionStorage.getItem('byfio_last_admin_tab') || '').trim().toLowerCase() as AdminTabType;
+      const validAdminTabs: AdminTabType[] = [
+        'orders',
+        'layaways',
+        'billing',
+        'inventory',
+        'reports',
+        'sinpe',
+        'workshops',
+        'users',
+        'customers',
+        'agenda',
+        'suppliers',
+        'supplier-order-create',
+        'sales',
+        'catalog-view',
+        'apps',
+        'drive-courses',
+        'etf',
+        'ai-byfio',
+      ];
+      if (savedAdminTab && validAdminTabs.includes(savedAdminTab)) {
+        return { route: 'admin', adminTab: savedAdminTab };
+      }
+    } catch {}
     return { route: 'admin', adminTab: 'hub' };
   }
 

@@ -93,6 +93,7 @@ export const App: React.FC = () => {
     else if (newRoute === 'admin') {
       const adminPathMap: Partial<Record<AdminTabType, string>> = {
         orders: '/admin/pedidos',
+        layaways: '/admin/apartados',
         billing: '/admin/facturacion',
         inventory: '/admin/inventario',
         reports: '/admin/caja',
@@ -104,8 +105,11 @@ export const App: React.FC = () => {
         suppliers: '/admin/proveedores',
         'supplier-order-create': '/admin/realizar-pedido',
         sales: '/admin/ventas',
+        'catalog-view': '/admin/catalogo-visual',
         apps: '/admin/aplicaciones',
         'drive-courses': '/admin/cursos-drive',
+        etf: '/admin/etf',
+        'ai-byfio': '/admin/ai-byfio',
       };
       targetPath = adminPathMap[tab] || '/admin';
     }
@@ -129,7 +133,15 @@ export const App: React.FC = () => {
   };
 
   const handleSelectAdminTab = (tab: AdminTabType) => {
-    if (tab === 'catalog-view' || tab === 'supplier-order-create' || tab === 'apps' || tab === 'drive-courses') {
+    if (
+      tab === 'catalog-view' ||
+      tab === 'supplier-order-create' ||
+      tab === 'apps' ||
+      tab === 'drive-courses' ||
+      tab === 'ai-byfio' ||
+      tab === 'etf' ||
+      tab === 'layaways'
+    ) {
       navigate('admin', tab);
       return;
     }
@@ -160,7 +172,17 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (currentRoute === 'admin' && adminTab !== 'hub') {
-      if (adminTab !== 'catalog-view' && adminTab !== 'supplier-order-create' && adminTab !== 'apps' && adminTab !== 'drive-courses' && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
+      if (!currentUser) return;
+      const exemptTabs: AdminTabType[] = [
+        'catalog-view',
+        'supplier-order-create',
+        'apps',
+        'drive-courses',
+        'ai-byfio',
+        'etf',
+        'layaways',
+      ];
+      if (!exemptTabs.includes(adminTab) && (!isModuleEnabled(adminTab) || !hasPermission(adminTab))) {
         setAdminTab('hub');
       }
     } else if ((currentRoute === 'workshops' || currentRoute === 'workshop-detail' || currentRoute === 'workshop-waitlist') && !isModuleEnabled('workshops')) {
@@ -174,7 +196,7 @@ export const App: React.FC = () => {
     } else if (currentRoute === 'metricas' && !isModuleEnabled('metricas')) {
       navigate('admin');
     }
-  }, [currentRoute, adminTab, isModuleEnabled, hasPermission]);
+  }, [currentRoute, adminTab, isModuleEnabled, hasPermission, currentUser]);
 
   useEffect(() => {
     const handlePop = () => {
