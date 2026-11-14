@@ -1,3 +1,18 @@
+## [v4.19.190] - 2026-11-13
+
+### 🚪 Calibración de Despliegue Estilo Puerta de Ascensor: Velocidad Lenta, Capa Subyacente y Elevación Escalonada
+- **Animación Lenta y Fluida ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Duración extendida a 1150ms con desaceleración suave `cubic-bezier(0.22, 1, 0.36, 1)`, logrando una apertura pausada y elegante idéntica a una puerta de ascensor automática deslizándose.
+- **Posicionamiento Escalonado Elevado ("Más Arriba")**:
+  - Añadido desfase vertical `sm:-translate-y-4` que sitúa la tarjeta de registro 16px por encima de la ventana de chat, logrando la jerarquía escalonada requerida.
+- **Acoplamiento Directo por Debajo del Chat ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx), [StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Pegada con solapamiento negativo `sm:-ml-6` y capa `z-10` ubicada por debajo de la ventana de chat (`z-20`).
+  - Sombra lateral reforzada en la ventana de chat (`shadow-[0_25px_60px_-15px_rgba(0,0,0,0.45)]`), haciendo tangible que la tarjeta de registro emerge desde atrás/debajo mientras el chat se desliza suavemente a un lado.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.190`.
+
+---
+
 ## [v4.19.189] - 2026-11-13
 
 ### 🎛️ Control Configurable de Retrasos WhatsApp, Separadores Editables y Rediseño Visual Púrpura/Rosa ByFio
@@ -129,6 +144,21 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.190] - 2026-11-13
+
+### 🚪 Calibración de Despliegue Estilo Puerta de Ascensor: Velocidad Lenta, Capa Subyacente y Elevación Escalonada
+- **Animación Lenta y Fluida ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Duración extendida a 1150ms con desaceleración suave `cubic-bezier(0.22, 1, 0.36, 1)`, logrando una apertura pausada y elegante idéntica a una puerta de ascensor automática deslizándose.
+- **Posicionamiento Escalonado Elevado ("Más Arriba")**:
+  - Añadido desfase vertical `sm:-translate-y-4` que sitúa la tarjeta de registro 16px por encima de la ventana de chat, logrando la jerarquía escalonada requerida.
+- **Acoplamiento Directo por Debajo del Chat ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx), [StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Pegada con solapamiento negativo `sm:-ml-6` y capa `z-10` ubicada por debajo de la ventana de chat (`z-20`).
+  - Sombra lateral reforzada en la ventana de chat (`shadow-[0_25px_60px_-15px_rgba(0,0,0,0.45)]`), haciendo tangible que la tarjeta de registro emerge desde atrás/debajo mientras el chat se desliza suavemente a un lado.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.190`.
 
 ---
 

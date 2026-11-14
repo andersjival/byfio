@@ -44,7 +44,7 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
       setIsVisible(false);
       const timer = setTimeout(() => {
         setIsMounted(false);
-      }, 550);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -186,7 +186,7 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
         onSuccess({ name: formData.name, email: formData.email });
         onClose();
         setStep(1);
-      }, 550);
+      }, 1000);
     }, 2000);
   };
 
@@ -196,20 +196,20 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
     setTimeout(() => {
       onClose();
       setStep(1);
-    }, 550);
+    }, 1000);
   };
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 top-auto sm:relative sm:inset-auto z-30 sm:z-10 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
+      className={`fixed inset-x-0 bottom-0 top-auto sm:relative sm:inset-auto z-10 transition-all duration-[1150ms] ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden ${
         isVisible
-          ? 'w-full sm:w-[420px] sm:max-w-[420px] sm:ml-4 opacity-100 max-sm:translate-y-0'
+          ? 'w-full sm:w-[420px] sm:max-w-[420px] sm:-ml-6 opacity-100 max-sm:translate-y-0'
           : 'w-full sm:w-0 sm:max-w-0 sm:ml-0 opacity-0 pointer-events-none max-sm:translate-y-full'
       }`}
     >
       <div
-        className={`w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh] bg-white/95 dark:bg-[#1f1535]/95 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border-2 border-fio-300 dark:border-purple-500/50 flex flex-col justify-between overflow-hidden relative ${
-          isVisible ? 'animate-curtain-open' : 'animate-curtain-close'
+        className={`w-full sm:w-[420px] h-[88vh] sm:h-[620px] max-h-[92vh] sm:-translate-y-4 bg-white/95 dark:bg-[#1f1535]/95 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-xl border-2 border-fio-300 dark:border-purple-500/50 flex flex-col justify-between overflow-hidden relative transition-all duration-[1150ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isVisible ? 'translate-x-0 opacity-100' : 'sm:-translate-x-48 opacity-30'
         }`}
       >
         {/* Pliegue / Sombra suave de cortina en el borde izquierdo (desktop) */}

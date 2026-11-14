@@ -6,9 +6,9 @@ const TOKENS_KEY = 'byfio_envios_access_tokens_v1';
 
 export const DEFAULT_UBER_SETTINGS: UberDirectSettings = {
   credentials: {
-    customerId: 'cust_byfio_uber_sandbox_2026',
-    clientId: 'uber_direct_client_byfio_cr',
-    clientSecret: 'sec_live_uber_byfio_direct_k928f',
+    customerId: '825d6709-ab28-42d2-8412-f3a508104730',
+    clientId: 'XZr1K7kLoH-hETEr9refP3Dh3AolY6ze',
+    clientSecret: '1BrFmLmzqgTJQjB8AaeRb2rOcuQAV54eUj-xSy_o',
     webhookSecret: 'whsec_uber_direct_byfio_prod',
     environment: 'sandbox',
   },
