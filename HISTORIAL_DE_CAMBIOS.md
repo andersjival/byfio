@@ -1,3 +1,18 @@
+## [v4.19.214] - 2026-11-13
+
+### 🎨 Modernización Cromática de Botones y Etiquetas en Tabla de Inventario
+- **Sustitución de Tonos Café/Ámbar por Índigo y Azul Cielo ([InventoryTable.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/InventoryTable.tsx))**:
+  - Filtro "En Cero o No Disponibles" rediseñado con paleta Índigo/Violeta (`bg-indigo-600`, `dark:bg-white/10 dark:text-indigo-300 dark:border-indigo-500/30`).
+  - Filtro "Sin Proveedor" actualizado a Azul Cielo (`bg-sky-600`, `dark:bg-white/10 dark:text-sky-300 dark:border-sky-500/30`).
+  - Botones y badges de "Producto sin proveedor" en columnas SKU y Ubicación modernizados a Azul Cielo con soporte completo para modo claro y oscuro (`bg-sky-100`, `dark:bg-sky-950/60`, `text-sky-900`, `dark:text-sky-200`).
+  - Etiqueta de cantidad sugerida "A Reponer" (`+11`) actualizada con contraste nítido Azul Cielo (`bg-sky-100 dark:bg-sky-950/70 text-sky-800 dark:text-sky-200`).
+- **Banner de Inventario por Barrido ([InventoryAdminBanner.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/inventory/InventoryAdminBanner.tsx))**:
+  - Botón de alternancia "Barrido: Manual c/10" actualizado a Azul Cielo / Slate profundo (`bg-sky-50 dark:bg-sky-950/60 text-sky-900 dark:text-sky-200`), eliminando el tono marrón en modo oscuro.
+- **Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Versión de caché actualizada a `byfio-pwa-v4.19.214`.
+
+---
+
 ## [v4.19.213] - 2026-11-13
 
 ### 🎨 Rediseño Bubbly y Temas Claro/Oscuro en Desplegable de Directorio de Clientes
