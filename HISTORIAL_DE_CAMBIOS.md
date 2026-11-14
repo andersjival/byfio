@@ -1,3 +1,31 @@
+## [v4.19.213] - 2026-11-13
+
+### 🎨 Rediseño Bubbly y Temas Claro/Oscuro en Desplegable de Directorio de Clientes
+- **Desplegable Personalizado Bubbly ([CustomersSection.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/admin/CustomersSection.tsx))**:
+  - Reemplazado el `<select>` nativo rectangular por un menú desplegable con bordes redondeados (`rounded-2xl`, `rounded-xl`), tipografía `font-bubble` y micro-animaciones alineadas a la identidad de la tienda.
+  - Soporte completo para Modo Claro y Modo Oscuro con paleta de púrpuras y rosas de BYFIO (`dark:bg-[#1E1533]`, `dark:border-purple-500/40`, `dark:text-white`).
+  - Detección de clic exterior y tecla Escape para cierre automático.
+  - Sincronización cromática en botones de filtro activo e inactivo ("Todos", "Más han comprado", "Solo VIP").
+- **Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Versión de caché actualizada a `byfio-pwa-v4.19.213`.
+
+---
+
+## [v4.19.212] - 2026-11-13
+
+### 📱 Optimización Visual Móvil: Cero Barras de Desplazamiento y Foto Compacta en Chat IA
+- **Eliminación Total de Barras de Scroll en Móvil ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx), [index.css](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/index.css))**:
+  - Incorporada regla universal `.mobile-no-scrollbar` y `overflow-x-hidden` en modales, contenedores de mensajes y tarjetas, suprimiendo cualquier scrollbar horizontal y ocultando las barras de track vertical en dispositivos móviles.
+- **Ajuste de Proporción de Imagen y Tarjeta Compacta ([StarAgentProductCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentProductCard.tsx))**:
+  - Imagen cuadrada compacta en móvil (`max-sm:w-11 max-sm:h-11 aspect-square`) y reducción de altura total de la tarjeta a menos de 80px, evitando desbordes o scrollbars verticales forzados por la imagen.
+  - Ocultada frase redundante en pantallas táctiles (`hidden sm:block`) para que la imagen, detalles y botones de acción quepan de forma limpia en una sola vista.
+- **Checkout y Carrito Móvil Sin Desbordes ([StarAgentCheckoutView.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentCheckoutView.tsx), [StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - Formularios y listas de artículos aseguradas con `overflow-x-hidden` e imágenes ajustadas a `w-12 h-12`.
+- **Service Worker ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Caché PWA actualizado a `byfio-pwa-v4.19.212`.
+
+---
+
 ## [v4.19.211] - 2026-11-13
 
 ### 🛍️ Flujo Continuo de Compra por Chat con Botón "Agregar"
@@ -5227,7 +5255,7 @@ Cualquier funcionalidad registrada aquÃ­ estÃ¡ blindada: ninguna IA puede el
 
 ### Versión 1.5.0 - Ingreso de Pedidos de Proveedor por Correo (Worker & XML) e Historial de Cargas
 - [x] Sección dedicada **Ingresar Pedido por Correo** en el módulo de Ingresar Pedido de Proveedor.
-- [x] Automatización y explicación de recepción a ingresarpedido@byfiocr.com mediante Cloudflare Worker y extracción de XML de Factura Electrónica.
+- [x] Automatización y explicación de recepción a ipedidos@byfiocr.com mediante Cloudflare Worker y extracción de XML de Factura Electrónica.
 - [x] Alerta interactiva *Correo recibido para ingresar pedido al sistema* con navegación directa a la ficha completa.
 - [x] Ficha completa del proveedor y factura con desglose de subtotal, impuestos, total y tabla detallada de líneas de productos.
 - [x] Botón mandatorio **CARGAR AL SISTEMA** que suma automáticamente las unidades al inventario y registra el pedido.

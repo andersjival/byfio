@@ -2631,6 +2631,31 @@ body,
   background: #D946EF;
 }
 
+/* Ocultar barra de desplazamiento completamente */
+.no-scrollbar::-webkit-scrollbar,
+* .no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+@media (max-width: 640px) {
+  .mobile-no-scrollbar::-webkit-scrollbar,
+  * .mobile-no-scrollbar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  .mobile-no-scrollbar {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+}
+
 /* Modo Oscuro Universal */
 .dark,
 .dark *,

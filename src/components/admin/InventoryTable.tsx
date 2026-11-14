@@ -248,15 +248,15 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
             onClick={() => setStatusFilter('zero_or_unavailable')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all ${
               statusFilter === 'zero_or_unavailable'
-                ? 'bg-amber-600 text-white shadow-sm ring-2 ring-amber-300'
-                : 'bg-white text-amber-800 hover:bg-amber-50 border border-amber-200'
+                ? 'bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-300'
+                : 'bg-white dark:bg-white/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-white/15 border border-indigo-200 dark:border-indigo-500/30'
             }`}
             title="Muestra todos los productos que están no disponibles y los que están en cero"
           >
             <PackageX className="w-3.5 h-3.5" />
             <span>En Cero o No Disponibles</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-              statusFilter === 'zero_or_unavailable' ? 'bg-amber-700 text-white' : 'bg-amber-100 text-amber-800'
+              statusFilter === 'zero_or_unavailable' ? 'bg-indigo-700 text-white' : 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300'
             }`}>
               {zeroOrUnavailableCount}
             </span>
@@ -268,15 +268,15 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
             onClick={() => setStatusFilter(statusFilter === 'no_supplier' ? 'all' : 'no_supplier')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all ${
               statusFilter === 'no_supplier'
-                ? 'bg-amber-700 text-white shadow-sm ring-2 ring-amber-400'
-                : 'bg-white text-amber-900 hover:bg-amber-50 border border-amber-300'
+                ? 'bg-sky-600 text-white shadow-sm ring-2 ring-sky-300'
+                : 'bg-white dark:bg-white/10 text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-white/15 border border-sky-200 dark:border-sky-500/30'
             }`}
             title="Muestra los productos que no tienen ningún proveedor asignado"
           >
-            <Truck className="w-3.5 h-3.5 text-amber-600" />
+            <Truck className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
             <span>Sin Proveedor</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-              statusFilter === 'no_supplier' ? 'bg-amber-800 text-white' : 'bg-amber-100 text-amber-900'
+              statusFilter === 'no_supplier' ? 'bg-sky-700 text-white' : 'bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300'
             }`}>
               {noSupplierCount}
             </span>
@@ -404,7 +404,7 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                     isZeroStock
                       ? 'bg-red-50/90 hover:bg-red-100/90 border-l-4 border-l-red-600 border-red-300'
                       : isCritical
-                      ? 'bg-amber-50/40 hover:bg-amber-100/50 border-fio-100'
+                      ? 'bg-orange-50/40 dark:bg-orange-950/20 hover:bg-orange-100/50 dark:hover:bg-orange-900/30 border-fio-100 dark:border-white/10'
                       : 'hover:bg-fio-50/40 border-fio-100'
                   }`}
                 >
@@ -468,10 +468,10 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                               setSupplierModalProduct(prod);
                               setIsAssignSupplierModalOpen(true);
                             }}
-                            className="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-950/50 hover:bg-amber-200 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-600/40 font-bubble font-bold text-[9px] uppercase tracking-wide transition-all shadow-2xs active:scale-95 cursor-pointer"
+                            className="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 rounded-lg bg-sky-100 dark:bg-sky-950/60 hover:bg-sky-200 dark:hover:bg-sky-900/60 text-sky-900 dark:text-sky-200 border border-sky-300 dark:border-sky-500/40 font-bubble font-bold text-[9px] uppercase tracking-wide transition-all shadow-2xs active:scale-95 cursor-pointer"
                             title="Asignar un proveedor a este producto"
                           >
-                            <Truck className="w-2.5 h-2.5 text-amber-700 shrink-0" />
+                            <Truck className="w-2.5 h-2.5 text-sky-700 dark:text-sky-400 shrink-0" />
                             <span>Producto sin proveedor</span>
                           </button>
                         )}
@@ -524,10 +524,10 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                             setSupplierModalProduct(prod);
                             setIsAssignSupplierModalOpen(true);
                           }}
-                          className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-900 bg-amber-50 hover:bg-amber-100 px-1.5 py-0.5 rounded-lg border border-amber-200/80 transition-all cursor-pointer group"
+                          className="inline-flex items-center gap-1 text-[10px] font-medium text-sky-900 dark:text-sky-200 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 dark:hover:bg-sky-900/50 px-1.5 py-0.5 rounded-lg border border-sky-200/80 dark:border-sky-500/30 transition-all cursor-pointer group"
                           title={`Proveedor: ${prod.supplier} (Clic para cambiar)`}
                         >
-                          <Truck className="w-2.5 h-2.5 text-amber-600 group-hover:scale-110 transition-transform shrink-0" />
+                          <Truck className="w-2.5 h-2.5 text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform shrink-0" />
                           <span className="max-w-[120px] truncate">{prod.supplier}</span>
                         </button>
                       ) : (
@@ -537,10 +537,10 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                             setSupplierModalProduct(prod);
                             setIsAssignSupplierModalOpen(true);
                           }}
-                          className="inline-flex items-center gap-1.5 text-[10px] font-bubble font-bold text-amber-900 dark:text-amber-200 bg-amber-100/90 dark:bg-amber-950/50 hover:bg-amber-200 dark:hover:bg-amber-900/60 border border-amber-300 dark:border-amber-600/40 px-2 py-1 rounded-xl transition-all shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer group"
+                          className="inline-flex items-center gap-1.5 text-[10px] font-bubble font-bold text-sky-900 dark:text-sky-200 bg-sky-100/90 dark:bg-sky-950/60 hover:bg-sky-200 dark:hover:bg-sky-900/60 border border-sky-300 dark:border-sky-500/40 px-2 py-1 rounded-xl transition-all shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer group"
                           title="Hacer clic para asignar un proveedor a este producto"
                         >
-                          <Truck className="w-3.5 h-3.5 text-amber-700 group-hover:scale-110 transition-transform shrink-0" />
+                          <Truck className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform shrink-0" />
                           <span>Producto sin proveedor</span>
                         </button>
                       )}
@@ -556,7 +556,7 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                         isZeroStock
                           ? 'bg-red-100 border-red-300 ring-2 ring-red-200'
                           : isCritical
-                          ? 'bg-amber-50 border-amber-300 ring-1 ring-amber-200'
+                          ? 'bg-orange-50 dark:bg-orange-950/40 border-orange-300 dark:border-orange-500/40 ring-1 ring-orange-200 dark:ring-orange-500/30'
                           : 'bg-fio-100/60 dark:bg-white/10 border-fio-200 dark:border-white/15'
                       }`}>
                         <button
@@ -569,7 +569,7 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                         </button>
                         <div className="flex flex-col items-center min-w-[34px] px-0.5">
                           <span className={`font-bubble font-bold text-sm leading-none ${
-                            isZeroStock ? 'text-red-700 font-black' : isCritical ? 'text-amber-800' : 'text-gray-900'
+                            isZeroStock ? 'text-red-700 font-black' : isCritical ? 'text-orange-600 dark:text-orange-300' : 'text-gray-900 dark:text-white'
                           }`}>
                             {prod.stock}
                           </span>
@@ -612,7 +612,9 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({ onSelectTab, onO
                       <td className="py-3 px-2 text-center font-bold">
                         {suggestedOrder > 0 ? (
                           <span className={`px-2 py-0.5 rounded-lg font-bubble ${
-                            isZeroStock ? 'bg-red-600 text-white font-black shadow-sm' : 'bg-amber-100 text-amber-800'
+                            isZeroStock
+                              ? 'bg-red-600 text-white font-black shadow-sm'
+                              : 'bg-sky-100 dark:bg-sky-950/70 text-sky-800 dark:text-sky-200 border border-sky-300 dark:border-sky-500/40'
                           }`}>
                             +{suggestedOrder}
                           </span>

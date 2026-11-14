@@ -70,15 +70,15 @@ export const InventoryAdminBanner: React.FC<InventoryAdminBannerProps> = ({ onOp
               }}
               className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border text-xs font-bubble font-bold transition-all active:scale-95 cursor-pointer ${
                 sweepLoadMode === 'auto'
-                  ? 'bg-purple-50 border-purple-200 text-purple-900 shadow-xs'
-                  : 'bg-amber-50 border-amber-300 text-amber-900 shadow-xs'
+                  ? 'bg-purple-50 dark:bg-purple-950/50 border-purple-200 dark:border-purple-500/30 text-purple-900 dark:text-purple-200 shadow-xs'
+                  : 'bg-sky-50 dark:bg-sky-950/60 border-sky-300 dark:border-sky-500/40 text-sky-900 dark:text-sky-200 shadow-xs'
               }`}
               title="Alternar carga automática o manual cada 10 productos en Inventario por Barrido"
             >
               {sweepLoadMode === 'auto' ? (
-                <Zap className="w-4 h-4 text-purple-600" />
+                <Zap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               ) : (
-                <Hand className="w-4 h-4 text-amber-600" />
+                <Hand className="w-4 h-4 text-sky-600 dark:text-sky-400" />
               )}
               <span>
                 Barrido: {sweepLoadMode === 'auto' ? 'Auto c/10' : 'Manual c/10'} (

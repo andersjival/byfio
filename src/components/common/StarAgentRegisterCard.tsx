@@ -280,7 +280,7 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
         {mode === 'cart' ? (
           <div className="relative z-10 flex-1 flex flex-col justify-between py-3 overflow-hidden">
             {/* Lista de productos agregados estilo Carrito */}
-            <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-2.5 pr-1 mobile-no-scrollbar sm:fuchsia-pastel-scrollbar">
               {cartProducts.length === 0 ? (
                 <div className="text-center py-10 space-y-2">
                   <ShoppingBag className="w-10 h-10 mx-auto text-slate-300 dark:text-purple-700 animate-bounce" />
@@ -297,7 +297,7 @@ export const StarAgentRegisterCard: React.FC<StarAgentRegisterCardProps> = ({
                     <img
                       src={product.image || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=200&q=80'}
                       alt={product.name}
-                      className="w-13 h-13 rounded-xl object-cover border border-fio-100 shrink-0"
+                      className="w-12 h-12 rounded-xl object-cover border border-fio-100 shrink-0 aspect-square"
                     />
                     <div className="flex-1 min-w-0">
                       <h5 className="font-bubble font-bold text-xs text-slate-800 dark:text-purple-100 truncate">

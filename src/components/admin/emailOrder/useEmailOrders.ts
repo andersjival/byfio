@@ -44,7 +44,7 @@ export const useEmailOrders = () => {
     });
     setPendingOrder({
       id: `email-ord-${Date.now()}`,
-      emailFrom: parsed.emailFrom || 'ingresarpedido@byfiocr.com',
+      emailFrom: parsed.emailFrom || 'ipedidos@byfiocr.com',
       emailSubject: parsed.emailSubject || 'Factura Electrónica Insumos',
       receivedAt: new Date().toISOString(),
       xmlRaw: sampleXml,
@@ -71,7 +71,7 @@ export const useEmailOrders = () => {
     });
     setPendingOrder({
       id: `email-ord-${Date.now()}`,
-      emailFrom: parsed.emailFrom || 'ingresarpedido@byfiocr.com',
+      emailFrom: parsed.emailFrom || 'ipedidos@byfiocr.com',
       emailSubject: parsed.emailSubject || 'Factura Electrónica XML',
       receivedAt: new Date().toISOString(),
       xmlRaw: xmlText,
@@ -107,7 +107,7 @@ export const useEmailOrders = () => {
         subtotalAmount: pendingOrder.subtotalAmount, taxAmount: pendingOrder.taxAmount, discountAmount: pendingOrder.discountAmount,
         status: 'received', receivedAt: nowIso, loadedAt: nowIso, loadedBy: userName, source: 'email',
         items: pendingOrder.items, totalUnits, totalCost: pendingOrder.totalCost,
-        notes: `Factura Electrónica XML vía ingresarpedido@byfiocr.com • Ingresado por ${userName}`,
+        notes: `Factura Electrónica XML vía ipedidos@byfiocr.com • Ingresado por ${userName}`,
       });
 
       await addInventoryAdjustment({

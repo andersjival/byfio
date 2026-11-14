@@ -11,7 +11,7 @@ export const EmailOrderExplainer: React.FC<EmailOrderExplainerProps> = ({
   onUploadXml,
 }) => {
   const [copied, setCopied] = useState(false);
-  const emailTarget = 'ingresarpedido@byfiocr.com';
+  const emailTarget = 'ipedidos@byfiocr.com';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(emailTarget);

@@ -173,7 +173,7 @@ export const StarAgentCheckoutView: React.FC<StarAgentCheckoutViewProps> = ({
       </div>
 
       {/* Formulario con Scroll */}
-      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3.5">
+      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 space-y-3 mobile-no-scrollbar sm:fuchsia-pastel-scrollbar">
         {error && (
           <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold animate-in fade-in">
             {error}

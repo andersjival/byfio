@@ -70,7 +70,7 @@ export const SupplierInvoiceIntakeView: React.FC<SupplierInvoiceIntakeViewProps>
             <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto"><Mail className="w-6 h-6" /></div>
               <h4 className="font-bubble font-bold text-base text-slate-800">Bandeja de Correo Lista para Recibir Facturas</h4>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">Envía tus XML de factura electrónica a <strong className="text-purple-700">ingresarpedido@byfiocr.com</strong> o pulsa "Simular Correo" para probar la extracción automática.</p>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">Envía tus XML de factura electrónica a <strong className="text-purple-700">ipedidos@byfiocr.com</strong> o pulsa "Simular Correo" para probar la extracción automática.</p>
             </div>
           )}
         </div>

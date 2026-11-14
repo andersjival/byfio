@@ -582,12 +582,12 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-[130] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/55 backdrop-blur-xs animate-in fade-in duration-200 overflow-x-hidden"
+      className="fixed inset-0 z-[130] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/55 backdrop-blur-xs animate-in fade-in duration-200 overflow-hidden"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative flex flex-col sm:flex-row items-end justify-center max-w-full"
+        className="relative flex flex-col sm:flex-row items-end justify-center w-full max-w-full overflow-hidden"
       >
         {/* Ventana de Chat de la Estrellita (z-20) */}
         <div
@@ -666,14 +666,14 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
               </div>
 
               {/* Mensajes */}
-              <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 bg-slate-50/60 dark:bg-[#130f20]/60">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden p-2.5 sm:p-4 space-y-2.5 sm:space-y-3 bg-slate-50/60 dark:bg-[#130f20]/60 mobile-no-scrollbar sm:fuchsia-pastel-scrollbar">
                 {messages.map((m) => (
                   <div key={m.id} className="space-y-1.5 animate-in fade-in duration-150">
                     <div
                       className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
-                        className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm font-medium leading-relaxed shadow-xs ${
+                        className={`max-w-[85%] rounded-2xl px-3 py-2 sm:px-3.5 sm:py-2.5 text-xs sm:text-sm font-medium leading-relaxed shadow-xs ${
                           m.role === 'user'
                             ? 'bg-gradient-to-r from-purple-700 to-fio-pink text-white rounded-br-xs'
                             : 'bg-white dark:bg-[#251d3d] text-slate-800 dark:text-purple-100 border border-fio-100 dark:border-purple-800/40 rounded-bl-xs'
@@ -706,7 +706,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
 
                     {/* Tarjeta de Producto interactiva si el mensaje la contiene */}
                     {m.product && (
-                      <div className="w-full sm:max-w-[88%]">
+                      <div className="w-full sm:max-w-[88%] min-w-0 overflow-hidden">
                         <StarAgentProductCard
                           product={m.product}
                           actionType={m.productAction || 'pay_or_more'}
@@ -720,7 +720,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
 
                     {/* Sugerencias de productos si el mensaje las contiene */}
                     {m.suggestedProducts && m.suggestedProducts.length > 0 && (
-                      <div className="pt-1 flex flex-wrap gap-1.5 w-full sm:max-w-[88%] animate-in fade-in">
+                      <div className="pt-1 flex flex-wrap gap-1.5 w-full sm:max-w-[88%] min-w-0 overflow-hidden animate-in fade-in">
                         {m.suggestedProducts.map((p) => (
                           <button
                             key={p.id}

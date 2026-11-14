@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { Customer } from '../../types';
@@ -6,7 +6,7 @@ import {
   Users, UserPlus, Search, Phone, Mail, MapPin, FileText, Edit2, User, Clock,
   Trash2, X, Check, ShoppingBag, MessageCircle, CreditCard,
   Calendar, CheckCircle2, AlertCircle, Building2, Crown, Trophy,
-  History, ArrowDownWideNarrow, Minus, Plus, Copy, ExternalLink
+  History, ArrowDownWideNarrow, Minus, Plus, Copy, ExternalLink, ChevronDown
 } from 'lucide-react';
 import { formatShortDate, formatCRC, formatDateTime } from '../../utils/formatters';
 import {
@@ -21,6 +21,12 @@ import { InteractiveMapPicker } from '../common/InteractiveMapPicker';
 interface CustomersSectionProps {
   onSelectCustomerForBilling?: (customer: Customer) => void;
 }
+
+const SORT_OPTIONS: { value: 'default' | 'most' | 'least'; label: string }[] = [
+  { value: 'default', label: 'Recientes' },
+  { value: 'most', label: 'Mayores compras → Menores' },
+  { value: 'least', label: 'Menores compras → Mayores' },
+];
 
 export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCustomerForBilling }) => {
   const confirm = useConfirm();
@@ -40,6 +46,27 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMode, setFilterMode] = useState<'all' | 'top' | 'vip'>('all');
   const [sortMode, setSortMode] = useState<'default' | 'most' | 'least'>('default');
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const sortDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(e.target as Node)) {
+        setIsSortOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsSortOpen(false);
+    };
+    if (isSortOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isSortOpen]);
   const [vipMinPurchases, setVipMinPurchases] = useState<number>(() => {
     try {
       const saved = localStorage.getItem(CUSTOMER_VIP_THRESHOLD_STORAGE_KEY);
@@ -342,7 +369,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
       </div>
 
       {/* Filtros de Compradores, Etiquetas VIP y Ordenamiento por Compras */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3.5 rounded-2xl bg-[#F1F2F6] border border-white/80 shadow-2xs">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3.5 rounded-2xl bg-[#F1F2F6] dark:bg-[#1E1736] border border-white/80 dark:border-purple-500/20 shadow-2xs">
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
@@ -350,7 +377,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
             className={`px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
               filterMode === 'all'
                 ? 'bg-emerald-600 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+                : 'bg-white dark:bg-[#2C2746] text-slate-600 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#352F54] border border-slate-200 dark:border-white/10'
             }`}
           >
             Todos ({customers.length})
@@ -361,7 +388,7 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bubble font-bold transition-all cursor-pointer ${
               filterMode === 'top'
                 ? 'bg-fio-purple text-white shadow-xs'
-                : 'bg-white text-purple-800 hover:bg-purple-50 border border-purple-200'
+                : 'bg-white dark:bg-[#2C2746] text-purple-800 dark:text-purple-200 hover:bg-purple-50 dark:hover:bg-[#352F54] border border-purple-200 dark:border-purple-500/30'
             }`}
           >
             <Trophy className="w-3.5 h-3.5 text-amber-400" />
@@ -382,18 +409,64 @@ export const CustomersSection: React.FC<CustomersSectionProps> = ({ onSelectCust
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-xl border border-slate-200">
-            <ArrowDownWideNarrow className="w-3.5 h-3.5 text-fio-purple shrink-0" />
-            <span className="text-[11px] font-bold text-slate-500">Orden:</span>
-            <select
-              value={sortMode}
-              onChange={(e) => setSortMode(e.target.value as 'default' | 'most' | 'least')}
-              className="text-xs font-bubble font-bold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
+          {/* Menú Desplegable Personalizado de Ordenamiento */}
+          <div className="relative" ref={sortDropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsSortOpen((prev) => !prev)}
+              aria-haspopup="listbox"
+              aria-expanded={isSortOpen}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bubble font-bold transition-all cursor-pointer active:scale-95 select-none ${
+                isSortOpen
+                  ? 'bg-white dark:bg-[#2C2746] text-fio-purple dark:text-pink-300 border-fio-purple dark:border-pink-500 shadow-sm ring-2 ring-purple-400/20'
+                  : 'bg-white dark:bg-[#2C2746] text-slate-800 dark:text-purple-100 border-slate-200 dark:border-purple-500/30 hover:border-purple-300 dark:hover:border-purple-400/60 shadow-2xs hover:shadow-xs'
+              }`}
             >
-              <option value="default">Recientes</option>
-              <option value="most">Mayores compras &rarr; Menores</option>
-              <option value="least">Menores compras &rarr; Mayores</option>
-            </select>
+              <ArrowDownWideNarrow className="w-3.5 h-3.5 text-fio-purple dark:text-pink-400 shrink-0" />
+              <span className="text-[11px] font-bold text-slate-500 dark:text-purple-300/80">Orden:</span>
+              <span className="truncate max-w-[140px] sm:max-w-none text-slate-900 dark:text-white">
+                {SORT_OPTIONS.find((opt) => opt.value === sortMode)?.label || 'Recientes'}
+              </span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 dark:text-purple-300 transition-transform duration-200 shrink-0 ${
+                  isSortOpen ? 'rotate-180 text-fio-purple dark:text-pink-400' : ''
+                }`}
+              />
+            </button>
+
+            {isSortOpen && (
+              <div
+                role="listbox"
+                className="absolute right-0 top-full mt-2 w-64 bg-white/95 dark:bg-[#1E1533]/98 backdrop-blur-md border border-purple-200/90 dark:border-purple-500/40 rounded-2xl p-1.5 shadow-[0_14px_36px_rgba(107,33,168,0.18),0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.7),0_0_20px_rgba(168,85,247,0.18)] z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1"
+              >
+                <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase text-purple-900/60 dark:text-purple-300/60">
+                  Criterio de Orden
+                </div>
+                {SORT_OPTIONS.map((opt) => {
+                  const isSelected = sortMode === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      role="option"
+                      aria-selected={isSelected}
+                      onClick={() => {
+                        setSortMode(opt.value);
+                        setIsSortOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-bubble font-bold transition-all text-left cursor-pointer active:scale-98 ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-purple-600 via-fio-purple to-fio-pink text-white shadow-xs'
+                          : 'text-slate-700 dark:text-purple-100 hover:text-purple-900 dark:hover:text-white hover:bg-purple-50/80 dark:hover:bg-[#2C1F4D]'
+                      }`}
+                    >
+                      <span>{opt.label}</span>
+                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0 text-white" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div
