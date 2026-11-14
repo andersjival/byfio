@@ -1,3 +1,15 @@
+## [v4.19.191] - 2026-11-13
+
+### 📱 Experiencia Móvil de Registro: Descenso Vertical desde Arriba y Retirada Hacia Arriba
+- **Apertura de Arriba hacia Abajo en Móvil ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - En pantallas móviles (`< sm`), la tarjeta de registro desciende suavemente desde la parte superior de la pantalla (`max-sm:-translate-y-[135%]` a `max-sm:translate-y-0`) con desaceleración pausada (`duration-[1150ms]`), cubriendo la ventana del chat (`z-30`).
+- **Retirada Hacia Arriba tras Registro o Cierre**:
+  - Al completar el registro o presionar el botón de cierre, la ventana se desliza suavemente hacia arriba hasta desaparecer fuera del borde superior (`max-sm:-translate-y-[135%]`), dejando al usuario de nuevo en la conversación del chat con la Estrellita.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.191`.
+
+---
+
 ## [v4.19.190] - 2026-11-13
 
 ### 🚪 Calibración de Despliegue Estilo Puerta de Ascensor: Velocidad Lenta, Capa Subyacente y Elevación Escalonada
@@ -144,6 +156,18 @@
   - La descripción cuenta con espacio fluido y tipografía balanceada, centrada y armonizada con el botón de pago.
 - **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
   - Actualizado caché a `byfio-pwa-v4.19.183`.
+
+---
+
+## [v4.19.191] - 2026-11-13
+
+### 📱 Experiencia Móvil de Registro: Descenso Vertical desde Arriba y Retirada Hacia Arriba
+- **Apertura de Arriba hacia Abajo en Móvil ([StarAgentRegisterCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentRegisterCard.tsx))**:
+  - En pantallas móviles (`< sm`), la tarjeta de registro desciende suavemente desde la parte superior de la pantalla (`max-sm:-translate-y-[135%]` a `max-sm:translate-y-0`) con desaceleración pausada (`duration-[1150ms]`), cubriendo la ventana del chat (`z-30`).
+- **Retirada Hacia Arriba tras Registro o Cierre**:
+  - Al completar el registro o presionar el botón de cierre, la ventana se desliza suavemente hacia arriba hasta desaparecer fuera del borde superior (`max-sm:-translate-y-[135%]`), dejando al usuario de nuevo en la conversación del chat con la Estrellita.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.191`.
 
 ---
 
