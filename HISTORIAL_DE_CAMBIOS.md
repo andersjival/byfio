@@ -1,3 +1,17 @@
+## [v4.19.211] - 2026-11-13
+
+### 🛍️ Flujo Continuo de Compra por Chat con Botón "Agregar"
+- **Botón "Agregar" en Tarjeta de Producto ([StarAgentProductCard.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentProductCard.tsx))**:
+  - Reemplazado el botón "Comprar otro" por el botón directo "Agregar", indicando explícitamente la intención de seguir comprando en la tienda.
+- **Loop Conversacional de Compra Continua ([StarAgentChatModal.tsx](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/src/components/common/StarAgentChatModal.tsx))**:
+  - Al presionar "Agregar", la Estrellita suma el producto al carrito, confirma en el chat (`"¡Listo! Agregué [Producto] a tu carrito 🌸🛍️"`) y pregunta qué otro producto desea comprar, ofreciendo sugerencias interactivas.
+  - El ciclo se repite con cada nuevo producto agregado, permitiendo compras multi-artículo fluidas.
+  - Finalización inteligente: Si el usuario indica "Quiero pagar" o presiona "Pagar ahora", entra directo a Checkout. Si indica "Ya no quiero comprar más", el agente totaliza el pedido y consulta si procede al pago.
+- **Service Worker & Despliegue ([sw.js](file:///c:/Users/User/Desktop/GeoSoft/CUENTA%20ANDERSJIVAL/CLIENTES%20WEBS/BYFIO/public/sw.js))**:
+  - Actualizado caché a `byfio-pwa-v4.19.211`.
+
+---
+
 ## [v4.19.210] - 2026-11-13
 
 ### 💬 Unificación Inteligente y Antiduplicados en Chat Online en Vivo

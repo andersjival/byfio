@@ -210,18 +210,38 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   // 1. Pagar directamente un producto -> Convierte la ventana de chat en Checkout
   const handlePayProduct = (product: Product) => {
     playBubblePopSound(0.4);
-    const item = { product, quantity: 1 };
-    setCartProducts([item]);
-    setCheckoutItems([item]);
+    let currentCart = [...cartProducts];
+    const exists = currentCart.some((p) => p.product.id === product.id);
+    if (!exists) {
+      currentCart.push({ product, quantity: 1 });
+      setCartProducts(currentCart);
+      addToCart({
+        type: 'product',
+        id: product.id,
+        sku: product.sku,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        image: product.image,
+        images: product.images,
+        shelfLocation: product.shelfLocation,
+      });
+    }
+    setCheckoutItems(currentCart);
     setViewMode('checkout');
   };
 
-  // 2. El usuario quiere comprar otro producto -> La Estrellita pregunta cuál y ofrece sugerencias
+  // 2. El usuario da clic en "Agregar" -> Agrega al carrito, confirma en chat y pregunta cuál otro comprar (loop continuo)
   const handleWantAnother = (product: Product) => {
     playWaterDropSound();
+    setAddedSecondProductIds((prev) => new Set(prev).add(product.id));
+
     setCartProducts((prev) => {
-      const exists = prev.some((p) => p.product.id === product.id);
-      return exists ? prev : [...prev, { product, quantity: 1 }];
+      const exists = prev.find((p) => p.product.id === product.id);
+      if (exists) {
+        return prev.map((p) => (p.product.id === product.id ? { ...p, quantity: p.quantity + 1 } : p));
+      }
+      return [...prev, { product, quantity: 1 }];
     });
 
     addToCart({
@@ -244,81 +264,45 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       {
         id: `u_${Date.now()}`,
         role: 'user',
-        content: 'Quiero comprar otro producto ✨',
+        content: `Agregar ${product.name} ✨`,
         timestamp: Date.now(),
       },
       {
         id: `a_${Date.now() + 1}`,
         role: 'assistant',
-        content:
-          '¡Qué emoción! 🌸 Cuéntame, ¿cuál es el otro producto que te gustaría comprar? ✨ Puedes elegir uno de nuestros favoritos o escribirme su nombre:',
+        content: `¡Listo! Agregué ${product.name} a tu carrito 🌸🛍️\n\n¿Cuál otro producto te gustaría comprar? 💕 Puedes elegir uno de los favoritos de abajo o escribirme su nombre. (O si ya estás lista, dime "Quiero pagar" o "Ya no quiero nada más" ✨)`,
         timestamp: Date.now() + 1,
         suggestedProducts: otherProducts,
       },
     ]);
   };
 
-  // 3. Selección del 2° producto -> La Estrellita muestra el botón de Agregar
+  // 3. Selección de otro producto -> La Estrellita muestra el producto con Pagar ahora y Agregar
   const handleSelectSecondProduct = (p2: Product) => {
     playBubblePopSound(0.3);
-    setIsWaitingForSecondProduct(false);
 
     setMessages((prev) => [
       ...prev,
       {
         id: `u_${Date.now()}`,
         role: 'user',
-        content: `Quiero este: ${p2.name} 💕`,
+        content: `Quiero ver: ${p2.name} 💕`,
         timestamp: Date.now(),
       },
       {
         id: `a_${Date.now() + 1}`,
         role: 'assistant',
-        content: `¡Excelente elección! 🌸 Aquí tienes ${p2.name} listo para ti. Dale al botón de Agregar para sumarlo a tu pedido ✨`,
+        content: `¡Excelente elección! 🌸 Aquí tienes ${p2.name}. ¿Deseas pagarlo ahora o darle a "Agregar" para seguir sumando productos? ✨`,
         timestamp: Date.now() + 1,
         product: p2,
-        productAction: 'add_second',
+        productAction: 'pay_or_more',
       },
     ]);
   };
 
-  // 4. Clic en "Agregar" -> 1 segundo después aparece la ventana oculta en modo Carrito mostrando ambos productos
+  // 4. Clic en "Agregar" desde cualquier tarjeta de producto
   const handleAddSecondProduct = (p2: Product) => {
-    playWaterDropSound();
-    setAddedSecondProductIds((prev) => new Set(prev).add(p2.id));
-
-    setCartProducts((prev) => {
-      const exists = prev.some((p) => p.product.id === p2.id);
-      return exists ? prev : [...prev, { product: p2, quantity: 1 }];
-    });
-
-    addToCart({
-      type: 'product',
-      id: p2.id,
-      sku: p2.sku,
-      name: p2.name,
-      price: p2.price,
-      quantity: 1,
-      image: p2.image,
-      images: p2.images,
-      shelfLocation: p2.shelfLocation,
-    });
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `a_${Date.now()}`,
-        role: 'assistant',
-        content: `¡Listo! Agregué ${p2.name} a tu lista. Abriendo tu carrito con los dos productos... 🛍️✨`,
-        timestamp: Date.now(),
-      },
-    ]);
-
-    // EXACTAMENTE 1 SEGUNDO DESPUÉS: Abre la ventana oculta del registro en modo Carrito
-    setTimeout(() => {
-      setRegisterCardMode('cart');
-      setIsRegisterOpen(true);
-    }, 1000);
+    handleWantAnother(p2);
   };
 
   // 5. Clic en "Pagar los Productos" desde la ventana oculta del carrito
@@ -397,7 +381,7 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       return;
     }
 
-    // B. Si la Estrellita estaba esperando la respuesta del segundo producto
+    // B. Si la Estrellita estaba esperando la respuesta del siguiente producto
     if (isWaitingForSecondProduct) {
       const secondMatch = findMatchingProduct(text, products);
       if (secondMatch) {
@@ -407,24 +391,50 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
       }
     }
 
-    // C. Detectar si el usuario pide comprar otro producto
-    const isBuyAnotherIntent = /(comprar otro|otro producto|agregar otro|quiero otro|comprar mas|algo mas|ver otro|otro mas)/i.test(text);
-    if (isBuyAnotherIntent) {
-      setInputValue('');
-      const baseProduct = cartProducts[0]?.product || products[0];
-      if (baseProduct) {
-        handleWantAnother(baseProduct);
-        return;
-      }
-    }
-
-    // D. Detectar si el usuario pide pagar
-    const isPayIntent = /(quiero pagar|pagar ahora|proceder al pago|hacer el pago|como pago|pagar|cobrar)/i.test(text);
+    // C. Detectar si el usuario pide pagar
+    const isPayIntent = /(quiero pagar|pagar ahora|proceder al pago|hacer el pago|como pago|pagar|cobrar|listo para pagar|terminar y pagar)/i.test(text);
     if (isPayIntent && cartProducts.length > 0) {
       setInputValue('');
       setCheckoutItems(cartProducts);
       setViewMode('checkout');
       return;
+    }
+
+    // D. Detectar si el usuario ya no quiere comprar más
+    const isStopShoppingIntent = /(ya no quiero|no quiero mas|no quiero nada mas|nada mas|eso es todo|es todo|eso seria todo|ya no|listo ya|no mas|ya seria todo|terminar|solo eso|no gracias)/i.test(text);
+    if (isStopShoppingIntent && cartProducts.length > 0) {
+      setInputValue('');
+      const totalItems = cartProducts.reduce((sum, item) => sum + item.quantity, 0);
+      const totalAmount = cartProducts.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+
+      playWaterDropSound();
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `u_${Date.now()}`,
+          role: 'user',
+          content: text,
+          timestamp: Date.now(),
+        },
+        {
+          id: `a_${Date.now() + 1}`,
+          role: 'assistant',
+          content: `¡Perfecto! 🌸 Tienes ${totalItems} producto(s) en tu carrito por un total de ₡${totalAmount.toLocaleString('es-CR')} ✨🛍️\n\n¿Procedemos al pago ahora mismo? Puedes decirme "Quiero pagar" o darle clic a "Pagar ahora" 💕`,
+          timestamp: Date.now() + 1,
+        },
+      ]);
+      return;
+    }
+
+    // E. Detectar si el usuario pide agregar o comprar otro producto
+    const isBuyAnotherIntent = /(comprar otro|otro producto|agregar otro|quiero otro|comprar mas|algo mas|ver otro|otro mas|agregar)/i.test(text);
+    if (isBuyAnotherIntent) {
+      setInputValue('');
+      const baseProduct = cartProducts[cartProducts.length - 1]?.product || products[0];
+      if (baseProduct) {
+        handleWantAnother(baseProduct);
+        return;
+      }
     }
 
     // E. Conversación normal con detección de productos
@@ -560,7 +570,9 @@ export const StarAgentChatModal: React.FC<StarAgentChatModalProps> = ({
   };
 
   const quickChips =
-    userRole === 'staff' || userRole === 'admin'
+    cartProducts.length > 0
+      ? ['💳 Quiero pagar', '🌸 Agregar otro producto', 'Listo, ya no quiero más']
+      : userRole === 'staff' || userRole === 'admin'
       ? ['¿Cuánto stock queda de tazas?', '¿Qué talleres tienen cupos?', '¿Cuáles productos están agotados?']
       : ['🌸 Taza con Flores', '✨ Pack Stickers Kawaii', '📖 Agenda 2027', '¿Hacen envíos a todo Costa Rica?'];
 

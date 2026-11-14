@@ -65,59 +65,45 @@ export const StarAgentProductCard: React.FC<StarAgentProductCardProps> = ({
         </div>
       </div>
 
-      {/* Acciones interactivas adaptadas para Celular o PC */}
-      {actionType === 'pay_or_more' ? (
-        <div className="pt-2 border-t border-fio-100 dark:border-purple-800/40 space-y-1.5 sm:space-y-2">
-          <p className="text-[10.5px] sm:text-[11px] font-bold text-slate-700 dark:text-purple-200 text-center leading-snug">
-            ¿Deseas pagar este producto ahora o te gustaría comprar algo más? ✨
-          </p>
-          <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-            <button
-              type="button"
-              onClick={() => onPay(product)}
-              className="py-2.5 px-2 sm:px-3 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:opacity-95 text-white font-bubble font-bold text-[11px] sm:text-xs shadow-clayBtn transition-all active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer min-w-0"
-              title="Pagar este producto directamente"
-            >
-              <CreditCard className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">Pagar ahora</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => onWantAnother(product)}
-              className="py-2.5 px-2 sm:px-3 rounded-xl bg-white dark:bg-purple-900/60 border-2 border-fio-300 dark:border-purple-600/70 text-fio-900 dark:text-purple-200 font-bubble font-bold text-[11px] sm:text-xs hover:bg-fio-50 dark:hover:bg-purple-800/70 transition-all active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer min-w-0"
-              title="Seleccionar otro producto para comprar"
-            >
-              <Plus className="w-3.5 h-3.5 text-fio-pink shrink-0" />
-              <span className="truncate">Comprar otro</span>
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="pt-2 border-t border-fio-100 dark:border-purple-800/40">
+      {/* Acciones interactivas */}
+      <div className="pt-2 border-t border-fio-100 dark:border-purple-800/40 space-y-1.5 sm:space-y-2">
+        <p className="text-[10.5px] sm:text-[11px] font-bold text-slate-700 dark:text-purple-200 text-center leading-snug">
+          ¿Deseas pagar este producto ahora o agregarlo a tu pedido? ✨
+        </p>
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
           <button
             type="button"
-            disabled={isAdded}
-            onClick={() => onAddSecond(product)}
-            className={`w-full py-2.5 px-3 rounded-xl font-bubble font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${
+            onClick={() => onPay(product)}
+            className="py-2.5 px-2 sm:px-3 rounded-xl bg-gradient-to-r from-purple-700 to-fio-pink hover:opacity-95 text-white font-bubble font-bold text-[11px] sm:text-xs shadow-clayBtn transition-all active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer min-w-0"
+            title="Pagar este producto directamente"
+          >
+            <CreditCard className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Pagar ahora</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => (onWantAnother ? onWantAnother(product) : onAddSecond(product))}
+            className={`py-2.5 px-2 sm:px-3 rounded-xl border-2 font-bubble font-bold text-[11px] sm:text-xs transition-all active:scale-95 flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer min-w-0 ${
               isAdded
-                ? 'bg-emerald-600 text-white cursor-default'
-                : 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:opacity-95 text-white shadow-clayBtn'
+                ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 text-emerald-700 dark:text-emerald-300'
+                : 'bg-white dark:bg-purple-900/60 border-fio-300 dark:border-purple-600/70 text-fio-900 dark:text-purple-200 hover:bg-fio-50 dark:hover:bg-purple-800/70'
             }`}
+            title="Agregar este producto y seguir comprando"
           >
             {isAdded ? (
               <>
-                <Check className="w-4 h-4 shrink-0" />
-                <span className="truncate">¡Agregado! Abriendo carrito...</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="truncate">Agregado</span>
               </>
             ) : (
               <>
-                <ShoppingBag className="w-4 h-4 shrink-0" />
-                <span className="truncate">Agregar al Carrito</span>
+                <Plus className="w-3.5 h-3.5 text-fio-pink shrink-0" />
+                <span className="truncate">Agregar</span>
               </>
             )}
           </button>
         </div>
-      )}
+      </div>
     </div>
   );
 };
